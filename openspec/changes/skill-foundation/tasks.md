@@ -39,6 +39,28 @@ Tasks are ordered by priority (**P0 → P1 → P2**) and structured so independe
 - [x] 5.6 Fix **Leaflet** 403 / API-key placeholder tile issues on local `file://` origins by switching to Esri ArcGIS World Street Map (`https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}`), and verify visually and via Playwright that all map tiles render cleanly on `file://` without API keys or 403 blocks.
 - [x] 5.7 Create `skills/html-report/examples/example.csv` and document CSV-backed report rules in `skills/html-report/SKILL.md` and `skills/html-report/references/architecture-and-styling.md` (requiring a highlighted CSV source banner, a search/file control naming the CSV file, and synchronized **Alpine.js** + **Grid.js** actions).
 - [x] 5.8 Add a dedicated **CSV-Driven Interactive Showcase Section** at the bottom of `skills/html-report/examples/example.html` built around `example.csv` (highlighting `example.csv` as the source, providing a search/file function with the name `example.csv`, and triggering live **Alpine.js** filter/metric actions and **Grid.js** table updates), and verify it across all 5 Tailwind breakpoints in `playwright/verify-report.mjs`.
+- [x] 5.9 Set the default DaisyUI theme to `light` (`<html data-theme="light">`) across `example.html`, `index.html`, and skill documentation (replacing `corporate` as the default).
+- [x] 5.10 Convert the navbar icon-only Download button into an icon-only **Download Dropdown** (`#download-dropdown` / `#download-dropdown-btn`) with two menu options: **Download as HTML** (`#download-html-btn`, standalone inlined CDNs) and **Download as PDF** (`#download-pdf-btn`, triggering print/PDF export).
+- [x] 5.11 Add comprehensive `@media print` CSS and a dedicated **Print / PDF Page 1 Cover + Heading Table of Contents** (`#print-cover-page` with `#print-cover-title` and `#print-toc-list` mapping all `h1`, `h2`, `h3` headings, `break-after: page`) while hiding the navbar and interactive-only controls in print mode and showing static print fallbacks (including pre-populating the CSV table/chart for print if empty).
+- [x] 5.12 Update `skills/html-report/playwright/verify-report.mjs` to verify `@media print` queries (navbar hidden, Page 1 cover title + `h1`/`h2`/`h3` TOC visible, interactive-only controls hidden) and generate + verify **5 mock PDFs in 5 different DaisyUI themes** (`light`, `dark`, `cupcake`, `synthwave`, `nord`) in `skills/html-report/examples/mock-pdfs/`.
+
+## 6. [P2] Interactive vs. Static Mode Discrimination & Conditional PDF Readiness
+
+- [x] 6.1 Prompt & Mode Clarification: Update the skill workflow (`SKILL.md` Step 1) so the agent asks the user or clearly indicates upfront whether the report is **Interactive** (rich client-side UI, dynamic filtering, tabs, widget interaction) or **Static** (print-first, publication-grade document designed for physical print or PDF export).
+- [x] 6.2 Conditional Print Media Queries & PDF Readiness: Restrict the creation of `@media print` queries, Page 1 print cover + H1/H2/H3 TOC (`#print-cover-page`), static print fallback views, and Playwright `@media print` + multi-theme PDF verification to **Static** reports ONLY, preventing unnecessary focus and development overhead on print queries when an interactive dashboard is desired.
+- [x] 6.3 Interactive Mode Navbar Dropdown PDF Warning & Conversion Prompt: When a report is generated in **Interactive Mode**, configure the navbar Download Dropdown's PDF option to indicate that the report is not PDF-ready (e.g., marked as "Not PDF Ready (Interactive Mode)") and present a suggested prompt (e.g., `"Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC"`) to focus on the media print query when the user wants to convert it.
+- [x] 6.4 Verifier & Skill Guideline Updates: Add mode flags (e.g., `--mode interactive` vs `--mode static`) to `verify-report.mjs` and document the mode selection logic in `SKILL.md` and `references/architecture-and-styling.md`, ensuring interactive reports are verified for breakpoints, CDNs, and themes without failing on print-specific media query assertions.
+
+## 7. [P2] Content-Aware Favicon Emoticon
+
+- [x] 7.1 Content-Aware Favicon Emoticon: Each generated HTML report SHALL include a `<link rel="icon" ...>` featuring an emoji/emoticon favicon embedded as an SVG data URI (e.g., `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>`) that matches the content and subject matter of the file (e.g., 📊 for metrics/analytics, 🗺️ for geospatial/maps, ⚡ for performance, 🧪 for testing/experiments, 💻 for code/technical reports), requiring zero external image file assets.
+
+## 8. [P2] Post-Generation Auto-Open & Single-Tab Live-Reload Sync
+
+- [x] 8.1 Auto-Open on Completion: When report generation is complete, the skill SHALL automatically open the generated HTML report in the browser (e.g., via a lightweight local server / live-reload watcher or system browser opener).
+- [x] 8.2 Single-Tab Live-Reload & Tab Deduplication: When the HTML report file is updated:
+  - If the report is **currently not open** in a browser tab, it SHALL automatically reopen in a single browser tab.
+  - If the report is **already open in an existing browser tab**, it SHALL automatically refresh / live-reload that existing tab in place rather than launching redundant duplicate tabs.
 
 ## Workflow follow-up
 

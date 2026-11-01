@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="corporate" class="scroll-smooth">
+<html lang="en" data-theme="light" data-report-mode="interactive" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>html-report — 11-CDN Interactive Capabilities Showcase</title>
+
+  <!-- Content-Aware Favicon Emoticon (SVG data URI matching report content) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>" />
 
   <!-- 1. Stylesheets (DaisyUI v4 full + all 32 themes, Leaflet, Highlight.js, Grid.js, KaTeX) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
@@ -172,23 +175,50 @@
       border-radius: 0.25rem;
       margin-bottom: 0.35rem;
     }
+    #print-cover-page {
+      display: none;
+    }
+    .print-only-summary {
+      display: none;
+    }
     @media print {
-      .print\:hidden {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      html, body {
+        background-color: oklch(var(--b2)) !important;
+        color: oklch(var(--bc)) !important;
+      }
+      header,
+      .navbar,
+      .print\:hidden,
+      .print-interactive-control,
+      .gridjs-head,
+      .gridjs-pages {
         display: none !important;
+      }
+      #print-cover-page {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        min-height: 92vh !important;
+        break-after: page !important;
+        page-break-after: always !important;
+      }
+      .print-only-summary {
+        display: block !important;
       }
       .break-inside-avoid {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
-      }
-      body {
-        background: #ffffff !important;
       }
     }
   </style>
 </head>
 <body class="bg-base-200 text-base-content min-h-screen flex flex-col">
 
-  <!-- Sticky DaisyUI Navbar: Left Report Title (navbar-start) + Right Controls (navbar-end: TOC Dropdown, DaisyUI Color-Swatch Theme Dropdown, Icon-Only Download Button) -->
+  <!-- Sticky DaisyUI Navbar: Left Report Title (navbar-start) + Right Controls (navbar-end: TOC Dropdown, DaisyUI Color-Swatch Theme Dropdown, Icon-Only Download Dropdown) -->
   <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
     <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
       <!-- Left (navbar-start): Report Title -->
@@ -198,7 +228,7 @@
         </span>
       </div>
 
-      <!-- Right (navbar-end): Contents TOC Dropdown + DaisyUI Color-Swatch Theme Dropdown + Icon-Only Download Button -->
+      <!-- Right (navbar-end): Contents TOC Dropdown + DaisyUI Color-Swatch Theme Dropdown + Icon-Only Download Dropdown (HTML or PDF) -->
       <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
         <!-- 1. Table of Contents Dropdown (maps all h1, h2, h3 via #id) -->
         <div class="dropdown dropdown-end" id="toc-dropdown">
@@ -215,7 +245,7 @@
         <div class="dropdown dropdown-end" id="theme-dropdown">
           <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
             <i data-lucide="palette" class="w-4 h-4"></i>
-            <span id="active-theme-label" class="text-xs font-medium capitalize">corporate</span>
+            <span id="active-theme-label" class="text-xs font-medium capitalize">light</span>
             <span class="flex items-center gap-0.5">
               <span class="bg-primary rounded-badge w-1.5 h-3"></span>
               <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
@@ -230,18 +260,99 @@
           </div>
         </div>
 
-        <!-- 3. Icon-Only Self-Contained CDN-Inlining Download Button (no visible download text) -->
-        <button id="download-html-btn" type="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download standalone HTML report with all CDNs embedded" title="Download standalone HTML report with all CDNs embedded">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
-          </svg>
-        </button>
+        <!-- 3. Icon-Only Download Dropdown (Download as HTML or Download as PDF) -->
+        <div class="dropdown dropdown-end" id="download-dropdown">
+          <button
+            tabindex="0"
+            id="download-dropdown-btn"
+            type="button"
+            class="btn btn-primary btn-xs sm:btn-sm btn-square"
+            aria-label="Download report as HTML or PDF"
+            title="Download report as HTML or PDF"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
+            </svg>
+          </button>
+          <ul
+            tabindex="0"
+            id="download-dropdown-menu"
+            class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-80 p-2 shadow-2xl border border-base-300 space-y-1"
+          >
+            <li>
+              <button id="download-html-btn" type="button" class="flex items-start gap-2.5 py-2 px-3 text-xs w-full">
+                <i data-lucide="file-code-2" class="w-4 h-4 text-primary mt-0.5 shrink-0"></i>
+                <div class="text-left flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-bold whitespace-nowrap">Download as HTML</span>
+                    <span class="badge badge-success badge-xs shrink-0 whitespace-nowrap font-mono">Standalone</span>
+                  </div>
+                  <div class="text-[10px] opacity-65 font-normal truncate">All 11 CDNs Inlined Offline</div>
+                </div>
+              </button>
+            </li>
+            <li>
+              <button id="download-pdf-btn" type="button" class="flex items-start gap-2.5 py-2 px-3 text-xs w-full">
+                <i data-lucide="printer" class="w-4 h-4 text-warning mt-0.5 shrink-0"></i>
+                <div class="text-left flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-bold whitespace-nowrap">Download as PDF</span>
+                    <span class="badge badge-warning badge-xs shrink-0 whitespace-nowrap font-mono">Not PDF-Ready</span>
+                  </div>
+                  <div class="text-[10px] opacity-65 font-normal truncate">Interactive Mode • Click for Prompt</div>
+                </div>
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
   </header>
 
   <!-- Main Showcase Content -->
   <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1">
+
+    <!-- Print / PDF First Page Cover & Table of Contents (Shown Only in @media print as Page 1; Navbar is Hidden in PDF) -->
+    <section id="print-cover-page" class="card bg-base-100 border-2 border-primary/50 p-8 shadow-sm">
+      <div class="space-y-6">
+        <div class="flex items-center justify-between border-b border-base-300 pb-4">
+          <div class="flex items-center gap-2">
+            <span class="badge badge-primary font-mono text-xs">PRINT / PDF EDITION</span>
+            <span class="text-xs opacity-75">Active Theme: <strong id="print-cover-theme" class="font-mono capitalize">light</strong></span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="bg-primary rounded-badge w-3 h-5"></span>
+            <span class="bg-secondary rounded-badge w-3 h-5"></span>
+            <span class="bg-accent rounded-badge w-3 h-5"></span>
+            <span class="bg-neutral rounded-badge w-3 h-5"></span>
+          </div>
+        </div>
+
+        <div class="space-y-2 py-3">
+          <p class="text-xs uppercase tracking-widest opacity-65 font-bold">Publication-Grade HTML5 Report</p>
+          <div id="print-cover-title" class="text-3xl font-extrabold tracking-tight">
+            html-report — 11-CDN Interactive Capabilities Showcase
+          </div>
+          <p class="text-xs opacity-80 max-w-2xl">
+            First-page PDF cover and complete heading directory (<code>h1</code>, <code>h2</code>, <code>h3</code>). In print/PDF mode, the sticky navigation bar and interactive form inputs are replaced by static print views.
+          </p>
+        </div>
+
+        <div class="space-y-3 border-t border-base-300 pt-4">
+          <div class="text-sm font-bold uppercase tracking-wider opacity-80">
+            Table of Contents (All h1, h2, h3 Sections)
+          </div>
+          <ul id="print-toc-list" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs">
+            <!-- Populated by initTOC() with all h1, h2, h3 headings -->
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-base-300 pt-4 flex items-center justify-between text-xs opacity-70 mt-8">
+        <span>generated by html-report</span>
+        <span>Page 1 — Title &amp; Contents</span>
+      </div>
+    </section>
 
     <!-- Hero & H1 Header -->
     <section class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid">
@@ -728,8 +839,8 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
             </div>
           </div>
 
-          <!-- Load CSV Control (Top) -->
-          <div id="csv-step-1-load" class="bg-base-200/70 p-3 sm:p-4 rounded-box border border-base-300 space-y-2">
+          <!-- Load CSV Control (Top — Interactive Screen Control, Hidden in Print/PDF) -->
+          <div id="csv-step-1-load" class="print-interactive-control bg-base-200/70 p-3 sm:p-4 rounded-box border border-base-300 space-y-2">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <label class="label p-0" for="csv-file-input">
                 <span class="label-text text-xs sm:text-sm font-bold flex items-center gap-1.5">
@@ -769,13 +880,42 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
             </div>
           </div>
 
-          <!-- Empty State Indicator (Shown initially when no CSV is loaded) -->
+          <!-- Empty State Indicator (Shown initially on screen when no CSV is loaded; hidden in Print/PDF) -->
           <div
             id="csv-empty-state"
             x-show="!csvLoaded"
-            class="rounded-box border border-dashed border-base-300 bg-base-200/30 p-6 text-center text-xs opacity-70"
+            class="print-interactive-control rounded-box border border-dashed border-base-300 bg-base-200/30 p-6 text-center text-xs opacity-70"
           >
             No CSV data loaded yet. Load <code class="font-mono">example.csv</code> above to display the search bar, custom DaisyUI filters, Grid.js table, and Chart.js chart.
+          </div>
+
+          <!-- Static Print/PDF Snapshot of example.csv (Shown automatically in @media print when interactive controls are disabled) -->
+          <div id="csv-print-static-fallback" class="print-only-summary space-y-2">
+            <div class="text-xs font-semibold opacity-80">
+              Static Print Snapshot of <code>example.csv</code> (8 rows &bull; Interactive file loader &amp; filters hidden in print mode):
+            </div>
+            <table class="table table-xs table-zebra w-full border border-base-300">
+              <thead>
+                <tr class="bg-base-200 text-base-content">
+                  <th>id</th>
+                  <th>service</th>
+                  <th>region</th>
+                  <th>rps</th>
+                  <th>latency_ms</th>
+                  <th>status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>SRV-101</td><td>Edge-Auth-Gateway</td><td>eu-west-1</td><td>1420</td><td>18.4</td><td>Healthy</td></tr>
+                <tr><td>SRV-102</td><td>Vector-Search-Index</td><td>us-east-1</td><td>980</td><td>32.1</td><td>Healthy</td></tr>
+                <tr><td>SRV-103</td><td>LLM-Router-Primary</td><td>eu-central-1</td><td>2150</td><td>41.6</td><td>Scaling</td></tr>
+                <tr><td>SRV-104</td><td>Telemetry-Ingest</td><td>ap-northeast-1</td><td>3400</td><td>22.8</td><td>Healthy</td></tr>
+                <tr><td>SRV-105</td><td>Batch-Embed-Worker</td><td>us-west-2</td><td>640</td><td>54.2</td><td>Warning</td></tr>
+                <tr><td>SRV-106</td><td>Policy-Audit-Engine</td><td>eu-north-1</td><td>890</td><td>15.9</td><td>Healthy</td></tr>
+                <tr><td>SRV-107</td><td>Realtime-Stream-Hub</td><td>us-east-1</td><td>1760</td><td>29.5</td><td>Scaling</td></tr>
+                <tr><td>SRV-108</td><td>Cache-Sync-Coordinator</td><td>eu-west-1</td><td>1120</td><td>19.7</td><td>Healthy</td></tr>
+              </tbody>
+            </table>
           </div>
 
           <!-- Search, Custom DaisyUI Filters, Grid.js Table & Chart.js Underneath (Hidden/Empty Until CSV is Loaded) -->
@@ -786,7 +926,7 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
             class="space-y-4"
           >
             <!-- Search & Custom DaisyUI + Alpine.js Filters (Directly Underneath Load CSV) -->
-            <div id="csv-step-2-search" class="bg-base-200/60 p-3 sm:p-4 rounded-box border border-base-300 space-y-3">
+            <div id="csv-step-2-search" class="print-interactive-control bg-base-200/60 p-3 sm:p-4 rounded-box border border-base-300 space-y-3">
               <!-- Search Input Row -->
               <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
                 <div class="relative flex-1">
@@ -982,6 +1122,45 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
 
   </main>
 
+  <!-- Interactive Mode: PDF Readiness Notice & Conversion Prompt Modal -->
+  <dialog id="pdf-not-ready-modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box bg-base-100 text-base-content border border-base-300 shadow-2xl">
+      <div class="flex items-center gap-3 pb-3 border-b border-base-300">
+        <div class="w-10 h-10 rounded-full bg-warning/20 text-warning flex items-center justify-center shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-base">This Report is in Interactive Mode</h3>
+          <p class="text-xs text-base-content/70">Not optimized for static PDF export</p>
+        </div>
+      </div>
+      <p class="py-3 text-xs leading-relaxed">
+        This document contains rich client-side interactivity (sliders, file inputs, dynamic filtering) designed for browser use rather than paginated print output.
+      </p>
+      <div class="bg-base-200 p-3 rounded-box border border-base-300 text-xs space-y-2">
+        <span class="font-semibold block text-[11px] uppercase tracking-wider text-base-content/70">Prompt to make this report PDF-ready:</span>
+        <div class="space-y-2">
+          <pre id="pdf-conversion-prompt-text" class="bg-base-300 p-2.5 rounded font-mono text-[11px] select-all whitespace-pre-wrap break-words">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</pre>
+          <button type="button" id="copy-pdf-prompt-btn" class="btn btn-xs btn-primary gap-1" onclick="window.copyPdfConversionPrompt()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            <span id="copy-pdf-prompt-label">Copy Prompt</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-action flex justify-between items-center mt-4">
+        <button type="button" class="btn btn-ghost btn-xs text-base-content/60" onclick="document.getElementById('pdf-not-ready-modal').close(); window.exportReportPdf ? window.exportReportPdf() : window.print();">Print Anyway</button>
+        <button type="button" class="btn btn-sm" onclick="document.getElementById('pdf-not-ready-modal').close()">Close</button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
   <!-- Minimal Centered Footer -->
   <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75">
     generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a>
@@ -1008,15 +1187,17 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
       return base || `section-heading-${index}`;
     }
 
-    // 1. Table of Contents Builder (maps all h1, h2, h3 in <main>)
+    // 1. Table of Contents Builder (maps all h1, h2, h3 in <main> into both Navbar TOC and Print Page 1 TOC)
     function initTOC() {
       const tocList = document.getElementById("report-toc-list");
+      const printTocList = document.getElementById("print-toc-list");
       const mainEl = document.querySelector("main");
       if (!tocList || !mainEl) return;
 
       const headings = Array.from(mainEl.querySelectorAll("h1, h2, h3"));
       const usedIds = new Set();
       tocList.innerHTML = "";
+      if (printTocList) printTocList.innerHTML = "";
 
       headings.forEach((heading, idx) => {
         if (!heading.id) {
@@ -1045,6 +1226,20 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
 
         li.appendChild(a);
         tocList.appendChild(li);
+
+        if (printTocList) {
+          const printLi = document.createElement("li");
+          printLi.setAttribute("data-print-toc-level", tag);
+          if (tag === "h1") {
+            printLi.className = "font-extrabold text-xs col-span-1 sm:col-span-2 border-b border-base-300 pb-1 mb-1";
+          } else if (tag === "h2") {
+            printLi.className = "font-bold text-xs pt-1";
+          } else {
+            printLi.className = "pl-3 text-xs opacity-80";
+          }
+          printLi.textContent = heading.textContent.trim();
+          printTocList.appendChild(printLi);
+        }
       });
     }
 
@@ -1208,6 +1403,8 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
       document.documentElement.setAttribute("data-theme", themeName);
       const activeLabel = document.getElementById("active-theme-label");
       if (activeLabel) activeLabel.textContent = themeName;
+      const printThemeLabel = document.getElementById("print-cover-theme");
+      if (printThemeLabel) printThemeLabel.textContent = themeName;
 
       document.querySelectorAll("#theme-swatch-list .theme-swatch-item").forEach((btn) => {
         const check = btn.querySelector(".theme-check");
@@ -1224,11 +1421,11 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
       await renderMermaidWithTheme(palette);
     };
 
-    // Build DaisyUI Theme Dropdown with Color-Scheme Swatches (matching daisyui.com)
+    // Build DaisyUI Theme Dropdown with Color-Scheme Swatches (matching daisyui.com; default is always light)
     function initThemeDropdown() {
       const listEl = document.getElementById("theme-swatch-list");
       if (!listEl) return;
-      const currentTheme = document.documentElement.getAttribute("data-theme") || "corporate";
+      const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
       listEl.innerHTML = "";
 
       DAISYUI_THEMES.forEach((theme) => {
@@ -1790,10 +1987,10 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
       return insufficient;
     };
 
-    // 14. Self-Contained HTML Download Bundler (Fetches & Inlines All CDNs)
+    // 14. Self-Contained HTML Download Bundler (Fetches & Inlines All CDNs) & PDF Export Action
     window.buildInlinedHtmlSnapshot = async function buildInlinedHtmlSnapshot() {
       const clone = document.documentElement.cloneNode(true);
-      clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "corporate");
+      clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
 
       // Inline external stylesheets & rewrite relative font URLs (e.g., KaTeX fonts) to absolute CDN URLs
       const linkEls = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
@@ -1844,29 +2041,68 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
       return "<!DOCTYPE html>\n" + clone.outerHTML;
     };
 
-    function initDownloadButton() {
-      const btn = document.getElementById("download-html-btn");
-      if (!btn) return;
+    window.exportReportPdf = function exportReportPdf() {
+      if (window.reportCharts && window.reportCharts.length) {
+        window.reportCharts.forEach((c) => c.resize());
+      }
+      if (window.reportLeafletMap) {
+        window.reportLeafletMap.invalidateSize();
+      }
+      window.print();
+    };
 
-      btn.addEventListener("click", async () => {
-        try {
-          btn.disabled = true;
-          const htmlContent = await window.buildInlinedHtmlSnapshot();
-          const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "html-report-11-cdn-showcase-standalone.html";
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          URL.revokeObjectURL(url);
-        } catch (err) {
-          console.error("Failed to bundle report HTML:", err);
-        } finally {
-          btn.disabled = false;
-        }
-      });
+    window.copyPdfConversionPrompt = function copyPdfConversionPrompt() {
+      const text = document.getElementById("pdf-conversion-prompt-text")?.textContent?.trim() || "";
+      if (!text) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+      }
+      const label = document.getElementById("copy-pdf-prompt-label");
+      if (label) {
+        label.textContent = "Copied!";
+        setTimeout(() => { label.textContent = "Copy Prompt"; }, 2000);
+      }
+    };
+
+    function initDownloadButton() {
+      const htmlBtn = document.getElementById("download-html-btn");
+      const pdfBtn = document.getElementById("download-pdf-btn");
+
+      if (htmlBtn) {
+        htmlBtn.addEventListener("click", async () => {
+          try {
+            htmlBtn.disabled = true;
+            const htmlContent = await window.buildInlinedHtmlSnapshot();
+            const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "html-report-11-cdn-showcase-standalone.html";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+          } catch (err) {
+            console.error("Failed to bundle report HTML:", err);
+          } finally {
+            htmlBtn.disabled = false;
+          }
+        });
+      }
+
+      if (pdfBtn) {
+        pdfBtn.addEventListener("click", () => {
+          const reportMode = document.documentElement.getAttribute("data-report-mode") || "interactive";
+          if (reportMode === "interactive") {
+            const modal = document.getElementById("pdf-not-ready-modal");
+            if (modal && typeof modal.showModal === "function") {
+              modal.showModal();
+              return;
+            }
+          }
+          window.exportReportPdf();
+        });
+      }
     }
 
     // Boot all subsystems non-blockingly when DOM & deferred scripts are ready

@@ -42,14 +42,24 @@ git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report && 
    - **Highlight.js** (`highlight.js@11.10.0`) — Syntax-highlighted code blocks (including TypeScript Frontend & Kotlin Backend examples)
    - All scripts use non-blocking `defer` loading and isolated initialization guards so no single CDN blocks page rendering.
 
-2. **Sticky DaisyUI Navbar (Left Report Title + Right Controls)**:
+2. **Sticky DaisyUI Navbar (Left Report Title + Right Controls) & Default `light` Theme**:
+   - **Default Theme**: Always defaults to `data-theme="light"` (never `corporate`).
+   - **Content-Aware Favicon**: Each report includes an inline SVG emoji favicon in `<head>` (e.g. `📊`, `🗺️`, `⚡`, `🧪`) matching the report's content with zero external assets.
    - **Left (`navbar-start`)**: Displays the **Report Title** (`#navbar-report-title`).
    - **Right (`navbar-end`)**:
      - **Contents Dropdown (`#toc-dropdown`)**: Automatically maps and links to all `h1`, `h2`, and `h3` headings via `#id` anchors.
      - **DaisyUI Color-Swatch Theme Dropdown (`#theme-dropdown`)**: Displays all **32 DaisyUI themes** with live **color-scheme swatch previews** (`bg-primary`, `bg-secondary`, `bg-accent`, `bg-neutral` inside `data-theme="<theme>"`, matching the official DaisyUI website) and dynamically synchronizes **Chart.js**, **Mermaid**, **Grid.js**, and CSS-styled report elements.
-     - **Icon-Only Self-Contained Download Button (`#download-html-btn`)**: An icon-only button (no visible text label) that fetches all external CDN stylesheets and scripts in parallel, inlines them directly into `<style>` and `<script>` tags inside the HTML document, and downloads a 100% standalone offline `.html` file.
+     - **Icon-Only Download Dropdown (`#download-dropdown`)**: An icon-only trigger button (`#download-dropdown-btn`, no visible text label) that opens a dropdown menu with two options:
+       - **Download as HTML (`#download-html-btn`)**: Fetches all external CDN stylesheets and scripts in parallel, inlines them directly into `<style>` and `<script>` tags inside the HTML document, and downloads a 100% standalone offline `.html` file.
+       - **Download as PDF (`#download-pdf-btn`)**:
+         - In **Static Mode**: Triggers `window.exportReportPdf()` with `@media print` styling.
+         - In **Interactive Mode**: Displays a badge `"Not PDF-Ready"` and opens `#pdf-not-ready-modal` suggesting the conversion prompt (`Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC`) to focus on print media queries only when desired.
 
-3. **CSV-Backed Report Highlight, Search File Function & Grid.js / Alpine.js Actions**:
+3. **Interactive vs. Static Mode Discrimination & Conditional `@media print`**:
+   - The skill asks or indicates upfront whether the report is **Interactive** (client-side filters, sliders, dynamic charts, CSV loaders) or **Static** (print-first publication documents).
+   - ONLY when a report is **Static** does the agent create `@media print` queries, Page 1 Cover + TOC (`#print-cover-page`), static print summaries (`.print-only-summary`), and run multi-theme mock PDF verification (`light`, `dark`, `cupcake`, `synthwave`, `nord`). In interactive mode, print media query overhead is bypassed.
+
+4. **CSV-Backed Report Highlight, Search File Function & Grid.js / Alpine.js Actions**:
    - When an HTML report or form is built around a CSV file (such as `skills/html-report/examples/example.csv`), the report visually **highlights** the CSV-backed form (`data-csv-highlight="true"`) and includes a **Search File Function naming the CSV** (`#csv-search-input`) plus a CSV file loader (`#csv-file-input`) that triggers synchronized **Alpine.js** filter/metric actions and **Grid.js** table updates.
 
 4. **Horizontal Scrollbar ("Insufficient Space") Detection**:
@@ -103,6 +113,21 @@ ln -sfn "$(pwd)/skills/html-report" ~/.agents/skills/html-report
 mkdir -p ~/.gemini/config/skills
 ln -sfn "$(pwd)/skills/html-report" ~/.gemini/config/skills/html-report
 ```
+
+---
+
+## Auto-Open & Single-Tab Live-Reload Dev Server
+
+Serve any report with automatic single-tab synchronization:
+
+```bash
+node skills/html-report/scripts/serve-report.mjs skills/html-report/examples/example.html
+```
+
+- **Auto-Open**: Automatically launches the report in your default browser tab.
+- **Single-Tab Sync**: When you edit the HTML report:
+  - If already open in a tab, it refreshes the existing tab in place (zero duplicate tabs).
+  - If closed, it automatically re-opens a fresh browser tab.
 
 ---
 

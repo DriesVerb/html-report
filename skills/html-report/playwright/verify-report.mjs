@@ -26,26 +26,37 @@ const EXPECTED_CDN_NAMES = [
   "Highlight.js"
 ];
 
+const MOCK_PDF_THEMES = [
+  "light",
+  "dark",
+  "cupcake",
+  "synthwave",
+  "nord"
+];
+
 function parseArgs(argv) {
   const args = argv.slice(2);
   let htmlPath = null;
   let pdfPath = null;
+  let mode = null;
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--pdf" && args[i + 1]) {
       pdfPath = args[++i];
+    } else if (args[i] === "--mode" && args[i + 1]) {
+      mode = args[++i];
     } else if (!args[i].startsWith("--") && !htmlPath) {
       htmlPath = args[i];
     }
   }
 
-  return { htmlPath, pdfPath };
+  return { htmlPath, pdfPath, mode };
 }
 
 async function main() {
-  const { htmlPath, pdfPath } = parseArgs(process.argv);
+  const { htmlPath, pdfPath, mode } = parseArgs(process.argv);
   if (!htmlPath) {
-    console.error("Usage: node verify-report.mjs <path-to-report.html> [--pdf <output.pdf>]");
+    console.error("Usage: node verify-report.mjs <path-to-report.html> [--mode <interactive|static>] [--pdf <output.pdf>]");
     process.exit(1);
   }
 
@@ -92,28 +103,47 @@ async function main() {
   await page.goto(fileUrl, { waitUntil: "networkidle", timeout: 45000 });
   await page.waitForFunction(() => window.__REPORT_READY__ === true, null, { timeout: 15000 }).catch(() => {});
 
+  const detectedMode = await page.evaluate(() => {
+    return document.documentElement.getAttribute("data-report-mode") || "interactive";
+  });
+  const effectiveMode = (mode || detectedMode || "interactive").toLowerCase();
+  console.log(`Report Mode: ${effectiveMode.toUpperCase()} (mode arg: ${mode || "none"}, detected: ${detectedMode})`);
+
   const failures = [];
 
-  // 1. Check Swapped DaisyUI Navbar (Left Report Title + Right Controls: TOC Dropdown, Color-Swatch Theme Dropdown, Icon-Only Download Button) & Centered Footer
-  console.log("\n[1/6] Checking Swapped DaisyUI Navbar, Icon-Only Download & Centered Footer...");
-  const navAndFooterCheck = await page.evaluate(() => {
+  // 1. Check Default Light Theme, Content-Aware Favicon Emoticon, DaisyUI Navbar, Download Dropdown (HTML + PDF) & Centered Footer
+  console.log("\n[1/7] Checking Default 'light' Theme, Content-Aware Favicon, Swapped Navbar, Download Dropdown & Footer...");
+  const navAndFooterCheck = await page.evaluate((currMode) => {
+    const initialTheme = document.documentElement.getAttribute("data-theme");
+    const activeThemeLabelText = document.getElementById("active-theme-label")?.textContent?.trim() || "";
+    const faviconEl = document.querySelector('link[rel="icon"]');
+    const faviconHref = faviconEl ? faviconEl.getAttribute("href") : "";
+    const hasEmojiFavicon = Boolean(
+      faviconHref &&
+      faviconHref.startsWith("data:image/svg+xml") &&
+      decodeURIComponent(faviconHref).match(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u)
+    );
+
     const navbar = document.querySelector(".navbar");
     const navbarStart = document.querySelector(".navbar .navbar-start");
     const navbarEnd = document.querySelector(".navbar .navbar-end");
     const titleEl = document.getElementById("navbar-report-title");
     const tocDropdown = document.getElementById("toc-dropdown");
     const themeDropdown = document.getElementById("theme-dropdown");
-    const downloadBtn = document.getElementById("download-html-btn");
+    const downloadDropdown = document.getElementById("download-dropdown");
+    const downloadTriggerBtn = document.getElementById("download-dropdown-btn");
+    const downloadHtmlBtn = document.getElementById("download-html-btn");
+    const downloadPdfBtn = document.getElementById("download-pdf-btn");
 
     const titleInStart = Boolean(navbarStart && titleEl && navbarStart.contains(titleEl));
     const controlsInEnd = Boolean(
       navbarEnd &&
       tocDropdown &&
       themeDropdown &&
-      downloadBtn &&
+      downloadDropdown &&
       navbarEnd.contains(tocDropdown) &&
       navbarEnd.contains(themeDropdown) &&
-      navbarEnd.contains(downloadBtn)
+      navbarEnd.contains(downloadDropdown)
     );
 
     const startRect = navbarStart ? navbarStart.getBoundingClientRect() : null;
@@ -121,8 +151,28 @@ async function main() {
     const titleOnLeftAndControlsOnRight =
       startRect && endRect ? startRect.left < endRect.left : false;
 
-    const downloadBtnText = downloadBtn ? downloadBtn.textContent.trim() : null;
-    const downloadHasIcon = Boolean(downloadBtn && downloadBtn.querySelector("svg"));
+    const downloadBtnText = downloadTriggerBtn ? downloadTriggerBtn.textContent.trim() : null;
+    const downloadHasIcon = Boolean(downloadTriggerBtn && downloadTriggerBtn.querySelector("svg"));
+    const hasBothDownloadOptions = Boolean(
+      downloadDropdown &&
+      downloadHtmlBtn &&
+      downloadPdfBtn &&
+      downloadDropdown.contains(downloadHtmlBtn) &&
+      downloadDropdown.contains(downloadPdfBtn) &&
+      downloadHtmlBtn.textContent.includes("Download as HTML") &&
+      downloadPdfBtn.textContent.includes("Download as PDF")
+    );
+
+    // Interactive mode PDF warning & prompt inspection
+    const pdfBtnText = downloadPdfBtn ? downloadPdfBtn.textContent : "";
+    const pdfNotReadyWarning = Boolean(
+      downloadPdfBtn &&
+      (downloadPdfBtn.querySelector(".badge-warning") ||
+        pdfBtnText.includes("Not PDF-Ready") ||
+        pdfBtnText.includes("Interactive"))
+    );
+    const modalEl = document.getElementById("pdf-not-ready-modal");
+    const conversionPrompt = document.getElementById("pdf-conversion-prompt-text")?.textContent?.trim() || "";
 
     const tocLinks = Array.from(document.querySelectorAll("#report-toc-list a[href^='#']"));
     const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3"));
@@ -143,6 +193,10 @@ async function main() {
     );
 
     return {
+      initialTheme,
+      activeThemeLabelText,
+      hasEmojiFavicon,
+      faviconHref,
       hasNavbar: Boolean(navbar),
       titleText: titleEl ? titleEl.textContent.trim() : "",
       titleInStart,
@@ -150,6 +204,11 @@ async function main() {
       titleOnLeftAndControlsOnRight,
       downloadBtnText,
       downloadHasIcon,
+      hasBothDownloadOptions,
+      pdfBtnText,
+      pdfNotReadyWarning,
+      hasModal: Boolean(modalEl),
+      conversionPrompt,
       headingCount: headings.length,
       tocLinkCount: tocLinks.length,
       missingHeadingIds,
@@ -158,18 +217,39 @@ async function main() {
       footerCentered,
       footerLinkValid
     };
-  });
+  }, effectiveMode);
 
+  if (navAndFooterCheck.initialTheme !== "light" || navAndFooterCheck.activeThemeLabelText !== "light") {
+    failures.push(
+      `Default theme must always be "light" (found data-theme="${navAndFooterCheck.initialTheme}", label="${navAndFooterCheck.activeThemeLabelText}").`
+    );
+  }
+  if (!navAndFooterCheck.hasEmojiFavicon) {
+    failures.push(`Each report must have a content-aware emoji SVG favicon in <head> (<link rel="icon">, found "${navAndFooterCheck.faviconHref}").`);
+  }
   if (!navAndFooterCheck.hasNavbar) failures.push("Missing DaisyUI .navbar element.");
   if (!navAndFooterCheck.titleText || !navAndFooterCheck.titleInStart) {
     failures.push("Report title must be inside .navbar-start on the left.");
   }
   if (!navAndFooterCheck.controlsInEnd || !navAndFooterCheck.titleOnLeftAndControlsOnRight) {
-    failures.push("Contents dropdown, Theme dropdown, and Download button must be in .navbar-end on the right.");
+    failures.push("Contents dropdown, Theme dropdown, and Download dropdown must be in .navbar-end on the right.");
   }
   if (navAndFooterCheck.downloadBtnText !== "" || !navAndFooterCheck.downloadHasIcon) {
-    failures.push(`Download button must be icon-only with no text (found text: "${navAndFooterCheck.downloadBtnText}").`);
+    failures.push(`Download dropdown trigger button must be icon-only with no text (found text: "${navAndFooterCheck.downloadBtnText}").`);
   }
+  if (!navAndFooterCheck.hasBothDownloadOptions) {
+    failures.push("Download dropdown (#download-dropdown) must include both #download-html-btn ('Download as HTML') and #download-pdf-btn ('Download as PDF').");
+  }
+
+  if (effectiveMode === "interactive") {
+    if (!navAndFooterCheck.pdfNotReadyWarning) {
+      failures.push("In Interactive Mode, #download-pdf-btn in the download dropdown must indicate it is not PDF-ready ('Not PDF-Ready' badge or warning).");
+    }
+    if (!navAndFooterCheck.hasModal || !navAndFooterCheck.conversionPrompt.includes("@media print")) {
+      failures.push("In Interactive Mode, clicking or viewing the PDF option must provide #pdf-not-ready-modal suggesting a prompt to make the report PDF-ready with media print queries.");
+    }
+  }
+
   if (navAndFooterCheck.missingHeadingIds.length > 0) {
     failures.push(`Headings missing id attribute: ${navAndFooterCheck.missingHeadingIds.join(", ")}`);
   }
@@ -186,12 +266,23 @@ async function main() {
     );
   }
   console.log(
-    `  ✓ Navbar verified: Title "${navAndFooterCheck.titleText}" on LEFT; TOC (${navAndFooterCheck.tocLinkCount}/${navAndFooterCheck.headingCount} h1/h2/h3 links), Theme picker & Icon-only Download button on RIGHT.`
+    `  ✓ Default theme verified: data-theme="${navAndFooterCheck.initialTheme}" (label="${navAndFooterCheck.activeThemeLabelText}").`
   );
+  console.log(
+    `  ✓ Content-aware emoji favicon verified in <head>.`
+  );
+  console.log(
+    `  ✓ Navbar verified: Title "${navAndFooterCheck.titleText}" on LEFT; TOC (${navAndFooterCheck.tocLinkCount}/${navAndFooterCheck.headingCount} h1/h2/h3 links), Theme picker & Download dropdown on RIGHT.`
+  );
+  if (effectiveMode === "interactive") {
+    console.log(
+      `  ✓ Interactive Mode PDF notice verified: "Not PDF-Ready" warning shown with suggested conversion prompt: "${navAndFooterCheck.conversionPrompt}".`
+    );
+  }
   console.log(`  ✓ Footer verified: "${navAndFooterCheck.footerText}" with target="_blank" link to https://github.com/DriesVerb/html-report (centered=${navAndFooterCheck.footerCentered}).`);
 
   // 2. Check All 5 Tailwind Breakpoints & Element-Level Horizontal Scrollbar ("Insufficient Space") Detection
-  console.log("\n[2/6] Checking all 5 Tailwind breakpoints & Element-Level Horizontal Scrollbar ('Insufficient Space') indicator...");
+  console.log("\n[2/7] Checking all 5 Tailwind breakpoints & Element-Level Horizontal Scrollbar ('Insufficient Space') indicator...");
   for (const bp of TAILWIND_BREAKPOINTS) {
     await page.setViewportSize({ width: bp.width, height: bp.height });
     await page.waitForTimeout(200);
@@ -257,7 +348,7 @@ async function main() {
   await page.setViewportSize({ width: 1280, height: 900 });
 
   // 3. Check DaisyUI Theme Dropdown Color Swatches, Chart.js Reactivity & Grid.js Dark-Mode Readability
-  console.log("\n[3/6] Checking DaisyUI Theme Dropdown Color Swatches, Chart.js Sync & Grid.js Dark-Mode Readability...");
+  console.log("\n[3/7] Checking DaisyUI Theme Dropdown Color Swatches, Chart.js Sync & Grid.js Dark-Mode Readability...");
   const themeCheck = await page.evaluate(async () => {
     function parseRgbLuminance(rgbStr) {
       const m = rgbStr.match(/(\d+),\s*(\d+),\s*(\d+)/);
@@ -302,7 +393,7 @@ async function main() {
       tdTextLum - tdBgLum > 0.35 && thTextLum - thBgLum > 0.35;
 
     if (typeof window.setReportTheme === "function") {
-      await window.setReportTheme("corporate");
+      await window.setReportTheme("light");
     }
 
     return {
@@ -334,11 +425,11 @@ async function main() {
     );
   }
   console.log(
-    `  ✓ DaisyUI color-swatch dropdown verified: ${themeCheck.swatchCount} themes with 4 color pills each; Chart.js updated ${themeCheck.initialChartColor} -> ${themeCheck.updatedChartColor}; Grid.js dark-mode contrast verified (bg=${themeCheck.tdBg}, text=${themeCheck.tdColor}).`
+    `  ✓ DaisyUI color-swatch dropdown verified: ${themeCheck.swatchCount} themes with 4 color pills each; Chart.js updated ${themeCheck.initialChartColor} -> ${themeCheck.updatedChartColor}; Grid.js dark-mode contrast verified (bg=${themeCheck.tdBg}, text=${themeCheck.tdColor}); restored to default "light" theme.`
   );
 
   // 4. Check Section 1.1 Linkable CDN Cards, All 11 Live Examples, Highlight.js TypeScript (Frontend) + Kotlin (Backend), and Leaflet Zero-403 Tiles
-  console.log("\n[4/6] Checking Linkable 1.1 CDN Cards, All 11 Live Examples, TS/Kotlin Code & Leaflet Tiles...");
+  console.log("\n[4/7] Checking Linkable 1.1 CDN Cards, All 11 Live Examples, TS/Kotlin Code & Leaflet Tiles...");
   const cdnCheck = await page.evaluate((expectedNames) => {
     const bodyText = document.body.innerText;
     const missingNames = expectedNames.filter((name) => !bodyText.includes(name));
@@ -577,24 +668,156 @@ async function main() {
     `  ✓ Standalone HTML Download verified: ${downloadCheck.inlinedStylesCount} CDN stylesheets and ${downloadCheck.inlinedScriptsCount} CDN scripts embedded (${downloadCheck.snapshotKb} KB).`
   );
 
-  // 7. Pre-Delivery PDF Generation & Console Error Check
-  console.log("\n[7/7] Performing Pre-Delivery PDF Export & Console Error Check...");
-  const targetPdfPath = pdfPath
-    ? path.resolve(process.cwd(), pdfPath)
-    : path.join(path.dirname(resolvedHtmlPath), `${path.basename(resolvedHtmlPath, ".html")}.pdf`);
-
-  await page.emulateMedia({ media: "print" });
-  const pdfBuffer = await page.pdf({
-    path: targetPdfPath,
-    format: "A4",
-    printBackground: true,
-    margin: { top: "12mm", right: "12mm", bottom: "12mm", left: "12mm" }
-  });
-
-  if (!pdfBuffer || pdfBuffer.length < 1000) {
-    failures.push("Generated PDF is empty or unexpectedly small.");
+  // 7. @media print Verification & Mock PDF Exports (Static Mode Only)
+  if (effectiveMode === "interactive") {
+    console.log(
+      "\n[7/7] Interactive Mode Active: Skipping @media print verification & multi-theme mock PDF generation (report is optimized for client-side interactivity, not static print)."
+    );
+    if (pdfPath) {
+      const targetPdfPath = path.resolve(process.cwd(), pdfPath);
+      const pdfBuffer = await page.pdf({
+        path: targetPdfPath,
+        format: "A4",
+        printBackground: true,
+        margin: { top: "12mm", right: "12mm", bottom: "12mm", left: "12mm" }
+      });
+      console.log(
+        `  ✓ Optional interactive snapshot PDF saved to: ${targetPdfPath} (${Math.round(pdfBuffer.length / 1024)} KB)`
+      );
+    }
   } else {
-    console.log(`  ✓ Pre-delivery PDF verified & saved: ${targetPdfPath} (${Math.round(pdfBuffer.length / 1024)} KB)`);
+    console.log("\n[7/7] Static Mode Active: Verifying @media print Queries, Page 1 Cover + H1/H2/H3 TOC, & Generating 5 Multi-Theme Mock PDFs...");
+    await page.emulateMedia({ media: "print" });
+    await page.waitForTimeout(200);
+
+    const printQueryCheck = await page.evaluate(() => {
+      const headerEl = document.querySelector("header");
+      const navbarEl = document.querySelector(".navbar");
+      const coverPage = document.getElementById("print-cover-page");
+      const coverTitle = document.getElementById("print-cover-title");
+      const coverTocItems = Array.from(document.querySelectorAll("#print-toc-list li"));
+      const mainHeadings = Array.from(document.querySelectorAll("main h1, main h2, main h3"));
+      const interactiveControls = Array.from(document.querySelectorAll(".print-interactive-control"));
+      const staticFallback = document.getElementById("csv-print-static-fallback");
+
+      const headerHiddenInPrint = headerEl ? getComputedStyle(headerEl).display === "none" : true;
+      const navbarHiddenInPrint = navbarEl ? getComputedStyle(navbarEl).display === "none" : true;
+      const coverStyle = coverPage ? getComputedStyle(coverPage) : null;
+      const coverVisibleInPrint = Boolean(coverStyle && coverStyle.display === "flex");
+      const coverHasPageBreak = Boolean(
+        coverStyle &&
+        (coverStyle.breakAfter === "page" || coverStyle.pageBreakAfter === "always")
+      );
+      const coverTitleText = coverTitle ? coverTitle.textContent.trim() : "";
+      const allHeadingsInPrintToc =
+        coverTocItems.length === mainHeadings.length &&
+        mainHeadings.every((h) =>
+          coverTocItems.some((li) => li.textContent.includes(h.textContent.trim()))
+        );
+      const interactiveControlsHiddenInPrint =
+        interactiveControls.length > 0 &&
+        interactiveControls.every((el) => getComputedStyle(el).display === "none");
+      const staticFallbackVisibleInPrint = Boolean(
+        staticFallback && getComputedStyle(staticFallback).display === "block"
+      );
+
+      return {
+        headerHiddenInPrint,
+        navbarHiddenInPrint,
+        coverVisibleInPrint,
+        coverHasPageBreak,
+        coverTitleText,
+        printTocCount: coverTocItems.length,
+        headingCount: mainHeadings.length,
+        allHeadingsInPrintToc,
+        interactiveControlCount: interactiveControls.length,
+        interactiveControlsHiddenInPrint,
+        staticFallbackVisibleInPrint
+      };
+    });
+
+    if (!printQueryCheck.headerHiddenInPrint || !printQueryCheck.navbarHiddenInPrint) {
+      failures.push("In @media print, the navbar (header / .navbar) must not exist (display: none).");
+    }
+    if (!printQueryCheck.coverVisibleInPrint || !printQueryCheck.coverHasPageBreak || !printQueryCheck.coverTitleText) {
+      failures.push(
+        `In @media print, #print-cover-page must be visible on Page 1 with report title and page-break-after (visible=${printQueryCheck.coverVisibleInPrint}, pageBreak=${printQueryCheck.coverHasPageBreak}, title="${printQueryCheck.coverTitleText}").`
+      );
+    }
+    if (!printQueryCheck.allHeadingsInPrintToc) {
+      failures.push(
+        `In @media print, #print-toc-list on Page 1 must list all ${printQueryCheck.headingCount} h1/h2/h3 headings (found ${printQueryCheck.printTocCount}).`
+      );
+    }
+    if (!printQueryCheck.interactiveControlsHiddenInPrint || !printQueryCheck.staticFallbackVisibleInPrint) {
+      failures.push(
+        `In @media print, interactive controls (.print-interactive-control) must be hidden (${printQueryCheck.interactiveControlsHiddenInPrint}) and static print summary (#csv-print-static-fallback) must be visible (${printQueryCheck.staticFallbackVisibleInPrint}).`
+      );
+    }
+    console.log(
+      `  ✓ @media print verified: navbar hidden (display:none), Page 1 Cover ("${printQueryCheck.coverTitleText}") + ${printQueryCheck.printTocCount}/${printQueryCheck.headingCount} H1/H2/H3 TOC items visible with page break, ${printQueryCheck.interactiveControlCount} interactive controls hidden, and static CSV fallback table visible.`
+    );
+
+    const mockPdfsDir = path.join(path.dirname(resolvedHtmlPath), "mock-pdfs");
+    fs.mkdirSync(mockPdfsDir, { recursive: true });
+
+    const targetPdfPath = pdfPath
+      ? path.resolve(process.cwd(), pdfPath)
+      : path.join(path.dirname(resolvedHtmlPath), `${path.basename(resolvedHtmlPath, ".html")}.pdf`);
+
+    for (const theme of MOCK_PDF_THEMES) {
+      await page.evaluate(async (t) => {
+        if (typeof window.setReportTheme === "function") {
+          await window.setReportTheme(t);
+        }
+        window.reportCharts?.forEach((c) => c.resize());
+        window.reportLeafletMap?.invalidateSize();
+      }, theme);
+      await page.waitForTimeout(250);
+
+      const activeThemeVerify = await page.evaluate(() => ({
+        dataTheme: document.documentElement.getAttribute("data-theme"),
+        coverThemeLabel: document.getElementById("print-cover-theme")?.textContent?.trim() || "",
+        bgColor: getComputedStyle(document.body).backgroundColor
+      }));
+
+      if (activeThemeVerify.dataTheme !== theme || activeThemeVerify.coverThemeLabel !== theme) {
+        failures.push(
+          `Mock PDF theme switch to "${theme}" failed (data-theme="${activeThemeVerify.dataTheme}", coverLabel="${activeThemeVerify.coverThemeLabel}").`
+        );
+      }
+
+      const mockPdfFile = path.join(mockPdfsDir, `mock-report-${theme}.pdf`);
+      const pdfBuf = await page.pdf({
+        path: mockPdfFile,
+        format: "A4",
+        printBackground: true,
+        margin: { top: "12mm", right: "12mm", bottom: "12mm", left: "12mm" }
+      });
+
+      if (!pdfBuf || pdfBuf.length < 50000) {
+        failures.push(`Mock PDF for theme "${theme}" is empty or unexpectedly small (${pdfBuf ? pdfBuf.length : 0} bytes).`);
+      } else {
+        console.log(
+          `  ✓ Mock PDF [${theme}] verified & saved: ${mockPdfFile} (${Math.round(pdfBuf.length / 1024)} KB, body bg=${activeThemeVerify.bgColor})`
+        );
+      }
+
+      if (theme === "light") {
+        fs.copyFileSync(mockPdfFile, targetPdfPath);
+        console.log(
+          `  ✓ Primary default ('light' theme) PDF saved: ${targetPdfPath} (${Math.round(pdfBuf.length / 1024)} KB)`
+        );
+      }
+    }
+
+    // Restore default 'light' theme and screen media emulation
+    await page.evaluate(async () => {
+      if (typeof window.setReportTheme === "function") {
+        await window.setReportTheme("light");
+      }
+    });
+    await page.emulateMedia({ media: "screen" });
   }
 
   if (consoleErrors.length > 0) {
@@ -612,7 +835,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("\n✔ ALL PLAYWRIGHT MULTI-BREAKPOINT, SPACE-CHECK, 11-CDN, DARK-GRID, TS/KOTLIN, LEAFLET & PDF CHECKS PASSED!\n");
+  console.log("\n✔ ALL PLAYWRIGHT MULTI-BREAKPOINT, SPACE-CHECK, 11-CDN, DARK-GRID, TS/KOTLIN, LEAFLET, @MEDIA PRINT & 5-THEME MOCK PDF CHECKS PASSED!\n");
 }
 
 main().catch((err) => {

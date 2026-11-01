@@ -20,19 +20,26 @@ Every generated HTML report SHALL feature a sticky DaisyUI `navbar` containing t
 - **WHEN** a user views the DaisyUI navbar and opens the Contents dropdown on the right (`navbar-end`)
 - **THEN** the report title is displayed on the left (`navbar-start`) while the Contents dropdown, theme switcher, and icon-only download button are grouped on the right (`navbar-end`) and link smoothly to every `h1`, `h2`, and `h3` heading `id`
 
-### Requirement: DaisyUI Theme Dropdown with Color-Scheme Swatch Previews and Live Chart Synchronization
-The DaisyUI `navbar` theme selector SHALL display all 32 built-in DaisyUI themes in a dropdown where each theme option previews its own color scheme (`bg-base-100`, `text-base-content`, and `bg-primary`, `bg-secondary`, `bg-accent`, `bg-neutral` swatches inside `data-theme="<theme>"`) matching the DaisyUI website, and selecting a theme SHALL dynamically update Chart.js instances, Mermaid diagrams, and CSS-themed components.
+### Requirement: DaisyUI Theme Dropdown with Default Light Theme, Color-Scheme Swatch Previews, and Live Chart Synchronization
+Every generated HTML report SHALL default to the `light` DaisyUI theme (`<html data-theme="light">`), display all 32 built-in DaisyUI themes in a dropdown where each theme option previews its own color scheme (`bg-base-100`, `text-base-content`, and `bg-primary`, `bg-secondary`, `bg-accent`, `bg-neutral` swatches inside `data-theme="<theme>"`), and dynamically update Chart.js instances, Mermaid diagrams, and CSS-themed components when switching themes.
 
-#### Scenario: Viewing and selecting a DaisyUI theme with color swatches
-- **WHEN** a user opens the theme dropdown in the navbar and selects a theme
-- **THEN** each theme option displays its live DaisyUI color swatches, `<html data-theme="...">` updates immediately, and all Chart.js charts, Mermaid diagrams, and CSS-driven report elements recompute their palette colors from the active DaisyUI theme variables
+#### Scenario: Loading default light theme and selecting a DaisyUI theme with color swatches
+- **WHEN** a report loads initially or a user selects a theme from the navbar dropdown
+- **THEN** the initial theme is `light`, each dropdown item displays its 4 color swatches, `<html data-theme="...">` updates immediately, and all Chart.js, Mermaid, and Grid.js elements recompute their palette colors from the active DaisyUI theme variables
 
-### Requirement: Navbar Icon-Only Self-Contained HTML Download Button with Inlined CDNs
-The DaisyUI `navbar` SHALL include an icon-only Download button (with an accessible `aria-label` and tooltip, and no visible text label) that exports and downloads the HTML report as a standalone `.html` file with all external CDN stylesheets (`<link rel="stylesheet">`) and CDN scripts (`<script src="...">`) fetched and embedded inline into the downloaded file.
+### Requirement: Navbar Icon-Only Download Dropdown with HTML and PDF Export Options
+The DaisyUI `navbar` SHALL include an icon-only Download dropdown trigger button (`#download-dropdown-btn`, no visible text on the navbar button) that opens a dropdown menu offering two options: **Download as HTML** (`#download-html-btn`, fetching and embedding all external CDN stylesheets and scripts inline into a standalone `.html` file) and **Download as PDF** (`#download-pdf-btn`, preparing charts/print layout and triggering PDF/print export).
 
-#### Scenario: Clicking the icon-only Download button
-- **WHEN** a user inspects or clicks the Download button in the navbar
-- **THEN** the button renders as an icon-only control without visible download text, fetches all referenced CDN CSS and JS assets, inlines them into `<style>` and `<script>` blocks inside the HTML snapshot while preserving the active `data-theme`, and triggers a `.html` file download
+#### Scenario: Opening the Download dropdown and choosing HTML or PDF
+- **WHEN** a user opens the icon-only Download dropdown in the navbar
+- **THEN** the menu presents both "Download as HTML" (which bundles all CDNs inline) and "Download as PDF" (which triggers print/PDF export)
+
+### Requirement: Print Media Queries and First-Page Title plus Heading Table of Contents in PDF
+Every generated HTML report SHALL include `@media print` CSS rules that hide the sticky navbar and non-printable interactive controls, preserve active DaisyUI theme colors (`print-color-adjust: exact`), and render a dedicated first-page cover section (`#print-cover-page`) displaying the report title and the full `h1`, `h2`, and `h3` Table of Contents (`#print-toc-list`) followed by a page break (`break-after: page`).
+
+#### Scenario: Rendering the report in print / PDF media mode
+- **WHEN** the report is rendered under `@media print` or exported to PDF
+- **THEN** the navbar and interactive-only form controls are hidden, Page 1 displays the report title and the complete `h1`/`h2`/`h3` Table of Contents, and subsequent pages render static print-ready visuals in the active DaisyUI theme
 
 ### Requirement: Dedicated Charts and Mermaid Style Guide Standards
 The skill SHALL provide a dedicated style guide (`references/charts-and-mermaid-style-guide.md`) enforcing DaisyUI CSS variable color resolution, explicit responsive container heights, typography scales, legend rules, and print/PDF rendering stability for all Chart.js and Mermaid visualizations.
@@ -68,3 +75,36 @@ The skill SHALL provide a Playwright verification tool in `skills/html-report/pl
 #### Scenario: Running Playwright verification before sending PDF to the user
 - **WHEN** the Playwright check script runs against an HTML report (including `examples/example.html`)
 - **THEN** it tests layout and element-level horizontal scrollbars at `640px`, `768px`, `1024px`, `1280px`, and `1536px` widths, verifies zero console/page errors, valid `h1`/`h2`/`h3` TOC anchors, color-swatch theme dropdown reactivity, icon-only download button, and all 11 CDN examples, and confirms clean PDF generation
+
+### Requirement: Interactive vs. Static Report Mode Discrimination & Conditional PDF Readiness
+The skill SHALL ask or indicate upfront whether a requested report is **Interactive** (client-side filters, dynamic search, tabs, widget manipulation) or **Static** (print-first publication document). ONLY when the report is designated as **Static** SHALL the agent generate `@media print` queries, Page 1 print cover + TOC, static print fallbacks, and run print media/PDF verification. If generated in **Interactive Mode**, the navbar download dropdown PDF option SHALL indicate that it is not PDF-ready and suggest a prompt to make it PDF-ready with media print queries.
+
+#### Scenario: User requests an Interactive report
+- **WHEN** the user requests or selects an Interactive report
+- **THEN** the agent focuses on client-side interactivity, omits print media queries and PDF verification overhead, and sets the navbar download dropdown PDF option to indicate "Not PDF Ready (Interactive Mode)" with a suggested conversion prompt to add print media queries
+
+#### Scenario: User requests a Static report
+- **WHEN** the user requests or selects a Static / print-first report
+- **THEN** the agent includes comprehensive `@media print` rules, Page 1 cover + TOC, static fallbacks, and verifies print media queries and PDF export via Playwright
+
+### Requirement: Content-Aware Favicon Emoticon
+Every generated HTML report SHALL include a `<link rel="icon" ...>` featuring an emoji/emoticon favicon embedded as an inline SVG data URI based on the subject matter and content of the document (e.g., `📊` for analytics/data dashboards, `🗺️` for geospatial/maps, `⚡` for performance benchmarks, `🧪` for experiments/research, `💻` for developer/code reports), ensuring a visual tab icon with zero external image assets or HTTP requests.
+
+#### Scenario: Inspecting the document `<head>` for a content-aware favicon
+- **WHEN** an HTML report is generated for a given topic
+- **THEN** the `<head>` contains a `<link rel="icon">` with an SVG data URI encoding an emoji that visually reflects the document's subject
+
+### Requirement: Post-Generation Auto-Open and Single-Tab Live-Reload Sync
+Upon completing report generation or updates, the skill SHALL automatically open the HTML report in the user's browser, preferably served via a local development server or live-reload watcher. When the report is updated, if an existing tab is already open, it SHALL reload the existing tab rather than spawning redundant duplicate tabs; if no tab is currently open, it SHALL reopen the report in a single browser tab.
+
+#### Scenario: Report generation completes for the first time
+- **WHEN** an HTML report is newly generated
+- **THEN** it automatically opens in the user's default browser tab
+
+#### Scenario: Report file is updated while already open in a browser tab
+- **WHEN** changes are made and saved to an existing HTML report that is currently active in a browser tab
+- **THEN** the existing tab live-reloads the updated content without opening a new browser tab
+
+#### Scenario: Report file is updated while no browser tab is currently open
+- **WHEN** changes are made and saved to an HTML report and no browser tab is currently displaying it
+- **THEN** it automatically reopens in a single browser tab
