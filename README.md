@@ -4,6 +4,28 @@ An open, LLM-agnostic [Agent Skill](https://agentskills.io) built and evolved in
 
 ---
 
+## Super Easy Install
+
+### Option 1: Install as a Prompt (Copy & Paste into Your AI Agent)
+
+Paste this prompt directly into **Antigravity, Claude Code, Cursor, Codex, OpenCode, or Gemini CLI** and let your agent install it for you:
+
+```text
+Install the html-report skill from https://github.com/DriesVerb/html-report.git by cloning it into ~/.agents/html-report, symlinking ~/.agents/html-report/skills/html-report into ~/.agents/skills/html-report (and ~/.gemini/config/skills/html-report if using Antigravity/Gemini), and installing Playwright in ~/.agents/html-report/skills/html-report/playwright. Then read skills/html-report/SKILL.md.
+```
+
+### Option 2: 1-Line Terminal Command
+
+```bash
+# Via the universal Agent Skills CLI:
+npx skills add DriesVerb/html-report
+
+# Or via 1-line git clone + global symlink:
+git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report && mkdir -p ~/.agents/skills ~/.gemini/config/skills && ln -sfn ~/.agents/html-report/skills/html-report ~/.agents/skills/html-report && ln -sfn ~/.agents/html-report/skills/html-report ~/.gemini/config/skills/html-report
+```
+
+---
+
 ## Key Capabilities
 
 1. **Non-Blocking 11-Library CDN Stack**:

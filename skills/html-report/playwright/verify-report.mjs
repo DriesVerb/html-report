@@ -412,10 +412,14 @@ async function main() {
 
   // 5. Check CSV-Backed Form Highlight, Initial Empty State, Step 1 Load CSV -> Step 2 Search Underneath -> Chart.js + Grid.js + Alpine.js Actions
   console.log("\n[5/7] Checking CSV-Backed Form (Starts Empty, Step 1 Load CSV -> Step 2 Search Underneath -> Chart.js, Grid.js & Alpine.js)...");
-  const exampleCsvPath = path.join(path.dirname(resolvedHtmlPath), "example.csv");
+  const candidateCsvPaths = [
+    path.join(path.dirname(resolvedHtmlPath), "example.csv"),
+    path.join(path.dirname(resolvedHtmlPath), "skills/html-report/examples/example.csv")
+  ];
+  const exampleCsvPath = candidateCsvPaths.find((p) => fs.existsSync(p)) || candidateCsvPaths[0];
   const hasExampleCsvFile = fs.existsSync(exampleCsvPath);
   if (!hasExampleCsvFile) {
-    failures.push(`Expected example.csv file alongside example.html at ${exampleCsvPath}`);
+    failures.push(`Expected example.csv file at ${exampleCsvPath}`);
   }
 
   // Verify initial state is completely empty
