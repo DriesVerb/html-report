@@ -1,0 +1,9 @@
+id,service,region,rps,latency_ms,status
+SRV-101,Edge-Auth-Gateway,eu-west-1,1420,18.4,Healthy
+SRV-102,Vector-Search-Index,us-east-1,980,32.1,Healthy
+SRV-103,LLM-Router-Primary,eu-central-1,2150,41.6,Scaling
+SRV-104,Telemetry-Ingest,ap-northeast-1,3400,22.8,Healthy
+SRV-105,Batch-Embed-Worker,us-west-2,640,54.2,Warning
+SRV-106,Policy-Audit-Engine,eu-north-1,890,15.9,Healthy
+SRV-107,Realtime-Stream-Hub,us-east-1,1760,29.5,Scaling
+SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy

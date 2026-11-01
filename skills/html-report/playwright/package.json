@@ -1,0 +1,13 @@
+{
+  "name": "html-report-playwright-verifier",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Multi-breakpoint Tailwind CSS, DaisyUI theme reactivity, CDN-inlining download, and pre-PDF verification suite for html-report.",
+  "scripts": {
+    "verify:example": "node verify-report.mjs ../examples/example.html --pdf ../examples/example.pdf"
+  },
+  "dependencies": {
+    "playwright": "1.61.1"
+  }
+}

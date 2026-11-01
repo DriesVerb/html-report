@@ -1,0 +1,32 @@
+schema: spec-driven
+
+context: |
+  Project Goal: Build an LLM-agnostic Agent Skill (`html-report`) that generates excellent, self-contained, accessible, and visually polished HTML reports incrementally, step by step.
+  Repository & Distribution Constraints:
+  - The skill lives in `skills/html-report/` (following the open Agent Skills specification: `SKILL.md` with YAML frontmatter `name` and `description`, plus optional `references/`, `resources/`, `scripts/`, and `examples/`).
+  - The repository is designed to be published and shared across any LLM/agent harness (Claude Code, Antigravity, Cursor, Codex, OpenCode, Gemini CLI, etc.) and symlinked locally into `.agents/skills/html-report` (or global agent skill directories).
+  - Keep instructions in `SKILL.md` strictly LLM-agnostic (no vendor-specific tool names or proprietary tags) and use progressive disclosure so token usage stays minimal.
+  - Changes must be built incrementally in small, verifiable steps driven by OpenSpec specs.
+
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always state what is out of scope
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
