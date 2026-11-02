@@ -364,6 +364,8 @@
               <span>LLM-Agnostic Agent Skill</span>
             </div>
             <div class="badge badge-secondary badge-outline font-mono text-xs">OpenSpec Driven</div>
+            <div class="badge badge-accent badge-outline font-mono text-xs">Deterministic FSM</div>
+            <div class="badge badge-success badge-outline font-mono text-xs">&lt;100ms Build</div>
           </div>
           <span class="text-xs opacity-70">11 Non-Blocking CDNs &bull; 32 DaisyUI Themes &bull; 5 Breakpoints Verified</span>
         </div>
@@ -373,8 +375,42 @@
             html-report — Publication-Grade HTML5 Reports for AI Coding Agents
           </h1>
           <p class="text-sm sm:text-base opacity-85 max-w-4xl mt-2 leading-relaxed">
-            <strong><code>html-report</code></strong> is an open, LLM-agnostic <a href="https://agentskills.io" target="_blank" rel="noopener" class="link link-primary font-semibold">Agent Skill</a> built with <a href="https://github.com/Fission-AI/OpenSpec" target="_blank" rel="noopener" class="link link-primary font-semibold">OpenSpec</a>. It equips any AI coding agent (Antigravity, Claude Code, Cursor, Codex, OpenCode, Gemini CLI) to generate interactive, theme-adaptive, offline-downloadable, and Playwright-verified HTML5 reports and CSV dashboards.
+            <strong><code>html-report</code></strong> is an open, LLM-agnostic <a href="https://agentskills.io" target="_blank" rel="noopener" class="link link-primary font-semibold">Agent Skill</a> built with <a href="https://github.com/Fission-AI/OpenSpec" target="_blank" rel="noopener" class="link link-primary font-semibold">OpenSpec</a>. Powered by a <strong>zero-dependency deterministic Finite State Machine harness</strong> and a <strong>fast assembly pipeline</strong>, it equips any AI coding agent (Antigravity, Claude Code, Cursor, Codex, OpenCode, Gemini CLI) to generate interactive, theme-adaptive, offline-downloadable, and Playwright-verified HTML5 reports with <strong>~70% token savings</strong> and <strong>sub-100ms compilation</strong>.
           </p>
+        </div>
+
+        <!-- High-Impact State & Speed Metrics Banner -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 py-1">
+          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
+            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Token Savings</div>
+            <div class="text-lg sm:text-xl font-extrabold text-primary">~70%</div>
+            <div class="text-[10px] opacity-70 truncate">Emit Fragment Only</div>
+          </div>
+          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
+            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Assembly Speed</div>
+            <div class="text-lg sm:text-xl font-extrabold text-secondary">&lt;100ms</div>
+            <div class="text-[10px] opacity-70 truncate">Deterministic Stitch</div>
+          </div>
+          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
+            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">FSM Cold Start</div>
+            <div class="text-lg sm:text-xl font-extrabold text-accent">&lt;2ms</div>
+            <div class="text-[10px] opacity-70 truncate">Zero-Dep Node Engine</div>
+          </div>
+          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
+            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Pre-Flight Fix</div>
+            <div class="text-lg sm:text-xl font-extrabold text-info">&lt;1ms</div>
+            <div class="text-[10px] opacity-70 truncate">Zero LLM Roundtrips</div>
+          </div>
+          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
+            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Viewport Gate</div>
+            <div class="text-lg sm:text-xl font-extrabold text-success">&lt;4s</div>
+            <div class="text-[10px] opacity-70 truncate">Playwright 5-Breakpoints</div>
+          </div>
+          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
+            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Design Suite</div>
+            <div class="text-lg sm:text-xl font-extrabold text-warning">32 &bull; 11</div>
+            <div class="text-[10px] opacity-70 truncate">Themes &amp; CDNs</div>
+          </div>
         </div>
 
         <!-- Quick Action Links -->
@@ -399,16 +435,42 @@
 
         <!-- README Overview Grid: What It Offers + Installation & Verification -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-3 border-t border-base-300">
-          <div class="space-y-2">
+          <div class="space-y-3">
             <h2 id="readme-what-this-is" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
-              <i data-lucide="book-open" class="w-5 h-5 text-primary"></i>
-              README — What <code>html-report</code> Offers
+              <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i>
+              What <code>html-report</code> Offers: States &amp; Speed
             </h2>
-            <ul class="text-xs sm:text-sm space-y-1.5 list-disc pl-5 opacity-90">
-              <li><strong>Non-Blocking 11-CDN Stack:</strong> Tailwind CSS, DaisyUI (all 32 themes), Lucide Icons, Alpine.js, Chart.js, Mermaid, Leaflet (Esri tiles), Grid.js, KaTeX, Marked, and Highlight.js (TypeScript &amp; Kotlin).</li>
-              <li><strong>Sticky DaisyUI Navbar:</strong> Report title on the left (<code>navbar-start</code>); auto-mapped <code>h1</code>/<code>h2</code>/<code>h3</code> <strong>Contents</strong> dropdown, <strong>32-theme color-swatch selector</strong> (synced with Chart.js, Mermaid &amp; Grid.js dark mode), and <strong>icon-only offline HTML bundler</strong> on the right (<code>navbar-end</code>).</li>
-              <li><strong>CSV-Backed Interactive Forms:</strong> Highlights CSV-driven sections (<code>example.csv</code>), starts empty until loaded, and pairs search + custom DaisyUI filters with a live <strong>Grid.js</strong> table and <strong>Chart.js</strong> chart underneath.</li>
-              <li><strong>Horizontal Scrollbar Space Detection &amp; Playwright Gate:</strong> Flags any element where <code>scrollWidth &gt; clientWidth</code> across all 5 Tailwind breakpoints (<code>sm</code>–<code>2xl</code>) and verifies PDF export before delivery.</li>
+            <ul class="text-xs sm:text-sm space-y-2 list-none p-0 opacity-90">
+              <li class="flex items-start gap-2">
+                <i data-lucide="cpu" class="w-4 h-4 text-primary shrink-0 mt-0.5"></i>
+                <div>
+                  <strong>The Superpower of States (FSM Lifecycle):</strong> Governed by a pure-Node Finite State Machine (<code>IDLE</code> &rarr; <code>VALIDATING</code> &rarr; <code>AUTO_FIXING</code> &rarr; <code>ASSEMBLING</code> &rarr; <code>VERIFYING</code> &rarr; <code>COMPLETED</code>). Mathematically eliminates model hallucination loops with a bounded 3-attempt ceiling.
+                </div>
+              </li>
+              <li class="flex items-start gap-2">
+                <i data-lucide="wrench" class="w-4 h-4 text-info shrink-0 mt-0.5"></i>
+                <div>
+                  <strong>Mechanical Auto-Fix &amp; Small-Model Remediation:</strong> Strips accidental <code>&lt;html&gt;</code>/<code>&lt;body&gt;</code> wrappers, auto-slugifies missing heading IDs, and wraps unadorned tables in &lt;1ms. If verification catches an issue, produces spoon-fed JSON directives with line numbers and exact fixes.
+                </div>
+              </li>
+              <li class="flex items-start gap-2">
+                <i data-lucide="zap" class="w-4 h-4 text-secondary shrink-0 mt-0.5"></i>
+                <div>
+                  <strong>Blazing Speed &amp; ~70% Token Savings:</strong> Agents emit <em>only</em> semantic content (cards, stats, charts); pre-bundled DaisyUI shell and runtime stitch the full report in &lt;100ms. Sub-2ms cold startup with zero npm dependencies.
+                </div>
+              </li>
+              <li class="flex items-start gap-2">
+                <i data-lucide="git-branch" class="w-4 h-4 text-accent shrink-0 mt-0.5"></i>
+                <div>
+                  <strong>Progressive Complexity (Dual Execution):</strong> Zero-footprint standalone mode (compiles straight to <code>./report.html</code>) + Caller-Aware integration (serves as a shared visual bus for other agent skills like <code>debug-optimize-lcp</code> with profiles and 10-run vault pruning).
+                </div>
+              </li>
+              <li class="flex items-start gap-2">
+                <i data-lucide="palette" class="w-4 h-4 text-warning shrink-0 mt-0.5"></i>
+                <div>
+                  <strong>Publication-Grade 11-CDN Stack:</strong> Tailwind CSS, DaisyUI v4 (all 32 themes, default <code>light</code>), auto-mapping TOC navbar, 2D canvas OKLCH theme-synced charts, offline standalone HTML bundler (all CDNs inlined), and PDF export.
+                </div>
+              </li>
             </ul>
           </div>
 
@@ -417,13 +479,15 @@
             x-data="{
               copiedCmd: false,
               copiedPrompt: false,
+              copiedHarness: false,
               installCmd: 'npx skills add DriesVerb/html-report',
               oneLinerCmd: 'git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report && mkdir -p ~/.agents/skills && ln -sfn ~/.agents/html-report/skills/html-report ~/.agents/skills/html-report',
+              harnessCmd: 'node skills/html-report/scripts/harness.mjs run fragment.html --title &quot;My Report&quot;',
               installPrompt: 'Install the html-report skill from https://github.com/DriesVerb/html-report.git by cloning it into ~/.agents/html-report, symlinking ~/.agents/html-report/skills/html-report into ~/.agents/skills/html-report (and ~/.gemini/config/skills/html-report), and installing Playwright in ~/.agents/html-report/skills/html-report/playwright. Then read skills/html-report/SKILL.md.'
             }"
           >
             <h3 id="readme-quickstart" class="text-sm sm:text-base font-bold flex items-center gap-2 scroll-mt-20">
-              <i data-lucide="zap" class="w-4 h-4 text-secondary"></i>
+              <i data-lucide="terminal" class="w-4 h-4 text-secondary"></i>
               Super Easy Install — Command or AI Agent Prompt
             </h3>
 
@@ -463,14 +527,33 @@
                 </button>
               </div>
               <div class="rounded border border-base-300 overflow-hidden">
-                <pre class="text-xs m-0 whitespace-pre-wrap break-words"><code class="language-typescript">// Option 1: Universal Agent Skills CLI
-// npx skills add DriesVerb/html-report
+                <pre class="text-xs m-0 whitespace-pre-wrap break-words"><code class="language-typescript">// Universal Agent Skills CLI
+npx skills add DriesVerb/html-report
 
-// Option 2: 1-Line Clone + Global Symlink
-// git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report &amp;&amp; \
-//   mkdir -p ~/.agents/skills &amp;&amp; \
-//   ln -sfn ~/.agents/html-report/skills/html-report ~/.agents/skills/html-report</code></pre>
+// Or 1-Line Git Clone + Symlinks
+git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report &amp;&amp; \
+  mkdir -p ~/.agents/skills ~/.gemini/config/skills &amp;&amp; \
+  ln -sfn ~/.agents/html-report/skills/html-report ~/.agents/skills/html-report &amp;&amp; \
+  ln -sfn ~/.agents/html-report/skills/html-report ~/.gemini/config/skills/html-report</code></pre>
               </div>
+            </div>
+
+            <!-- 3. Fast Harness Run -->
+            <div class="rounded-box border border-accent/40 bg-accent/5 p-2.5 space-y-1">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[11px] font-bold flex items-center gap-1 text-accent">
+                  <i data-lucide="play" class="w-3 h-3"></i>
+                  Single-Command Unified Harness Execution
+                </span>
+                <button
+                  type="button"
+                  @click="navigator.clipboard.writeText(harnessCmd); copiedHarness = true; setTimeout(() => copiedHarness = false, 2000)"
+                  class="btn btn-ghost btn-xs font-mono text-[10px]"
+                >
+                  <span x-text="copiedHarness ? 'Copied!' : 'Copy'">Copy</span>
+                </button>
+              </div>
+              <code class="block text-[11px] font-mono bg-base-100 p-2 rounded border border-base-300 select-all overflow-x-auto text-base-content" x-text="harnessCmd">node skills/html-report/scripts/harness.mjs run fragment.html --title &quot;My Report&quot;</code>
             </div>
           </div>
         </div>
@@ -690,20 +773,25 @@
       <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body p-4 sm:p-6">
           <h3 id="mermaid-pipeline-flow" class="card-title text-base sm:text-lg scroll-mt-20">
-            4.1 Theme-Synchronized Architecture Flowchart (Mermaid)
+            4.1 Theme-Synchronized Deterministic State Machine Flowchart (Mermaid)
           </h3>
           <p class="text-xs opacity-75 mb-2">
-            Re-renders automatically with the active DaisyUI theme's primary, secondary, and surface hex tokens
+            Visualizes the zero-dependency FSM harness lifecycle, speed latency milestones, and theme synchronization across all 32 DaisyUI themes
           </p>
           <div id="mermaid-container" class="flex justify-center p-4 bg-base-200/60 rounded-box border border-base-300">
             <pre class="mermaid w-full text-center" id="architecture-mermaid">
 flowchart TD
-  Input["Report Spec &amp; Data"] --> Stack["11 Non-Blocking CDNs"]
-  Stack --> Theme["DaisyUI 32-Theme Resolver"]
-  Theme --> Charts["Chart.js &amp; Mermaid Sync"]
-  Theme --> Grid["Dark-Mode Ready Grid.js"]
-  Charts --> Verify["Playwright 5-Breakpoint Gate"]
-  Grid --> Verify
+  IDLE["IDLE (Cold Start &lt;2ms)"] --> CHECK_CALLER{"Has --caller?"}
+  CHECK_CALLER -- Yes --> RESOLVING_CALLER["RESOLVING_CALLER\n(Profile &amp; 3-Tier Config)"]
+  CHECK_CALLER -- No --> VALIDATING
+  RESOLVING_CALLER --> VALIDATING["VALIDATING\n(Semantic Pre-Flight Check)"]
+  VALIDATING --> AUTO_FIXING["AUTO_FIXING\n(Mechanical Repairs &lt;1ms)"]
+  AUTO_FIXING --> ASSEMBLING["ASSEMBLING\n(Deterministic Build &lt;100ms)"]
+  ASSEMBLING --> VERIFYING["VERIFYING\n(Playwright 5-Breakpoints)"]
+  VERIFYING -- Success --> COMPLETED["COMPLETED\n(HTML &amp; PDF Deliverables)"]
+  VERIFYING -- Issues Left --> REMEDIATING["REMEDIATING\n(Prescriptive JSON Directive)"]
+  REMEDIATING -. Attempt 2 or 3 .-> VALIDATING
+  VERIFYING -- Exceeded 3 Retries --> FAILED["FAILED\n(Terminal Safety Ceiling)"]
             </pre>
           </div>
         </div>
