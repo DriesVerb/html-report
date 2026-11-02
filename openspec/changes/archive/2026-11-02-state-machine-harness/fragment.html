@@ -1,0 +1,444 @@
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <!-- Journey Status Hero -->
+  <header class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-base-200">
+      <div class="min-w-0 flex-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary mb-2">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> OpenSpec Feature Journey &amp; Architecture Blueprint
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-base-content break-words" id="journey-overview">
+          Deterministic State Machine Harness &amp; Remediation Orchestrator
+        </h1>
+        <p class="text-sm sm:text-base text-base-content/70 mt-1">
+          Zero package managers, pure Node.js FSM, sub-2ms speed, and "Small Model First" remediation design.
+        </p>
+      </div>
+
+      <!-- Markdown Artifact Backlinks -->
+      <div class="flex flex-wrap items-center gap-2 shrink-0">
+        <a href="./proposal.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4"></i> proposal.md
+        </a>
+        <a href="./design.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="compass" class="w-4 h-4"></i> design.md
+        </a>
+        <a href="./tasks.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="check-square" class="w-4 h-4"></i> tasks.md
+        </a>
+        <a href="./specs/" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="layers" class="w-4 h-4"></i> specs/
+        </a>
+      </div>
+    </div>
+
+    <!-- Journey Stepper -->
+    <div class="mt-8">
+      <h2 class="text-xs font-bold uppercase tracking-wider text-base-content/60 mb-3" id="journey-stepper">
+        Current State of Our Journey
+      </h2>
+      <ul class="steps steps-vertical sm:steps-horizontal w-full">
+        <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
+        <li class="step step-primary font-bold text-primary" data-content="2">Planning &amp; Specs</li>
+        <li class="step font-medium" data-content="3">Implementing</li>
+        <li class="step font-medium" data-content="4">Verifying</li>
+        <li class="step font-medium" data-content="★">Ready to Ship</li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Live Progress Stats -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" aria-label="Progress Metrics">
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-primary">
+        <i data-lucide="list-todo" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Total Tasks</div>
+      <div class="stat-value text-primary text-2xl sm:text-3xl">10</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Across 4 planned phases</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-secondary">
+        <i data-lucide="check-circle" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Completed</div>
+      <div class="stat-value text-secondary text-2xl sm:text-3xl">0%</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">0 of 10 tasks completed</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-accent">
+        <i data-lucide="zap" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Cold Start</div>
+      <div class="stat-value text-accent text-2xl sm:text-3xl">&lt;2ms</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Pure native Node standard library</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-success">
+        <i data-lucide="shield-check" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">OpenSpec Valid</div>
+      <div class="stat-value text-success text-2xl sm:text-3xl">100%</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Passed openspec validate</div>
+    </div>
+  </section>
+
+  <!-- Core Architectural Tenets Card -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+      <div>
+        <h2 class="text-xl font-bold text-base-content min-w-0 flex-1 break-words" id="four-tenets">
+          Our Four Core Architectural Tenets
+        </h2>
+        <p class="text-xs text-base-content/70 mt-1">
+          Designed specifically to maximize determinism and reliability across all model tiers
+        </p>
+      </div>
+      <span class="badge badge-primary badge-outline shrink-0 whitespace-nowrap">Design Philosophy</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Tenet 1 -->
+      <div class="card bg-base-200/50 border border-base-300 p-4 space-y-2">
+        <div class="flex items-center gap-2 text-primary font-bold text-sm">
+          <i data-lucide="package-minus" class="w-4 h-4"></i>
+          <span>Zero Package Manager</span>
+        </div>
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          Zero npm/pnpm installs. Uses only native Node.js (<code>node:fs</code>, <code>node:path</code>, <code>node:child_process</code>). No dependency bloat, no setup failures in agent environments.
+        </p>
+      </div>
+
+      <!-- Tenet 2 -->
+      <div class="card bg-base-200/50 border border-base-300 p-4 space-y-2">
+        <div class="flex items-center gap-2 text-secondary font-bold text-sm">
+          <i data-lucide="bot" class="w-4 h-4"></i>
+          <span>Small-Model First</span>
+        </div>
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          Designed so less capable models (Flash-Lite, local open-weight LLMs) succeed on attempt 1 with a single command and unambiguous error instructions.
+        </p>
+      </div>
+
+      <!-- Tenet 3 -->
+      <div class="card bg-base-200/50 border border-base-300 p-4 space-y-2">
+        <div class="flex items-center gap-2 text-accent font-bold text-sm">
+          <i data-lucide="wrench" class="w-4 h-4"></i>
+          <span>Mechanical Auto-Fix</span>
+        </div>
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          Trivial mechanical mistakes (stripping accidental <code>&lt;html&gt;</code>/<code>&lt;body&gt;</code> wrappers, slugifying missing heading IDs) are cured automatically in &lt;1ms before compiling.
+        </p>
+      </div>
+
+      <!-- Tenet 4 -->
+      <div class="card bg-base-200/50 border border-base-300 p-4 space-y-2">
+        <div class="flex items-center gap-2 text-success font-bold text-sm">
+          <i data-lucide="compass" class="w-4 h-4"></i>
+          <span>Agnostic &amp; Blazing Fast</span>
+        </div>
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          Sub-2ms cold start preserving agent tool latency. Works uniformly across Claude Code, Gemini CLI, Cursor, Antigravity, and headless bash runners.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Lifecycle Statechart -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-4">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+      <h2 class="text-xl font-bold text-base-content min-w-0 flex-1 break-words" id="harness-statechart">
+        Harness Lifecycle State Machine Flow
+      </h2>
+      <span class="badge badge-ghost shrink-0 whitespace-nowrap font-mono text-xs">FSM Transition Graph</span>
+    </div>
+    
+    <div class="p-4 bg-base-200/50 rounded-xl flex justify-center">
+      <pre class="mermaid text-center">
+flowchart TD
+    IDLE["1. IDLE (Input Fragment)"] -->|lintCheck| VALIDATING{"2. VALIDATING (AST Linter)"}
+    VALIDATING -->|Auto-Fixable: Missing IDs / Outer Tags| AUTO_FIXING["2b. AUTO_FIXING (Auto-Slugify & Strip)"]
+    AUTO_FIXING --> VALIDATING
+    VALIDATING -->|Valid Fragment| ASSEMBLING["3. ASSEMBLING (Build Shell)"]
+    VALIDATING -->|Fatal Syntax Error| REMEDIATING["4. REMEDIATING (Spoon-Fed JSON)"]
+    
+    ASSEMBLING -->|Build OK| VERIFYING["5. VERIFYING (Playwright sm/lg)"]
+    ASSEMBLING -->|Build Error| REMEDIATING
+    
+    VERIFYING -->|Verified 0 Errors| COMPLETED(["6. COMPLETED (Success Exit 0)"])
+    VERIFYING -->|Overflow / Console Error| REMEDIATING
+    
+    REMEDIATING -->|Retry &lt; 3| VALIDATING
+    REMEDIATING -->|Retry &gt;= 3| FAILED(["7. FAILED (Terminal Exit 1)"])
+      </pre>
+    </div>
+  </section>
+
+  <!-- How It Makes Life Easy for Less Smart Models -->
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-4">
+      <h3 class="text-lg font-bold text-base-content flex items-center gap-2" id="spoon-fed-protocol">
+        <i data-lucide="code-2" class="w-5 h-5 text-primary"></i>
+        "Spoon-Fed" Error-as-Instruction Payload
+      </h3>
+      <p class="text-xs text-base-content/70">
+        Less capable models cannot interpret raw Playwright headless traces. The harness gives them a literal, copy-paste instruction:
+      </p>
+      <div class="mockup-code text-xs bg-neutral text-neutral-content rounded-xl overflow-hidden">
+        <pre data-prefix="1"><code>{</code></pre>
+        <pre data-prefix="2"><code>  "status": "REMEDIATION_REQUIRED",</code></pre>
+        <pre data-prefix="3"><code>  "attempt": 1,</code></pre>
+        <pre data-prefix="4"><code>  "maxAttempts": 3,</code></pre>
+        <pre data-prefix="5"><code>  "failureType": "HORIZONTAL_OVERFLOW",</code></pre>
+        <pre data-prefix="6"><code>  "culprit": {</code></pre>
+        <pre data-prefix="7"><code>    "selector": "#performance-matrix",</code></pre>
+        <pre data-prefix="8"><code>    "viewport": "640px (sm)"</code></pre>
+        <pre data-prefix="9"><code>  },</code></pre>
+        <pre data-prefix="10" class="whitespace-pre-wrap break-words"><code>  "instruction_for_agent": "Wrap #performance-matrix in &lt;div class=\"overflow-x-auto w-full\"&gt; then re-run."</code></pre>
+        <pre data-prefix="11"><code>}</code></pre>
+      </div>
+    </div>
+
+    <div class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-4">
+      <h3 class="text-lg font-bold text-base-content flex items-center gap-2" id="auto-fix-rules">
+        <i data-lucide="check-check" class="w-5 h-5 text-secondary"></i>
+        Zero-Penalty Mechanical Auto-Fixes
+      </h3>
+      <p class="text-xs text-base-content/70">
+        Why fail a smaller model for mechanical syntax oversights? The harness cures them automatically:
+      </p>
+      <ul class="space-y-3 text-xs">
+        <li class="flex items-start gap-2 p-3 bg-base-200/60 rounded-xl">
+          <i data-lucide="scissors" class="w-4 h-4 text-primary shrink-0 mt-0.5"></i>
+          <div>
+            <strong class="text-base-content font-semibold">Automatic Wrapper Stripping:</strong>
+            <p class="text-base-content/70 mt-0.5">If the model accidentally generates <code>&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body&gt;</code>, the harness strips the shell and keeps the inner semantic tags.</p>
+          </div>
+        </li>
+        <li class="flex items-start gap-2 p-3 bg-base-200/60 rounded-xl">
+          <i data-lucide="hash" class="w-4 h-4 text-secondary shrink-0 mt-0.5"></i>
+          <div>
+            <strong class="text-base-content font-semibold">Auto-Slugified Heading IDs:</strong>
+            <p class="text-base-content/70 mt-0.5">If the model writes <code>&lt;h2&gt;Executive Summary&lt;/h2&gt;</code> without an ID, the harness injects <code>id="executive-summary"</code> automatically for the TOC.</p>
+          </div>
+        </li>
+        <li class="flex items-start gap-2 p-3 bg-base-200/60 rounded-xl">
+          <i data-lucide="terminal" class="w-4 h-4 text-accent shrink-0 mt-0.5"></i>
+          <div>
+            <strong class="text-base-content font-semibold">Single-Command Execution:</strong>
+            <p class="text-base-content/70 mt-0.5">Model only runs: <code>node scripts/harness.mjs run --content fragment.html --title "Title"</code>. Zero multi-step cognitive load.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- OpenSpec Task Checklist -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+      <div>
+        <h2 class="text-xl font-bold text-base-content min-w-0 flex-1 break-words" id="task-checklist">
+          Connected Task Checklist (tasks.md)
+        </h2>
+        <p class="text-xs text-base-content/70 mt-1">
+          Tracked implementation roadmap partitioned into 4 verifiable phases
+        </p>
+      </div>
+      <span class="badge badge-outline shrink-0 whitespace-nowrap">Phase 1 &mdash; 4</span>
+    </div>
+
+    <div class="space-y-6">
+      <!-- Phase 1 -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-primary flex items-center gap-2" id="phase-1-tasks">
+          <span class="badge badge-primary badge-sm">Phase 1</span>
+          Zero-Dep Pre-Flight Linter &amp; Auto-Fix Engine
+        </h3>
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-base-200/50 border border-base-200 cursor-default">
+            <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mt-0.5" disabled />
+            <div class="text-xs">
+              <span class="font-medium text-base-content">1.1 Pure Node pre-flight linter in <code>skills/html-report/scripts/harness.mjs</code></span>
+              <p class="text-base-content/60 mt-0.5">Checks unique <code>id</code>s on <code>h1-h3</code> and detects outer <code>&lt;html&gt;</code>/<code>&lt;body&gt;</code> boilerplate.</p>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-base-200/50 border border-base-200 cursor-default">
+            <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mt-0.5" disabled />
+            <div class="text-xs">
+              <span class="font-medium text-base-content">1.2 Mechanical auto-fix transforms (<code>--auto-fix</code>)</span>
+              <p class="text-base-content/60 mt-0.5">Automatically strips accidental wrappers and synthesizes slugified IDs for headings missing them.</p>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-base-200/50 border border-base-200 cursor-default">
+            <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mt-0.5" disabled />
+            <div class="text-xs">
+              <span class="font-medium text-base-content">1.3 Automated unit tests in <code>tests/harness-linter.test.mjs</code></span>
+              <p class="text-base-content/60 mt-0.5">Asserts pre-flight detection and auto-fix behavior without external npm dependencies.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-secondary flex items-center gap-2" id="phase-2-tasks">
+          <span class="badge badge-secondary badge-sm">Phase 2</span>
+          Deterministic Pure-Node FSM Lifecycle Engine
+        </h3>
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-base-200/50 border border-base-200 cursor-default">
+            <input type="checkbox" class="checkbox checkbox-secondary checkbox-sm mt-0.5" disabled />
+            <div class="text-xs">
+              <span class="font-medium text-base-content">2.1 Implement core FSM runner in <code>skills/html-report/scripts/harness.mjs</code></span>
+              <p class="text-base-content/60 mt-0.5">Strict transitions: <code>IDLE</code> &rarr; <code>VALIDATING</code> &rarr; <code>AUTO_FIXING</code> &rarr; <code>ASSEMBLING</code> &rarr; <code>VERIFYING</code> &rarr; <code>COMPLETED</code> / <code>FAILED</code>.</p>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-base-200/50 border border-base-200 cursor-default">
+            <input type="checkbox" class="checkbox checkbox-secondary checkbox-sm mt-0.5" disabled />
+            <div class="text-xs">
+              <span class="font-medium text-base-content">2.2 Single-command execution chaining assembly &amp; Playwright verification</span>
+              <p class="text-base-content/60 mt-0.5">Runs <code>build-report.mjs</code> and <code>verify-report.mjs --quick</code> in one unified call.</p>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-base-200/50 border border-base-200 cursor-default">
+            <input type="checkbox" class="checkbox checkbox-secondary checkbox-sm mt-0.5" disabled />
+            <div class="text-xs">
+              <span class="font-medium text-base-content">2.3 Automated unit tests in <code>tests/harness-lifecycle.test.mjs</code></span>
+              <p class="text-base-content/60 mt-0.5">Verifies valid state progression, error handling, and appropriate CLI exit codes.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-accent flex items-center gap-2" id="phase-3-tasks">
+          <span class="badge badge-accent badge-sm">Phase 3</span>
+          "Small Model First" Remediation Protocol &amp; Bounded Retries
+        </h3>
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-base-200/50 border border-base-200 cursor-default">
+            <input type="checkbox" class="checkbox checkbox-accent checkbox-sm mt-0.5" disabled />
+            <div class="text-xs">
+              <span class="font-medium text-base-content">3.1 Implement diagnostic error parser with <code>instruction_for_agent</code></span>
+              <p class="text-base-content/60 mt-0.5">Transforms raw Playwright overflow errors into standardized JSON remediation packets.</p>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-base-200/50 border border-base-200 cursor-default">
+            <input type="checkbox" class="checkbox checkbox-accent checkbox-sm mt-0.5" disabled />
+            <div class="text-xs">
+              <span class="font-medium text-base-content">3.2 Bounded retry supervisor logic</span>
+              <p class="text-base-content/60 mt-0.5">Enforces maximum 3 retry attempts before transitioning to terminal <code>FAILED</code> state.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-neutral flex items-center gap-2" id="phase-4-tasks">
+          <span class="badge badge-neutral badge-sm">Phase 4</span>
+          Agnostic Skill Guidelines &amp; Documentation
+        </h3>
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-base-200/50 border border-base-200 cursor-default">
+            <input type="checkbox" class="checkbox checkbox-neutral checkbox-sm mt-0.5" disabled />
+            <div class="text-xs">
+              <span class="font-medium text-base-content">4.1 Update <code>skills/html-report/SKILL.md</code> documentation</span>
+              <p class="text-base-content/60 mt-0.5">Establishes <code>node scripts/harness.mjs run</code> as primary single-command workflow.</p>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-base-200/50 border border-base-200 cursor-default">
+            <input type="checkbox" class="checkbox checkbox-neutral checkbox-sm mt-0.5" disabled />
+            <div class="text-xs">
+              <span class="font-medium text-base-content">4.2 Author <code>skills/html-report/references/harness-architecture.md</code></span>
+              <p class="text-base-content/60 mt-0.5">Documents FSM lifecycle, auto-fix behavior, and small-model remediation design.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Execution Plan & Ready-to-Run Implementation Prompt -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6" id="implementation-plan-section">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+      <div>
+        <h2 class="text-xl font-bold text-base-content min-w-0 flex-1 break-words" id="execution-plan-title">
+          Execution Plan &amp; Kick-off Prompt
+        </h2>
+        <p class="text-xs text-base-content/70 mt-1">
+          Follow this 4-step sequence to deliver the deterministic zero-dep harness, and use the prompt below to initiate implementation
+        </p>
+      </div>
+      <span class="badge badge-primary shrink-0 whitespace-nowrap">Ready to Implement</span>
+    </div>
+
+    <!-- 4-Step Action Plan Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+      <div class="p-4 rounded-xl bg-base-200/50 border border-base-300 space-y-2">
+        <div class="flex items-center gap-2 font-bold text-primary">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>Step 1: Pre-Flight Linter &amp; Auto-Fix Engine</span>
+        </div>
+        <p class="text-base-content/75 leading-relaxed">
+          Create <code>skills/html-report/scripts/harness.mjs</code> with pure-Node regex/AST checks. Add mechanical auto-fixes (stripping accidental <code>&lt;html&gt;</code>/<code>&lt;body&gt;</code> wrappers, auto-generating heading IDs). Cover with unit tests in <code>tests/harness-linter.test.mjs</code>.
+        </p>
+      </div>
+
+      <div class="p-4 rounded-xl bg-base-200/50 border border-base-300 space-y-2">
+        <div class="flex items-center gap-2 font-bold text-secondary">
+          <i data-lucide="cpu" class="w-4 h-4"></i>
+          <span>Step 2: Deterministic Pure-Node FSM Lifecycle</span>
+        </div>
+        <p class="text-base-content/75 leading-relaxed">
+          Wire the explicit FSM engine (<code>IDLE</code> &rarr; <code>VALIDATING</code> &rarr; <code>AUTO_FIXING</code> &rarr; <code>ASSEMBLING</code> &rarr; <code>VERIFYING</code> &rarr; <code>COMPLETED</code> / <code>FAILED</code>). Chain deterministic assembly and Playwright verification in one call. Add lifecycle tests in <code>tests/harness-lifecycle.test.mjs</code>.
+        </p>
+      </div>
+
+      <div class="p-4 rounded-xl bg-base-200/50 border border-base-300 space-y-2">
+        <div class="flex items-center gap-2 font-bold text-accent">
+          <i data-lucide="life-buoy" class="w-4 h-4"></i>
+          <span>Step 3: Small-Model Spoon-Fed Remediation</span>
+        </div>
+        <p class="text-base-content/75 leading-relaxed">
+          Implement the diagnostic parser extracting offending DOM selectors and synthesizing copy-paste <code>instruction_for_agent</code> directives. Add bounded retry supervisor (max 3) and test in <code>tests/harness-remediation.test.mjs</code>.
+        </p>
+      </div>
+
+      <div class="p-4 rounded-xl bg-base-200/50 border border-base-300 space-y-2">
+        <div class="flex items-center gap-2 font-bold text-neutral-content">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span>Step 4: Skill Guidelines &amp; Reference Architecture</span>
+        </div>
+        <p class="text-base-content/75 leading-relaxed">
+          Update <code>skills/html-report/SKILL.md</code> establishing <code>node scripts/harness.mjs run</code> as the unified workflow. Author <code>skills/html-report/references/harness-architecture.md</code>. Run end-to-end integration tests.
+        </p>
+      </div>
+    </div>
+
+    <!-- Ready-to-Run Kickoff Prompt Box -->
+    <div class="space-y-3 pt-2">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-base-content flex items-center gap-2" id="ready-prompt">
+          <i data-lucide="sparkles" class="w-4 h-4 text-warning"></i>
+          Ready-to-Run Implementation Prompt
+        </h3>
+        <span class="text-xs text-base-content/60 font-mono">Copy &amp; run to start Phase 1</span>
+      </div>
+
+      <div class="p-4 rounded-xl bg-neutral text-neutral-content space-y-3">
+        <p class="text-xs text-neutral-content/80 font-medium">
+          Feed this exact prompt to the agent to kick off the execution journey:
+        </p>
+        <div class="p-3 bg-neutral-focus rounded-lg font-mono text-xs whitespace-pre-wrap break-words select-all border border-neutral-content/10">Implement OpenSpec change "state-machine-harness" starting with Phase 1 in tasks.md:
+1. Create `skills/html-report/scripts/harness.mjs` with zero external dependencies (pure Node.js built-ins) implementing pre-flight fragment linting and mechanical auto-fixes (stripping outer &lt;html&gt;/&lt;body&gt; wrappers and auto-slugifying heading IDs).
+2. Add automated unit tests in `tests/harness-linter.test.mjs` and verify all tests pass with node --test.
+3. Update `openspec/changes/state-machine-harness/tasks.md` to mark Phase 1 tasks complete.
+4. Immediately update `localhost:3000` by updating `index.html` and copying to `implementation-progress.html`.</div>
+      </div>
+    </div>
+  </section>
+</main>

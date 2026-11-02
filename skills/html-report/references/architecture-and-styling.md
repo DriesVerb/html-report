@@ -340,3 +340,23 @@ When building a card header or Hero banner featuring a title and description on 
    - Adding `min-w-0 flex-1` allows the left column to compress gracefully.
    - Adding `break-words` ensures long unbroken words or kebab-case identifiers wrap cleanly.
    - Adding `shrink-0` to the action button wrapper with `whitespace-nowrap` guarantees the button never gets squished or pushed outside the card boundary.
+
+---
+
+## 9. Deterministic Assembly Engine & Pre-Bundled Assets
+
+To minimize token usage and accelerate generation, reports are assembled deterministically rather than synthesized from scratch:
+- **`assets/template-shell.html`**: Contains the responsive HTML head, DaisyUI navbar, content slot (`<!-- {{CONTENT}} -->`), and centered footer.
+- **`assets/report-runtime.js`**: Pre-bundled client script managing 32-theme switching, canvas 2D palette resolution, TOC generation, space detection, and standalone snapshot bundling.
+- **`scripts/build-report.mjs`**: Local CLI tool that scans content fragments for feature signatures (`<canvas>`, `.mermaid`, `data-gridjs`, `katex`, `leaflet`, `hljs`), resolves necessary CDNs dynamically, and stitches the final report in <100ms:
+  ```bash
+  node skills/html-report/scripts/build-report.mjs --title "Report Title" --content fragment.html --output report.html
+  ```
+
+---
+
+## 10. Canvas 2D OKLCH Color Resolution & Mermaid Syntax Defense
+
+1. **Canvas 2D OKLCH Resolution**: DaisyUI v4 defines theme tokens using `oklch(...)`. Passing `oklch(...)` directly to Mermaid or Chart.js causes parsing errors or fallback to flat colors. `cssColorToHexAndRgba()` draws the color onto a 1x1 `<canvas>` 2D context and extracts deterministic 8-bit `#rrggbb` and `rgba(...)` values natively without external dependencies.
+2. **Mermaid Numbered List Defense**: Mermaid 11.4 parses tokens matching `1. `, `2. ` as markdown ordered lists, triggering `Unsupported markdown: list` syntax errors when used in subgraph or node titles. Always use hyphens or descriptive labels: `subgraph Input["Step 1 - Data Intake"]`.
+

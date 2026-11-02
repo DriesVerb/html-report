@@ -1469,7 +1469,7 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
           node.dataset.mermaidSource = node.textContent.trim();
         }
         node.removeAttribute("data-processed");
-        node.innerHTML = node.dataset.mermaidSource;
+        node.textContent = node.dataset.mermaidSource;
       });
 
       window.mermaid.initialize({

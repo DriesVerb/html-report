@@ -1,0 +1,221 @@
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <!-- Journey Status Hero -->
+  <header class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-base-200">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-success/15 text-success mb-2">
+          <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Feature Complete / Verified
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-base-content" id="journey-overview">
+          Fast Deterministic Pipeline & Token-Elimination Architecture
+        </h1>
+        <p class="text-base text-base-content/70 mt-1">
+          OpenSpec Feature Journey Dashboard & Interactive Blueprint
+        </p>
+      </div>
+
+      <!-- Markdown Artifact Backlinks -->
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="./proposal.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4"></i> proposal.md
+        </a>
+        <a href="./design.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="compass" class="w-4 h-4"></i> design.md
+        </a>
+        <a href="./tasks.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="check-square" class="w-4 h-4"></i> tasks.md
+        </a>
+        <a href="./specs/" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="layers" class="w-4 h-4"></i> specs/
+        </a>
+      </div>
+    </div>
+
+    <!-- Journey Stepper -->
+    <div class="mt-8">
+      <h2 class="text-xs font-bold uppercase tracking-wider text-base-content/60 mb-3" id="journey-stepper">
+        Current State of Our Journey
+      </h2>
+      <ul class="steps steps-vertical sm:steps-horizontal w-full">
+        <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
+        <li class="step step-primary font-medium" data-content="✓">Planning & Specs</li>
+        <li class="step step-primary font-medium" data-content="✓">Implementation</li>
+        <li class="step step-primary font-medium" data-content="✓">Verification</li>
+        <li class="step step-primary font-bold text-primary" data-content="★">Ready to Ship</li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Live Progress Stats -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" aria-label="Progress Metrics">
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-primary">
+        <i data-lucide="list-todo" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Total Tasks</div>
+      <div class="stat-value text-primary text-2xl sm:text-3xl">12</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Across 4 phases</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-success">
+        <i data-lucide="check-circle" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Completed</div>
+      <div class="stat-value text-success text-2xl sm:text-3xl">12</div>
+      <div class="stat-desc text-xs text-success truncate">100% completion</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-secondary">
+        <i data-lucide="zap" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Token Savings</div>
+      <div class="stat-value text-secondary text-2xl sm:text-3xl">~70%</div>
+      <div class="stat-desc text-xs text-secondary truncate">Sub-second local CLI</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-accent">
+        <i data-lucide="shield-check" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Unit Tests</div>
+      <div class="stat-value text-accent text-2xl sm:text-3xl">45 / 45</div>
+      <div class="stat-desc text-xs text-accent truncate">100% pass rate</div>
+    </div>
+  </section>
+
+  <!-- Architecture Flow (Mermaid) -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-xl font-bold text-base-content" id="architecture-plan">
+          Deterministic Assembly Pipeline Architecture
+        </h2>
+        <p class="text-sm text-base-content/70">
+          How content fragments and reusable asset shells assemble deterministically
+        </p>
+      </div>
+      <span class="badge badge-primary badge-outline text-xs">Mermaid 11</span>
+    </div>
+
+    <div class="bg-base-200/50 p-4 rounded-xl overflow-x-auto">
+      <div class="mermaid">
+flowchart LR
+    A["LLM / Agent"] -->|"Emits semantic main fragment"| B["build-report.mjs"]
+    T["template-shell.html"] -->|"Provides Layout & Navbar"| B
+    R["report-runtime.js"] -->|"Provides 32-Theme Runtime"| B
+    B -->|"Auto-detects CDNs & Assembles"| C["Final index.html (sub-100ms)"]
+    C -->|"Live Reload (SSE)"| D["localhost:3000"]
+    C -->|"Lean Playwright (sub-4s)"| E["Multi-Breakpoint Verification"]
+      </div>
+    </div>
+  </section>
+
+  <!-- Connected Task Checklist Section -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-base-200">
+      <div>
+        <h2 class="text-xl font-bold text-base-content" id="task-tracking">
+          Connected Task Tracking
+        </h2>
+        <p class="text-sm text-base-content/70">
+          Mirrored from <a href="./tasks.md" class="link link-primary font-mono text-xs">tasks.md</a>
+        </p>
+      </div>
+      <div class="badge badge-success gap-1.5 py-3 px-3 font-semibold text-xs">
+        <i data-lucide="check" class="w-3.5 h-3.5"></i> All Phases Complete
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <!-- Phase 1 -->
+      <div class="space-y-3">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2" id="phase-1">
+          <span class="badge badge-primary badge-sm">Phase 1</span>
+          Asset Templates & Pre-Bundled Runtime
+        </h3>
+        <ul class="space-y-2 text-sm text-base-content/85">
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>1.1</strong> Create <code>template-shell.html</code> containing responsive head, DaisyUI navbar, and slots.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>1.2</strong> Create <code>report-runtime.js</code> with 32-theme switcher, canvas color resolver, and TOC parser.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>1.3</strong> Add automated unit tests in <code>tests/runtime-assets.test.mjs</code>.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="space-y-3">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2" id="phase-2">
+          <span class="badge badge-primary badge-sm">Phase 2</span>
+          Deterministic Build CLI (<code>build-report.mjs</code>)
+        </h3>
+        <ul class="space-y-2 text-sm text-base-content/85">
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>2.1</strong> Implement <code>build-report.mjs</code> with <code>--title</code>, <code>--content</code>, <code>--output</code>, and <code>--printable</code> flags.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>2.2</strong> Auto-detect CDN signatures (<code>&lt;canvas&gt;</code>, <code>.mermaid</code>, <code>data-gridjs</code>, <code>katex</code>, <code>leaflet</code>, <code>hljs</code>).</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>2.3</strong> Write unit tests in <code>tests/build-report.test.mjs</code> verifying slot injection and detection.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="space-y-3">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2" id="phase-3">
+          <span class="badge badge-primary badge-sm">Phase 3</span>
+          Lean Playwright Verification (<code>verify-report.mjs</code>)
+        </h3>
+        <ul class="space-y-2 text-sm text-base-content/85">
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>3.1</strong> Refactor verifier to dynamically assert only active CDN addons.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>3.2</strong> Add <code>--quick</code> mode to test <code>sm</code> and <code>lg</code> breakpoints in &lt;4 seconds.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>3.3</strong> Enforce on-demand single PDF export when explicitly passed.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="space-y-3">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2" id="phase-4">
+          <span class="badge badge-primary badge-sm">Phase 4</span>
+          Documentation & Reference Guides
+        </h3>
+        <ul class="space-y-2 text-sm text-base-content/85">
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>4.1</strong> Update <code>SKILL.md</code> to guide agents to emit fragments and use builder.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>4.2</strong> Document canvas 2D OKLCH color resolution and Mermaid list defenses in reference docs.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-success mt-0.5 shrink-0"></i>
+            <span><strong>4.3</strong> End-to-end integration test passes successfully.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>

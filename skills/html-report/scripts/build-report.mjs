@@ -1,0 +1,372 @@
+#!/usr/bin/env node
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export const ADDON_REGISTRY = {
+  charts: {
+    name: "Chart.js",
+    signatures: [/<canvas\b/i, /chart\.js/i, /data-chart/i],
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" crossorigin="anonymous"></script>`
+  },
+  mermaid: {
+    name: "Mermaid",
+    signatures: [/class=["'][^"']*\bmermaid\b/i, /<pre\s+class=["']mermaid["']/i],
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" crossorigin="anonymous"></script>`
+  },
+  gridjs: {
+    name: "Grid.js",
+    signatures: [/data-gridjs/i, /gridjs-table/i, /class=["'][^"']*\bgridjs\b/i],
+    head: `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/theme/mermaid.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/gridjs.umd.js" crossorigin="anonymous"></script>`
+  },
+  katex: {
+    name: "KaTeX",
+    signatures: [/\bkatex\b/i, /\\\(.*?\\\)/, /\\\[.*?\\\]/],
+    head: `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>`
+  },
+  leaflet: {
+    name: "Leaflet",
+    signatures: [/\bleaflet\b/i, /id=["'](?:datacenterMap|map)["']/i, /leaflet-pane/i],
+    head: `<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>`
+  },
+  hljs: {
+    name: "Highlight.js",
+    signatures: [/\bhljs\b/i, /class=["'][^"']*\blanguage-[a-z0-9_-]+/i],
+    head: `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/kotlin.min.js" crossorigin="anonymous"></script>`
+  },
+  marked: {
+    name: "Marked",
+    signatures: [/id=["']markdown-(?:source|output)["']/i, /\bmarked\b/i],
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>`
+  }
+};
+
+const ADDON_ALIASES = {
+  chart: "charts",
+  chartjs: "charts",
+  math: "katex",
+  highlight: "hljs",
+  map: "leaflet",
+  maps: "leaflet"
+};
+
+const PRINT_MEDIA_CSS = `
+  <style id="printable-media-styles">
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #111827 !important;
+      }
+      header,
+      .navbar,
+      .print\\:hidden,
+      .print-interactive-control,
+      .gridjs-head,
+      .gridjs-pages {
+        display: none !important;
+      }
+      #print-cover-page {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        min-height: 92vh !important;
+        break-after: page !important;
+        page-break-after: always !important;
+      }
+      .print-only-summary {
+        display: block !important;
+      }
+      .break-inside-avoid {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+    }
+  </style>`;
+
+/**
+ * Scans content fragment for known feature signatures and merges with explicit addon requests.
+ */
+export function detectAddons(content = "", explicitAddons = []) {
+  const active = new Set();
+
+  // Normalize explicit addons
+  for (const raw of explicitAddons) {
+    const key = raw.toLowerCase().trim();
+    const normalized = ADDON_ALIASES[key] || key;
+    if (ADDON_REGISTRY[normalized]) {
+      active.add(normalized);
+    }
+  }
+
+  // Scan content signatures
+  for (const [key, addon] of Object.entries(ADDON_REGISTRY)) {
+    if (active.has(key)) continue;
+    for (const pattern of addon.signatures) {
+      if (pattern.test(content)) {
+        active.add(key);
+        break;
+      }
+    }
+  }
+
+  return Array.from(active);
+}
+
+/**
+ * Normalizes content fragment, removing accidental outer <main> wrappers or frontmatter.
+ */
+export function extractMainContent(rawContent = "") {
+  let content = rawContent.trim();
+
+  // Strip leading YAML frontmatter if present
+  if (content.startsWith("---")) {
+    const endMatch = content.slice(3).indexOf("\n---");
+    if (endMatch !== -1) {
+      content = content.slice(endMatch + 7).trim();
+    }
+  }
+
+  // If wrapped in <main>...</main>, unwrap inner content
+  const mainMatch = content.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
+  if (mainMatch) {
+    return mainMatch[1].trim();
+  }
+
+  return content;
+}
+
+/**
+ * Generates an SVG emoji favicon tag.
+ */
+export function generateFaviconTag(emoticon = "📊") {
+  const cleanEmoji = emoticon.trim() || "📊";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${cleanEmoji}</text></svg>`;
+  return `<link rel="icon" href="data:image/svg+xml,${encodeURIComponent(svg)}" />`;
+}
+
+/**
+ * Parses CLI arguments.
+ */
+export function parseArgs(argv) {
+  const args = argv.slice(2);
+  const options = {
+    title: "HTML Report",
+    content: null,
+    output: "./report.html",
+    printable: false,
+    theme: null,
+    addons: [],
+    favicon: "📊",
+    help: false
+  };
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    if (arg === "--help" || arg === "-h") {
+      options.help = true;
+    } else if ((arg === "--title" || arg === "-t") && args[i + 1]) {
+      options.title = args[++i];
+    } else if ((arg === "--content" || arg === "-c") && args[i + 1]) {
+      options.content = args[++i];
+    } else if ((arg === "--output" || arg === "-o") && args[i + 1]) {
+      options.output = args[++i];
+    } else if (arg === "--printable" || arg === "-p") {
+      options.printable = true;
+    } else if (arg === "--theme" && args[i + 1]) {
+      options.theme = args[++i];
+    } else if (arg === "--addons" && args[i + 1]) {
+      const items = args[++i].split(",").map((s) => s.trim()).filter(Boolean);
+      options.addons.push(...items);
+    } else if (arg === "--favicon" && args[i + 1]) {
+      options.favicon = args[++i];
+    } else if (arg === "--all-addons") {
+      options.addons.push(...Object.keys(ADDON_REGISTRY));
+    } else if (arg.startsWith("--") && ADDON_ALIASES[arg.slice(2)]) {
+      options.addons.push(ADDON_ALIASES[arg.slice(2)]);
+    } else if (arg.startsWith("--") && ADDON_REGISTRY[arg.slice(2)]) {
+      options.addons.push(arg.slice(2));
+    } else if (!arg.startsWith("--") && !options.content) {
+      options.content = arg;
+    }
+  }
+
+  return options;
+}
+
+/**
+ * Deterministically builds the final HTML report from the template shell,
+ * runtime script, and content fragment.
+ */
+export function buildReport({
+  title = "HTML Report",
+  content = "",
+  printable = false,
+  addons = [],
+  favicon = "📊",
+  theme = null,
+  templateShellPath = path.resolve(__dirname, "../assets/template-shell.html"),
+  runtimeScriptPath = path.resolve(__dirname, "../assets/report-runtime.js")
+} = {}) {
+  if (!fs.existsSync(templateShellPath)) {
+    throw new Error(`Template shell not found at: ${templateShellPath}`);
+  }
+  if (!fs.existsSync(runtimeScriptPath)) {
+    throw new Error(`Runtime script not found at: ${runtimeScriptPath}`);
+  }
+
+  const shellTemplate = fs.readFileSync(templateShellPath, "utf-8");
+  const runtimeScript = fs.readFileSync(runtimeScriptPath, "utf-8");
+
+  const cleanBody = extractMainContent(content);
+  const activeAddonKeys = detectAddons(cleanBody, addons);
+
+  // Construct head extras
+  const headExtraParts = [];
+  for (const key of activeAddonKeys) {
+    if (ADDON_REGISTRY[key]?.head) {
+      headExtraParts.push(`  <!-- Addon: ${ADDON_REGISTRY[key].name} -->\n  ${ADDON_REGISTRY[key].head}`);
+    }
+  }
+  if (printable) {
+    headExtraParts.push(PRINT_MEDIA_CSS);
+  }
+  const headExtras = headExtraParts.join("\n\n");
+
+  // Construct favicon tag
+  const faviconTag = generateFaviconTag(favicon);
+
+  // Construct runtime script tag
+  const inlinedRuntime = `<script>\n${runtimeScript}\n  </script>`;
+
+  // Slot replacements
+  let html = shellTemplate;
+
+  // Set theme attribute on <html> if provided
+  if (theme) {
+    html = html.replace(/data-theme="[^"]*"/i, `data-theme="${theme}"`);
+  }
+
+  // Set report mode attribute on <html>
+  const mode = printable ? "static" : "interactive";
+  html = html.replace(
+    /<html([^>]*)>/i,
+    (match, attrs) => {
+      let updated = attrs;
+      if (!updated.includes("data-report-mode")) {
+        updated = ` data-report-mode="${mode}"` + updated;
+      } else {
+        updated = updated.replace(/data-report-mode="[^"]*"/, `data-report-mode="${mode}"`);
+      }
+      return `<html${updated}>`;
+    }
+  );
+
+  // If printable, update download PDF button styling
+  if (printable) {
+    html = html.replace(
+      /<span class="badge badge-warning badge-xs font-mono">Not PDF-Ready<\/span>/,
+      ""
+    );
+  }
+
+  html = html.replace(/<!-- {{TITLE}} -->/g, title);
+  html = html.replace(/<!-- {{FAVICON}} -->/g, faviconTag);
+  html = html.replace(/<!-- {{HEAD_EXTRAS}} -->/g, headExtras);
+  html = html.replace(/<!-- {{CONTENT}} -->/g, cleanBody);
+  html = html.replace(/<!-- {{RUNTIME_SCRIPT}} -->/g, inlinedRuntime);
+
+  return {
+    html,
+    activeAddons: activeAddonKeys,
+    mode
+  };
+}
+
+function showHelp() {
+  console.log(`
+html-report deterministic build CLI (build-report.mjs)
+
+Usage:
+  node build-report.mjs --content <fragment.html> [options]
+
+Options:
+  -c, --content <file>    Path to semantic <main> HTML fragment file (required)
+  -t, --title <string>    Report title (default: "HTML Report")
+  -o, --output <file>     Destination HTML file (default: "./report.html")
+  -p, --printable         Enable printable/PDF mode (@media print rules, static mode)
+      --theme <name>      DaisyUI theme name (default: "light")
+      --favicon <emoji>   Favicon emoticon (default: "📊")
+      --addons <list>     Comma-separated addons (charts, mermaid, gridjs, katex, leaflet, hljs, marked)
+      --all-addons        Include all catalog addons in <head>
+      --charts            Explicitly include Chart.js
+      --mermaid           Explicitly include Mermaid
+      --gridjs            Explicitly include Grid.js
+      --math, --katex     Explicitly include KaTeX
+      --leaflet           Explicitly include Leaflet
+      --hljs, --highlight Explicitly include Highlight.js
+  -h, --help              Show this help message
+
+Auto-Detection:
+  Signatures for <canvas>, .mermaid, data-gridjs, katex, leaflet, and hljs are
+  automatically detected from the content fragment.
+`);
+}
+
+// CLI entry point
+const isDirectCli = process.argv[1] && (
+  process.argv[1].endsWith("build-report.mjs") ||
+  import.meta.url === pathToFileURL(process.argv[1]).href
+);
+
+if (isDirectCli) {
+  const options = parseArgs(process.argv);
+
+  if (options.help) {
+    showHelp();
+    process.exit(0);
+  }
+
+  if (!options.content) {
+    console.error("Error: --content <file> is required.");
+    showHelp();
+    process.exit(1);
+  }
+
+  const contentPath = path.resolve(process.cwd(), options.content);
+  if (!fs.existsSync(contentPath)) {
+    console.error(`Error: Content file not found at: ${contentPath}`);
+    process.exit(1);
+  }
+
+  const rawContent = fs.readFileSync(contentPath, "utf-8");
+  const startTime = performance.now();
+
+  const { html, activeAddons, mode } = buildReport({
+    title: options.title,
+    content: rawContent,
+    printable: options.printable,
+    theme: options.theme,
+    addons: options.addons,
+    favicon: options.favicon
+  });
+
+  const outputPath = path.resolve(process.cwd(), options.output);
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, html, "utf-8");
+
+  const elapsedMs = Math.round((performance.now() - startTime) * 100) / 100;
+  console.log(`[html-report] Report assembled in ${elapsedMs}ms:`);
+  console.log(`  Output:        ${outputPath}`);
+  console.log(`  Mode:          ${mode}`);
+  console.log(`  Active Addons: ${activeAddons.length > 0 ? activeAddons.join(", ") : "Core 4 only"}`);
+}

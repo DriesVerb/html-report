@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html data-report-mode="interactive" lang="en" data-theme="light" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caller-Aware Harness - Journey & Plan</title>
+
+  <!-- Content-Aware Favicon Emoticon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
+
+  <!-- Core CDNs -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" crossorigin="anonymous"></script>
+
+  <!-- Optional Addon CDNs & Styles -->
+    <!-- Addon: Chart.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Mermaid -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --grid-bg-1: #ffffff;
+      --grid-bg-2: #f3f4f6;
+      --grid-border: #d1d5db;
+      --grid-text: #111827;
+      --grid-muted: #4b5563;
+      --grid-primary: #2563eb;
+    }
+    html, body {
+      max-width: 100%;
+    }
+    .mermaid {
+      color: inherit;
+    }
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+      background-color: transparent !important;
+    }
+    [data-insufficient-space="true"] {
+      outline: 2px dashed #f59e0b !important;
+      position: relative;
+    }
+    [data-insufficient-space="true"]::before {
+      content: "⚠ Insufficient horizontal space";
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      background: #f59e0b;
+      color: #111827;
+      border-radius: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+    /* Grid.js Full Light & Dark Mode DaisyUI Theme Integration */
+    .gridjs-container {
+      color: var(--grid-text) !important;
+      background-color: transparent !important;
+      font-size: 0.8125rem;
+      padding: 0 !important;
+    }
+    .gridjs-wrapper {
+      border-radius: 0.5rem;
+      border: 1px solid var(--grid-border) !important;
+      background-color: var(--grid-bg-1) !important;
+      box-shadow: none !important;
+    }
+    .gridjs-table {
+      width: 100% !important;
+      table-layout: fixed !important;
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    .gridjs-tbody,
+    tr.gridjs-tr {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    th.gridjs-th {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    th.gridjs-th:hover,
+    th.gridjs-th-sort:hover {
+      background-color: var(--grid-bg-2) !important;
+      filter: brightness(0.95);
+    }
+    td.gridjs-td {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    .gridjs-footer {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+    }
+    .gridjs-pages button {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border: 1px solid var(--grid-border) !important;
+    }
+    .gridjs-pages button.gridjs-currentPage {
+      background-color: var(--grid-primary) !important;
+      color: #ffffff !important;
+      border-color: var(--grid-primary) !important;
+      font-weight: 700 !important;
+    }
+  </style>
+</head>
+<body class="bg-base-200 text-base-content min-h-screen flex flex-col font-sans antialiased selection:bg-primary selection:text-primary-content">
+
+  <!-- Sticky DaisyUI Navbar -->
+  <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
+    <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
+      <!-- Left: Title -->
+      <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
+        <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
+          Caller-Aware Harness - Journey & Plan
+        </span>
+      </div>
+
+      <!-- Right: TOC + Theme Picker + Download Menu -->
+      <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
+        <!-- 1. TOC Dropdown -->
+        <div class="dropdown dropdown-end" id="toc-dropdown">
+          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            <span>Contents</span>
+          </div>
+          <ul id="report-toc-list" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-72 sm:w-80 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
+            <!-- Populated via initTOC() -->
+          </ul>
+        </div>
+
+        <!-- 2. DaisyUI 32-Themes Dropdown -->
+        <div class="dropdown dropdown-end" id="theme-dropdown">
+          <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
+            <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
+            <div class="flex items-center gap-0.5">
+              <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+              <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+            </div>
+          </div>
+          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
+            <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+              <!-- Populated via initThemeDropdown() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Icon-Only Download Dropdown -->
+        <div class="dropdown dropdown-end" id="download-dropdown">
+          <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Report" title="Download Report">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
+            </svg>
+          </div>
+          <ul id="download-dropdown-menu" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-64 p-2 shadow-2xl border border-base-300">
+            <li>
+              <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <span>Download as HTML</span>
+              </button>
+            </li>
+            <li>
+              <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                <div class="flex items-center gap-2.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span>Download as PDF</span>
+                </div>
+                <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Interactive PDF Warning Modal -->
+  <dialog id="pdf-not-ready-modal" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg text-warning flex items-center gap-2">
+        <span>⚠ Interactive Report Mode</span>
+      </h3>
+      <p class="py-4 text-xs">
+        This report is in interactive web-first mode. To generate a print-ready version with @media print rules, cover page, and PDF pagination, request:
+      </p>
+      <div class="bg-base-200 p-3 rounded font-mono text-2xs overflow-x-auto">
+        <code id="pdf-conversion-prompt-text">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</code>
+      </div>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-sm">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
+<!-- Journey Status Hero -->
+  <header class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-base-200">
+      <div class="min-w-0 flex-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary mb-2">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> OpenSpec Feature Journey &amp; Architecture Blueprint
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-base-content break-words" id="journey-overview">
+          Caller-Aware Deterministic Harness: Architecture &amp; Specifications
+        </h1>
+        <p class="text-sm sm:text-base text-base-content/70 mt-1">
+          Zero standalone footprint: pure &amp; simple when invoked by itself; scales seamlessly into caller-aware profile resolution and vault tracking only when called externally.
+        </p>
+      </div>
+
+      <!-- Markdown Artifact Backlinks -->
+      <div class="flex flex-wrap items-center gap-2 shrink-0">
+        <a href="./proposal.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4"></i> proposal.md
+        </a>
+        <a href="./design.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="compass" class="w-4 h-4"></i> design.md
+        </a>
+        <a href="./tasks.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="check-square" class="w-4 h-4"></i> tasks.md
+        </a>
+        <a href="./specs/caller-harness-orchestration/spec.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="layers" class="w-4 h-4"></i> specs/
+        </a>
+      </div>
+    </div>
+
+    <!-- Journey Stepper -->
+    <div class="mt-8">
+      <h2 class="text-xs font-bold uppercase tracking-wider text-base-content/60 mb-3" id="journey-stepper">
+        Current State of Our Journey
+      </h2>
+      <ul class="steps steps-vertical sm:steps-horizontal w-full">
+        <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
+        <li class="step step-primary font-medium" data-content="✓">Planning &amp; Specs</li>
+        <li class="step step-primary font-medium" data-content="✓">Implementing</li>
+        <li class="step step-primary font-medium" data-content="✓">Verifying</li>
+        <li class="step step-primary font-bold text-primary" data-content="★">Shipped / Archived</li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Live Progress Stats -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" aria-label="Progress Metrics">
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-primary">
+        <i data-lucide="list-todo" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Total Tasks</div>
+      <div class="stat-value text-primary text-2xl sm:text-3xl">13</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Across 4 planned phases</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-secondary">
+        <i data-lucide="check-circle" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Completed</div>
+      <div class="stat-value text-secondary text-2xl sm:text-3xl">100%</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">All 13 tasks verified</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-success">
+        <i data-lucide="award" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Active Stage</div>
+      <div class="stat-value text-success text-xl sm:text-2xl">Shipped / Archived</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Production Ready &amp; Archived</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-success">
+        <i data-lucide="shield-check" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Validated Specs</div>
+      <div class="stat-value text-success text-2xl sm:text-3xl">5</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">8 formal test scenarios</div>
+    </div>
+  </section>
+
+  <!-- Progressive Complexity Principle Card -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="border-b border-base-200 pb-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-base-content flex items-center gap-2" id="progressive-complexity">
+        <i data-lucide="layers" class="w-6 h-6 text-primary"></i> The Progressive Complexity Principle
+      </h2>
+      <p class="text-sm text-base-content/70 mt-1">
+        Ensuring direct skill usage remains lightweight and untouched, activating advanced machinery strictly for external callers.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Mode 1: Standalone Self-Invocation -->
+      <div class="card bg-base-200/40 border-2 border-primary/20 p-5 rounded-xl space-y-3 relative overflow-hidden">
+        <div class="badge badge-primary font-bold text-xs">MODE 1: STANDALONE (SELF)</div>
+        <div class="font-bold text-lg text-base-content flex items-center gap-2">
+          <i data-lucide="zap" class="w-5 h-5 text-primary"></i> Zero Added Complexity
+        </div>
+        <p class="text-xs sm:text-sm text-base-content/80">
+          When invoked by a developer or direct user prompt without <code class="text-xs bg-base-300 px-1 py-0.5 rounded">--caller</code>:
+        </p>
+        <ul class="text-xs space-y-2 text-base-content/70">
+          <li class="flex items-start gap-2">
+            <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+            <span><strong>Zero Vault Touches:</strong> <code class="text-xs bg-base-300 px-1 py-0.5 rounded">.caller-requests/</code> is never read, created, or modified.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+            <span><strong>Zero Profile Overhead:</strong> Bypasses profile lookup, schema validation, and pruning logic.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+            <span><strong>Predictable Outputs:</strong> Generates standard <code class="text-xs bg-base-300 px-1 py-0.5 rounded">./report.html</code> with default light theme.</span>
+          </li>
+        </ul>
+        <div class="p-2.5 rounded-lg bg-base-300/50 font-mono text-xs text-base-content/80">
+          node harness.mjs run fragment.html
+        </div>
+      </div>
+
+      <!-- Mode 2: External Caller-Aware Invocation -->
+      <div class="card bg-base-200/40 border-2 border-secondary/20 p-5 rounded-xl space-y-3 relative overflow-hidden">
+        <div class="badge badge-secondary font-bold text-xs">MODE 2: CALLER-AWARE (EXTERNAL)</div>
+        <div class="font-bold text-lg text-base-content flex items-center gap-2">
+          <i data-lucide="network" class="w-5 h-5 text-secondary"></i> Rich Contextual Rendering Bus
+        </div>
+        <p class="text-xs sm:text-sm text-base-content/80">
+          When invoked by external agent skills, subagents, or automated pipelines with <code class="text-xs bg-base-300 px-1 py-0.5 rounded">--caller &lt;id&gt;</code>:
+        </p>
+        <ul class="text-xs space-y-2 text-base-content/70">
+          <li class="flex items-start gap-2">
+            <i data-lucide="arrow-right" class="w-4 h-4 text-secondary shrink-0 mt-0.5"></i>
+            <span><strong>Profile Resolution:</strong> Automatically loads or scaffolds <code class="text-xs bg-base-300 px-1 py-0.5 rounded">.caller-requests/profiles/&lt;caller&gt;.md</code>.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i data-lucide="arrow-right" class="w-4 h-4 text-secondary shrink-0 mt-0.5"></i>
+            <span><strong>Vault Ephemeral Runs:</strong> Persists <code class="text-xs bg-base-300 px-1 py-0.5 rounded">run.json</code> &amp; <code class="text-xs bg-base-300 px-1 py-0.5 rounded">trace.json</code> and prunes to last 10 runs.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i data-lucide="arrow-right" class="w-4 h-4 text-secondary shrink-0 mt-0.5"></i>
+            <span><strong>Contextual Routing:</strong> Emits <code class="text-xs bg-base-300 px-1 py-0.5 rounded">./report-&lt;caller&gt;.html</code> in caller's CWD.</span>
+          </li>
+        </ul>
+        <div class="p-2.5 rounded-lg bg-base-300/50 font-mono text-xs text-base-content/80">
+          node harness.mjs run fragment.html --caller memory-leak-debugging
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dual-Path FSM State Diagram -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="border-b border-base-200 pb-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-base-content flex items-center gap-2" id="dual-fsm">
+        <i data-lucide="git-fork" class="w-6 h-6 text-primary"></i> Dual-Path FSM Execution Flow
+      </h2>
+      <p class="text-sm text-base-content/70 mt-1">
+        Visualizing how the state machine cleanly forks based on the presence of the <code class="text-xs bg-base-200 px-1 py-0.5 rounded">--caller</code> flag.
+      </p>
+    </div>
+
+    <!-- Mermaid Dual-Path Diagram -->
+    <div class="p-4 bg-base-200/40 rounded-xl overflow-x-auto">
+      <pre class="mermaid">
+flowchart TD
+  START([CLI Entry Point]) --> CHECK{--caller provided?}
+  
+  subgraph STANDALONE ["Standalone Execution (Pure &amp; Zero-Vault)"]
+    CHECK -- No --> V_STANDALONE[VALIDATING: Semantic Lint]
+    V_STANDALONE -->|Issues &amp; autoFix| AF_STANDALONE[AUTO_FIXING: Zero-Cost Repairs]
+    AF_STANDALONE --> V_STANDALONE
+    V_STANDALONE --> ASM_STANDALONE[ASSEMBLING: Compile ./report.html]
+    ASM_STANDALONE --> VER_STANDALONE[VERIFYING: Playwright Check]
+    VER_STANDALONE --> DONE_STANDALONE([COMPLETED: Report Ready])
+    VER_STANDALONE -->|Failure| REM_STANDALONE([REMEDIATING: Terminal Banner])
+  end
+
+  subgraph CALLER_AWARE ["Caller-Aware Execution (Vault &amp; Profile Enabled)"]
+    CHECK -- Yes --> RES_CALLER[RESOLVING_CALLER: Scaffold &amp; Merge Profile]
+    RES_CALLER --> V_CALLER[VALIDATING: Lint Fragment]
+    V_CALLER -->|Issues &amp; autoFix| AF_CALLER[AUTO_FIXING: Mechanical Fixes]
+    AF_CALLER --> V_CALLER
+    V_CALLER --> ASM_CALLER[ASSEMBLING: Inject Profile Theme &amp; CDNs]
+    ASM_CALLER --> VER_CALLER[VERIFYING: Playwright &amp; Optional PDF]
+    VER_CALLER --> REC_RUN[RECORDING_RUN: Write vault trace.json &amp; Prune]
+    REC_RUN --> DONE_CALLER([COMPLETED: ./report-caller.html])
+    REC_RUN -->|Failure| REM_CALLER([REMEDIATING: Spoon-Fed JSON Directive])
+  end
+
+  style STANDALONE fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0369a1
+  style CALLER_AWARE fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,color:#7e22ce
+      </pre>
+    </div>
+  </section>
+
+  <!-- Performance & Efficiency Comparison Chart -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="border-b border-base-200 pb-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-base-content flex items-center gap-2" id="efficiency-metrics">
+        <i data-lucide="bar-chart-2" class="w-6 h-6 text-primary"></i> Performance &amp; Startup Benchmarks
+      </h2>
+      <p class="text-sm text-base-content/70 mt-1">
+        Comparing standalone execution, caller-aware execution, and legacy multi-step workflows.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+      <div class="h-64 sm:h-72">
+        <canvas id="efficiencyChart"></canvas>
+      </div>
+
+      <div class="space-y-4">
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <div class="font-bold text-sm text-base-content mb-1 flex items-center gap-2">
+            <i data-lucide="zap" class="w-4 h-4 text-warning"></i> Sub-2ms Standalone Startup
+          </div>
+          <p class="text-xs text-base-content/70">
+            When called standalone, zero filesystem lookups for profiles or vault directories are executed. Pure in-memory AST and regex linting runs instantaneously.
+          </p>
+        </div>
+
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <div class="font-bold text-sm text-base-content mb-1 flex items-center gap-2">
+            <i data-lucide="folder-minus" class="w-4 h-4 text-primary"></i> Zero Git Clutter
+          </div>
+          <p class="text-xs text-base-content/70">
+            Standalone runs produce only the designated output HTML file. When external callers run, all profiles and ephemeral logs remain securely quarantined in <code class="text-xs bg-base-300 px-1 py-0.5 rounded">.caller-requests/</code>.
+          </p>
+        </div>
+
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <div class="font-bold text-sm text-base-content mb-1 flex items-center gap-2">
+            <i data-lucide="shield" class="w-4 h-4 text-secondary"></i> Bounded Hallucination Ceiling
+          </div>
+          <p class="text-xs text-base-content/70">
+            Both modes enforce a strict 3-attempt remediation ceiling with spoon-fed prescriptive instructions, preventing runaway loops.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Connected Task Checklist -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="border-b border-base-200 pb-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-base-content flex items-center gap-2" id="task-checklist">
+        <i data-lucide="check-square" class="w-6 h-6 text-primary"></i> Actionable Implementation Roadmap
+      </h2>
+      <p class="text-sm text-base-content/70 mt-1">
+        Connected task checklist corresponding directly to <a href="./tasks.md" class="link link-primary">tasks.md</a>.
+      </p>
+    </div>
+
+    <div class="space-y-6">
+      <!-- Phase 1 -->
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 font-bold text-sm text-base-content">
+          <span class="badge badge-primary badge-sm">Phase 1</span> Dual-Mode FSM State Architecture &amp; Caller Resolution
+        </div>
+        <div class="space-y-1.5 pl-2 text-xs sm:text-sm">
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-primary" checked disabled />
+            <span>1.1 Extend <code class="text-xs bg-base-200 px-1 py-0.5 rounded">STATES</code> in <code class="text-xs bg-base-200 px-1 py-0.5 rounded">harness.mjs</code> with <code class="text-xs bg-base-200 px-1 py-0.5 rounded">RESOLVING_CALLER</code> and <code class="text-xs bg-base-200 px-1 py-0.5 rounded">RECORDING_RUN</code></span>
+          </label>
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-primary" checked disabled />
+            <span>1.2 Implement conditional mode fork: bypass caller states completely when <code class="text-xs bg-base-200 px-1 py-0.5 rounded">--caller</code> is omitted (Standalone Mode)</span>
+          </label>
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-primary" checked disabled />
+            <span>1.3 Integrate <code class="text-xs bg-base-200 px-1 py-0.5 rounded">caller-registry.mjs</code> resolution into <code class="text-xs bg-base-200 px-1 py-0.5 rounded">harness.mjs</code> strictly when <code class="text-xs bg-base-200 px-1 py-0.5 rounded">--caller</code> flag is passed</span>
+          </label>
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-primary" checked disabled />
+            <span>1.4 Add CLI argument <code class="text-xs bg-base-200 px-1 py-0.5 rounded">--run-id</code> and <code class="text-xs bg-base-200 px-1 py-0.5 rounded">--theme</code> overrides to <code class="text-xs bg-base-200 px-1 py-0.5 rounded">parseArgs()</code> in <code class="text-xs bg-base-200 px-1 py-0.5 rounded">harness.mjs</code></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 font-bold text-sm text-base-content">
+          <span class="badge badge-secondary badge-sm">Phase 2</span> Profile-Driven Deterministic Assembly &amp; Output Routing
+        </div>
+        <div class="space-y-1.5 pl-2 text-xs sm:text-sm">
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-secondary" checked disabled />
+            <span>2.1 Pass profile <code class="text-xs bg-base-200 px-1 py-0.5 rounded">default_theme</code>, <code class="text-xs bg-base-200 px-1 py-0.5 rounded">required_cdns</code>, and <code class="text-xs bg-base-200 px-1 py-0.5 rounded">reportMode</code> into <code class="text-xs bg-base-200 px-1 py-0.5 rounded">buildReport()</code> during <code class="text-xs bg-base-200 px-1 py-0.5 rounded">ASSEMBLING</code> state in caller mode</span>
+          </label>
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-secondary" checked disabled />
+            <span>2.2 Wire caller-aware default output path routing to <code class="text-xs bg-base-200 px-1 py-0.5 rounded">./report-&lt;callerId&gt;.html</code> (and <code class="text-xs bg-base-200 px-1 py-0.5 rounded">.pdf</code>); preserve <code class="text-xs bg-base-200 px-1 py-0.5 rounded">./report.html</code> for standalone mode</span>
+          </label>
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-secondary" checked disabled />
+            <span>2.3 Verify runtime overrides take precedence over caller profile defaults while maintaining non-destructive profile integrity</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 font-bold text-sm text-base-content">
+          <span class="badge badge-accent badge-sm">Phase 3</span> Ephemeral Vault Run Lifecycle &amp; Trace Recording
+        </div>
+        <div class="space-y-1.5 pl-2 text-xs sm:text-sm">
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-accent" checked disabled />
+            <span>3.1 Implement structured <code class="text-xs bg-base-200 px-1 py-0.5 rounded">run.json</code> and <code class="text-xs bg-base-200 px-1 py-0.5 rounded">trace.json</code> persistence inside <code class="text-xs bg-base-200 px-1 py-0.5 rounded">.caller-requests/runs/&lt;callerId&gt;/&lt;runId&gt;/</code> during <code class="text-xs bg-base-200 px-1 py-0.5 rounded">RECORDING_RUN</code> in caller mode</span>
+          </label>
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-accent" checked disabled />
+            <span>3.2 Ensure <code class="text-xs bg-base-200 px-1 py-0.5 rounded">pruneRuns()</code> is triggered after run completion, maintaining the strict 10-run limit per caller</span>
+          </label>
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-accent" checked disabled />
+            <span>3.3 Link multi-attempt retries using <code class="text-xs bg-base-200 px-1 py-0.5 rounded">--run-id</code> so remediation diagnostics and final completion are correlated in the same run folder</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 font-bold text-sm text-base-content">
+          <span class="badge badge-outline badge-sm">Phase 4</span> Test Suite, Verification &amp; Companion Dashboard
+        </div>
+        <div class="space-y-1.5 pl-2 text-xs sm:text-sm">
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-success" checked disabled />
+            <span>4.1 Create test suite <code class="text-xs bg-base-200 px-1 py-0.5 rounded">tests/caller-harness-integration.test.mjs</code> verifying zero filesystem side-effects in standalone mode and full lifecycle in caller mode</span>
+          </label>
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-success" checked disabled />
+            <span>4.2 Verify existing test suites (<code class="text-xs bg-base-200 px-1 py-0.5 rounded">node --test</code>) remain 100% green with zero regressions</span>
+          </label>
+          <label class="flex items-center gap-2.5 cursor-pointer text-base-content/80 hover:text-base-content">
+            <input type="checkbox" class="checkbox checkbox-xs sm:checkbox-sm checkbox-success" checked disabled />
+            <span>4.3 Build and serve the companion HTML dashboard on <code class="text-xs bg-base-200 px-1 py-0.5 rounded">http://localhost:3000</code> reflecting live journey state</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <!-- Minimal Centered Footer -->
+  <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
+    generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a>
+  </footer>
+
+  <!-- Runtime Scripts -->
+  <script>
+/**
+ * html-report client runtime (report-runtime.js)
+ * Pre-bundled runtime for 32 DaisyUI themes, canvas 2D OKLCH palette resolution,
+ * Mermaid list syntax defense, dynamic TOC generation, snapshot bundler,
+ * and horizontal space detection.
+ */
+
+const DAISYUI_THEMES = [
+  "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
+  "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden",
+  "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black",
+  "luxury", "dracula", "cmyk", "autumn", "business", "acid", "lemonade",
+  "night", "coffee", "winter", "dim", "nord", "sunset"
+];
+
+/**
+ * Resolves any valid CSS color string (including oklch, color-mix, rgb, hsl, hex)
+ * into a strict 8-bit hex string and rgba generator via an offscreen 2D canvas.
+ */
+function cssColorToHexAndRgba(colorStr, customCtx = null) {
+  if (!colorStr) {
+    return { hex: "#3b82f6", r: 59, g: 130, b: 246, a: 1, rgba: (a = 1) => `rgba(59, 130, 246, ${a})` };
+  }
+
+  try {
+    let ctx = customCtx;
+    if (!ctx && typeof document !== "undefined") {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      ctx = canvas.getContext("2d", { willReadFrequently: true });
+    }
+
+    if (ctx) {
+      ctx.fillStyle = colorStr;
+      ctx.fillRect(0, 0, 1, 1);
+      const [r, g, b, aRaw] = ctx.getImageData(0, 0, 1, 1).data;
+      const a = aRaw / 255;
+      const hex = "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
+      return {
+        hex,
+        r,
+        g,
+        b,
+        a,
+        rgba: (alpha = a) => `rgba(${r}, ${g}, ${b}, ${alpha})`
+      };
+    }
+  } catch (_) {}
+
+  // Fallback if canvas is unavailable or failed
+  return { hex: "#3b82f6", r: 59, g: 130, b: 246, a: 1, rgba: (alpha = 1) => `rgba(59, 130, 246, ${alpha})` };
+}
+
+/**
+ * Resolves active DaisyUI semantic palette tokens (primary, secondary, accent, neutral, base, content)
+ * into deterministic hex/rgba colors.
+ */
+function resolveDaisyUIThemePalette(doc = (typeof document !== "undefined" ? document : null)) {
+  if (!doc) return {};
+
+  const probeContainer = doc.createElement("div");
+  probeContainer.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none;";
+  const roles = {
+    primary: "bg-primary",
+    secondary: "bg-secondary",
+    accent: "bg-accent",
+    neutral: "bg-neutral",
+    base100: "bg-base-100",
+    base200: "bg-base-200",
+    base300: "bg-base-300"
+  };
+
+  const nodes = {};
+  for (const [key, cls] of Object.entries(roles)) {
+    const el = doc.createElement("span");
+    el.className = cls;
+    probeContainer.appendChild(el);
+    nodes[key] = el;
+  }
+  const textNode = doc.createElement("span");
+  textNode.className = "text-base-content";
+  probeContainer.appendChild(textNode);
+  doc.body.appendChild(probeContainer);
+
+  const palette = {};
+  const getStyle = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle : () => ({ backgroundColor: "#3b82f6", color: "#1f2937" });
+
+  for (const [key, el] of Object.entries(nodes)) {
+    palette[key] = cssColorToHexAndRgba(getStyle(el).backgroundColor);
+  }
+  palette.content = cssColorToHexAndRgba(getStyle(textNode).color);
+  probeContainer.remove();
+  return palette;
+}
+
+/**
+ * Sanitizes Mermaid diagram source code to defend against Mermaid 11.4 markdown list parser bugs.
+ * Disallows starting subgraph or node titles with numbered list tokens (e.g. `1. `, `2. `).
+ */
+function sanitizeMermaidSource(source) {
+  if (!source || typeof source !== "string") return "";
+
+  // 1. Replace numbered list pattern in subgraphs: e.g. subgraph ["1. Title"] or subgraph sub1 ["1. Title"]
+  let sanitized = source.replace(
+    /(subgraph\s+(?:[a-zA-Z0-9_-]+\s*)?\[\s*")(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 2. Replace numbered list pattern in unquoted subgraphs: e.g. subgraph 1. Title
+  sanitized = sanitized.replace(
+    /(subgraph\s+)(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 3. Replace numbered list tokens in bracketed nodes: e.g. ["1. Step Description"]
+  sanitized = sanitized.replace(
+    /(\[\s*")(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 4. Replace numbered list tokens in unquoted node brackets: e.g. [1. Step Description]
+  sanitized = sanitized.replace(
+    /(\[\s*)(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  return sanitized;
+}
+
+/**
+ * Dynamic Mermaid theme re-rendering synced with DaisyUI theme palette.
+ */
+async function renderMermaidWithTheme(palette) {
+  if (typeof window === "undefined" || !window.mermaid) return;
+  const mermaidNodes = document.querySelectorAll(".mermaid");
+  if (!mermaidNodes.length) return;
+
+  mermaidNodes.forEach((node) => {
+    if (!node.dataset.mermaidSource) {
+      node.dataset.mermaidSource = node.textContent.trim();
+    }
+    node.removeAttribute("data-processed");
+    node.textContent = sanitizeMermaidSource(node.dataset.mermaidSource);
+  });
+
+  const base100 = palette.base100 ? palette.base100.hex : "#ffffff";
+  const base200 = palette.base200 ? palette.base200.hex : "#f3f4f6";
+  const base300 = palette.base300 ? palette.base300.hex : "#e5e7eb";
+  const content = palette.content ? palette.content.hex : "#1f2937";
+  const primary = palette.primary ? palette.primary.hex : "#3b82f6";
+  const secondary = palette.secondary ? palette.secondary.hex : "#6b7280";
+  const accent = palette.accent ? palette.accent.hex : "#10b981";
+
+  window.mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: "loose",
+    theme: "base",
+    themeVariables: {
+      background: base100,
+      primaryColor: base200,
+      primaryTextColor: content,
+      primaryBorderColor: primary,
+      secondaryColor: base300,
+      secondaryTextColor: content,
+      secondaryBorderColor: secondary,
+      tertiaryColor: base100,
+      tertiaryTextColor: content,
+      tertiaryBorderColor: accent,
+      lineColor: primary,
+      textColor: content,
+      mainBkg: base100,
+      nodeBorder: primary,
+      clusterBkg: base200,
+      clusterBorder: base300,
+      titleColor: content,
+      edgeLabelBackground: base200,
+      nodeTextColor: content
+    }
+  });
+
+  try {
+    await window.mermaid.run({ querySelector: ".mermaid" });
+  } catch (err) {
+    console.warn("[html-report] Mermaid render notice:", err);
+  }
+}
+
+/**
+ * Initializes the 32 DaisyUI theme color swatch picker dropdown.
+ */
+function initThemeDropdown() {
+  if (typeof document === "undefined") return;
+  const listEl = document.getElementById("theme-swatch-list");
+  if (!listEl) return;
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  listEl.innerHTML = "";
+
+  DAISYUI_THEMES.forEach((theme) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.setAttribute("data-theme", theme);
+    btn.setAttribute("data-set-theme", theme);
+    btn.className = "theme-swatch-item outline-base-content text-start outline-offset-4 rounded-btn w-full cursor-pointer font-sans";
+    btn.innerHTML = `
+      <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
+        <span class="grid grid-cols-5 grid-rows-3">
+          <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
+              <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
+            </svg>
+            <span class="flex-grow text-xs font-semibold capitalize">${theme}</span>
+            <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
+              <span class="bg-primary rounded-badge w-2 h-4"></span>
+              <span class="bg-secondary rounded-badge w-2 h-4"></span>
+              <span class="bg-accent rounded-badge w-2 h-4"></span>
+              <span class="bg-neutral rounded-badge w-2 h-4"></span>
+            </span>
+          </span>
+        </span>
+      </span>
+    `;
+    btn.addEventListener("click", () => setReportTheme(theme));
+    listEl.appendChild(btn);
+  });
+}
+
+/**
+ * Sets active DaisyUI theme dynamically and updates charts/Mermaid.
+ */
+async function setReportTheme(themeName) {
+  if (!DAISYUI_THEMES.includes(themeName)) return;
+  if (typeof document === "undefined") return;
+
+  document.documentElement.setAttribute("data-theme", themeName);
+  const activeLabel = document.getElementById("active-theme-label");
+  if (activeLabel) activeLabel.textContent = themeName;
+
+  document.querySelectorAll("#theme-swatch-list .theme-swatch-item").forEach((btn) => {
+    const check = btn.querySelector(".theme-check");
+    if (check) {
+      const isCurrent = btn.getAttribute("data-set-theme") === themeName;
+      check.classList.toggle("opacity-100", isCurrent);
+      check.classList.toggle("opacity-0", !isCurrent);
+    }
+  });
+
+  const palette = resolveDaisyUIThemePalette();
+
+  // Dynamic Chart.js color sync
+  if (typeof window !== "undefined" && window.reportCharts && Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((chart, idx) => {
+      if (chart?.data?.datasets) {
+        chart.data.datasets.forEach((ds, dsIdx) => {
+          const colorKey = dsIdx % 3 === 0 ? "primary" : dsIdx % 3 === 1 ? "secondary" : "accent";
+          const chosen = palette[colorKey] ? palette[colorKey].hex : "#3b82f6";
+          if (ds.borderColor) ds.borderColor = chosen;
+          if (ds.backgroundColor && typeof ds.backgroundColor === "string" && ds.backgroundColor.includes("rgba")) {
+            ds.backgroundColor = palette[colorKey] ? palette[colorKey].rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+          }
+        });
+        chart.update();
+      }
+    });
+  }
+
+  // Dynamic Mermaid sync
+  await renderMermaidWithTheme(palette);
+}
+
+/**
+ * Builds Table of Contents from main h1, h2, h3 elements.
+ */
+function initTOC() {
+  if (typeof document === "undefined") return;
+  const tocList = document.getElementById("report-toc-list");
+  if (!tocList) return;
+  const headings = document.querySelectorAll("main h1, main h2, main h3");
+  tocList.innerHTML = "";
+
+  headings.forEach((h) => {
+    if (!h.id) {
+      h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    }
+    const level = parseInt(h.tagName.substring(1), 10);
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = `#${h.id}`;
+    a.textContent = h.textContent.trim();
+    a.className = level === 1 ? "font-bold text-xs" : level === 2 ? "pl-3 text-xs" : "pl-6 text-2xs opacity-80";
+    a.addEventListener("click", () => {
+      const dropdown = document.getElementById("toc-dropdown");
+      if (dropdown) dropdown.removeAttribute("open");
+    });
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+}
+
+/**
+ * Horizontal Scrollbar -> Insufficient Space Detector.
+ * Flags elements where scrollWidth > clientWidth with [data-insufficient-space="true"].
+ */
+function checkInsufficientHorizontalSpace() {
+  if (typeof document === "undefined") return [];
+  const mainEl = document.querySelector("main");
+  if (!mainEl) return [];
+
+  const insufficient = [];
+  const candidates = mainEl.querySelectorAll("section, div, pre, table, .card, .overflow-x-auto, .gridjs-wrapper");
+
+  candidates.forEach((el) => {
+    const style = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle(el) : el.style;
+    if (style.display === "none" || style.visibility === "hidden" || el.clientWidth === 0) {
+      el.removeAttribute("data-insufficient-space");
+      return;
+    }
+    const hasHorizontalScrollbar =
+      el.scrollWidth > el.clientWidth + 2 &&
+      ["auto", "scroll"].includes(style.overflowX);
+
+    if (hasHorizontalScrollbar) {
+      el.setAttribute("data-insufficient-space", "true");
+      insufficient.push({
+        tag: el.tagName.toLowerCase(),
+        id: el.id || null,
+        className: typeof el.className === "string" ? el.className : "",
+        scrollWidth: el.scrollWidth,
+        clientWidth: el.clientWidth,
+        message: "Element has a horizontal scrollbar and does not have enough space"
+      });
+    } else {
+      el.removeAttribute("data-insufficient-space");
+    }
+  });
+
+  return insufficient;
+}
+
+/**
+ * Builds a standalone, inlined HTML snapshot with fetched CSS and JS bundled directly.
+ */
+async function buildInlinedHtmlSnapshot() {
+  if (typeof document === "undefined") return "";
+  const clone = document.documentElement.cloneNode(true);
+  clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
+
+  // Inline external stylesheets
+  const linkEls = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
+  await Promise.allSettled(
+    linkEls.map(async (linkEl) => {
+      const href = linkEl.getAttribute("href");
+      if (!href || (!href.startsWith("http://") && !href.startsWith("https://"))) return;
+      try {
+        const res = await fetch(href);
+        if (!res.ok) return;
+        let cssText = await res.text();
+        cssText = cssText.replace(/url\((['"]?)(?!data:|https?:|#)([^'")]+)\1\)/g, (match, quote, relPath) => {
+          try {
+            return `url("${new URL(relPath, href).href}")`;
+          } catch {
+            return match;
+          }
+        });
+        const styleEl = document.createElement("style");
+        styleEl.setAttribute("data-inlined-href", href);
+        styleEl.textContent = cssText;
+        linkEl.replaceWith(styleEl);
+      } catch (_) {}
+    })
+  );
+
+  // Inline external scripts
+  const scriptEls = Array.from(clone.querySelectorAll("script[src]"));
+  await Promise.allSettled(
+    scriptEls.map(async (scriptEl) => {
+      const src = scriptEl.getAttribute("src");
+      if (!src || (!src.startsWith("http://") && !src.startsWith("https://"))) return;
+      if (src.includes("cdn.tailwindcss.com")) {
+        const marker = document.createElement("script");
+        marker.setAttribute("data-inlined-src", src);
+        marker.textContent = "/* Tailwind CSS styles pre-compiled inline in <head> */";
+        scriptEl.replaceWith(marker);
+        return;
+      }
+      try {
+        const res = await fetch(src);
+        if (!res.ok) return;
+        const jsText = await res.text();
+        const inlineScript = document.createElement("script");
+        inlineScript.setAttribute("data-inlined-src", src);
+        inlineScript.textContent = jsText.replace(/<\/script>/gi, "<\\/script>");
+        scriptEl.replaceWith(inlineScript);
+      } catch (_) {}
+    })
+  );
+
+  return "<!DOCTYPE html>\n" + clone.outerHTML;
+}
+
+/**
+ * Triggers PDF export / print dialog.
+ */
+function exportReportPdf() {
+  if (typeof window === "undefined") return;
+  if (window.reportCharts && Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((c) => c?.resize?.());
+  }
+  if (window.reportLeafletMap && typeof window.reportLeafletMap.invalidateSize === "function") {
+    window.reportLeafletMap.invalidateSize();
+  }
+  window.print();
+}
+
+/**
+ * Initializes the download menu actions (HTML & PDF).
+ */
+function initDownloadButton() {
+  if (typeof document === "undefined") return;
+  const htmlBtn = document.getElementById("download-html-btn");
+  const pdfBtn = document.getElementById("download-pdf-btn");
+
+  if (htmlBtn) {
+    htmlBtn.addEventListener("click", async () => {
+      try {
+        htmlBtn.disabled = true;
+        const htmlContent = await buildInlinedHtmlSnapshot();
+        const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const docTitle = document.title || "html-report";
+        a.download = `${docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-standalone.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("[html-report] Failed to bundle inlined HTML snapshot:", err);
+      } finally {
+        htmlBtn.disabled = false;
+      }
+    });
+  }
+
+  if (pdfBtn) {
+    pdfBtn.addEventListener("click", () => {
+      const reportMode = document.documentElement.getAttribute("data-report-mode") || "interactive";
+      if (reportMode === "interactive") {
+        const modal = document.getElementById("pdf-not-ready-modal");
+        if (modal && typeof modal.showModal === "function") {
+          modal.showModal();
+          return;
+        }
+      }
+      exportReportPdf();
+    });
+  }
+}
+
+// Global browser window bindings
+if (typeof window !== "undefined") {
+  window.DAISYUI_THEMES = DAISYUI_THEMES;
+  window.cssColorToHexAndRgba = cssColorToHexAndRgba;
+  window.resolveDaisyUIThemePalette = resolveDaisyUIThemePalette;
+  window.sanitizeMermaidSource = sanitizeMermaidSource;
+  window.renderMermaidWithTheme = renderMermaidWithTheme;
+  window.initThemeDropdown = initThemeDropdown;
+  window.setReportTheme = setReportTheme;
+  window.initTOC = initTOC;
+  window.checkInsufficientHorizontalSpace = checkInsufficientHorizontalSpace;
+  window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
+  window.exportReportPdf = exportReportPdf;
+  window.initDownloadButton = initDownloadButton;
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
+    try { initTOC(); } catch (_) {}
+    try { initThemeDropdown(); } catch (_) {}
+    try { initDownloadButton(); } catch (_) {}
+    try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
+
+    const palette = resolveDaisyUIThemePalette();
+    try { await renderMermaidWithTheme(palette); } catch (_) {}
+    try { checkInsufficientHorizontalSpace(); } catch (_) {}
+    window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.__REPORT_READY__ = true;
+  });
+}
+
+// Node.js CommonJS exports for unit testing
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    DAISYUI_THEMES,
+    cssColorToHexAndRgba,
+    resolveDaisyUIThemePalette,
+    sanitizeMermaidSource,
+    renderMermaidWithTheme,
+    initThemeDropdown,
+    setReportTheme,
+    initTOC,
+    checkInsufficientHorizontalSpace,
+    buildInlinedHtmlSnapshot,
+    exportReportPdf,
+    initDownloadButton
+  };
+}
+
+  </script>
+</body>
+</html>

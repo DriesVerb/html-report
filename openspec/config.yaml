@@ -7,26 +7,24 @@ context: |
   - The repository is designed to be published and shared across any LLM/agent harness (Claude Code, Antigravity, Cursor, Codex, OpenCode, Gemini CLI, etc.) and symlinked locally into `.agents/skills/html-report` (or global agent skill directories).
   - Keep instructions in `SKILL.md` strictly LLM-agnostic (no vendor-specific tool names or proprietary tags) and use progressive disclosure so token usage stays minimal.
   - Changes must be built incrementally in small, verifiable steps driven by OpenSpec specs.
-
+  - Every OpenSpec change directory (`openspec/changes/<feature-name>/`) MUST contain a companion `index.html` report generated using `html-report` that visually presents the brainstorm and plan, links back to markdown artifacts (`proposal.md`, `design.md`, `tasks.md`, `specs/`), and visually displays the current state of the journey.
+  - Implementation requires a minimal task tracking file (`tasks.md`) in the same feature folder, continuously synced with `index.html`.
+  - When a feature is in progress, ALWAYS update `localhost:3000` (via `implementation-progress.html` synced to `skills/html-report/scripts/serve-report.mjs --port 3000`) so the user has immediate live visual feedback.
 
 # Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always state what is out of scope
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  proposal:
+    - Include or link to the companion index.html visualizing the brainstorm and plan
+  tasks:
+    - Keep tasks minimal, verifiable, and chunked by phase
+    - Sync task progress with the feature index.html journey state and ensure localhost:3000 reflects live progress
 
 # Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+operations:
+  apply:
+    guidance:
+      - Update the companion index.html as tasks in tasks.md are completed to reflect the current state of our journey
+      - Always update localhost:3000 (via implementation-progress.html) whenever a feature is in progress
+  archive:
+    guidance:
+      - Ensure index.html in the change folder reflects the final completed journey state before archiving

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><!-- {{TITLE}} --></title>
+
+  <!-- Content-Aware Favicon Emoticon -->
+  <!-- {{FAVICON}} -->
+
+  <!-- Core CDNs -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" crossorigin="anonymous"></script>
+
+  <!-- Optional Addon CDNs & Styles -->
+  <!-- {{HEAD_EXTRAS}} -->
+
+  <style>
+    :root {
+      --grid-bg-1: #ffffff;
+      --grid-bg-2: #f3f4f6;
+      --grid-border: #d1d5db;
+      --grid-text: #111827;
+      --grid-muted: #4b5563;
+      --grid-primary: #2563eb;
+    }
+    html, body {
+      max-width: 100%;
+    }
+    .mermaid {
+      color: inherit;
+    }
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+      background-color: transparent !important;
+    }
+    [data-insufficient-space="true"] {
+      outline: 2px dashed #f59e0b !important;
+      position: relative;
+    }
+    [data-insufficient-space="true"]::before {
+      content: "⚠ Insufficient horizontal space";
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      background: #f59e0b;
+      color: #111827;
+      border-radius: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+    /* Grid.js Full Light & Dark Mode DaisyUI Theme Integration */
+    .gridjs-container {
+      color: var(--grid-text) !important;
+      background-color: transparent !important;
+      font-size: 0.8125rem;
+      padding: 0 !important;
+    }
+    .gridjs-wrapper {
+      border-radius: 0.5rem;
+      border: 1px solid var(--grid-border) !important;
+      background-color: var(--grid-bg-1) !important;
+      box-shadow: none !important;
+    }
+    .gridjs-table {
+      width: 100% !important;
+      table-layout: fixed !important;
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    .gridjs-tbody,
+    tr.gridjs-tr {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    th.gridjs-th {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    th.gridjs-th:hover,
+    th.gridjs-th-sort:hover {
+      background-color: var(--grid-bg-2) !important;
+      filter: brightness(0.95);
+    }
+    td.gridjs-td {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    .gridjs-footer {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+    }
+    .gridjs-pages button {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border: 1px solid var(--grid-border) !important;
+    }
+    .gridjs-pages button.gridjs-currentPage {
+      background-color: var(--grid-primary) !important;
+      color: #ffffff !important;
+      border-color: var(--grid-primary) !important;
+      font-weight: 700 !important;
+    }
+  </style>
+</head>
+<body class="bg-base-200 text-base-content min-h-screen flex flex-col font-sans antialiased selection:bg-primary selection:text-primary-content">
+
+  <!-- Sticky DaisyUI Navbar -->
+  <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
+    <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
+      <!-- Left: Title -->
+      <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
+        <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
+          <!-- {{TITLE}} -->
+        </span>
+      </div>
+
+      <!-- Right: TOC + Theme Picker + Download Menu -->
+      <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
+        <!-- 1. TOC Dropdown -->
+        <div class="dropdown dropdown-end" id="toc-dropdown">
+          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            <span>Contents</span>
+          </div>
+          <ul id="report-toc-list" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-72 sm:w-80 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
+            <!-- Populated via initTOC() -->
+          </ul>
+        </div>
+
+        <!-- 2. DaisyUI 32-Themes Dropdown -->
+        <div class="dropdown dropdown-end" id="theme-dropdown">
+          <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
+            <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
+            <div class="flex items-center gap-0.5">
+              <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+              <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+            </div>
+          </div>
+          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
+            <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+              <!-- Populated via initThemeDropdown() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Icon-Only Download Dropdown -->
+        <div class="dropdown dropdown-end" id="download-dropdown">
+          <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Report" title="Download Report">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
+            </svg>
+          </div>
+          <ul id="download-dropdown-menu" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-64 p-2 shadow-2xl border border-base-300">
+            <li>
+              <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <span>Download as HTML</span>
+              </button>
+            </li>
+            <li>
+              <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                <div class="flex items-center gap-2.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span>Download as PDF</span>
+                </div>
+                <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Interactive PDF Warning Modal -->
+  <dialog id="pdf-not-ready-modal" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg text-warning flex items-center gap-2">
+        <span>⚠ Interactive Report Mode</span>
+      </h3>
+      <p class="py-4 text-xs">
+        This report is in interactive web-first mode. To generate a print-ready version with @media print rules, cover page, and PDF pagination, request:
+      </p>
+      <div class="bg-base-200 p-3 rounded font-mono text-2xs overflow-x-auto">
+        <code id="pdf-conversion-prompt-text">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</code>
+      </div>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-sm">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
+<!-- {{CONTENT}} -->
+  </main>
+
+  <!-- Minimal Centered Footer -->
+  <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
+    generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a>
+  </footer>
+
+  <!-- Runtime Scripts -->
+  <!-- {{RUNTIME_SCRIPT}} -->
+</body>
+</html>

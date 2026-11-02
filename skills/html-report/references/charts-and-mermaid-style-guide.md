@@ -165,7 +165,13 @@ Mermaid 11.4 enforces strict token parsing that will throw `Syntax error in text
    - **Wrong**: `participant Vault as .caller-requests/`.
 4. **Hex color format mandatory for `themeVariables`**:
    - DaisyUI v4 exports colors as modern `oklch(...)`. Passing `oklch(...)` to `mermaid.initialize({ themeVariables })` throws `Error: Unsupported color format: "oklch(...)"`.
-   - Always resolve theme colors through `cssColorToHexAndRgba()` and pass strict `#rrggbb` hex values (`palette.primary.hex`, `palette.base100.hex`).
+   - Always resolve theme colors through `cssColorToHexAndRgba()` (using an offscreen 1x1 `<canvas>` 2D context) and pass strict `#rrggbb` hex values (`palette.primary.hex`, `palette.base100.hex`). Never rely on regex `rgba?\(...` matching which fails against `oklch(...)`.
+5. **Never start subgraph titles or node labels with ordered list patterns (`1. `, `2. `)**:
+   - Mermaid 11 parses leading numbers with periods (e.g. `subgraph Input["1. User Request"]`) as markdown ordered list items, triggering `Unsupported markdown: list` syntax errors.
+   - **Correct**: Use hyphens or descriptive words: `subgraph Input["Step 1 - User Request"]` or `subgraph Input["[1] User Request"]`.
+   - **Wrong**: `subgraph Input["1. User Request"]`.
+6. **Badge & Card Header Responsive Boundary Defense**:
+   - Flex header rows containing badges and titles must use `flex flex-wrap items-center justify-between gap-2` with `shrink-0` on badges and `min-w-0 flex-1 break-words` on title containers. Without `shrink-0` and `flex-wrap`, badges overflow card boundaries on narrow viewports.
 
 ### 3.3 Dynamic DaisyUI Theme Re-Rendering for Mermaid
 Before running `mermaid.run()` for the first time, store the raw Mermaid definition in `el.dataset.mermaidSource = el.textContent.trim()`. When the DaisyUI theme changes:
@@ -184,7 +190,7 @@ async function renderMermaidWithTheme(palette) {
       node.dataset.mermaidSource = node.textContent.trim();
     }
     node.removeAttribute("data-processed");
-    node.innerHTML = node.dataset.mermaidSource;
+    node.textContent = node.dataset.mermaidSource;
   });
 
   window.mermaid.initialize({

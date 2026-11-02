@@ -16,7 +16,9 @@ description: >-
 
 # HTML Report Generation Skill (`html-report`)
 
-This skill guides the creation of rich, responsive, theme-adaptive, and print/PDF-verified HTML5 reports. Every report is a single `.html` file powered by a non-blocking 11-library CDN stack and verified across all Tailwind CSS breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) using Playwright before delivery.
+This skill guides the creation of rich, responsive, theme-adaptive, and print/PDF-verified HTML5 reports using a **fast deterministic pipeline**.
+
+Agents generate **only the semantic `<main>` content fragment** (stats, cards, charts, diagrams, tables), saving ~70% of output tokens. The deterministic builder CLI (`build-report.mjs`) stitches the fragment into the pre-bundled DaisyUI shell (`template-shell.html`) with client runtime (`report-runtime.js`) in <100ms, auto-detecting required CDNs. Lean Playwright verification (`--quick`) validates mobile and desktop responsiveness in <4 seconds.
 
 ---
 
@@ -25,96 +27,137 @@ This skill guides the creation of rich, responsive, theme-adaptive, and print/PD
 Before writing any HTML report, read the relevant reference guides in this skill directory:
 
 1. **[Architecture, 11-CDN Stack & DaisyUI Navbar Blueprint](./references/architecture-and-styling.md)** *(Required for all reports)*:
-   - Exact CDN links (`Tailwind CSS`, `DaisyUI v4 full + all 32 themes`, `Lucide Icons`, `Alpine.js`, `Chart.js`, `Mermaid`, `Leaflet`, `Grid.js`, `KaTeX`, `Marked`, `Highlight.js`) with `defer` non-blocking loading.
+   - Modular CDN loading: Core 4 baseline (`Tailwind CSS`, `DaisyUI v4 full + all 32 themes`, `Lucide Icons`, `Alpine.js`) with on-demand addons (`Chart.js`, `Mermaid`, `Leaflet`, `Grid.js`, `KaTeX`, `Marked`, `Highlight.js`) auto-detected by `build-report.mjs`.
+   - Pre-bundled **`assets/template-shell.html`** and **`assets/report-runtime.js`**.
    - Sticky **DaisyUI Navbar** structure (`print:hidden`, default theme always `data-theme="light"`):
      - **Left (`navbar-start`)**: Report Title (`#navbar-report-title`).
-     - **Right (`navbar-end`)**: `Contents` dropdown mapping `h1`/`h2`/`h3` `#id` links, **DaisyUI 32-Theme Dropdown** where each theme option displays its color scheme swatches (`bg-primary`, `bg-secondary`, `bg-accent`, `bg-neutral` inside `data-theme="<theme>"`), and an **icon-only Download dropdown** (`#download-dropdown`) with options to **Download as HTML** (`#download-html-btn`, inlines all CDNs) or **Download as PDF** (`#download-pdf-btn`, prints/exports with `@media print`).
-   - **`@media print` & Page 1 Cover + H1/H2/H3 TOC**: Navbar hidden in print (`display: none !important`), Page 1 (`#print-cover-page`) displays the report title and complete table of contents of all `h1`, `h2`, `h3` tags with `page-break-after: always`, interactive controls hidden (`.print-interactive-control`), and static print fallbacks shown (`.print-only-summary`).
-   - **Horizontal Scrollbar / Insufficient-Space Detector**: Indicates whenever any element has a horizontal scrollbar (`scrollWidth > clientWidth`) that it does not have enough space.
+     - **Right (`navbar-end`)**: `Contents` dropdown mapping `h1`/`h2`/`h3` `#id` links, **DaisyUI 32-Theme Dropdown** where each theme option displays its color scheme swatches (`bg-primary`, `bg-secondary`, `bg-accent`, `bg-neutral`), and an **icon-only Download dropdown** (`#download-dropdown`).
+   - Canvas 2D OKLCH color resolution and Mermaid numbered list syntax defense.
+   - Horizontal-scrollbar insufficient-space detector (`checkInsufficientHorizontalSpace()`).
 2. **[Charts (Chart.js) & Diagrams (Mermaid) Dedicated Style Guide](./references/charts-and-mermaid-style-guide.md)** *(Required whenever a report contains charts or Mermaid diagrams)*:
-   - Universal DaisyUI theme color resolver (`resolveDaisyUIThemePalette()`) that converts active `data-theme` colors into `#rrggbb` and `rgba(...)` values.
+   - Universal DaisyUI theme color resolver (`resolveDaisyUIThemePalette()`) using an offscreen 1x1 `<canvas>` 2D context to convert `oklch(...)` colors into `#rrggbb` hex and `rgba(...)`.
    - Dynamic re-theming for **Chart.js** canvases and **Mermaid** SVG diagrams when switching across any of the 32 DaisyUI themes.
    - Fixed-height responsive containers (`h-72 sm:h-80`) and print/PDF resize hooks.
+   - Defense against ordered list tokens (`1. `, `2. `) in Mermaid subgraphs.
 3. **[Full-Featured Showcase Example (`example.html`)](./examples/example.html)**:
-   - Complete working reference implementation explicitly listing the names of all 11 CDNs and demonstrating live examples of each.
+   - Complete working reference implementation explicitly demonstrating all 11 CDNs and CSV-driven interactive workflows.
+4. **[Caller-Aware Integration Registry (`caller-registry.mjs`)](./scripts/caller-registry.mjs)** *(Required when invoked by agent skills or CLI tools)*:
+   - Dedicated gitignored vault at `.caller-requests/` holding persistent caller profiles (`profiles/<caller-id>.md`) and ephemeral run payloads (`runs/<caller-id>/<run-id>/`).
+   - Zero-config auto-scaffolding, 10-run pruning, and non-destructive override hierarchy.
+   - Default output routing: `./report-<caller-id>.html` and `./report-<caller-id>.pdf`.
+5. **[Deterministic FSM Harness & Remediation Architecture (`harness-architecture.md`)](./references/harness-architecture.md)** *(Architecture & small-model remediation)*:
+   - Zero-dependency Node.js Finite State Machine lifecycle: `IDLE` &rarr; `VALIDATING` &rarr; `AUTO_FIXING` &rarr; `ASSEMBLING` &rarr; `VERIFYING` &rarr; `COMPLETED` / `REMEDIATING` / `FAILED`.
+   - Mechanical auto-fixes (stripping outer wrappers, generating heading IDs, wrapping bare tables).
+   - "Small Model First" prescriptive JSON error payloads with `instruction_for_agent` fields and bounded 3-attempt retries.
+
+---
+
+## Caller-Aware Skill Integration Workflow
+
+External agent skills (e.g. `memory-leak-debugging`, `debug-optimize-lcp`, `troubleshooting`), subagents, and automated CLI tools can invoke `html-report` as a shared visual rendering bus without repetitive styling instructions or workspace clutter:
+
+```
+html-report/ (Workspace Root)
+├── .caller-requests/                     <-- Gitignored vault
+│   ├── profiles/                         <-- Persistent caller rulebooks
+│   │   ├── memory-leak-debugging.md
+│   │   ├── debug-optimize-lcp.md
+│   │   └── default.md
+│   └── runs/                             <-- Ephemeral per-run payloads (pruned: max 10)
+│       └── memory-leak-debugging/
+│           ├── 2026-11-02T18-00-00Z/
+│           │   ├── payload.json
+│           │   └── overrides.json
+│           └── ... (max 10 runs)
+```
+
+### Caller Registry CLI Usage
+
+```bash
+# Resolve or auto-scaffold a caller profile
+node skills/html-report/scripts/caller-registry.mjs resolve <caller-id>
+
+# Extract the direct leaf caller ID from a nested agent chain
+node skills/html-report/scripts/caller-registry.mjs leaf teamwork/subagent/memory-leak-debugging
+# Output: memory-leak-debugging
+```
 
 ---
 
 ## Step-by-Step Workflow
 
-### Step 1: Clarify Report Mode (Interactive vs. Static), Favicon & Document Hierarchy
-- **Determine / Ask Report Mode (Interactive vs. Static)**:
-  - **Interactive Mode** (`<html lang="en" data-theme="light" data-report-mode="interactive">`): Best for rich browser applications, dashboards, sliders, dynamic filtering, CSV file loaders, or tabbed views.
-    - **RULE**: In Interactive Mode, **DO NOT** create print media queries or spend time focusing on PDF readiness. Instead, the navbar Download Dropdown's PDF option displays `"Not PDF-Ready"` and clicking it opens a notice modal (`#pdf-not-ready-modal`) suggesting a prompt to make it PDF ready:
-      ```text
-      Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC
-      ```
-  - **Static Mode** (`<html lang="en" data-theme="light" data-report-mode="static">`): Best for print-first documents, summaries, and publication-grade reports intended for physical printing or PDF export.
-    - **RULE**: **ONLY** when the report is designated as Static Mode should you create `@media print` queries, Page 1 Cover + TOC (`#print-cover-page`), static print fallback views, and run Playwright print media & multi-theme PDF verification.
-- **Content-Aware Favicon Emoticon**:
-  - Always include a `<link rel="icon">` in `<head>` featuring an emoji/emoticon embedded as an SVG data URI matching the document's content (e.g., `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>` for metrics/dashboards, `🗺️` for maps, `⚡` for benchmarks, `🧪` for experiments), with zero external assets.
-- **Document Hierarchy & Heading IDs**:
-  - Structure the report inside `<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">`.
-  - Assign every `<h1>`, `<h2>`, and `<h3>` element a unique, descriptive `id` attribute (e.g., `<h2 id="executive-summary" class="scroll-mt-20 ...">`) so the navbar **Contents** dropdown links directly to every section.
-  - Start `<main>` with a high-impact Hero / Executive Summary and DaisyUI `stats` KPI overview before diving into detailed sections.
+### Step 1: Emit the Semantic `<main>` Content Fragment Only
+- **DO NOT synthesize HTML wrappers, `<head>` tags, CDN `<script>` tags, navbar markup, or footer boilerplate.**
+- Emit *only* the semantic `<main>` content fragment (Hero banner, stats, visual containers, charts, tables, cards):
+  - Assign every `<h1>`, `<h2>`, and `<h3>` element a unique, descriptive `id` attribute (e.g., `<h2 id="executive-summary" class="scroll-mt-20 ...">`) so the navbar TOC dropdown maps them automatically. (If omitted, `--auto-fix` will automatically synthesize and inject unique IDs).
+  - Wrap card/hero headers in `flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full` with `min-w-0 flex-1 break-words` on the text column and `shrink-0` with `whitespace-nowrap` on badges/buttons.
+  - Save the semantic fragment to a temporary file (e.g. `report-fragment.html`).
 
-### Step 2: Assemble the Non-Blocking 11-CDN Stack, Favicon & Swapped DaisyUI Navbar
-- Follow **[architecture-and-styling.md](./references/architecture-and-styling.md)** to include the non-blocking CDN tags (`defer`), the content-aware favicon emoticon, `<html lang="en" data-theme="light" data-report-mode="..." class="scroll-smooth">` (default theme is always `light`), and the sticky DaisyUI `navbar` (`print:hidden`):
-  - **Left (`navbar-start`)**:
-    - The **Report Title** (`#navbar-report-title`) aligned to the left.
-  - **Right (`navbar-end`)**:
-    1. **Contents Dropdown (`#toc-dropdown`)** mapping all `h1`, `h2`, and `h3` headings via `#id` anchors.
-    2. **DaisyUI Theme Dropdown (`#theme-dropdown`)** populated with all 32 DaisyUI themes (defaulting to `light`), where each item previews its color scheme swatches (`bg-primary`, `bg-secondary`, `bg-accent`, `bg-neutral`) and updates `<html data-theme="...">`, Chart.js instances, Mermaid diagrams, and CSS components.
-    3. **Icon-Only Download Dropdown (`#download-dropdown`)** with an icon-only trigger button (`#download-dropdown-btn`, no text label) opening a dropdown menu (`#download-dropdown-menu`) with two options:
-       - **Download as HTML (`#download-html-btn`)**: Wired to `window.buildInlinedHtmlSnapshot()` so clicking it fetches and embeds all external CDN stylesheets and scripts directly into the downloaded `.html` file.
-       - **Download as PDF (`#download-pdf-btn`)**:
-         - In **Static Mode**: Triggers `window.exportReportPdf()` (`window.print()`).
-         - In **Interactive Mode**: Displays a badge `"Not PDF-Ready"` and opens `#pdf-not-ready-modal` suggesting the conversion prompt to add print media queries.
-  - **`@media print` & Page 1 Cover + H1/H2/H3 TOC (`#print-cover-page`)** *(Static Mode Only)*:
-    - When generating a Static report, hide `header, .navbar, .print\:hidden, .print-interactive-control, .gridjs-head, .gridjs-pages` (`display: none !important`), show `.print-only-summary` static fallbacks, and render `#print-cover-page` on Page 1 displaying the report title (`#print-cover-title`) and the complete Table of Contents of all `h1`, `h2`, and `h3` headings (`#print-toc-list`), followed by `break-after: page; page-break-after: always`.
+### Step 2: Unified Execution via State Machine Harness (`harness.mjs run`)
 
-### Step 3: Build Visuals, Maps, Tables, Math, Markdown, Code & CSV-Driven Controls with Zero Horizontal Scrollbars
-- Initialize each subsystem (`initMarkdown()`, `initTOC()`, `initThemeDropdown()`, `initDownloadButton()`, `initLucide()`, `initKaTeX()`, `initGridJs()`, `initCsvShowcase()`, `initCodeHighlight()`, `initCharts()`, `initMermaid()`, `initMaps()`, `checkInsufficientHorizontalSpace()`) inside independent `try / catch` and feature-detection guards.
-- **CSV-Driven HTML Reports**: Whenever an HTML report or form is built on the basis of a `.csv` file (such as `examples/example.csv`):
-  1. Visually **highlight** that the form/section is built around that CSV file (`data-csv-highlight="true"` banner + badge showing the CSV filename).
-  2. Start the CSV workspace **completely empty** (`csvLoaded: false`) until the **Load CSV** control at the top loads the CSV file (`#csv-file-input` or `#load-example-csv-btn`).
-  3. Place the **Search File Function naming the CSV** (`#csv-search-input`) and **custom DaisyUI + Alpine.js filter controls** (e.g., DaisyUI `select` dropdown, `join` segmented status buttons, `range` sliders, and `toggle`) directly **underneath** the Load CSV control.
-  4. Render the **Grid.js** table (`#csv-gridjs-table`) underneath the search/filter panel, and the **Chart.js** visualization (`#csvChart`) **underneath the Grid.js table**, all updating in lockstep when searching or filtering.
-- Design all components to fit cleanly across every Tailwind breakpoint (`sm`: 640px through `2xl`: 1536px) without horizontal scrollbars. Whenever an element develops a horizontal scrollbar (`scrollWidth > clientWidth`), `checkInsufficientHorizontalSpace()` marks it with `data-insufficient-space="true"` to indicate it does not have enough space.
-- **Card Header & Action Button Contract**: Always wrap card/hero header flex rows in `flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full` with `min-w-0 flex-1` and `break-words` on the text column, and `shrink-0 self-start sm:self-center` with `whitespace-nowrap` on the action button container to prevent buttons from overflowing or jumping out of the card.
-- **Mermaid 11.4 Strict Syntax Defense**:
-  - **No angle brackets (`<...>` or `&lt;...&gt;`)**: Mermaid parses angle brackets as custom unclosed HTML tags (`TAGSTART`). Always use curly braces `{param}` or square brackets `[param]`.
-  - **No unquoted comparison operators (`>`, `<`) in sequence diagrams**: `>` is treated as an arrow operator token. Write descriptive text (e.g., `exceeding 10`) or explicitly quote strings (`"runs > 10"`).
-  - **Hex colors mandatory for `themeVariables`**: DaisyUI v4 exports `oklch(...)`. Passing `oklch(...)` to `mermaid.initialize({ themeVariables })` throws `Unsupported color format: "oklch(...)"`. Always resolve colors to strict `#rrggbb` hex codes via `cssColorToHexAndRgba()`.
+The harness operates under the **Progressive Complexity Principle**, providing two distinct execution pathways:
 
-### Step 4: Run the Mandatory Playwright Multi-Breakpoint Verification (and Multi-Theme PDFs if Static)
-Before delivering the HTML report or its exported PDF to the user, run the Playwright verifier in `./playwright/`:
+#### Mode A: Standalone Self-Invocation (Zero Overhead & Zero Vault Clutter)
+When invoked without `--caller`, the harness operates with zero standalone overhead:
+- **Zero Vault Touches**: `.caller-requests/` is never read, created, or touched.
+- **Zero Profile Overhead**: Bypasses caller profile resolution, schema checking, and run archiving.
+- **Direct Deliverable**: Compiles directly to `./report.html` (or custom `--output`).
 
 ```bash
-# For Interactive reports (verifies breakpoints, CDNs, themes, and PDF readiness warning):
-node skills/html-report/playwright/verify-report.mjs <path-to-report.html> --mode interactive
-
-# For Static / Print-First reports (verifies breakpoints, @media print rules, and exports 5 mock PDFs):
-node skills/html-report/playwright/verify-report.mjs <path-to-report.html> --mode static --pdf <path-to-output.pdf>
+# Standalone execution (validates, auto-fixes, compiles, and verifies):
+node skills/html-report/scripts/harness.mjs run report-fragment.html --title "Report Title"
 ```
 
-The Playwright script checks:
-1. Default theme is always `light` (`data-theme="light"`), content-aware favicon emoticon is present in `<head>`, and all 5 Tailwind CSS breakpoints (`sm`: 640px, `md`: 768px, `lg`: 1024px, `xl`: 1280px, `2xl`: 1536px) have zero page-level overflow and zero element-level horizontal scrollbars (reporting `"Element does not have enough space"` if any element has a horizontal scrollbar).
-2. DaisyUI navbar layout: report title on the left (`navbar-start`) and `Contents` dropdown, 32-theme color-swatch dropdown, and icon-only Download dropdown (`#download-dropdown` with **Download as HTML** and **Download as PDF**) on the right (`navbar-end`).
-3. If `--mode interactive`: verifies that the PDF download option indicates "Not PDF-Ready" and provides `#pdf-not-ready-modal` suggesting the conversion prompt to add print media queries, while skipping print media assertion overhead.
-4. If `--mode static`: verifies `@media print` queries (`page.emulateMedia({ media: "print" })`), navbar hidden (`display: none`), Page 1 Cover (`#print-cover-page`) visible with report title + full `h1`/`h2`/`h3` TOC (`#print-toc-list`) and page break, interactive controls hidden, static print summary visible, and generates 5 mock PDFs across DaisyUI themes (`light`, `dark`, `cupcake`, `synthwave`, `nord`).
-5. Live DaisyUI theme switching across `data-theme` and Chart.js / Mermaid color updates, restoring to `light`.
-6. Self-contained CDN-inlining HTML Download (`window.buildInlinedHtmlSnapshot()`).
-7. Zero console errors or uncaught page exceptions.
-
-### Step 5: Auto-Open & Single-Tab Live-Reload Dev Server
-When report generation is complete, launch the local live-reload dev server:
+#### Mode B: Caller-Aware Integration Mode (`--caller <id>`)
+When invoked by external agent skills, subagents, or automated pipelines with `--caller <id>`:
+- **Profile Resolution & Scaffolding**: Auto-scaffolds or loads `.caller-requests/profiles/<caller-id>.md`.
+- **3-Tier Configuration Merge**: Merges `Runtime Overrides` (`--theme`, `--pdf`, `--mode`) > `Caller Profile Rules` > `Core Quality Baseline`.
+- **Contextual CWD Routing**: Defaults output deliverables to `./report-<caller-id>.html` (and `./report-<caller-id>.pdf` if `--pdf` is requested).
+- **Vault Trace Persistence & Pruning**: Writes `run.json` (state history, duration, attempt) and `trace.json` (prescriptive directives, lint issues, auto-fixes) into `.caller-requests/runs/<caller-id>/<run-id>/`, enforcing strict 10-run retention.
+- **Multi-Attempt Correlation**: Retries with `--attempt 2 --run-id <run-id>` update the existing run directory across remediation retries.
 
 ```bash
-node skills/html-report/scripts/serve-report.mjs <path-to-report.html>
+# Standard caller-aware invocation:
+node skills/html-report/scripts/harness.mjs run report-fragment.html --caller memory-leak-debugging
+
+# Caller-aware with custom theme override, PDF deliverable, and machine JSON envelope:
+node skills/html-report/scripts/harness.mjs run report-fragment.html \
+  --caller debug-optimize-lcp \
+  --theme synthwave \
+  --pdf \
+  --json
+
+# Multi-attempt remediation retry correlated to previous run:
+node skills/html-report/scripts/harness.mjs run report-fragment.html \
+  --caller memory-leak-debugging \
+  --attempt 2 \
+  --run-id <run-id>
 ```
 
-- **Auto-Open on Completion**: Automatically opens `http://localhost:3000/` in the user's browser.
-- **Single-Tab Live-Reload & Deduplication**:
-  - When the HTML file is updated while the browser tab is **already open**, the server broadcasts a Server-Sent Event (SSE) to reload the existing tab in place without launching redundant duplicate tabs.
-  - When the HTML file is updated while the tab was **closed** (zero active tabs detected), the server automatically reopens the report in a single browser tab.
+#### Deterministic FSM Lifecycle Summary
+1. **RESOLVING_CALLER** *(Caller mode only)*: Auto-scaffold/resolve profile, validate schema compatibility, and merge 3-tier configuration hierarchy.
+2. **VALIDATING**: Semantic pre-flight checks (boilerplate, heading IDs, responsive tables).
+3. **AUTO_FIXING**: Mechanical deterministic transforms with zero LLM round-trips.
+4. **ASSEMBLING (`build-report.mjs`)**: Stitches fragment into DaisyUI template shell, injecting profile/override theme and required CDNs in <100ms.
+5. **VERIFYING (`verify-report.mjs`)**: Playwright multi-breakpoint and console verification with optional PDF export.
+6. **RECORDING_RUN** *(Caller mode only)*: Persists `run.json`, `trace.json`, and `overrides.json` in caller vault and prunes to 10-run limit.
+7. **COMPLETED / REMEDIATING / FAILED**: Prints success message or high-contrast remediation banner with spoon-fed prescriptive instructions for small models.
+
+*(Low-Level Modular Alternative)*:
+If you need to execute compilation and verification separately:
+```bash
+# Assembly only:
+node skills/html-report/scripts/build-report.mjs --title "Report Title" --content report-fragment.html --output report.html --theme light
+
+# Verification only:
+node skills/html-report/playwright/verify-report.mjs report.html --quick
+```
+
+### Step 3: Auto-Open & Single-Tab Live-Reload Dev Server
+Launch the local live-reload server to view and iterate on the report:
+
+```bash
+node skills/html-report/scripts/serve-report.mjs report.html
+```
+
+- **Single-Tab Live-Reload**: Broadcasts SSE to refresh the existing browser tab in place upon disk updates without opening redundant tabs.
