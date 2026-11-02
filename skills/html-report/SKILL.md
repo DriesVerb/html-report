@@ -81,6 +81,11 @@ Before writing any HTML report, read the relevant reference guides in this skill
   3. Place the **Search File Function naming the CSV** (`#csv-search-input`) and **custom DaisyUI + Alpine.js filter controls** (e.g., DaisyUI `select` dropdown, `join` segmented status buttons, `range` sliders, and `toggle`) directly **underneath** the Load CSV control.
   4. Render the **Grid.js** table (`#csv-gridjs-table`) underneath the search/filter panel, and the **Chart.js** visualization (`#csvChart`) **underneath the Grid.js table**, all updating in lockstep when searching or filtering.
 - Design all components to fit cleanly across every Tailwind breakpoint (`sm`: 640px through `2xl`: 1536px) without horizontal scrollbars. Whenever an element develops a horizontal scrollbar (`scrollWidth > clientWidth`), `checkInsufficientHorizontalSpace()` marks it with `data-insufficient-space="true"` to indicate it does not have enough space.
+- **Card Header & Action Button Contract**: Always wrap card/hero header flex rows in `flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full` with `min-w-0 flex-1` and `break-words` on the text column, and `shrink-0 self-start sm:self-center` with `whitespace-nowrap` on the action button container to prevent buttons from overflowing or jumping out of the card.
+- **Mermaid 11.4 Strict Syntax Defense**:
+  - **No angle brackets (`<...>` or `&lt;...&gt;`)**: Mermaid parses angle brackets as custom unclosed HTML tags (`TAGSTART`). Always use curly braces `{param}` or square brackets `[param]`.
+  - **No unquoted comparison operators (`>`, `<`) in sequence diagrams**: `>` is treated as an arrow operator token. Write descriptive text (e.g., `exceeding 10`) or explicitly quote strings (`"runs > 10"`).
+  - **Hex colors mandatory for `themeVariables`**: DaisyUI v4 exports `oklch(...)`. Passing `oklch(...)` to `mermaid.initialize({ themeVariables })` throws `Unsupported color format: "oklch(...)"`. Always resolve colors to strict `#rrggbb` hex codes via `cssColorToHexAndRgba()`.
 
 ### Step 4: Run the Mandatory Playwright Multi-Breakpoint Verification (and Multi-Theme PDFs if Static)
 Before delivering the HTML report or its exported PDF to the user, run the Playwright verifier in `./playwright/`:

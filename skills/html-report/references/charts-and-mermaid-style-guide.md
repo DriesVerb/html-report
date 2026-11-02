@@ -148,7 +148,26 @@ function applyThemeToCharts(palette) {
 2. Keep node labels concise (max 4–6 words per node) and quote labels containing parentheses or special characters (`A["Ingestion Service (v2)"]`).
 3. Prefer `flowchart LR` or `flowchart TD` with at most 12 nodes per diagram for clarity.
 
-### 3.2 Dynamic DaisyUI Theme Re-Rendering for Mermaid
+### 3.2 Mermaid 11.4 Syntax Defense & Strict Parsing Rules
+Mermaid 11.4 enforces strict token parsing that will throw `Syntax error in text` or fail silently if common text tokens are unescaped:
+
+1. **Never use angle brackets (`<...>` or `&lt;...&gt;`) in node labels or messages**:
+   - Mermaid parses `<...>` as custom unclosed HTML tags, throwing `Parse error ... got 'TAGSTART'`.
+   - **Correct**: Use curly braces `{caller_id}`, square brackets `[run_id]`, or parentheses `(id)`.
+   - **Wrong**: `P["profiles/<caller>.md"]` or `Reg->>Vault: Check profiles/<caller_id>.md`.
+2. **Never use unquoted comparison operators (`>`, `<`) in sequence diagram messages**:
+   - In sequence diagrams, `>` is parsed as an arrow operator syntax token (`->>`), triggering a syntax error.
+   - **Correct**: Write descriptive English (`"Auto-prune runs exceeding 10"`) or explicitly quote the string (`"runs > 10"`).
+   - **Wrong**: `Reg->>Vault: Auto-prune runs > 10`.
+3. **Quote participant labels containing leading dots, slashes, or symbols**:
+   - Participant paths with leading dots or path separators (e.g. `.caller-requests/`) cause parser errors unless quoted or aliased.
+   - **Correct**: `participant Vault as ".caller-requests/"` or `participant Vault as Caller Vault`.
+   - **Wrong**: `participant Vault as .caller-requests/`.
+4. **Hex color format mandatory for `themeVariables`**:
+   - DaisyUI v4 exports colors as modern `oklch(...)`. Passing `oklch(...)` to `mermaid.initialize({ themeVariables })` throws `Error: Unsupported color format: "oklch(...)"`.
+   - Always resolve theme colors through `cssColorToHexAndRgba()` and pass strict `#rrggbb` hex values (`palette.primary.hex`, `palette.base100.hex`).
+
+### 3.3 Dynamic DaisyUI Theme Re-Rendering for Mermaid
 Before running `mermaid.run()` for the first time, store the raw Mermaid definition in `el.dataset.mermaidSource = el.textContent.trim()`. When the DaisyUI theme changes:
 1. Restore each element's raw source (`el.removeAttribute("data-processed"); el.textContent = el.dataset.mermaidSource;`).
 2. Re-initialize `mermaid.initialize({ startOnLoad: false, theme: "base", themeVariables: { ... } })` using `#rrggbb` hex values from `resolveDaisyUIThemePalette()`.
