@@ -11,12 +11,12 @@ export const ADDON_REGISTRY = {
   charts: {
     name: "Chart.js",
     signatures: [/<canvas\b/i, /chart\.js/i, /data-chart/i],
-    head: `<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" crossorigin="anonymous"></script>`
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>`
   },
   mermaid: {
     name: "Mermaid",
     signatures: [/class=["'][^"']*\bmermaid\b/i, /<pre\s+class=["']mermaid["']/i],
-    head: `<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" crossorigin="anonymous"></script>`
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>`
   },
   gridjs: {
     name: "Grid.js",

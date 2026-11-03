@@ -139,6 +139,40 @@ function applyThemeToCharts(palette) {
 }
 ```
 
+### 2.3 Critical Execution Rules: Script Placement, Deferred CDN Polling & Offline Fallbacks
+
+> [!CAUTION]
+> **Never place `<script>` tags after `</main>` in content fragments.**
+> `build-report.mjs` extracts content using `content.match(/<main[^>]*>([\s\S]*?)<\/main>/i)`. Any `<script>` tag placed outside `</main>` is silently stripped, leaving canvases completely blank without throwing errors.
+
+1. **Mandatory Script Enclosure:** Always place initialization `<script>` tags **inside** `<main>...</main>`.
+2. **Deferred CDN Auto-Polling:** Because Chart.js CDN scripts load with `defer`, inline code can execute before `window.Chart` exists. Never write single-tick `if (typeof Chart === 'undefined') return;`. Always use self-polling:
+   ```javascript
+   (function initChartWithPolling() {
+     let attempts = 0;
+     function tryInit() {
+       const canvas = document.getElementById("myChart");
+       if (!canvas) return;
+       if (typeof Chart === "undefined") {
+         if (++attempts < 60) setTimeout(tryInit, 60);
+         return;
+       }
+       if (canvas.__initialized) return;
+       canvas.__initialized = true;
+       const chart = new Chart(canvas, { /* config */ });
+       window.reportCharts = window.reportCharts || [];
+       window.reportCharts.push(chart);
+     }
+     if (document.readyState === "loading") {
+       document.addEventListener("DOMContentLoaded", tryInit);
+     } else {
+       tryInit();
+     }
+     window.addEventListener("load", tryInit);
+   })();
+   ```
+3. **Mandatory Offline Visual Fallback:** Never leave a `<canvas>` alone in a card. Always accompany canvas charts with a zero-JS visual scorecard, CSS bar breakdown, or structured table. If a user is offline or an air-gapped firewall blocks the CDN, the card must still present the data clearly and never display as an empty white card.
+
 ---
 
 ## 3. Mermaid Diagram Standards

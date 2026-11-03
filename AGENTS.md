@@ -30,6 +30,7 @@ Whenever we brainstorm, plan, or use **OpenSpec** in this repository, agents and
     3. `Implementing` (active coding against `tasks.md`)
     4. `Verifying` (running test suites and validation)
     5. `Shipped / Archived` (feature complete and merged)
+    * *Stepper Formatting Standard:* Always use `<div class="w-full overflow-x-auto"><ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">...</ul></div>`. Never use `steps-vertical sm:steps-horizontal` because Tailwind CDN does not generate responsive variants for DaisyUI component classes.
   * **Live Progress Metrics**: Displays task completion percentages and status counts (Total, In Progress, Completed, Remaining).
   * **Connected Task Checklist**: An interactive or formatted task progress section matching `tasks.md`.
 * **Continuous Updates to `localhost:3000`**:

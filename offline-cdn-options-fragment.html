@@ -1,0 +1,817 @@
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+  <!-- HERO SECTION -->
+  <header class="card bg-base-100 shadow-xl border border-base-300 overflow-hidden">
+    <div class="card-body p-6 sm:p-8">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-4 w-full">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="badge badge-primary font-mono text-xs font-semibold uppercase tracking-wider">Zero Node Modules</span>
+            <span class="badge badge-secondary font-mono text-xs font-semibold uppercase tracking-wider">Air-Gapped Architecture</span>
+            <span class="badge badge-accent font-mono text-xs font-semibold uppercase tracking-wider">Security Hardened</span>
+          </div>
+          <h1 id="executive-summary" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-base-content scroll-mt-20">
+            Zero-Dependency CDN Architecture: Option 1 vs. Option 2
+          </h1>
+          <p class="text-base text-base-content/70 mt-2 max-w-3xl leading-relaxed">
+            Eliminating <code>node_modules</code> entirely while delivering high-speed, 100% offline-capable HTML reports. 
+            A comprehensive architectural and cybersecurity comparison between a <strong>Pure Native Node.js Asset Server</strong> (Option 1) and a <strong>Fully Inlined Single-File Report</strong> (Option 2).
+          </p>
+        </div>
+        <div class="shrink-0 flex items-center gap-2">
+          <div class="badge badge-outline badge-lg font-mono font-bold text-success border-success gap-1.5 py-4 px-4">
+            <i data-lucide="shield-check" class="w-4 h-4 text-success"></i>
+            Air-Gapped & Audited
+          </div>
+        </div>
+      </div>
+
+      <!-- KEY METRICS BANNER -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-base-200">
+        <div class="bg-base-200/60 rounded-xl p-4 text-center border border-base-300">
+          <div class="text-xs uppercase font-bold text-base-content/60 tracking-wider">Node Modules Required</div>
+          <div class="text-2xl sm:text-3xl font-black text-primary mt-1">0</div>
+          <div class="text-xs text-base-content/60 mt-1 font-medium">Both options: zero npm packages</div>
+        </div>
+        <div class="bg-base-200/60 rounded-xl p-4 text-center border border-base-300">
+          <div class="text-xs uppercase font-bold text-base-content/60 tracking-wider">Startup Latency</div>
+          <div class="text-2xl sm:text-3xl font-black text-secondary mt-1">&lt;2ms vs 0ms</div>
+          <div class="text-xs text-base-content/60 mt-1 font-medium">Option 1: &lt;2ms | Option 2: instant</div>
+        </div>
+        <div class="bg-base-200/60 rounded-xl p-4 text-center border border-base-300">
+          <div class="text-xs uppercase font-bold text-base-content/60 tracking-wider">Network Attack Surface</div>
+          <div class="text-2xl sm:text-3xl font-black text-accent mt-1">1 Port vs 0</div>
+          <div class="text-xs text-base-content/60 mt-1 font-medium">Opt 1: 127.0.0.1 | Opt 2: 0 listening</div>
+        </div>
+        <div class="bg-base-200/60 rounded-xl p-4 text-center border border-base-300">
+          <div class="text-xs uppercase font-bold text-base-content/60 tracking-wider">Supply Chain Exposure</div>
+          <div class="text-2xl sm:text-3xl font-black text-success mt-1">Pinned</div>
+          <div class="text-xs text-base-content/60 mt-1 font-medium">Zero external runtime fetches</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ARCHITECTURAL VISUALIZATION SECTION -->
+  <section class="space-y-6">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+      <div class="min-w-0 flex-1">
+        <h2 id="architectural-diagrams" class="text-2xl font-bold tracking-tight text-base-content scroll-mt-20">
+          System Dataflow Visualizations
+        </h2>
+        <p class="text-sm text-base-content/70 mt-1">
+          How assets are resolved and delivered to the browser under both zero-<code>node_modules</code> models.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- OPTION 1 MERMAID -->
+      <div class="card bg-base-100 shadow-lg border border-base-300">
+        <div class="card-body p-6">
+          <div class="flex items-center justify-between gap-2 border-b border-base-200 pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="badge badge-primary font-bold">Option 1</span>
+              <h3 id="option-1-flow" class="text-lg font-bold text-base-content scroll-mt-20">Native Node.js CDN Server</h3>
+            </div>
+            <span class="badge badge-outline text-xs font-mono">node:http + node:zlib</span>
+          </div>
+          <p class="text-xs text-base-content/70 mb-4">
+            A single zero-dependency Node script serves pre-cached vendor libraries from disk over HTTP loopback or LAN.
+          </p>
+          <div class="overflow-x-auto bg-base-200/40 p-4 rounded-xl border border-base-300/60">
+            <div class="mermaid">
+flowchart TD
+    subgraph Host["Local Host / Private LAN"]
+        Vendored["Vendor Folder\n(./vendor-cdn/*.min.js)"]
+        Server["Pure Node Server\n(node:http + node:zlib)\nZero node_modules (&lt;2ms)"]
+        Vendored -->|Zero-Copy Stream| Server
+    end
+    
+    subgraph Clients["Browser Contexts"]
+        ReportA["Report A\n(index.html)"]
+        ReportB["Report B\n(metrics.html)"]
+        BrowserCache[("Browser Cache\nETag / 304 Not Mod")]
+    end
+    
+    ReportA -->|"GET http://127.0.0.1:8080/cdn/*"| Server
+    ReportB -->|"GET http://127.0.0.1:8080/cdn/*"| Server
+    Server -->|"200 OK (Brotli/Gzip) / 304"| BrowserCache
+    BrowserCache -.->|"Instant Cached Load"| ReportA
+    BrowserCache -.->|"Instant Cached Load"| ReportB
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION 2 MERMAID -->
+      <div class="card bg-base-100 shadow-lg border border-base-300">
+        <div class="card-body p-6">
+          <div class="flex items-center justify-between gap-2 border-b border-base-200 pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="badge badge-secondary font-bold">Option 2</span>
+              <h3 id="option-2-flow" class="text-lg font-bold text-base-content scroll-mt-20">Full Inlined Single File</h3>
+            </div>
+            <span class="badge badge-outline text-xs font-mono">Zero Network / Zero Port</span>
+          </div>
+          <p class="text-xs text-base-content/70 mb-4">
+            The build step inlines the full CSS and JS bundles directly into the HTML document. No network activity whatsoever.
+          </p>
+          <div class="overflow-x-auto bg-base-200/40 p-4 rounded-xl border border-base-300/60">
+            <div class="mermaid">
+flowchart TD
+    subgraph BuildStep["Zero-Dep Build Engine"]
+        SourceHTML["Semantic &lt;main&gt;\nFragment"]
+        VendorAssets["Local Asset Vault\n(CSS & JS files)"]
+        Stitcher["build-report.mjs\n(node:fs inline stitching)"]
+        SourceHTML --> Stitcher
+        VendorAssets --> Stitcher
+    end
+
+    subgraph OutputArtifact["Portable Air-Gapped Deliverable"]
+        SingleFile["Single report.html\n(&lt;style&gt; + &lt;script&gt; inlined)\n~1.8MB Total"]
+    end
+    Stitcher -->|Generates| SingleFile
+
+    subgraph Delivery["Zero-Network Execution"]
+        OfflinePC["Air-Gapped Workstation\n(USB / Email / AirDrop)"]
+        Browser["Any Web Browser\n(file:///report.html)"]
+        SingleFile --> OfflinePC --> Browser
+    end
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEEP-DIVE CARDS -->
+  <section class="space-y-6">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+      <div class="min-w-0 flex-1">
+        <h2 id="deep-dive-comparison" class="text-2xl font-bold tracking-tight text-base-content scroll-mt-20">
+          In-Depth Architecture Analysis
+        </h2>
+        <p class="text-sm text-base-content/70 mt-1">
+          Detailed technical breakdown, operational characteristics, strengths, and constraints of each option.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- OPTION 1 CARD -->
+      <div class="card bg-base-100 shadow-lg border border-base-300">
+        <div class="card-body p-6 sm:p-8 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-lg">
+              1
+            </div>
+            <div>
+              <h3 id="option-1-details" class="text-xl font-bold text-base-content scroll-mt-20">Option 1: Pure Node.js Standard Library CDN Server</h3>
+              <p class="text-xs text-base-content/60 font-mono">scripts/local-cdn.mjs &bull; zero npm install</p>
+            </div>
+          </div>
+
+          <p class="text-sm text-base-content/80 leading-relaxed">
+            You vendor the required libraries (DaisyUI, Tailwind, Chart.js, etc.) once into a local folder. A lightweight 60-line script using Node's native <code>node:http</code>, <code>node:fs</code>, and <code>node:zlib</code> serves them with HTTP caching, ETag validation, and Brotli/Gzip compression.
+          </p>
+
+          <div class="bg-base-200 rounded-xl p-4 font-mono text-xs space-y-2 border border-base-300">
+            <div class="text-primary font-bold">Execution Blueprint:</div>
+            <div class="text-base-content/80"># 1. Start the zero-dependency CDN (cold startup &lt;2ms)</div>
+            <div class="text-success font-semibold">node scripts/local-cdn.mjs --port 8080</div>
+            <div class="text-base-content/80"># 2. Reports reference assets locally:</div>
+            <div class="text-base-content/60">&lt;script src="http://127.0.0.1:8080/cdn/chart.js"&gt;&lt;/script&gt;</div>
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <div class="text-sm font-bold text-base-content flex items-center gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4 text-success"></i> Key Advantages
+            </div>
+            <ul class="text-xs space-y-1.5 text-base-content/70 list-disc list-inside">
+              <li><strong>Tiny HTML Reports:</strong> Individual HTML files remain tiny (~30KB–80KB) because they link to shared URLs.</li>
+              <li><strong>Browser Cache Multiplier:</strong> If an operator opens 20 different reports, the browser downloads the 16 libraries once; the next 19 load instantaneously from cache.</li>
+              <li><strong>Team/LAN Distribution:</strong> Can run on one machine in a private lab and serve assets to all workstations on the subnet.</li>
+              <li><strong>Zero Dependencies:</strong> No <code>node_modules</code>, zero supply-chain risk.</li>
+            </ul>
+
+            <div class="text-sm font-bold text-base-content flex items-center gap-2 pt-2">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-warning"></i> Limitations
+            </div>
+            <ul class="text-xs space-y-1.5 text-base-content/70 list-disc list-inside">
+              <li>Requires a background process running (e.g. on port 8080).</li>
+              <li>Double-clicking an HTML file without the server running results in unstyled reports.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION 2 CARD -->
+      <div class="card bg-base-100 shadow-lg border border-base-300">
+        <div class="card-body p-6 sm:p-8 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center font-bold text-lg">
+              2
+            </div>
+            <div>
+              <h3 id="option-2-details" class="text-xl font-bold text-base-content scroll-mt-20">Option 2: Full Inlined Single-File Report</h3>
+              <p class="text-xs text-base-content/60 font-mono">build-report.mjs --inline &bull; zero network</p>
+            </div>
+          </div>
+
+          <p class="text-sm text-base-content/80 leading-relaxed">
+            The build script reads the vendor files from disk and injects them directly into <code>&lt;style&gt;</code> and <code>&lt;script&gt;</code> tags inside the generated HTML report. The result is a 100% self-contained document that needs no internet, no server, and no port.
+          </p>
+
+          <div class="bg-base-200 rounded-xl p-4 font-mono text-xs space-y-2 border border-base-300">
+            <div class="text-secondary font-bold">Execution Blueprint:</div>
+            <div class="text-base-content/80"># 1. Build self-contained artifact in &lt;100ms</div>
+            <div class="text-success font-semibold">node scripts/build-report.mjs --inline --output report.html</div>
+            <div class="text-base-content/80"># 2. Open anywhere with zero network:</div>
+            <div class="text-base-content/60">xdg-open report.html # Opens directly via file://</div>
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <div class="text-sm font-bold text-base-content flex items-center gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4 text-success"></i> Key Advantages
+            </div>
+            <ul class="text-xs space-y-1.5 text-base-content/70 list-disc list-inside">
+              <li><strong>Zero Running Processes:</strong> No background Node server, no daemon, no port allocations.</li>
+              <li><strong>Maximum Portability:</strong> A single file can be emailed, transferred via USB stick, or archived permanently in compliance vaults.</li>
+              <li><strong>Double-Click Safe:</strong> Works over <code>file:///</code> protocol on any browser without server dependencies.</li>
+              <li><strong>Zero Dependencies:</strong> Built entirely with native Node.js string operations.</li>
+            </ul>
+
+            <div class="text-sm font-bold text-base-content flex items-center gap-2 pt-2">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-warning"></i> Limitations
+            </div>
+            <ul class="text-xs space-y-1.5 text-base-content/70 list-disc list-inside">
+              <li>Larger HTML file size (~1.5MB–3.5MB depending on which of the 16 CDNs are active).</li>
+              <li>Assets are duplicated in each HTML file rather than shared across reports in browser cache.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- COMPREHENSIVE CYBERSECURITY ARCHITECTURE  -->
+  <!-- ========================================== -->
+  <section class="space-y-6">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="badge badge-error font-mono text-xs uppercase font-bold">Threat Modeling</span>
+          <span class="badge badge-warning font-mono text-xs uppercase font-bold">OPSEC</span>
+        </div>
+        <h2 id="security-architecture" class="text-2xl font-bold tracking-tight text-base-content scroll-mt-20">
+          Cybersecurity & Attack Surface Analysis
+        </h2>
+        <p class="text-sm text-base-content/70 mt-1">
+          Each deployment model shifts the trust boundary and introduces distinct vulnerability vectors across the supply chain, local network, and browser runtime.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECURITY THREAT MATRIX TABLE -->
+    <div class="card bg-base-100 shadow-xl border border-base-300 overflow-hidden">
+      <div class="p-6 border-b border-base-200 flex items-center justify-between">
+        <div>
+          <h3 id="threat-matrix" class="text-xl font-bold text-base-content scroll-mt-20">Comprehensive Threat Comparison Matrix</h3>
+          <p class="text-xs text-base-content/60 mt-0.5">Evaluating trust boundaries, attack vectors, and operational liabilities</p>
+        </div>
+        <span class="badge badge-outline font-mono text-xs">4 Architectures Audited</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table table-zebra w-full text-xs sm:text-sm">
+          <thead>
+            <tr class="bg-base-200 text-base-content font-bold">
+              <th>Threat Vector / Dimension</th>
+              <th class="text-error font-black">Public Third-Party CDN</th>
+              <th class="text-warning font-black">Fastify CDN (Node Modules)</th>
+              <th class="text-primary font-black">Option 1: Native Node CDN</th>
+              <th class="text-secondary font-black">Option 2: Single-File Inlining</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-bold">Supply-Chain Attacks</td>
+              <td><span class="badge badge-error text-xs font-bold">High Risk</span><br/><span class="text-2xs text-base-content/60">Third-party edge compromise</span></td>
+              <td><span class="badge badge-warning text-xs font-bold">Medium Risk</span><br/><span class="text-2xs text-base-content/60">Transitive npm dependencies</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Very Low</span><br/><span class="text-2xs text-base-content/60">Local pinned vendor files</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Very Low</span><br/><span class="text-2xs text-base-content/60">Local pinned vendor files</span></td>
+            </tr>
+            <tr>
+              <td class="font-bold">Path Traversal (Arbitrary File Read)</td>
+              <td><span class="badge badge-ghost text-xs">N/A</span><br/><span class="text-2xs text-base-content/60">Hosted remotely</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Safe</span><br/><span class="text-2xs text-base-content/60">Protected by @fastify/static</span></td>
+              <td><span class="badge badge-warning text-xs font-bold">Critical Implementation Risk</span><br/><span class="text-2xs text-base-content/60">Requires path.normalize & startsWith checks</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Immune</span><br/><span class="text-2xs text-base-content/60">No server running</span></td>
+            </tr>
+            <tr>
+              <td class="font-bold">Network Attack Surface</td>
+              <td><span class="badge badge-success text-xs">Zero Inbound</span><br/><span class="text-2xs text-base-content/60">Client outbound only</span></td>
+              <td><span class="badge badge-warning text-xs">Open Port</span><br/><span class="text-2xs text-base-content/60">Background Node daemon</span></td>
+              <td><span class="badge badge-warning text-xs">Open Port</span><br/><span class="text-2xs text-base-content/60">Port 8080 (must bind 127.0.0.1)</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Zero Inbound & Outbound</span><br/><span class="text-2xs text-base-content/60">0 ports open, file:// ready</span></td>
+            </tr>
+            <tr>
+              <td class="font-bold">OPSEC & Metadata Exfiltration</td>
+              <td><span class="badge badge-error text-xs font-bold">Active Leakage</span><br/><span class="text-2xs text-base-content/60">Leaks client IP, user-agent, referer</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Zero Outbound</span><br/><span class="text-2xs text-base-content/60">Internal loopback/LAN only</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Zero Outbound</span><br/><span class="text-2xs text-base-content/60">Internal loopback/LAN only</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Zero Outbound</span><br/><span class="text-2xs text-base-content/60">100% offline isolation</span></td>
+            </tr>
+            <tr>
+              <td class="font-bold">Content Security Policy (CSP)</td>
+              <td><span class="badge badge-warning text-xs">Requires Whitelist</span><br/><span class="text-2xs text-base-content/60">cdn.jsdelivr.net etc.</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Strict CSP</span><br/><span class="text-2xs text-base-content/60">Full header control</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Strict CSP</span><br/><span class="text-2xs text-base-content/60">Full header control</span></td>
+              <td><span class="badge badge-error text-xs font-bold">Triggers 'unsafe-inline'</span><br/><span class="text-2xs text-base-content/60">Or requires SHA-256 script hashes</span></td>
+            </tr>
+            <tr>
+              <td class="font-bold">DNS Rebinding / Cross-Origin Probing</td>
+              <td><span class="badge badge-ghost text-xs">Low</span><br/><span class="text-2xs text-base-content/60">Standard public domain</span></td>
+              <td><span class="badge badge-warning text-xs">Possible</span><br/><span class="text-2xs text-base-content/60">If bound to 0.0.0.0 / open CORS</span></td>
+              <td><span class="badge badge-warning text-xs">Possible</span><br/><span class="text-2xs text-base-content/60">If bound to 0.0.0.0 / open CORS</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Immune</span><br/><span class="text-2xs text-base-content/60">No HTTP listener</span></td>
+            </tr>
+            <tr>
+              <td class="font-bold">Process Privilege / RCE Exposure</td>
+              <td><span class="badge badge-ghost text-xs">None</span><br/><span class="text-2xs text-base-content/60">Static browser client</span></td>
+              <td><span class="badge badge-warning text-xs">Vulnerable</span><br/><span class="text-2xs text-base-content/60">If run as root with unpatched npm CVE</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Minimal</span><br/><span class="text-2xs text-base-content/60">Zero npm code, tiny attack surface</span></td>
+              <td><span class="badge badge-success text-xs font-bold">Immune</span><br/><span class="text-2xs text-base-content/60">No running daemon</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 4 DEEP-DIVE SECURITY CARDS (2x2 GRID) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- THREAT 1: PUBLIC CDN -->
+      <div class="card bg-base-100 shadow-lg border border-base-300">
+        <div class="card-body p-6 space-y-3">
+          <div class="flex items-center gap-2 text-error font-bold text-base">
+            <i data-lucide="globe" class="w-5 h-5"></i>
+            <h3 id="public-cdn-risks" class="text-base font-bold scroll-mt-20">1. Public Third-Party CDN Vectors</h3>
+          </div>
+          <p class="text-xs text-base-content/70 leading-relaxed">
+            Relying on external hosts (<code>cdn.jsdelivr.net</code>, <code>cdnjs.com</code>) outsources operational uptime and client trust to third parties.
+          </p>
+          <div class="bg-base-200/80 rounded-xl p-3 text-xs space-y-2 border border-base-300">
+            <div><strong class="text-error">&bull; Poisoned CDN Edge:</strong> If a CDN maintainer account or cache is breached, injected JavaScript executes on the user machine with the report's origin privileges.</div>
+            <div><strong class="text-error">&bull; OPSEC / Intelligence Leak:</strong> Classified or internal networks leak IP addresses, browser configurations, and document titles via the HTTP <code>Referer</code> header on every asset fetch.</div>
+            <div><strong class="text-warning">&bull; Essential Mitigation:</strong> Enforce Subresource Integrity (SRI) hashes (<code>integrity="sha384-..."</code>) on all tags.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THREAT 2: FASTIFY DEPENDENCIES -->
+      <div class="card bg-base-100 shadow-lg border border-base-300">
+        <div class="card-body p-6 space-y-3">
+          <div class="flex items-center gap-2 text-warning font-bold text-base">
+            <i data-lucide="package-x" class="w-5 h-5"></i>
+            <h3 id="fastify-security-risks" class="text-base font-bold scroll-mt-20">2. Fastify & `node_modules` Vectors</h3>
+          </div>
+          <p class="text-xs text-base-content/70 leading-relaxed">
+            Introducing full server frameworks imports dozens of transitive packages into the air-gapped environment.
+          </p>
+          <div class="bg-base-200/80 rounded-xl p-3 text-xs space-y-2 border border-base-300">
+            <div><strong class="text-warning">&bull; Transitive Supply Chain:</strong> Packages like <code>fastify</code>, <code>@fastify/static</code>, and <code>@fastify/compress</code> pull in dependency trees subject to periodic prototype pollution and ReDoS CVEs.</div>
+            <div><strong class="text-warning">&bull; Air-Gapped Maintenance:</strong> Security patches cannot be automatically installed via <code>npm audit</code> in disconnected environments, leaving known vulnerabilities unpatched indefinitely.</div>
+            <div><strong class="text-error">&bull; Process Escalation:</strong> If executed under a privileged account (e.g. root in Docker), framework flaws can compromise the host machine.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THREAT 3: OPTION 1 SERVER HARDENING -->
+      <div class="card bg-base-100 shadow-lg border border-base-300">
+        <div class="card-body p-6 space-y-3">
+          <div class="flex items-center gap-2 text-primary font-bold text-base">
+            <i data-lucide="server-crash" class="w-5 h-5"></i>
+            <h3 id="option-1-security-risks" class="text-base font-bold scroll-mt-20">3. Option 1: Native Node Server Implementation Risks</h3>
+          </div>
+          <p class="text-xs text-base-content/70 leading-relaxed">
+            Writing a zero-dependency server means you must manually implement the defenses that web frameworks handle automatically.
+          </p>
+          <div class="bg-base-200/80 rounded-xl p-3 text-xs space-y-2 border border-base-300">
+            <div><strong class="text-error">&bull; Path Traversal Vulnerability:</strong> Failure to sanitize incoming URLs can allow attackers to read <code>/etc/passwd</code> or SSH keys via <code>/cdn/../../../../etc/shadow</code>.</div>
+            <div><strong class="text-warning">&bull; 0.0.0.0 vs 127.0.0.1 Binding:</strong> Binding to <code>0.0.0.0</code> inadvertently broadcasts the asset server to the entire LAN/Wi-Fi subnet.</div>
+            <div><strong class="text-warning">&bull; Compression DoS:</strong> Unrestricted on-the-fly Brotli/Gzip compression on concurrent streams can exhaust CPU cores without thread isolation.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THREAT 4: OPTION 2 CSP & INLINING -->
+      <div class="card bg-base-100 shadow-lg border border-base-300">
+        <div class="card-body p-6 space-y-3">
+          <div class="flex items-center gap-2 text-secondary font-bold text-base">
+            <i data-lucide="file-code" class="w-5 h-5"></i>
+            <h3 id="option-2-security-risks" class="text-base font-bold scroll-mt-20">4. Option 2: Full Inlining & CSP Hardening</h3>
+          </div>
+          <p class="text-xs text-base-content/70 leading-relaxed">
+            Eliminating network ports shifts the entire security boundary to client-side Content Security Policies and browser sandboxes.
+          </p>
+          <div class="bg-base-200/80 rounded-xl p-3 text-xs space-y-2 border border-base-300">
+            <div><strong class="text-error">&bull; CSP 'unsafe-inline' Dilemma:</strong> Inlining scripts into HTML forces the document to declare <code>script-src 'unsafe-inline'</code>, opening the door for DOM-based XSS attacks.</div>
+            <div><strong class="text-success">&bull; Cryptographic Hash Defense:</strong> Inlining scripts with pre-calculated <code>sha256-...</code> hashes restores strict CSP without requiring <code>'unsafe-inline'</code>.</div>
+            <div><strong class="text-warning">&bull; file:/// Origin Boundaries:</strong> Different browsers treat <code>file:///</code> paths with varying degrees of origin isolation, requiring verification in locked-down environments.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECURITY HARDENING CHECKLIST -->
+    <div class="card bg-gradient-to-r from-base-100 to-base-200 shadow-xl border border-base-300 p-6 sm:p-8 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="p-3 bg-success text-success-content rounded-xl shadow-md">
+          <i data-lucide="shield-alert" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 id="security-hardening-checklist" class="text-xl font-bold text-base-content scroll-mt-20">Production Hardening Checklist for Air-Gapped Environments</h3>
+          <p class="text-xs text-base-content/70">Mandatory engineering safeguards before shipping either zero-dependency setup</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+        <div class="p-4 bg-base-100 rounded-xl border border-primary/30 space-y-2">
+          <div class="text-primary font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="check" class="w-4 h-4 text-primary"></i> For Option 1 (Native Node CDN)
+          </div>
+          <ul class="text-xs space-y-1.5 text-base-content/80 list-disc list-inside">
+            <li><strong>Enforce Canonical Prefix Guard:</strong> Always verify <code>fullPath.startsWith(ASSET_DIR)</code> after <code>path.normalize()</code>.</li>
+            <li><strong>Bind to 127.0.0.1 Only:</strong> Never default to <code>0.0.0.0</code> unless explicit LAN sharing is authorized.</li>
+            <li><strong>Run as Unprivileged User:</strong> Execute Node under a sandboxed UID/GID with read-only filesystem permissions on <code>vendor-cdn/</code>.</li>
+            <li><strong>Pre-Compress Assets:</strong> Store <code>.br</code> and <code>.gz</code> pre-built files on disk to eliminate live CPU compression overhead.</li>
+          </ul>
+        </div>
+
+        <div class="p-4 bg-base-100 rounded-xl border border-secondary/30 space-y-2">
+          <div class="text-secondary font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="check" class="w-4 h-4 text-secondary"></i> For Option 2 (Full Inlining)
+          </div>
+          <ul class="text-xs space-y-1.5 text-base-content/80 list-disc list-inside">
+            <li><strong>SHA-256 Script Hashes:</strong> Automatically inject SHA-256 hashes into <code>&lt;meta http-equiv="Content-Security-Policy"&gt;</code> to block XSS.</li>
+            <li><strong>Pre-Audit Vendored Code:</strong> Run automated static analysis (e.g. Semgrep) against vendor JS files before initial bundle inclusion.</li>
+            <li><strong>Memory-Cap Safeguards:</strong> Strip redundant map files and comments to keep overall document size under 3MB.</li>
+            <li><strong>Sanitize HTML Dynamic Injectors:</strong> Ensure user data fragments passed into the builder are escaped before inlining.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENCHMARK / COMPARISON CHART -->
+  <section class="card bg-base-100 shadow-xl border border-base-300 p-6 sm:p-8 space-y-6">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+      <div class="min-w-0 flex-1">
+        <h2 id="metrics-evaluation" class="text-2xl font-bold tracking-tight text-base-content scroll-mt-20">
+          Quantitative Comparison: Option 1 vs. Option 2
+        </h2>
+        <p class="text-sm text-base-content/70 mt-1">
+          Scoring architectural attributes on a 0–10 scale across performance, operational simplicity, and portability.
+        </p>
+      </div>
+      <div class="shrink-0 flex items-center gap-2">
+        <span class="badge badge-primary font-mono text-xs">Radar Comparison</span>
+      </div>
+    </div>
+
+    <!-- RESPONSIVE CHART CONTAINER WITH AUTO-FALLBACK -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+      <!-- CANVAS RADAR -->
+      <div class="lg:col-span-7 relative w-full h-80 sm:h-96 bg-base-200/30 rounded-2xl p-2 border border-base-200">
+        <canvas id="comparisonChart" class="w-full h-full" aria-label="Quantitative comparison radar chart" role="img"></canvas>
+      </div>
+
+      <!-- ZERO-JS VISUAL SCORECARD (ALWAYS VISIBLE EVEN IF OFFLINE) -->
+      <div class="lg:col-span-5 space-y-3 bg-base-200/50 p-5 rounded-2xl border border-base-300/70">
+        <div class="flex items-center justify-between pb-2 border-b border-base-300">
+          <span class="text-xs font-bold uppercase tracking-wider text-base-content/70">Dimension Breakdown</span>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="flex items-center gap-1 font-bold text-primary"><span class="w-2.5 h-2.5 rounded-full bg-primary inline-block"></span> Opt 1</span>
+            <span class="flex items-center gap-1 font-bold text-secondary"><span class="w-2.5 h-2.5 rounded-full bg-secondary inline-block"></span> Opt 2</span>
+          </div>
+        </div>
+
+        <!-- 7 CRITERIA PROGRESS BARS -->
+        <div class="space-y-2 text-xs">
+          <div>
+            <div class="flex justify-between font-semibold mb-1">
+              <span>Zero node_modules</span>
+              <span class="font-mono text-2xs text-base-content/70">10 vs 10</span>
+            </div>
+            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
+              <div class="bg-primary h-full" style="width: 50%"></div>
+              <div class="bg-secondary h-full" style="width: 50%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between font-semibold mb-1">
+              <span>Zero Port Conflicts</span>
+              <span class="font-mono text-2xs text-base-content/70">5 (Opt 1) vs 10 (Opt 2)</span>
+            </div>
+            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
+              <div class="bg-primary h-full" style="width: 33%"></div>
+              <div class="bg-secondary h-full" style="width: 67%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between font-semibold mb-1">
+              <span>Air-Gapped Portability (USB/Mail)</span>
+              <span class="font-mono text-2xs text-base-content/70">7 (Opt 1) vs 10 (Opt 2)</span>
+            </div>
+            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
+              <div class="bg-primary h-full" style="width: 41%"></div>
+              <div class="bg-secondary h-full" style="width: 59%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between font-semibold mb-1">
+              <span>Disk Footprint per Report</span>
+              <span class="font-mono text-2xs text-base-content/70">10 (~50KB) vs 4 (~2MB)</span>
+            </div>
+            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
+              <div class="bg-primary h-full" style="width: 71%"></div>
+              <div class="bg-secondary h-full" style="width: 29%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between font-semibold mb-1">
+              <span>Browser Cache Multiplier</span>
+              <span class="font-mono text-2xs text-base-content/70">10 (Shared) vs 3 (Per-file)</span>
+            </div>
+            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
+              <div class="bg-primary h-full" style="width: 77%"></div>
+              <div class="bg-secondary h-full" style="width: 23%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between font-semibold mb-1">
+              <span>LAN Subnet Reusability</span>
+              <span class="font-mono text-2xs text-base-content/70">10 (Hostable) vs 4 (Local only)</span>
+            </div>
+            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
+              <div class="bg-primary h-full" style="width: 71%"></div>
+              <div class="bg-secondary h-full" style="width: 29%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between font-semibold mb-1">
+              <span>Supply-Chain Isolation</span>
+              <span class="font-mono text-2xs text-base-content/70">9 (Local code) vs 10 (Static)</span>
+            </div>
+            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
+              <div class="bg-primary h-full" style="width: 47%"></div>
+              <div class="bg-secondary h-full" style="width: 53%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRUCTURED FEATURE COMPARISON TABLE -->
+  <section class="card bg-base-100 shadow-xl border border-base-300 overflow-hidden">
+    <div class="p-6 border-b border-base-200">
+      <h2 id="feature-matrix" class="text-2xl font-bold tracking-tight text-base-content scroll-mt-20">
+        Direct Architectural Matrix
+      </h2>
+      <p class="text-sm text-base-content/70 mt-1">
+        Side-by-side technical evaluation including the rejected Fastify model for context.
+      </p>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full text-sm">
+        <thead>
+          <tr class="bg-base-200 text-base-content font-bold">
+            <th>Evaluation Dimension</th>
+            <th class="text-primary font-black">Option 1: Native Node CDN</th>
+            <th class="text-secondary font-black">Option 2: Single-File Inlining</th>
+            <th class="text-base-content/50">Fastify CDN (Rejected)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-bold">node_modules Dependency</td>
+            <td><span class="badge badge-success font-mono font-bold text-xs">0 Packages</span></td>
+            <td><span class="badge badge-success font-mono font-bold text-xs">0 Packages</span></td>
+            <td><span class="badge badge-error font-mono font-bold text-xs">10+ Packages</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold">Server Process Required</td>
+            <td><span class="badge badge-warning text-xs font-semibold">Yes (Port 8080)</span></td>
+            <td><span class="badge badge-success text-xs font-semibold">None (0 Ports)</span></td>
+            <td><span class="badge badge-error text-xs font-semibold">Yes (Heavy Runtime)</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold">Cold Startup Latency</td>
+            <td class="font-mono text-success font-bold">&lt;2ms (Native Node)</td>
+            <td class="font-mono text-success font-bold">0ms (Static file)</td>
+            <td class="font-mono text-error">50ms–150ms</td>
+          </tr>
+          <tr>
+            <td class="font-bold">Memory Footprint (RAM)</td>
+            <td class="font-mono text-xs">~15MB RSS</td>
+            <td class="font-mono text-xs">0MB (Client-only)</td>
+            <td class="font-mono text-xs">~50MB–80MB RSS</td>
+          </tr>
+          <tr>
+            <td class="font-bold">Generated Report File Size</td>
+            <td class="font-mono text-xs">~30KB–80KB (Tiny)</td>
+            <td class="font-mono text-xs">~1.5MB–3.5MB (Self-contained)</td>
+            <td class="font-mono text-xs">~30KB–80KB</td>
+          </tr>
+          <tr>
+            <td class="font-bold">Browser Cache Multiplier</td>
+            <td><span class="badge badge-success text-xs font-bold">High (Shared across reports)</span></td>
+            <td><span class="badge badge-ghost text-xs">N/A (Embedded per report)</span></td>
+            <td><span class="badge badge-success text-xs font-bold">High</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold">Air-Gapped USB / Email Portability</td>
+            <td><span class="badge badge-warning text-xs font-semibold">Moderate (Needs local server)</span></td>
+            <td><span class="badge badge-success text-xs font-bold">Flawless (Double-click ready)</span></td>
+            <td><span class="badge badge-warning text-xs font-semibold">Moderate</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold">Network Security / Firewall Safe</td>
+            <td><span class="badge badge-success text-xs">100% Loopback / Private</span></td>
+            <td><span class="badge badge-success text-xs">100% Zero-Network</span></td>
+            <td><span class="badge badge-success text-xs">100% Private</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- DECISION GUIDE / RECOMMENDATION -->
+  <section class="card bg-gradient-to-br from-base-100 to-base-200/50 shadow-xl border border-base-300 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center gap-3">
+      <div class="p-3 bg-primary text-primary-content rounded-xl shadow-md">
+        <i data-lucide="compass" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h2 id="strategic-verdict" class="text-2xl font-bold text-base-content scroll-mt-20">Strategic Recommendation</h2>
+        <p class="text-sm text-base-content/70">How to choose the ideal pattern for your specific environment</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+      <div class="p-5 rounded-2xl bg-base-100 border-2 border-primary/30 space-y-3">
+        <div class="flex items-center gap-2 text-primary font-bold">
+          <i data-lucide="server" class="w-5 h-5"></i>
+          Choose Option 1 (Native Node CDN) when:
+        </div>
+        <ul class="text-xs space-y-2 text-base-content/80 list-disc list-inside leading-relaxed">
+          <li>You are actively developing locally and running the dev server (<code>localhost:3000</code>).</li>
+          <li>You generate dozens of reports per day and want to keep report files small (~50KB each).</li>
+          <li>You want all reports to share the browser cache for instant loading.</li>
+          <li>You want to serve reports across an internal team subnet or local staging container.</li>
+        </ul>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-base-100 border-2 border-secondary/30 space-y-3">
+        <div class="flex items-center gap-2 text-secondary font-bold">
+          <i data-lucide="file-check-2" class="w-5 h-5"></i>
+          Choose Option 2 (Full Inlining) when:
+        </div>
+        <ul class="text-xs space-y-2 text-base-content/80 list-disc list-inside leading-relaxed">
+          <li>You need to email or deliver the report to external stakeholders or executives.</li>
+          <li>The recipient is on an air-gapped machine and will open it with double-click (<code>file:///</code>).</li>
+          <li>You cannot guarantee background services or ports (like port 8080) are open.</li>
+          <li>The deliverable must remain permanently archived and render identically in 10 years with 0 infrastructure.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  // Bulletproof Chart.js initialization with auto-polling & theme-sync
+  (function initRadarComparison() {
+    let attempts = 0;
+    const maxAttempts = 50;
+
+    function render() {
+      const canvas = document.getElementById('comparisonChart');
+      if (!canvas) return;
+
+      if (typeof Chart === 'undefined') {
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(render, 80);
+        }
+        return;
+      }
+
+      if (canvas.__initialized) return;
+      canvas.__initialized = true;
+
+      const chart = new Chart(canvas, {
+        type: 'radar',
+        data: {
+          labels: [
+            'Zero node_modules',
+            'Zero Port Conflicts',
+            'Air-Gapped Portability',
+            'Low Disk per Report',
+            'Browser Cache Reuse',
+            'LAN Subnet Sharing',
+            'Supply-Chain Isolation'
+          ],
+          datasets: [
+            {
+              label: 'Option 1: Native Node CDN Server',
+              data: [10, 5, 7, 10, 10, 10, 9],
+              backgroundColor: 'rgba(37, 99, 235, 0.25)',
+              borderColor: 'rgba(37, 99, 235, 1)',
+              borderWidth: 2,
+              pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+              pointRadius: 4
+            },
+            {
+              label: 'Option 2: Single-File Inlining',
+              data: [10, 10, 10, 4, 3, 4, 10],
+              backgroundColor: 'rgba(217, 70, 239, 0.25)',
+              borderColor: 'rgba(217, 70, 239, 1)',
+              borderWidth: 2,
+              pointBackgroundColor: 'rgba(217, 70, 239, 1)',
+              pointRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                boxWidth: 14,
+                font: {
+                  weight: 'bold',
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => ` ${context.dataset.label}: ${context.raw}/10`
+              }
+            }
+          },
+          scales: {
+            r: {
+              min: 0,
+              max: 10,
+              ticks: {
+                stepSize: 2,
+                backdropColor: 'transparent',
+                font: { size: 10 }
+              },
+              grid: {
+                color: 'rgba(150, 150, 150, 0.2)'
+              },
+              angleLines: {
+                color: 'rgba(150, 150, 150, 0.2)'
+              },
+              pointLabels: {
+                font: {
+                  size: 11,
+                  weight: '600'
+                }
+              }
+            }
+          }
+        }
+      });
+
+      window.reportCharts = window.reportCharts || [];
+      window.reportCharts.push(chart);
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      render();
+    } else {
+      document.addEventListener('DOMContentLoaded', render);
+    }
+    window.addEventListener('load', render);
+  })();
+  </script>
+
+</main>

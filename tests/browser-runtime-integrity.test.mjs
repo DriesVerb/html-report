@@ -1,0 +1,116 @@
+import test, { describe, it } from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const buildReportPath = path.resolve(__dirname, "../skills/html-report/scripts/build-report.mjs");
+const playwrightPath = path.resolve(__dirname, "../skills/html-report/playwright/node_modules/playwright/index.mjs");
+
+const { buildReport } = await import(buildReportPath);
+const { chromium } = await import(playwrightPath);
+
+describe("Browser Runtime Integrity & CDN Health Tests", () => {
+  it("should assemble a report and load in headless browser with zero console errors and active Tailwind", async () => {
+    const testFragment = `
+      <main class="max-w-4xl mx-auto p-6 space-y-6">
+        <h1 id="test-heading" class="text-3xl font-extrabold text-primary">Browser Integrity Test</h1>
+        <div class="card bg-base-100 shadow-xl border border-base-300 p-6">
+          <p class="text-sm font-semibold text-secondary">Card content for style validation</p>
+          <div class="w-full overflow-x-auto">
+            <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+              <li class="step step-primary" data-content="✓">Step 1</li>
+              <li class="step step-primary" data-content="★">Step 2</li>
+              <li class="step" data-content="3">Step 3</li>
+            </ul>
+          </div>
+        </div>
+      </main>
+    `;
+
+    const { html } = buildReport({
+      title: "Browser Integrity Test",
+      content: testFragment,
+      theme: "light"
+    });
+
+    const tempHtmlPath = path.resolve(__dirname, "../tmp-browser-test.html");
+    fs.writeFileSync(tempHtmlPath, html, "utf-8");
+
+    const browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    const consoleErrors = [];
+    const pageErrors = [];
+
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
+        consoleErrors.push(msg.text());
+      }
+    });
+
+    page.on("pageerror", (err) => {
+      pageErrors.push(err.message);
+    });
+
+    try {
+      await page.goto("file://" + tempHtmlPath, { waitUntil: "load" });
+      await page.waitForTimeout(1000);
+
+      // 1. Assert zero console errors & zero unhandled page errors
+      assert.deepEqual(pageErrors, [], `Page threw runtime errors: ${pageErrors.join(", ")}`);
+      assert.deepEqual(consoleErrors, [], `Browser logged console errors: ${consoleErrors.join("; ")}`);
+
+      // 2. Assert Core CDNs are loaded in browser window
+      const windowGlobals = await page.evaluate(() => ({
+        hasTailwind: typeof window.tailwind !== "undefined",
+        hasLucide: typeof window.lucide !== "undefined",
+        hasAlpine: typeof window.Alpine !== "undefined"
+      }));
+
+      assert.strictEqual(windowGlobals.hasTailwind, true, "window.tailwind must be loaded and initialized");
+      assert.strictEqual(windowGlobals.hasLucide, true, "window.lucide must be loaded");
+      assert.strictEqual(windowGlobals.hasAlpine, true, "window.Alpine must be loaded");
+
+      // 3. Assert DaisyUI & Tailwind styles are actively computed by the browser
+      const computedStyles = await page.evaluate(() => {
+        const heading = document.getElementById("test-heading");
+        const card = document.querySelector(".card");
+        const stepper = document.querySelector("ul.steps");
+
+        return {
+          headingWeight: heading ? getComputedStyle(heading).fontWeight : null,
+          cardDisplay: card ? getComputedStyle(card).display : null,
+          stepperGridFlow: stepper ? getComputedStyle(stepper).gridAutoFlow : null
+        };
+      });
+
+      assert.strictEqual(computedStyles.cardDisplay, "flex", ".card class must compute display: flex from DaisyUI/Tailwind");
+      assert.strictEqual(computedStyles.stepperGridFlow, "column", ".steps-horizontal must compute grid-auto-flow: column");
+      assert.ok(
+        ["800", "bold", "extrabold"].includes(computedStyles.headingWeight) || parseInt(computedStyles.headingWeight, 10) >= 700,
+        `Heading must have bold/extrabold font-weight, got: ${computedStyles.headingWeight}`
+      );
+    } finally {
+      await browser.close();
+      if (fs.existsSync(tempHtmlPath)) {
+        fs.unlinkSync(tempHtmlPath);
+      }
+    }
+  });
+
+  it("should guard template-shell.html against Tailwind CORS regression", () => {
+    const shellPath = path.resolve(__dirname, "../skills/html-report/assets/template-shell.html");
+    const shellContent = fs.readFileSync(shellPath, "utf-8");
+
+    // Extract the Tailwind script tag
+    const twMatch = shellContent.match(/<script[^>]*src=["'][^"']*cdn\.tailwindcss\.com[^"']*["'][^>]*>/i);
+    assert.ok(twMatch, "template-shell.html must contain cdn.tailwindcss.com script tag");
+    assert.strictEqual(
+      twMatch[0].includes("crossorigin"),
+      false,
+      "cdn.tailwindcss.com script MUST NOT contain crossorigin attribute because Tailwind CDN blocks CORS anonymous requests"
+    );
+  });
+});

@@ -47,6 +47,10 @@ Every report MUST include the following 11-library CDN stack. Scripts use `defer
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" crossorigin="anonymous"></script>
 ```
 
+> [!WARNING]
+> **Tailwind Play CDN CORS Guard**: Never add `crossorigin="anonymous"` or `integrity="..."` to `<script src="https://cdn.tailwindcss.com"></script>`. Unlike jsDelivr and cdnjs, `cdn.tailwindcss.com` does not serve CORS headers (`Access-Control-Allow-Origin`). Adding `crossorigin="anonymous"` triggers browser CORS policy blocks, completely breaking Tailwind styling across all viewports. Core pinned libraries (DaisyUI, Lucide, Alpine, Chart.js, Mermaid) support full CORS and SRI hashes.
+
+
 > **Content-Aware Favicon Emoticon Rule**: Every report MUST include an inline SVG emoji favicon in `<head>` matching its content (requiring zero external assets):
 > ```html
 > <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>" />
@@ -402,4 +406,37 @@ To minimize token usage and accelerate generation, reports are assembled determi
 
 1. **Canvas 2D OKLCH Resolution**: DaisyUI v4 defines theme tokens using `oklch(...)`. Passing `oklch(...)` directly to Mermaid or Chart.js causes parsing errors or fallback to flat colors. `cssColorToHexAndRgba()` draws the color onto a 1x1 `<canvas>` 2D context and extracts deterministic 8-bit `#rrggbb` and `rgba(...)` values natively without external dependencies.
 2. **Mermaid Numbered List Defense**: Mermaid 11.4 parses tokens matching `1. `, `2. ` as markdown ordered lists, triggering `Unsupported markdown: list` syntax errors when used in subgraph or node titles. Always use hyphens or descriptive labels: `subgraph Input["Step 1 - Data Intake"]`.
+
+---
+
+## 11. DaisyUI Stepper & Responsive Component Anti-Pattern Defense
+
+> [!CAUTION]
+> **Never apply Tailwind responsive prefixes (`sm:`, `md:`, `lg:`) to DaisyUI component classes (e.g. `sm:steps-horizontal`, `md:modal-bottom`).**
+
+### The Cause
+Tailwind's standalone browser CDN (`cdn.tailwindcss.com`) dynamically scans the DOM and generates utility CSS rules for *Tailwind's own utility palette*. It does **NOT** generate responsive variants for external component classes declared in separate stylesheets (like DaisyUI's `.steps-horizontal`).
+
+If you write:
+```html
+<!-- ❌ BROKEN ANTI-PATTERN: sm:steps-horizontal is ignored, stepper remains vertical forever -->
+<ul class="steps steps-vertical sm:steps-horizontal w-full">
+```
+`sm:steps-horizontal` is completely ignored. `.steps-vertical` remains permanently active on desktop, rendering the stepper as a broken vertical column with misaligned step numbers.
+
+### The Standard Implementation
+Always use `.steps-horizontal` directly, wrapped in an `overflow-x-auto` container with a sensible minimum width (`min-w-[500px]`):
+```html
+<!-- ✅ CORRECT PUBLICATION STANDARD -->
+<div class="w-full overflow-x-auto pt-4 border-t border-base-200">
+  <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+    <li class="step step-primary font-medium" data-content="✓">1. Brainstorming</li>
+    <li class="step step-primary font-bold text-primary" data-content="★">2. Planning (Active)</li>
+    <li class="step font-medium" data-content="3">3. Implementing</li>
+    <li class="step font-medium" data-content="4">4. Verifying</li>
+    <li class="step font-medium" data-content="5">5. Shipped</li>
+  </ul>
+</div>
+```
+
 

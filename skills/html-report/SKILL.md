@@ -98,6 +98,7 @@ node skills/html-report/scripts/caller-registry.mjs leaf teamwork/subagent/memor
 - Emit *only* the semantic `<main>` content fragment (Hero banner, stats, visual containers, charts, tables, cards):
   - Assign every `<h1>`, `<h2>`, and `<h3>` element a unique, descriptive `id` attribute (e.g., `<h2 id="executive-summary" class="scroll-mt-20 ...">`) so the navbar TOC dropdown maps them automatically. (If omitted, `--auto-fix` will automatically synthesize and inject unique IDs).
   - Wrap card/hero headers in `flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full` with `min-w-0 flex-1 break-words` on the text column and `shrink-0` with `whitespace-nowrap` on badges/buttons.
+  - **Script Placement Guard**: If your fragment contains custom `<script>` tags (e.g. Chart.js initialization), keep them strictly **inside** `<main>...</main>` (never after `</main>`). Because CDNs load with `defer`, write auto-polling initializers (`setTimeout(..., 50)`) and always provide an offline zero-JS visual scorecard alongside canvases so charts never render as empty white boxes.
   - Save the semantic fragment to a temporary file (e.g. `report-fragment.html`).
 
 > [!IMPORTANT]
