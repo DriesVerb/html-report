@@ -4,11 +4,11 @@
 [![Agent Skill](https://img.shields.io/badge/Agent%20Skill-LLM--Agnostic-blueviolet.svg)](https://agentskills.io)
 [![OpenSpec](https://img.shields.io/badge/OpenSpec-Evolved-emerald.svg)](https://github.com/Fission-AI/OpenSpec)
 [![Themes](https://img.shields.io/badge/DaisyUI%20v4-32%20Themes-ff5724.svg)](https://daisyui.com/docs/themes/)
-[![CDNs](https://img.shields.io/badge/CDN%20Stack-16%20Libraries-3b82f6.svg)](#-the-16-library-cdn-power-stack)
+[![CDNs](https://img.shields.io/badge/CDN%20Stack-17%20Libraries-3b82f6.svg)](#-the-17-library-cdn-power-stack)
 [![Security](https://img.shields.io/badge/Security-SRI%20%2B%20CSP%20%2B%20No--Referrer-blue.svg)](#-cryptographic-security--csp-hardening)
 [![Assembly Speed](https://img.shields.io/badge/Assembly-%3C100ms-success.svg)](#-blazing-speed--token-efficiency)
 [![FSM Harness](https://img.shields.io/badge/FSM%20Harness-Deterministic-cyan.svg)](#-the-superpower-of-states-deterministic-fsm-harness)
-[![Verified](https://img.shields.io/badge/Verified-144%20Tests%20Passing-2ea44f.svg)](#-testing)
+[![Verified](https://img.shields.io/badge/Verified-165%20Tests%20Passing-2ea44f.svg)](#-testing)
 
 > 🌐 **Live GitHub Pages Showcase:** [https://driesverb.github.io/html-report/](https://driesverb.github.io/html-report/)  
 > **The fastest, most reliable way for AI coding agents to produce publication-grade, interactive, theme-adaptive, and print/PDF-ready HTML5 reports.**  
@@ -152,7 +152,7 @@ The state machine operates with strict progressive disclosure:
 
 ---
 
-## 🎨 The 16-Library CDN Power Stack
+## 🎨 The 17-Library CDN Power Stack
 
 All reports utilize a carefully curated, non-blocking CDN stack pre-wired for instant interactivity, cryptographic security, and responsive elegance:
 
@@ -175,6 +175,7 @@ All reports utilize a carefully curated, non-blocking CDN stack pre-wired for in
 │  Mock.js 1.1     — Client-Side Synthetic Data & Schema Simulation           │
 │  Showdown 2.1    — Two-Way Markdown Converter (Zero Marked Collision)       │
 │  FullCalendar 6  — Interactive Scheduling Grids & Theme Palette Sync        │
+│  Datastar.js 1.0 — Real-Time SSE Morphing & Reactive Signals (Idiomorph)    │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -198,6 +199,7 @@ All reports utilize a carefully curated, non-blocking CDN stack pre-wired for in
 | **Mock.js** | v1.1.0 | `defer` + UMD | Client-side synthetic data simulation engine (`Mock.mock(...)` via `[data-mock]`) with 0 backend calls. |
 | **Showdown** | v2.1.0 | `defer` + UMD | Two-way Markdown parser with table and strikethrough support that co-exists cleanly with Marked. |
 | **FullCalendar** | v6.1.15 | `defer` + UMD | Interactive scheduling grids (month, week, list) with theme-adaptive border and accent highlights. |
+| **Datastar.js** | v1.0.0-beta.9 | Module + ESM | Real-time SSE hypermedia streaming, live DOM morphing (Idiomorph), declarative reactive signals, and LLM telemetry. |
 
 ---
 
@@ -289,18 +291,34 @@ Your report is compiled in <100ms to `./report.html` (or `./report-<caller>.html
 
 ---
 
-## 🔄 Single-Tab Live-Reload Dev Server
+## 🔄 Single-Tab Live-Reload Dev Server & Real-Time Datastar Streaming
 
-Serve and iterate on any report in real time:
+Serve and iterate on any report in real time with Server-Sent Events (SSE) hypermedia morphing:
 
 ```bash
+# Launch live-reload server:
 node skills/html-report/scripts/serve-report.mjs report.html --port 3000
 ```
 
 - **Auto-Open**: Automatically launches the report in your default browser.
-- **Single-Tab Sync**: When you recompile or edit the file:
-  - If open, it seamlessly refreshes the existing tab in place (zero duplicate tabs).
-  - If closed, it re-opens a fresh browser tab automatically.
+- **Single-Tab Sync**: When you recompile or edit the file, it refreshes the existing tab in place (zero duplicate tabs).
+- **Datastar SSE Stream (`/__datastar_stream__`)**: Stream real-time agent telemetry, live task checklist morphs (`#task-${id}`), and tool invocation drawers (`#tool-call-feed`) directly into the browser without page reloads.
+
+---
+
+## ⚡ Datastar.js Real-Time Live Dashboards (`--live`)
+
+Reports support real-time hypermedia streaming and reactive signals via **Datastar.js**:
+
+1. **CLI Flag (`--live`, `-l`)**:
+   Enables the Datastar ESM bundle, sets `data-report-mode="live"`, and permits SSE stream ingestion without full-page reloads.
+   ```bash
+   node skills/html-report/scripts/build-report.mjs --title "Live Agent Dashboard" --content live-fragment.html --live --output live.html
+   ```
+2. **Task & Session Telemetry Pipeline (`datastar-sse.mjs`)**:
+   Standardized `TaskTelemetrySchema`, `AgyTelemetryAdapter` (Google Antigravity transcripts), and `CodexTelemetryAdapter` (OpenAI reasoning & tool chunks) stream agent Chain-of-Thought, live task checklist cards (`#task-${id}`), and tool invocation cards (`#tool-call-feed`) in real time.
+3. **Post-Morph Icon Rehydration**:
+   `report-runtime.js` automatically observes DOM morphs with a `MutationObserver` and rehydrates `<i data-lucide="...">` tags into SVG icons.
 
 ---
 
@@ -313,25 +331,27 @@ html-report/
 │       ├── SKILL.md                              # Main agent instructions
 │       ├── assets/
 │       │   ├── template-shell.html               # Pre-bundled DaisyUI shell & navbar
-│       │   └── report-runtime.js                 # Theme resolver, TOC, OKLCH canvas sync
+│       │   └── report-runtime.js                 # Theme resolver, TOC, OKLCH canvas sync, Lucide rehydrator
 │       ├── scripts/
 │       │   ├── harness.mjs                       # Zero-dep FSM Lifecycle Harness (<2ms)
 │       │   ├── build-report.mjs                  # Deterministic Compiler (<100ms)
+│       │   ├── datastar-sse.mjs                  # Real-Time Datastar SSE Telemetry Engine
 │       │   ├── caller-registry.mjs               # Caller profiles & ephemeral run vault
-│       │   └── serve-report.mjs                  # Single-tab live reload dev server
+│       │   └── serve-report.mjs                  # Single-tab live reload dev server & SSE stream endpoint
 │       ├── references/
-│       │   ├── architecture-and-styling.md       # 16-CDN stack & styling rules
+│       │   ├── architecture-and-styling.md       # 17-CDN stack & styling rules
 │       │   ├── charts-and-mermaid-style-guide.md # Chart.js & Mermaid theme standards
+│       │   ├── datastar-live-dashboards.md       # Architectural guide & telemetry schema
 │       │   └── harness-architecture.md           # FSM states & remediation protocol
 │       ├── examples/
-│       │   ├── example.html                      # Complete 16-CDN showcase
+│       │   ├── example.html                      # Complete 17-CDN showcase
 │       │   └── example.csv                       # Interactive CSV demo dataset
 │       └── playwright/
 │           ├── package.json                      # Playwright test dependencies
 │           └── verify-report.mjs                 # 5-breakpoint responsive & PDF verifier
 ├── .agents/skills/html-report -> skills/html-report # Universal local symlink
 ├── index.html                                    # Live GitHub Pages Showcase
-└── tests/                                        # 144 unit & integration tests
+└── tests/                                        # 165 unit & integration tests
 ```
 
 ---

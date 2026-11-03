@@ -1,48 +1,73 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" data-report-mode="interactive" class="scroll-smooth">
+<html data-report-mode="interactive" lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss:;" />
-  <title>html-report — 16-CDN Interactive Capabilities Showcase</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
+  <title>html-report — 17-CDN Interactive Capabilities Showcase</title>
 
-  <!-- Content-Aware Favicon Emoticon (SVG data URI matching report content) -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>" />
+  <!-- Content-Aware Favicon Emoticon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
 
-  <!-- 1. Stylesheets (DaisyUI v4 full + all 32 themes, Leaflet, Highlight.js, Grid.js, KaTeX) -->
+  <!-- Core CDNs with Cryptographic SRI & Anonymous Cross-Origin -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" integrity="sha384-iMbeRReqpIEp0z+cPe0FZxnbV/GbGyGjDfou8Rjcr6KSJIptc245QXNVjLMtu5TR" crossorigin="anonymous" />
-  <!-- DaisyUI Custom Themes (Injected at build or runtime) -->
-  <style id="daisyui-custom-themes"></style>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/theme/mermaid.min.css" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
-
-  <!-- 2. Tailwind CSS Play CDN (No crossorigin to prevent Tailwind CORS warning) -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- 3. Non-Blocking Feature Scripts (defer with Cryptographic SRI & Anonymous Cross-Origin) -->
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" integrity="sha384-ieG+IKD0d/ZPXyCBTMVAbqsQdns8QGJR/e26WMw7M4fkaI/rHcS/YIoi+ah9WGge" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" integrity="sha384-iZD2X8o1Zdq0HR5H/7oa8W30WS4No+zWCKUPD7fHRay9I1Gf+C4F8sVmw7zec1wW" crossorigin="anonymous"></script>
+
+  <!-- DaisyUI Custom Themes (Injected at build or runtime) -->
+  <style id="daisyui-custom-themes">
+
+  </style>
+
+  <!-- Optional Addon CDNs & Styles -->
+    <!-- Addon: Chart.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
+
+  <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Grid.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/theme/mermaid.min.css" crossorigin="anonymous" />
   <script defer src="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/gridjs.umd.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css" crossorigin="anonymous" />
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js" crossorigin="anonymous"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/kotlin.min.js" crossorigin="anonymous"></script>
 
-  <!-- 4. Expanded Addons: Day.js, Impress.js, Mock.js, Showdown, FullCalendar -->
+  <!-- Addon: Marked -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Day.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/plugin/relativeTime.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/plugin/customParseFormat.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Impress.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/impress.js@1.1.0/js/impress.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Mock.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/mockjs@1.1.0/dist/mock.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Showdown -->
   <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: FullCalendar -->
   <script defer src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Datastar -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
 
   <style>
     :root {
@@ -57,9 +82,33 @@
       max-width: 100%;
       overflow-x: hidden;
     }
+    .mermaid {
+      color: inherit;
+    }
     .mermaid svg {
       max-width: 100% !important;
       height: auto !important;
+      background-color: transparent !important;
+    }
+    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping and vertical pill overflow */
+    .badge {
+      white-space: nowrap !important;
+      flex-shrink: 0;
+    }
+    [data-insufficient-space="true"] {
+      outline: 2px dashed #f59e0b !important;
+      position: relative;
+    }
+    [data-insufficient-space="true"]::before {
+      content: "⚠ Insufficient horizontal space";
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      background: #f59e0b;
+      color: #111827;
+      border-radius: 0.25rem;
+      margin-bottom: 0.25rem;
     }
     /* Grid.js Full Light & Dark Mode DaisyUI Theme Integration */
     .gridjs-container {
@@ -110,44 +159,16 @@
       word-break: break-word;
       white-space: normal !important;
     }
-    .gridjs-head {
-      margin-bottom: 0.5rem;
-    }
-    input.gridjs-input,
-    .gridjs-search-input {
-      background-color: var(--grid-bg-1) !important;
-      color: var(--grid-text) !important;
-      border: 1px solid var(--grid-border) !important;
-      border-radius: 0.375rem !important;
-      padding: 0.35rem 0.65rem !important;
-      font-size: 0.8125rem !important;
-    }
-    input.gridjs-input::placeholder {
-      color: var(--grid-muted) !important;
-      opacity: 0.8;
-    }
     .gridjs-footer {
       background-color: var(--grid-bg-2) !important;
       color: var(--grid-text) !important;
       border-color: var(--grid-border) !important;
       padding: 8px 10px !important;
     }
-    .gridjs-summary {
-      color: var(--grid-muted) !important;
-    }
     .gridjs-pages button {
       background-color: var(--grid-bg-1) !important;
       color: var(--grid-text) !important;
       border: 1px solid var(--grid-border) !important;
-    }
-    .gridjs-pages button:hover {
-      background-color: var(--grid-bg-2) !important;
-      color: var(--grid-text) !important;
-    }
-    .gridjs-pages button:disabled {
-      opacity: 0.45 !important;
-      background-color: var(--grid-bg-1) !important;
-      color: var(--grid-muted) !important;
     }
     .gridjs-pages button.gridjs-currentPage {
       background-color: var(--grid-primary) !important;
@@ -155,165 +176,128 @@
       border-color: var(--grid-primary) !important;
       font-weight: 700 !important;
     }
-    /* Markdown styling */
-    .markdown-body h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-top: 0.5rem;
-      margin-bottom: 0.35rem;
+
+    /* FullCalendar DaisyUI Theme Integration */
+    :root {
+      --fc-page-bg-color: transparent;
+      --fc-neutral-bg-color: hsl(var(--b2, 0 0% 95%));
+      --fc-list-event-hover-bg-color: hsl(var(--b3, 0 0% 90%));
+      --fc-theme-standard-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
+      --fc-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
+      --fc-button-bg-color: hsl(var(--p, 259 94% 51%));
+      --fc-button-border-color: hsl(var(--p, 259 94% 51%));
+      --fc-button-text-color: hsl(var(--pc, 0 0% 100%));
     }
-    .markdown-body p {
-      margin-bottom: 0.6rem;
-      line-height: 1.6;
+    .fc {
+      max-width: 100%;
     }
-    .markdown-body ul {
-      list-style-type: disc;
-      padding-left: 1.25rem;
-      margin-bottom: 0.6rem;
+    .fc .fc-toolbar-title {
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
     }
-    /* Horizontal Scrollbar -> Insufficient Space Indicator */
-    [data-insufficient-space="true"] {
-      outline: 2px dashed #f59e0b !important;
-      outline-offset: 2px;
+    .fc .fc-button {
+      padding: 0.35rem 0.65rem !important;
+      font-size: 0.8125rem !important;
+      border-radius: 0.375rem !important;
+      text-transform: capitalize !important;
+    }
+
+    /* Impress.js Presentation Guard & Print-Equivalent Treatment */
+    html:not([data-presentation="true"]) .step {
+      position: relative !important;
+      opacity: 1 !important;
+      transform: none !important;
+      display: block !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      margin-bottom: 1.5rem !important;
+    }
+    .impress-wrapper {
       position: relative;
+      overflow: hidden;
+      width: 100%;
+      min-height: 420px;
+      border-radius: 0.75rem;
     }
-    [data-insufficient-space="true"]::before {
-      content: "⚠ Insufficient space: element has a horizontal scrollbar";
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 0.15rem 0.5rem;
-      background: #f59e0b;
-      color: #111827;
-      border-radius: 0.25rem;
-      margin-bottom: 0.35rem;
-    }
-    #print-cover-page {
-      display: none;
-    }
-    .print-only-summary {
-      display: none;
-    }
-    @media print {
-      * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-      html, body {
-        background-color: oklch(var(--b2)) !important;
-        color: oklch(var(--bc)) !important;
-      }
-      header,
-      .navbar,
-      .print\:hidden,
-      .print-interactive-control,
-      .gridjs-head,
-      .gridjs-pages {
-        display: none !important;
-      }
-      #print-cover-page {
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
-        min-height: 92vh !important;
-        break-after: page !important;
-        page-break-after: always !important;
-      }
-      .print-only-summary {
-        display: block !important;
-      }
-      .break-inside-avoid {
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-      }
+    html[data-presentation="true"] .impress-wrapper #impress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
-<body class="bg-base-200 text-base-content min-h-screen flex flex-col">
+<body class="bg-base-200 text-base-content min-h-screen flex flex-col font-sans antialiased selection:bg-primary selection:text-primary-content">
 
-  <!-- Sticky DaisyUI Navbar: Left Report Title (navbar-start) + Right Controls (navbar-end: TOC Dropdown, DaisyUI Color-Swatch Theme Dropdown, Icon-Only Download Dropdown) -->
+  <!-- Sticky DaisyUI Navbar -->
   <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
     <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
-      <!-- Left (navbar-start): Report Title -->
+      <!-- Left: Title -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
-        <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate">
-          html-report — 16-CDN Interactive Capabilities Showcase
+        <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
+          html-report — 17-CDN Interactive Capabilities Showcase
         </span>
       </div>
 
-      <!-- Right (navbar-end): Contents TOC Dropdown + DaisyUI Color-Swatch Theme Dropdown + Icon-Only Download Dropdown (HTML or PDF) -->
+      <!-- Right: TOC + Theme Picker + Download Menu -->
       <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
-        <!-- 1. Table of Contents Dropdown (maps all h1, h2, h3 via #id) -->
+        <!-- 1. TOC Dropdown -->
         <div class="dropdown dropdown-end" id="toc-dropdown">
           <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
-            <i data-lucide="list-tree" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
             <span>Contents</span>
           </div>
           <ul id="report-toc-list" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-72 sm:w-80 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
-            <!-- Populated dynamically by initTOC() from all h1, h2, h3 headings -->
+            <!-- Populated via initTOC() -->
           </ul>
         </div>
 
-        <!-- 2. DaisyUI 32-Themes Dropdown with Official Color-Scheme Swatches -->
+        <!-- 2. DaisyUI 32-Themes Dropdown -->
         <div class="dropdown dropdown-end" id="theme-dropdown">
           <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
-            <i data-lucide="palette" class="w-4 h-4"></i>
-            <span id="active-theme-label" class="text-xs font-medium capitalize">light</span>
-            <span class="flex items-center gap-0.5">
+            <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
+            <div class="flex items-center gap-0.5">
               <span class="bg-primary rounded-badge w-1.5 h-3"></span>
               <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
               <span class="bg-accent rounded-badge w-1.5 h-3"></span>
               <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
-            </span>
+            </div>
           </div>
-          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-60 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
+          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
             <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
-              <!-- Populated by initThemeDropdown() with all 32 DaisyUI themes + color scheme swatches -->
+              <!-- Populated via initThemeDropdown() -->
             </div>
           </div>
         </div>
 
-        <!-- 3. Icon-Only Download Dropdown (Download as HTML or Download as PDF) -->
+        <!-- 3. Icon-Only Download Dropdown -->
         <div class="dropdown dropdown-end" id="download-dropdown">
-          <button
-            tabindex="0"
-            id="download-dropdown-btn"
-            type="button"
-            class="btn btn-primary btn-xs sm:btn-sm btn-square"
-            aria-label="Download report as HTML or PDF"
-            title="Download report as HTML or PDF"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Report" title="Download Report">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
             </svg>
-          </button>
-          <ul
-            tabindex="0"
-            id="download-dropdown-menu"
-            class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-80 p-2 shadow-2xl border border-base-300 space-y-1"
-          >
+          </div>
+          <ul id="download-dropdown-menu" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-64 p-2 shadow-2xl border border-base-300">
             <li>
-              <button id="download-html-btn" type="button" class="flex items-start gap-2.5 py-2 px-3 text-xs w-full">
-                <i data-lucide="file-code-2" class="w-4 h-4 text-primary mt-0.5 shrink-0"></i>
-                <div class="text-left flex-1 min-w-0">
-                  <div class="flex items-center justify-between gap-2">
-                    <span class="font-bold whitespace-nowrap">Download as HTML</span>
-                    <span class="badge badge-success badge-xs shrink-0 whitespace-nowrap font-mono">Standalone</span>
-                  </div>
-                  <div class="text-[10px] opacity-65 font-normal truncate">All 11 CDNs Inlined Offline</div>
-                </div>
+              <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <span>Download as HTML</span>
               </button>
             </li>
             <li>
-              <button id="download-pdf-btn" type="button" class="flex items-start gap-2.5 py-2 px-3 text-xs w-full">
-                <i data-lucide="printer" class="w-4 h-4 text-warning mt-0.5 shrink-0"></i>
-                <div class="text-left flex-1 min-w-0">
-                  <div class="flex items-center justify-between gap-2">
-                    <span class="font-bold whitespace-nowrap">Download as PDF</span>
-                    <span class="badge badge-warning badge-xs shrink-0 whitespace-nowrap font-mono">Not PDF-Ready</span>
-                  </div>
-                  <div class="text-[10px] opacity-65 font-normal truncate">Interactive Mode • Click for Prompt</div>
+              <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                <div class="flex items-center gap-2.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span>Download as PDF</span>
                 </div>
+                <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
               </button>
             </li>
           </ul>
@@ -322,10 +306,29 @@
     </nav>
   </header>
 
-  <!-- Main Showcase Content -->
-  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1">
+  <!-- Interactive PDF Warning Modal -->
+  <dialog id="pdf-not-ready-modal" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg text-warning flex items-center gap-2">
+        <span>⚠ Interactive Report Mode</span>
+      </h3>
+      <p class="py-4 text-xs">
+        This report is in interactive web-first mode. To generate a print-ready version with @media print rules, cover page, and PDF pagination, request:
+      </p>
+      <div class="bg-base-200 p-3 rounded font-mono text-2xs overflow-x-auto">
+        <code id="pdf-conversion-prompt-text">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</code>
+      </div>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-sm">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
 
-    <!-- Print / PDF First Page Cover & Table of Contents (Shown Only in @media print as Page 1; Navbar is Hidden in PDF) -->
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
+<!-- Print / PDF First Page Cover & Table of Contents (Shown Only in @media print as Page 1; Navbar is Hidden in PDF) -->
     <section id="print-cover-page" class="card bg-base-100 border-2 border-primary/50 p-8 shadow-sm">
       <div class="space-y-6">
         <div class="flex items-center justify-between border-b border-base-300 pb-4">
@@ -344,7 +347,7 @@
         <div class="space-y-2 py-3">
           <p class="text-xs uppercase tracking-widest opacity-65 font-bold">Publication-Grade HTML5 Report</p>
           <div id="print-cover-title" class="text-3xl font-extrabold tracking-tight">
-            html-report — Publication-Grade HTML5 Reports for AI Coding Agents
+            html-report — 16-CDN Interactive Capabilities Showcase
           </div>
           <p class="text-xs opacity-80 max-w-2xl">
             First-page PDF cover and complete heading directory (<code>h1</code>, <code>h2</code>, <code>h3</code>). In print/PDF mode, the sticky navigation bar and interactive form inputs are replaced by static print views.
@@ -367,209 +370,22 @@
       </div>
     </section>
 
-    <!-- Hero & Project README Overview ("What is html-report?") -->
+    <!-- Hero & H1 Header -->
     <section class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid">
-      <div class="card-body p-5 sm:p-8 space-y-5">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div class="flex flex-wrap items-center gap-2">
-            <div class="badge badge-primary badge-outline font-semibold gap-1">
-              <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-              <span>LLM-Agnostic Agent Skill</span>
-            </div>
-            <div class="badge badge-secondary badge-outline font-mono text-xs">OpenSpec Driven</div>
-            <div class="badge badge-accent badge-outline font-mono text-xs">Deterministic FSM</div>
-            <div class="badge badge-success badge-outline font-mono text-xs">&lt;100ms Build</div>
+      <div class="card-body p-5 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div class="badge badge-primary badge-outline font-semibold gap-1">
+            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+            <span>Interactive Skill Showcase</span>
           </div>
           <span class="text-xs opacity-70">16 Non-Blocking CDNs &bull; 32 DaisyUI Themes &bull; 5 Breakpoints Verified</span>
         </div>
-
-        <div>
-          <h1 id="report-main-title" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight scroll-mt-20">
-            html-report — Publication-Grade HTML5 Reports for AI Coding Agents
-          </h1>
-          <p class="text-sm sm:text-base opacity-85 max-w-4xl mt-2 leading-relaxed">
-            <strong><code>html-report</code></strong> is an open, LLM-agnostic <a href="https://agentskills.io" target="_blank" rel="noopener" class="link link-primary font-semibold">Agent Skill</a> built with <a href="https://github.com/Fission-AI/OpenSpec" target="_blank" rel="noopener" class="link link-primary font-semibold">OpenSpec</a>. Powered by a <strong>zero-dependency deterministic Finite State Machine harness</strong> and a <strong>fast assembly pipeline</strong>, it equips any AI coding agent (Antigravity, Claude Code, Cursor, Codex, OpenCode, Gemini CLI) to generate interactive, theme-adaptive, offline-downloadable, and Playwright-verified HTML5 reports with <strong>~70% token savings</strong> and <strong>sub-100ms compilation</strong>.
-          </p>
-        </div>
-
-        <!-- High-Impact State & Speed Metrics Banner -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 py-1">
-          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
-            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Token Savings</div>
-            <div class="text-lg sm:text-xl font-extrabold text-primary">~70%</div>
-            <div class="text-[10px] opacity-70 truncate">Emit Fragment Only</div>
-          </div>
-          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
-            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Assembly Speed</div>
-            <div class="text-lg sm:text-xl font-extrabold text-secondary">&lt;100ms</div>
-            <div class="text-[10px] opacity-70 truncate">Deterministic Stitch</div>
-          </div>
-          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
-            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">FSM Cold Start</div>
-            <div class="text-lg sm:text-xl font-extrabold text-accent">&lt;2ms</div>
-            <div class="text-[10px] opacity-70 truncate">Zero-Dep Node Engine</div>
-          </div>
-          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
-            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Pre-Flight Fix</div>
-            <div class="text-lg sm:text-xl font-extrabold text-info">&lt;1ms</div>
-            <div class="text-[10px] opacity-70 truncate">Zero LLM Roundtrips</div>
-          </div>
-          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
-            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Viewport Gate</div>
-            <div class="text-lg sm:text-xl font-extrabold text-success">&lt;4s</div>
-            <div class="text-[10px] opacity-70 truncate">Playwright 5-Breakpoints</div>
-          </div>
-          <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
-            <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Design Suite</div>
-            <div class="text-lg sm:text-xl font-extrabold text-warning">32 &bull; 16</div>
-            <div class="text-[10px] opacity-70 truncate">Themes &amp; CDNs</div>
-          </div>
-        </div>
-
-        <!-- Quick Action Links -->
-        <div class="flex flex-wrap items-center gap-2 pt-1">
-          <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener" class="btn btn-primary btn-xs sm:btn-sm gap-1.5">
-            <i data-lucide="github" class="w-4 h-4"></i>
-            <span>GitHub Repository</span>
-          </a>
-          <a href="./skills/html-report/examples/example.html" class="btn btn-secondary btn-outline btn-xs sm:btn-sm gap-1.5">
-            <i data-lucide="external-link" class="w-4 h-4"></i>
-            <span>Open Standalone example.html</span>
-          </a>
-          <a href="./skills/html-report/examples/example.csv" download="example.csv" class="btn btn-accent btn-outline btn-xs sm:btn-sm gap-1.5 font-mono">
-            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-            <span>Download example.csv</span>
-          </a>
-          <a href="#showcase-csv-support" class="btn btn-ghost border border-base-300 btn-xs sm:btn-sm gap-1.5">
-            <i data-lucide="database" class="w-4 h-4 text-primary"></i>
-            <span>Jump to CSV Interactive Demo</span>
-          </a>
-        </div>
-
-        <!-- README Overview Grid: What It Offers + Installation & Verification -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-3 border-t border-base-300">
-          <div class="space-y-3">
-            <h2 id="readme-what-this-is" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
-              <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i>
-              What <code>html-report</code> Offers: States &amp; Speed
-            </h2>
-            <ul class="text-xs sm:text-sm space-y-2 list-none p-0 opacity-90">
-              <li class="flex items-start gap-2">
-                <i data-lucide="cpu" class="w-4 h-4 text-primary shrink-0 mt-0.5"></i>
-                <div>
-                  <strong>The Superpower of States (FSM Lifecycle):</strong> Governed by a pure-Node Finite State Machine (<code>IDLE</code> &rarr; <code>VALIDATING</code> &rarr; <code>AUTO_FIXING</code> &rarr; <code>ASSEMBLING</code> &rarr; <code>VERIFYING</code> &rarr; <code>COMPLETED</code>). Mathematically eliminates model hallucination loops with a bounded 3-attempt ceiling.
-                </div>
-              </li>
-              <li class="flex items-start gap-2">
-                <i data-lucide="wrench" class="w-4 h-4 text-info shrink-0 mt-0.5"></i>
-                <div>
-                  <strong>Mechanical Auto-Fix &amp; Small-Model Remediation:</strong> Strips accidental <code>&lt;html&gt;</code>/<code>&lt;body&gt;</code> wrappers, auto-slugifies missing heading IDs, and wraps unadorned tables in &lt;1ms. If verification catches an issue, produces spoon-fed JSON directives with line numbers and exact fixes.
-                </div>
-              </li>
-              <li class="flex items-start gap-2">
-                <i data-lucide="zap" class="w-4 h-4 text-secondary shrink-0 mt-0.5"></i>
-                <div>
-                  <strong>Blazing Speed &amp; ~70% Token Savings:</strong> Agents emit <em>only</em> semantic content (cards, stats, charts); pre-bundled DaisyUI shell and runtime stitch the full report in &lt;100ms. Sub-2ms cold startup with zero npm dependencies.
-                </div>
-              </li>
-              <li class="flex items-start gap-2">
-                <i data-lucide="git-branch" class="w-4 h-4 text-accent shrink-0 mt-0.5"></i>
-                <div>
-                  <strong>Progressive Complexity (Dual Execution):</strong> Zero-footprint standalone mode (compiles straight to <code>./report.html</code>) + Caller-Aware integration (serves as a shared visual bus for other agent skills like <code>debug-optimize-lcp</code> with profiles and 10-run vault pruning).
-                </div>
-              </li>
-              <li class="flex items-start gap-2">
-                <i data-lucide="palette" class="w-4 h-4 text-warning shrink-0 mt-0.5"></i>
-                <div>
-                  <strong>Publication-Grade 16-CDN Stack:</strong> Tailwind CSS, DaisyUI v4 (all 32 themes, default <code>light</code>), auto-mapping TOC navbar, 2D canvas OKLCH theme-synced charts, offline standalone HTML bundler (all CDNs inlined), and PDF export.
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <div
-            class="space-y-3"
-            x-data="{
-              copiedCmd: false,
-              copiedPrompt: false,
-              copiedHarness: false,
-              installCmd: 'npx skills add DriesVerb/html-report',
-              oneLinerCmd: 'git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report && mkdir -p ~/.agents/skills && ln -sfn ~/.agents/html-report/skills/html-report ~/.agents/skills/html-report',
-              harnessCmd: 'node skills/html-report/scripts/harness.mjs run fragment.html --title &quot;My Report&quot;',
-              installPrompt: 'Install the html-report skill from https://github.com/DriesVerb/html-report.git by cloning it into ~/.agents/html-report, symlinking ~/.agents/html-report/skills/html-report into ~/.agents/skills/html-report (and ~/.gemini/config/skills/html-report), and installing Playwright in ~/.agents/html-report/skills/html-report/playwright. Then read skills/html-report/SKILL.md.'
-            }"
-          >
-            <h3 id="readme-quickstart" class="text-sm sm:text-base font-bold flex items-center gap-2 scroll-mt-20">
-              <i data-lucide="terminal" class="w-4 h-4 text-secondary"></i>
-              Super Easy Install — Command or AI Agent Prompt
-            </h3>
-
-            <!-- 1. Install via AI Agent Prompt -->
-            <div class="rounded-box border border-primary/40 bg-primary/5 p-3 space-y-1.5">
-              <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-bold flex items-center gap-1.5 text-primary">
-                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                  Option A: Install as a Prompt (Paste into your AI Agent)
-                </span>
-                <button
-                  type="button"
-                  @click="navigator.clipboard.writeText(installPrompt); copiedPrompt = true; setTimeout(() => copiedPrompt = false, 2000)"
-                  class="btn btn-primary btn-xs font-mono"
-                >
-                  <span x-text="copiedPrompt ? 'Copied Prompt!' : 'Copy Prompt'">Copy Prompt</span>
-                </button>
-              </div>
-              <p id="install-prompt-box" class="text-xs font-mono bg-base-100 p-2.5 rounded border border-base-300 leading-relaxed select-all" x-text="installPrompt">
-                Install the html-report skill from https://github.com/DriesVerb/html-report.git by cloning it into ~/.agents/html-report, symlinking ~/.agents/html-report/skills/html-report into ~/.agents/skills/html-report (and ~/.gemini/config/skills/html-report), and installing Playwright in ~/.agents/html-report/skills/html-report/playwright. Then read skills/html-report/SKILL.md.
-              </p>
-            </div>
-
-            <!-- 2. Install via Terminal Commands -->
-            <div class="rounded-box border border-base-300 bg-base-200/60 p-3 space-y-1.5">
-              <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-bold flex items-center gap-1.5">
-                  <i data-lucide="terminal" class="w-3.5 h-3.5 text-secondary"></i>
-                  Option B: Terminal Commands (CLI or 1-Line Symlink)
-                </span>
-                <button
-                  type="button"
-                  @click="navigator.clipboard.writeText(oneLinerCmd); copiedCmd = true; setTimeout(() => copiedCmd = false, 2000)"
-                  class="btn btn-outline btn-xs font-mono"
-                >
-                  <span x-text="copiedCmd ? 'Copied!' : 'Copy Command'">Copy Command</span>
-                </button>
-              </div>
-              <div class="rounded border border-base-300 overflow-hidden">
-                <pre class="text-xs m-0 whitespace-pre-wrap break-words"><code class="language-typescript">// Universal Agent Skills CLI
-npx skills add DriesVerb/html-report
-
-// Or 1-Line Git Clone + Symlinks
-git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report &amp;&amp; \
-  mkdir -p ~/.agents/skills ~/.gemini/config/skills &amp;&amp; \
-  ln -sfn ~/.agents/html-report/skills/html-report ~/.agents/skills/html-report &amp;&amp; \
-  ln -sfn ~/.agents/html-report/skills/html-report ~/.gemini/config/skills/html-report</code></pre>
-              </div>
-            </div>
-
-            <!-- 3. Fast Harness Run -->
-            <div class="rounded-box border border-accent/40 bg-accent/5 p-2.5 space-y-1">
-              <div class="flex items-center justify-between gap-2">
-                <span class="text-[11px] font-bold flex items-center gap-1 text-accent">
-                  <i data-lucide="play" class="w-3 h-3"></i>
-                  Single-Command Unified Harness Execution
-                </span>
-                <button
-                  type="button"
-                  @click="navigator.clipboard.writeText(harnessCmd); copiedHarness = true; setTimeout(() => copiedHarness = false, 2000)"
-                  class="btn btn-ghost btn-xs font-mono text-[10px]"
-                >
-                  <span x-text="copiedHarness ? 'Copied!' : 'Copy'">Copy</span>
-                </button>
-              </div>
-              <code class="block text-[11px] font-mono bg-base-100 p-2 rounded border border-base-300 select-all overflow-x-auto text-base-content" x-text="harnessCmd">node skills/html-report/scripts/harness.mjs run fragment.html --title &quot;My Report&quot;</code>
-            </div>
-          </div>
-        </div>
+        <h1 id="report-main-title" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight scroll-mt-20">
+          html-report — 16-CDN Interactive Capabilities Showcase
+        </h1>
+        <p class="text-sm sm:text-base opacity-80 max-w-3xl mt-2">
+          Live reference showcase of every CDN library integrated into the <code>html-report</code> skill. Click any CDN card below to jump directly to its live interactive example.
+        </p>
       </div>
     </section>
 
@@ -1095,6 +911,14 @@ git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report &am
           </div>
           <p class="text-xs opacity-75 mt-1">Interactive month/week/list schedules with theme sync &rarr; Section 11.5</p>
         </a>
+
+        <a href="#showcase-datastar" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Datastar">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-primary"></i><span>Datastar.js</span></span>
+            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
+          </div>
+          <p class="text-xs opacity-75 mt-1">Real-time SSE DOM morphing, reactive signals &amp; LLM telemetry &rarr; Section 11.6</p>
+        </a>
       </div>
     </section>
 
@@ -1137,7 +961,7 @@ git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report &am
             <span>Standalone Export</span>
             <i data-lucide="download" class="w-4 h-4 text-success"></i>
           </div>
-          <div class="stat-value text-success text-2xl sm:text-3xl">11 CDNs</div>
+          <div class="stat-value text-success text-2xl sm:text-3xl">16 CDNs</div>
           <div class="stat-desc opacity-75">Inlined on 1-click download</div>
         </div>
       </div>
@@ -1211,25 +1035,20 @@ git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report &am
       <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body p-4 sm:p-6">
           <h3 id="mermaid-pipeline-flow" class="card-title text-base sm:text-lg scroll-mt-20">
-            4.1 Theme-Synchronized Deterministic State Machine Flowchart (Mermaid)
+            4.1 Theme-Synchronized Architecture Flowchart (Mermaid)
           </h3>
           <p class="text-xs opacity-75 mb-2">
-            Visualizes the zero-dependency FSM harness lifecycle, speed latency milestones, and theme synchronization across all 32 DaisyUI themes
+            Re-renders automatically with the active DaisyUI theme's primary, secondary, and surface hex tokens
           </p>
           <div id="mermaid-container" class="flex justify-center p-4 bg-base-200/60 rounded-box border border-base-300">
             <pre class="mermaid w-full text-center" id="architecture-mermaid">
 flowchart TD
-  IDLE["IDLE (Cold Start &lt;2ms)"] --> CHECK_CALLER{"Has --caller?"}
-  CHECK_CALLER -- Yes --> RESOLVING_CALLER["RESOLVING_CALLER\n(Profile &amp; 3-Tier Config)"]
-  CHECK_CALLER -- No --> VALIDATING
-  RESOLVING_CALLER --> VALIDATING["VALIDATING\n(Semantic Pre-Flight Check)"]
-  VALIDATING --> AUTO_FIXING["AUTO_FIXING\n(Mechanical Repairs &lt;1ms)"]
-  AUTO_FIXING --> ASSEMBLING["ASSEMBLING\n(Deterministic Build &lt;100ms)"]
-  ASSEMBLING --> VERIFYING["VERIFYING\n(Playwright 5-Breakpoints)"]
-  VERIFYING -- Success --> COMPLETED["COMPLETED\n(HTML &amp; PDF Deliverables)"]
-  VERIFYING -- Issues Left --> REMEDIATING["REMEDIATING\n(Prescriptive JSON Directive)"]
-  REMEDIATING -. Attempt 2 or 3 .-> VALIDATING
-  VERIFYING -- Exceeded 3 Retries --> FAILED["FAILED\n(Terminal Safety Ceiling)"]
+  Input["Report Spec &amp; Data"] --> Stack["11 Non-Blocking CDNs"]
+  Stack --> Theme["DaisyUI 32-Theme Resolver"]
+  Theme --> Charts["Chart.js &amp; Mermaid Sync"]
+  Theme --> Grid["Dark-Mode Ready Grid.js"]
+  Charts --> Verify["Playwright 5-Breakpoint Gate"]
+  Grid --> Verify
             </pre>
           </div>
         </div>
@@ -1524,7 +1343,8 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
             <div class="text-xs font-semibold opacity-80">
               Static Print Snapshot of <code>example.csv</code> (8 rows &bull; Interactive file loader &amp; filters hidden in print mode):
             </div>
-            <table class="table table-xs table-zebra w-full border border-base-300">
+            <div class="overflow-x-auto w-full">
+  <table class="table table-xs table-zebra w-full border border-base-300">
               <thead>
                 <tr class="bg-base-200 text-base-content">
                   <th>id</th>
@@ -1546,6 +1366,7 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
                 <tr><td>SRV-108</td><td>Cache-Sync-Coordinator</td><td>eu-west-1</td><td>1120</td><td>19.7</td><td>Healthy</td></tr>
               </tbody>
             </table>
+</div>
           </div>
 
           <!-- Search, Custom DaisyUI Filters, Grid.js Table & Chart.js Underneath (Hidden/Empty Until CSV is Loaded) -->
@@ -1865,7 +1686,7 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
           <p class="text-xs opacity-80">
             Showdown compiles markdown tables, strikethrough, and GitHub tasklists alongside Marked with zero namespace collision.
           </p>
-          <div class="p-4 rounded-box bg-base-200/50 border border-base-300" data-showdown="#### Architectural Milestone&#10;- [x] Day.js timestamp hydration&#10;- [x] Impress presentation guard&#10;- [x] FullCalendar DaisyUI theme syncing"></div>
+          <div class="p-4 rounded-box bg-base-200/50 border border-base-300" data-markdown-showdown="#### Architectural Milestone&#10;- [x] Day.js timestamp hydration&#10;- [x] Impress presentation guard&#10;- [x] FullCalendar DaisyUI theme syncing"></div>
         </div>
       </div>
 
@@ -1891,883 +1712,320 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
           ></div>
         </div>
       </div>
+
+      <!-- 11.6 Datastar.js Real-Time Live Telemetry & Hypermedia Morphing -->
+      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-datastar">
+        <div class="card-body p-4 sm:p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 id="datastar-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
+              <i data-lucide="zap" class="w-5 h-5 text-primary"></i>
+              <span>11.6 Datastar.js Real-Time Live Telemetry &amp; Reactive Signals</span>
+            </h3>
+            <span class="badge badge-outline badge-primary text-xs">Datastar Live</span>
+          </div>
+          <p class="text-xs opacity-80">
+            Real-time server-sent hypermedia morphing (via Idiomorph) and declarative reactive signals with zero build tools or complex state machines.
+          </p>
+
+          <!-- Interactive Datastar Signal Monitor -->
+          <div
+            class="p-4 rounded-xl bg-base-200/60 border border-base-300 space-y-3"
+            data-signals='{"activeAgent":"Google Antigravity","stepIndex":4,"toolFilter":"all","taskCounter":3,"streamStatus":"Active"}'
+          >
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-base-300 pb-2">
+              <div class="flex items-center gap-2 text-xs">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse"></span>
+                <span class="font-semibold">Stream Status:</span>
+                <span class="badge badge-sm badge-success font-mono" data-text="$streamStatus">Active</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                <span class="opacity-70">Agent:</span>
+                <span class="badge badge-sm badge-ghost font-mono" data-text="$activeAgent">Google Antigravity</span>
+                <span class="opacity-70">Step:</span>
+                <span class="badge badge-sm badge-primary font-mono" data-text="$stepIndex">4</span>
+              </div>
+            </div>
+
+            <!-- Mini Live Task Tree Simulation -->
+            <div class="space-y-2">
+              <div class="text-2xs uppercase tracking-wider font-bold opacity-60">Task Hierarchy Telemetry (#task-*)</div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div id="task-demo-1" class="card bg-base-100 p-3 rounded-lg border border-success/40 transition">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="check" class="w-4 h-4 text-success"></i>
+                      <span class="text-xs font-semibold line-through opacity-75">Schema Formalization</span>
+                    </div>
+                    <span class="badge badge-xs badge-success">Done</span>
+                  </div>
+                </div>
+                <div id="task-demo-2" class="card bg-base-100 p-3 rounded-lg border border-primary shadow-xs transition">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="loading loading-spinner loading-xs text-primary"></span>
+                      <span class="text-xs font-bold text-primary">SSE Stream Morphing</span>
+                    </div>
+                    <span class="badge badge-xs badge-primary animate-pulse">Running</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mini Tool Invocation Feed Simulation -->
+            <div class="space-y-2">
+              <div class="text-2xs uppercase tracking-wider font-bold opacity-60">Live Tool Execution Feed (#tool-call-feed)</div>
+              <div id="tool-call-feed" class="space-y-1.5">
+                <div id="tool-demo-1" class="rounded-box border border-base-300 bg-base-100 p-2.5 text-xs shadow-2xs">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5 truncate">
+                      <i data-lucide="terminal" class="w-3.5 h-3.5 text-primary shrink-0"></i>
+                      <span class="font-mono font-semibold text-3xs text-primary">run_command</span>
+                      <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1 rounded">node --test tests/datastar-stream.test.mjs</span>
+                    </div>
+                    <span class="badge badge-success badge-xs">180ms</span>
+                  </div>
+                  <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-1.5 px-3 max-h-24 overflow-y-auto">
+                    <pre data-prefix=">"><code>✔ 12 passing tests (0 failures)</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-  </main>
-
-  <!-- Interactive Mode: PDF Readiness Notice & Conversion Prompt Modal -->
-  <dialog id="pdf-not-ready-modal" class="modal modal-bottom sm:modal-middle">
-    <div class="modal-box bg-base-100 text-base-content border border-base-300 shadow-2xl">
-      <div class="flex items-center gap-3 pb-3 border-b border-base-300">
-        <div class="w-10 h-10 rounded-full bg-warning/20 text-warning flex items-center justify-center shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-        </div>
-        <div>
-          <h3 class="font-bold text-base">This Report is in Interactive Mode</h3>
-          <p class="text-xs text-base-content/70">Not optimized for static PDF export</p>
-        </div>
-      </div>
-      <p class="py-3 text-xs leading-relaxed">
-        This document contains rich client-side interactivity (sliders, file inputs, dynamic filtering) designed for browser use rather than paginated print output.
-      </p>
-      <div class="bg-base-200 p-3 rounded-box border border-base-300 text-xs space-y-2">
-        <span class="font-semibold block text-[11px] uppercase tracking-wider text-base-content/70">Prompt to make this report PDF-ready:</span>
-        <div class="space-y-2">
-          <pre id="pdf-conversion-prompt-text" class="bg-base-300 p-2.5 rounded font-mono text-[11px] select-all whitespace-pre-wrap break-words">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</pre>
-          <button type="button" id="copy-pdf-prompt-btn" class="btn btn-xs btn-primary gap-1" onclick="window.copyPdfConversionPrompt()">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-            </svg>
-            <span id="copy-pdf-prompt-label">Copy Prompt</span>
-          </button>
-        </div>
-      </div>
-      <div class="modal-action flex justify-between items-center mt-4">
-        <button type="button" class="btn btn-ghost btn-xs text-base-content/60" onclick="document.getElementById('pdf-not-ready-modal').close(); window.exportReportPdf ? window.exportReportPdf() : window.print();">Print Anyway</button>
-        <button type="button" class="btn btn-sm" onclick="document.getElementById('pdf-not-ready-modal').close()">Close</button>
-      </div>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-      <button>close</button>
-    </form>
-  </dialog>
-
-  <!-- Minimal Centered Footer -->
-  <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75">
-    generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a>
-  </footer>
-
-  <!-- Non-Blocking Subsystem Initialization Script -->
-  <script>
-    const STANDARD_DAISYUI_THEMES = new Set([
-      "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
-      "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden",
-      "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe",
-      "black", "luxury", "dracula", "cmyk", "autumn", "business",
-      "acid", "lemonade", "night", "coffee", "winter", "dim", "nord", "sunset"
-    ]);
-
-    const DAISYUI_THEMES = Array.from(STANDARD_DAISYUI_THEMES);
-
-    // Zero-dependency pure JS OKLCH engine & compiler
-    function srgbToLinear(c) {
-      const norm = c / 255;
-      return norm <= 0.04045 ? norm / 12.92 : Math.pow((norm + 0.055) / 1.055, 2.4);
-    }
-
-    function linearToSrgb(c) {
-      const clamped = Math.max(0, Math.min(1, c));
-      const srgb = clamped <= 0.0031308 ? clamped * 12.92 : 1.055 * Math.pow(clamped, 1 / 2.4) - 0.055;
-      return Math.round(srgb * 255);
-    }
-
-    function hexToRgb(hex) {
-      let clean = String(hex).replace(/^#/, "").trim();
-      if (clean.length === 3) {
-        clean = clean.split("").map((c) => c + c).join("") + "ff";
-      } else if (clean.length === 4) {
-        clean = clean.split("").map((c) => c + c).join("");
-      } else if (clean.length === 6) {
-        clean += "ff";
-      }
-      if (clean.length !== 8) return [0, 0, 0, 1];
-      const num = parseInt(clean, 16);
-      if (Number.isNaN(num)) return [0, 0, 0, 1];
-      return [
-        (num >>> 24) & 255,
-        (num >>> 16) & 255,
-        (num >>> 8) & 255,
-        ((num & 255) / 255)
-      ];
-    }
-
-    function hslToRgb(h, s, l) {
-      const hNorm = (((h % 360) + 360) % 360) / 360;
-      const sNorm = Math.max(0, Math.min(1, s / 100));
-      const lNorm = Math.max(0, Math.min(1, l / 100));
-      if (sNorm === 0) {
-        const val = Math.round(lNorm * 255);
-        return [val, val, val];
-      }
-      const q = lNorm < 0.5 ? lNorm * (1 + sNorm) : lNorm + sNorm - lNorm * sNorm;
-      const p = 2 * lNorm - q;
-      const hue2rgb = (t) => {
-        let tNorm = t;
-        if (tNorm < 0) tNorm += 1;
-        if (tNorm > 1) tNorm -= 1;
-        if (tNorm < 1 / 6) return p + (q - p) * 6 * tNorm;
-        if (tNorm < 1 / 2) return q;
-        if (tNorm < 2 / 3) return p + (q - p) * (2 / 3 - tNorm) * 6;
-        return p;
-      };
-      return [
-        Math.round(hue2rgb(hNorm + 1 / 3) * 255),
-        Math.round(hue2rgb(hNorm) * 255),
-        Math.round(hue2rgb(hNorm - 1 / 3) * 255)
-      ];
-    }
-
-    function parseColor(input) {
-      if (!input || typeof input !== "string") {
-        return { r: 59, g: 130, b: 246, a: 1, oklch: null };
-      }
-      const str = input.trim();
-      const oklchMatch = str.match(/^(?:oklch\s*\(\s*)?([0-9.]+%?)\s+([0-9.]+)\s+([0-9.]+)(?:\s*(?:\/|\s)\s*([0-9.]+%?))?\s*\)?$/i);
-      if (oklchMatch) {
-        let rawL = oklchMatch[1];
-        let L = rawL.endsWith("%") ? parseFloat(rawL) / 100 : parseFloat(rawL);
-        if (L > 1) L = L / 100;
-        const C = parseFloat(oklchMatch[2]);
-        const H = parseFloat(oklchMatch[3]);
+    <script>
+      window.themeStudioController = function themeStudioController() {
         return {
-          r: null,
-          g: null,
-          b: null,
-          a: 1,
-          oklch: {
-            L,
-            C,
-            H,
-            formatted: `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`
-          }
-        };
-      }
-      if (str.startsWith("#")) {
-        const [r, g, b, a] = hexToRgb(str);
-        return { r, g, b, a, oklch: null };
-      }
-      const rgbMatch = str.match(/^rgba?\s*\(\s*(\d+)(?:,|\s+)\s*(\d+)(?:,|\s+)\s*(\d+)(?:(?:\s*[,/]\s*|\s+)([0-9.]+%?))?\s*\)$/i);
-      if (rgbMatch) {
-        const r = parseInt(rgbMatch[1], 10);
-        const g = parseInt(rgbMatch[2], 10);
-        const b = parseInt(rgbMatch[3], 10);
-        let a = 1;
-        if (rgbMatch[4]) {
-          a = rgbMatch[4].endsWith("%") ? parseFloat(rgbMatch[4]) / 100 : parseFloat(rgbMatch[4]);
-        }
-        return { r, g, b, a, oklch: null };
-      }
-      const hslMatch = str.match(/^hsla?\s*\(\s*(\d+)(?:deg)?(?:,|\s+)\s*(\d+)%(?:,|\s+)\s*(\d+)%(?:(?:\s*[,/]\s*|\s+)([0-9.]+%?))?\s*\)$/i);
-      if (hslMatch) {
-        const h = parseInt(hslMatch[1], 10);
-        const s = parseInt(hslMatch[2], 10);
-        const l = parseInt(hslMatch[3], 10);
-        const [r, g, b] = hslToRgb(h, s, l);
-        let a = 1;
-        if (hslMatch[4]) {
-          a = hslMatch[4].endsWith("%") ? parseFloat(hslMatch[4]) / 100 : parseFloat(hslMatch[4]);
-        }
-        return { r, g, b, a, oklch: null };
-      }
-      return { r: 59, g: 130, b: 246, a: 1, oklch: null };
-    }
+          isOpen: false,
+          themeName: "custom-brand",
+          extendsTheme: "light",
+          colorScheme: "auto",
+          primary: "#3b82f6",
+          secondary: "#ec4899",
+          accent: "#10b981",
+          neutral: "#1f2937",
+          base100: "#ffffff",
+          base200: "#f3f4f6",
+          base300: "#e5e7eb",
+          roundedBtn: "0.5rem",
+          roundedBtnNum: 0.5,
+          roundedBox: "1rem",
+          roundedBoxNum: 1.0,
+          roundedBadge: "1.9rem",
+          roundedBadgeNum: 1.9,
+          copiedCss: false,
+          copiedTailwind: false,
+          savedNotice: false,
+          activeTheme: "light",
+          baseThemeOptions: [
+            "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
+            "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden",
+            "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black",
+            "luxury", "dracula", "cmyk", "autumn", "business", "acid", "lemonade",
+            "night", "coffee", "winter", "dim", "nord", "sunset"
+          ],
 
-    function rgbToOklch(r, g, b) {
-      if (r === g && g === b) {
-        const L = r === 0 ? 0 : r === 255 ? 1 : 0.2104542553 * Math.cbrt(srgbToLinear(r)) + 0.7936177850 * Math.cbrt(srgbToLinear(r)) - 0.0040720468 * Math.cbrt(srgbToLinear(r));
-        return {
-          L,
-          C: 0,
-          H: 0,
-          formatted: `${(L * 100).toFixed(2)}% 0.000 0.00`
-        };
-      }
-      const lr = srgbToLinear(r);
-      const lg = srgbToLinear(g);
-      const lb = srgbToLinear(b);
-
-      const l = 0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb;
-      const m = 0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb;
-      const s = 0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb;
-
-      const l_ = Math.cbrt(Math.max(0, l));
-      const m_ = Math.cbrt(Math.max(0, m));
-      const s_ = Math.cbrt(Math.max(0, s));
-
-      const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
-      const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
-      const b_ = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
-
-      let C = Math.sqrt(a * a + b_ * b_);
-      let H = Math.atan2(b_, a) * (180 / Math.PI);
-      if (H < 0) H += 360;
-      if (C < 0.0001) {
-        C = 0;
-        H = 0;
-      }
-      return {
-        L,
-        C,
-        H,
-        formatted: `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`
-      };
-    }
-
-    function autoContrastContent(colorInput) {
-      const parsed = parseColor(colorInput);
-      let L = 0.5;
-      let H = 0;
-      let luminance = 0.5;
-
-      if (parsed.oklch) {
-        L = parsed.oklch.L;
-        H = parsed.oklch.H;
-        luminance = L;
-      } else {
-        const oklch = rgbToOklch(parsed.r, parsed.g, parsed.b);
-        L = oklch.L;
-        H = oklch.H;
-        const lr = srgbToLinear(parsed.r);
-        const lg = srgbToLinear(parsed.g);
-        const lb = srgbToLinear(parsed.b);
-        luminance = 0.2126 * lr + 0.7152 * lg + 0.0722 * lb;
-      }
-
-      const hVal = Number.isFinite(H) ? H.toFixed(2) : "0";
-      if (L > 0.65 || luminance > 0.4) {
-        return `15% 0.02 ${hVal}`;
-      }
-      return `98% 0.01 ${hVal}`;
-    }
-
-    const RUNTIME_COLOR_MAP = {
-      primary: "--p",
-      "primary-content": "--pc",
-      secondary: "--s",
-      "secondary-content": "--sc",
-      accent: "--a",
-      "accent-content": "--ac",
-      neutral: "--n",
-      "neutral-content": "--nc",
-      "base-100": "--b1",
-      "base-200": "--b2",
-      "base-300": "--b3",
-      "base-content": "--bc"
-    };
-
-    function compileTheme(themeDefinition, { defaultThemeName = "custom" } = {}) {
-      if (typeof themeDefinition === "string") {
-        const trimmed = themeDefinition.trim();
-        if (trimmed.includes("[data-theme=")) {
-          const match = trimmed.match(/\[data-theme=["']?([a-zA-Z0-9_\-]+)["']?\]/);
-          const themeName = match ? match[1] : defaultThemeName;
-          return { themeName, css: trimmed, variables: {}, isRawCss: true };
-        }
-        try {
-          return compileTheme(JSON.parse(trimmed), { defaultThemeName });
-        } catch (_) {
-          throw new Error("Invalid theme definition");
-        }
-      }
-
-      let themeObj = themeDefinition;
-      let themeName = defaultThemeName;
-
-      const topKeys = Object.keys(themeObj);
-      if (topKeys.length === 1 && typeof themeObj[topKeys[0]] === "object" && !themeObj[topKeys[0]].r) {
-        themeName = topKeys[0];
-        themeObj = themeObj[topKeys[0]];
-      } else if (themeObj.name) {
-        themeName = themeObj.name;
-      }
-
-      const resultVars = {};
-      for (const [key, rawValue] of Object.entries(themeObj)) {
-        if (key === "extends" || key === "name") continue;
-        if (RUNTIME_COLOR_MAP[key]) {
-          const parsed = parseColor(rawValue);
-          resultVars[RUNTIME_COLOR_MAP[key]] = parsed.oklch ? parsed.oklch.formatted : rgbToOklch(parsed.r, parsed.g, parsed.b).formatted;
-          continue;
-        }
-        if (key.startsWith("--")) {
-          if (Object.values(RUNTIME_COLOR_MAP).includes(key)) {
-            const parsed = parseColor(rawValue);
-            resultVars[key] = parsed.oklch ? parsed.oklch.formatted : rgbToOklch(parsed.r, parsed.g, parsed.b).formatted;
-          } else {
-            resultVars[key] = String(rawValue).trim();
-          }
-          continue;
-        }
-        if (key === "color-scheme" || key === "colorScheme") {
-          resultVars["color-scheme"] = String(rawValue).trim();
-          continue;
-        }
-        resultVars[key] = String(rawValue).trim();
-      }
-
-      // Auto content
-      const pairs = [["--p", "--pc"], ["--s", "--sc"], ["--a", "--ac"], ["--n", "--nc"], ["--b1", "--bc"]];
-      for (const [pVar, cVar] of pairs) {
-        if (resultVars[pVar] && !resultVars[cVar]) {
-          resultVars[cVar] = autoContrastContent(resultVars[pVar]);
-        }
-      }
-
-      const lines = [`[data-theme="${themeName}"] {`];
-      if (resultVars["color-scheme"]) lines.push(`  color-scheme: ${resultVars["color-scheme"]};`);
-      for (const [k, v] of Object.entries(resultVars)) {
-        if (k === "color-scheme") continue;
-        lines.push(`  ${k}: ${v};`);
-      }
-      lines.push(`}`);
-      return { themeName, css: lines.join("\n"), variables: resultVars, isRawCss: false };
-    }
-
-    function tailwindConfigSnippet(themeName, variables) {
-      return `daisyui: {\n  themes: [\n    {\n      "${themeName}": ${JSON.stringify(variables, null, 8).replace(/^ {8}/gm, "      ")}\n    }\n  ]\n}`;
-    }
-
-    function registerCustomTheme(themeName, css = null) {
-      if (!themeName || typeof themeName !== "string") return false;
-      const name = themeName.trim();
-      if (!DAISYUI_THEMES.includes(name)) {
-        DAISYUI_THEMES.push(name);
-      }
-
-      if (css && typeof document !== "undefined") {
-        let styleEl = document.getElementById("daisyui-custom-themes");
-        if (!styleEl) {
-          styleEl = document.createElement("style");
-          styleEl.id = "daisyui-custom-themes";
-          styleEl.textContent = "";
-          if (document.head && typeof document.head.appendChild === "function") {
-            document.head.appendChild(styleEl);
-          }
-        }
-        styleEl.textContent = styleEl.textContent || "";
-        const themeSelector = `[data-theme="${name}"]`;
-        if (styleEl.textContent.includes(themeSelector)) {
-          const escaped = themeSelector.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-          const regex = new RegExp(`${escaped}\\s*\\{[^}]*\\}`, "g");
-          styleEl.textContent = styleEl.textContent.replace(regex, css);
-        } else {
-          styleEl.textContent += `\n${css}\n`;
-        }
-      }
-
-      if (typeof document !== "undefined" && document.getElementById("theme-swatch-list")) {
-        initThemeDropdown();
-      }
-      return true;
-    }
-
-    function scanAndRegisterExistingCustomThemes() {
-      if (typeof document === "undefined") return;
-      const styleEl = document.getElementById("daisyui-custom-themes");
-      if (styleEl && styleEl.textContent) {
-        const themeRegex = /\[data-theme=["']?([a-zA-Z0-9_\-]+)["']?\]/g;
-        let match;
-        while ((match = themeRegex.exec(styleEl.textContent)) !== null) {
-          const name = match[1];
-          if (name && !DAISYUI_THEMES.includes(name)) {
-            DAISYUI_THEMES.push(name);
-          }
-        }
-      }
-      try {
-        if (typeof localStorage !== "undefined") {
-          const savedThemes = localStorage.getItem("html_report_custom_themes");
-          if (savedThemes) {
-            const parsed = JSON.parse(savedThemes);
-            if (typeof parsed === "object") {
-              for (const [themeName, entry] of Object.entries(parsed)) {
-                const css = typeof entry === "string" ? entry : (entry.css || null);
-                registerCustomTheme(themeName, css);
-              }
-            }
-          }
-        }
-      } catch (_) {}
-    }
-
-    window.srgbToLinear = srgbToLinear;
-    window.linearToSrgb = linearToSrgb;
-    window.hexToRgb = hexToRgb;
-    window.hslToRgb = hslToRgb;
-    window.parseColor = parseColor;
-    window.rgbToOklch = rgbToOklch;
-    window.autoContrastContent = autoContrastContent;
-    window.compileTheme = compileTheme;
-    window.tailwindConfigSnippet = tailwindConfigSnippet;
-    window.registerCustomTheme = registerCustomTheme;
-    window.scanAndRegisterExistingCustomThemes = scanAndRegisterExistingCustomThemes;
-    window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
-    window.DAISYUI_THEMES = DAISYUI_THEMES;
-
-    window.themeStudioController = function themeStudioController() {
-      return {
-        isOpen: false,
-        themeName: "custom-brand",
-        extendsTheme: "light",
-        colorScheme: "auto",
-        primary: "#3b82f6",
-        secondary: "#ec4899",
-        accent: "#10b981",
-        neutral: "#1f2937",
-        base100: "#ffffff",
-        base200: "#f3f4f6",
-        base300: "#e5e7eb",
-        roundedBtn: "0.5rem",
-        roundedBtnNum: 0.5,
-        roundedBox: "1rem",
-        roundedBoxNum: 1.0,
-        roundedBadge: "1.9rem",
-        roundedBadgeNum: 1.9,
-        copiedCss: false,
-        copiedTailwind: false,
-        savedNotice: false,
-        activeTheme: "light",
-        baseThemeOptions: Array.from(STANDARD_DAISYUI_THEMES),
-
-        init() {
-          this.activeTheme = document.documentElement.getAttribute("data-theme") || "light";
-          try {
-            if (typeof localStorage !== "undefined") {
-              const savedJson = localStorage.getItem("html_report_custom_themes");
-              if (savedJson) {
-                const saved = JSON.parse(savedJson);
-                if (saved[this.themeName]) {
-                  const item = saved[this.themeName];
-                  if (item.primary) this.primary = item.primary;
-                  if (item.secondary) this.secondary = item.secondary;
-                  if (item.accent) this.accent = item.accent;
-                  if (item.neutral) this.neutral = item.neutral;
-                  if (item.base100) this.base100 = item.base100;
-                  if (item.base200) this.base200 = item.base200;
-                  if (item.base300) this.base300 = item.base300;
-                  if (item.extends) this.extendsTheme = item.extends;
+          init() {
+            this.activeTheme = document.documentElement.getAttribute("data-theme") || "light";
+            try {
+              if (typeof localStorage !== "undefined") {
+                const savedJson = localStorage.getItem("html_report_custom_themes");
+                if (savedJson) {
+                  const saved = JSON.parse(savedJson);
+                  if (saved[this.themeName]) {
+                    const item = saved[this.themeName];
+                    if (item.primary) this.primary = item.primary;
+                    if (item.secondary) this.secondary = item.secondary;
+                    if (item.accent) this.accent = item.accent;
+                    if (item.neutral) this.neutral = item.neutral;
+                    if (item.base100) this.base100 = item.base100;
+                    if (item.base200) this.base200 = item.base200;
+                    if (item.base300) this.base300 = item.base300;
+                    if (item.extends) this.extendsTheme = item.extends;
+                  }
                 }
               }
+            } catch (_) {}
+          },
+
+          getOklch(hex) {
+            if (!hex) return "";
+            try {
+              if (window.rgbToOklch && window.hexToRgb) {
+                const [r, g, b] = window.hexToRgb(hex);
+                return window.rgbToOklch(r, g, b).formatted;
+              }
+            } catch (_) {}
+            return hex;
+          },
+
+          getCompiledCss() {
+            if (typeof window.compileTheme === "function") {
+              const res = window.compileTheme({
+                [this.themeName]: {
+                  extends: this.extendsTheme,
+                  primary: this.primary,
+                  secondary: this.secondary,
+                  accent: this.accent,
+                  neutral: this.neutral,
+                  "base-100": this.base100,
+                  "base-200": this.base200,
+                  "base-300": this.base300,
+                  "--rounded-btn": this.roundedBtn,
+                  "--rounded-box": this.roundedBox,
+                  "--rounded-badge": this.roundedBadge,
+                  ...(this.colorScheme !== "auto" ? { "color-scheme": this.colorScheme } : {})
+                }
+              });
+              return res.css;
             }
-          } catch (_) {}
-        },
+            return `[data-theme="${this.themeName}"] {\n  --p: ${this.primary};\n}`;
+          },
 
-        getOklch(hex) {
-          if (!hex) return "";
-          try {
-            const [r, g, b] = hexToRgb(hex);
-            return rgbToOklch(r, g, b).formatted;
-          } catch (_) {}
-          return hex;
-        },
-
-        getCompiledCss() {
-          const res = compileTheme({
-            [this.themeName]: {
-              extends: this.extendsTheme,
-              primary: this.primary,
-              secondary: this.secondary,
-              accent: this.accent,
-              neutral: this.neutral,
-              "base-100": this.base100,
-              "base-200": this.base200,
-              "base-300": this.base300,
-              "--rounded-btn": this.roundedBtn,
-              "--rounded-box": this.roundedBox,
-              "--rounded-badge": this.roundedBadge,
-              ...(this.colorScheme !== "auto" ? { "color-scheme": this.colorScheme } : {})
+          getTailwindSnippet() {
+            if (typeof window.tailwindConfigSnippet === "function") {
+              return window.tailwindConfigSnippet(this.themeName, {
+                primary: this.getOklch(this.primary),
+                secondary: this.getOklch(this.secondary),
+                accent: this.getOklch(this.accent),
+                neutral: this.getOklch(this.neutral),
+                "base-100": this.getOklch(this.base100),
+                "base-200": this.getOklch(this.base200),
+                "base-300": this.getOklch(this.base300),
+                "--rounded-btn": this.roundedBtn,
+                "--rounded-box": this.roundedBox,
+                "--rounded-badge": this.roundedBadge
+              });
             }
-          });
-          return res.css;
-        },
+            return `// Tailwind config for ${this.themeName}`;
+          },
 
-        getTailwindSnippet() {
-          return tailwindConfigSnippet(this.themeName, {
-            primary: this.getOklch(this.primary),
-            secondary: this.getOklch(this.secondary),
-            accent: this.getOklch(this.accent),
-            neutral: this.getOklch(this.neutral),
-            "base-100": this.getOklch(this.base100),
-            "base-200": this.getOklch(this.base200),
-            "base-300": this.getOklch(this.base300),
-            "--rounded-btn": this.roundedBtn,
-            "--rounded-box": this.roundedBox,
-            "--rounded-badge": this.roundedBadge
-          });
-        },
-
-        applyLiveTheme() {
-          const css = this.getCompiledCss();
-          registerCustomTheme(this.themeName, css);
-          if (typeof window.setReportTheme === "function") {
-            window.setReportTheme(this.themeName);
-            this.activeTheme = this.themeName;
-          }
-        },
-
-        saveTheme() {
-          this.applyLiveTheme();
-          try {
-            if (typeof localStorage !== "undefined") {
-              const saved = JSON.parse(localStorage.getItem("html_report_custom_themes") || "{}");
-              saved[this.themeName] = {
-                extends: this.extendsTheme,
-                colorScheme: this.colorScheme,
-                primary: this.primary,
-                secondary: this.secondary,
-                accent: this.accent,
-                neutral: this.neutral,
-                base100: this.base100,
-                base200: this.base200,
-                base300: this.base300,
-                roundedBtn: this.roundedBtn,
-                roundedBox: this.roundedBox,
-                roundedBadge: this.roundedBadge,
-                css: this.getCompiledCss()
-              };
-              localStorage.setItem("html_report_custom_themes", JSON.stringify(saved));
-              this.savedNotice = true;
-              setTimeout(() => { this.savedNotice = false; }, 2500);
+          applyLiveTheme() {
+            const css = this.getCompiledCss();
+            if (typeof window.registerCustomTheme === "function") {
+              window.registerCustomTheme(this.themeName, css);
             }
-          } catch (_) {}
-        },
+            if (typeof window.setReportTheme === "function") {
+              window.setReportTheme(this.themeName);
+              this.activeTheme = this.themeName;
+            }
+          },
 
-        copyCss() {
-          const css = this.getCompiledCss();
-          navigator.clipboard.writeText(css).then(() => {
-            this.copiedCss = true;
-            setTimeout(() => { this.copiedCss = false; }, 2500);
-          });
-        },
+          saveTheme() {
+            this.applyLiveTheme();
+            try {
+              if (typeof localStorage !== "undefined") {
+                const saved = JSON.parse(localStorage.getItem("html_report_custom_themes") || "{}");
+                saved[this.themeName] = {
+                  extends: this.extendsTheme,
+                  colorScheme: this.colorScheme,
+                  primary: this.primary,
+                  secondary: this.secondary,
+                  accent: this.accent,
+                  neutral: this.neutral,
+                  base100: this.base100,
+                  base200: this.base200,
+                  base300: this.base300,
+                  roundedBtn: this.roundedBtn,
+                  roundedBox: this.roundedBox,
+                  roundedBadge: this.roundedBadge,
+                  css: this.getCompiledCss()
+                };
+                localStorage.setItem("html_report_custom_themes", JSON.stringify(saved));
+                this.savedNotice = true;
+                setTimeout(() => { this.savedNotice = false; }, 2500);
+              }
+            } catch (_) {}
+          },
 
-        copyTailwind() {
-          const tw = this.getTailwindSnippet();
-          navigator.clipboard.writeText(tw).then(() => {
-            this.copiedTailwind = true;
-            setTimeout(() => { this.copiedTailwind = false; }, 2500);
-          });
-        },
+          copyCss() {
+            const css = this.getCompiledCss();
+            navigator.clipboard.writeText(css).then(() => {
+              this.copiedCss = true;
+              setTimeout(() => { this.copiedCss = false; }, 2500);
+            });
+          },
 
-        resetDefaults() {
-          this.primary = "#3b82f6";
-          this.secondary = "#ec4899";
-          this.accent = "#10b981";
-          this.neutral = "#1f2937";
-          this.base100 = "#ffffff";
-          this.base200 = "#f3f4f6";
-          this.base300 = "#e5e7eb";
-          this.roundedBtn = "0.5rem";
-          this.roundedBtnNum = 0.5;
-          this.roundedBox = "1rem";
-          this.roundedBoxNum = 1.0;
-          this.roundedBadge = "1.9rem";
-          this.roundedBadgeNum = 1.9;
-          this.applyLiveTheme();
-        }
-      };
-    };
+          copyTailwind() {
+            const tw = this.getTailwindSnippet();
+            navigator.clipboard.writeText(tw).then(() => {
+              this.copiedTailwind = true;
+              setTimeout(() => { this.copiedTailwind = false; }, 2500);
+            });
+          },
 
-    window.reportCharts = [];
-
-    function slugifyHeading(text, index) {
-      const base = text
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-      return base || `section-heading-${index}`;
-    }
-
-    // 1. Table of Contents Builder (maps all h1, h2, h3 in <main> into both Navbar TOC and Print Page 1 TOC)
-    function initTOC() {
-      const tocList = document.getElementById("report-toc-list");
-      const printTocList = document.getElementById("print-toc-list");
-      const mainEl = document.querySelector("main");
-      if (!tocList || !mainEl) return;
-
-      const headings = Array.from(mainEl.querySelectorAll("h1, h2, h3"));
-      const usedIds = new Set();
-      tocList.innerHTML = "";
-      if (printTocList) printTocList.innerHTML = "";
-
-      headings.forEach((heading, idx) => {
-        if (!heading.id) {
-          let candidate = slugifyHeading(heading.textContent || "", idx);
-          while (usedIds.has(candidate)) {
-            candidate = `${candidate}-${idx}`;
+          resetDefaults() {
+            this.primary = "#3b82f6";
+            this.secondary = "#ec4899";
+            this.accent = "#10b981";
+            this.neutral = "#1f2937";
+            this.base100 = "#ffffff";
+            this.base200 = "#f3f4f6";
+            this.base300 = "#e5e7eb";
+            this.roundedBtn = "0.5rem";
+            this.roundedBtnNum = 0.5;
+            this.roundedBox = "1rem";
+            this.roundedBoxNum = 1.0;
+            this.roundedBadge = "1.9rem";
+            this.roundedBadgeNum = 1.9;
+            this.applyLiveTheme();
           }
-          heading.id = candidate;
-        }
-        usedIds.add(heading.id);
-
-        const tag = heading.tagName.toLowerCase();
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        a.href = `#${heading.id}`;
-        a.textContent = heading.textContent.trim();
-        a.setAttribute("data-toc-level", tag);
-
-        if (tag === "h1") {
-          a.className = "font-bold text-xs sm:text-sm";
-        } else if (tag === "h2") {
-          a.className = "pl-4 font-medium text-xs sm:text-sm";
-        } else {
-          a.className = "pl-7 text-xs opacity-80";
-        }
-
-        li.appendChild(a);
-        tocList.appendChild(li);
-
-        if (printTocList) {
-          const printLi = document.createElement("li");
-          printLi.setAttribute("data-print-toc-level", tag);
-          if (tag === "h1") {
-            printLi.className = "font-extrabold text-xs col-span-1 sm:col-span-2 border-b border-base-300 pb-1 mb-1";
-          } else if (tag === "h2") {
-            printLi.className = "font-bold text-xs pt-1";
-          } else {
-            printLi.className = "pl-3 text-xs opacity-80";
-          }
-          printLi.textContent = heading.textContent.trim();
-          printTocList.appendChild(printLi);
-        }
-      });
-    }
-
-    // 2. DaisyUI Theme Color Resolver (converts any OKLCH/HSL/RGB theme color via 1x1 Canvas)
-    function cssColorToHexAndRgba(cssColor) {
-      const canvas = document.createElement("canvas");
-      canvas.width = 1;
-      canvas.height = 1;
-      const ctx = canvas.getContext("2d");
-      ctx.fillStyle = cssColor;
-      ctx.fillRect(0, 0, 1, 1);
-      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-      const hex = "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
-      return {
-        r,
-        g,
-        b,
-        hex,
-        rgb: `rgb(${r}, ${g}, ${b})`,
-        rgba: (alpha = 1) => `rgba(${r}, ${g}, ${b}, ${alpha})`
-      };
-    }
-
-    window.resolveDaisyUIThemePalette = function resolveDaisyUIThemePalette() {
-      const probeContainer = document.createElement("div");
-      probeContainer.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none;";
-      const roles = {
-        primary: "bg-primary",
-        secondary: "bg-secondary",
-        accent: "bg-accent",
-        neutral: "bg-neutral",
-        base100: "bg-base-100",
-        base200: "bg-base-200",
-        base300: "bg-base-300",
-        info: "bg-info",
-        success: "bg-success",
-        warning: "bg-warning",
-        error: "bg-error"
+        };
       };
 
-      const nodes = {};
-      for (const [key, cls] of Object.entries(roles)) {
-        const el = document.createElement("span");
-        el.className = cls;
-        probeContainer.appendChild(el);
-        nodes[key] = el;
-      }
-      const textNode = document.createElement("span");
-      textNode.className = "text-base-content";
-      probeContainer.appendChild(textNode);
-
-      document.body.appendChild(probeContainer);
-
-      const palette = {};
-      for (const [key, el] of Object.entries(nodes)) {
-        palette[key] = cssColorToHexAndRgba(getComputedStyle(el).backgroundColor);
-      }
-      palette.content = cssColorToHexAndRgba(getComputedStyle(textNode).color);
-
-      probeContainer.remove();
-      return palette;
-    };
-
-    // Synchronize Grid.js & CSS Custom Properties with active DaisyUI Theme (fixes dark-mode readability)
-    function applyThemeToGridAndCss(palette) {
-      const rootStyle = document.documentElement.style;
-      rootStyle.setProperty("--grid-bg-1", palette.base100.hex);
-      rootStyle.setProperty("--grid-bg-2", palette.base200.hex);
-      rootStyle.setProperty("--grid-border", palette.base300.hex);
-      rootStyle.setProperty("--grid-text", palette.content.hex);
-      rootStyle.setProperty("--grid-muted", palette.content.rgba(0.72));
-      rootStyle.setProperty("--grid-primary", palette.primary.hex);
-    }
-
-    // 3. Synchronize Chart.js instances with active DaisyUI Theme
-    function applyThemeToCharts(palette) {
-      if (!window.reportCharts || !window.reportCharts.length) return;
-      const seriesColors = [
-        palette.primary,
-        palette.secondary,
-        palette.accent,
-        palette.info,
-        palette.success,
-        palette.warning
-      ];
-
-      for (const chart of window.reportCharts) {
-        chart.data.datasets.forEach((ds, idx) => {
-          const color = seriesColors[idx % seriesColors.length];
-          if (ds.type === "line" || chart.config.type === "line") {
-            ds.borderColor = color.hex;
-            ds.backgroundColor = color.rgba(0.2);
-            ds.pointBackgroundColor = color.hex;
-          } else {
-            ds.backgroundColor = color.rgba(0.82);
-            ds.borderColor = color.hex;
-            ds.borderWidth = 1.5;
-            ds.borderRadius = 6;
-          }
+      // Fragment-Level Initializers for example.html Interactive Showcases
+      window.parseCsvText = function parseCsvText(rawText) {
+        const lines = (rawText || "").trim().split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+        if (!lines.length) return { headers: [], rows: [] };
+        const headers = lines[0].split(",").map((h) => h.trim());
+        const rows = lines.slice(1).map((line) => {
+          const values = line.split(",").map((v) => v.trim());
+          const obj = {};
+          headers.forEach((h, i) => { obj[h] = values[i] ?? ""; });
+          return { values, obj };
         });
+        return { headers, rows };
+      };
 
-        if (chart.options.scales) {
-          for (const scale of Object.values(chart.options.scales)) {
-            if (scale.ticks) scale.ticks.color = palette.content.rgba(0.82);
-            if (scale.grid) scale.grid.color = palette.content.rgba(0.14);
+      window.updateCsvChart = function updateCsvChart(filteredRows, isLoaded) {
+        if (!window.Chart) return;
+        const canvas = document.getElementById("csvChart");
+        if (!canvas) return;
+        if (!isLoaded) {
+          if (window.csvChartInstance) {
+            window.reportCharts = (window.reportCharts || []).filter((c) => c !== window.csvChartInstance);
+            window.csvChartInstance.destroy();
+            window.csvChartInstance = null;
           }
+          return;
         }
-        if (chart.options.plugins?.legend?.labels) {
-          chart.options.plugins.legend.labels.color = palette.content.hex;
+        const palette = typeof window.resolveDaisyUIThemePalette === "function"
+          ? window.resolveDaisyUIThemePalette()
+          : { primary: { hex: "#3b82f6", rgba: (a) => `rgba(59, 130, 246, ${a})` }, secondary: { hex: "#ec4899", rgba: (a) => `rgba(236, 72, 153, ${a})` }, content: { hex: "#111827", rgba: (a) => `rgba(17, 24, 39, ${a})` } };
+        const rows = filteredRows || [];
+        const labels = rows.map((r) => r.obj?.service || r.values?.[1] || r.values?.[0] || "Row");
+        const rpsData = rows.map((r) => parseFloat(r.obj?.rps ?? r.values?.[3] ?? "0") || 0);
+        const latencyData = rows.map((r) => parseFloat(r.obj?.latency_ms ?? r.values?.[4] ?? "0") || 0);
+
+        if (window.csvChartInstance) {
+          window.csvChartInstance.data.labels = labels;
+          window.csvChartInstance.data.datasets[0].data = rpsData;
+          window.csvChartInstance.data.datasets[1].data = latencyData;
+          window.csvChartInstance.update("none");
+          return;
         }
-        chart.update("none");
-      }
-    }
 
-    // 4. Synchronize Mermaid diagrams with active DaisyUI Theme
-    async function renderMermaidWithTheme(palette) {
-      if (!window.mermaid) return;
-      const mermaidNodes = document.querySelectorAll(".mermaid");
-      if (!mermaidNodes.length) return;
-
-      mermaidNodes.forEach((node) => {
-        if (!node.dataset.mermaidSource) {
-          node.dataset.mermaidSource = node.textContent.trim();
-        }
-        node.removeAttribute("data-processed");
-        node.textContent = node.dataset.mermaidSource;
-      });
-
-      window.mermaid.initialize({
-        startOnLoad: false,
-        securityLevel: "loose",
-        theme: "base",
-        themeVariables: {
-          background: palette.base100.hex,
-          primaryColor: palette.base200.hex,
-          primaryTextColor: palette.content.hex,
-          primaryBorderColor: palette.primary.hex,
-          secondaryColor: palette.base300.hex,
-          secondaryTextColor: palette.content.hex,
-          secondaryBorderColor: palette.secondary.hex,
-          tertiaryColor: palette.base100.hex,
-          tertiaryTextColor: palette.content.hex,
-          tertiaryBorderColor: palette.accent.hex,
-          lineColor: palette.primary.hex,
-          textColor: palette.content.hex,
-          mainBkg: palette.base200.hex,
-          nodeBorder: palette.primary.hex,
-          clusterBkg: palette.base200.hex,
-          clusterBorder: palette.secondary.hex,
-          titleColor: palette.content.hex,
-          edgeLabelBackground: palette.base100.hex
-        }
-      });
-
-      await window.mermaid.run({ querySelector: ".mermaid" });
-    }
-
-    // 5. Apply Theme Globally & Update DaisyUI Color-Swatch Dropdown Checkmarks
-    window.setReportTheme = async function setReportTheme(themeName) {
-      if (!DAISYUI_THEMES.includes(themeName)) return;
-      document.documentElement.setAttribute("data-theme", themeName);
-      const activeLabel = document.getElementById("active-theme-label");
-      if (activeLabel) activeLabel.textContent = themeName;
-      const printThemeLabel = document.getElementById("print-cover-theme");
-      if (printThemeLabel) printThemeLabel.textContent = themeName;
-
-      document.querySelectorAll("#theme-swatch-list .theme-swatch-item").forEach((btn) => {
-        const check = btn.querySelector(".theme-check");
-        if (check) {
-          const isCurrent = btn.getAttribute("data-set-theme") === themeName;
-          check.classList.toggle("opacity-100", isCurrent);
-          check.classList.toggle("opacity-0", !isCurrent);
-        }
-      });
-
-      const palette = window.resolveDaisyUIThemePalette();
-      applyThemeToGridAndCss(palette);
-      applyThemeToCharts(palette);
-      await renderMermaidWithTheme(palette);
-
-      if (typeof window !== "undefined") {
-        document.querySelectorAll("[data-fullcalendar]").forEach((el) => {
-          if (el.__fullcalendarInstance) {
-            try { el.__fullcalendarInstance.render(); } catch (_) {}
-          }
-        });
-      }
-    };
-
-    // Build DaisyUI Theme Dropdown with Color-Scheme Swatches (matching daisyui.com; default is always light)
-    function initThemeDropdown() {
-      const listEl = document.getElementById("theme-swatch-list");
-      if (!listEl) return;
-      const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-      listEl.innerHTML = "";
-
-      DAISYUI_THEMES.forEach((theme) => {
-        const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.setAttribute("data-theme", theme);
-        btn.setAttribute("data-set-theme", theme);
-        btn.className = "theme-swatch-item outline-base-content text-start outline-offset-4 rounded-btn w-full cursor-pointer font-sans";
-        btn.innerHTML = `
-          <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
-            <span class="grid grid-cols-5 grid-rows-3">
-              <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
-                  <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
-                </svg>
-                <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
-                  <span>${theme}</span>
-                  ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
-                </span>
-                <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
-                  <span class="bg-primary rounded-badge w-2 h-4"></span>
-                  <span class="bg-secondary rounded-badge w-2 h-4"></span>
-                  <span class="bg-accent rounded-badge w-2 h-4"></span>
-                  <span class="bg-neutral rounded-badge w-2 h-4"></span>
-                </span>
-              </span>
-            </span>
-          </span>
-        `;
-        btn.addEventListener("click", () => window.setReportTheme(theme));
-        listEl.appendChild(btn);
-      });
-    }
-
-    // 6. Initialize Chart.js Visualizations
-    function initCharts(palette) {
-      if (!window.Chart) return;
-      window.reportCharts = [];
-
-      const revCtx = document.getElementById("revenueChart");
-      if (revCtx) {
-        const revChart = new window.Chart(revCtx, {
+        const chart = new window.Chart(canvas, {
           type: "bar",
           data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+            labels,
             datasets: [
               {
                 type: "bar",
-                label: "Throughput (req/s)",
-                data: [48.2, 54.6, 63.1, 72.4, 83.0, 95.8, 112.4, 134.6],
+                label: "Throughput (RPS)",
+                data: rpsData,
                 backgroundColor: palette.primary.rgba(0.82),
                 borderColor: palette.primary.hex,
                 borderWidth: 1.5,
@@ -2775,8 +2033,8 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
               },
               {
                 type: "line",
-                label: "Baseline Latency (ms)",
-                data: [42.1, 39.8, 37.4, 35.9, 33.5, 31.2, 29.0, 26.8],
+                label: "Latency (ms)",
+                data: latencyData,
                 borderColor: palette.secondary.hex,
                 backgroundColor: palette.secondary.rgba(0.2),
                 pointBackgroundColor: palette.secondary.hex,
@@ -2785,751 +2043,1609 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
               }
             ]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                labels: { color: palette.content.hex }
-              }
-            },
-            scales: {
-              x: {
-                ticks: { color: palette.content.rgba(0.82) },
-                grid: { color: palette.content.rgba(0.14) }
-              },
-              y: {
-                ticks: { color: palette.content.rgba(0.82) },
-                grid: { color: palette.content.rgba(0.14) }
-              }
-            }
-          }
+          options: { responsive: true, maintainAspectRatio: false }
         });
-        window.reportCharts.push(revChart);
-      }
-
-      const workCtx = document.getElementById("workloadChart");
-      if (workCtx) {
-        const workChart = new window.Chart(workCtx, {
-          type: "bar",
-          data: {
-            labels: ["sm (640)", "md (768)", "lg (1024)", "xl (1280)", "2xl (1536)"],
-            datasets: [
-              {
-                label: "Container Width (px)",
-                data: [608, 720, 960, 1216, 1280],
-                backgroundColor: palette.accent.rgba(0.82),
-                borderColor: palette.accent.hex,
-                borderWidth: 1.5,
-                borderRadius: 6
-              },
-              {
-                label: "Render Budget (ms)",
-                data: [14, 15, 16, 17, 18],
-                backgroundColor: palette.info.rgba(0.82),
-                borderColor: palette.info.hex,
-                borderWidth: 1.5,
-                borderRadius: 6
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                labels: { color: palette.content.hex }
-              }
-            },
-            scales: {
-              x: {
-                ticks: { color: palette.content.rgba(0.82) },
-                grid: { color: palette.content.rgba(0.14) }
-              },
-              y: {
-                ticks: { color: palette.content.rgba(0.82) },
-                grid: { color: palette.content.rgba(0.14) }
-              }
-            }
-          }
-        });
-        window.reportCharts.push(workChart);
-      }
-
-      window.addEventListener("beforeprint", () => {
-        window.reportCharts.forEach((c) => c.resize());
-      });
-    }
-
-    // 7. Initialize Leaflet Geospatial Map (Uses CARTO Basemaps CDN to prevent OpenStreetMap file:// 403 errors)
-    function initMaps() {
-      if (!window.L) return;
-      const mapContainer = document.getElementById("datacenterMap");
-      if (!mapContainer) return;
-
-      const map = window.L.map(mapContainer, {
-        scrollWheelZoom: false
-      }).setView([34.0, 15.0], 2);
-
-      window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
-        maxZoom: 18,
-        attribution: "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom"
-      }).addTo(map);
-
-      const hubs = [
-        { name: "Amsterdam Edge Node", coords: [52.3676, 4.9041], status: "Active" },
-        { name: "Frankfurt Core Node", coords: [50.1109, 8.6821], status: "Active" },
-        { name: "Ashburn US-East Node", coords: [39.0438, -77.4874], status: "Active" },
-        { name: "Tokyo AP-East Node", coords: [35.6762, 139.6503], status: "Active" }
-      ];
-
-      hubs.forEach((hub) => {
-        window.L.circleMarker(hub.coords, {
-          radius: 8,
-          fillColor: "#2563eb",
-          color: "#ffffff",
-          weight: 2,
-          opacity: 1,
-          fillOpacity: 0.9
-        })
-          .addTo(map)
-          .bindPopup(`<strong>${hub.name}</strong><br/>Status: ${hub.status}`);
-      });
-
-      window.reportLeafletMap = map;
-      window.addEventListener("resize", () => map.invalidateSize());
-      setTimeout(() => map.invalidateSize(), 250);
-    }
-
-    // 8. Initialize Grid.js Interactive Data Table & CSV-Driven Grid.js Table
-    window.parseCsvText = function parseCsvText(rawText) {
-      const lines = (rawText || "")
-        .trim()
-        .split(/\r?\n/)
-        .map((l) => l.trim())
-        .filter(Boolean);
-      if (!lines.length) return { headers: [], rows: [] };
-      const headers = lines[0].split(",").map((h) => h.trim());
-      const rows = lines.slice(1).map((line) => {
-        const values = line.split(",").map((v) => v.trim());
-        const obj = {};
-        headers.forEach((h, i) => {
-          obj[h] = values[i] ?? "";
-        });
-        return { values, obj };
-      });
-      return { headers, rows };
-    };
-
-    window.updateCsvChart = function updateCsvChart(filteredRows, isLoaded) {
-      if (!window.Chart) return;
-      const canvas = document.getElementById("csvChart");
-      if (!canvas) return;
-
-      if (!isLoaded) {
-        if (window.csvChartInstance) {
-          window.reportCharts = (window.reportCharts || []).filter((c) => c !== window.csvChartInstance);
-          window.csvChartInstance.destroy();
-          window.csvChartInstance = null;
-        }
-        return;
-      }
-
-      const palette = window.resolveDaisyUIThemePalette();
-      const rows = filteredRows || [];
-      const labels = rows.map((r) => r.obj?.service || r.values?.[1] || r.values?.[0] || "Row");
-      const rpsData = rows.map((r) => parseFloat(r.obj?.rps ?? r.values?.[3] ?? "0") || 0);
-      const latencyData = rows.map((r) => parseFloat(r.obj?.latency_ms ?? r.values?.[4] ?? "0") || 0);
-
-      if (window.csvChartInstance) {
-        window.csvChartInstance.data.labels = labels;
-        window.csvChartInstance.data.datasets[0].data = rpsData;
-        window.csvChartInstance.data.datasets[1].data = latencyData;
-        window.csvChartInstance.update("none");
-        setTimeout(() => window.csvChartInstance?.resize(), 40);
-        return;
-      }
-
-      const chart = new window.Chart(canvas, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [
-            {
-              type: "bar",
-              label: "Throughput (RPS)",
-              data: rpsData,
-              backgroundColor: palette.primary.rgba(0.82),
-              borderColor: palette.primary.hex,
-              borderWidth: 1.5,
-              borderRadius: 6
-            },
-            {
-              type: "line",
-              label: "Latency (ms)",
-              data: latencyData,
-              borderColor: palette.secondary.hex,
-              backgroundColor: palette.secondary.rgba(0.2),
-              pointBackgroundColor: palette.secondary.hex,
-              tension: 0.35,
-              fill: true
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              labels: { color: palette.content.hex }
-            }
-          },
-          scales: {
-            x: {
-              ticks: { color: palette.content.rgba(0.82) },
-              grid: { color: palette.content.rgba(0.14) }
-            },
-            y: {
-              ticks: { color: palette.content.rgba(0.82) },
-              grid: { color: palette.content.rgba(0.14) }
-            }
-          }
-        }
-      });
-
-      window.csvChartInstance = chart;
-      window.reportCharts = window.reportCharts || [];
-      if (!window.reportCharts.includes(chart)) {
-        window.reportCharts.push(chart);
-      }
-      setTimeout(() => chart.resize(), 40);
-    };
-
-    window.updateCsvGridTable = function updateCsvGridTable(filteredRows, headers) {
-      if (!window.gridjs) return;
-      const target = document.getElementById("csv-gridjs-table");
-      if (!target) return;
-
-      if (!headers || !headers.length) {
-        target.innerHTML = "";
-        window.csvGridInstance = null;
-        return;
-      }
-
-      const dataMatrix = (filteredRows || []).map((r) => (Array.isArray(r) ? r : r.values));
-
-      target.innerHTML = "";
-      const mountNode = document.createElement("div");
-      target.appendChild(mountNode);
-      window.csvGridInstance = new window.gridjs.Grid({
-        columns: headers,
-        autoWidth: false,
-        sort: true,
-        pagination: { limit: 5 },
-        data: dataMatrix
-      }).render(mountNode);
-    };
-
-    window.csvReportController = function csvReportController() {
-      return {
-        csvLoaded: false,
-        csvFileName: "example.csv",
-        rawCsvText: "",
-        headers: [],
-        allRows: [],
-        filteredRows: [],
-        availableRegions: [],
-        searchQuery: "",
-        regionFilter: "All",
-        statusFilter: "All",
-        minRps: 0,
-        maxLatency: 60,
-        showRawCsv: false,
-        totalRps: "0",
-        avgLatency: "0.0",
-        activeSummary: "No CSV loaded",
-
-        initCsvSection() {
-          // Starts completely empty until CSV is loaded
-          this.clearCsv();
-        },
-
-        loadExampleCsv() {
-          const embeddedEl = document.getElementById("embedded-csv-data");
-          const defaultName = embeddedEl?.getAttribute("data-csv-filename") || "example.csv";
-          const defaultText = embeddedEl ? embeddedEl.textContent.trim() : "";
-          this.loadFromRawText(defaultText, defaultName);
-        },
-
-        loadFromRawText(csvText, fileName) {
-          this.csvFileName = fileName || "example.csv";
-          this.rawCsvText = (csvText || "").trim();
-          const parsed = window.parseCsvText(this.rawCsvText);
-          this.headers = parsed.headers;
-          this.allRows = parsed.rows;
-          this.availableRegions = Array.from(
-            new Set(parsed.rows.map((r) => r.obj.region).filter(Boolean))
-          );
-          this.csvLoaded = this.headers.length > 0;
-          this.searchQuery = "";
-          this.regionFilter = "All";
-          this.statusFilter = "All";
-          this.minRps = 0;
-          this.maxLatency = 60;
-          this.applyCsvFilters();
-        },
-
-        clearCsv() {
-          this.csvLoaded = false;
-          this.csvFileName = "example.csv";
-          this.rawCsvText = "";
-          this.headers = [];
-          this.allRows = [];
-          this.filteredRows = [];
-          this.availableRegions = [];
-          this.searchQuery = "";
-          this.regionFilter = "All";
-          this.statusFilter = "All";
-          this.minRps = 0;
-          this.maxLatency = 60;
-          this.showRawCsv = false;
-          this.totalRps = "0";
-          this.avgLatency = "0.0";
-          this.activeSummary = "No CSV loaded";
-          const fileInput = document.getElementById("csv-file-input");
-          if (fileInput) fileInput.value = "";
-          window.__activeCsvState = null;
-          window.updateCsvGridTable([], []);
-          window.updateCsvChart([], false);
-        },
-
-        applyCsvFilters() {
-          if (!this.csvLoaded) {
-            window.updateCsvGridTable([], []);
-            window.updateCsvChart([], false);
-            return;
-          }
-          const q = (this.searchQuery || "").toLowerCase().trim();
-          this.filteredRows = this.allRows.filter((row) => {
-            const matchesQuery =
-              !q ||
-              row.values.some((val) => String(val).toLowerCase().includes(q));
-            const rowRegion = String(row.obj.region || "");
-            const matchesRegion =
-              this.regionFilter === "All" || rowRegion === this.regionFilter;
-            const rowStatus = String(row.obj.status || "").toLowerCase();
-            const matchesStatus =
-              this.statusFilter === "All" ||
-              rowStatus === this.statusFilter.toLowerCase();
-            const rpsNum = parseFloat(row.obj.rps || "0") || 0;
-            const matchesRps = rpsNum >= (Number(this.minRps) || 0);
-            const latNum = parseFloat(row.obj.latency_ms || "0") || 0;
-            const matchesLat = latNum <= (Number(this.maxLatency) || 60);
-            return matchesQuery && matchesRegion && matchesStatus && matchesRps && matchesLat;
-          });
-
-          const rpsSum = this.filteredRows.reduce(
-            (acc, r) => acc + (parseFloat(r.obj.rps || "0") || 0),
-            0
-          );
-          const latSum = this.filteredRows.reduce(
-            (acc, r) => acc + (parseFloat(r.obj.latency_ms || "0") || 0),
-            0
-          );
-          this.totalRps = rpsSum.toLocaleString("en-US");
-          this.avgLatency = this.filteredRows.length
-            ? (latSum / this.filteredRows.length).toFixed(1)
-            : "0.0";
-          this.activeSummary = `File: ${this.csvFileName} | Region: ${this.regionFilter} | Status: ${this.statusFilter} | RPS>=${this.minRps} | Lat<=${this.maxLatency}ms | Query: ${q || "none"}`;
-
-          window.__activeCsvState = {
-            csvLoaded: true,
-            headers: this.headers,
-            filteredRows: this.filteredRows
-          };
-          window.updateCsvGridTable(this.filteredRows, this.headers);
-          window.updateCsvChart(this.filteredRows, true);
-        },
-
-        setStatusFilter(status) {
-          this.statusFilter = status;
-          this.applyCsvFilters();
-        },
-
-        resetCsvFilters() {
-          this.searchQuery = "";
-          this.regionFilter = "All";
-          this.statusFilter = "All";
-          this.minRps = 0;
-          this.maxLatency = 60;
-          this.applyCsvFilters();
-        },
-
-        loadCsvFile(event) {
-          const file = event?.target?.files?.[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const text = String(e.target?.result || "");
-            this.loadFromRawText(text, file.name);
-          };
-          reader.readAsText(file);
-        }
+        window.csvChartInstance = chart;
+        window.reportCharts = window.reportCharts || [];
+        if (!window.reportCharts.includes(chart)) window.reportCharts.push(chart);
       };
-    };
 
-    function initGridJs() {
-      if (!window.gridjs) return;
-      const target = document.getElementById("gridjs-benchmark-table");
-      if (target) {
-        target.innerHTML = "";
-        new window.gridjs.Grid({
-          columns: ["Library", "Category", "Loading", "Theme Sync", "Status"],
-          autoWidth: false,
-          search: true,
-          sort: true,
-          pagination: { limit: 5 },
-          data: [
-            ["Tailwind CSS", "Utility Layout", "Non-Blocking", "CSS Tokens", "Verified"],
-            ["DaisyUI", "Components & 32 Themes", "Stylesheet", "Native", "Verified"],
-            ["Lucide Icons", "SVG Vector Icons", "defer UMD", "currentColor", "Verified"],
-            ["Alpine.js", "Reactive State", "defer CDN", "Native DOM", "Verified"],
-            ["Chart.js", "Canvas Charts", "defer UMD", "Dynamic Palette", "Verified"],
-            ["Mermaid", "SVG Diagrams", "defer UMD", "themeVariables", "Verified"],
-            ["Leaflet", "Geospatial Maps", "defer UMD", "Esri Tiles", "Verified"],
-            ["Grid.js", "Interactive Tables", "defer UMD", "Dark/Light Vars", "Verified"],
-            ["KaTeX", "Math Typesetting", "defer UMD", "currentColor", "Verified"],
-            ["Marked", "Markdown Parser", "defer UMD", "Prose Tokens", "Verified"],
-            ["Highlight.js", "TS & Kotlin Code", "defer UMD", "Syntax Theme", "Verified"],
-            ["Day.js", "Date Parsing & Relative Time", "defer UMD", "2kB Bundle", "Verified"],
-            ["Impress.js", "3D Presentation Guard", "Static Fallback", "Print-Safe", "Verified"],
-            ["Mock.js", "Client Synthetic Engine", "defer UMD", "Offline Schema", "Verified"],
-            ["Showdown", "Two-Way Markdown Parser", "defer UMD", "Marked Safe", "Verified"],
-            ["FullCalendar", "Interactive Scheduling", "defer UMD", "DaisyUI Synced", "Verified"]
-          ]
-        }).render(target);
-      }
-
-      if (window.__activeCsvState && window.__activeCsvState.csvLoaded) {
-        window.updateCsvGridTable(
-          window.__activeCsvState.filteredRows,
-          window.__activeCsvState.headers
-        );
-      }
-    }
-
-    // 9. Initialize KaTeX Math Rendering
-    function initKaTeX() {
-      if (!window.renderMathInElement) return;
-      const mathBlock = document.getElementById("katex-math-block");
-      if (!mathBlock) return;
-      window.renderMathInElement(mathBlock, {
-        delimiters: [
-          { left: "$$", right: "$$", display: true },
-          { left: "$", right: "$", display: false }
-        ],
-        throwOnError: false
-      });
-    }
-
-    // 10. Initialize Lucide Icons
-    function initLucide() {
-      if (!window.lucide) return;
-      window.lucide.createIcons();
-    }
-
-    // 11. Initialize Markdown Rendering (Marked CDN)
-    function initMarkdown() {
-      if (!window.marked) return;
-      const sourceEl = document.getElementById("markdown-source");
-      const outputEl = document.getElementById("markdown-output");
-      if (!sourceEl || !outputEl) return;
-      outputEl.innerHTML = window.marked.parse(sourceEl.textContent.trim());
-    }
-
-    // 12. Initialize Syntax Highlighting (Highlight.js CDN - TypeScript Frontend & Kotlin Backend)
-    function initCodeHighlight() {
-      if (!window.hljs) return;
-      window.hljs.highlightAll();
-    }
-
-    // 13. Initialize Day.js (Date formatting & relative time)
-    function initDayjs() {
-      if (!window.dayjs) return;
-      try {
-        if (window.dayjs_plugin_relativeTime) window.dayjs.extend(window.dayjs_plugin_relativeTime);
-        if (window.dayjs_plugin_customParseFormat) window.dayjs.extend(window.dayjs_plugin_customParseFormat);
-      } catch (err) {
-        console.warn("[html-report] Day.js plugin registration notice:", err);
-      }
-
-      try {
-        const nodes = document.querySelectorAll("[data-dayjs]");
-        nodes.forEach((node) => {
-          const raw = node.getAttribute("data-dayjs");
-          const fmt = node.getAttribute("data-dayjs-format") || "YYYY-MM-DD HH:mm:ss";
-          const isFromNow = node.hasAttribute("data-dayjs-from-now");
-          const d = raw === "now" || !raw ? window.dayjs() : window.dayjs(raw);
-          if (!d.isValid()) return;
-          node.textContent = isFromNow && typeof d.fromNow === "function" ? d.fromNow() : d.format(fmt);
-        });
-      } catch (err) {
-        console.warn("[html-report] Day.js DOM hydration notice:", err);
-      }
-    }
-
-    // 14. Initialize Mock.js (Client-side synthetic data simulation)
-    function initMockjs() {
-      if (!window.Mock) return;
-      try {
-        const nodes = document.querySelectorAll("[data-mock]");
-        nodes.forEach((node) => {
-          const raw = node.getAttribute("data-mock");
-          if (!raw) return;
-          try {
-            const schema = JSON.parse(raw);
-            const data = window.Mock.mock(schema);
-            node.textContent = JSON.stringify(data, null, 2);
-          } catch (_) {
-            const data = window.Mock.mock(raw);
-            node.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
-          }
-        });
-      } catch (err) {
-        console.warn("[html-report] Mock.js hydration notice:", err);
-      }
-    }
-
-    // 15. Initialize Showdown (Two-way markdown compilation)
-    function initShowdown() {
-      if (!window.showdown) return;
-      try {
-        const converter = new window.showdown.Converter({
-          tables: true,
-          strikethrough: true,
-          tasklists: true,
-          simpleLineBreaks: true
-        });
-        const nodes = document.querySelectorAll("[data-showdown]");
-        nodes.forEach((node) => {
-          const raw = node.getAttribute("data-showdown");
-          if (!raw) return;
-          node.innerHTML = converter.makeHtml(raw);
-        });
-      } catch (err) {
-        console.warn("[html-report] Showdown markdown rendering notice:", err);
-      }
-    }
-
-    // 16. Initialize FullCalendar (Interactive scheduling & theme synchronization)
-    function initFullCalendar() {
-      if (!window.FullCalendar) return;
-      try {
-        const nodes = document.querySelectorAll("[data-fullcalendar]");
-        nodes.forEach((el) => {
-          if (el.__fullcalendarInstance) return;
-          const eventsAttr = el.getAttribute("data-calendar-events");
-          let events = [];
-          if (eventsAttr) {
-            try {
-              events = JSON.parse(eventsAttr);
-            } catch (_) {}
-          }
-          const calendar = new window.FullCalendar.Calendar(el, {
-            initialView: el.getAttribute("data-calendar-view") || "dayGridMonth",
-            headerToolbar: {
-              left: "prev,next today",
-              center: "title",
-              right: "dayGridMonth,timeGridWeek,listWeek"
-            },
-            height: "auto",
-            events
-          });
-          calendar.render();
-          el.__fullcalendarInstance = calendar;
-        });
-      } catch (err) {
-        console.warn("[html-report] FullCalendar initialization notice:", err);
-      }
-    }
-
-    // 13. Horizontal Scrollbar -> Insufficient Space Detector
-    window.checkInsufficientHorizontalSpace = function checkInsufficientHorizontalSpace() {
-      const mainEl = document.querySelector("main");
-      if (!mainEl) return [];
-      const insufficient = [];
-      const candidates = mainEl.querySelectorAll("section, div, pre, table, .card, .overflow-x-auto, .gridjs-wrapper");
-
-      candidates.forEach((el) => {
-        const style = getComputedStyle(el);
-        if (style.display === "none" || style.visibility === "hidden" || el.clientWidth === 0) {
-          el.removeAttribute("data-insufficient-space");
+      window.updateCsvGridTable = function updateCsvGridTable(filteredRows, headers) {
+        if (!window.gridjs) return;
+        const target = document.getElementById("csv-gridjs-table");
+        if (!target) return;
+        if (!headers || !headers.length) {
+          target.innerHTML = "";
+          window.csvGridInstance = null;
           return;
         }
-        const hasHorizontalScrollbar =
-          el.scrollWidth > el.clientWidth + 2 &&
-          ["auto", "scroll"].includes(style.overflowX);
+        const dataMatrix = (filteredRows || []).map((r) => (Array.isArray(r) ? r : r.values));
+        target.innerHTML = "";
+        const mountNode = document.createElement("div");
+        target.appendChild(mountNode);
+        window.csvGridInstance = new window.gridjs.Grid({
+          columns: headers,
+          autoWidth: false,
+          sort: true,
+          pagination: { limit: 5 },
+          data: dataMatrix
+        }).render(mountNode);
+      };
 
-        if (hasHorizontalScrollbar) {
-          el.setAttribute("data-insufficient-space", "true");
-          insufficient.push({
-            tag: el.tagName.toLowerCase(),
-            id: el.id || null,
-            className: typeof el.className === "string" ? el.className : "",
-            scrollWidth: el.scrollWidth,
-            clientWidth: el.clientWidth,
-            message: "Element has a horizontal scrollbar and does not have enough space"
-          });
-        } else {
-          el.removeAttribute("data-insufficient-space");
-        }
-      });
-      return insufficient;
-    };
+      window.csvReportController = function csvReportController() {
+        return {
+          csvLoaded: false,
+          csvFileName: "example.csv",
+          rawCsvText: "",
+          headers: [],
+          allRows: [],
+          filteredRows: [],
+          availableRegions: [],
+          searchQuery: "",
+          regionFilter: "All",
+          statusFilter: "All",
+          minRps: 0,
+          maxLatency: 60,
+          showRawCsv: false,
+          totalRps: "0",
+          avgLatency: "0.0",
+          activeSummary: "No CSV loaded",
 
-    // 14. Self-Contained HTML Download Bundler (Fetches & Inlines All CDNs) & PDF Export Action
-    window.buildInlinedHtmlSnapshot = async function buildInlinedHtmlSnapshot() {
-      const clone = document.documentElement.cloneNode(true);
-      clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
-
-      // Inline external stylesheets & rewrite relative font URLs (e.g., KaTeX fonts) to absolute CDN URLs
-      const linkEls = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
-      await Promise.allSettled(
-        linkEls.map(async (linkEl) => {
-          const href = linkEl.getAttribute("href");
-          if (!href || (!href.startsWith("http://") && !href.startsWith("https://"))) return;
-          const res = await fetch(href);
-          if (!res.ok) return;
-          let cssText = await res.text();
-          cssText = cssText.replace(/url\((['"]?)(?!data:|https?:|#)([^'")]+)\1\)/g, (match, quote, relPath) => {
-            try {
-              return `url("${new URL(relPath, href).href}")`;
-            } catch {
-              return match;
-            }
-          });
-          const styleEl = document.createElement("style");
-          styleEl.setAttribute("data-inlined-href", href);
-          styleEl.textContent = cssText;
-          linkEl.replaceWith(styleEl);
-        })
-      );
-
-      // Inline external scripts
-      const scriptEls = Array.from(clone.querySelectorAll("script[src]"));
-      await Promise.allSettled(
-        scriptEls.map(async (scriptEl) => {
-          const src = scriptEl.getAttribute("src");
-          if (!src || (!src.startsWith("http://") && !src.startsWith("https://"))) return;
-          if (src.includes("cdn.tailwindcss.com")) {
-            const marker = document.createElement("script");
-            marker.setAttribute("data-inlined-src", src);
-            marker.textContent = "/* Tailwind CSS styles pre-compiled inline in <head> */";
-            scriptEl.replaceWith(marker);
-            return;
-          }
-          const res = await fetch(src);
-          if (!res.ok) return;
-          const jsText = await res.text();
-          const inlineScript = document.createElement("script");
-          inlineScript.setAttribute("data-inlined-src", src);
-          inlineScript.textContent = jsText.replace(/<\/script>/gi, "<\\/script>");
-          scriptEl.replaceWith(inlineScript);
-        })
-      );
-
-      return "<!DOCTYPE html>\n" + clone.outerHTML;
-    };
-
-    window.exportReportPdf = function exportReportPdf() {
-      if (window.reportCharts && window.reportCharts.length) {
-        window.reportCharts.forEach((c) => c.resize());
-      }
-      if (window.reportLeafletMap) {
-        window.reportLeafletMap.invalidateSize();
-      }
-      window.print();
-    };
-
-    window.copyPdfConversionPrompt = function copyPdfConversionPrompt() {
-      const text = document.getElementById("pdf-conversion-prompt-text")?.textContent?.trim() || "";
-      if (!text) return;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text);
-      }
-      const label = document.getElementById("copy-pdf-prompt-label");
-      if (label) {
-        label.textContent = "Copied!";
-        setTimeout(() => { label.textContent = "Copy Prompt"; }, 2000);
-      }
-    };
-
-    function initDownloadButton() {
-      const htmlBtn = document.getElementById("download-html-btn");
-      const pdfBtn = document.getElementById("download-pdf-btn");
-
-      if (htmlBtn) {
-        htmlBtn.addEventListener("click", async () => {
-          try {
-            htmlBtn.disabled = true;
-            const htmlContent = await window.buildInlinedHtmlSnapshot();
-            const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "html-report-11-cdn-showcase-standalone.html";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(url);
-          } catch (err) {
-            console.error("Failed to bundle report HTML:", err);
-          } finally {
-            htmlBtn.disabled = false;
-          }
-        });
-      }
-
-      if (pdfBtn) {
-        pdfBtn.addEventListener("click", () => {
-          const reportMode = document.documentElement.getAttribute("data-report-mode") || "interactive";
-          if (reportMode === "interactive") {
-            const modal = document.getElementById("pdf-not-ready-modal");
-            if (modal && typeof modal.showModal === "function") {
-              modal.showModal();
+          initCsvSection() { this.clearCsv(); },
+          loadExampleCsv() {
+            const embeddedEl = document.getElementById("embedded-csv-data");
+            const defaultName = embeddedEl?.getAttribute("data-csv-filename") || "example.csv";
+            const defaultText = embeddedEl ? embeddedEl.textContent.trim() : "";
+            this.loadFromRawText(defaultText, defaultName);
+          },
+          loadFromRawText(csvText, fileName) {
+            this.csvFileName = fileName || "example.csv";
+            this.rawCsvText = (csvText || "").trim();
+            const parsed = window.parseCsvText(this.rawCsvText);
+            this.headers = parsed.headers;
+            this.allRows = parsed.rows;
+            this.availableRegions = Array.from(new Set(parsed.rows.map((r) => r.obj.region).filter(Boolean)));
+            this.csvLoaded = this.headers.length > 0;
+            this.searchQuery = "";
+            this.regionFilter = "All";
+            this.statusFilter = "All";
+            this.minRps = 0;
+            this.maxLatency = 60;
+            this.applyCsvFilters();
+          },
+          clearCsv() {
+            this.csvLoaded = false;
+            this.csvFileName = "example.csv";
+            this.rawCsvText = "";
+            this.headers = [];
+            this.allRows = [];
+            this.filteredRows = [];
+            this.availableRegions = [];
+            this.searchQuery = "";
+            this.regionFilter = "All";
+            this.statusFilter = "All";
+            this.minRps = 0;
+            this.maxLatency = 60;
+            this.showRawCsv = false;
+            this.totalRps = "0";
+            this.avgLatency = "0.0";
+            this.activeSummary = "No CSV loaded";
+            const fileInput = document.getElementById("csv-file-input");
+            if (fileInput) fileInput.value = "";
+            window.updateCsvGridTable([], []);
+            window.updateCsvChart([], false);
+          },
+          applyCsvFilters() {
+            if (!this.csvLoaded) {
+              window.updateCsvGridTable([], []);
+              window.updateCsvChart([], false);
               return;
             }
+            const q = (this.searchQuery || "").toLowerCase().trim();
+            this.filteredRows = this.allRows.filter((row) => {
+              const matchesQuery = !q || row.values.some((val) => String(val).toLowerCase().includes(q));
+              const rowRegion = String(row.obj.region || "");
+              const matchesRegion = this.regionFilter === "All" || rowRegion === this.regionFilter;
+              const rowStatus = String(row.obj.status || "").toLowerCase();
+              const matchesStatus = this.statusFilter === "All" || rowStatus === this.statusFilter.toLowerCase();
+              const rpsNum = parseFloat(row.obj.rps || "0") || 0;
+              const matchesRps = rpsNum >= (Number(this.minRps) || 0);
+              const latNum = parseFloat(row.obj.latency_ms || "0") || 0;
+              const matchesLat = latNum <= (Number(this.maxLatency) || 60);
+              return matchesQuery && matchesRegion && matchesStatus && matchesRps && matchesLat;
+            });
+            const rpsSum = this.filteredRows.reduce((acc, r) => acc + (parseFloat(r.obj.rps || "0") || 0), 0);
+            const latSum = this.filteredRows.reduce((acc, r) => acc + (parseFloat(r.obj.latency_ms || "0") || 0), 0);
+            this.totalRps = rpsSum.toLocaleString("en-US");
+            this.avgLatency = this.filteredRows.length ? (latSum / this.filteredRows.length).toFixed(1) : "0.0";
+            this.activeSummary = `File: ${this.csvFileName} | Region: ${this.regionFilter} | Status: ${this.statusFilter} | RPS>=${this.minRps} | Lat<=${this.maxLatency}ms | Query: ${q || "none"}`;
+            window.updateCsvGridTable(this.filteredRows, this.headers);
+            window.updateCsvChart(this.filteredRows, true);
+          },
+          setStatusFilter(status) { this.statusFilter = status; this.applyCsvFilters(); },
+          resetCsvFilters() {
+            this.searchQuery = "";
+            this.regionFilter = "All";
+            this.statusFilter = "All";
+            this.minRps = 0;
+            this.maxLatency = 60;
+            this.applyCsvFilters();
+          },
+          loadCsvFile(event) {
+            const file = event?.target?.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const text = String(e.target?.result || "");
+              this.loadFromRawText(text, file.name);
+            };
+            reader.readAsText(file);
           }
-          window.exportReportPdf();
+        };
+      };
+
+      function initExampleShowcase() {
+        const palette = typeof window.resolveDaisyUIThemePalette === "function"
+          ? window.resolveDaisyUIThemePalette()
+          : {
+              primary: { hex: "#3b82f6", rgba: (a) => `rgba(59, 130, 246, ${a})` },
+              secondary: { hex: "#ec4899", rgba: (a) => `rgba(236, 72, 153, ${a})` },
+              accent: { hex: "#10b981", rgba: (a) => `rgba(16, 185, 129, ${a})` },
+              content: { hex: "#111827", rgba: (a) => `rgba(17, 24, 39, ${a})` },
+              info: { hex: "#0284c7", rgba: (a) => `rgba(2, 132, 199, ${a})` }
+            };
+
+        // Charts
+        if (window.Chart && document.getElementById("revenueChart") && !document.getElementById("revenueChart").__initialized) {
+          const revCtx = document.getElementById("revenueChart");
+          revCtx.__initialized = true;
+          const revChart = new window.Chart(revCtx, {
+            type: "bar",
+            data: {
+              labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+              datasets: [
+                {
+                  type: "bar",
+                  label: "Throughput (req/s)",
+                  data: [48.2, 54.6, 63.1, 72.4, 83.0, 95.8, 112.4, 134.6],
+                  backgroundColor: palette.primary.rgba(0.82),
+                  borderColor: palette.primary.hex,
+                  borderWidth: 1.5,
+                  borderRadius: 6
+                },
+                {
+                  type: "line",
+                  label: "Baseline Latency (ms)",
+                  data: [42.1, 39.8, 37.4, 35.9, 33.5, 31.2, 29.0, 26.8],
+                  borderColor: palette.secondary.hex,
+                  backgroundColor: palette.secondary.rgba(0.2),
+                  pointBackgroundColor: palette.secondary.hex,
+                  tension: 0.35,
+                  fill: true
+                }
+              ]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+          window.reportCharts = window.reportCharts || [];
+          window.reportCharts.push(revChart);
+        }
+
+        if (window.Chart && document.getElementById("workloadChart") && !document.getElementById("workloadChart").__initialized) {
+          const workCtx = document.getElementById("workloadChart");
+          workCtx.__initialized = true;
+          const workChart = new window.Chart(workCtx, {
+            type: "bar",
+            data: {
+              labels: ["sm (640)", "md (768)", "lg (1024)", "xl (1280)", "2xl (1536)"],
+              datasets: [
+                {
+                  label: "Container Width (px)",
+                  data: [608, 720, 960, 1216, 1280],
+                  backgroundColor: palette.accent.rgba(0.82),
+                  borderColor: palette.accent.hex,
+                  borderWidth: 1.5,
+                  borderRadius: 6
+                }
+              ]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+          window.reportCharts = window.reportCharts || [];
+          window.reportCharts.push(workChart);
+        }
+
+        // Leaflet
+        if (window.L && document.getElementById("datacenterMap") && !document.getElementById("datacenterMap").__initialized) {
+          const mapContainer = document.getElementById("datacenterMap");
+          mapContainer.__initialized = true;
+          const map = window.L.map(mapContainer, { scrollWheelZoom: false }).setView([34.0, 15.0], 2);
+          window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+            maxZoom: 18,
+            attribution: "Tiles &copy; Esri"
+          }).addTo(map);
+
+          const hubs = [
+            { name: "Amsterdam Edge Node", coords: [52.3676, 4.9041], status: "Active" },
+            { name: "Frankfurt Core Node", coords: [50.1109, 8.6821], status: "Active" },
+            { name: "Ashburn US-East Node", coords: [39.0438, -77.4874], status: "Active" },
+            { name: "Tokyo AP-East Node", coords: [35.6762, 139.6503], status: "Active" }
+          ];
+
+          hubs.forEach((hub) => {
+            window.L.circleMarker(hub.coords, {
+              radius: 8,
+              fillColor: "#2563eb",
+              color: "#ffffff",
+              weight: 2,
+              opacity: 1,
+              fillOpacity: 0.9
+            }).addTo(map).bindPopup(`<strong>${hub.name}</strong><br/>Status: ${hub.status}`);
+          });
+
+          window.reportLeafletMap = map;
+          setTimeout(() => map.invalidateSize(), 250);
+        }
+
+        // Grid.js
+        if (window.gridjs && document.getElementById("gridjs-benchmark-table") && !document.getElementById("gridjs-benchmark-table").__initialized) {
+          const target = document.getElementById("gridjs-benchmark-table");
+          target.__initialized = true;
+          target.innerHTML = "";
+          new window.gridjs.Grid({
+            columns: ["Library", "Category", "Loading", "Theme Sync", "Status"],
+            autoWidth: false,
+            search: true,
+            sort: true,
+            pagination: { limit: 5 },
+            data: [
+              ["Tailwind CSS", "Utility Layout", "Non-Blocking", "CSS Tokens", "Verified"],
+              ["DaisyUI", "Components & 32 Themes", "Stylesheet", "Native", "Verified"],
+              ["Lucide Icons", "SVG Vector Icons", "defer UMD", "currentColor", "Verified"],
+              ["Alpine.js", "Reactive State", "defer CDN", "Native DOM", "Verified"],
+              ["Chart.js", "Canvas Charts", "defer UMD", "Dynamic Palette", "Verified"],
+              ["Mermaid", "SVG Diagrams", "defer UMD", "themeVariables", "Verified"],
+              ["Leaflet", "Geospatial Maps", "defer UMD", "Esri Tiles", "Verified"],
+              ["Grid.js", "Interactive Tables", "defer UMD", "Dark/Light Vars", "Verified"],
+              ["KaTeX", "Math Typesetting", "defer UMD", "currentColor", "Verified"],
+              ["Marked", "Markdown Parser", "defer UMD", "Prose Tokens", "Verified"],
+              ["Highlight.js", "TS & Kotlin Code", "defer UMD", "Syntax Theme", "Verified"],
+              ["Day.js", "Date Parsing & Relative Time", "defer UMD", "2kB Bundle", "Verified"],
+              ["Impress.js", "3D Presentation Guard", "Static Fallback", "Print-Safe", "Verified"],
+              ["Mock.js", "Client Synthetic Engine", "defer UMD", "Offline Schema", "Verified"],
+              ["Showdown", "Two-Way Markdown Parser", "defer UMD", "Marked Safe", "Verified"],
+              ["FullCalendar", "Interactive Scheduling", "defer UMD", "DaisyUI Synced", "Verified"],
+              ["Datastar.js", "Real-Time SSE Morphing & Signals", "type=module", "Idiomorph Morphing", "Verified"]
+            ]
+          }).render(target);
+        }
+
+        // KaTeX
+        if (window.renderMathInElement && document.getElementById("katex-math-block")) {
+          window.renderMathInElement(document.getElementById("katex-math-block"), {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false }
+            ],
+            throwOnError: false
+          });
+        }
+
+        // Marked
+        if (window.marked && document.getElementById("markdown-source") && document.getElementById("markdown-output")) {
+          const src = document.getElementById("markdown-source").textContent.trim();
+          document.getElementById("markdown-output").innerHTML = window.marked.parse(src);
+        }
+
+        // Highlight.js
+        if (window.hljs) {
+          window.hljs.highlightAll();
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => {
+          setTimeout(initExampleShowcase, 100);
         });
+      } else {
+        setTimeout(initExampleShowcase, 100);
+      }
+    </script>
+  </main>
+
+  <!-- Minimal Centered Footer -->
+  <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
+    generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a>
+  </footer>
+
+  <!-- Runtime Scripts -->
+  <script>
+/**
+ * html-report client runtime (report-runtime.js)
+ * Pre-bundled runtime for 32 DaisyUI themes, canvas 2D OKLCH palette resolution,
+ * Mermaid list syntax defense, dynamic TOC generation, snapshot bundler,
+ * and horizontal space detection.
+ */
+
+const STANDARD_DAISYUI_THEMES = new Set([
+  "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
+  "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden",
+  "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black",
+  "luxury", "dracula", "cmyk", "autumn", "business", "acid", "lemonade",
+  "night", "coffee", "winter", "dim", "nord", "sunset"
+]);
+
+const DAISYUI_THEMES = Array.from(STANDARD_DAISYUI_THEMES);
+
+// Zero-dependency pure JS OKLCH engine & compiler for browser runtime
+function srgbToLinear(c) {
+  const norm = c / 255;
+  return norm <= 0.04045 ? norm / 12.92 : Math.pow((norm + 0.055) / 1.055, 2.4);
+}
+
+function linearToSrgb(c) {
+  const clamped = Math.max(0, Math.min(1, c));
+  const srgb = clamped <= 0.0031308 ? clamped * 12.92 : 1.055 * Math.pow(clamped, 1 / 2.4) - 0.055;
+  return Math.round(srgb * 255);
+}
+
+function hexToRgb(hex) {
+  let clean = String(hex).replace(/^#/, "").trim();
+  if (clean.length === 3) {
+    clean = clean.split("").map((c) => c + c).join("") + "ff";
+  } else if (clean.length === 4) {
+    clean = clean.split("").map((c) => c + c).join("");
+  } else if (clean.length === 6) {
+    clean += "ff";
+  }
+  if (clean.length !== 8) return [0, 0, 0, 1];
+  const num = parseInt(clean, 16);
+  if (Number.isNaN(num)) return [0, 0, 0, 1];
+  return [
+    (num >>> 24) & 255,
+    (num >>> 16) & 255,
+    (num >>> 8) & 255,
+    ((num & 255) / 255)
+  ];
+}
+
+function hslToRgb(h, s, l) {
+  const hNorm = (((h % 360) + 360) % 360) / 360;
+  const sNorm = Math.max(0, Math.min(1, s / 100));
+  const lNorm = Math.max(0, Math.min(1, l / 100));
+  if (sNorm === 0) {
+    const val = Math.round(lNorm * 255);
+    return [val, val, val];
+  }
+  const q = lNorm < 0.5 ? lNorm * (1 + sNorm) : lNorm + sNorm - lNorm * sNorm;
+  const p = 2 * lNorm - q;
+  const hue2rgb = (t) => {
+    let tNorm = t;
+    if (tNorm < 0) tNorm += 1;
+    if (tNorm > 1) tNorm -= 1;
+    if (tNorm < 1 / 6) return p + (q - p) * 6 * tNorm;
+    if (tNorm < 1 / 2) return q;
+    if (tNorm < 2 / 3) return p + (q - p) * (2 / 3 - tNorm) * 6;
+    return p;
+  };
+  return [
+    Math.round(hue2rgb(hNorm + 1 / 3) * 255),
+    Math.round(hue2rgb(hNorm) * 255),
+    Math.round(hue2rgb(hNorm - 1 / 3) * 255)
+  ];
+}
+
+function parseColor(input) {
+  if (!input || typeof input !== "string") {
+    return { r: 59, g: 130, b: 246, a: 1, oklch: null };
+  }
+  const str = input.trim();
+  const oklchMatch = str.match(/^(?:oklch\s*\(\s*)?([0-9.]+%?)\s+([0-9.]+)\s+([0-9.]+)(?:\s*(?:\/|\s)\s*([0-9.]+%?))?\s*\)?$/i);
+  if (oklchMatch) {
+    let rawL = oklchMatch[1];
+    let L = rawL.endsWith("%") ? parseFloat(rawL) / 100 : parseFloat(rawL);
+    if (L > 1) L = L / 100;
+    const C = parseFloat(oklchMatch[2]);
+    const H = parseFloat(oklchMatch[3]);
+    return {
+      r: null,
+      g: null,
+      b: null,
+      a: 1,
+      oklch: {
+        L,
+        C,
+        H,
+        formatted: `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`
+      }
+    };
+  }
+  if (str.startsWith("#")) {
+    const [r, g, b, a] = hexToRgb(str);
+    return { r, g, b, a, oklch: null };
+  }
+  const rgbMatch = str.match(/^rgba?\s*\(\s*(\d+)(?:,|\s+)\s*(\d+)(?:,|\s+)\s*(\d+)(?:(?:\s*[,/]\s*|\s+)([0-9.]+%?))?\s*\)$/i);
+  if (rgbMatch) {
+    const r = parseInt(rgbMatch[1], 10);
+    const g = parseInt(rgbMatch[2], 10);
+    const b = parseInt(rgbMatch[3], 10);
+    let a = 1;
+    if (rgbMatch[4]) {
+      a = rgbMatch[4].endsWith("%") ? parseFloat(rgbMatch[4]) / 100 : parseFloat(rgbMatch[4]);
+    }
+    return { r, g, b, a, oklch: null };
+  }
+  const hslMatch = str.match(/^hsla?\s*\(\s*(\d+)(?:deg)?(?:,|\s+)\s*(\d+)%(?:,|\s+)\s*(\d+)%(?:(?:\s*[,/]\s*|\s+)([0-9.]+%?))?\s*\)$/i);
+  if (hslMatch) {
+    const h = parseInt(hslMatch[1], 10);
+    const s = parseInt(hslMatch[2], 10);
+    const l = parseInt(hslMatch[3], 10);
+    const [r, g, b] = hslToRgb(h, s, l);
+    let a = 1;
+    if (hslMatch[4]) {
+      a = hslMatch[4].endsWith("%") ? parseFloat(hslMatch[4]) / 100 : parseFloat(hslMatch[4]);
+    }
+    return { r, g, b, a, oklch: null };
+  }
+  return { r: 59, g: 130, b: 246, a: 1, oklch: null };
+}
+
+function rgbToOklch(r, g, b) {
+  if (r === g && g === b) {
+    const L = r === 0 ? 0 : r === 255 ? 1 : 0.2104542553 * Math.cbrt(srgbToLinear(r)) + 0.7936177850 * Math.cbrt(srgbToLinear(r)) - 0.0040720468 * Math.cbrt(srgbToLinear(r));
+    return {
+      L,
+      C: 0,
+      H: 0,
+      formatted: `${(L * 100).toFixed(2)}% 0.000 0.00`
+    };
+  }
+  const lr = srgbToLinear(r);
+  const lg = srgbToLinear(g);
+  const lb = srgbToLinear(b);
+
+  const l = 0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb;
+  const m = 0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb;
+  const s = 0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb;
+
+  const l_ = Math.cbrt(Math.max(0, l));
+  const m_ = Math.cbrt(Math.max(0, m));
+  const s_ = Math.cbrt(Math.max(0, s));
+
+  const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+  const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+  const b_ = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+  let C = Math.sqrt(a * a + b_ * b_);
+  let H = Math.atan2(b_, a) * (180 / Math.PI);
+  if (H < 0) H += 360;
+  if (C < 0.0001) {
+    C = 0;
+    H = 0;
+  }
+  return {
+    L,
+    C,
+    H,
+    formatted: `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`
+  };
+}
+
+function autoContrastContent(colorInput) {
+  const parsed = parseColor(colorInput);
+  let L = 0.5;
+  let H = 0;
+  let luminance = 0.5;
+
+  if (parsed.oklch) {
+    L = parsed.oklch.L;
+    H = parsed.oklch.H;
+    luminance = L;
+  } else {
+    const oklch = rgbToOklch(parsed.r, parsed.g, parsed.b);
+    L = oklch.L;
+    H = oklch.H;
+    const lr = srgbToLinear(parsed.r);
+    const lg = srgbToLinear(parsed.g);
+    const lb = srgbToLinear(parsed.b);
+    luminance = 0.2126 * lr + 0.7152 * lg + 0.0722 * lb;
+  }
+
+  const hVal = Number.isFinite(H) ? H.toFixed(2) : "0";
+  if (L > 0.65 || luminance > 0.4) {
+    return `15% 0.02 ${hVal}`;
+  }
+  return `98% 0.01 ${hVal}`;
+}
+
+const RUNTIME_COLOR_MAP = {
+  primary: "--p",
+  "primary-content": "--pc",
+  secondary: "--s",
+  "secondary-content": "--sc",
+  accent: "--a",
+  "accent-content": "--ac",
+  neutral: "--n",
+  "neutral-content": "--nc",
+  "base-100": "--b1",
+  "base-200": "--b2",
+  "base-300": "--b3",
+  "base-content": "--bc",
+  info: "--in",
+  "info-content": "--inc",
+  success: "--su",
+  "success-content": "--suc",
+  warning: "--wa",
+  "warning-content": "--wac",
+  error: "--er",
+  "error-content": "--erc"
+};
+
+const RUNTIME_BASE_THEMES = {
+  light: {
+    "color-scheme": "light",
+    "--p": "49.12% 0.3096 275.75",
+    "--pc": "89.824% 0.06192 275.75",
+    "--s": "69.71% 0.329 342.55",
+    "--sc": "98.71% 0.0106 342.55",
+    "--a": "76.76% 0.184 183.61",
+    "--ac": "15.352% 0.0368 183.61",
+    "--n": "32.1785% 0.02476 255.701624",
+    "--nc": "89.4994% 0.011585 252.096176",
+    "--b1": "100% 0 0",
+    "--b2": "96.1151% 0 0",
+    "--b3": "92.4169% 0.00108 197.137559",
+    "--bc": "27.8078% 0.029596 256.847952",
+    "--in": "72.06% 0.191 231.6",
+    "--inc": "0% 0 0",
+    "--su": "64.8% 0.150 160",
+    "--suc": "0% 0 0",
+    "--wa": "84.71% 0.199 83.87",
+    "--wac": "0% 0 0",
+    "--er": "71.76% 0.221 22.18",
+    "--erc": "0% 0 0",
+    "--rounded-box": "1rem",
+    "--rounded-btn": "0.5rem",
+    "--rounded-badge": "1.9rem",
+    "--animation-btn": "0.25s",
+    "--animation-input": ".2s",
+    "--btn-focus-scale": "0.95",
+    "--border-btn": "1px",
+    "--tab-border": "1px",
+    "--tab-radius": "0.5rem"
+  },
+  dark: {
+    "color-scheme": "dark",
+    "--p": "65.69% 0.196 275.75",
+    "--pc": "13.138% 0.0392 275.75",
+    "--s": "74.8% 0.26 342.55",
+    "--sc": "14.96% 0.052 342.55",
+    "--a": "74.51% 0.167 183.61",
+    "--ac": "14.902% 0.0334 183.61",
+    "--n": "31.3815% 0.021108 254.139175",
+    "--nc": "74.6477% 0.0216 264.435964",
+    "--b1": "25.3267% 0.015896 252.417568",
+    "--b2": "23.2607% 0.013807 253.100675",
+    "--b3": "21.1484% 0.01165 254.087939",
+    "--bc": "74.6477% 0.0216 264.435964",
+    "--in": "72.06% 0.191 231.6",
+    "--inc": "0% 0 0",
+    "--su": "64.8% 0.150 160",
+    "--suc": "0% 0 0",
+    "--wa": "84.71% 0.199 83.87",
+    "--wac": "0% 0 0",
+    "--er": "71.76% 0.221 22.18",
+    "--erc": "0% 0 0",
+    "--rounded-box": "1rem",
+    "--rounded-btn": "0.5rem",
+    "--rounded-badge": "1.9rem",
+    "--animation-btn": "0.25s",
+    "--animation-input": ".2s",
+    "--btn-focus-scale": "0.95",
+    "--border-btn": "1px",
+    "--tab-border": "1px",
+    "--tab-radius": "0.5rem"
+  }
+};
+
+function compileTheme(themeDefinition, { defaultThemeName = "custom" } = {}) {
+  if (typeof themeDefinition === "string") {
+    const trimmed = themeDefinition.trim();
+    if (trimmed.includes("[data-theme=")) {
+      const match = trimmed.match(/\[data-theme=["']?([a-zA-Z0-9_\-]+)["']?\]/);
+      const themeName = match ? match[1] : defaultThemeName;
+      return { themeName, css: trimmed, variables: {}, isRawCss: true };
+    }
+    try {
+      return compileTheme(JSON.parse(trimmed), { defaultThemeName });
+    } catch (_) {
+      throw new Error("Invalid theme definition");
+    }
+  }
+
+  let themeObj = themeDefinition;
+  let themeName = defaultThemeName;
+
+  if (themeObj.themes && Array.isArray(themeObj.themes) && themeObj.themes.length > 0) {
+    themeObj = themeObj.themes[0];
+  }
+  const topKeys = Object.keys(themeObj);
+  if (topKeys.length === 1 && typeof themeObj[topKeys[0]] === "object" && !themeObj[topKeys[0]].r) {
+    themeName = topKeys[0];
+    themeObj = themeObj[topKeys[0]];
+  } else if (themeObj.name) {
+    themeName = themeObj.name;
+  }
+
+  const baseThemeName = themeObj.extends || "light";
+  const baseVars = RUNTIME_BASE_THEMES[baseThemeName] ? { ...RUNTIME_BASE_THEMES[baseThemeName] } : { ...RUNTIME_BASE_THEMES.light };
+  const resultVars = { ...baseVars };
+
+  for (const [key, rawValue] of Object.entries(themeObj)) {
+    if (key === "extends" || key === "name") continue;
+    if (RUNTIME_COLOR_MAP[key]) {
+      const parsed = parseColor(rawValue);
+      resultVars[RUNTIME_COLOR_MAP[key]] = parsed.oklch ? parsed.oklch.formatted : rgbToOklch(parsed.r, parsed.g, parsed.b).formatted;
+      continue;
+    }
+    if (key.startsWith("--")) {
+      if (Object.values(RUNTIME_COLOR_MAP).includes(key)) {
+        const parsed = parseColor(rawValue);
+        resultVars[key] = parsed.oklch ? parsed.oklch.formatted : rgbToOklch(parsed.r, parsed.g, parsed.b).formatted;
+      } else {
+        resultVars[key] = String(rawValue).trim();
+      }
+      continue;
+    }
+    if (key === "color-scheme" || key === "colorScheme") {
+      resultVars["color-scheme"] = String(rawValue).trim();
+      continue;
+    }
+    resultVars[key] = String(rawValue).trim();
+  }
+
+  // Auto content
+  const pairs = [["--p", "--pc"], ["--s", "--sc"], ["--a", "--ac"], ["--n", "--nc"], ["--b1", "--bc"]];
+  for (const [pVar, cVar] of pairs) {
+    if (resultVars[pVar] && !themeObj[cVar] && !themeObj[Object.keys(RUNTIME_COLOR_MAP).find((k) => RUNTIME_COLOR_MAP[k] === cVar)]) {
+      resultVars[cVar] = autoContrastContent(resultVars[pVar]);
+    }
+  }
+
+  const lines = [`[data-theme="${themeName}"] {`];
+  if (resultVars["color-scheme"]) lines.push(`  color-scheme: ${resultVars["color-scheme"]};`);
+  for (const [k, v] of Object.entries(resultVars)) {
+    if (k === "color-scheme") continue;
+    lines.push(`  ${k}: ${v};`);
+  }
+  lines.push(`}`);
+  return { themeName, css: lines.join("\n"), variables: resultVars, isRawCss: false };
+}
+
+function tailwindConfigSnippet(themeName, variables) {
+  return `daisyui: {\n  themes: [\n    {\n      "${themeName}": ${JSON.stringify(variables, null, 8).replace(/^ {8}/gm, "      ")}\n    }\n  ]\n}`;
+}
+
+/**
+ * Registers a custom DaisyUI theme dynamically in runtime, injecting CSS if provided.
+ */
+function registerCustomTheme(themeName, css = null) {
+  if (!themeName || typeof themeName !== "string") return false;
+  const name = themeName.trim();
+  if (!DAISYUI_THEMES.includes(name)) {
+    DAISYUI_THEMES.push(name);
+  }
+
+  if (css && typeof document !== "undefined") {
+    let styleEl = document.getElementById("daisyui-custom-themes");
+    if (!styleEl) {
+      styleEl = document.createElement("style");
+      styleEl.id = "daisyui-custom-themes";
+      styleEl.textContent = "";
+      if (document.head && typeof document.head.appendChild === "function") {
+        document.head.appendChild(styleEl);
       }
     }
+    styleEl.textContent = styleEl.textContent || "";
+    const themeSelector = `[data-theme="${name}"]`;
+    if (styleEl.textContent.includes(themeSelector)) {
+      const escaped = themeSelector.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+      const regex = new RegExp(`${escaped}\\s*\\{[^}]*\\}`, "g");
+      styleEl.textContent = styleEl.textContent.replace(regex, css);
+    } else {
+      styleEl.textContent += `\n${css}\n`;
+    }
+  }
 
-    // Boot all subsystems non-blockingly when DOM & deferred scripts are ready
-    window.addEventListener("DOMContentLoaded", async () => {
-      try { scanAndRegisterExistingCustomThemes(); } catch (e) { console.error("Custom themes scan error:", e); }
-      try { initMarkdown(); } catch (e) { console.error("Markdown init error:", e); }
-      try { initTOC(); } catch (e) { console.error("TOC init error:", e); }
-      try { initThemeDropdown(); } catch (e) { console.error("Theme dropdown error:", e); }
-      try { initDownloadButton(); } catch (e) { console.error("Download button error:", e); }
-      try { initLucide(); } catch (e) { console.error("Lucide init error:", e); }
-      try { initKaTeX(); } catch (e) { console.error("KaTeX init error:", e); }
-      try { initGridJs(); } catch (e) { console.error("Grid.js init error:", e); }
-      try { initCodeHighlight(); } catch (e) { console.error("Highlight init error:", e); }
-      try { initDayjs(); } catch (e) { console.error("Day.js init error:", e); }
-      try { initMockjs(); } catch (e) { console.error("Mock.js init error:", e); }
-      try { initShowdown(); } catch (e) { console.error("Showdown init error:", e); }
-      try { initFullCalendar(); } catch (e) { console.error("FullCalendar init error:", e); }
+  if (typeof document !== "undefined" && document.getElementById("theme-swatch-list")) {
+    initThemeDropdown();
+  }
+  return true;
+}
 
-      const palette = window.resolveDaisyUIThemePalette();
-      try { applyThemeToGridAndCss(palette); } catch (e) { console.error("Grid theme sync error:", e); }
-      try { initCharts(palette); } catch (e) { console.error("Chart init error:", e); }
-      try { await renderMermaidWithTheme(palette); } catch (e) { console.error("Mermaid init error:", e); }
-      try { initMaps(); } catch (e) { console.error("Leaflet init error:", e); }
-      try { window.checkInsufficientHorizontalSpace(); } catch (e) { console.error("Space check error:", e); }
-      window.addEventListener("resize", () => window.checkInsufficientHorizontalSpace());
-      window.__REPORT_READY__ = true;
+/**
+ * Scans for build-time or localStorage custom themes and registers them.
+ */
+function scanAndRegisterExistingCustomThemes() {
+  if (typeof document === "undefined") return;
+
+  // 1. Scan pre-injected <style id="daisyui-custom-themes">
+  const styleEl = document.getElementById("daisyui-custom-themes");
+  if (styleEl && styleEl.textContent) {
+    const themeRegex = /\[data-theme=["']?([a-zA-Z0-9_\-]+)["']?\]/g;
+    let match;
+    while ((match = themeRegex.exec(styleEl.textContent)) !== null) {
+      const name = match[1];
+      if (name && !DAISYUI_THEMES.includes(name)) {
+        DAISYUI_THEMES.push(name);
+      }
+    }
+  }
+
+  // 2. Scan localStorage
+  try {
+    if (typeof localStorage !== "undefined") {
+      const savedThemes = localStorage.getItem("html_report_custom_themes");
+      if (savedThemes) {
+        const parsed = JSON.parse(savedThemes);
+        if (typeof parsed === "object") {
+          for (const [themeName, entry] of Object.entries(parsed)) {
+            const css = typeof entry === "string" ? entry : (entry.css || null);
+            registerCustomTheme(themeName, css);
+          }
+        }
+      }
+      const savedActive = localStorage.getItem("html_report_active_theme");
+      if (savedActive && DAISYUI_THEMES.includes(savedActive)) {
+        document.documentElement.setAttribute("data-theme", savedActive);
+        const activeLabel = document.getElementById("active-theme-label");
+        if (activeLabel) activeLabel.textContent = savedActive;
+      }
+    }
+  } catch (_) {}
+}
+
+/**
+ * Resolves any valid CSS color string (including oklch, color-mix, rgb, hsl, hex)
+ * into a strict 8-bit hex string and rgba generator via an offscreen 2D canvas.
+ */
+function cssColorToHexAndRgba(colorStr, customCtx = null) {
+  if (!colorStr) {
+    return { hex: "#3b82f6", r: 59, g: 130, b: 246, a: 1, rgba: (a = 1) => `rgba(59, 130, 246, ${a})` };
+  }
+
+  try {
+    let ctx = customCtx;
+    if (!ctx && typeof document !== "undefined") {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      ctx = canvas.getContext("2d", { willReadFrequently: true });
+    }
+
+    if (ctx) {
+      ctx.fillStyle = colorStr;
+      ctx.fillRect(0, 0, 1, 1);
+      const [r, g, b, aRaw] = ctx.getImageData(0, 0, 1, 1).data;
+      const a = aRaw / 255;
+      const hex = "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
+      return {
+        hex,
+        r,
+        g,
+        b,
+        a,
+        rgba: (alpha = a) => `rgba(${r}, ${g}, ${b}, ${alpha})`
+      };
+    }
+  } catch (_) {}
+
+  // Fallback if canvas is unavailable or failed
+  return { hex: "#3b82f6", r: 59, g: 130, b: 246, a: 1, rgba: (alpha = 1) => `rgba(59, 130, 246, ${alpha})` };
+}
+
+/**
+ * Resolves active DaisyUI semantic palette tokens (primary, secondary, accent, neutral, base, content)
+ * into deterministic hex/rgba colors.
+ */
+function resolveDaisyUIThemePalette(doc = (typeof document !== "undefined" ? document : null)) {
+  if (!doc) return {};
+
+  const probeContainer = doc.createElement("div");
+  probeContainer.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none;";
+  const roles = {
+    primary: "bg-primary",
+    secondary: "bg-secondary",
+    accent: "bg-accent",
+    neutral: "bg-neutral",
+    base100: "bg-base-100",
+    base200: "bg-base-200",
+    base300: "bg-base-300"
+  };
+
+  const nodes = {};
+  for (const [key, cls] of Object.entries(roles)) {
+    const el = doc.createElement("span");
+    el.className = cls;
+    probeContainer.appendChild(el);
+    nodes[key] = el;
+  }
+  const textNode = doc.createElement("span");
+  textNode.className = "text-base-content";
+  probeContainer.appendChild(textNode);
+  doc.body.appendChild(probeContainer);
+
+  const palette = {};
+  const getStyle = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle : () => ({ backgroundColor: "#3b82f6", color: "#1f2937" });
+
+  for (const [key, el] of Object.entries(nodes)) {
+    palette[key] = cssColorToHexAndRgba(getStyle(el).backgroundColor);
+  }
+  palette.content = cssColorToHexAndRgba(getStyle(textNode).color);
+  probeContainer.remove();
+  return palette;
+}
+
+/**
+ * Sanitizes Mermaid diagram source code to defend against Mermaid 11.4 markdown list parser bugs.
+ * Disallows starting subgraph or node titles with numbered list tokens (e.g. `1. `, `2. `).
+ */
+function sanitizeMermaidSource(source) {
+  if (!source || typeof source !== "string") return "";
+
+  // 1. Replace numbered list pattern in subgraphs: e.g. subgraph ["1. Title"] or subgraph sub1 ["1. Title"]
+  let sanitized = source.replace(
+    /(subgraph\s+(?:[a-zA-Z0-9_-]+\s*)?\[\s*")(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 2. Replace numbered list pattern in unquoted subgraphs: e.g. subgraph 1. Title
+  sanitized = sanitized.replace(
+    /(subgraph\s+)(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 3. Replace numbered list tokens in bracketed nodes: e.g. ["1. Step Description"]
+  sanitized = sanitized.replace(
+    /(\[\s*")(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 4. Replace numbered list tokens in unquoted node brackets: e.g. [1. Step Description]
+  sanitized = sanitized.replace(
+    /(\[\s*)(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  return sanitized;
+}
+
+/**
+ * Dynamic Mermaid theme re-rendering synced with DaisyUI theme palette.
+ */
+async function renderMermaidWithTheme(palette) {
+  if (typeof window === "undefined" || !window.mermaid) return;
+  const mermaidNodes = document.querySelectorAll(".mermaid");
+  if (!mermaidNodes.length) return;
+
+  mermaidNodes.forEach((node) => {
+    if (!node.dataset.mermaidSource) {
+      node.dataset.mermaidSource = node.textContent.trim();
+    }
+    node.removeAttribute("data-processed");
+    node.textContent = sanitizeMermaidSource(node.dataset.mermaidSource);
+  });
+
+  const base100 = palette.base100 ? palette.base100.hex : "#ffffff";
+  const base200 = palette.base200 ? palette.base200.hex : "#f3f4f6";
+  const base300 = palette.base300 ? palette.base300.hex : "#e5e7eb";
+  const content = palette.content ? palette.content.hex : "#1f2937";
+  const primary = palette.primary ? palette.primary.hex : "#3b82f6";
+  const secondary = palette.secondary ? palette.secondary.hex : "#6b7280";
+  const accent = palette.accent ? palette.accent.hex : "#10b981";
+
+  window.mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: "loose",
+    theme: "base",
+    themeVariables: {
+      background: base100,
+      primaryColor: base200,
+      primaryTextColor: content,
+      primaryBorderColor: primary,
+      secondaryColor: base300,
+      secondaryTextColor: content,
+      secondaryBorderColor: secondary,
+      tertiaryColor: base100,
+      tertiaryTextColor: content,
+      tertiaryBorderColor: accent,
+      lineColor: primary,
+      textColor: content,
+      mainBkg: base100,
+      nodeBorder: primary,
+      clusterBkg: base200,
+      clusterBorder: base300,
+      titleColor: content,
+      edgeLabelBackground: base200,
+      nodeTextColor: content
+    }
+  });
+
+  try {
+    await window.mermaid.run({ querySelector: ".mermaid" });
+  } catch (err) {
+    console.warn("[html-report] Mermaid render notice:", err);
+  }
+}
+
+/**
+ * Initializes the 32 DaisyUI theme color swatch picker dropdown.
+ */
+function initThemeDropdown() {
+  if (typeof document === "undefined") return;
+  const listEl = document.getElementById("theme-swatch-list");
+  if (!listEl) return;
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  listEl.innerHTML = "";
+
+  DAISYUI_THEMES.forEach((theme) => {
+    const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.setAttribute("data-theme", theme);
+    btn.setAttribute("data-set-theme", theme);
+    btn.className = "theme-swatch-item outline-base-content text-start outline-offset-4 rounded-btn w-full cursor-pointer font-sans";
+    btn.innerHTML = `
+      <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
+        <span class="grid grid-cols-5 grid-rows-3">
+          <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
+              <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
+            </svg>
+            <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
+              <span>${theme}</span>
+              ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
+            </span>
+            <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
+              <span class="bg-primary rounded-badge w-2 h-4"></span>
+              <span class="bg-secondary rounded-badge w-2 h-4"></span>
+              <span class="bg-accent rounded-badge w-2 h-4"></span>
+              <span class="bg-neutral rounded-badge w-2 h-4"></span>
+            </span>
+          </span>
+        </span>
+      </span>
+    `;
+    btn.addEventListener("click", () => setReportTheme(theme));
+    listEl.appendChild(btn);
+  });
+}
+
+/**
+ * Sets active DaisyUI theme dynamically and updates charts/Mermaid.
+ */
+async function setReportTheme(themeName) {
+  if (!DAISYUI_THEMES.includes(themeName)) return;
+  if (typeof document === "undefined") return;
+
+  document.documentElement.setAttribute("data-theme", themeName);
+  const activeLabel = document.getElementById("active-theme-label");
+  if (activeLabel) activeLabel.textContent = themeName;
+
+  try {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("html_report_active_theme", themeName);
+    }
+  } catch (_) {}
+
+  document.querySelectorAll("#theme-swatch-list .theme-swatch-item").forEach((btn) => {
+    const check = btn.querySelector(".theme-check");
+    if (check) {
+      const isCurrent = btn.getAttribute("data-set-theme") === themeName;
+      check.classList.toggle("opacity-100", isCurrent);
+      check.classList.toggle("opacity-0", !isCurrent);
+    }
+  });
+
+  const palette = resolveDaisyUIThemePalette();
+
+  // Dynamic Chart.js color sync
+  if (typeof window !== "undefined" && window.reportCharts && Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((chart, idx) => {
+      if (chart?.data?.datasets) {
+        chart.data.datasets.forEach((ds, dsIdx) => {
+          const colorKey = dsIdx % 3 === 0 ? "primary" : dsIdx % 3 === 1 ? "secondary" : "accent";
+          const chosen = palette[colorKey] ? palette[colorKey].hex : "#3b82f6";
+          if (ds.borderColor) ds.borderColor = chosen;
+          if (ds.backgroundColor && typeof ds.backgroundColor === "string" && ds.backgroundColor.includes("rgba")) {
+            ds.backgroundColor = palette[colorKey] ? palette[colorKey].rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+          }
+        });
+        chart.update();
+      }
     });
+  }
+
+  // Dynamic Mermaid sync
+  await renderMermaidWithTheme(palette);
+
+  // Dynamic FullCalendar sync
+  if (typeof window !== "undefined" && window.reportCalendars && Array.isArray(window.reportCalendars)) {
+    window.reportCalendars.forEach((cal) => {
+      try {
+        cal.render();
+      } catch (_) {}
+    });
+  }
+
+  // Dynamic Datastar reactive $theme signal sync
+  syncDatastarTheme(themeName);
+}
+
+/**
+ * Builds Table of Contents from main h1, h2, h3 elements.
+ */
+function initTOC() {
+  if (typeof document === "undefined") return;
+  const tocList = document.getElementById("report-toc-list");
+  if (!tocList) return;
+  const headings = document.querySelectorAll("main h1, main h2, main h3");
+  tocList.innerHTML = "";
+
+  headings.forEach((h) => {
+    if (!h.id) {
+      h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    }
+    const level = parseInt(h.tagName.substring(1), 10);
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = `#${h.id}`;
+    a.textContent = h.textContent.trim();
+    a.className = level === 1 ? "font-bold text-xs" : level === 2 ? "pl-3 text-xs" : "pl-6 text-2xs opacity-80";
+    a.addEventListener("click", () => {
+      const dropdown = document.getElementById("toc-dropdown");
+      if (dropdown) dropdown.removeAttribute("open");
+    });
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+}
+
+/**
+ * Horizontal Scrollbar -> Insufficient Space Detector.
+ * Flags elements where scrollWidth > clientWidth with [data-insufficient-space="true"].
+ */
+function checkInsufficientHorizontalSpace() {
+  if (typeof document === "undefined") return [];
+  const mainEl = document.querySelector("main");
+  if (!mainEl) return [];
+
+  const insufficient = [];
+  const candidates = mainEl.querySelectorAll("section, div, pre, table, .card, .overflow-x-auto, .gridjs-wrapper");
+
+  candidates.forEach((el) => {
+    const style = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle(el) : el.style;
+    if (style.display === "none" || style.visibility === "hidden" || el.clientWidth === 0) {
+      el.removeAttribute("data-insufficient-space");
+      return;
+    }
+    const hasHorizontalScrollbar =
+      el.scrollWidth > el.clientWidth + 2 &&
+      ["auto", "scroll"].includes(style.overflowX);
+
+    if (hasHorizontalScrollbar) {
+      el.setAttribute("data-insufficient-space", "true");
+      insufficient.push({
+        tag: el.tagName.toLowerCase(),
+        id: el.id || null,
+        className: typeof el.className === "string" ? el.className : "",
+        scrollWidth: el.scrollWidth,
+        clientWidth: el.clientWidth,
+        message: "Element has a horizontal scrollbar and does not have enough space"
+      });
+    } else {
+      el.removeAttribute("data-insufficient-space");
+    }
+  });
+
+  return insufficient;
+}
+
+/**
+ * Builds a standalone, inlined HTML snapshot with fetched CSS and JS bundled directly.
+ */
+async function buildInlinedHtmlSnapshot() {
+  if (typeof document === "undefined") return "";
+  const clone = document.documentElement.cloneNode(true);
+  clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
+
+  // Inline external stylesheets
+  const linkEls = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
+  await Promise.allSettled(
+    linkEls.map(async (linkEl) => {
+      const href = linkEl.getAttribute("href");
+      if (!href || (!href.startsWith("http://") && !href.startsWith("https://"))) return;
+      try {
+        const res = await fetch(href);
+        if (!res.ok) return;
+        let cssText = await res.text();
+        cssText = cssText.replace(/url\((['"]?)(?!data:|https?:|#)([^'")]+)\1\)/g, (match, quote, relPath) => {
+          try {
+            return `url("${new URL(relPath, href).href}")`;
+          } catch {
+            return match;
+          }
+        });
+        const styleEl = document.createElement("style");
+        styleEl.setAttribute("data-inlined-href", href);
+        styleEl.textContent = cssText;
+        linkEl.replaceWith(styleEl);
+      } catch (_) {}
+    })
+  );
+
+  // Inline external scripts
+  const scriptEls = Array.from(clone.querySelectorAll("script[src]"));
+  await Promise.allSettled(
+    scriptEls.map(async (scriptEl) => {
+      const src = scriptEl.getAttribute("src");
+      if (!src || (!src.startsWith("http://") && !src.startsWith("https://"))) return;
+      if (src.includes("cdn.tailwindcss.com")) {
+        const marker = document.createElement("script");
+        marker.setAttribute("data-inlined-src", src);
+        marker.textContent = "/* Tailwind CSS styles pre-compiled inline in <head> */";
+        scriptEl.replaceWith(marker);
+        return;
+      }
+      try {
+        const res = await fetch(src);
+        if (!res.ok) return;
+        const jsText = await res.text();
+        const inlineScript = document.createElement("script");
+        inlineScript.setAttribute("data-inlined-src", src);
+        inlineScript.textContent = jsText.replace(/<\/script>/gi, "<\\/script>");
+        scriptEl.replaceWith(inlineScript);
+      } catch (_) {}
+    })
+  );
+
+  return "<!DOCTYPE html>\n" + clone.outerHTML;
+}
+
+/**
+ * Triggers PDF export / print dialog.
+ */
+function exportReportPdf() {
+  if (typeof window === "undefined") return;
+  if (window.reportCharts && Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((c) => c?.resize?.());
+  }
+  if (window.reportLeafletMap && typeof window.reportLeafletMap.invalidateSize === "function") {
+    window.reportLeafletMap.invalidateSize();
+  }
+  window.print();
+}
+
+/**
+ * Initializes the download menu actions (HTML & PDF).
+ */
+function initDownloadButton() {
+  if (typeof document === "undefined") return;
+  const htmlBtn = document.getElementById("download-html-btn");
+  const pdfBtn = document.getElementById("download-pdf-btn");
+
+  if (htmlBtn) {
+    htmlBtn.addEventListener("click", async () => {
+      try {
+        htmlBtn.disabled = true;
+        const htmlContent = await buildInlinedHtmlSnapshot();
+        const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const docTitle = document.title || "html-report";
+        a.download = `${docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-standalone.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("[html-report] Failed to bundle inlined HTML snapshot:", err);
+      } finally {
+        htmlBtn.disabled = false;
+      }
+    });
+  }
+
+  if (pdfBtn) {
+    pdfBtn.addEventListener("click", () => {
+      const reportMode = document.documentElement.getAttribute("data-report-mode") || "interactive";
+      if (reportMode === "interactive") {
+        const modal = document.getElementById("pdf-not-ready-modal");
+        if (modal && typeof modal.showModal === "function") {
+          modal.showModal();
+          return;
+        }
+      }
+      exportReportPdf();
+    });
+  }
+}
+
+/**
+ * Day.js runtime initialization & data-dayjs hydration.
+ */
+function initDayjs() {
+  if (typeof window === "undefined" || !window.dayjs) return;
+  try {
+    if (window.dayjs_plugin_relativeTime) {
+      window.dayjs.extend(window.dayjs_plugin_relativeTime);
+    }
+    if (window.dayjs_plugin_customParseFormat) {
+      window.dayjs.extend(window.dayjs_plugin_customParseFormat);
+    }
+  } catch (err) {
+    console.warn("[html-report] Day.js plugin registration notice:", err);
+  }
+
+  try {
+    document.querySelectorAll("[data-dayjs]").forEach((el) => {
+      const raw = el.getAttribute("data-dayjs");
+      const format = el.getAttribute("data-dayjs-format") || "YYYY-MM-DD HH:mm:ss";
+      const fromNow = el.hasAttribute("data-dayjs-from-now") || el.getAttribute("data-dayjs-relative") === "true";
+      const d = (raw && raw !== "now" && raw !== "true") ? window.dayjs(raw) : window.dayjs();
+      if (fromNow && typeof d.fromNow === "function") {
+        el.textContent = d.fromNow();
+      } else {
+        el.textContent = d.format(format);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Day.js DOM hydration notice:", err);
+  }
+}
+
+/**
+ * Impress.js runtime initialization with strict presentation guard.
+ * Only initializes 3D canvas when explicitly requested as a presentation.
+ */
+function initImpress() {
+  if (typeof window === "undefined" || !window.impress) return;
+
+  const impressRoot = document.getElementById("impress");
+  if (!impressRoot) return;
+
+  // Presentation Guard: Impress 3D initialization ONLY activates when explicitly requested
+  const isPresentationRequested =
+    document.documentElement.getAttribute("data-presentation") === "true" ||
+    document.body.getAttribute("data-presentation") === "true" ||
+    impressRoot.getAttribute("data-presentation") === "true" ||
+    impressRoot.classList.contains("impress-presentation-active");
+
+  if (!isPresentationRequested) {
+    // Treat as print/static: slides remain stacked in standard document flow
+    impressRoot.classList.add("impress-static-fallback");
+    return;
+  }
+
+  try {
+    if (!impressRoot.dataset.impressInitialized) {
+      impressRoot.dataset.impressInitialized = "true";
+      const api = window.impress("impress");
+      api.init();
+      window.impressApi = api;
+    }
+  } catch (err) {
+    console.warn("[html-report] Impress.js initialization notice:", err);
+  }
+}
+
+/**
+ * Mock.js runtime initialization & data-mock hydration.
+ */
+function initMockjs() {
+  if (typeof window === "undefined" || !window.Mock) return;
+  try {
+    document.querySelectorAll("[data-mock]").forEach((el) => {
+      if (el.dataset.mockInitialized) return;
+      el.dataset.mockInitialized = "true";
+      const raw = el.getAttribute("data-mock");
+      if (!raw) return;
+      try {
+        const schema = JSON.parse(raw);
+        const data = window.Mock.mock(schema);
+        if (el.tagName.toLowerCase() === "code" || el.tagName.toLowerCase() === "pre") {
+          el.textContent = JSON.stringify(data, null, 2);
+        } else if (el.hasAttribute("data-mock-target")) {
+          const target = document.querySelector(el.getAttribute("data-mock-target"));
+          if (target) target.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (parseErr) {
+        const data = window.Mock.mock(raw);
+        el.textContent = String(data);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Mock.js hydration notice:", err);
+  }
+}
+
+/**
+ * Showdown runtime initialization & data-showdown hydration.
+ */
+function initShowdown() {
+  if (typeof window === "undefined" || !window.showdown) return;
+  try {
+    const converter = new window.showdown.Converter({
+      tables: true,
+      tasklists: true,
+      strikethrough: true,
+      emoji: true,
+      ghCodeBlocks: true
+    });
+    window.showdownConverter = converter;
+
+    document.querySelectorAll("[data-showdown], [data-markdown-showdown]").forEach((el) => {
+      if (el._sdInitialized || el.dataset.sdInitialized) return;
+      el._sdInitialized = true;
+      el.dataset.sdInitialized = "true";
+      const srcSelector = el.getAttribute("data-showdown-source") || el.getAttribute("data-markdown-showdown-source");
+      let md = "";
+      if (srcSelector) {
+        const srcEl = document.querySelector(srcSelector);
+        if (srcEl) {
+          md = srcEl.value !== undefined ? srcEl.value : srcEl.textContent;
+        }
+      } else {
+        const rawAttr = el.getAttribute("data-markdown-showdown") || el.getAttribute("data-showdown");
+        md = (rawAttr && rawAttr !== "true") ? rawAttr : el.textContent;
+      }
+      if (md) {
+        el.innerHTML = converter.makeHtml(md);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Showdown markdown rendering notice:", err);
+  }
+}
+
+/**
+ * FullCalendar runtime initialization & DaisyUI theme synchronization.
+ */
+function initFullCalendar() {
+  if (typeof window === "undefined" || !window.FullCalendar) return;
+  window.reportCalendars = window.reportCalendars || [];
+
+  try {
+    const calendarEls = document.querySelectorAll("[data-fullcalendar], #calendar");
+    calendarEls.forEach((el) => {
+      if (el.dataset.calendarInitialized) return;
+      el.dataset.calendarInitialized = "true";
+
+      let events = [];
+      const rawEvents = el.getAttribute("data-calendar-events");
+      if (rawEvents) {
+        try {
+          events = JSON.parse(rawEvents);
+        } catch (_) {}
+      }
+
+      const calendar = new window.FullCalendar.Calendar(el, {
+        initialView: el.getAttribute("data-calendar-view") || "dayGridMonth",
+        headerToolbar: {
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,listWeek"
+        },
+        height: el.getAttribute("data-calendar-height") || "auto",
+        events: events
+      });
+      calendar.render();
+      window.reportCalendars.push(calendar);
+    });
+  } catch (err) {
+    console.warn("[html-report] FullCalendar initialization notice:", err);
+  }
+}
+
+/**
+ * Rehydrates Lucide icons in the DOM.
+ */
+function rehydrateLucideIcons(root = null) {
+  if (typeof window === "undefined" || !window.lucide || typeof window.lucide.createIcons !== "function") return;
+  try {
+    if (root && root.nodeType === 1) {
+      window.lucide.createIcons({ root });
+    } else {
+      window.lucide.createIcons();
+    }
+  } catch (err) {
+    console.warn("[html-report] Lucide icon rehydration notice:", err);
+  }
+}
+
+/**
+ * Initializes MutationObserver to rehydrate Lucide icons post-morph and handle Datastar signal events.
+ */
+let _datastarObserverInstance = null;
+let _lucideRehydrationTimer = null;
+
+function initDatastarObserver() {
+  if (typeof window === "undefined" || typeof MutationObserver === "undefined") return null;
+  if (typeof document === "undefined" || !document.body) return null;
+  if (_datastarObserverInstance) return _datastarObserverInstance;
+
+  _datastarObserverInstance = new MutationObserver((mutations) => {
+    let needsRehydrate = false;
+    for (const m of mutations) {
+      if (m.type === "childList" && m.addedNodes.length > 0) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === 1) {
+            if (node.hasAttribute && node.hasAttribute("data-lucide")) {
+              needsRehydrate = true;
+              break;
+            }
+            if (node.querySelector && node.querySelector("[data-lucide]")) {
+              needsRehydrate = true;
+              break;
+            }
+          }
+        }
+      }
+      if (needsRehydrate) break;
+    }
+
+    if (needsRehydrate) {
+      if (_lucideRehydrationTimer) clearTimeout(_lucideRehydrationTimer);
+      _lucideRehydrationTimer = setTimeout(() => {
+        rehydrateLucideIcons();
+      }, 16);
+    }
+  });
+
+  _datastarObserverInstance.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Also listen for explicit Datastar fragment events if dispatched
+  document.addEventListener("datastar-fragment-applied", () => {
+    rehydrateLucideIcons();
+  });
+
+  return _datastarObserverInstance;
+}
+
+/**
+ * Synchronizes DaisyUI theme switcher selection with Datastar $theme reactive signal.
+ */
+function syncDatastarTheme(themeName) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  // 1. Dispatch custom event for Datastar signals
+  try {
+    const evt = new CustomEvent("datastar-merge-signals", {
+      bubbles: true,
+      detail: { theme: themeName }
+    });
+    document.dispatchEvent(evt);
+  } catch (_) {}
+
+  // 2. Direct API call if Datastar is active on window
+  if (window.datastar) {
+    if (typeof window.datastar.mergeSignals === "function") {
+      try { window.datastar.mergeSignals({ theme: themeName }); } catch (_) {}
+    } else if (window.datastar.signals && typeof window.datastar.signals === "object") {
+      try { window.datastar.signals.theme = themeName; } catch (_) {}
+    }
+  }
+
+  // 3. Update DOM signal attributes for initial or bound elements
+  try {
+    const signalHolders = document.querySelectorAll("[data-signals]");
+    signalHolders.forEach((el) => {
+      if (el._dsSignals && typeof el._dsSignals === "object") {
+        el._dsSignals.theme = themeName;
+      }
+    });
+  } catch (_) {}
+}
+
+// Global browser window bindings
+if (typeof window !== "undefined") {
+  window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
+  window.DAISYUI_THEMES = DAISYUI_THEMES;
+  window.registerCustomTheme = registerCustomTheme;
+  window.scanAndRegisterExistingCustomThemes = scanAndRegisterExistingCustomThemes;
+  window.srgbToLinear = srgbToLinear;
+  window.linearToSrgb = linearToSrgb;
+  window.hexToRgb = hexToRgb;
+  window.hslToRgb = hslToRgb;
+  window.parseColor = parseColor;
+  window.rgbToOklch = rgbToOklch;
+  window.autoContrastContent = autoContrastContent;
+  window.compileTheme = compileTheme;
+  window.tailwindConfigSnippet = tailwindConfigSnippet;
+  window.cssColorToHexAndRgba = cssColorToHexAndRgba;
+  window.resolveDaisyUIThemePalette = resolveDaisyUIThemePalette;
+  window.sanitizeMermaidSource = sanitizeMermaidSource;
+  window.renderMermaidWithTheme = renderMermaidWithTheme;
+  window.initThemeDropdown = initThemeDropdown;
+  window.setReportTheme = setReportTheme;
+  window.initTOC = initTOC;
+  window.checkInsufficientHorizontalSpace = checkInsufficientHorizontalSpace;
+  window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
+  window.exportReportPdf = exportReportPdf;
+  window.initDownloadButton = initDownloadButton;
+  window.initDayjs = initDayjs;
+  window.initImpress = initImpress;
+  window.initMockjs = initMockjs;
+  window.initShowdown = initShowdown;
+  window.initFullCalendar = initFullCalendar;
+  window.rehydrateLucideIcons = rehydrateLucideIcons;
+  window.initDatastarObserver = initDatastarObserver;
+  window.syncDatastarTheme = syncDatastarTheme;
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
+    try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
+    try { initTOC(); } catch (_) {}
+    try { initThemeDropdown(); } catch (_) {}
+    try { initDownloadButton(); } catch (_) {}
+    try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
+    try { initDayjs(); } catch (_) {}
+    try { initShowdown(); } catch (_) {}
+    try { initMockjs(); } catch (_) {}
+    try { initFullCalendar(); } catch (_) {}
+    try { initImpress(); } catch (_) {}
+    try { initDatastarObserver(); } catch (_) {}
+
+    const palette = resolveDaisyUIThemePalette();
+    try { await renderMermaidWithTheme(palette); } catch (_) {}
+    try { checkInsufficientHorizontalSpace(); } catch (_) {}
+    window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.__REPORT_READY__ = true;
+  });
+}
+
+// Node.js CommonJS exports for unit testing
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    STANDARD_DAISYUI_THEMES,
+    DAISYUI_THEMES,
+    registerCustomTheme,
+    scanAndRegisterExistingCustomThemes,
+    srgbToLinear,
+    linearToSrgb,
+    hexToRgb,
+    hslToRgb,
+    parseColor,
+    rgbToOklch,
+    autoContrastContent,
+    compileTheme,
+    tailwindConfigSnippet,
+    cssColorToHexAndRgba,
+    resolveDaisyUIThemePalette,
+    sanitizeMermaidSource,
+    renderMermaidWithTheme,
+    initThemeDropdown,
+    setReportTheme,
+    initTOC,
+    checkInsufficientHorizontalSpace,
+    buildInlinedHtmlSnapshot,
+    exportReportPdf,
+    initDownloadButton,
+    initDayjs,
+    initImpress,
+    initMockjs,
+    initShowdown,
+    initFullCalendar,
+    rehydrateLucideIcons,
+    initDatastarObserver,
+    syncDatastarTheme
+  };
+}
+
   </script>
 </body>
 </html>

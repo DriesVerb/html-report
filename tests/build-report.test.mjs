@@ -77,6 +77,18 @@ describe("Phase 2: build-report.mjs Deterministic Assembly Unit Tests", () => {
       assert.ok(opts.addons.includes("impress"));
     });
 
+    it("should handle --live and -l flags and auto-include datastar addon", () => {
+      const argv1 = ["node", "build-report.mjs", "-c", "frag.html", "--live"];
+      const opts1 = parseArgs(argv1);
+      assert.equal(opts1.live, true);
+      assert.ok(opts1.addons.includes("datastar"));
+
+      const argv2 = ["node", "build-report.mjs", "-c", "frag.html", "-l"];
+      const opts2 = parseArgs(argv2);
+      assert.equal(opts2.live, true);
+      assert.ok(opts2.addons.includes("datastar"));
+    });
+
     it("should parse --custom-theme flag correctly", () => {
       const argv = ["node", "build-report.mjs", "-c", "frag.html", "--custom-theme", "brand.json"];
       const opts = parseArgs(argv);
@@ -156,6 +168,22 @@ describe("Phase 2: build-report.mjs Deterministic Assembly Unit Tests", () => {
       const content = `<div id="calendar" data-fullcalendar="true"></div>`;
       const addons = detectAddons(content);
       assert.ok(addons.includes("fullcalendar"));
+    });
+
+    it("should auto-detect Datastar signatures (data-signals, data-bind, data-on-, etc.)", () => {
+      const sigs = [
+        '<div data-signals="{ count: 0 }"></div>',
+        '<input data-bind="userInput" />',
+        '<button data-on-click="$$get(\'/api/stream\')">Run</button>',
+        '<div data-indicator="loading">Loading...</div>',
+        '<div data-computed="doubled"></div>',
+        '<span data-text="$user.name"></span>',
+        '<span data-show="$isOpen">Visible</span>'
+      ];
+      for (const sig of sigs) {
+        const addons = detectAddons(sig);
+        assert.ok(addons.includes("datastar"), `Failed to auto-detect Datastar for signature: ${sig}`);
+      }
     });
 
     it("should resolve CLI aliases for all new addons correctly", () => {
@@ -256,6 +284,21 @@ addons: [charts]
       assert.ok(result.html.includes("@media print"));
       assert.ok(result.html.includes('id="printable-media-styles"'));
       assert.ok(!result.html.includes("Not PDF-Ready"));
+    });
+
+    it("should handle live mode with datastar addon and live report mode", () => {
+      const fragment = `<h1 id="live-dashboard">Live Agent Dashboard</h1>`;
+
+      const result = buildReport({
+        title: "Live Report",
+        content: fragment,
+        live: true
+      });
+
+      assert.equal(result.mode, "live");
+      assert.ok(result.html.includes('data-report-mode="live"'));
+      assert.ok(result.activeAddons.includes("datastar"));
+      assert.ok(result.html.includes("@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"));
     });
 
     it("should set custom theme on html tag when theme parameter is passed", () => {

@@ -68,13 +68,29 @@ export const ADDON_REGISTRY = {
   },
   showdown: {
     name: "Showdown",
-    signatures: [/\bshowdown\b/i, /new\s+showdown\.Converter/i, /data-showdown/i, /id=["']showdown-/i],
+    signatures: [/\bshowdown\b/i, /new\s+showdown\.Converter/i, /data-showdown/i, /data-markdown-showdown/i, /id=["']showdown-/i],
     head: `<script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>`
   },
   fullcalendar: {
     name: "FullCalendar",
     signatures: [/id=["']calendar["']/i, /data-fullcalendar/i, /FullCalendar\.Calendar/i, /class=["'][^"']*\bfc\b/i],
     head: `<script defer src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" crossorigin="anonymous"></script>`
+  },
+  datastar: {
+    name: "Datastar",
+    signatures: [
+      /data-signals\b/i,
+      /data-bind\b/i,
+      /data-on-/i,
+      /data-indicator\b/i,
+      /data-computed\b/i,
+      /data-text\b/i,
+      /data-show\b/i,
+      /data-ref\b/i,
+      /data-fetch-indicator\b/i,
+      /\bdatastar\b/i
+    ],
+    head: `<script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>`
   }
 };
 
@@ -88,6 +104,8 @@ const ADDON_ALIASES = {
   day: "dayjs",
   dayjs: "dayjs",
   impress: "impress",
+  datastar: "datastar",
+  live: "datastar",
   impressjs: "impress",
   mock: "mockjs",
   mockjs: "mockjs",
@@ -220,6 +238,7 @@ export function parseArgs(argv) {
     output: "./report.html",
     printable: false,
     presentation: false,
+    live: false,
     theme: null,
     customTheme: null,
     addons: [],
@@ -244,6 +263,11 @@ export function parseArgs(argv) {
       options.presentation = true;
       if (!options.addons.includes("impress")) {
         options.addons.push("impress");
+      }
+    } else if (arg === "--live" || arg === "-l") {
+      options.live = true;
+      if (!options.addons.includes("datastar")) {
+        options.addons.push("datastar");
       }
     } else if (arg === "--theme" && args[i + 1]) {
       options.theme = args[++i];
@@ -277,6 +301,7 @@ export function buildReport({
   content = "",
   printable = false,
   presentation = false,
+  live = false,
   addons = [],
   favicon = "📊",
   theme = null,
@@ -297,6 +322,9 @@ export function buildReport({
 
   const cleanBody = extractMainContent(content);
   const activeAddonKeys = detectAddons(cleanBody, addons);
+  if (live && !activeAddonKeys.includes("datastar")) {
+    activeAddonKeys.push("datastar");
+  }
 
   // Compile custom themes if provided
   let compiledCustomCss = "";
@@ -352,7 +380,7 @@ export function buildReport({
   }
 
   // Set report mode attribute on <html>
-  const mode = printable ? "static" : "interactive";
+  const mode = live ? "live" : printable ? "static" : "interactive";
   html = html.replace(
     /<html([^>]*)>/i,
     (match, attrs) => {
@@ -390,8 +418,14 @@ export function buildReport({
 
   html = html.replace(/<!-- {{TITLE}} -->/g, () => title);
   html = html.replace(/<!-- {{FAVICON}} -->/g, () => faviconTag);
+  // Defense against Datastar attribute prefix collision (data-showdown vs data-show)
+  let processedBody = cleanBody;
+  if (activeAddonKeys.includes("datastar")) {
+    processedBody = processedBody.replace(/\bdata-showdown\b/g, "data-markdown-showdown");
+  }
+
   html = html.replace(/<!-- {{HEAD_EXTRAS}} -->/g, () => headExtras);
-  html = html.replace(/<!-- {{CONTENT}} -->/g, () => cleanBody);
+  html = html.replace(/<!-- {{CONTENT}} -->/g, () => processedBody);
   html = html.replace(/<!-- {{RUNTIME_SCRIPT}} -->/g, () => inlinedRuntime);
   html = html.replace(/<!-- {{CUSTOM_THEMES}} -->/g, () => compiledCustomCss ? `\n${compiledCustomCss}\n  ` : "");
 
@@ -417,6 +451,7 @@ Options:
   -o, --output <file>       Destination HTML file (default: "./report.html")
   -p, --printable           Enable printable/PDF mode (@media print rules, static mode)
       --presentation        Enable interactive presentation mode for Impress.js
+  -l, --live                Enable real-time Datastar live dashboard mode (sets data-report-mode="live")
       --theme <name>        DaisyUI theme name (default: "light")
       --custom-theme <path> Path to custom theme definition (.json or .css)
       --favicon <emoji>     Favicon emoticon (default: "📊")
@@ -481,6 +516,7 @@ if (isDirectCli) {
     content: rawContent,
     printable: options.printable,
     presentation: options.presentation,
+    live: options.live,
     theme: options.theme,
     customTheme: customThemePath,
     addons: options.addons,

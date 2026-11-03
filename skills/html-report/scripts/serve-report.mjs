@@ -3,6 +3,8 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { exec } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import { DatastarBridge } from "./datastar-sse.mjs";
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -98,13 +100,57 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
   const rootDir = path.dirname(resolvedPath);
   const targetFileName = path.basename(resolvedPath);
   const sseClients = new Set();
+  const datastarClients = new Set();
   let serverPort = initialPort;
 
   const server = http.createServer((req, res) => {
     const parsedUrl = new URL(req.url, `http://localhost:${serverPort}`);
     let pathname = decodeURIComponent(parsedUrl.pathname);
 
-    // 1. SSE Live-Reload Endpoint
+    // 1a. Datastar Real-Time SSE Stream Endpoint
+    if (pathname === "/__datastar_stream__") {
+      if (req.method === "POST") {
+        let body = "";
+        req.on("data", (chunk) => { body += chunk; });
+        req.on("end", () => {
+          let ssePayload = body;
+          try {
+            const parsed = JSON.parse(body);
+            if (parsed.selector && parsed.html) {
+              ssePayload = DatastarBridge.formatFragment(parsed);
+            } else if (parsed.signals) {
+              ssePayload = DatastarBridge.formatSignals(parsed.signals);
+            }
+          } catch (_) {}
+
+          for (const client of datastarClients) {
+            try { client.write(ssePayload); } catch (_) { datastarClients.delete(client); }
+          }
+          res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+          res.end(JSON.stringify({ ok: true, listeners: datastarClients.size }));
+        });
+        return;
+      }
+
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+        "Access-Control-Allow-Origin": "*"
+      });
+      res.write("event: connected\ndata: {}\n\n");
+
+      datastarClients.add(res);
+      console.log(`[html-report] Datastar stream connected (active listeners: ${datastarClients.size})`);
+
+      req.on("close", () => {
+        datastarClients.delete(res);
+        console.log(`[html-report] Datastar stream disconnected (remaining listeners: ${datastarClients.size})`);
+      });
+      return;
+    }
+
+    // 1b. SSE Live-Reload Endpoint
     if (pathname === "/__live_reload__") {
       res.writeHead(200, {
         "Content-Type": "text/event-stream",
@@ -177,6 +223,13 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
         sseClients.delete(client);
       }
     }
+    for (const client of datastarClients) {
+      try {
+        client.write(": ping\n\n");
+      } catch (_) {
+        datastarClients.delete(client);
+      }
+    }
   }, 15000);
 
   // File watcher with debounce to handle editor double-saves
@@ -231,37 +284,61 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
     }
   });
 
-  server.listen(serverPort, () => {
-    const serverUrl = `http://localhost:${serverPort}/`;
-    console.log(`\n======================================================`);
-    console.log(` 🚀 html-report Live-Reload Dev Server`);
-    console.log(` Serving: ${resolvedPath}`);
-    console.log(` URL:     ${serverUrl}`);
-    console.log(` Status:  Watching for updates...`);
-    console.log(`\n  • When updated while tab is open: refreshes existing tab in place.`);
-    console.log(`  • When updated while tab is closed: reopens automatically in a tab.`);
-    console.log(`======================================================\n`);
+  return new Promise((resolve) => {
+    server.listen(serverPort, () => {
+      const serverUrl = `http://localhost:${serverPort}/`;
+      if (process.env.NODE_ENV !== "test") {
+        console.log(`\n======================================================`);
+        console.log(` 🚀 html-report Live-Reload Dev Server`);
+        console.log(` Serving: ${resolvedPath}`);
+        console.log(` URL:     ${serverUrl}`);
+        console.log(` Status:  Watching for updates...`);
+        console.log(`\n  • When updated while tab is open: refreshes existing tab in place.`);
+        console.log(`  • When updated while tab is closed: reopens automatically in a tab.`);
+        console.log(`======================================================\n`);
+      }
 
-    if (autoOpen) {
-      console.log(`[html-report] Auto-opening browser at ${serverUrl}...`);
-      openBrowser(serverUrl);
-    }
+      if (autoOpen) {
+        console.log(`[html-report] Auto-opening browser at ${serverUrl}...`);
+        openBrowser(serverUrl);
+      }
+
+      resolve({
+        server,
+        serverPort,
+        close: () => {
+          clearInterval(heartbeat);
+          try { watcher.close(); } catch (_) {}
+          for (const c of sseClients) { try { c.end(); } catch (_) {} }
+          for (const c of datastarClients) { try { c.end(); } catch (_) {} }
+          return new Promise((res) => server.close(res));
+        }
+      });
+    });
+
+    // Graceful shutdown
+    const cleanup = () => {
+      clearInterval(heartbeat);
+      try { watcher.close(); } catch (_) {}
+      server.close(() => process.exit(0));
+    };
+    process.on("SIGINT", cleanup);
+    process.on("SIGTERM", cleanup);
   });
-
-  // Graceful shutdown
-  const cleanup = () => {
-    clearInterval(heartbeat);
-    try { watcher.close(); } catch (_) {}
-    server.close(() => process.exit(0));
-  };
-  process.on("SIGINT", cleanup);
-  process.on("SIGTERM", cleanup);
 }
 
-const { filePath, port, autoOpen } = parseArgs(process.argv);
-if (!filePath) {
-  console.error("Usage: node serve-report.mjs <path-to-report.html> [--port <number>] [--no-open]");
-  process.exit(1);
-}
+export { startServer, parseArgs, injectLiveReload, MIME_TYPES };
 
-startServer(filePath, port, autoOpen);
+const isMainModule = process.argv[1] && (
+  process.argv[1].endsWith("serve-report.mjs") ||
+  path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))
+);
+
+if (isMainModule) {
+  const { filePath, port, autoOpen } = parseArgs(process.argv);
+  if (!filePath) {
+    console.error("Usage: node serve-report.mjs <path-to-report.html> [--port <number>] [--no-open]");
+    process.exit(1);
+  }
+  startServer(filePath, port, autoOpen);
+}

@@ -56,6 +56,14 @@ describe("Phase 1: Runtime Assets & Template Shell Unit Tests", () => {
       assert.ok(shell.includes("white-space: nowrap !important;"), "Must enforce white-space: nowrap !important on .badge");
       assert.ok(shell.includes("flex-shrink: 0;"), "Must enforce flex-shrink: 0 on .badge");
     });
+
+    it("should allow WebSocket and HTTP/HTTPS connections in CSP for live SSE streaming", () => {
+      const shell = fs.readFileSync(shellPath, "utf-8");
+      assert.ok(
+        shell.includes("connect-src 'self' ws: wss: http: https:;"),
+        "CSP connect-src must allow ws:, wss:, http:, and https: for live SSE and WebSockets"
+      );
+    });
   });
 
   describe("report-runtime.js: DAISYUI_THEMES catalog", () => {
@@ -229,6 +237,71 @@ end`;
         assert.ok(customItem, "Custom theme button must be rendered in dropdown");
         assert.ok(customItem.innerHTML.includes("custom"), "Must include custom badge indicator");
       } finally {
+        globalThis.document = originalDoc;
+      }
+    });
+  });
+
+  describe("report-runtime.js: Datastar live runtime & signals", () => {
+    it("should rehydrate Lucide icons when rehydrateLucideIcons is called", () => {
+      const { rehydrateLucideIcons } = runtime;
+      let lucideCalled = false;
+      const originalWindow = globalThis.window;
+      globalThis.window = {
+        lucide: {
+          createIcons: () => {
+            lucideCalled = true;
+          }
+        }
+      };
+
+      try {
+        rehydrateLucideIcons();
+        assert.equal(lucideCalled, true, "lucide.createIcons must be called");
+      } finally {
+        globalThis.window = originalWindow;
+      }
+    });
+
+    it("should synchronize DaisyUI theme selection with Datastar $theme signal", () => {
+      const { syncDatastarTheme } = runtime;
+      let dispatchedEvent = null;
+      let datastarMergedTheme = null;
+
+      const originalWindow = globalThis.window;
+      const originalDoc = globalThis.document;
+
+      globalThis.window = {
+        datastar: {
+          mergeSignals: (signals) => {
+            datastarMergedTheme = signals.theme;
+          }
+        }
+      };
+
+      const mockElement = {
+        _dsSignals: { theme: "light" }
+      };
+
+      globalThis.document = {
+        dispatchEvent: (evt) => {
+          dispatchedEvent = evt;
+        },
+        querySelectorAll: (selector) => {
+          if (selector === "[data-signals]") return [mockElement];
+          return [];
+        }
+      };
+
+      try {
+        syncDatastarTheme("dracula");
+        assert.ok(dispatchedEvent, "Must dispatch custom event");
+        assert.equal(dispatchedEvent.type, "datastar-merge-signals");
+        assert.equal(dispatchedEvent.detail.theme, "dracula");
+        assert.equal(datastarMergedTheme, "dracula");
+        assert.equal(mockElement._dsSignals.theme, "dracula");
+      } finally {
+        globalThis.window = originalWindow;
         globalThis.document = originalDoc;
       }
     });

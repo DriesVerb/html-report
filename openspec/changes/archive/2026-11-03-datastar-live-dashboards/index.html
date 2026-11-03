@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html data-report-mode="interactive" lang="en" data-theme="light" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="no-referrer" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
+  <title>Datastar.js Live Dashboards - Journey & Plan</title>
+
+  <!-- Content-Aware Favicon Emoticon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
+
+  <!-- Core CDNs with Cryptographic SRI & Anonymous Cross-Origin -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" integrity="sha384-iMbeRReqpIEp0z+cPe0FZxnbV/GbGyGjDfou8Rjcr6KSJIptc245QXNVjLMtu5TR" crossorigin="anonymous" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" integrity="sha384-ieG+IKD0d/ZPXyCBTMVAbqsQdns8QGJR/e26WMw7M4fkaI/rHcS/YIoi+ah9WGge" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" integrity="sha384-iZD2X8o1Zdq0HR5H/7oa8W30WS4No+zWCKUPD7fHRay9I1Gf+C4F8sVmw7zec1wW" crossorigin="anonymous"></script>
+
+  <!-- DaisyUI Custom Themes (Injected at build or runtime) -->
+  <style id="daisyui-custom-themes">
+
+  </style>
+
+  <!-- Optional Addon CDNs & Styles -->
+    <!-- Addon: Mermaid -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
+
+  <!-- Addon: Datastar -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
+
+  <style>
+    :root {
+      --grid-bg-1: #ffffff;
+      --grid-bg-2: #f3f4f6;
+      --grid-border: #d1d5db;
+      --grid-text: #111827;
+      --grid-muted: #4b5563;
+      --grid-primary: #2563eb;
+    }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    .mermaid {
+      color: inherit;
+    }
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+      background-color: transparent !important;
+    }
+    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping and vertical pill overflow */
+    .badge {
+      white-space: nowrap !important;
+      flex-shrink: 0;
+    }
+    [data-insufficient-space="true"] {
+      outline: 2px dashed #f59e0b !important;
+      position: relative;
+    }
+    [data-insufficient-space="true"]::before {
+      content: "⚠ Insufficient horizontal space";
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      background: #f59e0b;
+      color: #111827;
+      border-radius: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+    /* Grid.js Full Light & Dark Mode DaisyUI Theme Integration */
+    .gridjs-container {
+      color: var(--grid-text) !important;
+      background-color: transparent !important;
+      font-size: 0.8125rem;
+      padding: 0 !important;
+    }
+    .gridjs-wrapper {
+      border-radius: 0.5rem;
+      border: 1px solid var(--grid-border) !important;
+      background-color: var(--grid-bg-1) !important;
+      box-shadow: none !important;
+    }
+    .gridjs-table {
+      width: 100% !important;
+      table-layout: fixed !important;
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    .gridjs-tbody,
+    tr.gridjs-tr {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    th.gridjs-th {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    th.gridjs-th:hover,
+    th.gridjs-th-sort:hover {
+      background-color: var(--grid-bg-2) !important;
+      filter: brightness(0.95);
+    }
+    td.gridjs-td {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    .gridjs-footer {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+    }
+    .gridjs-pages button {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border: 1px solid var(--grid-border) !important;
+    }
+    .gridjs-pages button.gridjs-currentPage {
+      background-color: var(--grid-primary) !important;
+      color: #ffffff !important;
+      border-color: var(--grid-primary) !important;
+      font-weight: 700 !important;
+    }
+
+    /* FullCalendar DaisyUI Theme Integration */
+    :root {
+      --fc-page-bg-color: transparent;
+      --fc-neutral-bg-color: hsl(var(--b2, 0 0% 95%));
+      --fc-list-event-hover-bg-color: hsl(var(--b3, 0 0% 90%));
+      --fc-theme-standard-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
+      --fc-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
+      --fc-button-bg-color: hsl(var(--p, 259 94% 51%));
+      --fc-button-border-color: hsl(var(--p, 259 94% 51%));
+      --fc-button-text-color: hsl(var(--pc, 0 0% 100%));
+    }
+    .fc {
+      max-width: 100%;
+    }
+    .fc .fc-toolbar-title {
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
+    }
+    .fc .fc-button {
+      padding: 0.35rem 0.65rem !important;
+      font-size: 0.8125rem !important;
+      border-radius: 0.375rem !important;
+      text-transform: capitalize !important;
+    }
+
+    /* Impress.js Presentation Guard & Print-Equivalent Treatment */
+    html:not([data-presentation="true"]) .step {
+      position: relative !important;
+      opacity: 1 !important;
+      transform: none !important;
+      display: block !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      margin-bottom: 1.5rem !important;
+    }
+    .impress-wrapper {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      min-height: 420px;
+      border-radius: 0.75rem;
+    }
+    html[data-presentation="true"] .impress-wrapper #impress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body class="bg-base-200 text-base-content min-h-screen flex flex-col font-sans antialiased selection:bg-primary selection:text-primary-content">
+
+  <!-- Sticky DaisyUI Navbar -->
+  <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
+    <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
+      <!-- Left: Title -->
+      <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
+        <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
+          Datastar.js Live Dashboards - Journey & Plan
+        </span>
+      </div>
+
+      <!-- Right: TOC + Theme Picker + Download Menu -->
+      <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
+        <!-- 1. TOC Dropdown -->
+        <div class="dropdown dropdown-end" id="toc-dropdown">
+          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            <span>Contents</span>
+          </div>
+          <ul id="report-toc-list" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-72 sm:w-80 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
+            <!-- Populated via initTOC() -->
+          </ul>
+        </div>
+
+        <!-- 2. DaisyUI 32-Themes Dropdown -->
+        <div class="dropdown dropdown-end" id="theme-dropdown">
+          <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
+            <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
+            <div class="flex items-center gap-0.5">
+              <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+              <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+            </div>
+          </div>
+          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
+            <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+              <!-- Populated via initThemeDropdown() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Icon-Only Download Dropdown -->
+        <div class="dropdown dropdown-end" id="download-dropdown">
+          <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Report" title="Download Report">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
+            </svg>
+          </div>
+          <ul id="download-dropdown-menu" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-64 p-2 shadow-2xl border border-base-300">
+            <li>
+              <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <span>Download as HTML</span>
+              </button>
+            </li>
+            <li>
+              <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                <div class="flex items-center gap-2.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span>Download as PDF</span>
+                </div>
+                <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Interactive PDF Warning Modal -->
+  <dialog id="pdf-not-ready-modal" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg text-warning flex items-center gap-2">
+        <span>⚠ Interactive Report Mode</span>
+      </h3>
+      <p class="py-4 text-xs">
+        This report is in interactive web-first mode. To generate a print-ready version with @media print rules, cover page, and PDF pagination, request:
+      </p>
+      <div class="bg-base-200 p-3 rounded font-mono text-2xs overflow-x-auto">
+        <code id="pdf-conversion-prompt-text">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</code>
+      </div>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-sm">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
+<!-- Journey Status Hero -->
+  <header class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-base-200">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary/15 text-primary mb-2">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> OpenSpec Change &bull; Datastar.js Live Dashboards
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-base-content" id="journey-overview">
+          Datastar.js Live Dashboards: Task &amp; Tool Call Inspection
+        </h1>
+        <p class="text-base text-base-content/70 mt-1">
+          De-Risked Passive Observability &bull; Real-Time Tool Call Streamer &bull; Terminal Output Drawer &bull; TaskTelemetrySchema
+        </p>
+      </div>
+
+      <!-- Markdown Artifact Backlinks -->
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="./proposal.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4"></i> proposal.md
+        </a>
+        <a href="./design.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="compass" class="w-4 h-4"></i> design.md
+        </a>
+        <a href="./tasks.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="check-square" class="w-4 h-4"></i> tasks.md
+        </a>
+        <a href="./specs/live-dashboards/spec.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="layers" class="w-4 h-4"></i> specs/
+        </a>
+      </div>
+    </div>
+
+    <!-- Journey Stepper -->
+    <div class="mt-8">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-base-content/60" id="journey-stepper">
+          Current State of Our Journey
+        </h2>
+        <span class="badge badge-success badge-sm font-semibold gap-1 text-success-content">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i> Shipped / Archived
+        </span>
+      </div>
+      <div class="w-full overflow-x-auto">
+        <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
+          <li class="step step-primary font-medium" data-content="✓">Planning &amp; Specs</li>
+          <li class="step step-primary font-medium" data-content="✓">Implementing</li>
+          <li class="step step-primary font-medium" data-content="✓">Verifying</li>
+          <li class="step step-primary font-bold text-primary" data-content="★">Shipped / Archived</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Overnight Autonomous CLI Execution & 1-Click Copy Box -->
+  <section class="bg-base-100 rounded-2xl shadow-md border-2 border-primary/40 p-6 sm:p-8 space-y-6" x-data="{ copied: false }">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-base-200 pb-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-primary text-primary-content">
+          <i data-lucide="moon" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-xl font-extrabold text-base-content" id="overnight-run">Overnight Autonomous Execution</h2>
+            <span class="badge badge-success badge-sm font-bold">100% Shipped &amp; Verified</span>
+          </div>
+          <p class="text-xs text-base-content/70 mt-0.5">
+            1-Click copy command for <code>agy</code> to implement and test all 5 phases while you sleep.
+          </p>
+        </div>
+      </div>
+
+      <!-- Copy Action Button -->
+      <button 
+        @click="navigator.clipboard.writeText(document.getElementById('overnight-cmd-textarea').value); copied = true; setTimeout(() => copied = false, 2500);" 
+        class="btn btn-primary btn-md gap-2 shadow-sm font-bold"
+        :class="{ 'btn-success text-success-content': copied }">
+        <template x-if="!copied">
+          <span class="inline-flex items-center gap-2">
+            <i data-lucide="copy" class="w-4 h-4"></i> Copy Overnight Command
+          </span>
+        </template>
+        <template x-if="copied">
+          <span class="inline-flex items-center gap-2">
+            <i data-lucide="check" class="w-4 h-4"></i> Copied to Clipboard!
+          </span>
+        </template>
+      </button>
+    </div>
+
+    <!-- Hidden Raw Textarea for pristine clipboard copying -->
+    <textarea id="overnight-cmd-textarea" class="hidden" readonly>agy -c --dangerously-skip-permissions -i "/goal Execute and complete the entire implementation plan for the Datastar.js live dashboards feature in openspec/changes/2026-11-03-datastar-live-dashboards/. Work through all 5 phases in tasks.md autonomously without stopping or asking for manual confirmations until all test suites pass, all tasks in tasks.md are checked off, and the companion journey stepper is advanced to Shipped / Archived."</textarea>
+
+    <!-- Styled Mockup Code Preview -->
+    <div class="mockup-code text-xs bg-neutral text-neutral-content rounded-xl shadow-inner border border-neutral-content/10">
+      <div class="px-5 py-1 text-primary text-[11px] font-mono border-b border-neutral-content/10 flex justify-between items-center">
+        <span>Verified Command &bull; agy interactive prompt with automated permissions</span>
+        <span class="opacity-60">Tested for zsh &amp; bash</span>
+      </div>
+      <pre data-prefix="$" class="py-3 px-4 whitespace-pre-wrap break-words leading-relaxed font-mono"><code><span class="text-primary font-bold">agy</span> -c --dangerously-skip-permissions -i <span class="text-success">"/goal Execute and complete the entire implementation plan for the Datastar.js live dashboards feature in openspec/changes/2026-11-03-datastar-live-dashboards/. Work through all 5 phases in tasks.md autonomously without stopping or asking for manual confirmations until all test suites pass, all tasks in tasks.md are checked off, and the companion journey stepper is advanced to Shipped / Archived."</span></code></pre>
+    </div>
+
+    <!-- Helpful Tips & Why -p failed -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 text-xs text-base-content/70">
+      <div class="flex items-start gap-2">
+        <i data-lucide="zap" class="w-4 h-4 text-primary shrink-0 mt-0.5"></i>
+        <span><strong>-i (--prompt-interactive)</strong>: Runs initial prompt interactively. (Note: <code>-p</code> is <code>--print</code> single-turn mode).</span>
+      </div>
+      <div class="flex items-start gap-2">
+        <i data-lucide="shield-check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+        <span><strong>--dangerously-skip-permissions</strong>: Auto-approves all tool actions without blocking on user input.</span>
+      </div>
+      <div class="flex items-start gap-2">
+        <i data-lucide="target" class="w-4 h-4 text-secondary shrink-0 mt-0.5"></i>
+        <span><strong>-c (--continue)</strong>: Re-attaches to this exact conversation session seamlessly.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Progress Stats -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" aria-label="Progress Metrics">
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-primary">
+        <i data-lucide="terminal" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Tool Invocations</div>
+      <div class="stat-value text-primary text-2xl sm:text-3xl">Live Feed</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Commands, stdout &amp; durations</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-success">
+        <i data-lucide="check-circle" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Validation</div>
+      <div class="stat-value text-success text-2xl sm:text-3xl">165 Passed</div>
+      <div class="stat-desc text-xs text-success font-semibold truncate">0 Failures &bull; 100% Green</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-accent">
+        <i data-lucide="file-code-2" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Schema Standard</div>
+      <div class="stat-value text-accent text-2xl sm:text-3xl">TaskTelemetry</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Phases, Tasks &amp; Metrics</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-info">
+        <i data-lucide="list-checks" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Actionable Tasks</div>
+      <div class="stat-value text-info text-2xl sm:text-3xl">17 Tasks</div>
+      <div class="stat-desc text-xs text-success font-semibold truncate">17 / 17 Complete (100%)</div>
+    </div>
+  </section>
+
+  <!-- Interactive Mockup: Live Task Inspection & Tool Call Feed -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center justify-between flex-wrap gap-4 border-b border-base-200 pb-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-primary/10 text-primary">
+          <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-base-content" id="live-inspection-preview">Live Task &amp; Tool Call Inspection Feed</h2>
+          <p class="text-sm text-base-content/70">What reviewers see in real time as an AGY or Codex session executes</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse"></span>
+        <span class="text-xs font-mono font-bold text-success">STREAMING ACTIVE</span>
+      </div>
+    </div>
+
+    <!-- Dual-Pane Live Inspector -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left Column: Task Checklist & Progress (5 cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-base-content/60" id="task-checklist">
+            Active Tasks (Phase 2)
+          </h3>
+          <span class="badge badge-sm badge-success font-semibold">17 / 17 Complete</span>
+        </div>
+
+        <div class="space-y-3">
+          <!-- Completed Task -->
+          <div class="card bg-base-200/50 p-3.5 rounded-xl border border-success/30">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="check-circle" class="w-4 h-4 text-success"></i>
+                <span class="text-xs font-semibold text-base-content">1.1 Register Datastar CDN</span>
+              </div>
+              <span class="badge badge-xs badge-success">42ms</span>
+            </div>
+            <div class="text-[11px] text-base-content/60 mt-1 pl-6">
+              Verified in ADDON_REGISTRY. 1 tool executed.
+            </div>
+          </div>
+
+          <!-- Active Running Task -->
+          <div class="card bg-base-100 p-3.5 rounded-xl border-2 border-primary shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="loading loading-spinner loading-xs text-primary"></span>
+                <span class="text-xs font-bold text-primary">1.2 Build CLI Flag --live</span>
+              </div>
+              <span class="badge badge-xs badge-primary animate-pulse">Running</span>
+            </div>
+            <div class="text-[11px] text-base-content/70 mt-1.5 pl-6 flex items-center justify-between">
+              <span>Assigned: <strong>Codex Coder</strong></span>
+              <span class="font-mono text-[10px]">Elapsed: 3.2s</span>
+            </div>
+            <!-- Sub-progress bar -->
+            <div class="pl-6 pt-2">
+              <progress class="progress progress-primary w-full h-1" value="65" max="100"></progress>
+            </div>
+          </div>
+
+          <!-- Pending Task -->
+          <div class="card bg-base-200/30 p-3.5 rounded-xl border border-base-200 opacity-60">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="circle" class="w-4 h-4 text-base-content/40"></i>
+                <span class="text-xs font-medium text-base-content/70">1.3 Update CSP Headers</span>
+              </div>
+              <span class="badge badge-xs badge-ghost">Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Tool Call Feed & Terminal Drawer (7 cols) -->
+      <div class="lg:col-span-7 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-base-content/60" id="tool-feed">
+            Live Tool Invocations
+          </h3>
+          <!-- Filter Tabs -->
+          <div class="join">
+            <button class="btn btn-xs join-item btn-active">All</button>
+            <button class="btn btn-xs join-item">Shell</button>
+            <button class="btn btn-xs join-item">Files</button>
+          </div>
+        </div>
+
+        <div class="space-y-3" id="tool-call-feed">
+          <!-- Active Tool Call with Terminal Output -->
+          <div class="card bg-neutral text-neutral-content rounded-xl border border-neutral-content/20 shadow-sm overflow-hidden">
+            <div class="p-3 bg-neutral-focus border-b border-neutral-content/10 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="loading loading-spinner loading-xs text-primary"></span>
+                <span class="font-mono text-xs font-bold text-primary">run_command</span>
+                <span class="text-[11px] opacity-75 font-mono truncate max-w-xs">node build-report.mjs --live</span>
+              </div>
+              <span class="badge badge-xs badge-primary">Executing</span>
+            </div>
+            <!-- Terminal Output Drawer -->
+            <div class="p-3 text-[11px] font-mono leading-relaxed bg-black/40 space-y-0.5">
+              <div class="text-base-content/40">&gt; Executing in workspace: /home/eta/projects/html-report</div>
+              <div class="text-success">[html-report] Addon registry loaded: datastar</div>
+              <div class="text-base-content/80">[html-report] Compiling fragment.html with live mode enabled...</div>
+              <div class="text-warning animate-pulse">&gt; Processing CSP connect-src directives...</div>
+            </div>
+          </div>
+
+          <!-- Completed File Tool Call -->
+          <div class="card bg-base-200/60 p-3 rounded-xl border border-base-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="file-text" class="w-4 h-4 text-secondary"></i>
+                <span class="font-mono text-xs font-bold text-base-content">read_file</span>
+                <code class="text-[11px] text-base-content/70">template-shell.html</code>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-mono opacity-60">297 lines</span>
+                <span class="badge badge-xs badge-success">18ms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Completed Tool Call -->
+          <div class="card bg-base-200/60 p-3 rounded-xl border border-base-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-success"></i>
+                <span class="font-mono text-xs font-bold text-base-content">run_command</span>
+                <code class="text-[11px] text-base-content/70">git status --porcelain</code>
+              </div>
+              <span class="badge badge-xs badge-success">34ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Flow & Test Harness Architecture -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 rounded-xl bg-secondary/10 text-secondary">
+        <i data-lucide="git-merge" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-base-content" id="technical-architecture">Test-First Telemetry Architecture</h2>
+        <p class="text-sm text-base-content/70">Validating Datastar SSE morphing against synthetic simulation harnesses</p>
+      </div>
+    </div>
+
+    <pre class="mermaid text-center">
+flowchart TD
+    subgraph TestSources["Sources &amp; Simulation Harness"]
+        Fixtures["Historical Log Fixtures\n(transcript.jsonl &amp; stream chunks)"]
+        Replayer["Synthetic Stream Replayer\n(MockAgyStreamer &amp; MockCodexStreamer)"]
+        Fixtures --> Replayer
+    end
+
+    subgraph Adapters["Provider Normalizers (datastar-sse.mjs)"]
+        AgyAdapt["AgyTelemetryAdapter"]
+        CodexAdapt["CodexTelemetryAdapter"]
+        Replayer --> AgyAdapt
+        Replayer --> CodexAdapt
+    end
+
+    subgraph Core["Canonical Task Telemetry Engine"]
+        AgyAdapt --> SchemaEngine["TaskTelemetrySchema Engine\n(Stateful Session, Phases &amp; Tasks)"]
+        CodexAdapt --> SchemaEngine
+        SchemaEngine --> Bridge["DatastarBridge (DOM Morph &amp; Signal Formatter)"]
+    end
+
+    subgraph Verification["Test Suite &amp; Dev Server"]
+        Bridge --> SSERoute["serve-report.mjs (/__datastar_stream__)"]
+        SSERoute --> Headless["Playwright Headless Browser\n(Burst Test: 100 events / 2s)"]
+        Headless --> Assertions["Assertions:\n1. Tool cards show spinner &amp; duration\n2. Terminal output drawer renders\n3. Zero DOM corruption on 100-event burst"]
+    end
+    </pre>
+  </section>
+
+  <!-- Connected Task Checklist -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center justify-between flex-wrap gap-4 border-b border-base-200 pb-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-success/10 text-success">
+          <i data-lucide="check-square" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-base-content" id="implementation-tasks">Implementation Task Plan</h2>
+          <p class="text-sm text-base-content/70">Structured in 5 verifiable milestones matching tasks.md</p>
+        </div>
+      </div>
+      <a href="./tasks.md" target="_blank" class="btn btn-sm btn-ghost gap-1.5 text-xs">
+        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> View tasks.md
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Phase 1 & 2 -->
+      <div class="space-y-4">
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <h3 class="font-bold text-sm text-base-content flex items-center gap-2 mb-2" id="phase-1-cli">
+            <span class="badge badge-primary badge-sm">Phase 1</span> Build CLI &amp; Shell Integration
+          </h3>
+          <ul class="space-y-1.5 text-xs text-base-content/80">
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Register <code>ADDON_REGISTRY.datastar</code> &amp; aliases</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Auto-detection for <code>data-signals</code>, <code>data-on-</code>, etc.</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Implement convenience <code>--live</code> CLI flag</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Update CSP <code>connect-src</code> to allow <code>http:</code> &amp; <code>https:</code></li>
+          </ul>
+        </div>
+
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <h3 class="font-bold text-sm text-base-content flex items-center gap-2 mb-2" id="phase-2-runtime">
+            <span class="badge badge-secondary badge-sm">Phase 2</span> Runtime Rehydration &amp; Signals
+          </h3>
+          <ul class="space-y-1.5 text-xs text-base-content/80">
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> DOM <code>MutationObserver</code> for Lucide post-morph rehydration</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Synchronize DaisyUI theme switcher with Datastar <code>$theme</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Phase 3, 4 & 5 -->
+      <div class="space-y-4">
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <h3 class="font-bold text-sm text-base-content flex items-center gap-2 mb-2" id="phase-3-schema">
+            <span class="badge badge-accent badge-sm">Phase 3</span> Task &amp; Tool Telemetry Engine
+          </h3>
+          <ul class="space-y-1.5 text-xs text-base-content/80">
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Formalize <code>TaskTelemetrySchema</code> &amp; <code>ToolInvocationRecord</code></li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> <code>DatastarBridge</code> formatting tool feed &amp; terminal drawers</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> <code>AgyTelemetryAdapter</code> for Antigravity transcripts &amp; tools</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> <code>CodexTelemetryAdapter</code> for OpenAI stream chunks</li>
+          </ul>
+        </div>
+
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <h3 class="font-bold text-sm text-base-content flex items-center gap-2 mb-2" id="phase-4-testing">
+            <span class="badge badge-warning badge-sm">Phase 4 &amp; 5</span> Test Harness, Dev Server &amp; Docs
+          </h3>
+          <ul class="space-y-1.5 text-xs text-base-content/80">
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> <code>MockAgyStreamer</code> &amp; <code>MockCodexStreamer</code> fixtures</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Burst load stress tests (100 events / 2s) in Playwright</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Hot fragment SSE endpoint in <code>serve-report.mjs</code></li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Reference guide <code>references/datastar-live-dashboards.md</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <!-- Minimal Centered Footer -->
+  <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
+    generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a>
+  </footer>
+
+  <!-- Runtime Scripts -->
+  <script>
+/**
+ * html-report client runtime (report-runtime.js)
+ * Pre-bundled runtime for 32 DaisyUI themes, canvas 2D OKLCH palette resolution,
+ * Mermaid list syntax defense, dynamic TOC generation, snapshot bundler,
+ * and horizontal space detection.
+ */
+
+const STANDARD_DAISYUI_THEMES = new Set([
+  "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
+  "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden",
+  "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black",
+  "luxury", "dracula", "cmyk", "autumn", "business", "acid", "lemonade",
+  "night", "coffee", "winter", "dim", "nord", "sunset"
+]);
+
+const DAISYUI_THEMES = Array.from(STANDARD_DAISYUI_THEMES);
+
+// Zero-dependency pure JS OKLCH engine & compiler for browser runtime
+function srgbToLinear(c) {
+  const norm = c / 255;
+  return norm <= 0.04045 ? norm / 12.92 : Math.pow((norm + 0.055) / 1.055, 2.4);
+}
+
+function linearToSrgb(c) {
+  const clamped = Math.max(0, Math.min(1, c));
+  const srgb = clamped <= 0.0031308 ? clamped * 12.92 : 1.055 * Math.pow(clamped, 1 / 2.4) - 0.055;
+  return Math.round(srgb * 255);
+}
+
+function hexToRgb(hex) {
+  let clean = String(hex).replace(/^#/, "").trim();
+  if (clean.length === 3) {
+    clean = clean.split("").map((c) => c + c).join("") + "ff";
+  } else if (clean.length === 4) {
+    clean = clean.split("").map((c) => c + c).join("");
+  } else if (clean.length === 6) {
+    clean += "ff";
+  }
+  if (clean.length !== 8) return [0, 0, 0, 1];
+  const num = parseInt(clean, 16);
+  if (Number.isNaN(num)) return [0, 0, 0, 1];
+  return [
+    (num >>> 24) & 255,
+    (num >>> 16) & 255,
+    (num >>> 8) & 255,
+    ((num & 255) / 255)
+  ];
+}
+
+function hslToRgb(h, s, l) {
+  const hNorm = (((h % 360) + 360) % 360) / 360;
+  const sNorm = Math.max(0, Math.min(1, s / 100));
+  const lNorm = Math.max(0, Math.min(1, l / 100));
+  if (sNorm === 0) {
+    const val = Math.round(lNorm * 255);
+    return [val, val, val];
+  }
+  const q = lNorm < 0.5 ? lNorm * (1 + sNorm) : lNorm + sNorm - lNorm * sNorm;
+  const p = 2 * lNorm - q;
+  const hue2rgb = (t) => {
+    let tNorm = t;
+    if (tNorm < 0) tNorm += 1;
+    if (tNorm > 1) tNorm -= 1;
+    if (tNorm < 1 / 6) return p + (q - p) * 6 * tNorm;
+    if (tNorm < 1 / 2) return q;
+    if (tNorm < 2 / 3) return p + (q - p) * (2 / 3 - tNorm) * 6;
+    return p;
+  };
+  return [
+    Math.round(hue2rgb(hNorm + 1 / 3) * 255),
+    Math.round(hue2rgb(hNorm) * 255),
+    Math.round(hue2rgb(hNorm - 1 / 3) * 255)
+  ];
+}
+
+function parseColor(input) {
+  if (!input || typeof input !== "string") {
+    return { r: 59, g: 130, b: 246, a: 1, oklch: null };
+  }
+  const str = input.trim();
+  const oklchMatch = str.match(/^(?:oklch\s*\(\s*)?([0-9.]+%?)\s+([0-9.]+)\s+([0-9.]+)(?:\s*(?:\/|\s)\s*([0-9.]+%?))?\s*\)?$/i);
+  if (oklchMatch) {
+    let rawL = oklchMatch[1];
+    let L = rawL.endsWith("%") ? parseFloat(rawL) / 100 : parseFloat(rawL);
+    if (L > 1) L = L / 100;
+    const C = parseFloat(oklchMatch[2]);
+    const H = parseFloat(oklchMatch[3]);
+    return {
+      r: null,
+      g: null,
+      b: null,
+      a: 1,
+      oklch: {
+        L,
+        C,
+        H,
+        formatted: `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`
+      }
+    };
+  }
+  if (str.startsWith("#")) {
+    const [r, g, b, a] = hexToRgb(str);
+    return { r, g, b, a, oklch: null };
+  }
+  const rgbMatch = str.match(/^rgba?\s*\(\s*(\d+)(?:,|\s+)\s*(\d+)(?:,|\s+)\s*(\d+)(?:(?:\s*[,/]\s*|\s+)([0-9.]+%?))?\s*\)$/i);
+  if (rgbMatch) {
+    const r = parseInt(rgbMatch[1], 10);
+    const g = parseInt(rgbMatch[2], 10);
+    const b = parseInt(rgbMatch[3], 10);
+    let a = 1;
+    if (rgbMatch[4]) {
+      a = rgbMatch[4].endsWith("%") ? parseFloat(rgbMatch[4]) / 100 : parseFloat(rgbMatch[4]);
+    }
+    return { r, g, b, a, oklch: null };
+  }
+  const hslMatch = str.match(/^hsla?\s*\(\s*(\d+)(?:deg)?(?:,|\s+)\s*(\d+)%(?:,|\s+)\s*(\d+)%(?:(?:\s*[,/]\s*|\s+)([0-9.]+%?))?\s*\)$/i);
+  if (hslMatch) {
+    const h = parseInt(hslMatch[1], 10);
+    const s = parseInt(hslMatch[2], 10);
+    const l = parseInt(hslMatch[3], 10);
+    const [r, g, b] = hslToRgb(h, s, l);
+    let a = 1;
+    if (hslMatch[4]) {
+      a = hslMatch[4].endsWith("%") ? parseFloat(hslMatch[4]) / 100 : parseFloat(hslMatch[4]);
+    }
+    return { r, g, b, a, oklch: null };
+  }
+  return { r: 59, g: 130, b: 246, a: 1, oklch: null };
+}
+
+function rgbToOklch(r, g, b) {
+  if (r === g && g === b) {
+    const L = r === 0 ? 0 : r === 255 ? 1 : 0.2104542553 * Math.cbrt(srgbToLinear(r)) + 0.7936177850 * Math.cbrt(srgbToLinear(r)) - 0.0040720468 * Math.cbrt(srgbToLinear(r));
+    return {
+      L,
+      C: 0,
+      H: 0,
+      formatted: `${(L * 100).toFixed(2)}% 0.000 0.00`
+    };
+  }
+  const lr = srgbToLinear(r);
+  const lg = srgbToLinear(g);
+  const lb = srgbToLinear(b);
+
+  const l = 0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb;
+  const m = 0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb;
+  const s = 0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb;
+
+  const l_ = Math.cbrt(Math.max(0, l));
+  const m_ = Math.cbrt(Math.max(0, m));
+  const s_ = Math.cbrt(Math.max(0, s));
+
+  const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+  const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+  const b_ = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+  let C = Math.sqrt(a * a + b_ * b_);
+  let H = Math.atan2(b_, a) * (180 / Math.PI);
+  if (H < 0) H += 360;
+  if (C < 0.0001) {
+    C = 0;
+    H = 0;
+  }
+  return {
+    L,
+    C,
+    H,
+    formatted: `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`
+  };
+}
+
+function autoContrastContent(colorInput) {
+  const parsed = parseColor(colorInput);
+  let L = 0.5;
+  let H = 0;
+  let luminance = 0.5;
+
+  if (parsed.oklch) {
+    L = parsed.oklch.L;
+    H = parsed.oklch.H;
+    luminance = L;
+  } else {
+    const oklch = rgbToOklch(parsed.r, parsed.g, parsed.b);
+    L = oklch.L;
+    H = oklch.H;
+    const lr = srgbToLinear(parsed.r);
+    const lg = srgbToLinear(parsed.g);
+    const lb = srgbToLinear(parsed.b);
+    luminance = 0.2126 * lr + 0.7152 * lg + 0.0722 * lb;
+  }
+
+  const hVal = Number.isFinite(H) ? H.toFixed(2) : "0";
+  if (L > 0.65 || luminance > 0.4) {
+    return `15% 0.02 ${hVal}`;
+  }
+  return `98% 0.01 ${hVal}`;
+}
+
+const RUNTIME_COLOR_MAP = {
+  primary: "--p",
+  "primary-content": "--pc",
+  secondary: "--s",
+  "secondary-content": "--sc",
+  accent: "--a",
+  "accent-content": "--ac",
+  neutral: "--n",
+  "neutral-content": "--nc",
+  "base-100": "--b1",
+  "base-200": "--b2",
+  "base-300": "--b3",
+  "base-content": "--bc",
+  info: "--in",
+  "info-content": "--inc",
+  success: "--su",
+  "success-content": "--suc",
+  warning: "--wa",
+  "warning-content": "--wac",
+  error: "--er",
+  "error-content": "--erc"
+};
+
+const RUNTIME_BASE_THEMES = {
+  light: {
+    "color-scheme": "light",
+    "--p": "49.12% 0.3096 275.75",
+    "--pc": "89.824% 0.06192 275.75",
+    "--s": "69.71% 0.329 342.55",
+    "--sc": "98.71% 0.0106 342.55",
+    "--a": "76.76% 0.184 183.61",
+    "--ac": "15.352% 0.0368 183.61",
+    "--n": "32.1785% 0.02476 255.701624",
+    "--nc": "89.4994% 0.011585 252.096176",
+    "--b1": "100% 0 0",
+    "--b2": "96.1151% 0 0",
+    "--b3": "92.4169% 0.00108 197.137559",
+    "--bc": "27.8078% 0.029596 256.847952",
+    "--in": "72.06% 0.191 231.6",
+    "--inc": "0% 0 0",
+    "--su": "64.8% 0.150 160",
+    "--suc": "0% 0 0",
+    "--wa": "84.71% 0.199 83.87",
+    "--wac": "0% 0 0",
+    "--er": "71.76% 0.221 22.18",
+    "--erc": "0% 0 0",
+    "--rounded-box": "1rem",
+    "--rounded-btn": "0.5rem",
+    "--rounded-badge": "1.9rem",
+    "--animation-btn": "0.25s",
+    "--animation-input": ".2s",
+    "--btn-focus-scale": "0.95",
+    "--border-btn": "1px",
+    "--tab-border": "1px",
+    "--tab-radius": "0.5rem"
+  },
+  dark: {
+    "color-scheme": "dark",
+    "--p": "65.69% 0.196 275.75",
+    "--pc": "13.138% 0.0392 275.75",
+    "--s": "74.8% 0.26 342.55",
+    "--sc": "14.96% 0.052 342.55",
+    "--a": "74.51% 0.167 183.61",
+    "--ac": "14.902% 0.0334 183.61",
+    "--n": "31.3815% 0.021108 254.139175",
+    "--nc": "74.6477% 0.0216 264.435964",
+    "--b1": "25.3267% 0.015896 252.417568",
+    "--b2": "23.2607% 0.013807 253.100675",
+    "--b3": "21.1484% 0.01165 254.087939",
+    "--bc": "74.6477% 0.0216 264.435964",
+    "--in": "72.06% 0.191 231.6",
+    "--inc": "0% 0 0",
+    "--su": "64.8% 0.150 160",
+    "--suc": "0% 0 0",
+    "--wa": "84.71% 0.199 83.87",
+    "--wac": "0% 0 0",
+    "--er": "71.76% 0.221 22.18",
+    "--erc": "0% 0 0",
+    "--rounded-box": "1rem",
+    "--rounded-btn": "0.5rem",
+    "--rounded-badge": "1.9rem",
+    "--animation-btn": "0.25s",
+    "--animation-input": ".2s",
+    "--btn-focus-scale": "0.95",
+    "--border-btn": "1px",
+    "--tab-border": "1px",
+    "--tab-radius": "0.5rem"
+  }
+};
+
+function compileTheme(themeDefinition, { defaultThemeName = "custom" } = {}) {
+  if (typeof themeDefinition === "string") {
+    const trimmed = themeDefinition.trim();
+    if (trimmed.includes("[data-theme=")) {
+      const match = trimmed.match(/\[data-theme=["']?([a-zA-Z0-9_\-]+)["']?\]/);
+      const themeName = match ? match[1] : defaultThemeName;
+      return { themeName, css: trimmed, variables: {}, isRawCss: true };
+    }
+    try {
+      return compileTheme(JSON.parse(trimmed), { defaultThemeName });
+    } catch (_) {
+      throw new Error("Invalid theme definition");
+    }
+  }
+
+  let themeObj = themeDefinition;
+  let themeName = defaultThemeName;
+
+  if (themeObj.themes && Array.isArray(themeObj.themes) && themeObj.themes.length > 0) {
+    themeObj = themeObj.themes[0];
+  }
+  const topKeys = Object.keys(themeObj);
+  if (topKeys.length === 1 && typeof themeObj[topKeys[0]] === "object" && !themeObj[topKeys[0]].r) {
+    themeName = topKeys[0];
+    themeObj = themeObj[topKeys[0]];
+  } else if (themeObj.name) {
+    themeName = themeObj.name;
+  }
+
+  const baseThemeName = themeObj.extends || "light";
+  const baseVars = RUNTIME_BASE_THEMES[baseThemeName] ? { ...RUNTIME_BASE_THEMES[baseThemeName] } : { ...RUNTIME_BASE_THEMES.light };
+  const resultVars = { ...baseVars };
+
+  for (const [key, rawValue] of Object.entries(themeObj)) {
+    if (key === "extends" || key === "name") continue;
+    if (RUNTIME_COLOR_MAP[key]) {
+      const parsed = parseColor(rawValue);
+      resultVars[RUNTIME_COLOR_MAP[key]] = parsed.oklch ? parsed.oklch.formatted : rgbToOklch(parsed.r, parsed.g, parsed.b).formatted;
+      continue;
+    }
+    if (key.startsWith("--")) {
+      if (Object.values(RUNTIME_COLOR_MAP).includes(key)) {
+        const parsed = parseColor(rawValue);
+        resultVars[key] = parsed.oklch ? parsed.oklch.formatted : rgbToOklch(parsed.r, parsed.g, parsed.b).formatted;
+      } else {
+        resultVars[key] = String(rawValue).trim();
+      }
+      continue;
+    }
+    if (key === "color-scheme" || key === "colorScheme") {
+      resultVars["color-scheme"] = String(rawValue).trim();
+      continue;
+    }
+    resultVars[key] = String(rawValue).trim();
+  }
+
+  // Auto content
+  const pairs = [["--p", "--pc"], ["--s", "--sc"], ["--a", "--ac"], ["--n", "--nc"], ["--b1", "--bc"]];
+  for (const [pVar, cVar] of pairs) {
+    if (resultVars[pVar] && !themeObj[cVar] && !themeObj[Object.keys(RUNTIME_COLOR_MAP).find((k) => RUNTIME_COLOR_MAP[k] === cVar)]) {
+      resultVars[cVar] = autoContrastContent(resultVars[pVar]);
+    }
+  }
+
+  const lines = [`[data-theme="${themeName}"] {`];
+  if (resultVars["color-scheme"]) lines.push(`  color-scheme: ${resultVars["color-scheme"]};`);
+  for (const [k, v] of Object.entries(resultVars)) {
+    if (k === "color-scheme") continue;
+    lines.push(`  ${k}: ${v};`);
+  }
+  lines.push(`}`);
+  return { themeName, css: lines.join("\n"), variables: resultVars, isRawCss: false };
+}
+
+function tailwindConfigSnippet(themeName, variables) {
+  return `daisyui: {\n  themes: [\n    {\n      "${themeName}": ${JSON.stringify(variables, null, 8).replace(/^ {8}/gm, "      ")}\n    }\n  ]\n}`;
+}
+
+/**
+ * Registers a custom DaisyUI theme dynamically in runtime, injecting CSS if provided.
+ */
+function registerCustomTheme(themeName, css = null) {
+  if (!themeName || typeof themeName !== "string") return false;
+  const name = themeName.trim();
+  if (!DAISYUI_THEMES.includes(name)) {
+    DAISYUI_THEMES.push(name);
+  }
+
+  if (css && typeof document !== "undefined") {
+    let styleEl = document.getElementById("daisyui-custom-themes");
+    if (!styleEl) {
+      styleEl = document.createElement("style");
+      styleEl.id = "daisyui-custom-themes";
+      styleEl.textContent = "";
+      if (document.head && typeof document.head.appendChild === "function") {
+        document.head.appendChild(styleEl);
+      }
+    }
+    styleEl.textContent = styleEl.textContent || "";
+    const themeSelector = `[data-theme="${name}"]`;
+    if (styleEl.textContent.includes(themeSelector)) {
+      const escaped = themeSelector.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+      const regex = new RegExp(`${escaped}\\s*\\{[^}]*\\}`, "g");
+      styleEl.textContent = styleEl.textContent.replace(regex, css);
+    } else {
+      styleEl.textContent += `\n${css}\n`;
+    }
+  }
+
+  if (typeof document !== "undefined" && document.getElementById("theme-swatch-list")) {
+    initThemeDropdown();
+  }
+  return true;
+}
+
+/**
+ * Scans for build-time or localStorage custom themes and registers them.
+ */
+function scanAndRegisterExistingCustomThemes() {
+  if (typeof document === "undefined") return;
+
+  // 1. Scan pre-injected <style id="daisyui-custom-themes">
+  const styleEl = document.getElementById("daisyui-custom-themes");
+  if (styleEl && styleEl.textContent) {
+    const themeRegex = /\[data-theme=["']?([a-zA-Z0-9_\-]+)["']?\]/g;
+    let match;
+    while ((match = themeRegex.exec(styleEl.textContent)) !== null) {
+      const name = match[1];
+      if (name && !DAISYUI_THEMES.includes(name)) {
+        DAISYUI_THEMES.push(name);
+      }
+    }
+  }
+
+  // 2. Scan localStorage
+  try {
+    if (typeof localStorage !== "undefined") {
+      const savedThemes = localStorage.getItem("html_report_custom_themes");
+      if (savedThemes) {
+        const parsed = JSON.parse(savedThemes);
+        if (typeof parsed === "object") {
+          for (const [themeName, entry] of Object.entries(parsed)) {
+            const css = typeof entry === "string" ? entry : (entry.css || null);
+            registerCustomTheme(themeName, css);
+          }
+        }
+      }
+      const savedActive = localStorage.getItem("html_report_active_theme");
+      if (savedActive && DAISYUI_THEMES.includes(savedActive)) {
+        document.documentElement.setAttribute("data-theme", savedActive);
+        const activeLabel = document.getElementById("active-theme-label");
+        if (activeLabel) activeLabel.textContent = savedActive;
+      }
+    }
+  } catch (_) {}
+}
+
+/**
+ * Resolves any valid CSS color string (including oklch, color-mix, rgb, hsl, hex)
+ * into a strict 8-bit hex string and rgba generator via an offscreen 2D canvas.
+ */
+function cssColorToHexAndRgba(colorStr, customCtx = null) {
+  if (!colorStr) {
+    return { hex: "#3b82f6", r: 59, g: 130, b: 246, a: 1, rgba: (a = 1) => `rgba(59, 130, 246, ${a})` };
+  }
+
+  try {
+    let ctx = customCtx;
+    if (!ctx && typeof document !== "undefined") {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      ctx = canvas.getContext("2d", { willReadFrequently: true });
+    }
+
+    if (ctx) {
+      ctx.fillStyle = colorStr;
+      ctx.fillRect(0, 0, 1, 1);
+      const [r, g, b, aRaw] = ctx.getImageData(0, 0, 1, 1).data;
+      const a = aRaw / 255;
+      const hex = "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
+      return {
+        hex,
+        r,
+        g,
+        b,
+        a,
+        rgba: (alpha = a) => `rgba(${r}, ${g}, ${b}, ${alpha})`
+      };
+    }
+  } catch (_) {}
+
+  // Fallback if canvas is unavailable or failed
+  return { hex: "#3b82f6", r: 59, g: 130, b: 246, a: 1, rgba: (alpha = 1) => `rgba(59, 130, 246, ${alpha})` };
+}
+
+/**
+ * Resolves active DaisyUI semantic palette tokens (primary, secondary, accent, neutral, base, content)
+ * into deterministic hex/rgba colors.
+ */
+function resolveDaisyUIThemePalette(doc = (typeof document !== "undefined" ? document : null)) {
+  if (!doc) return {};
+
+  const probeContainer = doc.createElement("div");
+  probeContainer.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none;";
+  const roles = {
+    primary: "bg-primary",
+    secondary: "bg-secondary",
+    accent: "bg-accent",
+    neutral: "bg-neutral",
+    base100: "bg-base-100",
+    base200: "bg-base-200",
+    base300: "bg-base-300"
+  };
+
+  const nodes = {};
+  for (const [key, cls] of Object.entries(roles)) {
+    const el = doc.createElement("span");
+    el.className = cls;
+    probeContainer.appendChild(el);
+    nodes[key] = el;
+  }
+  const textNode = doc.createElement("span");
+  textNode.className = "text-base-content";
+  probeContainer.appendChild(textNode);
+  doc.body.appendChild(probeContainer);
+
+  const palette = {};
+  const getStyle = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle : () => ({ backgroundColor: "#3b82f6", color: "#1f2937" });
+
+  for (const [key, el] of Object.entries(nodes)) {
+    palette[key] = cssColorToHexAndRgba(getStyle(el).backgroundColor);
+  }
+  palette.content = cssColorToHexAndRgba(getStyle(textNode).color);
+  probeContainer.remove();
+  return palette;
+}
+
+/**
+ * Sanitizes Mermaid diagram source code to defend against Mermaid 11.4 markdown list parser bugs.
+ * Disallows starting subgraph or node titles with numbered list tokens (e.g. `1. `, `2. `).
+ */
+function sanitizeMermaidSource(source) {
+  if (!source || typeof source !== "string") return "";
+
+  // 1. Replace numbered list pattern in subgraphs: e.g. subgraph ["1. Title"] or subgraph sub1 ["1. Title"]
+  let sanitized = source.replace(
+    /(subgraph\s+(?:[a-zA-Z0-9_-]+\s*)?\[\s*")(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 2. Replace numbered list pattern in unquoted subgraphs: e.g. subgraph 1. Title
+  sanitized = sanitized.replace(
+    /(subgraph\s+)(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 3. Replace numbered list tokens in bracketed nodes: e.g. ["1. Step Description"]
+  sanitized = sanitized.replace(
+    /(\[\s*")(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 4. Replace numbered list tokens in unquoted node brackets: e.g. [1. Step Description]
+  sanitized = sanitized.replace(
+    /(\[\s*)(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  return sanitized;
+}
+
+/**
+ * Dynamic Mermaid theme re-rendering synced with DaisyUI theme palette.
+ */
+async function renderMermaidWithTheme(palette) {
+  if (typeof window === "undefined" || !window.mermaid) return;
+  const mermaidNodes = document.querySelectorAll(".mermaid");
+  if (!mermaidNodes.length) return;
+
+  mermaidNodes.forEach((node) => {
+    if (!node.dataset.mermaidSource) {
+      node.dataset.mermaidSource = node.textContent.trim();
+    }
+    node.removeAttribute("data-processed");
+    node.textContent = sanitizeMermaidSource(node.dataset.mermaidSource);
+  });
+
+  const base100 = palette.base100 ? palette.base100.hex : "#ffffff";
+  const base200 = palette.base200 ? palette.base200.hex : "#f3f4f6";
+  const base300 = palette.base300 ? palette.base300.hex : "#e5e7eb";
+  const content = palette.content ? palette.content.hex : "#1f2937";
+  const primary = palette.primary ? palette.primary.hex : "#3b82f6";
+  const secondary = palette.secondary ? palette.secondary.hex : "#6b7280";
+  const accent = palette.accent ? palette.accent.hex : "#10b981";
+
+  window.mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: "loose",
+    theme: "base",
+    themeVariables: {
+      background: base100,
+      primaryColor: base200,
+      primaryTextColor: content,
+      primaryBorderColor: primary,
+      secondaryColor: base300,
+      secondaryTextColor: content,
+      secondaryBorderColor: secondary,
+      tertiaryColor: base100,
+      tertiaryTextColor: content,
+      tertiaryBorderColor: accent,
+      lineColor: primary,
+      textColor: content,
+      mainBkg: base100,
+      nodeBorder: primary,
+      clusterBkg: base200,
+      clusterBorder: base300,
+      titleColor: content,
+      edgeLabelBackground: base200,
+      nodeTextColor: content
+    }
+  });
+
+  try {
+    await window.mermaid.run({ querySelector: ".mermaid" });
+  } catch (err) {
+    console.warn("[html-report] Mermaid render notice:", err);
+  }
+}
+
+/**
+ * Initializes the 32 DaisyUI theme color swatch picker dropdown.
+ */
+function initThemeDropdown() {
+  if (typeof document === "undefined") return;
+  const listEl = document.getElementById("theme-swatch-list");
+  if (!listEl) return;
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  listEl.innerHTML = "";
+
+  DAISYUI_THEMES.forEach((theme) => {
+    const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.setAttribute("data-theme", theme);
+    btn.setAttribute("data-set-theme", theme);
+    btn.className = "theme-swatch-item outline-base-content text-start outline-offset-4 rounded-btn w-full cursor-pointer font-sans";
+    btn.innerHTML = `
+      <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
+        <span class="grid grid-cols-5 grid-rows-3">
+          <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
+              <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
+            </svg>
+            <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
+              <span>${theme}</span>
+              ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
+            </span>
+            <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
+              <span class="bg-primary rounded-badge w-2 h-4"></span>
+              <span class="bg-secondary rounded-badge w-2 h-4"></span>
+              <span class="bg-accent rounded-badge w-2 h-4"></span>
+              <span class="bg-neutral rounded-badge w-2 h-4"></span>
+            </span>
+          </span>
+        </span>
+      </span>
+    `;
+    btn.addEventListener("click", () => setReportTheme(theme));
+    listEl.appendChild(btn);
+  });
+}
+
+/**
+ * Sets active DaisyUI theme dynamically and updates charts/Mermaid.
+ */
+async function setReportTheme(themeName) {
+  if (!DAISYUI_THEMES.includes(themeName)) return;
+  if (typeof document === "undefined") return;
+
+  document.documentElement.setAttribute("data-theme", themeName);
+  const activeLabel = document.getElementById("active-theme-label");
+  if (activeLabel) activeLabel.textContent = themeName;
+
+  try {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("html_report_active_theme", themeName);
+    }
+  } catch (_) {}
+
+  document.querySelectorAll("#theme-swatch-list .theme-swatch-item").forEach((btn) => {
+    const check = btn.querySelector(".theme-check");
+    if (check) {
+      const isCurrent = btn.getAttribute("data-set-theme") === themeName;
+      check.classList.toggle("opacity-100", isCurrent);
+      check.classList.toggle("opacity-0", !isCurrent);
+    }
+  });
+
+  const palette = resolveDaisyUIThemePalette();
+
+  // Dynamic Chart.js color sync
+  if (typeof window !== "undefined" && window.reportCharts && Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((chart, idx) => {
+      if (chart?.data?.datasets) {
+        chart.data.datasets.forEach((ds, dsIdx) => {
+          const colorKey = dsIdx % 3 === 0 ? "primary" : dsIdx % 3 === 1 ? "secondary" : "accent";
+          const chosen = palette[colorKey] ? palette[colorKey].hex : "#3b82f6";
+          if (ds.borderColor) ds.borderColor = chosen;
+          if (ds.backgroundColor && typeof ds.backgroundColor === "string" && ds.backgroundColor.includes("rgba")) {
+            ds.backgroundColor = palette[colorKey] ? palette[colorKey].rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+          }
+        });
+        chart.update();
+      }
+    });
+  }
+
+  // Dynamic Mermaid sync
+  await renderMermaidWithTheme(palette);
+
+  // Dynamic FullCalendar sync
+  if (typeof window !== "undefined" && window.reportCalendars && Array.isArray(window.reportCalendars)) {
+    window.reportCalendars.forEach((cal) => {
+      try {
+        cal.render();
+      } catch (_) {}
+    });
+  }
+
+  // Dynamic Datastar reactive $theme signal sync
+  syncDatastarTheme(themeName);
+}
+
+/**
+ * Builds Table of Contents from main h1, h2, h3 elements.
+ */
+function initTOC() {
+  if (typeof document === "undefined") return;
+  const tocList = document.getElementById("report-toc-list");
+  if (!tocList) return;
+  const headings = document.querySelectorAll("main h1, main h2, main h3");
+  tocList.innerHTML = "";
+
+  headings.forEach((h) => {
+    if (!h.id) {
+      h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    }
+    const level = parseInt(h.tagName.substring(1), 10);
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = `#${h.id}`;
+    a.textContent = h.textContent.trim();
+    a.className = level === 1 ? "font-bold text-xs" : level === 2 ? "pl-3 text-xs" : "pl-6 text-2xs opacity-80";
+    a.addEventListener("click", () => {
+      const dropdown = document.getElementById("toc-dropdown");
+      if (dropdown) dropdown.removeAttribute("open");
+    });
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+}
+
+/**
+ * Horizontal Scrollbar -> Insufficient Space Detector.
+ * Flags elements where scrollWidth > clientWidth with [data-insufficient-space="true"].
+ */
+function checkInsufficientHorizontalSpace() {
+  if (typeof document === "undefined") return [];
+  const mainEl = document.querySelector("main");
+  if (!mainEl) return [];
+
+  const insufficient = [];
+  const candidates = mainEl.querySelectorAll("section, div, pre, table, .card, .overflow-x-auto, .gridjs-wrapper");
+
+  candidates.forEach((el) => {
+    const style = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle(el) : el.style;
+    if (style.display === "none" || style.visibility === "hidden" || el.clientWidth === 0) {
+      el.removeAttribute("data-insufficient-space");
+      return;
+    }
+    const hasHorizontalScrollbar =
+      el.scrollWidth > el.clientWidth + 2 &&
+      ["auto", "scroll"].includes(style.overflowX);
+
+    if (hasHorizontalScrollbar) {
+      el.setAttribute("data-insufficient-space", "true");
+      insufficient.push({
+        tag: el.tagName.toLowerCase(),
+        id: el.id || null,
+        className: typeof el.className === "string" ? el.className : "",
+        scrollWidth: el.scrollWidth,
+        clientWidth: el.clientWidth,
+        message: "Element has a horizontal scrollbar and does not have enough space"
+      });
+    } else {
+      el.removeAttribute("data-insufficient-space");
+    }
+  });
+
+  return insufficient;
+}
+
+/**
+ * Builds a standalone, inlined HTML snapshot with fetched CSS and JS bundled directly.
+ */
+async function buildInlinedHtmlSnapshot() {
+  if (typeof document === "undefined") return "";
+  const clone = document.documentElement.cloneNode(true);
+  clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
+
+  // Inline external stylesheets
+  const linkEls = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
+  await Promise.allSettled(
+    linkEls.map(async (linkEl) => {
+      const href = linkEl.getAttribute("href");
+      if (!href || (!href.startsWith("http://") && !href.startsWith("https://"))) return;
+      try {
+        const res = await fetch(href);
+        if (!res.ok) return;
+        let cssText = await res.text();
+        cssText = cssText.replace(/url\((['"]?)(?!data:|https?:|#)([^'")]+)\1\)/g, (match, quote, relPath) => {
+          try {
+            return `url("${new URL(relPath, href).href}")`;
+          } catch {
+            return match;
+          }
+        });
+        const styleEl = document.createElement("style");
+        styleEl.setAttribute("data-inlined-href", href);
+        styleEl.textContent = cssText;
+        linkEl.replaceWith(styleEl);
+      } catch (_) {}
+    })
+  );
+
+  // Inline external scripts
+  const scriptEls = Array.from(clone.querySelectorAll("script[src]"));
+  await Promise.allSettled(
+    scriptEls.map(async (scriptEl) => {
+      const src = scriptEl.getAttribute("src");
+      if (!src || (!src.startsWith("http://") && !src.startsWith("https://"))) return;
+      if (src.includes("cdn.tailwindcss.com")) {
+        const marker = document.createElement("script");
+        marker.setAttribute("data-inlined-src", src);
+        marker.textContent = "/* Tailwind CSS styles pre-compiled inline in <head> */";
+        scriptEl.replaceWith(marker);
+        return;
+      }
+      try {
+        const res = await fetch(src);
+        if (!res.ok) return;
+        const jsText = await res.text();
+        const inlineScript = document.createElement("script");
+        inlineScript.setAttribute("data-inlined-src", src);
+        inlineScript.textContent = jsText.replace(/<\/script>/gi, "<\\/script>");
+        scriptEl.replaceWith(inlineScript);
+      } catch (_) {}
+    })
+  );
+
+  return "<!DOCTYPE html>\n" + clone.outerHTML;
+}
+
+/**
+ * Triggers PDF export / print dialog.
+ */
+function exportReportPdf() {
+  if (typeof window === "undefined") return;
+  if (window.reportCharts && Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((c) => c?.resize?.());
+  }
+  if (window.reportLeafletMap && typeof window.reportLeafletMap.invalidateSize === "function") {
+    window.reportLeafletMap.invalidateSize();
+  }
+  window.print();
+}
+
+/**
+ * Initializes the download menu actions (HTML & PDF).
+ */
+function initDownloadButton() {
+  if (typeof document === "undefined") return;
+  const htmlBtn = document.getElementById("download-html-btn");
+  const pdfBtn = document.getElementById("download-pdf-btn");
+
+  if (htmlBtn) {
+    htmlBtn.addEventListener("click", async () => {
+      try {
+        htmlBtn.disabled = true;
+        const htmlContent = await buildInlinedHtmlSnapshot();
+        const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const docTitle = document.title || "html-report";
+        a.download = `${docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-standalone.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("[html-report] Failed to bundle inlined HTML snapshot:", err);
+      } finally {
+        htmlBtn.disabled = false;
+      }
+    });
+  }
+
+  if (pdfBtn) {
+    pdfBtn.addEventListener("click", () => {
+      const reportMode = document.documentElement.getAttribute("data-report-mode") || "interactive";
+      if (reportMode === "interactive") {
+        const modal = document.getElementById("pdf-not-ready-modal");
+        if (modal && typeof modal.showModal === "function") {
+          modal.showModal();
+          return;
+        }
+      }
+      exportReportPdf();
+    });
+  }
+}
+
+/**
+ * Day.js runtime initialization & data-dayjs hydration.
+ */
+function initDayjs() {
+  if (typeof window === "undefined" || !window.dayjs) return;
+  try {
+    if (window.dayjs_plugin_relativeTime) {
+      window.dayjs.extend(window.dayjs_plugin_relativeTime);
+    }
+    if (window.dayjs_plugin_customParseFormat) {
+      window.dayjs.extend(window.dayjs_plugin_customParseFormat);
+    }
+  } catch (err) {
+    console.warn("[html-report] Day.js plugin registration notice:", err);
+  }
+
+  try {
+    document.querySelectorAll("[data-dayjs]").forEach((el) => {
+      const raw = el.getAttribute("data-dayjs");
+      const format = el.getAttribute("data-dayjs-format") || "YYYY-MM-DD HH:mm:ss";
+      const fromNow = el.hasAttribute("data-dayjs-from-now") || el.getAttribute("data-dayjs-relative") === "true";
+      const d = (raw && raw !== "now" && raw !== "true") ? window.dayjs(raw) : window.dayjs();
+      if (fromNow && typeof d.fromNow === "function") {
+        el.textContent = d.fromNow();
+      } else {
+        el.textContent = d.format(format);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Day.js DOM hydration notice:", err);
+  }
+}
+
+/**
+ * Impress.js runtime initialization with strict presentation guard.
+ * Only initializes 3D canvas when explicitly requested as a presentation.
+ */
+function initImpress() {
+  if (typeof window === "undefined" || !window.impress) return;
+
+  const impressRoot = document.getElementById("impress");
+  if (!impressRoot) return;
+
+  // Presentation Guard: Impress 3D initialization ONLY activates when explicitly requested
+  const isPresentationRequested =
+    document.documentElement.getAttribute("data-presentation") === "true" ||
+    document.body.getAttribute("data-presentation") === "true" ||
+    impressRoot.getAttribute("data-presentation") === "true" ||
+    impressRoot.classList.contains("impress-presentation-active");
+
+  if (!isPresentationRequested) {
+    // Treat as print/static: slides remain stacked in standard document flow
+    impressRoot.classList.add("impress-static-fallback");
+    return;
+  }
+
+  try {
+    if (!impressRoot.dataset.impressInitialized) {
+      impressRoot.dataset.impressInitialized = "true";
+      const api = window.impress("impress");
+      api.init();
+      window.impressApi = api;
+    }
+  } catch (err) {
+    console.warn("[html-report] Impress.js initialization notice:", err);
+  }
+}
+
+/**
+ * Mock.js runtime initialization & data-mock hydration.
+ */
+function initMockjs() {
+  if (typeof window === "undefined" || !window.Mock) return;
+  try {
+    document.querySelectorAll("[data-mock]").forEach((el) => {
+      if (el.dataset.mockInitialized) return;
+      el.dataset.mockInitialized = "true";
+      const raw = el.getAttribute("data-mock");
+      if (!raw) return;
+      try {
+        const schema = JSON.parse(raw);
+        const data = window.Mock.mock(schema);
+        if (el.tagName.toLowerCase() === "code" || el.tagName.toLowerCase() === "pre") {
+          el.textContent = JSON.stringify(data, null, 2);
+        } else if (el.hasAttribute("data-mock-target")) {
+          const target = document.querySelector(el.getAttribute("data-mock-target"));
+          if (target) target.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (parseErr) {
+        const data = window.Mock.mock(raw);
+        el.textContent = String(data);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Mock.js hydration notice:", err);
+  }
+}
+
+/**
+ * Showdown runtime initialization & data-showdown hydration.
+ */
+function initShowdown() {
+  if (typeof window === "undefined" || !window.showdown) return;
+  try {
+    const converter = new window.showdown.Converter({
+      tables: true,
+      tasklists: true,
+      strikethrough: true,
+      emoji: true,
+      ghCodeBlocks: true
+    });
+    window.showdownConverter = converter;
+
+    document.querySelectorAll("[data-showdown], [data-markdown-showdown]").forEach((el) => {
+      if (el._sdInitialized || el.dataset.sdInitialized) return;
+      el._sdInitialized = true;
+      el.dataset.sdInitialized = "true";
+      const srcSelector = el.getAttribute("data-showdown-source") || el.getAttribute("data-markdown-showdown-source");
+      let md = "";
+      if (srcSelector) {
+        const srcEl = document.querySelector(srcSelector);
+        if (srcEl) {
+          md = srcEl.value !== undefined ? srcEl.value : srcEl.textContent;
+        }
+      } else {
+        const rawAttr = el.getAttribute("data-markdown-showdown") || el.getAttribute("data-showdown");
+        md = (rawAttr && rawAttr !== "true") ? rawAttr : el.textContent;
+      }
+      if (md) {
+        el.innerHTML = converter.makeHtml(md);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Showdown markdown rendering notice:", err);
+  }
+}
+
+/**
+ * FullCalendar runtime initialization & DaisyUI theme synchronization.
+ */
+function initFullCalendar() {
+  if (typeof window === "undefined" || !window.FullCalendar) return;
+  window.reportCalendars = window.reportCalendars || [];
+
+  try {
+    const calendarEls = document.querySelectorAll("[data-fullcalendar], #calendar");
+    calendarEls.forEach((el) => {
+      if (el.dataset.calendarInitialized) return;
+      el.dataset.calendarInitialized = "true";
+
+      let events = [];
+      const rawEvents = el.getAttribute("data-calendar-events");
+      if (rawEvents) {
+        try {
+          events = JSON.parse(rawEvents);
+        } catch (_) {}
+      }
+
+      const calendar = new window.FullCalendar.Calendar(el, {
+        initialView: el.getAttribute("data-calendar-view") || "dayGridMonth",
+        headerToolbar: {
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,listWeek"
+        },
+        height: el.getAttribute("data-calendar-height") || "auto",
+        events: events
+      });
+      calendar.render();
+      window.reportCalendars.push(calendar);
+    });
+  } catch (err) {
+    console.warn("[html-report] FullCalendar initialization notice:", err);
+  }
+}
+
+/**
+ * Rehydrates Lucide icons in the DOM.
+ */
+function rehydrateLucideIcons(root = null) {
+  if (typeof window === "undefined" || !window.lucide || typeof window.lucide.createIcons !== "function") return;
+  try {
+    if (root && root.nodeType === 1) {
+      window.lucide.createIcons({ root });
+    } else {
+      window.lucide.createIcons();
+    }
+  } catch (err) {
+    console.warn("[html-report] Lucide icon rehydration notice:", err);
+  }
+}
+
+/**
+ * Initializes MutationObserver to rehydrate Lucide icons post-morph and handle Datastar signal events.
+ */
+let _datastarObserverInstance = null;
+let _lucideRehydrationTimer = null;
+
+function initDatastarObserver() {
+  if (typeof window === "undefined" || typeof MutationObserver === "undefined") return null;
+  if (typeof document === "undefined" || !document.body) return null;
+  if (_datastarObserverInstance) return _datastarObserverInstance;
+
+  _datastarObserverInstance = new MutationObserver((mutations) => {
+    let needsRehydrate = false;
+    for (const m of mutations) {
+      if (m.type === "childList" && m.addedNodes.length > 0) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === 1) {
+            if (node.hasAttribute && node.hasAttribute("data-lucide")) {
+              needsRehydrate = true;
+              break;
+            }
+            if (node.querySelector && node.querySelector("[data-lucide]")) {
+              needsRehydrate = true;
+              break;
+            }
+          }
+        }
+      }
+      if (needsRehydrate) break;
+    }
+
+    if (needsRehydrate) {
+      if (_lucideRehydrationTimer) clearTimeout(_lucideRehydrationTimer);
+      _lucideRehydrationTimer = setTimeout(() => {
+        rehydrateLucideIcons();
+      }, 16);
+    }
+  });
+
+  _datastarObserverInstance.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Also listen for explicit Datastar fragment events if dispatched
+  document.addEventListener("datastar-fragment-applied", () => {
+    rehydrateLucideIcons();
+  });
+
+  return _datastarObserverInstance;
+}
+
+/**
+ * Synchronizes DaisyUI theme switcher selection with Datastar $theme reactive signal.
+ */
+function syncDatastarTheme(themeName) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  // 1. Dispatch custom event for Datastar signals
+  try {
+    const evt = new CustomEvent("datastar-merge-signals", {
+      bubbles: true,
+      detail: { theme: themeName }
+    });
+    document.dispatchEvent(evt);
+  } catch (_) {}
+
+  // 2. Direct API call if Datastar is active on window
+  if (window.datastar) {
+    if (typeof window.datastar.mergeSignals === "function") {
+      try { window.datastar.mergeSignals({ theme: themeName }); } catch (_) {}
+    } else if (window.datastar.signals && typeof window.datastar.signals === "object") {
+      try { window.datastar.signals.theme = themeName; } catch (_) {}
+    }
+  }
+
+  // 3. Update DOM signal attributes for initial or bound elements
+  try {
+    const signalHolders = document.querySelectorAll("[data-signals]");
+    signalHolders.forEach((el) => {
+      if (el._dsSignals && typeof el._dsSignals === "object") {
+        el._dsSignals.theme = themeName;
+      }
+    });
+  } catch (_) {}
+}
+
+// Global browser window bindings
+if (typeof window !== "undefined") {
+  window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
+  window.DAISYUI_THEMES = DAISYUI_THEMES;
+  window.registerCustomTheme = registerCustomTheme;
+  window.scanAndRegisterExistingCustomThemes = scanAndRegisterExistingCustomThemes;
+  window.srgbToLinear = srgbToLinear;
+  window.linearToSrgb = linearToSrgb;
+  window.hexToRgb = hexToRgb;
+  window.hslToRgb = hslToRgb;
+  window.parseColor = parseColor;
+  window.rgbToOklch = rgbToOklch;
+  window.autoContrastContent = autoContrastContent;
+  window.compileTheme = compileTheme;
+  window.tailwindConfigSnippet = tailwindConfigSnippet;
+  window.cssColorToHexAndRgba = cssColorToHexAndRgba;
+  window.resolveDaisyUIThemePalette = resolveDaisyUIThemePalette;
+  window.sanitizeMermaidSource = sanitizeMermaidSource;
+  window.renderMermaidWithTheme = renderMermaidWithTheme;
+  window.initThemeDropdown = initThemeDropdown;
+  window.setReportTheme = setReportTheme;
+  window.initTOC = initTOC;
+  window.checkInsufficientHorizontalSpace = checkInsufficientHorizontalSpace;
+  window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
+  window.exportReportPdf = exportReportPdf;
+  window.initDownloadButton = initDownloadButton;
+  window.initDayjs = initDayjs;
+  window.initImpress = initImpress;
+  window.initMockjs = initMockjs;
+  window.initShowdown = initShowdown;
+  window.initFullCalendar = initFullCalendar;
+  window.rehydrateLucideIcons = rehydrateLucideIcons;
+  window.initDatastarObserver = initDatastarObserver;
+  window.syncDatastarTheme = syncDatastarTheme;
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
+    try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
+    try { initTOC(); } catch (_) {}
+    try { initThemeDropdown(); } catch (_) {}
+    try { initDownloadButton(); } catch (_) {}
+    try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
+    try { initDayjs(); } catch (_) {}
+    try { initShowdown(); } catch (_) {}
+    try { initMockjs(); } catch (_) {}
+    try { initFullCalendar(); } catch (_) {}
+    try { initImpress(); } catch (_) {}
+    try { initDatastarObserver(); } catch (_) {}
+
+    const palette = resolveDaisyUIThemePalette();
+    try { await renderMermaidWithTheme(palette); } catch (_) {}
+    try { checkInsufficientHorizontalSpace(); } catch (_) {}
+    window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.__REPORT_READY__ = true;
+  });
+}
+
+// Node.js CommonJS exports for unit testing
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    STANDARD_DAISYUI_THEMES,
+    DAISYUI_THEMES,
+    registerCustomTheme,
+    scanAndRegisterExistingCustomThemes,
+    srgbToLinear,
+    linearToSrgb,
+    hexToRgb,
+    hslToRgb,
+    parseColor,
+    rgbToOklch,
+    autoContrastContent,
+    compileTheme,
+    tailwindConfigSnippet,
+    cssColorToHexAndRgba,
+    resolveDaisyUIThemePalette,
+    sanitizeMermaidSource,
+    renderMermaidWithTheme,
+    initThemeDropdown,
+    setReportTheme,
+    initTOC,
+    checkInsufficientHorizontalSpace,
+    buildInlinedHtmlSnapshot,
+    exportReportPdf,
+    initDownloadButton,
+    initDayjs,
+    initImpress,
+    initMockjs,
+    initShowdown,
+    initFullCalendar,
+    rehydrateLucideIcons,
+    initDatastarObserver,
+    syncDatastarTheme
+  };
+}
+
+  </script>
+</body>
+</html>

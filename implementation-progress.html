@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss:;" />
-  <title>CDN Documentation, GitHub Pages Parity & Showcase Upgrade - Journey</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
+  <title>Datastar.js Live Dashboards - Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -25,23 +25,8 @@
     <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
 
-  <!-- Addon: Chart.js -->
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
-
-  <!-- Addon: KaTeX -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-
-  <!-- Addon: Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
-
-  <!-- Addon: Marked -->
-  <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>
-
-  <!-- Addon: Showdown -->
-  <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
+  <!-- Addon: Datastar -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
 
   <style>
     :root {
@@ -210,7 +195,7 @@
       <!-- Left: Title -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          CDN Documentation, GitHub Pages Parity & Showcase Upgrade - Journey
+          Datastar.js Live Dashboards - Journey & Plan
         </span>
       </div>
 
@@ -302,208 +287,414 @@
 
   <!-- Main Content Container -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
-<!-- JOURNEY PHASE STEPPER & HEADER -->
-  <header class="card bg-base-100 shadow-xl border border-base-300 overflow-hidden">
-    <div class="card-body p-6 sm:p-8 space-y-6">
-      
-      <!-- TOP STATUS BAR -->
-      <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-4 w-full">
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="badge badge-primary font-mono text-xs font-semibold uppercase tracking-wider">OpenSpec Change</span>
-            <span class="badge badge-outline font-mono text-xs">cdn-readme-ghpages-showcase</span>
-          </div>
-          <h1 id="executive-summary" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-base-content scroll-mt-20">
-            CDN Documentation, GitHub Pages Parity & Showcase Upgrade
-          </h1>
-          <p class="text-base text-base-content/70 mt-2 max-w-3xl leading-relaxed">
-            Synchronizing the public GitHub Pages landing showcase (<code>index.html</code>) with all 16 modular CDN libraries, elevating <code>README.md</code> with direct demo links and cryptographic SRI/CSP specifications, and harmonizing reference examples across the repository.
-          </p>
+<!-- Journey Status Hero -->
+  <header class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-base-200">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary/15 text-primary mb-2">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> OpenSpec Change &bull; Datastar.js Live Dashboards
         </div>
-        
-        <div class="shrink-0 flex items-center gap-2">
-          <div class="badge badge-success badge-lg font-mono font-bold gap-1.5 py-4 px-4 shadow-sm">
-            <i data-lucide="check-check" class="w-4 h-4"></i>
-            Phase: Completed & Verified (144 Tests)
-          </div>
-        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-base-content" id="journey-overview">
+          Datastar.js Live Dashboards: Task &amp; Tool Call Inspection
+        </h1>
+        <p class="text-base text-base-content/70 mt-1">
+          De-Risked Passive Observability &bull; Real-Time Tool Call Streamer &bull; Terminal Output Drawer &bull; TaskTelemetrySchema
+        </p>
       </div>
 
-      <!-- JOURNEY STEPPER (RULE MANDATE: HORIZONTAL WITH CLEAN DATA-CONTENT) -->
-      <div class="w-full pt-4 border-t border-base-200 overflow-x-auto">
-        <ul class="steps steps-horizontal w-full min-w-[540px] text-xs font-semibold">
-          <li class="step step-primary font-medium" data-content="✓">1. Brainstorming</li>
-          <li class="step step-primary font-medium" data-content="✓">2. Planning</li>
-          <li class="step step-primary font-medium" data-content="✓">3. Implementing</li>
-          <li class="step step-primary font-medium" data-content="✓">4. Verifying</li>
-          <li class="step step-primary font-bold text-success" data-content="★">5. Shipped</li>
+      <!-- Markdown Artifact Backlinks -->
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="./proposal.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4"></i> proposal.md
+        </a>
+        <a href="./design.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="compass" class="w-4 h-4"></i> design.md
+        </a>
+        <a href="./tasks.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="check-square" class="w-4 h-4"></i> tasks.md
+        </a>
+        <a href="./specs/live-dashboards/spec.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="layers" class="w-4 h-4"></i> specs/
+        </a>
+      </div>
+    </div>
+
+    <!-- Journey Stepper -->
+    <div class="mt-8">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-base-content/60" id="journey-stepper">
+          Current State of Our Journey
+        </h2>
+        <span class="badge badge-success badge-sm font-semibold gap-1 text-success-content">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i> Shipped / Archived
+        </span>
+      </div>
+      <div class="w-full overflow-x-auto">
+        <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
+          <li class="step step-primary font-medium" data-content="✓">Planning &amp; Specs</li>
+          <li class="step step-primary font-medium" data-content="✓">Implementing</li>
+          <li class="step step-primary font-medium" data-content="✓">Verifying</li>
+          <li class="step step-primary font-bold text-primary" data-content="★">Shipped / Archived</li>
         </ul>
-      </div>
-
-      <!-- DIRECT ARTIFACT BACKLINKS -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-        <a href="proposal.md" class="card bg-base-200/60 hover:bg-base-200 border border-base-300 transition p-3.5 flex flex-row items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <i data-lucide="file-text" class="w-4 h-4 text-primary"></i>
-            <div>
-              <div class="text-xs font-bold text-base-content">proposal.md</div>
-              <div class="text-2xs text-base-content/60">Vision & Parity Goals</div>
-            </div>
-          </div>
-          <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-60"></i>
-        </a>
-
-        <a href="design.md" class="card bg-base-200/60 hover:bg-base-200 border border-base-300 transition p-3.5 flex flex-row items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <i data-lucide="layers" class="w-4 h-4 text-secondary"></i>
-            <div>
-              <div class="text-xs font-bold text-base-content">design.md</div>
-              <div class="text-2xs text-base-content/60">Architecture & SRI Specs</div>
-            </div>
-          </div>
-          <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-60"></i>
-        </a>
-
-        <a href="tasks.md" class="card bg-base-200/60 hover:bg-base-200 border border-base-300 transition p-3.5 flex flex-row items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <i data-lucide="check-square" class="w-4 h-4 text-accent"></i>
-            <div>
-              <div class="text-xs font-bold text-base-content">tasks.md</div>
-              <div class="text-2xs text-base-content/60">5 Numbered Execution Phases (100% Done)</div>
-            </div>
-          </div>
-          <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-60"></i>
-        </a>
       </div>
     </div>
   </header>
 
-  <!-- LIVE PROGRESS METRICS & KPI CARDS -->
-  <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-    <div class="card bg-base-100 border border-base-300 p-4 shadow-sm">
-      <div class="text-xs font-mono uppercase text-base-content/60 font-semibold">Total CDN Libraries</div>
-      <div class="text-2xl sm:text-3xl font-extrabold text-primary mt-1">16</div>
-      <div class="text-2xs text-base-content/60 mt-1">4 Core + 12 On-Demand</div>
+  <!-- Overnight Autonomous CLI Execution & 1-Click Copy Box -->
+  <section class="bg-base-100 rounded-2xl shadow-md border-2 border-primary/40 p-6 sm:p-8 space-y-6" x-data="{ copied: false }">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-base-200 pb-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-primary text-primary-content">
+          <i data-lucide="moon" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-xl font-extrabold text-base-content" id="overnight-run">Overnight Autonomous Execution</h2>
+            <span class="badge badge-success badge-sm font-bold">100% Shipped &amp; Verified</span>
+          </div>
+          <p class="text-xs text-base-content/70 mt-0.5">
+            1-Click copy command for <code>agy</code> to implement and test all 5 phases while you sleep.
+          </p>
+        </div>
+      </div>
+
+      <!-- Copy Action Button -->
+      <button 
+        @click="navigator.clipboard.writeText(document.getElementById('overnight-cmd-textarea').value); copied = true; setTimeout(() => copied = false, 2500);" 
+        class="btn btn-primary btn-md gap-2 shadow-sm font-bold"
+        :class="{ 'btn-success text-success-content': copied }">
+        <template x-if="!copied">
+          <span class="inline-flex items-center gap-2">
+            <i data-lucide="copy" class="w-4 h-4"></i> Copy Overnight Command
+          </span>
+        </template>
+        <template x-if="copied">
+          <span class="inline-flex items-center gap-2">
+            <i data-lucide="check" class="w-4 h-4"></i> Copied to Clipboard!
+          </span>
+        </template>
+      </button>
     </div>
-    <div class="card bg-base-100 border border-base-300 p-4 shadow-sm">
-      <div class="text-xs font-mono uppercase text-base-content/60 font-semibold">Security Layers</div>
-      <div class="text-2xl sm:text-3xl font-extrabold text-success mt-1">3</div>
-      <div class="text-2xs text-base-content/60 mt-1">SRI · CSP · No-Referrer</div>
+
+    <!-- Hidden Raw Textarea for pristine clipboard copying -->
+    <textarea id="overnight-cmd-textarea" class="hidden" readonly>agy -c --dangerously-skip-permissions -i "/goal Execute and complete the entire implementation plan for the Datastar.js live dashboards feature in openspec/changes/2026-11-03-datastar-live-dashboards/. Work through all 5 phases in tasks.md autonomously without stopping or asking for manual confirmations until all test suites pass, all tasks in tasks.md are checked off, and the companion journey stepper is advanced to Shipped / Archived."</textarea>
+
+    <!-- Styled Mockup Code Preview -->
+    <div class="mockup-code text-xs bg-neutral text-neutral-content rounded-xl shadow-inner border border-neutral-content/10">
+      <div class="px-5 py-1 text-primary text-[11px] font-mono border-b border-neutral-content/10 flex justify-between items-center">
+        <span>Verified Command &bull; agy interactive prompt with automated permissions</span>
+        <span class="opacity-60">Tested for zsh &amp; bash</span>
+      </div>
+      <pre data-prefix="$" class="py-3 px-4 whitespace-pre-wrap break-words leading-relaxed font-mono"><code><span class="text-primary font-bold">agy</span> -c --dangerously-skip-permissions -i <span class="text-success">"/goal Execute and complete the entire implementation plan for the Datastar.js live dashboards feature in openspec/changes/2026-11-03-datastar-live-dashboards/. Work through all 5 phases in tasks.md autonomously without stopping or asking for manual confirmations until all test suites pass, all tasks in tasks.md are checked off, and the companion journey stepper is advanced to Shipped / Archived."</span></code></pre>
     </div>
-    <div class="card bg-base-100 border border-base-300 p-4 shadow-sm">
-      <div class="text-xs font-mono uppercase text-base-content/60 font-semibold">Unit & Integration Tests</div>
-      <div class="text-2xl sm:text-3xl font-extrabold text-accent mt-1">144</div>
-      <div class="text-2xs text-base-content/60 mt-1">100% Pass Rate (~2s)</div>
-    </div>
-    <div class="card bg-base-100 border border-base-300 p-4 shadow-sm">
-      <div class="text-xs font-mono uppercase text-base-content/60 font-semibold">GitHub Pages Parity</div>
-      <div class="text-2xl sm:text-3xl font-extrabold text-info mt-1">100%</div>
-      <div class="text-2xs text-base-content/60 mt-1">Section 11 + 16 Addons</div>
+
+    <!-- Helpful Tips & Why -p failed -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 text-xs text-base-content/70">
+      <div class="flex items-start gap-2">
+        <i data-lucide="zap" class="w-4 h-4 text-primary shrink-0 mt-0.5"></i>
+        <span><strong>-i (--prompt-interactive)</strong>: Runs initial prompt interactively. (Note: <code>-p</code> is <code>--print</code> single-turn mode).</span>
+      </div>
+      <div class="flex items-start gap-2">
+        <i data-lucide="shield-check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+        <span><strong>--dangerously-skip-permissions</strong>: Auto-approves all tool actions without blocking on user input.</span>
+      </div>
+      <div class="flex items-start gap-2">
+        <i data-lucide="target" class="w-4 h-4 text-secondary shrink-0 mt-0.5"></i>
+        <span><strong>-c (--continue)</strong>: Re-attaches to this exact conversation session seamlessly.</span>
+      </div>
     </div>
   </section>
 
-  <!-- ARCHITECTURE & SYNC FLOW DIAGRAM -->
-  <section class="card bg-base-100 shadow-xl border border-base-300 p-6 sm:p-8 space-y-4">
-    <div class="flex items-center justify-between border-b border-base-200 pb-3">
-      <h2 id="sync-architecture" class="text-xl sm:text-2xl font-bold flex items-center gap-2 scroll-mt-20">
-        <i data-lucide="git-merge" class="w-6 h-6 text-primary"></i>
-        <span>Architecture & Artifact Synchronization Flow</span>
-      </h2>
-      <span class="badge badge-success font-mono text-xs">Verified & Shipped</span>
+  <!-- Live Progress Stats -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" aria-label="Progress Metrics">
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-primary">
+        <i data-lucide="terminal" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Tool Invocations</div>
+      <div class="stat-value text-primary text-2xl sm:text-3xl">Live Feed</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Commands, stdout &amp; durations</div>
     </div>
 
-    <div class="mermaid">
-flowchart LR
-    A["16-CDN Power Stack<br/>Core 4 + 12 Addons"] --> B["README.md<br/>Top Demo Link &amp; SRI Specs"]
-    A --> C["GitHub Pages (index.html)<br/>16-CDN Interactive Showcase"]
-    A --> D["Reference Example<br/>example.html Fragment"]
-    
-    B --> E["Automated Verification<br/>144 Node Tests + Playwright"]
-    C --> E
-    D --> E
-    
-    E --> F["Git Archive &amp; Push<br/>origin/main"]
-    
-    style A fill:#2563eb,stroke:#1d4ed8,color:#fff
-    style B fill:#3b82f6,stroke:#2563eb,color:#fff
-    style C fill:#10b981,stroke:#059669,color:#fff
-    style D fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style E fill:#f59e0b,stroke:#d97706,color:#fff
-    style F fill:#16a34a,stroke:#15803d,color:#fff
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-success">
+        <i data-lucide="check-circle" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Validation</div>
+      <div class="stat-value text-success text-2xl sm:text-3xl">165 Passed</div>
+      <div class="stat-desc text-xs text-success font-semibold truncate">0 Failures &bull; 100% Green</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-accent">
+        <i data-lucide="file-code-2" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Schema Standard</div>
+      <div class="stat-value text-accent text-2xl sm:text-3xl">TaskTelemetry</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Phases, Tasks &amp; Metrics</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-info">
+        <i data-lucide="list-checks" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Actionable Tasks</div>
+      <div class="stat-value text-info text-2xl sm:text-3xl">17 Tasks</div>
+      <div class="stat-desc text-xs text-success font-semibold truncate">17 / 17 Complete (100%)</div>
     </div>
   </section>
 
-  <!-- CONNECTED TASK CHECKLIST -->
-  <section class="card bg-base-100 shadow-xl border border-base-300 p-6 sm:p-8 space-y-4">
-    <div class="flex items-center justify-between border-b border-base-200 pb-3">
-      <h2 id="task-checklist" class="text-xl sm:text-2xl font-bold flex items-center gap-2 scroll-mt-20">
-        <i data-lucide="list-checks" class="w-6 h-6 text-success"></i>
-        <span>Implementation Roadmap &amp; Progress (100% Completed)</span>
-      </h2>
-      <span class="badge badge-success font-mono text-xs">16 / 16 Tasks Done</span>
+  <!-- Interactive Mockup: Live Task Inspection & Tool Call Feed -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center justify-between flex-wrap gap-4 border-b border-base-200 pb-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-primary/10 text-primary">
+          <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-base-content" id="live-inspection-preview">Live Task &amp; Tool Call Inspection Feed</h2>
+          <p class="text-sm text-base-content/70">What reviewers see in real time as an AGY or Codex session executes</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse"></span>
+        <span class="text-xs font-mono font-bold text-success">STREAMING ACTIVE</span>
+      </div>
     </div>
 
-    <div class="space-y-4">
-      <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
-        <div class="font-bold text-sm text-primary flex items-center gap-2">
-          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
-          <span>Phase 1: README.md Updates</span>
+    <!-- Dual-Pane Live Inspector -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left Column: Task Checklist & Progress (5 cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-base-content/60" id="task-checklist">
+            Active Tasks (Phase 2)
+          </h3>
+          <span class="badge badge-sm badge-success font-semibold">17 / 17 Complete</span>
         </div>
-        <ul class="text-xs space-y-1.5 opacity-90 pl-6 list-disc">
-          <li>✓ 1.1 Add prominent GitHub Pages link and badge (https://driesverb.github.io/html-report/) at top</li>
-          <li>✓ 1.2 Update CDN stack documentation to 16 libraries (Day.js, Impress.js, Mock.js, Showdown, FullCalendar)</li>
-          <li>✓ 1.3 Add Cryptographic Security (SRI, CSP, and No-Referrer) section</li>
-          <li>✓ 1.4 Update test metrics (144 tests passing in ~2s) and fix stale 11-CDN references</li>
-        </ul>
+
+        <div class="space-y-3">
+          <!-- Completed Task -->
+          <div class="card bg-base-200/50 p-3.5 rounded-xl border border-success/30">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="check-circle" class="w-4 h-4 text-success"></i>
+                <span class="text-xs font-semibold text-base-content">1.1 Register Datastar CDN</span>
+              </div>
+              <span class="badge badge-xs badge-success">42ms</span>
+            </div>
+            <div class="text-[11px] text-base-content/60 mt-1 pl-6">
+              Verified in ADDON_REGISTRY. 1 tool executed.
+            </div>
+          </div>
+
+          <!-- Active Running Task -->
+          <div class="card bg-base-100 p-3.5 rounded-xl border-2 border-primary shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="loading loading-spinner loading-xs text-primary"></span>
+                <span class="text-xs font-bold text-primary">1.2 Build CLI Flag --live</span>
+              </div>
+              <span class="badge badge-xs badge-primary animate-pulse">Running</span>
+            </div>
+            <div class="text-[11px] text-base-content/70 mt-1.5 pl-6 flex items-center justify-between">
+              <span>Assigned: <strong>Codex Coder</strong></span>
+              <span class="font-mono text-[10px]">Elapsed: 3.2s</span>
+            </div>
+            <!-- Sub-progress bar -->
+            <div class="pl-6 pt-2">
+              <progress class="progress progress-primary w-full h-1" value="65" max="100"></progress>
+            </div>
+          </div>
+
+          <!-- Pending Task -->
+          <div class="card bg-base-200/30 p-3.5 rounded-xl border border-base-200 opacity-60">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="circle" class="w-4 h-4 text-base-content/40"></i>
+                <span class="text-xs font-medium text-base-content/70">1.3 Update CSP Headers</span>
+              </div>
+              <span class="badge badge-xs badge-ghost">Pending</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
-        <div class="font-bold text-sm text-secondary flex items-center gap-2">
-          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
-          <span>Phase 2: Reference Example (example.html) Parity</span>
+      <!-- Right Column: Live Tool Call Feed & Terminal Drawer (7 cols) -->
+      <div class="lg:col-span-7 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-base-content/60" id="tool-feed">
+            Live Tool Invocations
+          </h3>
+          <!-- Filter Tabs -->
+          <div class="join">
+            <button class="btn btn-xs join-item btn-active">All</button>
+            <button class="btn btn-xs join-item">Shell</button>
+            <button class="btn btn-xs join-item">Files</button>
+          </div>
         </div>
-        <ul class="text-xs space-y-1.5 opacity-90 pl-6 list-disc">
-          <li>✓ 2.1 Verify skills/html-report/examples/example.html contains all 16 CDN showcase sections</li>
-          <li>✓ 2.2 Verify interactive initializers for Chart.js, Leaflet, Grid.js, KaTeX, Marked, Highlight.js, and CSV dashboard</li>
-        </ul>
+
+        <div class="space-y-3" id="tool-call-feed">
+          <!-- Active Tool Call with Terminal Output -->
+          <div class="card bg-neutral text-neutral-content rounded-xl border border-neutral-content/20 shadow-sm overflow-hidden">
+            <div class="p-3 bg-neutral-focus border-b border-neutral-content/10 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="loading loading-spinner loading-xs text-primary"></span>
+                <span class="font-mono text-xs font-bold text-primary">run_command</span>
+                <span class="text-[11px] opacity-75 font-mono truncate max-w-xs">node build-report.mjs --live</span>
+              </div>
+              <span class="badge badge-xs badge-primary">Executing</span>
+            </div>
+            <!-- Terminal Output Drawer -->
+            <div class="p-3 text-[11px] font-mono leading-relaxed bg-black/40 space-y-0.5">
+              <div class="text-base-content/40">&gt; Executing in workspace: /home/eta/projects/html-report</div>
+              <div class="text-success">[html-report] Addon registry loaded: datastar</div>
+              <div class="text-base-content/80">[html-report] Compiling fragment.html with live mode enabled...</div>
+              <div class="text-warning animate-pulse">&gt; Processing CSP connect-src directives...</div>
+            </div>
+          </div>
+
+          <!-- Completed File Tool Call -->
+          <div class="card bg-base-200/60 p-3 rounded-xl border border-base-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="file-text" class="w-4 h-4 text-secondary"></i>
+                <span class="font-mono text-xs font-bold text-base-content">read_file</span>
+                <code class="text-[11px] text-base-content/70">template-shell.html</code>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-mono opacity-60">297 lines</span>
+                <span class="badge badge-xs badge-success">18ms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Completed Tool Call -->
+          <div class="card bg-base-200/60 p-3 rounded-xl border border-base-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-success"></i>
+                <span class="font-mono text-xs font-bold text-base-content">run_command</span>
+                <code class="text-[11px] text-base-content/70">git status --porcelain</code>
+              </div>
+              <span class="badge badge-xs badge-success">34ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Flow & Test Harness Architecture -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 rounded-xl bg-secondary/10 text-secondary">
+        <i data-lucide="git-merge" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-base-content" id="technical-architecture">Test-First Telemetry Architecture</h2>
+        <p class="text-sm text-base-content/70">Validating Datastar SSE morphing against synthetic simulation harnesses</p>
+      </div>
+    </div>
+
+    <pre class="mermaid text-center">
+flowchart TD
+    subgraph TestSources["Sources &amp; Simulation Harness"]
+        Fixtures["Historical Log Fixtures\n(transcript.jsonl &amp; stream chunks)"]
+        Replayer["Synthetic Stream Replayer\n(MockAgyStreamer &amp; MockCodexStreamer)"]
+        Fixtures --> Replayer
+    end
+
+    subgraph Adapters["Provider Normalizers (datastar-sse.mjs)"]
+        AgyAdapt["AgyTelemetryAdapter"]
+        CodexAdapt["CodexTelemetryAdapter"]
+        Replayer --> AgyAdapt
+        Replayer --> CodexAdapt
+    end
+
+    subgraph Core["Canonical Task Telemetry Engine"]
+        AgyAdapt --> SchemaEngine["TaskTelemetrySchema Engine\n(Stateful Session, Phases &amp; Tasks)"]
+        CodexAdapt --> SchemaEngine
+        SchemaEngine --> Bridge["DatastarBridge (DOM Morph &amp; Signal Formatter)"]
+    end
+
+    subgraph Verification["Test Suite &amp; Dev Server"]
+        Bridge --> SSERoute["serve-report.mjs (/__datastar_stream__)"]
+        SSERoute --> Headless["Playwright Headless Browser\n(Burst Test: 100 events / 2s)"]
+        Headless --> Assertions["Assertions:\n1. Tool cards show spinner &amp; duration\n2. Terminal output drawer renders\n3. Zero DOM corruption on 100-event burst"]
+    end
+    </pre>
+  </section>
+
+  <!-- Connected Task Checklist -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center justify-between flex-wrap gap-4 border-b border-base-200 pb-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-success/10 text-success">
+          <i data-lucide="check-square" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-base-content" id="implementation-tasks">Implementation Task Plan</h2>
+          <p class="text-sm text-base-content/70">Structured in 5 verifiable milestones matching tasks.md</p>
+        </div>
+      </div>
+      <a href="./tasks.md" target="_blank" class="btn btn-sm btn-ghost gap-1.5 text-xs">
+        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> View tasks.md
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Phase 1 & 2 -->
+      <div class="space-y-4">
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <h3 class="font-bold text-sm text-base-content flex items-center gap-2 mb-2" id="phase-1-cli">
+            <span class="badge badge-primary badge-sm">Phase 1</span> Build CLI &amp; Shell Integration
+          </h3>
+          <ul class="space-y-1.5 text-xs text-base-content/80">
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Register <code>ADDON_REGISTRY.datastar</code> &amp; aliases</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Auto-detection for <code>data-signals</code>, <code>data-on-</code>, etc.</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Implement convenience <code>--live</code> CLI flag</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Update CSP <code>connect-src</code> to allow <code>http:</code> &amp; <code>https:</code></li>
+          </ul>
+        </div>
+
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <h3 class="font-bold text-sm text-base-content flex items-center gap-2 mb-2" id="phase-2-runtime">
+            <span class="badge badge-secondary badge-sm">Phase 2</span> Runtime Rehydration &amp; Signals
+          </h3>
+          <ul class="space-y-1.5 text-xs text-base-content/80">
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> DOM <code>MutationObserver</code> for Lucide post-morph rehydration</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Synchronize DaisyUI theme switcher with Datastar <code>$theme</code></li>
+          </ul>
+        </div>
       </div>
 
-      <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
-        <div class="font-bold text-sm text-accent flex items-center gap-2">
-          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
-          <span>Phase 3: GitHub Pages (index.html) Upgrade</span>
+      <!-- Phase 3, 4 & 5 -->
+      <div class="space-y-4">
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <h3 class="font-bold text-sm text-base-content flex items-center gap-2 mb-2" id="phase-3-schema">
+            <span class="badge badge-accent badge-sm">Phase 3</span> Task &amp; Tool Telemetry Engine
+          </h3>
+          <ul class="space-y-1.5 text-xs text-base-content/80">
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Formalize <code>TaskTelemetrySchema</code> &amp; <code>ToolInvocationRecord</code></li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> <code>DatastarBridge</code> formatting tool feed &amp; terminal drawers</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> <code>AgyTelemetryAdapter</code> for Antigravity transcripts &amp; tools</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> <code>CodexTelemetryAdapter</code> for OpenAI stream chunks</li>
+          </ul>
         </div>
-        <ul class="text-xs space-y-1.5 opacity-90 pl-6 list-disc">
-          <li>✓ 3.1 Update index.html head with new CDN scripts, stylesheets, SRI hashes, CSP, and no-referrer</li>
-          <li>✓ 3.2 Update index.html titles and Section 1 CDN directory grid to 16 cards (4-column layout)</li>
-          <li>✓ 3.3 Add Section 11 (Day.js, Impress.js, Mock.js, Showdown, FullCalendar) to index.html</li>
-          <li>✓ 3.4 Wire runtime initializers in index.html for Day.js, Mock.js, Showdown, FullCalendar, and theme sync</li>
-          <li>✓ 3.5 Update Grid.js benchmark table to list all 16 libraries</li>
-        </ul>
-      </div>
 
-      <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
-        <div class="font-bold text-sm text-warning flex items-center gap-2">
-          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
-          <span>Phase 4: Verification & Integrity Testing</span>
+        <div class="card bg-base-200/50 p-4 rounded-xl border border-base-200">
+          <h3 class="font-bold text-sm text-base-content flex items-center gap-2 mb-2" id="phase-4-testing">
+            <span class="badge badge-warning badge-sm">Phase 4 &amp; 5</span> Test Harness, Dev Server &amp; Docs
+          </h3>
+          <ul class="space-y-1.5 text-xs text-base-content/80">
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> <code>MockAgyStreamer</code> &amp; <code>MockCodexStreamer</code> fixtures</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Burst load stress tests (100 events / 2s) in Playwright</li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Hot fragment SSE endpoint in <code>serve-report.mjs</code></li>
+            <li class="flex items-center gap-2"><input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-success" /> Reference guide <code>references/datastar-live-dashboards.md</code></li>
+          </ul>
         </div>
-        <ul class="text-xs space-y-1.5 opacity-90 pl-6 list-disc">
-          <li>✓ 4.1 Run unit and integration test suite (node --test tests/*.test.mjs - 144 passing)</li>
-          <li>✓ 4.2 Verify index.html and example.html in headless Chromium with zero console errors</li>
-          <li>✓ 4.3 Verify responsive behavior across all 5 breakpoints</li>
-        </ul>
-      </div>
-
-      <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
-        <div class="font-bold text-sm text-success flex items-center gap-2">
-          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
-          <span>Phase 5: Journey State, Archive & Git Sync</span>
-        </div>
-        <ul class="text-xs space-y-1.5 opacity-90 pl-6 list-disc">
-          <li>✓ 5.1 Build companion index.html and sync with implementation-progress.html</li>
-          <li>✓ 5.2 Archive change to openspec/changes/archive/2026-11-03-cdn-readme-ghpages-showcase</li>
-          <li>✓ 5.3 Commit all changes and push to origin/main</li>
-        </ul>
       </div>
     </div>
   </section>
@@ -1233,6 +1424,9 @@ async function setReportTheme(themeName) {
       } catch (_) {}
     });
   }
+
+  // Dynamic Datastar reactive $theme signal sync
+  syncDatastarTheme(themeName);
 }
 
 /**
@@ -1538,10 +1732,11 @@ function initShowdown() {
     });
     window.showdownConverter = converter;
 
-    document.querySelectorAll("[data-showdown]").forEach((el) => {
-      if (el.dataset.showdownInitialized) return;
-      el.dataset.showdownInitialized = "true";
-      const srcSelector = el.getAttribute("data-showdown-source");
+    document.querySelectorAll("[data-showdown], [data-markdown-showdown]").forEach((el) => {
+      if (el._sdInitialized || el.dataset.sdInitialized) return;
+      el._sdInitialized = true;
+      el.dataset.sdInitialized = "true";
+      const srcSelector = el.getAttribute("data-showdown-source") || el.getAttribute("data-markdown-showdown-source");
       let md = "";
       if (srcSelector) {
         const srcEl = document.querySelector(srcSelector);
@@ -1549,7 +1744,7 @@ function initShowdown() {
           md = srcEl.value !== undefined ? srcEl.value : srcEl.textContent;
         }
       } else {
-        const rawAttr = el.getAttribute("data-showdown");
+        const rawAttr = el.getAttribute("data-markdown-showdown") || el.getAttribute("data-showdown");
         md = (rawAttr && rawAttr !== "true") ? rawAttr : el.textContent;
       }
       if (md) {
@@ -1600,6 +1795,109 @@ function initFullCalendar() {
   }
 }
 
+/**
+ * Rehydrates Lucide icons in the DOM.
+ */
+function rehydrateLucideIcons(root = null) {
+  if (typeof window === "undefined" || !window.lucide || typeof window.lucide.createIcons !== "function") return;
+  try {
+    if (root && root.nodeType === 1) {
+      window.lucide.createIcons({ root });
+    } else {
+      window.lucide.createIcons();
+    }
+  } catch (err) {
+    console.warn("[html-report] Lucide icon rehydration notice:", err);
+  }
+}
+
+/**
+ * Initializes MutationObserver to rehydrate Lucide icons post-morph and handle Datastar signal events.
+ */
+let _datastarObserverInstance = null;
+let _lucideRehydrationTimer = null;
+
+function initDatastarObserver() {
+  if (typeof window === "undefined" || typeof MutationObserver === "undefined") return null;
+  if (typeof document === "undefined" || !document.body) return null;
+  if (_datastarObserverInstance) return _datastarObserverInstance;
+
+  _datastarObserverInstance = new MutationObserver((mutations) => {
+    let needsRehydrate = false;
+    for (const m of mutations) {
+      if (m.type === "childList" && m.addedNodes.length > 0) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === 1) {
+            if (node.hasAttribute && node.hasAttribute("data-lucide")) {
+              needsRehydrate = true;
+              break;
+            }
+            if (node.querySelector && node.querySelector("[data-lucide]")) {
+              needsRehydrate = true;
+              break;
+            }
+          }
+        }
+      }
+      if (needsRehydrate) break;
+    }
+
+    if (needsRehydrate) {
+      if (_lucideRehydrationTimer) clearTimeout(_lucideRehydrationTimer);
+      _lucideRehydrationTimer = setTimeout(() => {
+        rehydrateLucideIcons();
+      }, 16);
+    }
+  });
+
+  _datastarObserverInstance.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Also listen for explicit Datastar fragment events if dispatched
+  document.addEventListener("datastar-fragment-applied", () => {
+    rehydrateLucideIcons();
+  });
+
+  return _datastarObserverInstance;
+}
+
+/**
+ * Synchronizes DaisyUI theme switcher selection with Datastar $theme reactive signal.
+ */
+function syncDatastarTheme(themeName) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  // 1. Dispatch custom event for Datastar signals
+  try {
+    const evt = new CustomEvent("datastar-merge-signals", {
+      bubbles: true,
+      detail: { theme: themeName }
+    });
+    document.dispatchEvent(evt);
+  } catch (_) {}
+
+  // 2. Direct API call if Datastar is active on window
+  if (window.datastar) {
+    if (typeof window.datastar.mergeSignals === "function") {
+      try { window.datastar.mergeSignals({ theme: themeName }); } catch (_) {}
+    } else if (window.datastar.signals && typeof window.datastar.signals === "object") {
+      try { window.datastar.signals.theme = themeName; } catch (_) {}
+    }
+  }
+
+  // 3. Update DOM signal attributes for initial or bound elements
+  try {
+    const signalHolders = document.querySelectorAll("[data-signals]");
+    signalHolders.forEach((el) => {
+      if (el._dsSignals && typeof el._dsSignals === "object") {
+        el._dsSignals.theme = themeName;
+      }
+    });
+  } catch (_) {}
+}
+
 // Global browser window bindings
 if (typeof window !== "undefined") {
   window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
@@ -1631,6 +1929,9 @@ if (typeof window !== "undefined") {
   window.initMockjs = initMockjs;
   window.initShowdown = initShowdown;
   window.initFullCalendar = initFullCalendar;
+  window.rehydrateLucideIcons = rehydrateLucideIcons;
+  window.initDatastarObserver = initDatastarObserver;
+  window.syncDatastarTheme = syncDatastarTheme;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
@@ -1644,6 +1945,7 @@ if (typeof window !== "undefined") {
     try { initMockjs(); } catch (_) {}
     try { initFullCalendar(); } catch (_) {}
     try { initImpress(); } catch (_) {}
+    try { initDatastarObserver(); } catch (_) {}
 
     const palette = resolveDaisyUIThemePalette();
     try { await renderMermaidWithTheme(palette); } catch (_) {}
@@ -1684,7 +1986,10 @@ if (typeof module !== "undefined" && module.exports) {
     initImpress,
     initMockjs,
     initShowdown,
-    initFullCalendar
+    initFullCalendar,
+    rehydrateLucideIcons,
+    initDatastarObserver,
+    syncDatastarTheme
   };
 }
 

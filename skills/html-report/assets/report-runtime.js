@@ -715,6 +715,9 @@ async function setReportTheme(themeName) {
       } catch (_) {}
     });
   }
+
+  // Dynamic Datastar reactive $theme signal sync
+  syncDatastarTheme(themeName);
 }
 
 /**
@@ -1020,10 +1023,11 @@ function initShowdown() {
     });
     window.showdownConverter = converter;
 
-    document.querySelectorAll("[data-showdown]").forEach((el) => {
-      if (el.dataset.showdownInitialized) return;
-      el.dataset.showdownInitialized = "true";
-      const srcSelector = el.getAttribute("data-showdown-source");
+    document.querySelectorAll("[data-showdown], [data-markdown-showdown]").forEach((el) => {
+      if (el._sdInitialized || el.dataset.sdInitialized) return;
+      el._sdInitialized = true;
+      el.dataset.sdInitialized = "true";
+      const srcSelector = el.getAttribute("data-showdown-source") || el.getAttribute("data-markdown-showdown-source");
       let md = "";
       if (srcSelector) {
         const srcEl = document.querySelector(srcSelector);
@@ -1031,7 +1035,7 @@ function initShowdown() {
           md = srcEl.value !== undefined ? srcEl.value : srcEl.textContent;
         }
       } else {
-        const rawAttr = el.getAttribute("data-showdown");
+        const rawAttr = el.getAttribute("data-markdown-showdown") || el.getAttribute("data-showdown");
         md = (rawAttr && rawAttr !== "true") ? rawAttr : el.textContent;
       }
       if (md) {
@@ -1082,6 +1086,109 @@ function initFullCalendar() {
   }
 }
 
+/**
+ * Rehydrates Lucide icons in the DOM.
+ */
+function rehydrateLucideIcons(root = null) {
+  if (typeof window === "undefined" || !window.lucide || typeof window.lucide.createIcons !== "function") return;
+  try {
+    if (root && root.nodeType === 1) {
+      window.lucide.createIcons({ root });
+    } else {
+      window.lucide.createIcons();
+    }
+  } catch (err) {
+    console.warn("[html-report] Lucide icon rehydration notice:", err);
+  }
+}
+
+/**
+ * Initializes MutationObserver to rehydrate Lucide icons post-morph and handle Datastar signal events.
+ */
+let _datastarObserverInstance = null;
+let _lucideRehydrationTimer = null;
+
+function initDatastarObserver() {
+  if (typeof window === "undefined" || typeof MutationObserver === "undefined") return null;
+  if (typeof document === "undefined" || !document.body) return null;
+  if (_datastarObserverInstance) return _datastarObserverInstance;
+
+  _datastarObserverInstance = new MutationObserver((mutations) => {
+    let needsRehydrate = false;
+    for (const m of mutations) {
+      if (m.type === "childList" && m.addedNodes.length > 0) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === 1) {
+            if (node.hasAttribute && node.hasAttribute("data-lucide")) {
+              needsRehydrate = true;
+              break;
+            }
+            if (node.querySelector && node.querySelector("[data-lucide]")) {
+              needsRehydrate = true;
+              break;
+            }
+          }
+        }
+      }
+      if (needsRehydrate) break;
+    }
+
+    if (needsRehydrate) {
+      if (_lucideRehydrationTimer) clearTimeout(_lucideRehydrationTimer);
+      _lucideRehydrationTimer = setTimeout(() => {
+        rehydrateLucideIcons();
+      }, 16);
+    }
+  });
+
+  _datastarObserverInstance.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Also listen for explicit Datastar fragment events if dispatched
+  document.addEventListener("datastar-fragment-applied", () => {
+    rehydrateLucideIcons();
+  });
+
+  return _datastarObserverInstance;
+}
+
+/**
+ * Synchronizes DaisyUI theme switcher selection with Datastar $theme reactive signal.
+ */
+function syncDatastarTheme(themeName) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  // 1. Dispatch custom event for Datastar signals
+  try {
+    const evt = new CustomEvent("datastar-merge-signals", {
+      bubbles: true,
+      detail: { theme: themeName }
+    });
+    document.dispatchEvent(evt);
+  } catch (_) {}
+
+  // 2. Direct API call if Datastar is active on window
+  if (window.datastar) {
+    if (typeof window.datastar.mergeSignals === "function") {
+      try { window.datastar.mergeSignals({ theme: themeName }); } catch (_) {}
+    } else if (window.datastar.signals && typeof window.datastar.signals === "object") {
+      try { window.datastar.signals.theme = themeName; } catch (_) {}
+    }
+  }
+
+  // 3. Update DOM signal attributes for initial or bound elements
+  try {
+    const signalHolders = document.querySelectorAll("[data-signals]");
+    signalHolders.forEach((el) => {
+      if (el._dsSignals && typeof el._dsSignals === "object") {
+        el._dsSignals.theme = themeName;
+      }
+    });
+  } catch (_) {}
+}
+
 // Global browser window bindings
 if (typeof window !== "undefined") {
   window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
@@ -1113,6 +1220,9 @@ if (typeof window !== "undefined") {
   window.initMockjs = initMockjs;
   window.initShowdown = initShowdown;
   window.initFullCalendar = initFullCalendar;
+  window.rehydrateLucideIcons = rehydrateLucideIcons;
+  window.initDatastarObserver = initDatastarObserver;
+  window.syncDatastarTheme = syncDatastarTheme;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
@@ -1126,6 +1236,7 @@ if (typeof window !== "undefined") {
     try { initMockjs(); } catch (_) {}
     try { initFullCalendar(); } catch (_) {}
     try { initImpress(); } catch (_) {}
+    try { initDatastarObserver(); } catch (_) {}
 
     const palette = resolveDaisyUIThemePalette();
     try { await renderMermaidWithTheme(palette); } catch (_) {}
@@ -1166,6 +1277,9 @@ if (typeof module !== "undefined" && module.exports) {
     initImpress,
     initMockjs,
     initShowdown,
-    initFullCalendar
+    initFullCalendar,
+    rehydrateLucideIcons,
+    initDatastarObserver,
+    syncDatastarTheme
   };
 }

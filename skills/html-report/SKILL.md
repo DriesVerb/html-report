@@ -2,11 +2,11 @@
 name: html-report
 description: >-
   Generates publication-grade, interactive, and print-ready HTML5 reports with a
-  non-blocking 16-library CDN stack (Tailwind CSS, DaisyUI with all 32 themes
+  non-blocking 17-library CDN stack (Tailwind CSS, DaisyUI with all 32 themes
   defaulting to 'light', Lucide Icons, Alpine.js, Chart.js, Mermaid, Leaflet
   maps, Grid.js tables, KaTeX math, Marked markdown, Highlight.js code
   formatting, Day.js dates, Impress.js presentations, Mock.js data, Showdown
-  markdown, and FullCalendar schedules), a sticky DaisyUI navbar (left-aligned
+  markdown, FullCalendar schedules, and Datastar.js live hypermedia streaming), a sticky DaisyUI navbar (left-aligned
   report title, right-aligned Table of Contents dropdown mapping h1/h2/h3 IDs,
   DaisyUI color-swatch theme dropdown synced to charts/diagrams, and icon-only
   Download dropdown for HTML or PDF), @media print rules with a Page 1 Cover +
@@ -52,10 +52,14 @@ Before writing any HTML report, read the relevant reference guides in this skill
    - Dedicated gitignored vault at `.caller-requests/` holding persistent caller profiles (`profiles/<caller-id>.md`) and ephemeral run payloads (`runs/<caller-id>/<run-id>/`).
    - Zero-config auto-scaffolding, 10-run pruning, and non-destructive override hierarchy.
    - Default output routing: `./report-<caller-id>.html` and `./report-<caller-id>.pdf`.
-5. **[Deterministic FSM Harness & Remediation Architecture (`harness-architecture.md`)](./references/harness-architecture.md)** *(Architecture & small-model remediation)*:
+6. **[Deterministic FSM Harness & Remediation Architecture (`harness-architecture.md`)](./references/harness-architecture.md)** *(Architecture & small-model remediation)*:
    - Zero-dependency Node.js Finite State Machine lifecycle: `IDLE` &rarr; `VALIDATING` &rarr; `AUTO_FIXING` &rarr; `ASSEMBLING` &rarr; `VERIFYING` &rarr; `COMPLETED` / `REMEDIATING` / `FAILED`.
    - Mechanical auto-fixes (stripping outer wrappers, generating heading IDs, wrapping bare tables).
    - "Small Model First" prescriptive JSON error payloads with `instruction_for_agent` fields and bounded 3-attempt retries.
+7. **[Datastar.js Live Dashboards & Real-Time Hypermedia Architecture (`datastar-live-dashboards.md`)](./references/datastar-live-dashboards.md)** *(Real-time agent telemetry & live dashboards)*:
+   - Real-time SSE hypermedia streaming using `@starfederation/datastar@1.0.0-beta.9` ESM with zero npm dependencies.
+   - `TaskTelemetrySchema`, `SessionState`, `DatastarBridge`, and vendor-neutral LLM adapters for Google Antigravity (AGY) and OpenAI Codex.
+   - Active dev server SSE endpoint `/__datastar_stream__` with live fragment morphing and reactive `$theme` signal sync.
 
 ---
 
@@ -162,6 +166,12 @@ If you need to execute compilation and verification separately:
 # Assembly only:
 node skills/html-report/scripts/build-report.mjs --title "Report Title" --content report-fragment.html --output report.html --theme light
 
+# Assembly with real-time Datastar live hypermedia streaming:
+node skills/html-report/scripts/build-report.mjs --title "Live Agent Dashboard" --content report-fragment.html --live --output report.html
+
+# Dev server with live SSE stream & auto-reload:
+node skills/html-report/scripts/serve-report.mjs report.html --port 3000
+
 # Assembly with custom theme (JSON or CSS):
 node skills/html-report/scripts/build-report.mjs \
   --title "Brand Report" \
@@ -241,6 +251,20 @@ Reports support user-defined themes via:
    ```
 2. **Raw CSS Passthrough**: `[data-theme="acme"] { --p: 62.3% 0.188 259.8; ... }`.
 3. **In-Browser Top Collapsible Studio**: Expand the top accordion banner beneath the document title to customize colors in real-time with zero-dependency OKLCH monitors, live Chart.js/Mermaid reactivity, `localStorage` persistence, and one-click CSS & Tailwind export.
+
+### Datastar.js Real-Time Live Dashboards (`--live`)
+Reports support real-time hypermedia streaming and reactive signals via **Datastar.js**:
+1. **CLI Flag (`--live`, `-l`)**:
+   Enables the Datastar ESM bundle, sets `data-report-mode="live"`, and permits SSE stream ingestion without full-page reloads.
+   ```bash
+   node skills/html-report/scripts/build-report.mjs --title "Live Agent Dashboard" --content live-fragment.html --live --output live.html
+   ```
+2. **Server-Sent Events (SSE) Morphing**:
+   The dev server (`serve-report.mjs`) provides `/__datastar_stream__` for streaming `datastar-fragment` DOM morphs (using Idiomorph) and `datastar-merge-signals` updates.
+3. **Task & Session Telemetry Pipeline (`datastar-sse.mjs`)**:
+   Standardized `TaskTelemetrySchema`, `AgyTelemetryAdapter` (Google Antigravity transcripts), and `CodexTelemetryAdapter` (OpenAI reasoning & tool chunks) stream agent Chain-of-Thought, live task checklist cards (`#task-${id}`), and tool invocation cards (`#tool-call-feed`) in real time.
+4. **Post-Morph Icon Rehydration**:
+   `report-runtime.js` automatically observes DOM morphs with a `MutationObserver` and rehydrates `<i data-lucide="...">` tags into SVG icons.
 
 ### Step 3: Auto-Open & Single-Tab Live-Reload Dev Server
 Launch the local live-reload server to view and iterate on the report:
