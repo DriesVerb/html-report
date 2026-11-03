@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>html-report — 11-CDN Interactive Capabilities Showcase</title>
+  <meta name="referrer" content="no-referrer" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss:;" />
+  <title>html-report — 16-CDN Interactive Capabilities Showcase</title>
 
   <!-- Content-Aware Favicon Emoticon (SVG data URI matching report content) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>" />
 
   <!-- 1. Stylesheets (DaisyUI v4 full + all 32 themes, Leaflet, Highlight.js, Grid.js, KaTeX) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" integrity="sha384-iMbeRReqpIEp0z+cPe0FZxnbV/GbGyGjDfou8Rjcr6KSJIptc245QXNVjLMtu5TR" crossorigin="anonymous" />
   <!-- DaisyUI Custom Themes (Injected at build or runtime) -->
   <style id="daisyui-custom-themes"></style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
@@ -17,13 +19,14 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/theme/mermaid.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
 
-  <!-- 2. Tailwind CSS Play CDN -->
+  <!-- 2. Tailwind CSS Play CDN (No crossorigin to prevent Tailwind CORS warning) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- 3. Non-Blocking Feature Scripts (defer) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" crossorigin="anonymous"></script>
+  <!-- 3. Non-Blocking Feature Scripts (defer with Cryptographic SRI & Anonymous Cross-Origin) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" integrity="sha384-ieG+IKD0d/ZPXyCBTMVAbqsQdns8QGJR/e26WMw7M4fkaI/rHcS/YIoi+ah9WGge" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" integrity="sha384-iZD2X8o1Zdq0HR5H/7oa8W30WS4No+zWCKUPD7fHRay9I1Gf+C4F8sVmw7zec1wW" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/gridjs.umd.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
@@ -31,7 +34,15 @@
   <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js" crossorigin="anonymous"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/kotlin.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" crossorigin="anonymous"></script>
+
+  <!-- 4. Expanded Addons: Day.js, Impress.js, Mock.js, Showdown, FullCalendar -->
+  <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/plugin/relativeTime.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/plugin/customParseFormat.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/impress.js@1.1.0/js/impress.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mockjs@1.1.0/dist/mock.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" crossorigin="anonymous"></script>
 
   <style>
     :root {
@@ -226,7 +237,7 @@
       <!-- Left (navbar-start): Report Title -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate">
-          html-report — 11-CDN Interactive Capabilities Showcase
+          html-report — 16-CDN Interactive Capabilities Showcase
         </span>
       </div>
 
@@ -369,7 +380,7 @@
             <div class="badge badge-accent badge-outline font-mono text-xs">Deterministic FSM</div>
             <div class="badge badge-success badge-outline font-mono text-xs">&lt;100ms Build</div>
           </div>
-          <span class="text-xs opacity-70">11 Non-Blocking CDNs &bull; 32 DaisyUI Themes &bull; 5 Breakpoints Verified</span>
+          <span class="text-xs opacity-70">16 Non-Blocking CDNs &bull; 32 DaisyUI Themes &bull; 5 Breakpoints Verified</span>
         </div>
 
         <div>
@@ -410,7 +421,7 @@
           </div>
           <div class="bg-base-200/70 border border-base-300 rounded-box p-3 text-center">
             <div class="text-[10px] uppercase font-bold tracking-wider opacity-60">Design Suite</div>
-            <div class="text-lg sm:text-xl font-extrabold text-warning">32 &bull; 11</div>
+            <div class="text-lg sm:text-xl font-extrabold text-warning">32 &bull; 16</div>
             <div class="text-[10px] opacity-70 truncate">Themes &amp; CDNs</div>
           </div>
         </div>
@@ -470,7 +481,7 @@
               <li class="flex items-start gap-2">
                 <i data-lucide="palette" class="w-4 h-4 text-warning shrink-0 mt-0.5"></i>
                 <div>
-                  <strong>Publication-Grade 11-CDN Stack:</strong> Tailwind CSS, DaisyUI v4 (all 32 themes, default <code>light</code>), auto-mapping TOC navbar, 2D canvas OKLCH theme-synced charts, offline standalone HTML bundler (all CDNs inlined), and PDF export.
+                  <strong>Publication-Grade 16-CDN Stack:</strong> Tailwind CSS, DaisyUI v4 (all 32 themes, default <code>light</code>), auto-mapping TOC navbar, 2D canvas OKLCH theme-synced charts, offline standalone HTML bundler (all CDNs inlined), and PDF export.
                 </div>
               </li>
             </ul>
@@ -946,16 +957,16 @@ git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report &am
       </div>
     </section>
 
-    <!-- Section 1: Complete 11-CDN Stack Directory (All Cards Linkable to Their Live Examples) -->
+    <!-- Section 1: Complete 16-CDN Stack Directory (All Cards Linkable to Their Live Examples) -->
     <section class="space-y-4 break-inside-avoid">
       <h2 id="cdn-stack-directory" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
-        1. Integrated 11-CDN Stack Directory
+        1. Integrated 16-CDN Stack Directory
       </h2>
       <h3 id="cdn-catalog-cards" class="text-base sm:text-lg font-semibold opacity-85 scroll-mt-20">
         1.1 Click Any CDN to Jump to Its Live Showcase Section
       </h3>
 
-      <div id="cdn-directory-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div id="cdn-directory-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <a href="#showcase-tailwind-daisyui-lucide" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Tailwind CSS">
           <div class="flex items-center justify-between font-bold text-sm">
             <span class="flex items-center gap-2"><i data-lucide="layout-grid" class="w-4 h-4 text-primary"></i><span>Tailwind CSS</span></span>
@@ -1042,6 +1053,47 @@ git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report &am
             <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
           </div>
           <p class="text-xs opacity-75 mt-1">Syntax highlighting for TypeScript (Frontend) &amp; Kotlin (Backend) &rarr; Section 9</p>
+        </a>
+
+        <!-- Newly Supported Addons -->
+        <a href="#showcase-dayjs" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Day.js">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-primary"></i><span>Day.js</span></span>
+            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
+          </div>
+          <p class="text-xs opacity-75 mt-1">Lightweight date parsing, formatting &amp; relative time diffing &rarr; Section 11.1</p>
+        </a>
+
+        <a href="#showcase-impress" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Impress.js">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="flex items-center gap-2"><i data-lucide="presentation" class="w-4 h-4 text-warning"></i><span>Impress.js</span></span>
+            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
+          </div>
+          <p class="text-xs opacity-75 mt-1">Presentation mode guarded slides with print-safe fallback &rarr; Section 11.2</p>
+        </a>
+
+        <a href="#showcase-mockjs" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Mock.js">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="flex items-center gap-2"><i data-lucide="cpu" class="w-4 h-4 text-accent"></i><span>Mock.js</span></span>
+            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
+          </div>
+          <p class="text-xs opacity-75 mt-1">Synthetic data schemas &amp; client-side JSON simulation &rarr; Section 11.3</p>
+        </a>
+
+        <a href="#showcase-showdown" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Showdown">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="flex items-center gap-2"><i data-lucide="file-code" class="w-4 h-4 text-secondary"></i><span>Showdown</span></span>
+            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
+          </div>
+          <p class="text-xs opacity-75 mt-1">Live two-way Markdown compiler (co-existing with Marked) &rarr; Section 11.4</p>
+        </a>
+
+        <a href="#showcase-fullcalendar" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="FullCalendar">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-success"></i><span>FullCalendar</span></span>
+            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
+          </div>
+          <p class="text-xs opacity-75 mt-1">Interactive month/week/list schedules with theme sync &rarr; Section 11.5</p>
         </a>
       </div>
     </section>
@@ -1694,6 +1746,149 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. Expanded CDN Addons Showcase (Day.js, Impress.js, Mock.js, Showdown, FullCalendar) -->
+    <section class="space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-base-300 pb-2">
+        <h2 id="showcase-expanded-addons" class="text-xl sm:text-2xl font-bold flex items-center gap-2 scroll-mt-20">
+          <i data-lucide="package-plus" class="w-6 h-6 text-primary"></i>
+          11. Expanded CDN Addons (Day.js, Impress.js, Mock.js, Showdown, FullCalendar)
+        </h2>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-primary badge-sm font-mono">5 New Addons</span>
+          <span class="badge badge-accent badge-sm">On-Demand CDN</span>
+        </div>
+      </div>
+
+      <!-- 11.1 Day.js Live Formatting & Relative Time -->
+      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-dayjs">
+        <div class="card-body p-4 sm:p-6 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 id="dayjs-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
+              <i data-lucide="clock" class="w-5 h-5 text-primary"></i>
+              <span>11.1 Day.js Date Parsing &amp; Relative Time</span>
+            </h3>
+            <span class="badge badge-outline badge-primary text-xs">2kB Bundle</span>
+          </div>
+          <p class="text-xs opacity-80">
+            Immutable date operations via <code>[data-dayjs]</code> attributes without Moment.js overhead.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="p-3 rounded-box bg-base-200/60 border border-base-300">
+              <span class="text-2xs uppercase font-bold opacity-60">Current ISO Timestamp</span>
+              <div class="text-sm font-mono font-bold text-primary mt-1" data-dayjs="now" data-dayjs-format="YYYY-MM-DD HH:mm:ss"></div>
+            </div>
+            <div class="p-3 rounded-box bg-base-200/60 border border-base-300">
+              <span class="text-2xs uppercase font-bold opacity-60">Relative Release Time</span>
+              <div class="text-sm font-mono font-bold text-secondary mt-1" data-dayjs="2026-10-15" data-dayjs-from-now></div>
+            </div>
+            <div class="p-3 rounded-box bg-base-200/60 border border-base-300">
+              <span class="text-2xs uppercase font-bold opacity-60">Target Milestone</span>
+              <div class="text-sm font-mono font-bold text-accent mt-1" data-dayjs="2026-12-31" data-dayjs-format="dddd, MMMM D, YYYY"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11.2 Impress.js Presentation Guard & Print-Equivalent Treatment -->
+      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-impress" x-data="{ isPresentation: false }">
+        <div class="card-body p-4 sm:p-6 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 id="impress-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
+              <i data-lucide="presentation" class="w-5 h-5 text-warning"></i>
+              <span>11.2 Impress.js: Presentation Guard &amp; Print-Equivalent Static Fallback</span>
+            </h3>
+            <button
+              type="button"
+              @click="isPresentation = !isPresentation; document.documentElement.setAttribute('data-presentation', isPresentation ? 'true' : 'false')"
+              class="btn btn-xs sm:btn-sm btn-outline btn-warning gap-1"
+            >
+              <i data-lucide="monitor-play" class="w-3.5 h-3.5"></i>
+              <span x-text="isPresentation ? 'Exit Presentation Mode' : 'Simulate Presentation Mode'">Simulate Presentation Mode</span>
+            </button>
+          </div>
+          <div class="alert alert-warning/15 border border-warning/30 text-xs p-3">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-warning shrink-0"></i>
+            <div>
+              <strong>Presentation Guard Active:</strong> Impress.js receives the exact same treatment as a print by default. All <code>.step</code> slides remain static, stacked printable cards unless explicitly invoked via <code>--presentation</code> or <code>data-presentation="true"</code>, strictly preventing 3D viewport coordinate transforms from capturing report scrolling.
+            </div>
+          </div>
+          <div class="impress-wrapper border border-base-300 bg-base-200/40 p-4 rounded-box">
+            <div id="impress" class="space-y-3">
+              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="0" data-y="0">
+                <div class="text-xs uppercase font-bold text-primary">Slide 1: Executive Vision</div>
+                <div class="text-sm font-semibold mt-1">Autonomous Quality Engineering at Scale</div>
+                <p class="text-xs opacity-75 mt-0.5">Continuous verification across 5 responsive breakpoints with 100% test reliability.</p>
+              </div>
+              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="500" data-y="0">
+                <div class="text-xs uppercase font-bold text-secondary">Slide 2: Deterministic Harness</div>
+                <div class="text-sm font-semibold mt-1">Zero-Dependency Finite State Machine</div>
+                <p class="text-xs opacity-75 mt-0.5">Automated heading repair, bare table isolation, and badge multi-line safeguard.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11.3 Mock.js Client-Side Synthetic Generation -->
+      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-mockjs">
+        <div class="card-body p-4 sm:p-6 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 id="mockjs-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
+              <i data-lucide="cpu" class="w-5 h-5 text-accent"></i>
+              <span>11.3 Mock.js Client-Side Synthetic Data Engine</span>
+            </h3>
+            <span class="badge badge-outline badge-accent text-xs">Offline Simulation</span>
+          </div>
+          <p class="text-xs opacity-80">
+            Generate realistic synthetic profiles, load metrics, and random arrays client-side without backend dependencies via <code>Mock.mock(...)</code>.
+          </p>
+          <div class="rounded-box border border-base-300 bg-base-200 p-3">
+            <pre class="text-xs font-mono m-0 overflow-x-auto" data-mock='{"services|3":[{"id|+1":101,"name":"@word(4,8)-cluster","region|1":["eu-west-1","us-east-1","ap-northeast-1"],"p99_latency":"@integer(12,45) ms","healthy":true}]}'></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11.4 Showdown Live Markdown Conversion -->
+      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-showdown">
+        <div class="card-body p-4 sm:p-6 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 id="showdown-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
+              <i data-lucide="file-code" class="w-5 h-5 text-secondary"></i>
+              <span>11.4 Showdown Converter (Co-existing with Marked)</span>
+            </h3>
+            <span class="badge badge-outline badge-secondary text-xs">Two-Way Markdown</span>
+          </div>
+          <p class="text-xs opacity-80">
+            Showdown compiles markdown tables, strikethrough, and GitHub tasklists alongside Marked with zero namespace collision.
+          </p>
+          <div class="p-4 rounded-box bg-base-200/50 border border-base-300" data-showdown="#### Architectural Milestone&#10;- [x] Day.js timestamp hydration&#10;- [x] Impress presentation guard&#10;- [x] FullCalendar DaisyUI theme syncing"></div>
+        </div>
+      </div>
+
+      <!-- 11.5 FullCalendar 6 Interactive Schedule -->
+      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-fullcalendar">
+        <div class="card-body p-4 sm:p-6 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 id="fullcalendar-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
+              <i data-lucide="calendar" class="w-5 h-5 text-success"></i>
+              <span>11.5 FullCalendar 6 Scheduling Grid &amp; Theme Palette Sync</span>
+            </h3>
+            <span class="badge badge-outline badge-success text-xs">FullCalendar 6</span>
+          </div>
+          <p class="text-xs opacity-80">
+            Interactive month, week, and list views dynamically synced with active DaisyUI theme border and button colors.
+          </p>
+          <div
+            id="calendar"
+            data-fullcalendar="true"
+            data-calendar-view="dayGridMonth"
+            data-calendar-events='[{"title":"CDN Expansion Kickoff","start":"2026-11-01","color":"#3b82f6"},{"title":"Playwright Regression Pass","start":"2026-11-03","color":"#10b981"},{"title":"Final Release Verification","start":"2026-11-05","color":"#ec4899"}]'
+            class="rounded-box border border-base-300 bg-base-100 p-2 sm:p-3"
+          ></div>
         </div>
       </div>
     </section>
@@ -2507,6 +2702,14 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
       applyThemeToGridAndCss(palette);
       applyThemeToCharts(palette);
       await renderMermaidWithTheme(palette);
+
+      if (typeof window !== "undefined") {
+        document.querySelectorAll("[data-fullcalendar]").forEach((el) => {
+          if (el.__fullcalendarInstance) {
+            try { el.__fullcalendarInstance.render(); } catch (_) {}
+          }
+        });
+      }
     };
 
     // Build DaisyUI Theme Dropdown with Color-Scheme Swatches (matching daisyui.com; default is always light)
@@ -2997,7 +3200,12 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
             ["Grid.js", "Interactive Tables", "defer UMD", "Dark/Light Vars", "Verified"],
             ["KaTeX", "Math Typesetting", "defer UMD", "currentColor", "Verified"],
             ["Marked", "Markdown Parser", "defer UMD", "Prose Tokens", "Verified"],
-            ["Highlight.js", "TS & Kotlin Code", "defer UMD", "Syntax Theme", "Verified"]
+            ["Highlight.js", "TS & Kotlin Code", "defer UMD", "Syntax Theme", "Verified"],
+            ["Day.js", "Date Parsing & Relative Time", "defer UMD", "2kB Bundle", "Verified"],
+            ["Impress.js", "3D Presentation Guard", "Static Fallback", "Print-Safe", "Verified"],
+            ["Mock.js", "Client Synthetic Engine", "defer UMD", "Offline Schema", "Verified"],
+            ["Showdown", "Two-Way Markdown Parser", "defer UMD", "Marked Safe", "Verified"],
+            ["FullCalendar", "Interactive Scheduling", "defer UMD", "DaisyUI Synced", "Verified"]
           ]
         }).render(target);
       }
@@ -3043,6 +3251,106 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
     function initCodeHighlight() {
       if (!window.hljs) return;
       window.hljs.highlightAll();
+    }
+
+    // 13. Initialize Day.js (Date formatting & relative time)
+    function initDayjs() {
+      if (!window.dayjs) return;
+      try {
+        if (window.dayjs_plugin_relativeTime) window.dayjs.extend(window.dayjs_plugin_relativeTime);
+        if (window.dayjs_plugin_customParseFormat) window.dayjs.extend(window.dayjs_plugin_customParseFormat);
+      } catch (err) {
+        console.warn("[html-report] Day.js plugin registration notice:", err);
+      }
+
+      try {
+        const nodes = document.querySelectorAll("[data-dayjs]");
+        nodes.forEach((node) => {
+          const raw = node.getAttribute("data-dayjs");
+          const fmt = node.getAttribute("data-dayjs-format") || "YYYY-MM-DD HH:mm:ss";
+          const isFromNow = node.hasAttribute("data-dayjs-from-now");
+          const d = raw === "now" || !raw ? window.dayjs() : window.dayjs(raw);
+          if (!d.isValid()) return;
+          node.textContent = isFromNow && typeof d.fromNow === "function" ? d.fromNow() : d.format(fmt);
+        });
+      } catch (err) {
+        console.warn("[html-report] Day.js DOM hydration notice:", err);
+      }
+    }
+
+    // 14. Initialize Mock.js (Client-side synthetic data simulation)
+    function initMockjs() {
+      if (!window.Mock) return;
+      try {
+        const nodes = document.querySelectorAll("[data-mock]");
+        nodes.forEach((node) => {
+          const raw = node.getAttribute("data-mock");
+          if (!raw) return;
+          try {
+            const schema = JSON.parse(raw);
+            const data = window.Mock.mock(schema);
+            node.textContent = JSON.stringify(data, null, 2);
+          } catch (_) {
+            const data = window.Mock.mock(raw);
+            node.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+          }
+        });
+      } catch (err) {
+        console.warn("[html-report] Mock.js hydration notice:", err);
+      }
+    }
+
+    // 15. Initialize Showdown (Two-way markdown compilation)
+    function initShowdown() {
+      if (!window.showdown) return;
+      try {
+        const converter = new window.showdown.Converter({
+          tables: true,
+          strikethrough: true,
+          tasklists: true,
+          simpleLineBreaks: true
+        });
+        const nodes = document.querySelectorAll("[data-showdown]");
+        nodes.forEach((node) => {
+          const raw = node.getAttribute("data-showdown");
+          if (!raw) return;
+          node.innerHTML = converter.makeHtml(raw);
+        });
+      } catch (err) {
+        console.warn("[html-report] Showdown markdown rendering notice:", err);
+      }
+    }
+
+    // 16. Initialize FullCalendar (Interactive scheduling & theme synchronization)
+    function initFullCalendar() {
+      if (!window.FullCalendar) return;
+      try {
+        const nodes = document.querySelectorAll("[data-fullcalendar]");
+        nodes.forEach((el) => {
+          if (el.__fullcalendarInstance) return;
+          const eventsAttr = el.getAttribute("data-calendar-events");
+          let events = [];
+          if (eventsAttr) {
+            try {
+              events = JSON.parse(eventsAttr);
+            } catch (_) {}
+          }
+          const calendar = new window.FullCalendar.Calendar(el, {
+            initialView: el.getAttribute("data-calendar-view") || "dayGridMonth",
+            headerToolbar: {
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,listWeek"
+            },
+            height: "auto",
+            events
+          });
+          calendar.render();
+          el.__fullcalendarInstance = calendar;
+        });
+      } catch (err) {
+        console.warn("[html-report] FullCalendar initialization notice:", err);
+      }
     }
 
     // 13. Horizontal Scrollbar -> Insufficient Space Detector
@@ -3208,6 +3516,10 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
       try { initKaTeX(); } catch (e) { console.error("KaTeX init error:", e); }
       try { initGridJs(); } catch (e) { console.error("Grid.js init error:", e); }
       try { initCodeHighlight(); } catch (e) { console.error("Highlight init error:", e); }
+      try { initDayjs(); } catch (e) { console.error("Day.js init error:", e); }
+      try { initMockjs(); } catch (e) { console.error("Mock.js init error:", e); }
+      try { initShowdown(); } catch (e) { console.error("Showdown init error:", e); }
+      try { initFullCalendar(); } catch (e) { console.error("FullCalendar init error:", e); }
 
       const palette = window.resolveDaisyUIThemePalette();
       try { applyThemeToGridAndCss(palette); } catch (e) { console.error("Grid theme sync error:", e); }

@@ -293,7 +293,7 @@ addons: [charts]
       assert.ok(html.includes("dayjs@1.11.13"));
       assert.ok(html.includes("mockjs@1.1.0"));
       assert.ok(html.includes("showdown@2.1.0"));
-      assert.ok(html.includes("impress.js@2.0.0"));
+      assert.ok(html.includes("impress.js@1.1.0"));
       assert.ok(html.includes('data-presentation="true"'));
     });
 

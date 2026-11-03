@@ -1,0 +1,209 @@
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+  <!-- JOURNEY PHASE STEPPER & HEADER -->
+  <header class="card bg-base-100 shadow-xl border border-base-300 overflow-hidden">
+    <div class="card-body p-6 sm:p-8 space-y-6">
+      
+      <!-- TOP STATUS BAR -->
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-4 w-full">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="badge badge-primary font-mono text-xs font-semibold uppercase tracking-wider">OpenSpec Change</span>
+            <span class="badge badge-outline font-mono text-xs">cdn-readme-ghpages-showcase</span>
+          </div>
+          <h1 id="executive-summary" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-base-content scroll-mt-20">
+            CDN Documentation, GitHub Pages Parity & Showcase Upgrade
+          </h1>
+          <p class="text-base text-base-content/70 mt-2 max-w-3xl leading-relaxed">
+            Synchronizing the public GitHub Pages landing showcase (<code>index.html</code>) with all 16 modular CDN libraries, elevating <code>README.md</code> with direct demo links and cryptographic SRI/CSP specifications, and harmonizing reference examples across the repository.
+          </p>
+        </div>
+        
+        <div class="shrink-0 flex items-center gap-2">
+          <div class="badge badge-success badge-lg font-mono font-bold gap-1.5 py-4 px-4 shadow-sm">
+            <i data-lucide="check-check" class="w-4 h-4"></i>
+            Phase: Completed & Verified (144 Tests)
+          </div>
+        </div>
+      </div>
+
+      <!-- JOURNEY STEPPER (RULE MANDATE: HORIZONTAL WITH CLEAN DATA-CONTENT) -->
+      <div class="w-full pt-4 border-t border-base-200 overflow-x-auto">
+        <ul class="steps steps-horizontal w-full min-w-[540px] text-xs font-semibold">
+          <li class="step step-primary font-medium" data-content="✓">1. Brainstorming</li>
+          <li class="step step-primary font-medium" data-content="✓">2. Planning</li>
+          <li class="step step-primary font-medium" data-content="✓">3. Implementing</li>
+          <li class="step step-primary font-medium" data-content="✓">4. Verifying</li>
+          <li class="step step-primary font-bold text-success" data-content="★">5. Shipped</li>
+        </ul>
+      </div>
+
+      <!-- DIRECT ARTIFACT BACKLINKS -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+        <a href="proposal.md" class="card bg-base-200/60 hover:bg-base-200 border border-base-300 transition p-3.5 flex flex-row items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="file-text" class="w-4 h-4 text-primary"></i>
+            <div>
+              <div class="text-xs font-bold text-base-content">proposal.md</div>
+              <div class="text-2xs text-base-content/60">Vision & Parity Goals</div>
+            </div>
+          </div>
+          <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-60"></i>
+        </a>
+
+        <a href="design.md" class="card bg-base-200/60 hover:bg-base-200 border border-base-300 transition p-3.5 flex flex-row items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="layers" class="w-4 h-4 text-secondary"></i>
+            <div>
+              <div class="text-xs font-bold text-base-content">design.md</div>
+              <div class="text-2xs text-base-content/60">Architecture & SRI Specs</div>
+            </div>
+          </div>
+          <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-60"></i>
+        </a>
+
+        <a href="tasks.md" class="card bg-base-200/60 hover:bg-base-200 border border-base-300 transition p-3.5 flex flex-row items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="check-square" class="w-4 h-4 text-accent"></i>
+            <div>
+              <div class="text-xs font-bold text-base-content">tasks.md</div>
+              <div class="text-2xs text-base-content/60">5 Numbered Execution Phases (100% Done)</div>
+            </div>
+          </div>
+          <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-60"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- LIVE PROGRESS METRICS & KPI CARDS -->
+  <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="card bg-base-100 border border-base-300 p-4 shadow-sm">
+      <div class="text-xs font-mono uppercase text-base-content/60 font-semibold">Total CDN Libraries</div>
+      <div class="text-2xl sm:text-3xl font-extrabold text-primary mt-1">16</div>
+      <div class="text-2xs text-base-content/60 mt-1">4 Core + 12 On-Demand</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 shadow-sm">
+      <div class="text-xs font-mono uppercase text-base-content/60 font-semibold">Security Layers</div>
+      <div class="text-2xl sm:text-3xl font-extrabold text-success mt-1">3</div>
+      <div class="text-2xs text-base-content/60 mt-1">SRI · CSP · No-Referrer</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 shadow-sm">
+      <div class="text-xs font-mono uppercase text-base-content/60 font-semibold">Unit & Integration Tests</div>
+      <div class="text-2xl sm:text-3xl font-extrabold text-accent mt-1">144</div>
+      <div class="text-2xs text-base-content/60 mt-1">100% Pass Rate (~2s)</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 shadow-sm">
+      <div class="text-xs font-mono uppercase text-base-content/60 font-semibold">GitHub Pages Parity</div>
+      <div class="text-2xl sm:text-3xl font-extrabold text-info mt-1">100%</div>
+      <div class="text-2xs text-base-content/60 mt-1">Section 11 + 16 Addons</div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE & SYNC FLOW DIAGRAM -->
+  <section class="card bg-base-100 shadow-xl border border-base-300 p-6 sm:p-8 space-y-4">
+    <div class="flex items-center justify-between border-b border-base-200 pb-3">
+      <h2 id="sync-architecture" class="text-xl sm:text-2xl font-bold flex items-center gap-2 scroll-mt-20">
+        <i data-lucide="git-merge" class="w-6 h-6 text-primary"></i>
+        <span>Architecture & Artifact Synchronization Flow</span>
+      </h2>
+      <span class="badge badge-success font-mono text-xs">Verified & Shipped</span>
+    </div>
+
+    <div class="mermaid">
+flowchart LR
+    A["16-CDN Power Stack<br/>Core 4 + 12 Addons"] --> B["README.md<br/>Top Demo Link &amp; SRI Specs"]
+    A --> C["GitHub Pages (index.html)<br/>16-CDN Interactive Showcase"]
+    A --> D["Reference Example<br/>example.html Fragment"]
+    
+    B --> E["Automated Verification<br/>144 Node Tests + Playwright"]
+    C --> E
+    D --> E
+    
+    E --> F["Git Archive &amp; Push<br/>origin/main"]
+    
+    style A fill:#2563eb,stroke:#1d4ed8,color:#fff
+    style B fill:#3b82f6,stroke:#2563eb,color:#fff
+    style C fill:#10b981,stroke:#059669,color:#fff
+    style D fill:#8b5cf6,stroke:#7c3aed,color:#fff
+    style E fill:#f59e0b,stroke:#d97706,color:#fff
+    style F fill:#16a34a,stroke:#15803d,color:#fff
+    </div>
+  </section>
+
+  <!-- CONNECTED TASK CHECKLIST -->
+  <section class="card bg-base-100 shadow-xl border border-base-300 p-6 sm:p-8 space-y-4">
+    <div class="flex items-center justify-between border-b border-base-200 pb-3">
+      <h2 id="task-checklist" class="text-xl sm:text-2xl font-bold flex items-center gap-2 scroll-mt-20">
+        <i data-lucide="list-checks" class="w-6 h-6 text-success"></i>
+        <span>Implementation Roadmap &amp; Progress (100% Completed)</span>
+      </h2>
+      <span class="badge badge-success font-mono text-xs">16 / 16 Tasks Done</span>
+    </div>
+
+    <div class="space-y-4">
+      <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
+        <div class="font-bold text-sm text-primary flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
+          <span>Phase 1: README.md Updates</span>
+        </div>
+        <ul class="text-xs space-y-1.5 opacity-90 pl-6 list-disc">
+          <li>✓ 1.1 Add prominent GitHub Pages link and badge (https://driesverb.github.io/html-report/) at top</li>
+          <li>✓ 1.2 Update CDN stack documentation to 16 libraries (Day.js, Impress.js, Mock.js, Showdown, FullCalendar)</li>
+          <li>✓ 1.3 Add Cryptographic Security (SRI, CSP, and No-Referrer) section</li>
+          <li>✓ 1.4 Update test metrics (144 tests passing in ~2s) and fix stale 11-CDN references</li>
+        </ul>
+      </div>
+
+      <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
+        <div class="font-bold text-sm text-secondary flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
+          <span>Phase 2: Reference Example (example.html) Parity</span>
+        </div>
+        <ul class="text-xs space-y-1.5 opacity-90 pl-6 list-disc">
+          <li>✓ 2.1 Verify skills/html-report/examples/example.html contains all 16 CDN showcase sections</li>
+          <li>✓ 2.2 Verify interactive initializers for Chart.js, Leaflet, Grid.js, KaTeX, Marked, Highlight.js, and CSV dashboard</li>
+        </ul>
+      </div>
+
+      <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
+        <div class="font-bold text-sm text-accent flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
+          <span>Phase 3: GitHub Pages (index.html) Upgrade</span>
+        </div>
+        <ul class="text-xs space-y-1.5 opacity-90 pl-6 list-disc">
+          <li>✓ 3.1 Update index.html head with new CDN scripts, stylesheets, SRI hashes, CSP, and no-referrer</li>
+          <li>✓ 3.2 Update index.html titles and Section 1 CDN directory grid to 16 cards (4-column layout)</li>
+          <li>✓ 3.3 Add Section 11 (Day.js, Impress.js, Mock.js, Showdown, FullCalendar) to index.html</li>
+          <li>✓ 3.4 Wire runtime initializers in index.html for Day.js, Mock.js, Showdown, FullCalendar, and theme sync</li>
+          <li>✓ 3.5 Update Grid.js benchmark table to list all 16 libraries</li>
+        </ul>
+      </div>
+
+      <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
+        <div class="font-bold text-sm text-warning flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
+          <span>Phase 4: Verification & Integrity Testing</span>
+        </div>
+        <ul class="text-xs space-y-1.5 opacity-90 pl-6 list-disc">
+          <li>✓ 4.1 Run unit and integration test suite (node --test tests/*.test.mjs - 144 passing)</li>
+          <li>✓ 4.2 Verify index.html and example.html in headless Chromium with zero console errors</li>
+          <li>✓ 4.3 Verify responsive behavior across all 5 breakpoints</li>
+        </ul>
+      </div>
+
+      <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
+        <div class="font-bold text-sm text-success flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
+          <span>Phase 5: Journey State, Archive & Git Sync</span>
+        </div>
+        <ul class="text-xs space-y-1.5 opacity-90 pl-6 list-disc">
+          <li>✓ 5.1 Build companion index.html and sync with implementation-progress.html</li>
+          <li>✓ 5.2 Archive change to openspec/changes/archive/2026-11-03-cdn-readme-ghpages-showcase</li>
+          <li>✓ 5.3 Commit all changes and push to origin/main</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>

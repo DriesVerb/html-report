@@ -1555,4 +1555,379 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
           }
         };
       };
+
+      // Fragment-Level Initializers for example.html Interactive Showcases
+      window.parseCsvText = function parseCsvText(rawText) {
+        const lines = (rawText || "").trim().split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+        if (!lines.length) return { headers: [], rows: [] };
+        const headers = lines[0].split(",").map((h) => h.trim());
+        const rows = lines.slice(1).map((line) => {
+          const values = line.split(",").map((v) => v.trim());
+          const obj = {};
+          headers.forEach((h, i) => { obj[h] = values[i] ?? ""; });
+          return { values, obj };
+        });
+        return { headers, rows };
+      };
+
+      window.updateCsvChart = function updateCsvChart(filteredRows, isLoaded) {
+        if (!window.Chart) return;
+        const canvas = document.getElementById("csvChart");
+        if (!canvas) return;
+        if (!isLoaded) {
+          if (window.csvChartInstance) {
+            window.reportCharts = (window.reportCharts || []).filter((c) => c !== window.csvChartInstance);
+            window.csvChartInstance.destroy();
+            window.csvChartInstance = null;
+          }
+          return;
+        }
+        const palette = typeof window.resolveDaisyUIThemePalette === "function"
+          ? window.resolveDaisyUIThemePalette()
+          : { primary: { hex: "#3b82f6", rgba: (a) => `rgba(59, 130, 246, ${a})` }, secondary: { hex: "#ec4899", rgba: (a) => `rgba(236, 72, 153, ${a})` }, content: { hex: "#111827", rgba: (a) => `rgba(17, 24, 39, ${a})` } };
+        const rows = filteredRows || [];
+        const labels = rows.map((r) => r.obj?.service || r.values?.[1] || r.values?.[0] || "Row");
+        const rpsData = rows.map((r) => parseFloat(r.obj?.rps ?? r.values?.[3] ?? "0") || 0);
+        const latencyData = rows.map((r) => parseFloat(r.obj?.latency_ms ?? r.values?.[4] ?? "0") || 0);
+
+        if (window.csvChartInstance) {
+          window.csvChartInstance.data.labels = labels;
+          window.csvChartInstance.data.datasets[0].data = rpsData;
+          window.csvChartInstance.data.datasets[1].data = latencyData;
+          window.csvChartInstance.update("none");
+          return;
+        }
+
+        const chart = new window.Chart(canvas, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              {
+                type: "bar",
+                label: "Throughput (RPS)",
+                data: rpsData,
+                backgroundColor: palette.primary.rgba(0.82),
+                borderColor: palette.primary.hex,
+                borderWidth: 1.5,
+                borderRadius: 6
+              },
+              {
+                type: "line",
+                label: "Latency (ms)",
+                data: latencyData,
+                borderColor: palette.secondary.hex,
+                backgroundColor: palette.secondary.rgba(0.2),
+                pointBackgroundColor: palette.secondary.hex,
+                tension: 0.35,
+                fill: true
+              }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+        window.csvChartInstance = chart;
+        window.reportCharts = window.reportCharts || [];
+        if (!window.reportCharts.includes(chart)) window.reportCharts.push(chart);
+      };
+
+      window.updateCsvGridTable = function updateCsvGridTable(filteredRows, headers) {
+        if (!window.gridjs) return;
+        const target = document.getElementById("csv-gridjs-table");
+        if (!target) return;
+        if (!headers || !headers.length) {
+          target.innerHTML = "";
+          window.csvGridInstance = null;
+          return;
+        }
+        const dataMatrix = (filteredRows || []).map((r) => (Array.isArray(r) ? r : r.values));
+        target.innerHTML = "";
+        const mountNode = document.createElement("div");
+        target.appendChild(mountNode);
+        window.csvGridInstance = new window.gridjs.Grid({
+          columns: headers,
+          autoWidth: false,
+          sort: true,
+          pagination: { limit: 5 },
+          data: dataMatrix
+        }).render(mountNode);
+      };
+
+      window.csvReportController = function csvReportController() {
+        return {
+          csvLoaded: false,
+          csvFileName: "example.csv",
+          rawCsvText: "",
+          headers: [],
+          allRows: [],
+          filteredRows: [],
+          availableRegions: [],
+          searchQuery: "",
+          regionFilter: "All",
+          statusFilter: "All",
+          minRps: 0,
+          maxLatency: 60,
+          showRawCsv: false,
+          totalRps: "0",
+          avgLatency: "0.0",
+          activeSummary: "No CSV loaded",
+
+          initCsvSection() { this.clearCsv(); },
+          loadExampleCsv() {
+            const embeddedEl = document.getElementById("embedded-csv-data");
+            const defaultName = embeddedEl?.getAttribute("data-csv-filename") || "example.csv";
+            const defaultText = embeddedEl ? embeddedEl.textContent.trim() : "";
+            this.loadFromRawText(defaultText, defaultName);
+          },
+          loadFromRawText(csvText, fileName) {
+            this.csvFileName = fileName || "example.csv";
+            this.rawCsvText = (csvText || "").trim();
+            const parsed = window.parseCsvText(this.rawCsvText);
+            this.headers = parsed.headers;
+            this.allRows = parsed.rows;
+            this.availableRegions = Array.from(new Set(parsed.rows.map((r) => r.obj.region).filter(Boolean)));
+            this.csvLoaded = this.headers.length > 0;
+            this.searchQuery = "";
+            this.regionFilter = "All";
+            this.statusFilter = "All";
+            this.minRps = 0;
+            this.maxLatency = 60;
+            this.applyCsvFilters();
+          },
+          clearCsv() {
+            this.csvLoaded = false;
+            this.csvFileName = "example.csv";
+            this.rawCsvText = "";
+            this.headers = [];
+            this.allRows = [];
+            this.filteredRows = [];
+            this.availableRegions = [];
+            this.searchQuery = "";
+            this.regionFilter = "All";
+            this.statusFilter = "All";
+            this.minRps = 0;
+            this.maxLatency = 60;
+            this.showRawCsv = false;
+            this.totalRps = "0";
+            this.avgLatency = "0.0";
+            this.activeSummary = "No CSV loaded";
+            const fileInput = document.getElementById("csv-file-input");
+            if (fileInput) fileInput.value = "";
+            window.updateCsvGridTable([], []);
+            window.updateCsvChart([], false);
+          },
+          applyCsvFilters() {
+            if (!this.csvLoaded) {
+              window.updateCsvGridTable([], []);
+              window.updateCsvChart([], false);
+              return;
+            }
+            const q = (this.searchQuery || "").toLowerCase().trim();
+            this.filteredRows = this.allRows.filter((row) => {
+              const matchesQuery = !q || row.values.some((val) => String(val).toLowerCase().includes(q));
+              const rowRegion = String(row.obj.region || "");
+              const matchesRegion = this.regionFilter === "All" || rowRegion === this.regionFilter;
+              const rowStatus = String(row.obj.status || "").toLowerCase();
+              const matchesStatus = this.statusFilter === "All" || rowStatus === this.statusFilter.toLowerCase();
+              const rpsNum = parseFloat(row.obj.rps || "0") || 0;
+              const matchesRps = rpsNum >= (Number(this.minRps) || 0);
+              const latNum = parseFloat(row.obj.latency_ms || "0") || 0;
+              const matchesLat = latNum <= (Number(this.maxLatency) || 60);
+              return matchesQuery && matchesRegion && matchesStatus && matchesRps && matchesLat;
+            });
+            const rpsSum = this.filteredRows.reduce((acc, r) => acc + (parseFloat(r.obj.rps || "0") || 0), 0);
+            const latSum = this.filteredRows.reduce((acc, r) => acc + (parseFloat(r.obj.latency_ms || "0") || 0), 0);
+            this.totalRps = rpsSum.toLocaleString("en-US");
+            this.avgLatency = this.filteredRows.length ? (latSum / this.filteredRows.length).toFixed(1) : "0.0";
+            this.activeSummary = `File: ${this.csvFileName} | Region: ${this.regionFilter} | Status: ${this.statusFilter} | RPS>=${this.minRps} | Lat<=${this.maxLatency}ms | Query: ${q || "none"}`;
+            window.updateCsvGridTable(this.filteredRows, this.headers);
+            window.updateCsvChart(this.filteredRows, true);
+          },
+          setStatusFilter(status) { this.statusFilter = status; this.applyCsvFilters(); },
+          resetCsvFilters() {
+            this.searchQuery = "";
+            this.regionFilter = "All";
+            this.statusFilter = "All";
+            this.minRps = 0;
+            this.maxLatency = 60;
+            this.applyCsvFilters();
+          },
+          loadCsvFile(event) {
+            const file = event?.target?.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const text = String(e.target?.result || "");
+              this.loadFromRawText(text, file.name);
+            };
+            reader.readAsText(file);
+          }
+        };
+      };
+
+      function initExampleShowcase() {
+        const palette = typeof window.resolveDaisyUIThemePalette === "function"
+          ? window.resolveDaisyUIThemePalette()
+          : {
+              primary: { hex: "#3b82f6", rgba: (a) => `rgba(59, 130, 246, ${a})` },
+              secondary: { hex: "#ec4899", rgba: (a) => `rgba(236, 72, 153, ${a})` },
+              accent: { hex: "#10b981", rgba: (a) => `rgba(16, 185, 129, ${a})` },
+              content: { hex: "#111827", rgba: (a) => `rgba(17, 24, 39, ${a})` },
+              info: { hex: "#0284c7", rgba: (a) => `rgba(2, 132, 199, ${a})` }
+            };
+
+        // Charts
+        if (window.Chart && document.getElementById("revenueChart") && !document.getElementById("revenueChart").__initialized) {
+          const revCtx = document.getElementById("revenueChart");
+          revCtx.__initialized = true;
+          const revChart = new window.Chart(revCtx, {
+            type: "bar",
+            data: {
+              labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+              datasets: [
+                {
+                  type: "bar",
+                  label: "Throughput (req/s)",
+                  data: [48.2, 54.6, 63.1, 72.4, 83.0, 95.8, 112.4, 134.6],
+                  backgroundColor: palette.primary.rgba(0.82),
+                  borderColor: palette.primary.hex,
+                  borderWidth: 1.5,
+                  borderRadius: 6
+                },
+                {
+                  type: "line",
+                  label: "Baseline Latency (ms)",
+                  data: [42.1, 39.8, 37.4, 35.9, 33.5, 31.2, 29.0, 26.8],
+                  borderColor: palette.secondary.hex,
+                  backgroundColor: palette.secondary.rgba(0.2),
+                  pointBackgroundColor: palette.secondary.hex,
+                  tension: 0.35,
+                  fill: true
+                }
+              ]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+          window.reportCharts = window.reportCharts || [];
+          window.reportCharts.push(revChart);
+        }
+
+        if (window.Chart && document.getElementById("workloadChart") && !document.getElementById("workloadChart").__initialized) {
+          const workCtx = document.getElementById("workloadChart");
+          workCtx.__initialized = true;
+          const workChart = new window.Chart(workCtx, {
+            type: "bar",
+            data: {
+              labels: ["sm (640)", "md (768)", "lg (1024)", "xl (1280)", "2xl (1536)"],
+              datasets: [
+                {
+                  label: "Container Width (px)",
+                  data: [608, 720, 960, 1216, 1280],
+                  backgroundColor: palette.accent.rgba(0.82),
+                  borderColor: palette.accent.hex,
+                  borderWidth: 1.5,
+                  borderRadius: 6
+                }
+              ]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+          window.reportCharts = window.reportCharts || [];
+          window.reportCharts.push(workChart);
+        }
+
+        // Leaflet
+        if (window.L && document.getElementById("datacenterMap") && !document.getElementById("datacenterMap").__initialized) {
+          const mapContainer = document.getElementById("datacenterMap");
+          mapContainer.__initialized = true;
+          const map = window.L.map(mapContainer, { scrollWheelZoom: false }).setView([34.0, 15.0], 2);
+          window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+            maxZoom: 18,
+            attribution: "Tiles &copy; Esri"
+          }).addTo(map);
+
+          const hubs = [
+            { name: "Amsterdam Edge Node", coords: [52.3676, 4.9041], status: "Active" },
+            { name: "Frankfurt Core Node", coords: [50.1109, 8.6821], status: "Active" },
+            { name: "Ashburn US-East Node", coords: [39.0438, -77.4874], status: "Active" },
+            { name: "Tokyo AP-East Node", coords: [35.6762, 139.6503], status: "Active" }
+          ];
+
+          hubs.forEach((hub) => {
+            window.L.circleMarker(hub.coords, {
+              radius: 8,
+              fillColor: "#2563eb",
+              color: "#ffffff",
+              weight: 2,
+              opacity: 1,
+              fillOpacity: 0.9
+            }).addTo(map).bindPopup(`<strong>${hub.name}</strong><br/>Status: ${hub.status}`);
+          });
+
+          window.reportLeafletMap = map;
+          setTimeout(() => map.invalidateSize(), 250);
+        }
+
+        // Grid.js
+        if (window.gridjs && document.getElementById("gridjs-benchmark-table") && !document.getElementById("gridjs-benchmark-table").__initialized) {
+          const target = document.getElementById("gridjs-benchmark-table");
+          target.__initialized = true;
+          target.innerHTML = "";
+          new window.gridjs.Grid({
+            columns: ["Library", "Category", "Loading", "Theme Sync", "Status"],
+            autoWidth: false,
+            search: true,
+            sort: true,
+            pagination: { limit: 5 },
+            data: [
+              ["Tailwind CSS", "Utility Layout", "Non-Blocking", "CSS Tokens", "Verified"],
+              ["DaisyUI", "Components & 32 Themes", "Stylesheet", "Native", "Verified"],
+              ["Lucide Icons", "SVG Vector Icons", "defer UMD", "currentColor", "Verified"],
+              ["Alpine.js", "Reactive State", "defer CDN", "Native DOM", "Verified"],
+              ["Chart.js", "Canvas Charts", "defer UMD", "Dynamic Palette", "Verified"],
+              ["Mermaid", "SVG Diagrams", "defer UMD", "themeVariables", "Verified"],
+              ["Leaflet", "Geospatial Maps", "defer UMD", "Esri Tiles", "Verified"],
+              ["Grid.js", "Interactive Tables", "defer UMD", "Dark/Light Vars", "Verified"],
+              ["KaTeX", "Math Typesetting", "defer UMD", "currentColor", "Verified"],
+              ["Marked", "Markdown Parser", "defer UMD", "Prose Tokens", "Verified"],
+              ["Highlight.js", "TS & Kotlin Code", "defer UMD", "Syntax Theme", "Verified"],
+              ["Day.js", "Date Parsing & Relative Time", "defer UMD", "2kB Bundle", "Verified"],
+              ["Impress.js", "3D Presentation Guard", "Static Fallback", "Print-Safe", "Verified"],
+              ["Mock.js", "Client Synthetic Engine", "defer UMD", "Offline Schema", "Verified"],
+              ["Showdown", "Two-Way Markdown Parser", "defer UMD", "Marked Safe", "Verified"],
+              ["FullCalendar", "Interactive Scheduling", "defer UMD", "DaisyUI Synced", "Verified"]
+            ]
+          }).render(target);
+        }
+
+        // KaTeX
+        if (window.renderMathInElement && document.getElementById("katex-math-block")) {
+          window.renderMathInElement(document.getElementById("katex-math-block"), {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false }
+            ],
+            throwOnError: false
+          });
+        }
+
+        // Marked
+        if (window.marked && document.getElementById("markdown-source") && document.getElementById("markdown-output")) {
+          const src = document.getElementById("markdown-source").textContent.trim();
+          document.getElementById("markdown-output").innerHTML = window.marked.parse(src);
+        }
+
+        // Highlight.js
+        if (window.hljs) {
+          window.hljs.highlightAll();
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => {
+          setTimeout(initExampleShowcase, 100);
+        });
+      } else {
+        setTimeout(initExampleShowcase, 100);
+      }
     </script>

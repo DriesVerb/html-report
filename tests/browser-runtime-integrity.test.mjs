@@ -113,4 +113,112 @@ describe("Browser Runtime Integrity & CDN Health Tests", () => {
       "cdn.tailwindcss.com script MUST NOT contain crossorigin attribute because Tailwind CDN blocks CORS anonymous requests"
     );
   });
+
+  it("should load GitHub Pages index.html in headless browser with zero console errors and full 16-CDN parity", async () => {
+    const indexPath = path.resolve(__dirname, "../index.html");
+    assert.ok(fs.existsSync(indexPath), "index.html must exist at repo root");
+
+    const browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    const consoleErrors = [];
+    const pageErrors = [];
+
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
+        consoleErrors.push(msg.text());
+      }
+    });
+
+    page.on("pageerror", (err) => {
+      pageErrors.push(err.message);
+    });
+
+    try {
+      await page.goto("file://" + indexPath, { waitUntil: "load" });
+      await page.waitForTimeout(1000);
+
+      assert.deepEqual(pageErrors, [], `index.html threw runtime errors: ${pageErrors.join(", ")}`);
+      assert.deepEqual(consoleErrors, [], `index.html logged console errors: ${consoleErrors.join("; ")}`);
+
+      // Verify 16 CDN globals loaded
+      const globals = await page.evaluate(() => ({
+        hasTailwind: typeof window.tailwind !== "undefined",
+        hasLucide: typeof window.lucide !== "undefined",
+        hasAlpine: typeof window.Alpine !== "undefined",
+        hasChart: typeof window.Chart !== "undefined",
+        hasMermaid: typeof window.mermaid !== "undefined",
+        hasLeaflet: typeof window.L !== "undefined",
+        hasGridjs: typeof window.gridjs !== "undefined",
+        hasKatex: typeof window.katex !== "undefined",
+        hasMarked: typeof window.marked !== "undefined",
+        hasHljs: typeof window.hljs !== "undefined",
+        hasDayjs: typeof window.dayjs !== "undefined",
+        hasImpress: typeof window.impress !== "undefined",
+        hasMock: typeof window.Mock !== "undefined",
+        hasShowdown: typeof window.showdown !== "undefined",
+        hasFullCalendar: typeof window.FullCalendar !== "undefined"
+      }));
+
+      assert.strictEqual(globals.hasTailwind, true, "Tailwind must be present");
+      assert.strictEqual(globals.hasLucide, true, "Lucide must be present");
+      assert.strictEqual(globals.hasAlpine, true, "Alpine must be present");
+      assert.strictEqual(globals.hasChart, true, "Chart.js must be present");
+      assert.strictEqual(globals.hasMermaid, true, "Mermaid must be present");
+      assert.strictEqual(globals.hasLeaflet, true, "Leaflet must be present");
+      assert.strictEqual(globals.hasGridjs, true, "Grid.js must be present");
+      assert.strictEqual(globals.hasKatex, true, "KaTeX must be present");
+      assert.strictEqual(globals.hasMarked, true, "Marked must be present");
+      assert.strictEqual(globals.hasHljs, true, "Highlight.js must be present");
+      assert.strictEqual(globals.hasDayjs, true, "Day.js must be present");
+      assert.strictEqual(globals.hasImpress, true, "Impress.js must be present");
+      assert.strictEqual(globals.hasMock, true, "Mock.js must be present");
+      assert.strictEqual(globals.hasShowdown, true, "Showdown must be present");
+      assert.strictEqual(globals.hasFullCalendar, true, "FullCalendar must be present");
+    } finally {
+      await browser.close();
+    }
+  });
+
+  it("should assemble example.html and load in headless browser with zero console errors", async () => {
+    const examplePath = path.resolve(__dirname, "../skills/html-report/examples/example.html");
+    const content = fs.readFileSync(examplePath, "utf-8");
+
+    const { html } = buildReport({
+      title: "16-CDN Showcase Example Test",
+      content,
+      allAddons: true,
+      theme: "light"
+    });
+
+    const tempPath = path.resolve(__dirname, "../tmp-example-test.html");
+    fs.writeFileSync(tempPath, html, "utf-8");
+
+    const browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    const consoleErrors = [];
+    const pageErrors = [];
+
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
+        consoleErrors.push(msg.text());
+      }
+    });
+
+    page.on("pageerror", (err) => {
+      pageErrors.push(err.message);
+    });
+
+    try {
+      await page.goto("file://" + tempPath, { waitUntil: "load" });
+      await page.waitForTimeout(1000);
+
+      assert.deepEqual(pageErrors, [], `example.html threw runtime errors: ${pageErrors.join(", ")}`);
+      assert.deepEqual(consoleErrors, [], `example.html logged console errors: ${consoleErrors.join("; ")}`);
+    } finally {
+      await browser.close();
+      if (fs.existsSync(tempPath)) {
+        fs.unlinkSync(tempPath);
+      }
+    }
+  });
 });

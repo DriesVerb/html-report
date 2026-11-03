@@ -1,13 +1,16 @@
 # ⚡ `html-report` — Publication-Grade HTML5 Reports for AI Coding Agents
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success.svg?logo=github)](https://driesverb.github.io/html-report/)
 [![Agent Skill](https://img.shields.io/badge/Agent%20Skill-LLM--Agnostic-blueviolet.svg)](https://agentskills.io)
 [![OpenSpec](https://img.shields.io/badge/OpenSpec-Evolved-emerald.svg)](https://github.com/Fission-AI/OpenSpec)
 [![Themes](https://img.shields.io/badge/DaisyUI%20v4-32%20Themes-ff5724.svg)](https://daisyui.com/docs/themes/)
-[![CDNs](https://img.shields.io/badge/CDN%20Stack-16%20Libraries-3b82f6.svg)](#the-16-library-cdn-power-stack)
-[![Assembly Speed](https://img.shields.io/badge/Assembly-%3C100ms-success.svg)](#blazing-speed--token-efficiency)
-[![FSM Harness](https://img.shields.io/badge/FSM%20Harness-Deterministic-cyan.svg)](#the-superpower-of-states-deterministic-fsm-harness)
-[![Playwright](https://img.shields.io/badge/Verified-Playwright%205--Breakpoints-2ea44f.svg)](#horizontal-scrollbar-detection--playwright-gate)
+[![CDNs](https://img.shields.io/badge/CDN%20Stack-16%20Libraries-3b82f6.svg)](#-the-16-library-cdn-power-stack)
+[![Security](https://img.shields.io/badge/Security-SRI%20%2B%20CSP%20%2B%20No--Referrer-blue.svg)](#-cryptographic-security--csp-hardening)
+[![Assembly Speed](https://img.shields.io/badge/Assembly-%3C100ms-success.svg)](#-blazing-speed--token-efficiency)
+[![FSM Harness](https://img.shields.io/badge/FSM%20Harness-Deterministic-cyan.svg)](#-the-superpower-of-states-deterministic-fsm-harness)
+[![Verified](https://img.shields.io/badge/Verified-144%20Tests%20Passing-2ea44f.svg)](#-testing)
 
+> 🌐 **Live GitHub Pages Showcase:** [https://driesverb.github.io/html-report/](https://driesverb.github.io/html-report/)  
 > **The fastest, most reliable way for AI coding agents to produce publication-grade, interactive, theme-adaptive, and print/PDF-ready HTML5 reports.**  
 > Built for **Antigravity, Claude Code, Cursor, Codex, OpenCode, Gemini CLI**, and autonomous agent pipelines.
 
@@ -151,7 +154,7 @@ The state machine operates with strict progressive disclosure:
 
 ## 🎨 The 16-Library CDN Power Stack
 
-All reports utilize a carefully curated, non-blocking CDN stack pre-wired for instant interactivity and responsive elegance:
+All reports utilize a carefully curated, non-blocking CDN stack pre-wired for instant interactivity, cryptographic security, and responsive elegance:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -168,12 +171,49 @@ All reports utilize a carefully curated, non-blocking CDN stack pre-wired for in
 │  Marked 14.1     — Client-Side Markdown Prose Rendering                     │
 │  Highlight.js 11 — Syntax Highlighting (TypeScript, Kotlin, Python, Bash)   │
 │  Day.js 1.11     — Lightweight Date Formatting & Relative Timestamps        │
-│  Impress.js 2.0  — 3D Presentations (Presentation-Guarded, Print Fallback)  │
+│  Impress.js 1.1  — 3D Presentations (Presentation-Guarded, Print Fallback)  │
 │  Mock.js 1.1     — Client-Side Synthetic Data & Schema Simulation           │
 │  Showdown 2.1    — Two-Way Markdown Converter (Zero Marked Collision)       │
 │  FullCalendar 6  — Interactive Scheduling Grids & Theme Palette Sync        │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
+
+### Detailed CDN Catalog & Addon Capabilities
+
+| Library | Version | Loading & Guard | Purpose & Capabilities |
+| :--- | :--- | :--- | :--- |
+| **Tailwind CSS** | Latest Play CDN | Non-blocking | Full utility class engine across all 5 responsive breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`). |
+| **DaisyUI** | v4.12.14 | Stylesheet + 32 Themes | Semantic component styling with all 32 official themes defaulting to `light`. Fully custom themes supported. |
+| **Lucide Icons** | v0.460.0 | `defer` + UMD | 1,400+ crisp SVG vector icons rendered dynamically via `data-lucide` attributes. |
+| **Alpine.js** | v3.14.3 | `defer` + CDN | Declarative micro-reactivity (`x-data`, `x-model`, `@click`) for filters, studios, and interactive controls. |
+| **Chart.js** | v4.4.6 | `defer` + UMD | High-performance HTML5 canvas charts synchronized live with active DaisyUI theme palettes. |
+| **Mermaid** | v11.4.0 | `defer` + UMD | Architecture, sequence, and entity diagrams with numbered-list syntax defense and live re-theming. |
+| **Leaflet** | v1.9.4 | `defer` + UMD | Geospatial maps powered by Esri World Street tiles (zero API keys, zero `file:///` 403 errors). |
+| **Grid.js** | v6.0.6 | `defer` + UMD | Interactive, sortable, searchable, and paginated tables fully styled for both light and dark modes. |
+| **KaTeX** | v0.16.11 | `defer` + UMD | Fast scientific math and LaTeX typesetting with automatic math delimiters (`$$...$$`, `$...$`). |
+| **Marked** | v14.1.3 | `defer` + UMD | Lightning-fast client-side Markdown rendering for rich prose and technical documentation. |
+| **Highlight.js** | v11.10.0 | `defer` + UMD | Syntax highlighting across TypeScript, JavaScript, Kotlin, Python, Bash, and SQL code blocks. |
+| **Day.js** | v1.11.13 | `defer` + UMD | 2kB immutable date parser and relative-time calculator (`[data-dayjs="now"]`, `[data-dayjs-from-now]`). |
+| **Impress.js** | v1.1.0 | Presentation-Guarded | 3D step transitions for pitch decks. Strictly guarded: renders as clean printable cards by default. |
+| **Mock.js** | v1.1.0 | `defer` + UMD | Client-side synthetic data simulation engine (`Mock.mock(...)` via `[data-mock]`) with 0 backend calls. |
+| **Showdown** | v2.1.0 | `defer` + UMD | Two-way Markdown parser with table and strikethrough support that co-exists cleanly with Marked. |
+| **FullCalendar** | v6.1.15 | `defer` + UMD | Interactive scheduling grids (month, week, list) with theme-adaptive border and accent highlights. |
+
+---
+
+## 🔒 Cryptographic Security & CSP Hardening
+
+Every report assembled by `html-report` is hardened against supply-chain injection, unauthorized script execution, and sensitive context leakage:
+
+1. **Cryptographic Subresource Integrity (SRI)**:
+   - External CDN stylesheets and scripts carry SHA-384 cryptographic integrity hashes (e.g. `integrity="sha384-..."`) with `crossorigin="anonymous"`.
+   - Prevents execution of altered or compromised CDN payloads.
+2. **Content Security Policy (CSP)**:
+   - Strict `<meta http-equiv="Content-Security-Policy">` restricting executable scripts, styles, fonts, and images to vetted CDN domains (`cdn.jsdelivr.net`, `cdn.tailwindcss.com`, `cdnjs.cloudflare.com`, `unpkg.com`, `server.arcgisonline.com`).
+3. **No-Referrer Privacy Policy**:
+   - Includes `<meta name="referrer" content="no-referrer" />` on all templates and reports, preventing browsers from transmitting document paths, query params, or private caller IDs to external tile servers or CDNs.
+
+---
 
 ---
 
@@ -280,25 +320,25 @@ html-report/
 │       │   ├── caller-registry.mjs               # Caller profiles & ephemeral run vault
 │       │   └── serve-report.mjs                  # Single-tab live reload dev server
 │       ├── references/
-│       │   ├── architecture-and-styling.md       # 11-CDN stack & styling rules
+│       │   ├── architecture-and-styling.md       # 16-CDN stack & styling rules
 │       │   ├── charts-and-mermaid-style-guide.md # Chart.js & Mermaid theme standards
 │       │   └── harness-architecture.md           # FSM states & remediation protocol
 │       ├── examples/
-│       │   ├── example.html                      # Complete 11-CDN showcase
+│       │   ├── example.html                      # Complete 16-CDN showcase
 │       │   └── example.csv                       # Interactive CSV demo dataset
 │       └── playwright/
 │           ├── package.json                      # Playwright test dependencies
 │           └── verify-report.mjs                 # 5-breakpoint responsive & PDF verifier
 ├── .agents/skills/html-report -> skills/html-report # Universal local symlink
 ├── index.html                                    # Live GitHub Pages Showcase
-└── tests/                                        # 92 unit & integration tests
+└── tests/                                        # 144 unit & integration tests
 ```
 
 ---
 
 ## 🧪 Testing
 
-Run the comprehensive test suite (all 92 unit and integration tests run in ~500ms):
+Run the comprehensive test suite (all 144 unit and integration tests run in ~2s):
 
 ```bash
 node --test tests/*.test.mjs

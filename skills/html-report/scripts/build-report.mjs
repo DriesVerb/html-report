@@ -59,7 +59,7 @@ export const ADDON_REGISTRY = {
   impress: {
     name: "Impress.js",
     signatures: [/id=["']impress["']/i, /class=["'][^"']*\bstep\b[^"']*data-x/i, /\bimpress\s*\(\s*\)/],
-    head: `<script defer src="https://cdn.jsdelivr.net/npm/impress.js@2.0.0/js/impress.js" crossorigin="anonymous"></script>`
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/impress.js@1.1.0/js/impress.js" crossorigin="anonymous"></script>`
   },
   mockjs: {
     name: "Mock.js",
