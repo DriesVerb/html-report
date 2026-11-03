@@ -3,7 +3,7 @@
 [![Agent Skill](https://img.shields.io/badge/Agent%20Skill-LLM--Agnostic-blueviolet.svg)](https://agentskills.io)
 [![OpenSpec](https://img.shields.io/badge/OpenSpec-Evolved-emerald.svg)](https://github.com/Fission-AI/OpenSpec)
 [![Themes](https://img.shields.io/badge/DaisyUI%20v4-32%20Themes-ff5724.svg)](https://daisyui.com/docs/themes/)
-[![CDNs](https://img.shields.io/badge/CDN%20Stack-11%20Libraries-3b82f6.svg)](#the-11-library-cdn-power-stack)
+[![CDNs](https://img.shields.io/badge/CDN%20Stack-16%20Libraries-3b82f6.svg)](#the-16-library-cdn-power-stack)
 [![Assembly Speed](https://img.shields.io/badge/Assembly-%3C100ms-success.svg)](#blazing-speed--token-efficiency)
 [![FSM Harness](https://img.shields.io/badge/FSM%20Harness-Deterministic-cyan.svg)](#the-superpower-of-states-deterministic-fsm-harness)
 [![Playwright](https://img.shields.io/badge/Verified-Playwright%205--Breakpoints-2ea44f.svg)](#horizontal-scrollbar-detection--playwright-gate)
@@ -149,7 +149,7 @@ The state machine operates with strict progressive disclosure:
 
 ---
 
-## 🎨 The 11-Library CDN Power Stack
+## 🎨 The 16-Library CDN Power Stack
 
 All reports utilize a carefully curated, non-blocking CDN stack pre-wired for instant interactivity and responsive elegance:
 
@@ -167,6 +167,11 @@ All reports utilize a carefully curated, non-blocking CDN stack pre-wired for in
 │  KaTeX 0.16      — Scientific & LaTeX Equation Math Rendering               │
 │  Marked 14.1     — Client-Side Markdown Prose Rendering                     │
 │  Highlight.js 11 — Syntax Highlighting (TypeScript, Kotlin, Python, Bash)   │
+│  Day.js 1.11     — Lightweight Date Formatting & Relative Timestamps        │
+│  Impress.js 2.0  — 3D Presentations (Presentation-Guarded, Print Fallback)  │
+│  Mock.js 1.1     — Client-Side Synthetic Data & Schema Simulation           │
+│  Showdown 2.1    — Two-Way Markdown Converter (Zero Marked Collision)       │
+│  FullCalendar 6  — Interactive Scheduling Grids & Theme Palette Sync        │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 

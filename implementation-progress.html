@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Custom DaisyUI Themes - Journey & Plan</title>
+  <title>Playwright Re-write & CDN Styleguide Matrix - Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -26,6 +26,27 @@
   <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" crossorigin="anonymous"></script>
 
+  <!-- Addon: Grid.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/theme/mermaid.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/gridjs.umd.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/kotlin.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Marked -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>
+
   <style>
     :root {
       --grid-bg-1: #ffffff;
@@ -46,6 +67,11 @@
       max-width: 100% !important;
       height: auto !important;
       background-color: transparent !important;
+    }
+    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping and vertical pill overflow */
+    .badge {
+      white-space: nowrap !important;
+      flex-shrink: 0;
     }
     [data-insufficient-space="true"] {
       outline: 2px dashed #f59e0b !important;
@@ -128,6 +154,56 @@
       border-color: var(--grid-primary) !important;
       font-weight: 700 !important;
     }
+
+    /* FullCalendar DaisyUI Theme Integration */
+    :root {
+      --fc-page-bg-color: transparent;
+      --fc-neutral-bg-color: hsl(var(--b2, 0 0% 95%));
+      --fc-list-event-hover-bg-color: hsl(var(--b3, 0 0% 90%));
+      --fc-theme-standard-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
+      --fc-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
+      --fc-button-bg-color: hsl(var(--p, 259 94% 51%));
+      --fc-button-border-color: hsl(var(--p, 259 94% 51%));
+      --fc-button-text-color: hsl(var(--pc, 0 0% 100%));
+    }
+    .fc {
+      max-width: 100%;
+    }
+    .fc .fc-toolbar-title {
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
+    }
+    .fc .fc-button {
+      padding: 0.35rem 0.65rem !important;
+      font-size: 0.8125rem !important;
+      border-radius: 0.375rem !important;
+      text-transform: capitalize !important;
+    }
+
+    /* Impress.js Presentation Guard & Print-Equivalent Treatment */
+    html:not([data-presentation="true"]) .step {
+      position: relative !important;
+      opacity: 1 !important;
+      transform: none !important;
+      display: block !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      margin-bottom: 1.5rem !important;
+    }
+    .impress-wrapper {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      min-height: 420px;
+      border-radius: 0.75rem;
+    }
+    html[data-presentation="true"] .impress-wrapper #impress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body class="bg-base-200 text-base-content min-h-screen flex flex-col font-sans antialiased selection:bg-primary selection:text-primary-content">
@@ -138,7 +214,7 @@
       <!-- Left: Title -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Custom DaisyUI Themes - Journey & Plan
+          Playwright Re-write & CDN Styleguide Matrix - Journey & Plan
         </span>
       </div>
 
@@ -234,14 +310,14 @@
   <header class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-base-200">
       <div>
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-success/15 text-success mb-2">
-          <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> All 16 Tasks Implemented &bull; 110/110 Tests Passed &bull; Pushed to main (1e7ca55)
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary/15 text-primary mb-2">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> OpenSpec Change &bull; Playwright Re-write & CDN Styleguide Matrix
         </div>
         <h1 class="text-3xl font-extrabold tracking-tight text-base-content" id="journey-overview">
-          User-Defined Custom DaisyUI Theme Engine
+          Extensible Playwright Harness & Deterministic CDN Styleguide Matrix
         </h1>
         <p class="text-base text-base-content/70 mt-1">
-          OpenSpec Planning Blueprint, Architectural Design &amp; Living Journey Dashboard
+          Decoupled check runner, universal quality contracts, CDN styleguide flags, and precision diagnostics
         </p>
       </div>
 
@@ -256,7 +332,7 @@
         <a href="./tasks.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
           <i data-lucide="check-square" class="w-4 h-4"></i> tasks.md
         </a>
-        <a href="./specs/" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+        <a href="./specs/playwright-extensible-harness/spec.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
           <i data-lucide="layers" class="w-4 h-4"></i> specs/
         </a>
       </div>
@@ -269,10 +345,10 @@
       </h2>
       <ul class="steps steps-vertical sm:steps-horizontal w-full">
         <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
-        <li class="step step-primary font-medium" data-content="✓">Planning &amp; Specs</li>
+        <li class="step step-primary font-medium" data-content="✓">Planning & Architecture</li>
         <li class="step step-primary font-medium" data-content="✓">Implementing</li>
         <li class="step step-primary font-medium" data-content="✓">Verifying</li>
-        <li class="step step-primary font-bold text-primary" data-content="●">Shipped / Ready</li>
+        <li class="step step-primary font-bold text-primary" data-content="★">Shipped / Ready</li>
       </ul>
     </div>
   </header>
@@ -281,496 +357,801 @@
   <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" aria-label="Progress Metrics">
     <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
       <div class="stat-figure text-primary">
-        <i data-lucide="palette" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+        <i data-lucide="sliders" class="w-6 h-6 sm:w-7 sm:h-7"></i>
       </div>
-      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Native Themes</div>
-      <div class="stat-value text-primary text-2xl sm:text-3xl">32 + Custom</div>
-      <div class="stat-desc text-xs text-base-content/70 truncate">DaisyUI 4 compatible</div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Precision Flags</div>
+      <div class="stat-value text-primary text-2xl sm:text-3xl">18 Flags</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">CDN targets, bail, strict, json, timeout</div>
     </div>
 
     <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
       <div class="stat-figure text-secondary">
-        <i data-lucide="check-check" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+        <i data-lucide="blocks" class="w-6 h-6 sm:w-7 sm:h-7"></i>
       </div>
-      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Decisions Aligned</div>
-      <div class="stat-value text-secondary text-2xl sm:text-3xl">4 / 4</div>
-      <div class="stat-desc text-xs text-success truncate">D1:A, D2:A, D3:A, D4:A</div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">CDN Styleguides</div>
+      <div class="stat-value text-secondary text-2xl sm:text-3xl">10 CDNs</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Deterministic visual & behavioral rules</div>
     </div>
 
     <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
-      <div class="stat-figure text-success">
-        <i data-lucide="check-circle-2" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      <div class="stat-figure text-accent">
+        <i data-lucide="list-checks" class="w-6 h-6 sm:w-7 sm:h-7"></i>
       </div>
-      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Roadmap Progress</div>
-      <div class="stat-value text-success text-2xl sm:text-3xl">16 / 16</div>
-      <div class="stat-desc text-xs text-success font-semibold truncate">100% Complete &bull; 4 Phases</div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Implementation Tasks</div>
+      <div class="stat-value text-success text-2xl sm:text-3xl">23 / 23</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">100% complete (140/140 tests pass)</div>
     </div>
 
     <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
       <div class="stat-figure text-info">
-        <i data-lucide="sparkles" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+        <i data-lucide="file-json" class="w-6 h-6 sm:w-7 sm:h-7"></i>
       </div>
-      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Color Engine</div>
-      <div class="stat-value text-info text-2xl sm:text-3xl">Pure JS</div>
-      <div class="stat-desc text-xs text-info truncate">Zero-dependency OKLCH</div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Diagnostics Engine</div>
+      <div class="stat-value text-info text-2xl sm:text-3xl">JSON + PNG</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">Structured failure traces for agent self-healing</div>
     </div>
   </section>
 
-  <!-- Autonomous Execution Prompt Card (Copy-Paste Ready) -->
-  <section class="card bg-base-100 rounded-2xl shadow-md border-2 border-primary/30 p-6 sm:p-8 space-y-4 break-inside-avoid" id="execution-prompt-section">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-base-200">
+  <!-- Ready-to-Run OpenSpec Implementation Prompt -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border-2 border-primary/30 p-6 sm:p-8 space-y-6" id="implementation-prompt-card">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-200">
       <div class="flex items-center gap-3">
-        <div class="p-2.5 rounded-xl bg-primary/10 text-primary">
-          <i data-lucide="terminal" class="w-6 h-6"></i>
+        <div class="p-2.5 rounded-xl bg-primary text-primary-content shadow-sm">
+          <i data-lucide="terminal" class="w-5 h-5"></i>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h2 class="text-lg sm:text-xl font-bold text-base-content" id="autonomous-execution-prompt">
-              Autonomous Execution Prompt (/goal)
-            </h2>
-            <span class="badge badge-success badge-sm font-semibold gap-1">
-              <i data-lucide="check" class="w-3 h-3"></i> Ready to Run
-            </span>
-          </div>
-          <p class="text-xs text-base-content/70">
-            One-click copy-paste prompt granting full autonomous execution through Phases 1–4, live dashboard sync, and git push to main.
-          </p>
+          <h2 class="text-xl font-bold text-base-content" id="implementation-prompt">Ready-to-Run OpenSpec Implementation Prompt</h2>
+          <p class="text-xs text-base-content/70">Copy and paste this prompt directly into your AI coding assistant to implement the change</p>
         </div>
       </div>
+      <button 
+        type="button"
+        id="copy-prompt-btn"
+        onclick="copyImplementationPrompt()"
+        class="btn btn-primary btn-sm gap-2 self-start sm:self-auto shadow-sm">
+        <i data-lucide="copy" class="w-4 h-4" id="copy-prompt-icon"></i>
+        <span id="copy-prompt-label">Copy Implementation Prompt</span>
+      </button>
+    </div>
 
-      <!-- Copy Action Button with instant feedback -->
-      <div class="flex-shrink-0" x-data="{ copied: false }">
-        <button
-          type="button"
-          id="copy-goal-prompt-btn"
-          class="btn btn-sm btn-primary gap-2 shadow-sm font-semibold transition-all"
-          :class="copied ? 'btn-success text-success-content' : 'btn-primary'"
-          @click="
-            const text = document.getElementById('goal-prompt-code').innerText;
-            navigator.clipboard.writeText(text).then(() => {
-              copied = true;
-              setTimeout(() => { copied = false; }, 2500);
-            });
-          "
-        >
-          <span x-show="!copied" class="flex items-center gap-1.5">
-            <i data-lucide="copy" class="w-4 h-4"></i> Copy /goal Prompt
-          </span>
-          <span x-show="copied" class="flex items-center gap-1.5" style="display: none;">
-            <i data-lucide="check-check" class="w-4 h-4"></i> Copied to Clipboard!
-          </span>
-        </button>
+    <div class="relative rounded-xl overflow-hidden border border-base-300 bg-base-300/40">
+      <div class="flex items-center justify-between px-4 py-2 bg-base-200/80 border-b border-base-300 text-xs text-base-content/70 font-mono">
+        <span class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-error/70"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-warning/70"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-success/70"></span>
+          <span class="ml-2 font-semibold">openspec-apply-prompt.md</span>
+        </span>
+        <span class="badge badge-xs badge-outline">Ready to Copy</span>
       </div>
+      <pre class="p-5 text-xs font-mono text-base-content/90 overflow-y-auto whitespace-pre-wrap leading-relaxed max-h-[440px] select-all bg-base-200/50" id="prompt-content-block">Implement the OpenSpec change `playwright-extensible-harness` to refactor the monolithic Playwright verifier into a modular, pluggable test harness with a deterministic CDN Styleguide Matrix and precision CLI flags.
+
+### 1. Primary Goals of this Feature
+- **Give the Code Love &amp; Better Organization**: Refactor the monolithic 658-line procedural script into clean, single-responsibility modules: orchestrator (`runner.mjs`), check catalog (`registry.mjs`), diagnostic output engine (`reporter.mjs`), and focused check modules.
+- **Maximum Extensibility**: Decouple check authoring using the Strategy and Registry patterns so new CDN libraries, visual audits, or custom plugins can be added in isolated files with zero modifications to the core runner.
+- **Dedicated CDN Styleguide Flags**: Provide granular CLI flags (`--all-cdns`, `--cdns &lt;list&gt;`, `--check-&lt;cdn&gt;`) enabling developers to test specific CDN libraries and verify their visual/behavioral styleguides deterministically.
+- **Universal Quality &amp; Determinism**: Replace arbitrary sleeps with explicit ready predicates, eliminate flaky assertions, and enforce publication-grade quality (e.g. DaisyUI color sync, zero 403 tile responses, zero unparsed LaTeX syntax leaks).
+- **Sub-Second Feedback for Developers &amp; AI Agents**: Allow targeted runs (e.g. `--check-mermaid` or `--suites themes`) in under 800ms rather than waiting 30 seconds for full-suite cycles, and emit machine-readable `--json` traces for automated agent self-healing.
+- **100% Backward Compatibility**: Ensure existing CLI invocations (`--quick`, `--pdf`, `--mode`, `--caller`) function identically as a transparent facade.
+
+### 2. Context &amp; Planning Artifacts
+- **Proposal**: openspec/changes/playwright-extensible-harness/proposal.md
+- **Technical Design**: openspec/changes/playwright-extensible-harness/design.md
+- **Task Tracking**: openspec/changes/playwright-extensible-harness/tasks.md
+- **Spec Delta**: openspec/changes/playwright-extensible-harness/specs/playwright-extensible-harness/spec.md
+- **Original Script**: skills/html-report/playwright/verify-report.mjs
+
+### 3. Architectural Design Patterns (Mandatory)
+1. **Strategy Pattern (`harness/checks/*`)**:
+   Implement standard `VerificationCheck` contract with `id`, `name`, `category`, `cliFlags`, `styleguideRules`, and `async run({ page, browser, reportUrl, options, reporter })`.
+2. **Registry Pattern (`harness/registry.mjs`)**:
+   `CheckRegistry` indexing core checks and CDN styleguide checks; filters dynamically by `--suites`, `--grep`, `--all-cdns`, `--cdns`, and `--check-&lt;cdn&gt;`.
+3. **Pipeline with Bail (`harness/runner.mjs`)**:
+   Sequential execution pipeline with Template Method execution timing, per-check `--timeout` bounds, and fail-fast termination on `--bail`.
+4. **Observer / Reporter Pattern (`harness/reporter.mjs`)**:
+   Decoupled lifecycle event logging for clean terminal ANSI output, machine-readable JSON reports (`--json &lt;path&gt;`), and screenshot captures (`--screenshots [dir]`).
+5. **Facade Pattern (`verify-report.mjs`)**:
+   100% backward-compatible root CLI maintaining legacy arguments (`--quick`, `--pdf`, `--mode`, `--caller`) delegating to `runner.mjs`.
+
+### 4. Deterministic CDN Styleguide Matrix (`harness/checks/cdns/`)
+Implement deterministic visual and behavioral checks for all 10 CDN libraries:
+- `charts.mjs`: Chart.js canvas render, DaisyUI CSS variable palette sync (`--p`, `--s`, `--a`, `--n`), responsive resize, zero NaN artifacts.
+- `mermaid.mjs`: SVG diagram render, DaisyUI theme re-render, strict absence of `"Syntax error in text"` or error SVGs.
+- `leaflet.mjs`: Leaflet panes loaded, tile decoding (`naturalWidth &gt; 0`), zero 403 HTTP errors (preventing unauthenticated OSM/Carto tile blocks; enforces ESRI/Voyager).
+- `gridjs.mjs`: Table DOM rendered, functional search input, pagination controls, zero horizontal scrollbar container overflow.
+- `katex.mjs`: Formatted `.katex` blocks, zero unrendered LaTeX syntax markers (`$`, `\begin{...}`) leaking into DOM text.
+- `highlight.mjs`: Code blocks parsed with language classes, `.hljs-keyword` present, DaisyUI theme contrast.
+- `marked.mjs`: Clean semantic HTML headings/paragraphs, zero raw `###` or unparsed markdown syntax.
+- `lucide.mjs` &amp; `alpine.mjs`: All `[data-lucide]` replaced with SVGs; Alpine `[x-data]` mounted without hanging `x-cloak`.
+- `fullcalendar.mjs`: Calendar grid rendered, toolbar formatted, event items mounted.
+
+### 5. Mitigating Ground Rules
+- Keep check modules lean and under 70 lines of clean plain JavaScript.
+- Batch DOM inspections during full runs (`--all-cdns`) to avoid CDP wire latency spikes.
+- Do NOT break existing tests or legacy flags (`--quick`, `--pdf`).
+
+### 6. Verification &amp; Mandatory Journey Updates (per GEMINI.md)
+1. Work through Phase 1 to Phase 5 in `tasks.md` step-by-step.
+2. Mark completed tasks with `[x]` as you finish each milestone.
+3. Add automated tests in `tests/playwright-harness.test.mjs` testing all flags (`--suites`, `--grep`, `--all-cdns`, `--bail`, `--strict`, `--json`, etc.).
+4. Run `npm test` or the test runner to verify 100% passing tests.
+5. Continuously update the live dashboard on localhost:
+   `node skills/html-report/scripts/build-report.mjs --title "Playwright Re-write &amp; CDN Styleguide Matrix - Journey &amp; Plan" --content openspec/changes/playwright-extensible-harness/fragment.html --output openspec/changes/playwright-extensible-harness/index.html &amp;&amp; cp openspec/changes/playwright-extensible-harness/index.html implementation-progress.html`</pre>
     </div>
 
-    <!-- Formatted Code Container -->
-    <div class="relative group">
-      <pre class="bg-base-200/80 text-base-content p-4 sm:p-5 rounded-xl text-xs font-mono leading-relaxed overflow-x-auto border border-base-300 max-h-96 select-all whitespace-pre-wrap"><code id="goal-prompt-code">/goal Execute the complete implementation of the OpenSpec change `custom-daisyui-themes` from Phase 1 through Phase 4 according to `openspec/changes/custom-daisyui-themes/tasks.md` and `design.md`.
+    <script>
+      function copyImplementationPrompt() {
+        const text = document.getElementById("prompt-content-block").innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.getElementById("copy-prompt-btn");
+          const label = document.getElementById("copy-prompt-label");
+          const icon = document.getElementById("copy-prompt-icon");
+          
+          btn.classList.remove("btn-primary");
+          btn.classList.add("btn-success");
+          label.textContent = "Copied to Clipboard!";
+          if (icon) {
+            icon.setAttribute("data-lucide", "check");
+            if (window.lucide) window.lucide.createIcons();
+          }
 
-You have full autonomous authorization to execute all required tool calls without pausing for intermediate approval: create/edit files, run builds, execute unit tests, update templates and runtimes, and interact with git.
-
-Implementation Scope:
-1. Phase 1 (OKLCH Engine &amp; Compiler):
-   - Implement zero-dependency pure JS sRGB -&gt; Linear -&gt; XYZ -&gt; OKLab -&gt; OKLCH matrix conversion.
-   - Implement auto-contrast for content variables (`--pc`, `--sc`, etc.).
-   - Implement theme compiler supporting DaisyUI JSON objects, `extends: "&lt;baseTheme&gt;"` inheritance, and raw CSS rules.
-   - Add unit tests verifying color math accuracy, inheritance, and DaisyUI 4 CSS variable formatting.
-2. Phase 2 (Build CLI &amp; Shell Integration):
-   - Update `skills/html-report/scripts/build-report.mjs` to accept `--custom-theme &lt;path&gt;` (JSON &amp; CSS) and `--theme &lt;custom-name&gt;`.
-   - Inject generated `[data-theme="..."]` CSS into `&lt;style id="daisyui-custom-themes"&gt;`.
-   - Add automated build integration tests.
-3. Phase 3 (Runtime &amp; Top Collapsible Studio in example.html):
-   - Register dynamic custom themes in `report-runtime.js` and render swatches in the navbar dropdown.
-   - Implement the Top Collapsible Theme Studio (`collapse collapse-arrow`) in `skills/html-report/examples/example.html` with color pickers, OKLCH monitors, inheritance selector, live preview on charts/Mermaid, `localStorage` persistence, and one-click CSS/Tailwind export.
-4. Phase 4 (Verification, Documentation &amp; Git Push):
-   - Run the complete test suite (`node --test tests/*.test.mjs`) ensuring 100% pass rate.
-   - Validate OpenSpec compliance with `openspec validate custom-daisyui-themes`.
-   - Update `skills/html-report/SKILL.md` and `README.md`.
-   - Keep `openspec/changes/custom-daisyui-themes/tasks.md` and `http://localhost:3000` (via `implementation-progress.html`) continuously updated at every phase.
-   - Once all 16 tasks are verified, stage all changes, commit with a conventional commit message, and push directly to `origin/main`.</code></pre>
-    </div>
+          setTimeout(() => {
+            btn.classList.remove("btn-success");
+            btn.classList.add("btn-primary");
+            label.textContent = "Copy Implementation Prompt";
+            if (icon) {
+              icon.setAttribute("data-lucide", "copy");
+              if (window.lucide) window.lucide.createIcons();
+            }
+          }, 3000);
+        }).catch(err => {
+          console.error("Failed to copy text: ", err);
+        });
+      }
+    </script>
   </section>
 
-  <!-- Confirmed Architecture Decisions Grid -->
+  <!-- Brainstorming Focus & Strategic Goals -->
   <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
     <div class="flex items-center gap-3">
-      <div class="p-2.5 rounded-xl bg-success/10 text-success">
-        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+      <div class="p-2.5 rounded-xl bg-primary/10 text-primary">
+        <i data-lucide="compass" class="w-5 h-5"></i>
       </div>
       <div>
-        <h2 class="text-xl font-bold text-base-content" id="confirmed-decisions">
-          Confirmed Architectural Decisions
-        </h2>
-        <p class="text-xs sm:text-sm text-base-content/70">
-          Core foundations aligned during brainstorming
-        </p>
+        <h2 class="text-xl font-bold text-base-content" id="strategic-goals">Strategic Goals & Architectural Pillars</h2>
+        <p class="text-xs text-base-content/70">What makes this rewrite a massive leap forward for html-report</p>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="card bg-base-200/50 p-5 rounded-xl border border-base-300/50 space-y-2">
-        <div class="flex items-center justify-between">
-          <span class="badge badge-primary badge-sm">D1: Hybrid Input Formats</span>
-          <span class="text-2xs font-mono text-success">CONFIRMED (A)</span>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="p-5 rounded-xl bg-base-200/40 border border-base-200 space-y-3">
+        <div class="flex items-center gap-2 font-bold text-base text-primary">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          Extensible Plugin Architecture
         </div>
-        <p class="text-xs text-base-content/70">
-          Accepts standard DaisyUI JSON configuration objects (<code class="font-mono text-2xs">themes: [ { "mytheme": { ... } } ]</code>) with automatic sRGB &rarr; OKLCH conversion and content auto-contrast, alongside direct raw <code class="font-mono text-2xs">[data-theme="..."]</code> CSS blocks.
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          Break the monolithic 658-line script into isolated <code>harness/runner.mjs</code>, <code>harness/registry.mjs</code>, <code>harness/reporter.mjs</code>, and modular checks. Adding a new check or third-party validation hook requires zero changes to the runner.
         </p>
       </div>
 
-      <div class="card bg-base-200/50 p-5 rounded-xl border border-base-300/50 space-y-2">
-        <div class="flex items-center justify-between">
-          <span class="badge badge-secondary badge-sm">D2: In-Browser Theme Studio</span>
-          <span class="text-2xs font-mono text-success">CONFIRMED (A)</span>
+      <div class="p-5 rounded-xl bg-base-200/40 border border-base-200 space-y-3">
+        <div class="flex items-center gap-2 font-bold text-base text-secondary">
+          <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+          Deterministic CDN Styleguides
         </div>
-        <p class="text-xs text-base-content/70">
-          A dedicated "Customize Theme" modal accessible from the navbar theme dropdown. Features live interactive color pickers, real-time Chart.js/Mermaid diagram updates, <code class="font-mono text-2xs">localStorage</code> persistence, and one-click copy to DaisyUI CSS & Tailwind config.
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          Verify not just script loading, but full styleguide compliance for all 10 CDN libraries: palette syncing (Chart.js), syntax error absence (Mermaid), unblocked tile servers (Leaflet), table responsiveness (Grid.js), and zero unrendered token leaks (KaTeX).
         </p>
       </div>
 
-      <div class="card bg-base-200/50 p-5 rounded-xl border border-base-300/50 space-y-2">
-        <div class="flex items-center justify-between">
-          <span class="badge badge-accent badge-sm">D3: Pure JS Matrix Math</span>
-          <span class="text-2xs font-mono text-success">CONFIRMED (A)</span>
+      <div class="p-5 rounded-xl bg-base-200/40 border border-base-200 space-y-3">
+        <div class="flex items-center gap-2 font-bold text-base text-accent">
+          <i data-lucide="terminal" class="w-4 h-4"></i>
+          Precision Agent Automation
         </div>
-        <p class="text-xs text-base-content/70">
-          Zero-dependency inlined color conversion math (<code class="font-mono text-2xs">sRGB &rarr; Linear &rarr; XYZ &rarr; OKLab &rarr; OKLCH</code>) executing in &lt;1ms without external CDN dependencies or bundle bloat.
-        </p>
-      </div>
-
-      <div class="card bg-base-200/50 p-5 rounded-xl border border-base-300/50 space-y-2">
-        <div class="flex items-center justify-between">
-          <span class="badge badge-info badge-sm">D4: Base Theme Inheritance</span>
-          <span class="text-2xs font-mono text-success">CONFIRMED (A)</span>
-        </div>
-        <p class="text-xs text-base-content/70">
-          Themes can declare <code class="font-mono text-2xs">"extends": "dark"</code> or <code class="font-mono text-2xs">"extends": "emerald"</code> to inherit all base surface, neutral, and geometry tokens while overriding only specific branding colors.
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          Equip agents with granular CLI flags (<code>--cdns</code>, <code>--strict</code>, <code>--bail</code>, <code>--timeout</code>, <code>--json</code>). Emits structured JSON diagnostics with rule IDs and failed selector contexts so AI agents can instantly auto-repair regressions.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Technical Architecture Flow Diagram -->
-  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-4">
-    <div class="flex items-center justify-between">
+  <!-- Technical Architecture & Flowchart -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 rounded-xl bg-primary/10 text-primary">
+        <i data-lucide="cpu" class="w-5 h-5"></i>
+      </div>
       <div>
-        <h2 class="text-xl font-bold text-base-content" id="architecture-flow">
-          Custom Theme Engine Lifecycle Flow
-        </h2>
-        <p class="text-sm text-base-content/70">
-          How custom theme definitions compile deterministically and synchronize across DOM, charts, and diagrams
+        <h2 class="text-xl font-bold text-base-content" id="architecture-flow">Modular Pipeline & Check Registry Architecture</h2>
+        <p class="text-xs text-base-content/70">Decoupled execution engine with pluggable checks and fine-grained CLI dispatch</p>
+      </div>
+    </div>
+
+    <div class="p-4 bg-base-200/50 rounded-xl border border-base-200 overflow-x-auto">
+      <pre class="mermaid text-center">
+flowchart TD
+    CLI["CLI: verify-report.mjs &lt;file&gt;"] --> Parser["CLI Flag & Matrix Resolver"]
+    Parser --> Config["Resolved Config (Flags, Viewports, Themes, Timeout, Bail)"]
+    Config --> Runner["Harness Runner (harness/runner.mjs)"]
+    
+    Runner --> Launch["Chromium Context & Page Setup"]
+    Runner --> Reg["CheckRegistry: Filter & Sort Checks"]
+
+    subgraph CoreChecks ["Core Structural Checks"]
+        Reg --> C_Console["1. Console Errors & 4xx/5xx Tile Monitor"]
+        Reg --> C_Structure["2. DaisyUI Light Default, Favicon, Navbar, Footer"]
+        Reg --> C_Responsive["3. Breakpoint Viewports & Badge Pill Overflow"]
+        Reg --> C_Themes["4. 32-Theme Switcher & CSS Variable Reactivity"]
+        Reg --> C_Print["5. @media print Rules & On-Demand PDF"]
+    end
+
+    subgraph CdnChecks ["Deterministic CDN Styleguide Matrix"]
+        Reg --> CDN_Charts["Chart.js: DaisyUI Color Sync & Canvas Resize"]
+        Reg --> CDN_Mermaid["Mermaid: SVG Render & Zero Syntax Errors"]
+        Reg --> CDN_Leaflet["Leaflet: Tile Decoding & 403-Free Provider"]
+        Reg --> CDN_Grid["Grid.js: Search, Sort & Zero Overflow"]
+        Reg --> CDN_KaTeX["KaTeX: Math Formulas & Zero Token Leaks"]
+        Reg --> CDN_HLJS["Highlight.js: Keyword Classes & Contrast"]
+        Reg --> CDN_Other["Lucide, Alpine, FullCalendar, Marked"]
+    end
+
+    CoreChecks --> BailCheck{"Failure & --bail?"}
+    CdnChecks --> BailCheck
+    BailCheck -- Yes --> BailExit["Immediate Exit (code 1)"]
+    BailCheck -- No --> Summary["Aggregate Execution Metrics"]
+
+    Summary --> Reporter["reporter.mjs"]
+    Reporter --> Screen["PNG Traces on Failure (--screenshots)"]
+    Reporter --> Term["Formatted Terminal Console UI"]
+    Reporter --> JSON["Structured Diagnostics File (--json)"]
+      </pre>
+    </div>
+  </section>
+
+  <!-- CDN Styleguide Matrix Section -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center justify-between pb-4 border-b border-base-200">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-secondary/10 text-secondary">
+          <i data-lucide="layers" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-base-content" id="cdn-matrix">Deterministic CDN Styleguide Specifications</h2>
+          <p class="text-xs text-base-content/70">Universal quality rules enforced per CDN library</p>
+        </div>
+      </div>
+      <span class="badge badge-secondary badge-outline text-xs font-semibold">10 CDN Modules</span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full text-sm">
+        <thead>
+          <tr class="text-base-content/80">
+            <th>CDN Subsystem</th>
+            <th>CLI Flag(s)</th>
+            <th>Deterministic Styleguide Assertions</th>
+            <th>Quality Contract</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-bold flex items-center gap-2">
+              <i data-lucide="bar-chart-3" class="w-4 h-4 text-primary"></i> Chart.js
+            </td>
+            <td><code>--check-charts</code><br><code>--cdn-charts</code></td>
+            <td class="text-xs leading-relaxed">
+              Validates canvas render, <code>window.reportCharts</code> palette reactivity matching DaisyUI CSS vars (<code>--p</code>, <code>--s</code>, <code>--a</code>, <code>--n</code>), zero NaN label artifacts, responsive resizing.
+            </td>
+            <td><span class="badge badge-sm badge-success text-[10px]">Deterministic</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold flex items-center gap-2">
+              <i data-lucide="git-fork" class="w-4 h-4 text-primary"></i> Mermaid
+            </td>
+            <td><code>--check-mermaid</code><br><code>--cdn-mermaid</code></td>
+            <td class="text-xs leading-relaxed">
+              Verifies SVG diagrams generated, dark/light theme re-rendering, strict absence of visible <code>"Syntax error in text"</code> or <code>svg[aria-roledescription='error']</code>.
+            </td>
+            <td><span class="badge badge-sm badge-success text-[10px]">Deterministic</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold flex items-center gap-2">
+              <i data-lucide="map-pin" class="w-4 h-4 text-primary"></i> Leaflet Maps
+            </td>
+            <td><code>--check-maps</code><br><code>--cdn-leaflet</code></td>
+            <td class="text-xs leading-relaxed">
+              Checks pane sanity, tile decoding (<code>naturalWidth &gt; 0</code>), and strictly forbids 403 HTTP errors (preventing unauthenticated OSM/Carto tile blocks; enforces ESRI/Voyager).
+            </td>
+            <td><span class="badge badge-sm badge-success text-[10px]">Deterministic</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold flex items-center gap-2">
+              <i data-lucide="table" class="w-4 h-4 text-primary"></i> Grid.js Tables
+            </td>
+            <td><code>--check-tables</code><br><code>--cdn-gridjs</code></td>
+            <td class="text-xs leading-relaxed">
+              Verifies <code>.gridjs-table</code> DOM, functional search input, pagination controls, and confirms zero horizontal scrollbar container overflow.
+            </td>
+            <td><span class="badge badge-sm badge-success text-[10px]">Deterministic</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold flex items-center gap-2">
+              <i data-lucide="sigma" class="w-4 h-4 text-primary"></i> KaTeX Math
+            </td>
+            <td><code>--check-math</code><br><code>--cdn-katex</code></td>
+            <td class="text-xs leading-relaxed">
+              Verifies mathematical expressions rendered to formatted <code>.katex</code> elements; ensures zero raw unparsed <code>$</code> or <code>\begin{...}</code> syntax markers leak into DOM.
+            </td>
+            <td><span class="badge badge-sm badge-success text-[10px]">Deterministic</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold flex items-center gap-2">
+              <i data-lucide="code" class="w-4 h-4 text-primary"></i> Highlight.js
+            </td>
+            <td><code>--check-code</code><br><code>--cdn-highlight</code></td>
+            <td class="text-xs leading-relaxed">
+              Verifies code blocks parsed with language classes, <code>.hljs-keyword</code> present and highlighted, and contrast matches current DaisyUI palette.
+            </td>
+            <td><span class="badge badge-sm badge-success text-[10px]">Deterministic</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold flex items-center gap-2">
+              <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> Marked Markdown
+            </td>
+            <td><code>--check-markdown</code><br><code>--cdn-marked</code></td>
+            <td class="text-xs leading-relaxed">
+              Verifies markdown converted to semantic HTML headings/paragraphs; ensures zero unrendered raw <code>###</code> or markdown syntax leaks.
+            </td>
+            <td><span class="badge badge-sm badge-success text-[10px]">Deterministic</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-primary"></i> Lucide & Alpine
+            </td>
+            <td><code>--check-icons</code><br><code>--check-reactive</code></td>
+            <td class="text-xs leading-relaxed">
+              Verifies all <code>[data-lucide]</code> replaced by SVG; verifies Alpine <code>[x-data]</code> initialized and reactive without hanging <code>x-cloak</code>.
+            </td>
+            <td><span class="badge badge-sm badge-success text-[10px]">Deterministic</span></td>
+          </tr>
+          <tr>
+            <td class="font-bold flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-primary"></i> FullCalendar
+            </td>
+            <td><code>--check-calendar</code><br><code>--cdn-fullcalendar</code></td>
+            <td class="text-xs leading-relaxed">
+              Verifies calendar grid container rendered, header toolbar formatted, event items mounted, and responsive scaling active.
+            </td>
+            <td><span class="badge badge-sm badge-success text-[10px]">Deterministic</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Design Patterns Architecture Section -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center justify-between pb-4 border-b border-base-200">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-info/10 text-info">
+          <i data-lucide="box" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-base-content" id="design-patterns">Architectural Design Patterns Formulation</h2>
+          <p class="text-xs text-base-content/70">5 classic design patterns engineered for test extensibility and rock-solid determinism</p>
+        </div>
+      </div>
+      <span class="badge badge-info badge-outline text-xs font-semibold">5 Design Patterns</span>
+    </div>
+
+    <!-- Pattern Flow Diagram -->
+    <div class="p-4 bg-base-200/50 rounded-xl border border-base-200 overflow-x-auto">
+      <pre class="mermaid text-center">
+flowchart TD
+    subgraph Facade ["1. Facade Pattern (verify-report.mjs)"]
+        CLI["CLI Command: verify-report.mjs"] --> Normalizer["Argument Adapter & Normalizer"]
+    end
+
+    subgraph Registry ["2. Registry Pattern (registry.mjs)"]
+        Normalizer --> CheckReg["CheckRegistry"]
+        CheckReg --> RegCore["Core Checks"]
+        CheckReg --> RegCDN["CDN Checks"]
+        CheckReg --> RegPlugin["Custom Plugin Hooks"]
+    end
+
+    subgraph Pipeline ["3. Pipeline & Strategy Pattern (runner.mjs)"]
+        CheckReg --> FilterList["Active Checks Filter (--suites, --grep, --cdns)"]
+        FilterList --> PipelineLoop["Sequential Pipeline Loop"]
+        PipelineLoop --> StratExec["Execute Strategy (VerificationCheck.run)"]
+    end
+
+    subgraph Observer ["4. Observer / Reporter Pattern (reporter.mjs)"]
+        StratExec --> Events["Emitted Events (start, pass, fail, bail)"]
+        Events --> ConsoleOut["ConsoleReporter (ANSI badges & timers)"]
+        Events --> JsonOut["JsonReporter (Machine-readable diagnostics)"]
+        Events --> ScreenOut["ScreenshotReporter (PNG captures on error)"]
+    end
+      </pre>
+    </div>
+
+    <!-- Pattern Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+      <div class="p-5 rounded-xl bg-base-200/40 border border-base-200 space-y-2.5">
+        <div class="flex items-center gap-2 font-bold text-sm text-primary">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          1. Strategy Pattern
+        </div>
+        <div class="text-xs font-semibold text-base-content/90"><code>harness/checks/*</code></div>
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          Every core check and CDN validator is an isolated concrete <strong>Strategy</strong> implementing a universal <code>VerificationCheck</code> contract. Adding a new CDN takes 1 isolated file with zero runner modifications.
         </p>
       </div>
-      <span class="badge badge-primary badge-outline text-xs">Architecture</span>
-    </div>
 
-    <pre class="mermaid">
-flowchart LR
-    subgraph Inputs ["Theme Input Sources"]
-        CLI["CLI: --custom-theme brand.json | .css"]
-        Studio["In-Browser Theme Studio Modal"]
-        Storage["LocalStorage (Saved Themes)"]
-    end
-
-    subgraph Compiler ["DaisyUI Theming Compiler"]
-        Inherit["Resolve 'extends' Base Theme"]
-        HexToOklch["Pure JS sRGB to OKLCH (L% C H)"]
-        AutoContrast["Auto-Contrast for -content Tokens"]
-        CSSGen["CSS Rule [data-theme='name'] Gen"]
-    end
-
-    subgraph Runtime ["Live Report Synchronization"]
-        StyleTag["Inject to style#daisyui-custom-themes"]
-        Dropdown["Add to Navbar Theme Dropdown"]
-        Palette["resolveDaisyUIThemePalette()"]
-        Visuals["Sync Chart.js & Mermaid Diagrams"]
-    end
-
-    CLI --> Inherit
-    Studio --> Inherit
-    Storage --> Inherit
-
-    Inherit --> HexToOklch --> AutoContrast --> CSSGen
-    CSSGen --> StyleTag
-    CSSGen --> Dropdown
-    Dropdown --> Palette
-    Palette --> Visuals
-    </pre>
-  </section>
-
-  <!-- UX Exploration: Live Component Showcase & Placement in example.html -->
-  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="p-2.5 rounded-xl bg-success/10 text-success">
-          <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+      <div class="p-5 rounded-xl bg-base-200/40 border border-base-200 space-y-2.5">
+        <div class="flex items-center gap-2 font-bold text-sm text-secondary">
+          <i data-lucide="database" class="w-4 h-4"></i>
+          2. Registry Pattern
         </div>
-        <div>
-          <h2 class="text-xl font-bold text-base-content" id="placement-confirmed">
-            Confirmed Layout: Top Collapsible Accordion in example.html
-          </h2>
-          <p class="text-xs sm:text-sm text-base-content/70">
-            Compact 48px collapsed banner expanding into the full DaisyUI Theme Studio over the 800-line showcase
-          </p>
-        </div>
-      </div>
-      <span class="badge badge-success badge-outline text-xs">Confirmed Design</span>
-    </div>
-
-    <!-- Live Interactive Collapsible Wireframe Simulation -->
-    <div class="space-y-4">
-      <div class="collapse collapse-arrow bg-base-200/60 border border-base-300 rounded-2xl shadow-sm">
-        <input type="checkbox" id="demo-top-collapsed-toggle" checked />
-        <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
-          <div class="flex items-center gap-2">
-            <span class="p-1 rounded bg-primary/20 text-primary">
-              <i data-lucide="palette" class="w-4 h-4"></i>
-            </span>
-            <span>🎨 DaisyUI Theme Generator &amp; Studio</span>
-            <span class="badge badge-primary badge-xs">Active: Custom Brand</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <span class="bg-primary rounded-badge w-2 h-4"></span>
-            <span class="bg-secondary rounded-badge w-2 h-4"></span>
-            <span class="bg-accent rounded-badge w-2 h-4"></span>
-            <span class="bg-neutral rounded-badge w-2 h-4"></span>
-          </div>
-        </div>
-
-        <div class="collapse-content space-y-4 pt-2 border-t border-base-300/60">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-base-300/40">
-            <div>
-              <p class="text-xs text-base-content/70">
-                Adjust palette tokens live. Changes cascade instantly to all sections in <code class="font-mono text-2xs">example.html</code> underneath.
-              </p>
-            </div>
-            <div class="flex items-center gap-2">
-              <button class="btn btn-xs btn-outline gap-1">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy DaisyUI CSS
-              </button>
-              <button class="btn btn-xs btn-outline gap-1">
-                <i data-lucide="code" class="w-3.5 h-3.5"></i> Copy Tailwind Config
-              </button>
-              <button class="btn btn-xs btn-primary gap-1">
-                <i data-lucide="save" class="w-3.5 h-3.5"></i> Save &amp; Apply
-              </button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div class="bg-base-100 p-2.5 rounded-lg border border-base-300 space-y-1">
-              <span class="text-3xs font-bold uppercase text-base-content/60">Primary (--p)</span>
-              <div class="flex items-center gap-1.5">
-                <div class="w-5 h-5 rounded shadow-sm bg-[#3b82f6]"></div>
-                <span class="font-mono text-xs">#3B82F6</span>
-              </div>
-              <span class="text-3xs text-base-content/50 font-mono">oklch(62% 0.21 259)</span>
-            </div>
-
-            <div class="bg-base-100 p-2.5 rounded-lg border border-base-300 space-y-1">
-              <span class="text-3xs font-bold uppercase text-base-content/60">Secondary (--s)</span>
-              <div class="flex items-center gap-1.5">
-                <div class="w-5 h-5 rounded shadow-sm bg-[#ec4899]"></div>
-                <span class="font-mono text-xs">#EC4899</span>
-              </div>
-              <span class="text-3xs text-base-content/50 font-mono">oklch(65% 0.24 340)</span>
-            </div>
-
-            <div class="bg-base-100 p-2.5 rounded-lg border border-base-300 space-y-1">
-              <span class="text-3xs font-bold uppercase text-base-content/60">Accent (--a)</span>
-              <div class="flex items-center gap-1.5">
-                <div class="w-5 h-5 rounded shadow-sm bg-[#10b981]"></div>
-                <span class="font-mono text-xs">#10B981</span>
-              </div>
-              <span class="text-3xs text-base-content/50 font-mono">oklch(70% 0.17 160)</span>
-            </div>
-
-            <div class="bg-base-100 p-2.5 rounded-lg border border-base-300 space-y-1">
-              <span class="text-3xs font-bold uppercase text-base-content/60">Base-100 (--b1)</span>
-              <div class="flex items-center gap-1.5">
-                <div class="w-5 h-5 rounded shadow-sm bg-[#ffffff]"></div>
-                <span class="font-mono text-xs">#FFFFFF</span>
-              </div>
-              <span class="text-3xs text-base-content/50 font-mono">oklch(100% 0 0)</span>
-            </div>
-          </div>
-        </div>
+        <div class="text-xs font-semibold text-base-content/90"><code>harness/registry.mjs</code></div>
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          A centralized catalog that indexes all checks by ID, category, and CLI flags. Resolves active checks effortlessly based on <code>--suites</code>, <code>--grep</code>, or <code>--check-&lt;cdn&gt;</code>, and allows dynamic plugins.
+        </p>
       </div>
 
-      <!-- Arrow Indicator to Showcase Underneath -->
-      <div class="text-center py-2">
-        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-base-200 text-base-content/70">
-          <i data-lucide="arrow-down" class="w-3.5 h-3.5 text-primary animate-bounce"></i>
-          <span>Live example.html components underneath (Buttons, Badges, Charts, Tables) render in real-time</span>
-        </span>
+      <div class="p-5 rounded-xl bg-base-200/40 border border-base-200 space-y-2.5">
+        <div class="flex items-center gap-2 font-bold text-sm text-accent">
+          <i data-lucide="git-commit" class="w-4 h-4"></i>
+          3. Pipeline with Bail
+        </div>
+        <div class="text-xs font-semibold text-base-content/90"><code>harness/runner.mjs</code></div>
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          Executes checks sequentially through a shared Chromium browser context. Implements <strong>Template Method</strong> timing, timeout bounds per check, and fail-fast <code>--bail</code> abortion on the first regression.
+        </p>
+      </div>
+
+      <div class="p-5 rounded-xl bg-base-200/40 border border-base-200 space-y-2.5">
+        <div class="flex items-center gap-2 font-bold text-sm text-info">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          4. Observer / Reporter Pattern
+        </div>
+        <div class="text-xs font-semibold text-base-content/90"><code>harness/reporter.mjs</code></div>
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          Checks never pollute standard output. They emit lifecycle events (start, pass, fail) received by modular listeners: <code>ConsoleReporter</code>, <code>JsonReporter</code>, and <code>ScreenshotReporter</code>.
+        </p>
+      </div>
+
+      <div class="p-5 rounded-xl bg-base-200/40 border border-base-200 space-y-2.5">
+        <div class="flex items-center gap-2 font-bold text-sm text-warning">
+          <i data-lucide="shield-check" class="w-4 h-4"></i>
+          5. Facade Pattern
+        </div>
+        <div class="text-xs font-semibold text-base-content/90"><code>verify-report.mjs</code></div>
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          The public entrypoint provides a unified interface maintaining 100% backward compatibility for legacy workflows (<code>--quick</code>, <code>--pdf</code>, <code>--caller</code>) while delegating to the new pipeline.
+        </p>
+      </div>
+
+      <div class="p-5 rounded-xl bg-base-200/40 border border-base-200 space-y-2.5">
+        <div class="flex items-center gap-2 font-bold text-sm text-success">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          Universal Quality Contract
+        </div>
+        <div class="text-xs font-semibold text-base-content/90">Deterministic Schema</div>
+        <p class="text-xs text-base-content/70 leading-relaxed">
+          All checks return normalized data: <code>{ id, passed, durationMs, styleguide: { compliant, rulesChecked }, errors, warnings }</code>, eliminating flakiness and enabling AI agent auto-repair.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- Interactive Live Concept: Theme Customizer Studio -->
+  <!-- CLI Flags Matrix Table -->
   <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="p-2.5 rounded-xl bg-primary/10 text-primary">
-          <i data-lucide="sliders-horizontal" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <h2 class="text-xl font-bold text-base-content" id="interactive-preview">
-            Interactive Concept: Theme Customizer Studio
-          </h2>
-          <p class="text-xs sm:text-sm text-base-content/70">
-            Preview of the in-browser theme builder interface being designed
-          </p>
-        </div>
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 rounded-xl bg-accent/10 text-accent">
+        <i data-lucide="terminal" class="w-5 h-5"></i>
       </div>
-      <span class="badge badge-primary badge-outline text-xs">Studio Blueprint</span>
+      <div>
+        <h2 class="text-xl font-bold text-base-content" id="cli-matrix">Precision CLI Flags Specification</h2>
+        <p class="text-xs text-base-content/70">Granular controls for developers, CI runners, and autonomous AI agents</p>
+      </div>
     </div>
 
-    <!-- Mockup Card -->
-    <div class="mockup-window border border-base-300 bg-base-200/50">
-      <div class="p-6 bg-base-100 space-y-6">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-base-200">
-          <div>
-            <h3 class="font-bold text-base text-base-content">Theme Builder: "My Custom Brand"</h3>
-            <p class="text-xs text-base-content/60">Extends: "dark" &bull; Live sync with Chart.js & Mermaid</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <button class="btn btn-xs btn-outline gap-1">
-              <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy DaisyUI CSS
-            </button>
-            <button class="btn btn-xs btn-outline gap-1">
-              <i data-lucide="code" class="w-3.5 h-3.5"></i> Copy Tailwind Config
-            </button>
-            <button class="btn btn-xs btn-primary gap-1">
-              <i data-lucide="save" class="w-3.5 h-3.5"></i> Apply & Save
-            </button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div class="bg-base-200/60 p-3 rounded-lg border border-base-300 space-y-1.5">
-            <span class="text-2xs font-bold uppercase text-base-content/60">Primary (--p)</span>
-            <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-md shadow-sm border border-base-content/20 bg-[#3b82f6]"></div>
-              <span class="font-mono text-xs">#3B82F6</span>
-            </div>
-            <span class="text-3xs text-base-content/50 font-mono">oklch(62% 0.21 259)</span>
-          </div>
-
-          <div class="bg-base-200/60 p-3 rounded-lg border border-base-300 space-y-1.5">
-            <span class="text-2xs font-bold uppercase text-base-content/60">Secondary (--s)</span>
-            <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-md shadow-sm border border-base-content/20 bg-[#ec4899]"></div>
-              <span class="font-mono text-xs">#EC4899</span>
-            </div>
-            <span class="text-3xs text-base-content/50 font-mono">oklch(65% 0.24 340)</span>
-          </div>
-
-          <div class="bg-base-200/60 p-3 rounded-lg border border-base-300 space-y-1.5">
-            <span class="text-2xs font-bold uppercase text-base-content/60">Accent (--a)</span>
-            <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-md shadow-sm border border-base-content/20 bg-[#10b981]"></div>
-              <span class="font-mono text-xs">#10B981</span>
-            </div>
-            <span class="text-3xs text-base-content/50 font-mono">oklch(70% 0.17 160)</span>
-          </div>
-
-          <div class="bg-base-200/60 p-3 rounded-lg border border-base-300 space-y-1.5">
-            <span class="text-2xs font-bold uppercase text-base-content/60">Base-100 (--b1)</span>
-            <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-md shadow-sm border border-base-content/20 bg-[#111827]"></div>
-              <span class="font-mono text-xs">#111827</span>
-            </div>
-            <span class="text-3xs text-base-content/50 font-mono">oklch(20% 0.02 260)</span>
-          </div>
-        </div>
-
-        <!-- Component Preview in Theme -->
-        <div class="p-4 bg-base-200/40 rounded-xl border border-base-200 space-y-3">
-          <div class="text-2xs font-bold uppercase text-base-content/50">Component Preview with Active Theme</div>
-          <div class="flex flex-wrap items-center gap-2">
-            <button class="btn btn-sm btn-primary">Primary Button</button>
-            <button class="btn btn-sm btn-secondary">Secondary Button</button>
-            <button class="btn btn-sm btn-accent">Accent Button</button>
-            <span class="badge badge-primary">Primary Badge</span>
-            <span class="badge badge-secondary">Secondary Badge</span>
-            <span class="badge badge-accent">Accent Badge</span>
-          </div>
-        </div>
-      </div>
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full text-sm">
+        <thead>
+          <tr class="text-base-content/80">
+            <th>Flag</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description & Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-mono text-primary font-bold">--timeout &lt;ms&gt;</td>
+            <td>Integer</td>
+            <td><code>30000</code></td>
+            <td>Maximum wait time for navigation, selector waiting, and report readiness handshake.</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-primary font-bold">--all-cdns</td>
+            <td>Boolean</td>
+            <td><code>false</code></td>
+            <td>Executes full deterministic styleguide verifications across all 10 CDN libraries.</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-primary font-bold">--cdns &lt;list&gt;</td>
+            <td>Comma string</td>
+            <td><code>auto</code></td>
+            <td>Runs styleguide checks on specific CDNs (e.g. <code>--cdns mermaid,charts,leaflet</code>).</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-primary font-bold">--suites / --only</td>
+            <td>Comma string</td>
+            <td><code>all</code></td>
+            <td>Runs only specified check suites (e.g. <code>core,cdns,responsive,themes</code>).</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-primary font-bold">--grep &lt;pattern&gt;</td>
+            <td>RegExp</td>
+            <td><code>null</code></td>
+            <td>Executes only checks or assertion steps matching the provided pattern.</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-primary font-bold">--themes &lt;list&gt;</td>
+            <td>Comma string</td>
+            <td><code>all</code></td>
+            <td>Tests specific DaisyUI themes (e.g. <code>light,dark,cyberpunk,nord</code>) rather than cycling 32 themes.</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-primary font-bold">--viewports &lt;list&gt;</td>
+            <td>Comma string</td>
+            <td><code>all 5</code></td>
+            <td>Verifies named breakpoints (<code>sm,md,lg,xl,2xl</code>) or custom dimensions (e.g. <code>1920x1080</code>).</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-secondary font-bold">--screenshots [dir]</td>
+            <td>Path</td>
+            <td><code>null</code></td>
+            <td>Captures PNG snapshots for every tested breakpoint or immediately upon test failure.</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-secondary font-bold">--bail</td>
+            <td>Boolean</td>
+            <td><code>false</code></td>
+            <td>Aborts the run immediately on the first failed check for rapid CI failure feedback.</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-secondary font-bold">--strict</td>
+            <td>Boolean</td>
+            <td><code>false</code></td>
+            <td>Treats horizontal space warnings (<code>data-insufficient-space</code>) and console warnings as fatal errors.</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-accent font-bold">--json &lt;path&gt;</td>
+            <td>Path</td>
+            <td><code>null</code></td>
+            <td>Emits a structured JSON test execution report with failure traces and durations for agent diagnosis.</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-accent font-bold">--color-contrast</td>
+            <td>Boolean</td>
+            <td><code>false</code></td>
+            <td>Runs automated WCAG AA color contrast ratio audits on active themes.</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-info font-bold">--headed</td>
+            <td>Boolean</td>
+            <td><code>false</code></td>
+            <td>Launches Chromium in visible UI mode for interactive visual inspection and debugging.</td>
+          </tr>
+          <tr>
+            <td class="font-mono text-base-content/70">--quick / -q</td>
+            <td>Boolean</td>
+            <td><code>false</code></td>
+            <td>Legacy shorthand: runs <code>sm</code> and <code>lg</code> breakpoints on <code>light</code> theme only without PDF export.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 
   <!-- Connected Task Checklist -->
   <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
     <div class="flex items-center justify-between pb-4 border-b border-base-200">
-      <div>
-        <h2 class="text-xl font-bold text-base-content" id="roadmap-tasks">
-          OpenSpec Roadmap Tasks (tasks.md)
-        </h2>
-        <p class="text-xs sm:text-sm text-base-content/70">
-          Planned milestone tasks for implementation
-        </p>
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-success/10 text-success">
+          <i data-lucide="check-square" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-base-content" id="tasks-checklist">Verifiable Implementation Tasks</h2>
+          <p class="text-xs text-base-content/70">Synchronized with tasks.md (23/23 Complete &bull; 100% Shipped)</p>
+        </div>
       </div>
-      <a href="./tasks.md" target="_blank" class="btn btn-xs btn-outline gap-1">
-        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> View tasks.md
-      </a>
+      <span class="badge badge-success text-xs font-semibold">23 / 23 Complete</span>
     </div>
 
     <div class="space-y-6">
       <!-- Phase 1 -->
-      <div class="space-y-2">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-success flex items-center gap-2">
-          <span>Phase 1: Pure JS OKLCH Engine &amp; DaisyUI Compiler (D1, D3, D4)</span>
-          <span class="badge badge-xs badge-success text-success-content font-bold">Verified &bull; 4/4</span>
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-lg bg-success text-success-content flex items-center justify-center text-xs">✓</span>
+          Phase 1: Architecture Core & Check Registry
         </h3>
-        <ul class="space-y-1.5 text-xs text-base-content/80 font-mono bg-base-200/30 p-3 rounded-lg border border-base-200">
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 1.1 Implement pure JS color conversion utility (sRGB to OKLCH L% C H string).</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 1.2 Implement automatic contrast generator for -content variables (--pc, --sc, etc.).</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 1.3 Implement theme compiler supporting JSON definitions, base theme inheritance (extends), and raw CSS.</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 1.4 Add unit tests verifying color conversion accuracy, inheritance, and CSS output.</li>
+        <ul class="space-y-2 text-sm pl-8">
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>1.1</strong> Create <code>skills/html-report/playwright/harness/registry.mjs</code> defining <code>VerificationCheck</code> contract and registration API.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>1.2</strong> Create <code>skills/html-report/playwright/harness/runner.mjs</code> orchestrating browser startup, context, and check pipeline.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>1.3</strong> Create <code>skills/html-report/playwright/harness/reporter.mjs</code> managing console status logging, timers, and summaries.</span>
+          </li>
         </ul>
       </div>
 
       <!-- Phase 2 -->
-      <div class="space-y-2">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-success flex items-center gap-2">
-          <span>Phase 2: Build-Time &amp; CLI Integration (D1)</span>
-          <span class="badge badge-xs badge-success text-success-content font-bold">Verified &bull; 4/4</span>
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-lg bg-success text-success-content flex items-center justify-center text-xs">✓</span>
+          Phase 2: Core Check Modules Extraction
         </h3>
-        <ul class="space-y-1.5 text-xs text-base-content/80 font-mono bg-base-200/30 p-3 rounded-lg border border-base-200">
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 2.1 Update scripts/build-report.mjs to accept --custom-theme &lt;path&gt; (JSON and CSS).</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 2.2 Inject custom theme CSS into template shell &lt;style id="daisyui-custom-themes"&gt;.</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 2.3 Ensure custom theme names are recognized and selectable via --theme &lt;name&gt;.</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 2.4 Add build test verifying custom theme builds deterministically with matching palette.</li>
+        <ul class="space-y-2 text-sm pl-8">
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>2.1</strong> Extract console error and network tile monitoring into <code>harness/checks/core/console-errors.mjs</code>.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>2.2</strong> Extract default 'light' theme, favicon, navbar hierarchy, download dropdown, and footer into <code>harness/checks/core/structure.mjs</code>.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>2.3</strong> Extract responsive viewport testing, badge pill overflow, and horizontal scrollbar detection into <code>harness/checks/core/responsive.mjs</code>.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>2.4</strong> Extract DaisyUI 32-theme dropdown switching and palette sync into <code>harness/checks/core/theme-switcher.mjs</code>.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>2.5</strong> Extract print media styling (@media print rules), cover layout, and PDF generation into <code>harness/checks/core/print-pdf.mjs</code>.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>2.6</strong> Extract WCAG AA color contrast and accessibility landmark audits into <code>harness/checks/core/a11y-contrast.mjs</code>.</span>
+          </li>
         </ul>
       </div>
 
       <!-- Phase 3 -->
-      <div class="space-y-2">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-success flex items-center gap-2">
-          <span>Phase 3: Runtime Registration &amp; Top Collapsible Studio in example.html (D2)</span>
-          <span class="badge badge-xs badge-success text-success-content font-bold">Verified &bull; 5/5</span>
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-lg bg-success text-success-content flex items-center justify-center text-xs">✓</span>
+          Phase 3: Dedicated CDN Styleguide Matrix
         </h3>
-        <ul class="space-y-1.5 text-xs text-base-content/80 font-mono bg-base-200/30 p-3 rounded-lg border border-base-200">
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 3.1 Update report-runtime.js to register dynamic custom themes into DAISYUI_THEMES.</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 3.2 Update initThemeDropdown() to display custom themes with swatches and add indicator.</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 3.3 Create Top Collapsible Accordion (collapse collapse-arrow) in example.html with real-time color pickers and base theme dropdown.</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 3.4 Wire real-time live preview updating DOM, Chart.js instances, and Mermaid diagrams.</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 3.5 Implement localStorage persistence and one-click export (DaisyUI CSS &amp; Tailwind config).</li>
+        <ul class="space-y-2 text-sm pl-8">
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>3.1</strong> Implement Chart.js styleguide check in <code>harness/checks/cdns/charts.mjs</code> (DaisyUI color sync, canvas resize, zero clipping).</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>3.2</strong> Implement Mermaid styleguide check in <code>harness/checks/cdns/mermaid.mjs</code> (SVG diagram render, dark/light theme sync, zero syntax errors).</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>3.3</strong> Implement Leaflet styleguide check in <code>harness/checks/cdns/leaflet.mjs</code> (pane sanity, tile naturalWidth &gt; 0, 403 HTTP error prevention).</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>3.4</strong> Implement Grid.js styleguide check in <code>harness/checks/cdns/gridjs.mjs</code> (table DOM, search input, pagination, zero overflow).</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>3.5</strong> Implement KaTeX styleguide check in <code>harness/checks/cdns/katex.mjs</code> (formatted <code>.katex</code> blocks, zero unrendered LaTeX tokens).</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>3.6</strong> Implement Highlight.js styleguide check in <code>harness/checks/cdns/highlight.mjs</code> (code parsing, <code>.hljs-keyword</code> verification, theme styling).</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>3.7</strong> Implement Marked styleguide check in <code>harness/checks/cdns/marked.mjs</code> (clean semantic HTML, zero raw unparsed markdown symbols).</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>3.8</strong> Implement Lucide & Alpine styleguide check in <code>harness/checks/cdns/lucide.mjs</code> and <code>alpine.mjs</code> (SVG replacement, <code>x-data</code> reactivity).</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>3.9</strong> Implement FullCalendar styleguide check in <code>harness/checks/cdns/fullcalendar.mjs</code> (grid render, toolbar formatting, event presence).</span>
+          </li>
         </ul>
       </div>
 
       <!-- Phase 4 -->
-      <div class="space-y-2">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-success flex items-center gap-2">
-          <span>Phase 4: Verification &amp; Documentation</span>
-          <span class="badge badge-xs badge-success text-success-content font-bold">Verified &bull; 3/3</span>
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-lg bg-success text-success-content flex items-center justify-center text-xs">✓</span>
+          Phase 4: Precision CLI Flags Matrix
         </h3>
-        <ul class="space-y-1.5 text-xs text-base-content/80 font-mono bg-base-200/30 p-3 rounded-lg border border-base-200">
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 4.1 Run Playwright responsive checks across custom themes.</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 4.2 Verify dynamic palette resolution with Chart.js and Mermaid when switching custom themes.</li>
-          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 4.3 Update skills/html-report/SKILL.md and project README with theme customization instructions.</li>
+        <ul class="space-y-2 text-sm pl-8">
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.1</strong> Implement <code>--timeout &lt;ms&gt;</code> flag for configurable navigation and assertion timeout bounds.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.2</strong> Implement <code>--suites &lt;names&gt;</code> and <code>--only &lt;name&gt;</code> filtering to selectively run check subsets.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.3</strong> Implement <code>--grep &lt;pattern&gt;</code> filtering to execute checks matching regex patterns.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.4</strong> Implement CDN styleguide targeting flags: <code>--all-cdns</code>, <code>--cdns &lt;list&gt;</code>, and <code>--check-&lt;cdn&gt;</code>.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.5</strong> Implement <code>--themes &lt;list&gt;</code> to test specific DaisyUI themes instead of cycling all 32 themes.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.6</strong> Implement <code>--viewports &lt;list&gt;</code> supporting named breakpoints and custom dimensions.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.7</strong> Implement <code>--bail</code> for immediate execution halt upon first failed assertion.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.8</strong> Implement <code>--strict</code> flag treating layout warnings and console warnings as hard errors.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.9</strong> Implement <code>--headed</code> flag to enable non-headless browser debugging.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.10</strong> Implement <code>--json &lt;path&gt;</code> to export structured machine-readable test execution reports with styleguide compliance data.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>4.11</strong> Implement <code>--screenshots [dir]</code> capturing PNG images of failed assertions and responsive viewports.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Phase 5 -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-lg bg-success text-success-content flex items-center justify-center text-xs">✓</span>
+          Phase 5: Facade, Backward Compatibility & Verification
+        </h3>
+        <ul class="space-y-2 text-sm pl-8">
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>5.1</strong> Refactor <code>verify-report.mjs</code> into a lightweight facade mapping legacy args (<code>--quick</code>, <code>--pdf</code>, <code>--mode</code>, <code>--caller</code>) to the new harness runner.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>5.2</strong> Add comprehensive test suite in <code>tests/playwright-harness.test.mjs</code> verifying all CLI flags, CDN styleguide checks, bail behavior, and JSON report generation.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>5.3</strong> Update <code>skills/html-report/SKILL.md</code> with Playwright flags documentation, CDN styleguide commands, and troubleshooting guide.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" />
+            <span><strong>5.4</strong> Update companion <code>index.html</code> report and sync with <code>localhost:3000</code>.</span>
+          </li>
         </ul>
       </div>
     </div>
@@ -1492,6 +1873,15 @@ async function setReportTheme(themeName) {
 
   // Dynamic Mermaid sync
   await renderMermaidWithTheme(palette);
+
+  // Dynamic FullCalendar sync
+  if (typeof window !== "undefined" && window.reportCalendars && Array.isArray(window.reportCalendars)) {
+    window.reportCalendars.forEach((cal) => {
+      try {
+        cal.render();
+      } catch (_) {}
+    });
+  }
 }
 
 /**
@@ -1684,6 +2074,181 @@ function initDownloadButton() {
   }
 }
 
+/**
+ * Day.js runtime initialization & data-dayjs hydration.
+ */
+function initDayjs() {
+  if (typeof window === "undefined" || !window.dayjs) return;
+  try {
+    if (window.dayjs_plugin_relativeTime) {
+      window.dayjs.extend(window.dayjs_plugin_relativeTime);
+    }
+    if (window.dayjs_plugin_customParseFormat) {
+      window.dayjs.extend(window.dayjs_plugin_customParseFormat);
+    }
+  } catch (err) {
+    console.warn("[html-report] Day.js plugin registration notice:", err);
+  }
+
+  try {
+    document.querySelectorAll("[data-dayjs]").forEach((el) => {
+      const raw = el.getAttribute("data-dayjs");
+      const format = el.getAttribute("data-dayjs-format") || "YYYY-MM-DD HH:mm:ss";
+      const fromNow = el.hasAttribute("data-dayjs-from-now") || el.getAttribute("data-dayjs-relative") === "true";
+      const d = (raw && raw !== "now" && raw !== "true") ? window.dayjs(raw) : window.dayjs();
+      if (fromNow && typeof d.fromNow === "function") {
+        el.textContent = d.fromNow();
+      } else {
+        el.textContent = d.format(format);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Day.js DOM hydration notice:", err);
+  }
+}
+
+/**
+ * Impress.js runtime initialization with strict presentation guard.
+ * Only initializes 3D canvas when explicitly requested as a presentation.
+ */
+function initImpress() {
+  if (typeof window === "undefined" || !window.impress) return;
+
+  const impressRoot = document.getElementById("impress");
+  if (!impressRoot) return;
+
+  // Presentation Guard: Impress 3D initialization ONLY activates when explicitly requested
+  const isPresentationRequested =
+    document.documentElement.getAttribute("data-presentation") === "true" ||
+    document.body.getAttribute("data-presentation") === "true" ||
+    impressRoot.getAttribute("data-presentation") === "true" ||
+    impressRoot.classList.contains("impress-presentation-active");
+
+  if (!isPresentationRequested) {
+    // Treat as print/static: slides remain stacked in standard document flow
+    impressRoot.classList.add("impress-static-fallback");
+    return;
+  }
+
+  try {
+    if (!impressRoot.dataset.impressInitialized) {
+      impressRoot.dataset.impressInitialized = "true";
+      const api = window.impress("impress");
+      api.init();
+      window.impressApi = api;
+    }
+  } catch (err) {
+    console.warn("[html-report] Impress.js initialization notice:", err);
+  }
+}
+
+/**
+ * Mock.js runtime initialization & data-mock hydration.
+ */
+function initMockjs() {
+  if (typeof window === "undefined" || !window.Mock) return;
+  try {
+    document.querySelectorAll("[data-mock]").forEach((el) => {
+      if (el.dataset.mockInitialized) return;
+      el.dataset.mockInitialized = "true";
+      const raw = el.getAttribute("data-mock");
+      if (!raw) return;
+      try {
+        const schema = JSON.parse(raw);
+        const data = window.Mock.mock(schema);
+        if (el.tagName.toLowerCase() === "code" || el.tagName.toLowerCase() === "pre") {
+          el.textContent = JSON.stringify(data, null, 2);
+        } else if (el.hasAttribute("data-mock-target")) {
+          const target = document.querySelector(el.getAttribute("data-mock-target"));
+          if (target) target.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (parseErr) {
+        const data = window.Mock.mock(raw);
+        el.textContent = String(data);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Mock.js hydration notice:", err);
+  }
+}
+
+/**
+ * Showdown runtime initialization & data-showdown hydration.
+ */
+function initShowdown() {
+  if (typeof window === "undefined" || !window.showdown) return;
+  try {
+    const converter = new window.showdown.Converter({
+      tables: true,
+      tasklists: true,
+      strikethrough: true,
+      emoji: true,
+      ghCodeBlocks: true
+    });
+    window.showdownConverter = converter;
+
+    document.querySelectorAll("[data-showdown]").forEach((el) => {
+      if (el.dataset.showdownInitialized) return;
+      el.dataset.showdownInitialized = "true";
+      const srcSelector = el.getAttribute("data-showdown-source");
+      let md = "";
+      if (srcSelector) {
+        const srcEl = document.querySelector(srcSelector);
+        if (srcEl) {
+          md = srcEl.value !== undefined ? srcEl.value : srcEl.textContent;
+        }
+      } else {
+        const rawAttr = el.getAttribute("data-showdown");
+        md = (rawAttr && rawAttr !== "true") ? rawAttr : el.textContent;
+      }
+      if (md) {
+        el.innerHTML = converter.makeHtml(md);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Showdown markdown rendering notice:", err);
+  }
+}
+
+/**
+ * FullCalendar runtime initialization & DaisyUI theme synchronization.
+ */
+function initFullCalendar() {
+  if (typeof window === "undefined" || !window.FullCalendar) return;
+  window.reportCalendars = window.reportCalendars || [];
+
+  try {
+    const calendarEls = document.querySelectorAll("[data-fullcalendar], #calendar");
+    calendarEls.forEach((el) => {
+      if (el.dataset.calendarInitialized) return;
+      el.dataset.calendarInitialized = "true";
+
+      let events = [];
+      const rawEvents = el.getAttribute("data-calendar-events");
+      if (rawEvents) {
+        try {
+          events = JSON.parse(rawEvents);
+        } catch (_) {}
+      }
+
+      const calendar = new window.FullCalendar.Calendar(el, {
+        initialView: el.getAttribute("data-calendar-view") || "dayGridMonth",
+        headerToolbar: {
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,listWeek"
+        },
+        height: el.getAttribute("data-calendar-height") || "auto",
+        events: events
+      });
+      calendar.render();
+      window.reportCalendars.push(calendar);
+    });
+  } catch (err) {
+    console.warn("[html-report] FullCalendar initialization notice:", err);
+  }
+}
+
 // Global browser window bindings
 if (typeof window !== "undefined") {
   window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
@@ -1710,6 +2275,11 @@ if (typeof window !== "undefined") {
   window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
   window.exportReportPdf = exportReportPdf;
   window.initDownloadButton = initDownloadButton;
+  window.initDayjs = initDayjs;
+  window.initImpress = initImpress;
+  window.initMockjs = initMockjs;
+  window.initShowdown = initShowdown;
+  window.initFullCalendar = initFullCalendar;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
@@ -1718,6 +2288,11 @@ if (typeof window !== "undefined") {
     try { initThemeDropdown(); } catch (_) {}
     try { initDownloadButton(); } catch (_) {}
     try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
+    try { initDayjs(); } catch (_) {}
+    try { initShowdown(); } catch (_) {}
+    try { initMockjs(); } catch (_) {}
+    try { initFullCalendar(); } catch (_) {}
+    try { initImpress(); } catch (_) {}
 
     const palette = resolveDaisyUIThemePalette();
     try { await renderMermaidWithTheme(palette); } catch (_) {}
@@ -1753,7 +2328,12 @@ if (typeof module !== "undefined" && module.exports) {
     checkInsufficientHorizontalSpace,
     buildInlinedHtmlSnapshot,
     exportReportPdf,
-    initDownloadButton
+    initDownloadButton,
+    initDayjs,
+    initImpress,
+    initMockjs,
+    initShowdown,
+    initFullCalendar
   };
 }
 

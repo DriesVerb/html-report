@@ -244,10 +244,10 @@
 
       <!-- Quick Links to OpenSpec Changes -->
       <div class="flex flex-wrap items-center gap-2">
-        <a href="openspec/changes/cdn-addons-expansion/index.html" class="btn btn-sm btn-primary gap-1.5">
+        <a href="openspec/changes/archive/2026-11-03-cdn-addons-expansion/index.html" class="btn btn-sm btn-primary gap-1.5">
           <i data-lucide="package" class="w-4 h-4"></i> CDN Addons Hub
         </a>
-        <a href="openspec/changes/playwright-extensible-harness/index.html" class="btn btn-sm btn-secondary gap-1.5">
+        <a href="openspec/changes/archive/2026-11-03-playwright-extensible-harness/index.html" class="btn btn-sm btn-secondary gap-1.5">
           <i data-lucide="shield-check" class="w-4 h-4"></i> Playwright Harness Hub
         </a>
       </div>
@@ -260,10 +260,10 @@
       </h2>
       <ul class="steps steps-vertical sm:steps-horizontal w-full">
         <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
-        <li class="step step-primary font-bold text-primary" data-content="●">Planning & Specs Active</li>
-        <li class="step font-medium" data-content="3">Implementing</li>
-        <li class="step font-medium" data-content="4">Verifying</li>
-        <li class="step font-medium" data-content="5">Shipped / Archived</li>
+        <li class="step step-primary font-medium" data-content="✓">Planning &amp; Specs Active</li>
+        <li class="step step-primary font-medium" data-content="✓">Implementing</li>
+        <li class="step step-primary font-medium" data-content="✓">Verifying</li>
+        <li class="step step-primary font-bold text-primary" data-content="★">Shipped / Archived</li>
       </ul>
     </div>
   </header>
@@ -285,7 +285,7 @@
       </div>
       <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Total OpenSpec Tasks</div>
       <div class="stat-value text-secondary text-2xl sm:text-3xl">37 Tasks</div>
-      <div class="stat-desc text-xs text-base-content/70 truncate">16 CDN + 21 Playwright</div>
+      <div class="stat-desc text-xs text-success font-semibold truncate">37 / 37 Complete (100%)</div>
     </div>
 
     <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
@@ -312,7 +312,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-200">
       <div>
         <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary mb-1">
-          <i data-lucide="folder" class="w-3.5 h-3.5"></i> openspec/changes/cdn-addons-expansion/
+          <i data-lucide="folder" class="w-3.5 h-3.5"></i> openspec/changes/archive/2026-11-03-cdn-addons-expansion/
         </div>
         <h2 class="text-2xl font-bold text-base-content" id="change-cdn-addons">
           Change 1: CDN Addons Expansion
@@ -323,11 +323,11 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
-        <a href="openspec/changes/cdn-addons-expansion/proposal.md" target="_blank" class="btn btn-xs btn-outline">proposal.md</a>
-        <a href="openspec/changes/cdn-addons-expansion/design.md" target="_blank" class="btn btn-xs btn-outline">design.md</a>
-        <a href="openspec/changes/cdn-addons-expansion/tasks.md" target="_blank" class="btn btn-xs btn-outline">tasks.md</a>
-        <a href="openspec/changes/cdn-addons-expansion/specs/cdn-addons-expansion/spec.md" target="_blank" class="btn btn-xs btn-outline">spec.md</a>
-        <a href="openspec/changes/cdn-addons-expansion/index.html" class="btn btn-xs btn-primary gap-1">
+        <a href="openspec/changes/archive/2026-11-03-cdn-addons-expansion/proposal.md" target="_blank" class="btn btn-xs btn-outline">proposal.md</a>
+        <a href="openspec/changes/archive/2026-11-03-cdn-addons-expansion/design.md" target="_blank" class="btn btn-xs btn-outline">design.md</a>
+        <a href="openspec/changes/archive/2026-11-03-cdn-addons-expansion/tasks.md" target="_blank" class="btn btn-xs btn-outline">tasks.md</a>
+        <a href="openspec/changes/archive/2026-11-03-cdn-addons-expansion/specs/cdn-addons-expansion/spec.md" target="_blank" class="btn btn-xs btn-outline">spec.md</a>
+        <a href="openspec/changes/archive/2026-11-03-cdn-addons-expansion/index.html" class="btn btn-xs btn-primary gap-1">
           <i data-lucide="external-link" class="w-3 h-3"></i> Full Dashboard
         </a>
       </div>
@@ -335,125 +335,125 @@
 
     <!-- CDN Tasks Checklist Accordion -->
     <div class="space-y-4">
-      <div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-xl">
+      <div class="collapse collapse-arrow bg-base-205/50 border border-base-200 rounded-xl">
         <input type="checkbox" checked="checked" />
         <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
           <span class="flex items-center gap-2">
             <i data-lucide="list-todo" class="w-4 h-4 text-primary"></i>
             Phase 1: Addon Registry & CLI Build Integration (6 tasks)
           </span>
-          <span class="badge badge-sm badge-ghost">0/6</span>
+          <span class="badge badge-sm badge-success font-semibold">6/6</span>
         </div>
         <div class="collapse-content space-y-2 text-xs">
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>1.1</strong> Register Day.js CDN bundle and relativeTime/customParseFormat plugins in <code>ADDON_REGISTRY</code>.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>1.2</strong> Register Impress.js CDN bundle in <code>ADDON_REGISTRY</code> with viewport-safe container styles.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>1.3</strong> Register Mock.js CDN bundle in <code>ADDON_REGISTRY</code> with client-side mock interception.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>1.4</strong> Register Showdown CDN bundle in <code>ADDON_REGISTRY</code> with markdown converter signatures.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>1.5</strong> Register FullCalendar 6 CDN bundle and CSS variables in <code>ADDON_REGISTRY</code> with misspelling aliases.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>1.6</strong> Update <code>detectAddons()</code> in <code>skills/html-report/scripts/build-report.mjs</code> with auto-detection regexes.</span>
           </label>
         </div>
       </div>
 
-      <div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-xl">
+      <div class="collapse collapse-arrow bg-base-205/50 border border-base-200 rounded-xl">
         <input type="checkbox" />
         <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
           <span class="flex items-center gap-2">
             <i data-lucide="palette" class="w-4 h-4 text-primary"></i>
             Phase 2: Runtime Initialization & DaisyUI Theme Sync (4 tasks)
           </span>
-          <span class="badge badge-sm badge-ghost">0/4</span>
+          <span class="badge badge-sm badge-success font-semibold">4/4</span>
         </div>
         <div class="collapse-content space-y-2 text-xs">
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>2.1</strong> Update <code>report-runtime.js</code> to expose initialization helpers for <code>dayjs</code>, <code>impress</code>, <code>Mock</code>, <code>showdown</code>, and <code>FullCalendar</code>.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>2.2</strong> Wire DaisyUI theme switcher to dynamically update FullCalendar CSS custom properties and re-render.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>2.3</strong> Implement container scoping for embedded Impress.js presentations to prevent hijacking report body scroll.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>2.4</strong> Verify graceful offline degradation if CDN scripts fail to load in restricted network sandboxes.</span>
           </label>
         </div>
       </div>
 
-      <div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-xl">
+      <div class="collapse collapse-arrow bg-base-205/50 border border-base-200 rounded-xl">
         <input type="checkbox" />
         <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
           <span class="flex items-center gap-2">
             <i data-lucide="check-circle-2" class="w-4 h-4 text-primary"></i>
             Phase 3: Automated Unit & CLI Tests (4 tasks)
           </span>
-          <span class="badge badge-sm badge-ghost">0/4</span>
+          <span class="badge badge-sm badge-success font-semibold">4/4</span>
         </div>
         <div class="collapse-content space-y-2 text-xs">
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>3.1</strong> Add unit tests in <code>tests/build-report.test.mjs</code> verifying auto-detection signatures for all 5 new addons.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>3.2</strong> Add unit tests verifying CLI aliases (<code>--addons fullcalender</code>, <code>mock</code>, <code>day</code>, <code>impressjs</code>).</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>3.3</strong> Add unit tests verifying multi-addon co-existence (Marked and Showdown together).</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>3.4</strong> Run test suite and assert 100% test pass rate.</span>
           </label>
         </div>
       </div>
 
-      <div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-xl">
+      <div class="collapse collapse-arrow bg-base-205/50 border border-base-200 rounded-xl">
         <input type="checkbox" />
         <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
           <span class="flex items-center gap-2">
             <i data-lucide="book-open" class="w-4 h-4 text-primary"></i>
             Phase 4: Showcase Examples & Documentation (4 tasks)
           </span>
-          <span class="badge badge-sm badge-ghost">0/4</span>
+          <span class="badge badge-sm badge-success font-semibold">4/4</span>
         </div>
         <div class="collapse-content space-y-2 text-xs">
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>4.1</strong> Add interactive demo section for Day.js, Impress.js, Mock.js, Showdown, and FullCalendar in <code>skills/html-report/examples/example.html</code>.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>4.2</strong> Update <code>skills/html-report/SKILL.md</code> with capabilities, CDN table, auto-detection signatures, and code snippets.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>4.3</strong> Update <code>README.md</code> ecosystem library count and feature highlights.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-primary mt-0.5" />
             <span><strong>4.4</strong> Build and verify companion <code>index.html</code> report and sync to <code>localhost:3000</code>.</span>
           </label>
         </div>
@@ -466,7 +466,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-200">
       <div>
         <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary/10 text-secondary mb-1">
-          <i data-lucide="folder" class="w-3.5 h-3.5"></i> openspec/changes/playwright-extensible-harness/
+          <i data-lucide="folder" class="w-3.5 h-3.5"></i> openspec/changes/archive/2026-11-03-playwright-extensible-harness/
         </div>
         <h2 class="text-2xl font-bold text-base-content" id="change-playwright">
           Change 2: Playwright Extensible Harness & Precision Flags
@@ -477,11 +477,11 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
-        <a href="openspec/changes/playwright-extensible-harness/proposal.md" target="_blank" class="btn btn-xs btn-outline">proposal.md</a>
-        <a href="openspec/changes/playwright-extensible-harness/design.md" target="_blank" class="btn btn-xs btn-outline">design.md</a>
-        <a href="openspec/changes/playwright-extensible-harness/tasks.md" target="_blank" class="btn btn-xs btn-outline">tasks.md</a>
-        <a href="openspec/changes/playwright-extensible-harness/specs/playwright-extensible-harness/spec.md" target="_blank" class="btn btn-xs btn-outline">spec.md</a>
-        <a href="openspec/changes/playwright-extensible-harness/index.html" class="btn btn-xs btn-secondary gap-1">
+        <a href="openspec/changes/archive/2026-11-03-playwright-extensible-harness/proposal.md" target="_blank" class="btn btn-xs btn-outline">proposal.md</a>
+        <a href="openspec/changes/archive/2026-11-03-playwright-extensible-harness/design.md" target="_blank" class="btn btn-xs btn-outline">design.md</a>
+        <a href="openspec/changes/archive/2026-11-03-playwright-extensible-harness/tasks.md" target="_blank" class="btn btn-xs btn-outline">tasks.md</a>
+        <a href="openspec/changes/archive/2026-11-03-playwright-extensible-harness/specs/playwright-extensible-harness/spec.md" target="_blank" class="btn btn-xs btn-outline">spec.md</a>
+        <a href="openspec/changes/archive/2026-11-03-playwright-extensible-harness/index.html" class="btn btn-xs btn-secondary gap-1">
           <i data-lucide="external-link" class="w-3 h-3"></i> Full Dashboard
         </a>
       </div>
@@ -489,162 +489,162 @@
 
     <!-- Playwright Tasks Checklist Accordion -->
     <div class="space-y-4">
-      <div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-xl">
+      <div class="collapse collapse-arrow bg-base-205/50 border border-base-200 rounded-xl">
         <input type="checkbox" checked="checked" />
         <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
           <span class="flex items-center gap-2">
             <i data-lucide="cpu" class="w-4 h-4 text-secondary"></i>
             Phase 1: Architecture Core & Check Registry (3 tasks)
           </span>
-          <span class="badge badge-sm badge-ghost">0/3</span>
+          <span class="badge badge-sm badge-success font-semibold">0/3</span>
         </div>
         <div class="collapse-content space-y-2 text-xs">
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>1.1</strong> Create <code>harness/registry.mjs</code> defining <code>VerificationCheck</code> contract and registration API.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>1.2</strong> Create <code>harness/runner.mjs</code> orchestrating browser startup, context, and check pipeline.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>1.3</strong> Create <code>harness/reporter.mjs</code> managing console status logging, timers, and summaries.</span>
           </label>
         </div>
       </div>
 
-      <div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-xl">
+      <div class="collapse collapse-arrow bg-base-205/50 border border-base-200 rounded-xl">
         <input type="checkbox" />
         <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
           <span class="flex items-center gap-2">
             <i data-lucide="blocks" class="w-4 h-4 text-secondary"></i>
             Phase 2: Check Modules Extraction (6 tasks)
           </span>
-          <span class="badge badge-sm badge-ghost">0/6</span>
+          <span class="badge badge-sm badge-success font-semibold">6/6</span>
         </div>
         <div class="collapse-content space-y-2 text-xs">
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>2.1</strong> Extract console error and network tile monitoring into <code>harness/checks/console-errors.mjs</code>.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>2.2</strong> Extract dynamic CDN addon verification into <code>harness/checks/addons-health.mjs</code>.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>2.3</strong> Extract responsive viewport testing and horizontal overflow detection into <code>harness/checks/responsive.mjs</code>.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>2.4</strong> Extract DaisyUI theme switching and palette verification into <code>harness/checks/theme-switcher.mjs</code>.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>2.5</strong> Extract print media styling and PDF generation into <code>harness/checks/print-pdf.mjs</code>.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>2.6</strong> Implement WCAG AA color contrast check in <code>harness/checks/a11y-contrast.mjs</code>.</span>
           </label>
         </div>
       </div>
 
-      <div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-xl">
+      <div class="collapse collapse-arrow bg-base-205/50 border border-base-200 rounded-xl">
         <input type="checkbox" />
         <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
           <span class="flex items-center gap-2">
             <i data-lucide="sliders" class="w-4 h-4 text-secondary"></i>
             Phase 3: Precision CLI Flags Implementation (8 tasks)
           </span>
-          <span class="badge badge-sm badge-ghost">0/8</span>
+          <span class="badge badge-sm badge-success font-semibold">0/8</span>
         </div>
         <div class="collapse-content space-y-2 text-xs">
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>3.1</strong> Implement <code>--timeout &lt;ms&gt;</code> flag for configurable navigation and assertion timeout bounds.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>3.2</strong> Implement <code>--suites &lt;names&gt;</code> and <code>--only &lt;name&gt;</code> filtering to selectively run check subsets.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>3.3</strong> Implement <code>--grep &lt;pattern&gt;</code> filtering to execute checks or assertions matching regex patterns.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>3.4</strong> Implement <code>--themes &lt;list&gt;</code> to test specific DaisyUI themes instead of cycling through all themes.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>3.5</strong> Implement <code>--viewports &lt;list&gt;</code> supporting named breakpoints and custom dimensions.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>3.6</strong> Implement <code>--bail</code> for immediate execution halt upon first failed assertion.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>3.7</strong> Implement <code>--strict</code> flag treating layout warnings and console warnings as hard errors.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>3.8</strong> Implement <code>--headed</code> flag to enable non-headless browser debugging.</span>
           </label>
         </div>
       </div>
 
-      <div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-xl">
+      <div class="collapse collapse-arrow bg-base-205/50 border border-base-200 rounded-xl">
         <input type="checkbox" />
         <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
           <span class="flex items-center gap-2">
             <i data-lucide="file-json" class="w-4 h-4 text-secondary"></i>
             Phase 4: Diagnostics, JSON Reporting & Screenshots (3 tasks)
           </span>
-          <span class="badge badge-sm badge-ghost">0/3</span>
+          <span class="badge badge-sm badge-success font-semibold">0/3</span>
         </div>
         <div class="collapse-content space-y-2 text-xs">
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>4.1</strong> Implement <code>--json &lt;path&gt;</code> to export structured machine-readable test execution reports.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>4.2</strong> Implement <code>--screenshots [dir]</code> capturing PNG images of failed assertions and responsive viewports.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>4.3</strong> Ensure legacy CLI invocations (<code>--quick</code>, <code>--pdf</code>, <code>--mode</code>, <code>--caller</code>) function with 100% backward compatibility.</span>
           </label>
         </div>
       </div>
 
-      <div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-xl">
+      <div class="collapse collapse-arrow bg-base-205/50 border border-base-200 rounded-xl">
         <input type="checkbox" />
         <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
           <span class="flex items-center gap-2">
             <i data-lucide="shield-check" class="w-4 h-4 text-secondary"></i>
             Phase 5: Verification & Documentation (4 tasks)
           </span>
-          <span class="badge badge-sm badge-ghost">0/4</span>
+          <span class="badge badge-sm badge-success font-semibold">4/4</span>
         </div>
         <div class="collapse-content space-y-2 text-xs">
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>5.1</strong> Add automated test script in <code>tests/</code> verifying all new CLI flags against test reports.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>5.2</strong> Verify runner performance: ensure <code>--quick</code> executes within target latency bounds.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>5.3</strong> Update <code>skills/html-report/SKILL.md</code> with Playwright flags documentation and troubleshooting guide.</span>
           </label>
           <label class="flex items-start gap-2 cursor-pointer">
-            <input type="checkbox" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
+            <input type="checkbox" checked="checked" disabled class="checkbox checkbox-xs checkbox-secondary mt-0.5" />
             <span><strong>5.4</strong> Update companion <code>index.html</code> report and sync with <code>localhost:3000</code>.</span>
           </label>
         </div>

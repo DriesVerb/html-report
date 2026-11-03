@@ -60,11 +60,21 @@ describe("Phase 2: build-report.mjs Deterministic Assembly Unit Tests", () => {
     });
 
     it("should handle individual addon flags and aliases", () => {
-      const argv = ["node", "build-report.mjs", "-c", "frag.html", "--charts", "--math", "--leaflet"];
+      const argv = ["node", "build-report.mjs", "-c", "frag.html", "--charts", "--math", "--leaflet", "--fullcalender", "--mock", "--day"];
       const opts = parseArgs(argv);
       assert.ok(opts.addons.includes("charts"));
       assert.ok(opts.addons.includes("katex")); // alias for math
       assert.ok(opts.addons.includes("leaflet"));
+      assert.ok(opts.addons.includes("fullcalendar"));
+      assert.ok(opts.addons.includes("mockjs"));
+      assert.ok(opts.addons.includes("dayjs"));
+    });
+
+    it("should handle --presentation flag and auto-include impress addon", () => {
+      const argv = ["node", "build-report.mjs", "-c", "frag.html", "--presentation"];
+      const opts = parseArgs(argv);
+      assert.equal(opts.presentation, true);
+      assert.ok(opts.addons.includes("impress"));
     });
 
     it("should parse --custom-theme flag correctly", () => {
@@ -116,6 +126,56 @@ describe("Phase 2: build-report.mjs Deterministic Assembly Unit Tests", () => {
       const content = `<pre><code class="language-typescript">const x: number = 42;</code></pre>`;
       const addons = detectAddons(content);
       assert.ok(addons.includes("hljs"));
+    });
+
+    it("should auto-detect Day.js signatures", () => {
+      const content = `<span data-dayjs="2026-11-03" data-dayjs-from-now></span>`;
+      const addons = detectAddons(content);
+      assert.ok(addons.includes("dayjs"));
+    });
+
+    it("should auto-detect Impress.js signatures", () => {
+      const content = `<div id="impress"><div class="step" data-x="0" data-y="0">Slide 1</div></div>`;
+      const addons = detectAddons(content);
+      assert.ok(addons.includes("impress"));
+    });
+
+    it("should auto-detect Mock.js signatures", () => {
+      const content = `<pre data-mock='{"list|5":[{"id|+1":1}]}'></pre>`;
+      const addons = detectAddons(content);
+      assert.ok(addons.includes("mockjs"));
+    });
+
+    it("should auto-detect Showdown signatures", () => {
+      const content = `<div data-showdown="# Markdown Heading"></div>`;
+      const addons = detectAddons(content);
+      assert.ok(addons.includes("showdown"));
+    });
+
+    it("should auto-detect FullCalendar signatures", () => {
+      const content = `<div id="calendar" data-fullcalendar="true"></div>`;
+      const addons = detectAddons(content);
+      assert.ok(addons.includes("fullcalendar"));
+    });
+
+    it("should resolve CLI aliases for all new addons correctly", () => {
+      const addons = detectAddons("", ["fullcalender", "mock", "day", "impressjs", "calendar", "markdown-showdown"]);
+      assert.ok(addons.includes("fullcalendar"));
+      assert.ok(addons.includes("mockjs"));
+      assert.ok(addons.includes("dayjs"));
+      assert.ok(addons.includes("impress"));
+      assert.ok(addons.includes("showdown"));
+    });
+
+    it("should support multi-addon co-existence for Marked and Showdown together", () => {
+      const content = `
+        <div id="markdown-output">Marked content</div>
+        <div data-showdown="# Showdown Title">Showdown content</div>
+      `;
+      const addons = detectAddons(content);
+      assert.ok(addons.includes("marked"));
+      assert.ok(addons.includes("showdown"));
+      assert.equal(addons.length, 2);
     });
 
     it("should union auto-detected addons with explicit CLI requests", () => {
@@ -206,6 +266,58 @@ addons: [charts]
         theme: "synthwave"
       });
       assert.ok(result.html.includes('data-theme="synthwave"'));
+    });
+
+    it("should inject new CDN addon scripts and handle presentation mode attribute", () => {
+      const fragment = `
+        <div id="calendar" data-fullcalendar="true"></div>
+        <div data-dayjs="2026-11-03"></div>
+        <div data-mock='{"id": 1}'></div>
+        <div data-showdown="# Test"></div>
+        <div id="impress"><div class="step">Slide</div></div>
+      `;
+      const result = buildReport({
+        title: "New Addons Report",
+        content: fragment,
+        presentation: true
+      });
+
+      assert.ok(result.activeAddons.includes("fullcalendar"));
+      assert.ok(result.activeAddons.includes("dayjs"));
+      assert.ok(result.activeAddons.includes("mockjs"));
+      assert.ok(result.activeAddons.includes("showdown"));
+      assert.ok(result.activeAddons.includes("impress"));
+
+      const html = result.html;
+      assert.ok(html.includes("fullcalendar@6.1.15"));
+      assert.ok(html.includes("dayjs@1.11.13"));
+      assert.ok(html.includes("mockjs@1.1.0"));
+      assert.ok(html.includes("showdown@2.1.0"));
+      assert.ok(html.includes("impress.js@2.0.0"));
+      assert.ok(html.includes('data-presentation="true"'));
+    });
+
+    it("should enforce print-equivalent fallback and presentation guard for impress slides", () => {
+      const fragment = `<div id="impress"><div class="step" data-x="1000">Slide 1</div></div>`;
+      
+      // Standard analytical report mode (not presentation)
+      const standardResult = buildReport({
+        title: "Standard Report with Impress",
+        content: fragment,
+        presentation: false
+      });
+      assert.ok(standardResult.html.includes('html:not([data-presentation="true"]) .step'));
+      assert.equal(/<html[^>]*data-presentation="true"/.test(standardResult.html), false);
+
+      // Printable mode: must include @media print step rules
+      const printableResult = buildReport({
+        title: "Printable Report with Impress",
+        content: fragment,
+        printable: true
+      });
+      assert.ok(printableResult.html.includes(".step {"));
+      assert.ok(printableResult.html.includes("break-inside: avoid !important;"));
+      assert.ok(printableResult.html.includes("transform: none !important;"));
     });
 
     it("should inject custom theme CSS and activate theme via customTheme option", () => {

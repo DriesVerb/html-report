@@ -706,6 +706,15 @@ async function setReportTheme(themeName) {
 
   // Dynamic Mermaid sync
   await renderMermaidWithTheme(palette);
+
+  // Dynamic FullCalendar sync
+  if (typeof window !== "undefined" && window.reportCalendars && Array.isArray(window.reportCalendars)) {
+    window.reportCalendars.forEach((cal) => {
+      try {
+        cal.render();
+      } catch (_) {}
+    });
+  }
 }
 
 /**
@@ -898,6 +907,181 @@ function initDownloadButton() {
   }
 }
 
+/**
+ * Day.js runtime initialization & data-dayjs hydration.
+ */
+function initDayjs() {
+  if (typeof window === "undefined" || !window.dayjs) return;
+  try {
+    if (window.dayjs_plugin_relativeTime) {
+      window.dayjs.extend(window.dayjs_plugin_relativeTime);
+    }
+    if (window.dayjs_plugin_customParseFormat) {
+      window.dayjs.extend(window.dayjs_plugin_customParseFormat);
+    }
+  } catch (err) {
+    console.warn("[html-report] Day.js plugin registration notice:", err);
+  }
+
+  try {
+    document.querySelectorAll("[data-dayjs]").forEach((el) => {
+      const raw = el.getAttribute("data-dayjs");
+      const format = el.getAttribute("data-dayjs-format") || "YYYY-MM-DD HH:mm:ss";
+      const fromNow = el.hasAttribute("data-dayjs-from-now") || el.getAttribute("data-dayjs-relative") === "true";
+      const d = (raw && raw !== "now" && raw !== "true") ? window.dayjs(raw) : window.dayjs();
+      if (fromNow && typeof d.fromNow === "function") {
+        el.textContent = d.fromNow();
+      } else {
+        el.textContent = d.format(format);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Day.js DOM hydration notice:", err);
+  }
+}
+
+/**
+ * Impress.js runtime initialization with strict presentation guard.
+ * Only initializes 3D canvas when explicitly requested as a presentation.
+ */
+function initImpress() {
+  if (typeof window === "undefined" || !window.impress) return;
+
+  const impressRoot = document.getElementById("impress");
+  if (!impressRoot) return;
+
+  // Presentation Guard: Impress 3D initialization ONLY activates when explicitly requested
+  const isPresentationRequested =
+    document.documentElement.getAttribute("data-presentation") === "true" ||
+    document.body.getAttribute("data-presentation") === "true" ||
+    impressRoot.getAttribute("data-presentation") === "true" ||
+    impressRoot.classList.contains("impress-presentation-active");
+
+  if (!isPresentationRequested) {
+    // Treat as print/static: slides remain stacked in standard document flow
+    impressRoot.classList.add("impress-static-fallback");
+    return;
+  }
+
+  try {
+    if (!impressRoot.dataset.impressInitialized) {
+      impressRoot.dataset.impressInitialized = "true";
+      const api = window.impress("impress");
+      api.init();
+      window.impressApi = api;
+    }
+  } catch (err) {
+    console.warn("[html-report] Impress.js initialization notice:", err);
+  }
+}
+
+/**
+ * Mock.js runtime initialization & data-mock hydration.
+ */
+function initMockjs() {
+  if (typeof window === "undefined" || !window.Mock) return;
+  try {
+    document.querySelectorAll("[data-mock]").forEach((el) => {
+      if (el.dataset.mockInitialized) return;
+      el.dataset.mockInitialized = "true";
+      const raw = el.getAttribute("data-mock");
+      if (!raw) return;
+      try {
+        const schema = JSON.parse(raw);
+        const data = window.Mock.mock(schema);
+        if (el.tagName.toLowerCase() === "code" || el.tagName.toLowerCase() === "pre") {
+          el.textContent = JSON.stringify(data, null, 2);
+        } else if (el.hasAttribute("data-mock-target")) {
+          const target = document.querySelector(el.getAttribute("data-mock-target"));
+          if (target) target.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (parseErr) {
+        const data = window.Mock.mock(raw);
+        el.textContent = String(data);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Mock.js hydration notice:", err);
+  }
+}
+
+/**
+ * Showdown runtime initialization & data-showdown hydration.
+ */
+function initShowdown() {
+  if (typeof window === "undefined" || !window.showdown) return;
+  try {
+    const converter = new window.showdown.Converter({
+      tables: true,
+      tasklists: true,
+      strikethrough: true,
+      emoji: true,
+      ghCodeBlocks: true
+    });
+    window.showdownConverter = converter;
+
+    document.querySelectorAll("[data-showdown]").forEach((el) => {
+      if (el.dataset.showdownInitialized) return;
+      el.dataset.showdownInitialized = "true";
+      const srcSelector = el.getAttribute("data-showdown-source");
+      let md = "";
+      if (srcSelector) {
+        const srcEl = document.querySelector(srcSelector);
+        if (srcEl) {
+          md = srcEl.value !== undefined ? srcEl.value : srcEl.textContent;
+        }
+      } else {
+        const rawAttr = el.getAttribute("data-showdown");
+        md = (rawAttr && rawAttr !== "true") ? rawAttr : el.textContent;
+      }
+      if (md) {
+        el.innerHTML = converter.makeHtml(md);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Showdown markdown rendering notice:", err);
+  }
+}
+
+/**
+ * FullCalendar runtime initialization & DaisyUI theme synchronization.
+ */
+function initFullCalendar() {
+  if (typeof window === "undefined" || !window.FullCalendar) return;
+  window.reportCalendars = window.reportCalendars || [];
+
+  try {
+    const calendarEls = document.querySelectorAll("[data-fullcalendar], #calendar");
+    calendarEls.forEach((el) => {
+      if (el.dataset.calendarInitialized) return;
+      el.dataset.calendarInitialized = "true";
+
+      let events = [];
+      const rawEvents = el.getAttribute("data-calendar-events");
+      if (rawEvents) {
+        try {
+          events = JSON.parse(rawEvents);
+        } catch (_) {}
+      }
+
+      const calendar = new window.FullCalendar.Calendar(el, {
+        initialView: el.getAttribute("data-calendar-view") || "dayGridMonth",
+        headerToolbar: {
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,listWeek"
+        },
+        height: el.getAttribute("data-calendar-height") || "auto",
+        events: events
+      });
+      calendar.render();
+      window.reportCalendars.push(calendar);
+    });
+  } catch (err) {
+    console.warn("[html-report] FullCalendar initialization notice:", err);
+  }
+}
+
 // Global browser window bindings
 if (typeof window !== "undefined") {
   window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
@@ -924,6 +1108,11 @@ if (typeof window !== "undefined") {
   window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
   window.exportReportPdf = exportReportPdf;
   window.initDownloadButton = initDownloadButton;
+  window.initDayjs = initDayjs;
+  window.initImpress = initImpress;
+  window.initMockjs = initMockjs;
+  window.initShowdown = initShowdown;
+  window.initFullCalendar = initFullCalendar;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
@@ -932,6 +1121,11 @@ if (typeof window !== "undefined") {
     try { initThemeDropdown(); } catch (_) {}
     try { initDownloadButton(); } catch (_) {}
     try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
+    try { initDayjs(); } catch (_) {}
+    try { initShowdown(); } catch (_) {}
+    try { initMockjs(); } catch (_) {}
+    try { initFullCalendar(); } catch (_) {}
+    try { initImpress(); } catch (_) {}
 
     const palette = resolveDaisyUIThemePalette();
     try { await renderMermaidWithTheme(palette); } catch (_) {}
@@ -967,6 +1161,11 @@ if (typeof module !== "undefined" && module.exports) {
     checkInsufficientHorizontalSpace,
     buildInlinedHtmlSnapshot,
     exportReportPdf,
-    initDownloadButton
+    initDownloadButton,
+    initDayjs,
+    initImpress,
+    initMockjs,
+    initShowdown,
+    initFullCalendar
   };
 }

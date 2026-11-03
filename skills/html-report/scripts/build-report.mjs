@@ -48,6 +48,33 @@ export const ADDON_REGISTRY = {
     name: "Marked",
     signatures: [/id=["']markdown-(?:source|output)["']/i, /\bmarked\b/i],
     head: `<script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>`
+  },
+  dayjs: {
+    name: "Day.js",
+    signatures: [/\bdayjs\b/i, /data-dayjs/i, /dayjs\s*\(/],
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/plugin/relativeTime.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/plugin/customParseFormat.js" crossorigin="anonymous"></script>`
+  },
+  impress: {
+    name: "Impress.js",
+    signatures: [/id=["']impress["']/i, /class=["'][^"']*\bstep\b[^"']*data-x/i, /\bimpress\s*\(\s*\)/],
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/impress.js@2.0.0/js/impress.js" crossorigin="anonymous"></script>`
+  },
+  mockjs: {
+    name: "Mock.js",
+    signatures: [/\bMock\.(?:mock|Random)\b/i, /data-mock/i, /id=["']mock-/i],
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/mockjs@1.1.0/dist/mock.min.js" crossorigin="anonymous"></script>`
+  },
+  showdown: {
+    name: "Showdown",
+    signatures: [/\bshowdown\b/i, /new\s+showdown\.Converter/i, /data-showdown/i, /id=["']showdown-/i],
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>`
+  },
+  fullcalendar: {
+    name: "FullCalendar",
+    signatures: [/id=["']calendar["']/i, /data-fullcalendar/i, /FullCalendar\.Calendar/i, /class=["'][^"']*\bfc\b/i],
+    head: `<script defer src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" crossorigin="anonymous"></script>`
   }
 };
 
@@ -57,7 +84,18 @@ const ADDON_ALIASES = {
   math: "katex",
   highlight: "hljs",
   map: "leaflet",
-  maps: "leaflet"
+  maps: "leaflet",
+  day: "dayjs",
+  dayjs: "dayjs",
+  impress: "impress",
+  impressjs: "impress",
+  mock: "mockjs",
+  mockjs: "mockjs",
+  showdown: "showdown",
+  "markdown-showdown": "showdown",
+  fullcalendar: "fullcalendar",
+  fullcalender: "fullcalendar",
+  calendar: "fullcalendar"
 };
 
 const PRINT_MEDIA_CSS = `
@@ -89,6 +127,23 @@ const PRINT_MEDIA_CSS = `
       .break-inside-avoid {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
+      }
+      /* Impress.js print fallback: render slides statically without 3D transforms */
+      #impress,
+      .impress-wrapper {
+        position: static !important;
+        overflow: visible !important;
+        height: auto !important;
+        transform: none !important;
+      }
+      .step {
+        position: relative !important;
+        opacity: 1 !important;
+        transform: none !important;
+        display: block !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        margin-bottom: 2rem !important;
       }
     }
   </style>`;
@@ -164,6 +219,7 @@ export function parseArgs(argv) {
     content: null,
     output: "./report.html",
     printable: false,
+    presentation: false,
     theme: null,
     customTheme: null,
     addons: [],
@@ -184,6 +240,11 @@ export function parseArgs(argv) {
       options.output = args[++i];
     } else if (arg === "--printable" || arg === "-p") {
       options.printable = true;
+    } else if (arg === "--presentation") {
+      options.presentation = true;
+      if (!options.addons.includes("impress")) {
+        options.addons.push("impress");
+      }
     } else if (arg === "--theme" && args[i + 1]) {
       options.theme = args[++i];
     } else if ((arg === "--custom-theme" || arg === "-ct") && args[i + 1]) {
@@ -215,6 +276,7 @@ export function buildReport({
   title = "HTML Report",
   content = "",
   printable = false,
+  presentation = false,
   addons = [],
   favicon = "📊",
   theme = null,
@@ -304,6 +366,20 @@ export function buildReport({
     }
   );
 
+  // Set presentation attribute on <html> ONLY when explicitly requested
+  if (presentation) {
+    html = html.replace(
+      /<html([^>]*)>/i,
+      (match, attrs) => {
+        let updated = attrs;
+        if (!updated.includes("data-presentation")) {
+          updated = ` data-presentation="true"` + updated;
+        }
+        return `<html${updated}>`;
+      }
+    );
+  }
+
   // If printable, update download PDF button styling
   if (printable) {
     html = html.replace(
@@ -340,10 +416,11 @@ Options:
   -t, --title <string>      Report title (default: "HTML Report")
   -o, --output <file>       Destination HTML file (default: "./report.html")
   -p, --printable           Enable printable/PDF mode (@media print rules, static mode)
+      --presentation        Enable interactive presentation mode for Impress.js
       --theme <name>        DaisyUI theme name (default: "light")
       --custom-theme <path> Path to custom theme definition (.json or .css)
       --favicon <emoji>     Favicon emoticon (default: "📊")
-      --addons <list>     Comma-separated addons (charts, mermaid, gridjs, katex, leaflet, hljs, marked)
+      --addons <list>     Comma-separated addons (charts, mermaid, gridjs, katex, leaflet, hljs, marked, dayjs, impress, mockjs, showdown, fullcalendar)
       --all-addons        Include all catalog addons in <head>
       --charts            Explicitly include Chart.js
       --mermaid           Explicitly include Mermaid
@@ -351,11 +428,16 @@ Options:
       --math, --katex     Explicitly include KaTeX
       --leaflet           Explicitly include Leaflet
       --hljs, --highlight Explicitly include Highlight.js
+      --day, --dayjs      Explicitly include Day.js
+      --impress           Explicitly include Impress.js
+      --mock, --mockjs    Explicitly include Mock.js
+      --showdown          Explicitly include Showdown
+      --fullcalendar, --calendar Explicitly include FullCalendar
   -h, --help              Show this help message
 
 Auto-Detection:
-  Signatures for <canvas>, .mermaid, data-gridjs, katex, leaflet, and hljs are
-  automatically detected from the content fragment.
+  Signatures for <canvas>, .mermaid, data-gridjs, katex, leaflet, hljs, marked,
+  dayjs, impress, mock, showdown, and fullcalendar are automatically detected from the fragment.
 `);
 }
 
@@ -398,6 +480,7 @@ if (isDirectCli) {
     title: options.title,
     content: rawContent,
     printable: options.printable,
+    presentation: options.presentation,
     theme: options.theme,
     customTheme: customThemePath,
     addons: options.addons,

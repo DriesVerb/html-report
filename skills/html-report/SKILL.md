@@ -2,16 +2,17 @@
 name: html-report
 description: >-
   Generates publication-grade, interactive, and print-ready HTML5 reports with a
-  non-blocking 11-library CDN stack (Tailwind CSS, DaisyUI with all 32 themes
+  non-blocking 16-library CDN stack (Tailwind CSS, DaisyUI with all 32 themes
   defaulting to 'light', Lucide Icons, Alpine.js, Chart.js, Mermaid, Leaflet
-  maps, Grid.js tables, KaTeX math, Marked markdown, and Highlight.js code
-  formatting), a sticky DaisyUI navbar (left-aligned report title, right-aligned
-  Table of Contents dropdown mapping h1/h2/h3 IDs, DaisyUI color-swatch theme
-  dropdown synced to charts/diagrams, and icon-only Download dropdown for HTML
-  or PDF), @media print rules with a Page 1 Cover + H1/H2/H3 TOC, horizontal-scrollbar
-  insufficient-space detection, and Playwright multi-breakpoint & 5-theme PDF
-  verification. Use when the user asks to create, design, or export an HTML
-  report, dashboard report, or PDF-backed HTML summary.
+  maps, Grid.js tables, KaTeX math, Marked markdown, Highlight.js code
+  formatting, Day.js dates, Impress.js presentations, Mock.js data, Showdown
+  markdown, and FullCalendar schedules), a sticky DaisyUI navbar (left-aligned
+  report title, right-aligned Table of Contents dropdown mapping h1/h2/h3 IDs,
+  DaisyUI color-swatch theme dropdown synced to charts/diagrams, and icon-only
+  Download dropdown for HTML or PDF), @media print rules with a Page 1 Cover +
+  H1/H2/H3 TOC, horizontal-scrollbar insufficient-space detection, and Playwright
+  multi-breakpoint & 5-theme PDF verification. Use when the user asks to create,
+  design, or export an HTML report, dashboard report, or PDF-backed HTML summary.
 ---
 
 # HTML Report Generation Skill (`html-report`)
@@ -26,8 +27,9 @@ Agents generate **only the semantic `<main>` content fragment** (stats, cards, c
 
 Before writing any HTML report, read the relevant reference guides in this skill directory:
 
-1. **[Architecture, 11-CDN Stack & DaisyUI Navbar Blueprint](./references/architecture-and-styling.md)** *(Required for all reports)*:
-   - Modular CDN loading: Core 4 baseline (`Tailwind CSS`, `DaisyUI v4 full + all 32 themes`, `Lucide Icons`, `Alpine.js`) with on-demand addons (`Chart.js`, `Mermaid`, `Leaflet`, `Grid.js`, `KaTeX`, `Marked`, `Highlight.js`) auto-detected by `build-report.mjs`.
+1. **[Architecture, 16-CDN Stack & DaisyUI Navbar Blueprint](./references/architecture-and-styling.md)** *(Required for all reports)*:
+   - Modular CDN loading: Core 4 baseline (`Tailwind CSS`, `DaisyUI v4 full + all 32 themes`, `Lucide Icons`, `Alpine.js`) with on-demand addons (`Chart.js`, `Mermaid`, `Leaflet`, `Grid.js`, `KaTeX`, `Marked`, `Highlight.js`, `Day.js`, `Impress.js`, `Mock.js`, `Showdown`, `FullCalendar`) auto-detected by `build-report.mjs`.
+   - **Impress.js Presentation Guard**: Impress.js receives the same treatment as printable output by default. Interactive 3D presentation transitions ONLY activate when explicitly requested (via `--presentation`, `--addons impress`, or `data-presentation="true"`). In all other modes, `.step` elements render as clean static printable stacked cards.
    - Pre-bundled **`assets/template-shell.html`** and **`assets/report-runtime.js`**.
    - Sticky **DaisyUI Navbar** structure (`print:hidden`, default theme always `data-theme="light"`):
      - **Left (`navbar-start`)**: Report Title (`#navbar-report-title`).
@@ -36,11 +38,11 @@ Before writing any HTML report, read the relevant reference guides in this skill
    - Horizontal-scrollbar insufficient-space detector (`checkInsufficientHorizontalSpace()`).
 2. **[Charts (Chart.js) & Diagrams (Mermaid) Dedicated Style Guide](./references/charts-and-mermaid-style-guide.md)** *(Required whenever a report contains charts or Mermaid diagrams)*:
    - Universal DaisyUI theme color resolver (`resolveDaisyUIThemePalette()`) using an offscreen 1x1 `<canvas>` 2D context to convert `oklch(...)` colors into `#rrggbb` hex and `rgba(...)`.
-   - Dynamic re-theming for **Chart.js** canvases and **Mermaid** SVG diagrams when switching across any of the 32 DaisyUI themes.
+   - Dynamic re-theming for **Chart.js** canvases, **Mermaid** SVG diagrams, and **FullCalendar** grids when switching across any of the 32 DaisyUI themes.
    - Fixed-height responsive containers (`h-72 sm:h-80`) and print/PDF resize hooks.
    - Defense against ordered list tokens (`1. `, `2. `) in Mermaid subgraphs.
 3. **[Full-Featured Showcase Example (`example.html`)](./examples/example.html)**:
-   - Complete working reference implementation explicitly demonstrating all 11 CDNs, top collapsible theme generator studio, and CSV-driven interactive workflows.
+   - Complete working reference implementation explicitly demonstrating all 16 CDNs, top collapsible theme generator studio, and CSV-driven interactive workflows.
 4. **[Custom DaisyUI Theme Engine & Compiler (`theme-compiler.mjs`)](./scripts/theme-compiler.mjs)**:
    - Zero-dependency pure JS matrix conversion (`sRGB` &rarr; `Linear` &rarr; `XYZ` &rarr; `OKLab` &rarr; `OKLCH`).
    - Base theme inheritance (`extends: "dark"` or any of 32 native DaisyUI themes) and automatic high-contrast content generator (`--pc`, `--sc`, etc.).
@@ -97,6 +99,11 @@ node skills/html-report/scripts/caller-registry.mjs leaf teamwork/subagent/memor
   - Assign every `<h1>`, `<h2>`, and `<h3>` element a unique, descriptive `id` attribute (e.g., `<h2 id="executive-summary" class="scroll-mt-20 ...">`) so the navbar TOC dropdown maps them automatically. (If omitted, `--auto-fix` will automatically synthesize and inject unique IDs).
   - Wrap card/hero headers in `flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full` with `min-w-0 flex-1 break-words` on the text column and `shrink-0` with `whitespace-nowrap` on badges/buttons.
   - Save the semantic fragment to a temporary file (e.g. `report-fragment.html`).
+
+> [!IMPORTANT]
+> **Impress.js Presentation Guard & Proactive Presentation Offering**:
+> - Impress.js receives the exact same treatment as printable output by default: all `.step` slide elements remain static, stacked printable cards unless interactive presentation mode is explicitly enabled.
+> - **Agent Workflow Rule**: When a user explicitly mentions wanting a **slide deck**, **pitch presentation**, or **interactive 3D journey**, proactively offer the Impress.js CDN (`--addons impress` or `--presentation`). In standard analytical and printable reports, keep Impress in static print-safe fallback mode to prevent capturing document scroll.
 
 ### Step 2: Unified Execution via State Machine Harness (`harness.mjs run`)
 
@@ -163,7 +170,58 @@ node skills/html-report/scripts/build-report.mjs \
 
 # Verification only:
 node skills/html-report/playwright/verify-report.mjs report.html --quick
+
+# Focused sub-second CDN check:
+node skills/html-report/playwright/verify-report.mjs report.html --check-mermaid
+
+# Full CDN styleguide matrix verification with machine-readable telemetry:
+node skills/html-report/playwright/verify-report.mjs report.html --all-cdns --json results.json
 ```
+
+### Playwright Extensible Verification Harness & CDN Styleguide Matrix
+`verify-report.mjs` is powered by a modular, pluggable test harness (`skills/html-report/playwright/harness/`) built on the Strategy and Registry patterns.
+
+#### Precision CLI Flags Matrix
+
+| Flag | Argument | Default | Description |
+|---|---|---|---|
+| `--quick`, `-q` | None | `false` | Quick mode: test `sm` + `lg` breakpoints only, skip PDF, 5s timeout |
+| `--pdf` | `<path>` | `null` | Render and export PDF to specified path |
+| `--mode` | `<interactive\|static>` | auto | Override report execution mode |
+| `--caller` | `<caller-id>` | `null` | Caller harness integration ID |
+| `--timeout` | `<ms>` | `30000` (or `5000` in quick) | Page load and check assertion timeout bound |
+| `--suites` | `<comma-list>` | all | Run only named suites (`core,cdns,responsive,themes,print,a11y`) |
+| `--only` | `<name>` | `null` | Target single check or category (e.g. `--only mermaid`) |
+| `--grep` | `<regex>` | `null` | Filter checks matching regex pattern (e.g. `--grep "^cdn:"`) |
+| `--all-cdns` | None | `false` | Enforce full styleguide checks across all 10 CDN libraries |
+| `--cdns` | `<comma-list>` | auto | Target specific CDNs (e.g. `--cdns mermaid,charts,leaflet`) |
+| `--check-<cdn>` | None | `false` | Targeted flags: `--check-charts`, `--check-mermaid`, `--check-maps`, `--check-tables`, `--check-math`, `--check-code`, `--check-markdown`, `--check-icons`, `--check-reactive`, `--check-calendar` |
+| `--themes` | `<comma-list>` | all (or light in quick) | Target specific DaisyUI themes (e.g. `--themes light,dark,cyberpunk`) |
+| `--viewports` | `<comma-list>` | standard 5 (or 2 in quick) | Target breakpoints (`sm,md,lg,xl,2xl` or custom `1920x1080`) |
+| `--bail` | None | `false` | Immediately abort execution upon first check failure |
+| `--strict` | None | `false` | Fail on console warnings or layout badge wrapping alerts |
+| `--json` | `<path>` | `null` | Export structured JSON telemetry report for automated agent workflows |
+| `--screenshots` | `[dir]` | `null` | Capture full-page PNG screenshots on check failure or viewport |
+| `--color-contrast` | None | `false` | Run automated WCAG AA color contrast and landmark audits |
+| `--headed` | None | `false` | Run browser in headed mode for visual live debugging |
+
+#### Deterministic CDN Styleguide Matrix
+The harness enforces deterministic visual and behavioral styleguide rules across all 10 CDN libraries:
+- **Chart.js (`--check-charts`)**: Canvas presence, DaisyUI CSS variable palette sync (`--p`, `--s`, `--a`, `--n`), responsive resize, zero NaN artifacts.
+- **Mermaid (`--check-mermaid`)**: SVG diagram render, theme re-render, strict absence of `"Syntax error in text"` or error SVGs.
+- **Leaflet (`--check-maps`)**: Map panes loaded, tiles decoded (`naturalWidth > 0`), zero 403 HTTP errors (strictly enforces ESRI/Voyager).
+- **Grid.js (`--check-tables`)**: Table elements rendered, active search input and pagination, zero container overflow.
+- **KaTeX (`--check-math`)**: Formatted `.katex` blocks rendered, zero raw unrendered LaTeX markers leaking into DOM text.
+- **Highlight.js (`--check-code`)**: Code blocks highlighted with language classes, `.hljs-keyword` elements present.
+- **Marked (`--check-markdown`)**: Semantic HTML elements rendered, zero raw unparsed markdown symbols.
+- **Lucide & Alpine (`--check-icons`, `--check-reactive`)**: `[data-lucide]` replaced with inline SVGs; Alpine `[x-data]` mounted with zero hanging `x-cloak`.
+- **FullCalendar (`--check-calendar`)**: Calendar grid rendered, toolbar formatted, events mounted cleanly.
+
+#### Troubleshooting Guide
+- **Sub-Second Feedback**: When actively iterating on a single component or CDN, pass `--check-<cdn>` (e.g. `verify-report.mjs report.html --check-mermaid`) to test in <800ms without cycling through all 5 viewports and 32 themes.
+- **Bail on First Failure**: Use `--bail` in CI or agent retry loops to fail fast and receive immediate diagnostic feedback.
+- **Strict Mode**: Pass `--strict` to prevent subtle regressions like multi-line badge wrapping or console warnings before merging changes.
+
 
 ### Custom DaisyUI Theme Specification & Studio
 Reports support user-defined themes via:

@@ -343,6 +343,49 @@ When building a card header or Hero banner featuring a title and description on 
 
 ---
 
+## 9. Card & Section Header Badge Protection Contract (Preventing Badge Text Wrapping and Pill Overflow)
+
+When placing a status badge, category tag, or metadata indicator in a card or section header (e.g., `<span class="badge badge-success badge-outline text-xs">Confirmed Design</span>`), you MUST adhere to the Badge Protection Contract.
+
+### 9.1 Root Cause of the Broken Pill Layout
+DaisyUI `.badge` elements have a fixed single-line height (`height: 1.25rem` / `20px` in standard, or `1rem` in `badge-sm`, `0.75rem` in `badge-xs`) paired with fully rounded pill radii (`border-radius: var(--rounded-badge, 1.9rem)`).
+- However, DaisyUI does NOT define `white-space: nowrap;` or `flex-shrink: 0;` on `.badge`.
+- In a standard flex header (`<div class="flex items-center justify-between">`), children default to `flex-shrink: 1`.
+- When the title/description expands or the screen contracts, the badge is compressed horizontally. Multi-word badges with spaces (`"Confirmed Design"`, `"Not PDF-Ready"`, `"Verified • 4/4"`) are forced to wrap into two lines (`"Confirmed\nDesign"`).
+- Because the badge container is constrained to a single line height with `overflow: visible`, the top line pokes out of the badge's top border, and the second line breaks through the bottom border.
+
+### 9.2 The Double-Layer Protection Contract
+To permanently prevent this across all viewports and breakpoint transitions, two complementary rules are enforced:
+
+1. **Global CSS Reset Safeguard (in `template-shell.html`)**:
+   ```css
+   .badge {
+     white-space: nowrap !important;
+     flex-shrink: 0;
+   }
+   ```
+2. **Responsive Header Flex Layout**:
+   ```html
+   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 w-full">
+     <!-- Left Column: Title & Subtitle with min-w-0 flex-1 -->
+     <div class="flex items-center gap-3 min-w-0 flex-1">
+       <div class="p-2.5 rounded-xl bg-success/10 text-success shrink-0">
+         <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+       </div>
+       <div class="min-w-0 flex-1">
+         <h2 class="text-xl font-bold text-base-content break-words">Section Title</h2>
+         <p class="text-xs sm:text-sm text-base-content/70 break-words">Descriptive subtitle</p>
+       </div>
+     </div>
+     
+     <!-- Right Column: Status Badge with shrink-0 whitespace-nowrap -->
+     <span class="badge badge-success badge-outline text-xs shrink-0 whitespace-nowrap">
+       Confirmed Design
+     </span>
+   </div>
+   ```
+
+
 ## 9. Deterministic Assembly Engine & Pre-Bundled Assets
 
 To minimize token usage and accelerate generation, reports are assembled deterministically rather than synthesized from scratch:
