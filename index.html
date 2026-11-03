@@ -10,6 +10,8 @@
 
   <!-- 1. Stylesheets (DaisyUI v4 full + all 32 themes, Leaflet, Highlight.js, Grid.js, KaTeX) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
+  <!-- DaisyUI Custom Themes (Injected at build or runtime) -->
+  <style id="daisyui-custom-themes"></style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/theme/mermaid.min.css" crossorigin="anonymous" />
@@ -554,6 +556,390 @@ git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report &am
                 </button>
               </div>
               <code class="block text-[11px] font-mono bg-base-100 p-2 rounded border border-base-300 select-all overflow-x-auto text-base-content" x-text="harnessCmd">node skills/html-report/scripts/harness.mjs run fragment.html --title &quot;My Report&quot;</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Collapsible DaisyUI Theme Generator & Studio (Collapsed by default, Sleek 48px banner) -->
+    <section
+      id="theme-studio-section"
+      x-data="themeStudioController()"
+      x-init="init()"
+      class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid print:hidden overflow-hidden"
+    >
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="checkbox" id="theme-studio-accordion" x-model="isOpen" class="cursor-pointer" />
+        
+        <!-- Collapsed Sleek 48px Banner Header -->
+        <div class="collapse-title text-sm sm:text-base font-bold flex items-center justify-between py-3 px-5 sm:px-6 cursor-pointer select-none">
+          <div class="flex items-center gap-2.5">
+            <span class="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <i data-lucide="palette" class="w-4 h-4"></i>
+            </span>
+            <span>🎨 DaisyUI Theme Generator &amp; Studio</span>
+            <span class="text-2xs font-normal opacity-75 hidden sm:inline">
+              [Active: <strong class="capitalize text-primary" x-text="activeTheme">light</strong>]
+            </span>
+          </div>
+
+          <!-- Color Swatch Dots Preview in Header -->
+          <div class="flex items-center gap-2 mr-6">
+            <div class="flex items-center gap-1">
+              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + primary"></span>
+              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + secondary"></span>
+              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + accent"></span>
+              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + neutral"></span>
+            </div>
+            <span class="badge badge-xs badge-outline hidden md:inline font-normal" x-text="isOpen ? 'Click to Collapse' : 'Click to Customize'">Click to Customize</span>
+          </div>
+        </div>
+
+        <!-- Expanded Studio Drawer Content -->
+        <div class="collapse-content px-5 sm:px-6 pb-6 pt-2 border-t border-base-200 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-base-200">
+            <div>
+              <h3 id="theme-studio-title" class="text-base font-bold text-base-content flex items-center gap-2">
+                <span>Interactive Theme Customizer</span>
+                <span class="badge badge-primary badge-sm font-semibold">Live OKLCH</span>
+              </h3>
+              <p class="text-xs opacity-75">
+                Customize colors, base inheritance, and geometry with zero-dependency real-time OKLCH compilation synced directly to Chart.js and Mermaid.
+              </p>
+            </div>
+
+            <!-- Action Buttons: Apply, Copy CSS, Copy Tailwind, Reset -->
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                id="studio-apply-save-btn"
+                class="btn btn-xs sm:btn-sm btn-primary gap-1.5 shadow-xs font-semibold"
+                @click="saveTheme()"
+              >
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span x-text="savedNotice ? 'Saved!' : 'Apply & Save'">Apply & Save</span>
+              </button>
+
+              <button
+                type="button"
+                id="studio-copy-css-btn"
+                class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-semibold"
+                @click="copyCss()"
+              >
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                <span x-text="copiedCss ? 'Copied CSS!' : 'Copy DaisyUI CSS'">Copy DaisyUI CSS</span>
+              </button>
+
+              <button
+                type="button"
+                id="studio-copy-tailwind-btn"
+                class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-semibold"
+                @click="copyTailwind()"
+              >
+                <i data-lucide="code" class="w-3.5 h-3.5"></i>
+                <span x-text="copiedTailwind ? 'Copied Tailwind!' : 'Copy Tailwind Config'">Copy Tailwind Config</span>
+              </button>
+
+              <button
+                type="button"
+                id="studio-reset-btn"
+                class="btn btn-xs sm:btn-sm btn-ghost gap-1.5"
+                @click="resetDefaults()"
+                title="Reset to Defaults"
+              >
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                <span>Reset</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Configuration Controls: Theme Name & Extends Selector -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-xs font-bold uppercase tracking-wider">Custom Theme Name</span>
+              </label>
+              <input
+                type="text"
+                id="studio-theme-name-input"
+                x-model="themeName"
+                @input="applyLiveTheme()"
+                placeholder="my-brand-theme"
+                class="input input-sm input-bordered font-mono text-xs w-full"
+              />
+            </div>
+
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-xs font-bold uppercase tracking-wider">Base Theme Inheritance (extends)</span>
+              </label>
+              <select
+                id="studio-extends-select"
+                x-model="extendsTheme"
+                @change="applyLiveTheme()"
+                class="select select-sm select-bordered font-mono text-xs w-full capitalize"
+              >
+                <template x-for="t in baseThemeOptions" :key="t">
+                  <option :value="t" x-text="t" :selected="t === extendsTheme"></option>
+                </template>
+              </select>
+            </div>
+
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-xs font-bold uppercase tracking-wider">Color Scheme Mode</span>
+              </label>
+              <select
+                id="studio-color-scheme-select"
+                x-model="colorScheme"
+                @change="applyLiveTheme()"
+                class="select select-sm select-bordered font-mono text-xs w-full"
+              >
+                <option value="auto">Auto (Deduces from base-100)</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Semantic Color Inputs Grid -->
+          <div class="space-y-2">
+            <div class="text-xs font-bold uppercase tracking-wider opacity-80 flex items-center justify-between">
+              <span>Semantic Colors &amp; Live OKLCH Monitors</span>
+              <span class="text-3xs font-normal opacity-60">Auto-Contrast Active for Content Tokens</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <!-- Primary -->
+              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold">Primary (--p)</span>
+                  <span class="badge badge-primary badge-xs">Active</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-primary-picker"
+                    x-model="primary"
+                    @input="applyLiveTheme()"
+                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-primary-hex"
+                    x-model="primary"
+                    @input="applyLiveTheme()"
+                    class="input input-xs input-bordered font-mono w-24 text-xs"
+                  />
+                </div>
+                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(primary)"></div>
+              </div>
+
+              <!-- Secondary -->
+              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold">Secondary (--s)</span>
+                  <span class="badge badge-secondary badge-xs">Active</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-secondary-picker"
+                    x-model="secondary"
+                    @input="applyLiveTheme()"
+                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-secondary-hex"
+                    x-model="secondary"
+                    @input="applyLiveTheme()"
+                    class="input input-xs input-bordered font-mono w-24 text-xs"
+                  />
+                </div>
+                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(secondary)"></div>
+              </div>
+
+              <!-- Accent -->
+              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold">Accent (--a)</span>
+                  <span class="badge badge-accent badge-xs">Active</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-accent-picker"
+                    x-model="accent"
+                    @input="applyLiveTheme()"
+                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-accent-hex"
+                    x-model="accent"
+                    @input="applyLiveTheme()"
+                    class="input input-xs input-bordered font-mono w-24 text-xs"
+                  />
+                </div>
+                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(accent)"></div>
+              </div>
+
+              <!-- Neutral -->
+              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold">Neutral (--n)</span>
+                  <span class="badge badge-neutral badge-xs">Active</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-neutral-picker"
+                    x-model="neutral"
+                    @input="applyLiveTheme()"
+                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-neutral-hex"
+                    x-model="neutral"
+                    @input="applyLiveTheme()"
+                    class="input input-xs input-bordered font-mono w-24 text-xs"
+                  />
+                </div>
+                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(neutral)"></div>
+              </div>
+            </div>
+
+            <!-- Base Colors Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              <div class="bg-base-200/30 p-2.5 rounded-box border border-base-300 flex items-center justify-between gap-2">
+                <span class="text-xs font-bold">Base-100 (--b1)</span>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-base100-picker"
+                    x-model="base100"
+                    @input="applyLiveTheme()"
+                    class="w-7 h-7 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-base100-hex"
+                    x-model="base100"
+                    @input="applyLiveTheme()"
+                    class="input input-2xs input-bordered font-mono w-20 text-3xs"
+                  />
+                </div>
+              </div>
+
+              <div class="bg-base-200/30 p-2.5 rounded-box border border-base-300 flex items-center justify-between gap-2">
+                <span class="text-xs font-bold">Base-200 (--b2)</span>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-base200-picker"
+                    x-model="base200"
+                    @input="applyLiveTheme()"
+                    class="w-7 h-7 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-base200-hex"
+                    x-model="base200"
+                    @input="applyLiveTheme()"
+                    class="input input-2xs input-bordered font-mono w-20 text-3xs"
+                  />
+                </div>
+              </div>
+
+              <div class="bg-base-200/30 p-2.5 rounded-box border border-base-300 flex items-center justify-between gap-2">
+                <span class="text-xs font-bold">Base-300 (--b3)</span>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-base300-picker"
+                    x-model="base300"
+                    @input="applyLiveTheme()"
+                    class="w-7 h-7 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-base300-hex"
+                    x-model="base300"
+                    @input="applyLiveTheme()"
+                    class="input input-2xs input-bordered font-mono w-20 text-3xs"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Geometry Sliders -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-base-200">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-bold">Button Radius (--rounded-btn)</span>
+                <span class="font-mono text-3xs" x-text="roundedBtn">0.5rem</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="2"
+                step="0.125"
+                x-model="roundedBtnNum"
+                @input="roundedBtn = roundedBtnNum + 'rem'; applyLiveTheme()"
+                class="range range-xs range-primary"
+              />
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-bold">Box Radius (--rounded-box)</span>
+                <span class="font-mono text-3xs" x-text="roundedBox">1rem</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="2.5"
+                step="0.25"
+                x-model="roundedBoxNum"
+                @input="roundedBox = roundedBoxNum + 'rem'; applyLiveTheme()"
+                class="range range-xs range-secondary"
+              />
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-bold">Badge Radius (--rounded-badge)</span>
+                <span class="font-mono text-3xs" x-text="roundedBadge">1.9rem</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="2.5"
+                step="0.1"
+                x-model="roundedBadgeNum"
+                @input="roundedBadge = roundedBadgeNum + 'rem'; applyLiveTheme()"
+                class="range range-xs range-accent"
+              />
+            </div>
+          </div>
+
+          <!-- Real-Time Theme Preview Strip -->
+          <div class="bg-base-200/60 p-3.5 rounded-box border border-base-300 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold uppercase tracking-wider">Live Preview:</span>
+              <button type="button" class="btn btn-xs btn-primary">Primary</button>
+              <button type="button" class="btn btn-xs btn-secondary">Secondary</button>
+              <button type="button" class="btn btn-xs btn-accent">Accent</button>
+              <span class="badge badge-primary badge-sm">Badge</span>
+              <span class="badge badge-secondary badge-sm">Badge</span>
+              <span class="badge badge-accent badge-sm">Badge</span>
+            </div>
+            <div class="text-3xs font-mono opacity-60">
+              Updates active Chart.js and Mermaid diagrams live below
             </div>
           </div>
         </div>
@@ -1360,13 +1746,523 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
 
   <!-- Non-Blocking Subsystem Initialization Script -->
   <script>
-    const DAISYUI_THEMES = [
+    const STANDARD_DAISYUI_THEMES = new Set([
       "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
       "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden",
       "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe",
       "black", "luxury", "dracula", "cmyk", "autumn", "business",
       "acid", "lemonade", "night", "coffee", "winter", "dim", "nord", "sunset"
-    ];
+    ]);
+
+    const DAISYUI_THEMES = Array.from(STANDARD_DAISYUI_THEMES);
+
+    // Zero-dependency pure JS OKLCH engine & compiler
+    function srgbToLinear(c) {
+      const norm = c / 255;
+      return norm <= 0.04045 ? norm / 12.92 : Math.pow((norm + 0.055) / 1.055, 2.4);
+    }
+
+    function linearToSrgb(c) {
+      const clamped = Math.max(0, Math.min(1, c));
+      const srgb = clamped <= 0.0031308 ? clamped * 12.92 : 1.055 * Math.pow(clamped, 1 / 2.4) - 0.055;
+      return Math.round(srgb * 255);
+    }
+
+    function hexToRgb(hex) {
+      let clean = String(hex).replace(/^#/, "").trim();
+      if (clean.length === 3) {
+        clean = clean.split("").map((c) => c + c).join("") + "ff";
+      } else if (clean.length === 4) {
+        clean = clean.split("").map((c) => c + c).join("");
+      } else if (clean.length === 6) {
+        clean += "ff";
+      }
+      if (clean.length !== 8) return [0, 0, 0, 1];
+      const num = parseInt(clean, 16);
+      if (Number.isNaN(num)) return [0, 0, 0, 1];
+      return [
+        (num >>> 24) & 255,
+        (num >>> 16) & 255,
+        (num >>> 8) & 255,
+        ((num & 255) / 255)
+      ];
+    }
+
+    function hslToRgb(h, s, l) {
+      const hNorm = (((h % 360) + 360) % 360) / 360;
+      const sNorm = Math.max(0, Math.min(1, s / 100));
+      const lNorm = Math.max(0, Math.min(1, l / 100));
+      if (sNorm === 0) {
+        const val = Math.round(lNorm * 255);
+        return [val, val, val];
+      }
+      const q = lNorm < 0.5 ? lNorm * (1 + sNorm) : lNorm + sNorm - lNorm * sNorm;
+      const p = 2 * lNorm - q;
+      const hue2rgb = (t) => {
+        let tNorm = t;
+        if (tNorm < 0) tNorm += 1;
+        if (tNorm > 1) tNorm -= 1;
+        if (tNorm < 1 / 6) return p + (q - p) * 6 * tNorm;
+        if (tNorm < 1 / 2) return q;
+        if (tNorm < 2 / 3) return p + (q - p) * (2 / 3 - tNorm) * 6;
+        return p;
+      };
+      return [
+        Math.round(hue2rgb(hNorm + 1 / 3) * 255),
+        Math.round(hue2rgb(hNorm) * 255),
+        Math.round(hue2rgb(hNorm - 1 / 3) * 255)
+      ];
+    }
+
+    function parseColor(input) {
+      if (!input || typeof input !== "string") {
+        return { r: 59, g: 130, b: 246, a: 1, oklch: null };
+      }
+      const str = input.trim();
+      const oklchMatch = str.match(/^(?:oklch\s*\(\s*)?([0-9.]+%?)\s+([0-9.]+)\s+([0-9.]+)(?:\s*(?:\/|\s)\s*([0-9.]+%?))?\s*\)?$/i);
+      if (oklchMatch) {
+        let rawL = oklchMatch[1];
+        let L = rawL.endsWith("%") ? parseFloat(rawL) / 100 : parseFloat(rawL);
+        if (L > 1) L = L / 100;
+        const C = parseFloat(oklchMatch[2]);
+        const H = parseFloat(oklchMatch[3]);
+        return {
+          r: null,
+          g: null,
+          b: null,
+          a: 1,
+          oklch: {
+            L,
+            C,
+            H,
+            formatted: `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`
+          }
+        };
+      }
+      if (str.startsWith("#")) {
+        const [r, g, b, a] = hexToRgb(str);
+        return { r, g, b, a, oklch: null };
+      }
+      const rgbMatch = str.match(/^rgba?\s*\(\s*(\d+)(?:,|\s+)\s*(\d+)(?:,|\s+)\s*(\d+)(?:(?:\s*[,/]\s*|\s+)([0-9.]+%?))?\s*\)$/i);
+      if (rgbMatch) {
+        const r = parseInt(rgbMatch[1], 10);
+        const g = parseInt(rgbMatch[2], 10);
+        const b = parseInt(rgbMatch[3], 10);
+        let a = 1;
+        if (rgbMatch[4]) {
+          a = rgbMatch[4].endsWith("%") ? parseFloat(rgbMatch[4]) / 100 : parseFloat(rgbMatch[4]);
+        }
+        return { r, g, b, a, oklch: null };
+      }
+      const hslMatch = str.match(/^hsla?\s*\(\s*(\d+)(?:deg)?(?:,|\s+)\s*(\d+)%(?:,|\s+)\s*(\d+)%(?:(?:\s*[,/]\s*|\s+)([0-9.]+%?))?\s*\)$/i);
+      if (hslMatch) {
+        const h = parseInt(hslMatch[1], 10);
+        const s = parseInt(hslMatch[2], 10);
+        const l = parseInt(hslMatch[3], 10);
+        const [r, g, b] = hslToRgb(h, s, l);
+        let a = 1;
+        if (hslMatch[4]) {
+          a = hslMatch[4].endsWith("%") ? parseFloat(hslMatch[4]) / 100 : parseFloat(hslMatch[4]);
+        }
+        return { r, g, b, a, oklch: null };
+      }
+      return { r: 59, g: 130, b: 246, a: 1, oklch: null };
+    }
+
+    function rgbToOklch(r, g, b) {
+      if (r === g && g === b) {
+        const L = r === 0 ? 0 : r === 255 ? 1 : 0.2104542553 * Math.cbrt(srgbToLinear(r)) + 0.7936177850 * Math.cbrt(srgbToLinear(r)) - 0.0040720468 * Math.cbrt(srgbToLinear(r));
+        return {
+          L,
+          C: 0,
+          H: 0,
+          formatted: `${(L * 100).toFixed(2)}% 0.000 0.00`
+        };
+      }
+      const lr = srgbToLinear(r);
+      const lg = srgbToLinear(g);
+      const lb = srgbToLinear(b);
+
+      const l = 0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb;
+      const m = 0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb;
+      const s = 0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb;
+
+      const l_ = Math.cbrt(Math.max(0, l));
+      const m_ = Math.cbrt(Math.max(0, m));
+      const s_ = Math.cbrt(Math.max(0, s));
+
+      const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+      const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+      const b_ = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+      let C = Math.sqrt(a * a + b_ * b_);
+      let H = Math.atan2(b_, a) * (180 / Math.PI);
+      if (H < 0) H += 360;
+      if (C < 0.0001) {
+        C = 0;
+        H = 0;
+      }
+      return {
+        L,
+        C,
+        H,
+        formatted: `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`
+      };
+    }
+
+    function autoContrastContent(colorInput) {
+      const parsed = parseColor(colorInput);
+      let L = 0.5;
+      let H = 0;
+      let luminance = 0.5;
+
+      if (parsed.oklch) {
+        L = parsed.oklch.L;
+        H = parsed.oklch.H;
+        luminance = L;
+      } else {
+        const oklch = rgbToOklch(parsed.r, parsed.g, parsed.b);
+        L = oklch.L;
+        H = oklch.H;
+        const lr = srgbToLinear(parsed.r);
+        const lg = srgbToLinear(parsed.g);
+        const lb = srgbToLinear(parsed.b);
+        luminance = 0.2126 * lr + 0.7152 * lg + 0.0722 * lb;
+      }
+
+      const hVal = Number.isFinite(H) ? H.toFixed(2) : "0";
+      if (L > 0.65 || luminance > 0.4) {
+        return `15% 0.02 ${hVal}`;
+      }
+      return `98% 0.01 ${hVal}`;
+    }
+
+    const RUNTIME_COLOR_MAP = {
+      primary: "--p",
+      "primary-content": "--pc",
+      secondary: "--s",
+      "secondary-content": "--sc",
+      accent: "--a",
+      "accent-content": "--ac",
+      neutral: "--n",
+      "neutral-content": "--nc",
+      "base-100": "--b1",
+      "base-200": "--b2",
+      "base-300": "--b3",
+      "base-content": "--bc"
+    };
+
+    function compileTheme(themeDefinition, { defaultThemeName = "custom" } = {}) {
+      if (typeof themeDefinition === "string") {
+        const trimmed = themeDefinition.trim();
+        if (trimmed.includes("[data-theme=")) {
+          const match = trimmed.match(/\[data-theme=["']?([a-zA-Z0-9_\-]+)["']?\]/);
+          const themeName = match ? match[1] : defaultThemeName;
+          return { themeName, css: trimmed, variables: {}, isRawCss: true };
+        }
+        try {
+          return compileTheme(JSON.parse(trimmed), { defaultThemeName });
+        } catch (_) {
+          throw new Error("Invalid theme definition");
+        }
+      }
+
+      let themeObj = themeDefinition;
+      let themeName = defaultThemeName;
+
+      const topKeys = Object.keys(themeObj);
+      if (topKeys.length === 1 && typeof themeObj[topKeys[0]] === "object" && !themeObj[topKeys[0]].r) {
+        themeName = topKeys[0];
+        themeObj = themeObj[topKeys[0]];
+      } else if (themeObj.name) {
+        themeName = themeObj.name;
+      }
+
+      const resultVars = {};
+      for (const [key, rawValue] of Object.entries(themeObj)) {
+        if (key === "extends" || key === "name") continue;
+        if (RUNTIME_COLOR_MAP[key]) {
+          const parsed = parseColor(rawValue);
+          resultVars[RUNTIME_COLOR_MAP[key]] = parsed.oklch ? parsed.oklch.formatted : rgbToOklch(parsed.r, parsed.g, parsed.b).formatted;
+          continue;
+        }
+        if (key.startsWith("--")) {
+          if (Object.values(RUNTIME_COLOR_MAP).includes(key)) {
+            const parsed = parseColor(rawValue);
+            resultVars[key] = parsed.oklch ? parsed.oklch.formatted : rgbToOklch(parsed.r, parsed.g, parsed.b).formatted;
+          } else {
+            resultVars[key] = String(rawValue).trim();
+          }
+          continue;
+        }
+        if (key === "color-scheme" || key === "colorScheme") {
+          resultVars["color-scheme"] = String(rawValue).trim();
+          continue;
+        }
+        resultVars[key] = String(rawValue).trim();
+      }
+
+      // Auto content
+      const pairs = [["--p", "--pc"], ["--s", "--sc"], ["--a", "--ac"], ["--n", "--nc"], ["--b1", "--bc"]];
+      for (const [pVar, cVar] of pairs) {
+        if (resultVars[pVar] && !resultVars[cVar]) {
+          resultVars[cVar] = autoContrastContent(resultVars[pVar]);
+        }
+      }
+
+      const lines = [`[data-theme="${themeName}"] {`];
+      if (resultVars["color-scheme"]) lines.push(`  color-scheme: ${resultVars["color-scheme"]};`);
+      for (const [k, v] of Object.entries(resultVars)) {
+        if (k === "color-scheme") continue;
+        lines.push(`  ${k}: ${v};`);
+      }
+      lines.push(`}`);
+      return { themeName, css: lines.join("\n"), variables: resultVars, isRawCss: false };
+    }
+
+    function tailwindConfigSnippet(themeName, variables) {
+      return `daisyui: {\n  themes: [\n    {\n      "${themeName}": ${JSON.stringify(variables, null, 8).replace(/^ {8}/gm, "      ")}\n    }\n  ]\n}`;
+    }
+
+    function registerCustomTheme(themeName, css = null) {
+      if (!themeName || typeof themeName !== "string") return false;
+      const name = themeName.trim();
+      if (!DAISYUI_THEMES.includes(name)) {
+        DAISYUI_THEMES.push(name);
+      }
+
+      if (css && typeof document !== "undefined") {
+        let styleEl = document.getElementById("daisyui-custom-themes");
+        if (!styleEl) {
+          styleEl = document.createElement("style");
+          styleEl.id = "daisyui-custom-themes";
+          styleEl.textContent = "";
+          if (document.head && typeof document.head.appendChild === "function") {
+            document.head.appendChild(styleEl);
+          }
+        }
+        styleEl.textContent = styleEl.textContent || "";
+        const themeSelector = `[data-theme="${name}"]`;
+        if (styleEl.textContent.includes(themeSelector)) {
+          const escaped = themeSelector.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+          const regex = new RegExp(`${escaped}\\s*\\{[^}]*\\}`, "g");
+          styleEl.textContent = styleEl.textContent.replace(regex, css);
+        } else {
+          styleEl.textContent += `\n${css}\n`;
+        }
+      }
+
+      if (typeof document !== "undefined" && document.getElementById("theme-swatch-list")) {
+        initThemeDropdown();
+      }
+      return true;
+    }
+
+    function scanAndRegisterExistingCustomThemes() {
+      if (typeof document === "undefined") return;
+      const styleEl = document.getElementById("daisyui-custom-themes");
+      if (styleEl && styleEl.textContent) {
+        const themeRegex = /\[data-theme=["']?([a-zA-Z0-9_\-]+)["']?\]/g;
+        let match;
+        while ((match = themeRegex.exec(styleEl.textContent)) !== null) {
+          const name = match[1];
+          if (name && !DAISYUI_THEMES.includes(name)) {
+            DAISYUI_THEMES.push(name);
+          }
+        }
+      }
+      try {
+        if (typeof localStorage !== "undefined") {
+          const savedThemes = localStorage.getItem("html_report_custom_themes");
+          if (savedThemes) {
+            const parsed = JSON.parse(savedThemes);
+            if (typeof parsed === "object") {
+              for (const [themeName, entry] of Object.entries(parsed)) {
+                const css = typeof entry === "string" ? entry : (entry.css || null);
+                registerCustomTheme(themeName, css);
+              }
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    window.srgbToLinear = srgbToLinear;
+    window.linearToSrgb = linearToSrgb;
+    window.hexToRgb = hexToRgb;
+    window.hslToRgb = hslToRgb;
+    window.parseColor = parseColor;
+    window.rgbToOklch = rgbToOklch;
+    window.autoContrastContent = autoContrastContent;
+    window.compileTheme = compileTheme;
+    window.tailwindConfigSnippet = tailwindConfigSnippet;
+    window.registerCustomTheme = registerCustomTheme;
+    window.scanAndRegisterExistingCustomThemes = scanAndRegisterExistingCustomThemes;
+    window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
+    window.DAISYUI_THEMES = DAISYUI_THEMES;
+
+    window.themeStudioController = function themeStudioController() {
+      return {
+        isOpen: false,
+        themeName: "custom-brand",
+        extendsTheme: "light",
+        colorScheme: "auto",
+        primary: "#3b82f6",
+        secondary: "#ec4899",
+        accent: "#10b981",
+        neutral: "#1f2937",
+        base100: "#ffffff",
+        base200: "#f3f4f6",
+        base300: "#e5e7eb",
+        roundedBtn: "0.5rem",
+        roundedBtnNum: 0.5,
+        roundedBox: "1rem",
+        roundedBoxNum: 1.0,
+        roundedBadge: "1.9rem",
+        roundedBadgeNum: 1.9,
+        copiedCss: false,
+        copiedTailwind: false,
+        savedNotice: false,
+        activeTheme: "light",
+        baseThemeOptions: Array.from(STANDARD_DAISYUI_THEMES),
+
+        init() {
+          this.activeTheme = document.documentElement.getAttribute("data-theme") || "light";
+          try {
+            if (typeof localStorage !== "undefined") {
+              const savedJson = localStorage.getItem("html_report_custom_themes");
+              if (savedJson) {
+                const saved = JSON.parse(savedJson);
+                if (saved[this.themeName]) {
+                  const item = saved[this.themeName];
+                  if (item.primary) this.primary = item.primary;
+                  if (item.secondary) this.secondary = item.secondary;
+                  if (item.accent) this.accent = item.accent;
+                  if (item.neutral) this.neutral = item.neutral;
+                  if (item.base100) this.base100 = item.base100;
+                  if (item.base200) this.base200 = item.base200;
+                  if (item.base300) this.base300 = item.base300;
+                  if (item.extends) this.extendsTheme = item.extends;
+                }
+              }
+            }
+          } catch (_) {}
+        },
+
+        getOklch(hex) {
+          if (!hex) return "";
+          try {
+            const [r, g, b] = hexToRgb(hex);
+            return rgbToOklch(r, g, b).formatted;
+          } catch (_) {}
+          return hex;
+        },
+
+        getCompiledCss() {
+          const res = compileTheme({
+            [this.themeName]: {
+              extends: this.extendsTheme,
+              primary: this.primary,
+              secondary: this.secondary,
+              accent: this.accent,
+              neutral: this.neutral,
+              "base-100": this.base100,
+              "base-200": this.base200,
+              "base-300": this.base300,
+              "--rounded-btn": this.roundedBtn,
+              "--rounded-box": this.roundedBox,
+              "--rounded-badge": this.roundedBadge,
+              ...(this.colorScheme !== "auto" ? { "color-scheme": this.colorScheme } : {})
+            }
+          });
+          return res.css;
+        },
+
+        getTailwindSnippet() {
+          return tailwindConfigSnippet(this.themeName, {
+            primary: this.getOklch(this.primary),
+            secondary: this.getOklch(this.secondary),
+            accent: this.getOklch(this.accent),
+            neutral: this.getOklch(this.neutral),
+            "base-100": this.getOklch(this.base100),
+            "base-200": this.getOklch(this.base200),
+            "base-300": this.getOklch(this.base300),
+            "--rounded-btn": this.roundedBtn,
+            "--rounded-box": this.roundedBox,
+            "--rounded-badge": this.roundedBadge
+          });
+        },
+
+        applyLiveTheme() {
+          const css = this.getCompiledCss();
+          registerCustomTheme(this.themeName, css);
+          if (typeof window.setReportTheme === "function") {
+            window.setReportTheme(this.themeName);
+            this.activeTheme = this.themeName;
+          }
+        },
+
+        saveTheme() {
+          this.applyLiveTheme();
+          try {
+            if (typeof localStorage !== "undefined") {
+              const saved = JSON.parse(localStorage.getItem("html_report_custom_themes") || "{}");
+              saved[this.themeName] = {
+                extends: this.extendsTheme,
+                colorScheme: this.colorScheme,
+                primary: this.primary,
+                secondary: this.secondary,
+                accent: this.accent,
+                neutral: this.neutral,
+                base100: this.base100,
+                base200: this.base200,
+                base300: this.base300,
+                roundedBtn: this.roundedBtn,
+                roundedBox: this.roundedBox,
+                roundedBadge: this.roundedBadge,
+                css: this.getCompiledCss()
+              };
+              localStorage.setItem("html_report_custom_themes", JSON.stringify(saved));
+              this.savedNotice = true;
+              setTimeout(() => { this.savedNotice = false; }, 2500);
+            }
+          } catch (_) {}
+        },
+
+        copyCss() {
+          const css = this.getCompiledCss();
+          navigator.clipboard.writeText(css).then(() => {
+            this.copiedCss = true;
+            setTimeout(() => { this.copiedCss = false; }, 2500);
+          });
+        },
+
+        copyTailwind() {
+          const tw = this.getTailwindSnippet();
+          navigator.clipboard.writeText(tw).then(() => {
+            this.copiedTailwind = true;
+            setTimeout(() => { this.copiedTailwind = false; }, 2500);
+          });
+        },
+
+        resetDefaults() {
+          this.primary = "#3b82f6";
+          this.secondary = "#ec4899";
+          this.accent = "#10b981";
+          this.neutral = "#1f2937";
+          this.base100 = "#ffffff";
+          this.base200 = "#f3f4f6";
+          this.base300 = "#e5e7eb";
+          this.roundedBtn = "0.5rem";
+          this.roundedBtnNum = 0.5;
+          this.roundedBox = "1rem";
+          this.roundedBoxNum = 1.0;
+          this.roundedBadge = "1.9rem";
+          this.roundedBadgeNum = 1.9;
+          this.applyLiveTheme();
+        }
+      };
+    };
 
     window.reportCharts = [];
 
@@ -1621,6 +2517,7 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
       listEl.innerHTML = "";
 
       DAISYUI_THEMES.forEach((theme) => {
+        const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
         const btn = document.createElement("button");
         btn.type = "button";
         btn.setAttribute("data-theme", theme);
@@ -1633,7 +2530,10 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
                   <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
                 </svg>
-                <span class="flex-grow text-xs font-semibold capitalize">${theme}</span>
+                <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
+                  <span>${theme}</span>
+                  ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
+                </span>
                 <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
                   <span class="bg-primary rounded-badge w-2 h-4"></span>
                   <span class="bg-secondary rounded-badge w-2 h-4"></span>
@@ -2299,6 +3199,7 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
 
     // Boot all subsystems non-blockingly when DOM & deferred scripts are ready
     window.addEventListener("DOMContentLoaded", async () => {
+      try { scanAndRegisterExistingCustomThemes(); } catch (e) { console.error("Custom themes scan error:", e); }
       try { initMarkdown(); } catch (e) { console.error("Markdown init error:", e); }
       try { initTOC(); } catch (e) { console.error("TOC init error:", e); }
       try { initThemeDropdown(); } catch (e) { console.error("Theme dropdown error:", e); }

@@ -189,6 +189,13 @@ Easily pair data files (e.g. `example.csv`) with interactive metric summaries, l
 ### 3. Horizontal Scrollbar ("Insufficient Space") Detection & Playwright Gate
 The runtime and Playwright verifier automatically check every element across all 5 Tailwind breakpoints (`sm`: 640px, `md`: 768px, `lg`: 1024px, `xl`: 1280px, `2xl`: 1536px). If any element has a horizontal scrollbar (`scrollWidth > clientWidth`), it is visually flagged and reported so reports are guaranteed 100% responsive.
 
+### 4. User-Defined Custom DaisyUI Themes & Top Collapsible Studio
+- **Zero-Dependency Pure JS OKLCH Engine**: Converts any hex, RGB, or HSL color into DaisyUI 4 OKLCH channels (`L% C H`) using standard Ottosson matrix math without external CDN color libraries.
+- **Theme Inheritance (`extends`)**: Support for `"extends": "<baseTheme>"` allows extending any of the 32 native DaisyUI themes (`dark`, `light`, `emerald`, `synthwave`, etc.) while overriding chosen semantic colors.
+- **Auto-Contrast Content Generator**: Computes optimal high-contrast values for `-content` variables (`--pc`, `--sc`, `--ac`, `--bc`, etc.) automatically.
+- **Build-Time CLI Integration**: Pass `--custom-theme <path>` (supporting `.json` and raw `.css` blocks) to inject custom themes into `<style id="daisyui-custom-themes">`.
+- **In-Browser Top Collapsible Studio**: Interactive accordion banner beneath the document title with real-time color pickers, OKLCH monitors, live Chart.js/Mermaid reactivity, `localStorage` persistence, and one-click CSS & Tailwind config export.
+
 ---
 
 ## 🛠️ Step-by-Step Workflow for AI Agents

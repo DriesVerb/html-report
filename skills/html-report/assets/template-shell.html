@@ -14,6 +14,11 @@
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" crossorigin="anonymous"></script>
 
+  <!-- DaisyUI Custom Themes (Injected at build or runtime) -->
+  <style id="daisyui-custom-themes">
+<!-- {{CUSTOM_THEMES}} -->
+  </style>
+
   <!-- Optional Addon CDNs & Styles -->
   <!-- {{HEAD_EXTRAS}} -->
 
@@ -28,6 +33,7 @@
     }
     html, body {
       max-width: 100%;
+      overflow-x: hidden;
     }
     .mermaid {
       color: inherit;

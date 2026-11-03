@@ -2,6 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { compileTheme, compileThemeFile } from "./theme-compiler.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -164,6 +165,7 @@ export function parseArgs(argv) {
     output: "./report.html",
     printable: false,
     theme: null,
+    customTheme: null,
     addons: [],
     favicon: "📊",
     help: false
@@ -184,6 +186,8 @@ export function parseArgs(argv) {
       options.printable = true;
     } else if (arg === "--theme" && args[i + 1]) {
       options.theme = args[++i];
+    } else if ((arg === "--custom-theme" || arg === "-ct") && args[i + 1]) {
+      options.customTheme = args[++i];
     } else if (arg === "--addons" && args[i + 1]) {
       const items = args[++i].split(",").map((s) => s.trim()).filter(Boolean);
       options.addons.push(...items);
@@ -214,6 +218,8 @@ export function buildReport({
   addons = [],
   favicon = "📊",
   theme = null,
+  customTheme = null,
+  customThemeCss = null,
   templateShellPath = path.resolve(__dirname, "../assets/template-shell.html"),
   runtimeScriptPath = path.resolve(__dirname, "../assets/report-runtime.js")
 } = {}) {
@@ -229,6 +235,33 @@ export function buildReport({
 
   const cleanBody = extractMainContent(content);
   const activeAddonKeys = detectAddons(cleanBody, addons);
+
+  // Compile custom themes if provided
+  let compiledCustomCss = "";
+  let resolvedTheme = theme;
+
+  if (customTheme) {
+    if (typeof customTheme === "string") {
+      const isFile = fs.existsSync(customTheme);
+      if (isFile) {
+        const compiled = compileThemeFile(customTheme);
+        compiledCustomCss = compiled.css;
+        if (!resolvedTheme) resolvedTheme = compiled.themeName;
+      } else {
+        const compiled = compileTheme(customTheme);
+        compiledCustomCss = compiled.css;
+        if (!resolvedTheme) resolvedTheme = compiled.themeName;
+      }
+    } else if (typeof customTheme === "object") {
+      const compiled = compileTheme(customTheme);
+      compiledCustomCss = compiled.css;
+      if (!resolvedTheme) resolvedTheme = compiled.themeName;
+    }
+  }
+
+  if (customThemeCss) {
+    compiledCustomCss = (compiledCustomCss ? compiledCustomCss + "\n\n" : "") + customThemeCss;
+  }
 
   // Construct head extras
   const headExtraParts = [];
@@ -252,8 +285,8 @@ export function buildReport({
   let html = shellTemplate;
 
   // Set theme attribute on <html> if provided
-  if (theme) {
-    html = html.replace(/data-theme="[^"]*"/i, `data-theme="${theme}"`);
+  if (resolvedTheme) {
+    html = html.replace(/data-theme="[^"]*"/i, `data-theme="${resolvedTheme}"`);
   }
 
   // Set report mode attribute on <html>
@@ -279,16 +312,19 @@ export function buildReport({
     );
   }
 
-  html = html.replace(/<!-- {{TITLE}} -->/g, title);
-  html = html.replace(/<!-- {{FAVICON}} -->/g, faviconTag);
-  html = html.replace(/<!-- {{HEAD_EXTRAS}} -->/g, headExtras);
-  html = html.replace(/<!-- {{CONTENT}} -->/g, cleanBody);
-  html = html.replace(/<!-- {{RUNTIME_SCRIPT}} -->/g, inlinedRuntime);
+  html = html.replace(/<!-- {{TITLE}} -->/g, () => title);
+  html = html.replace(/<!-- {{FAVICON}} -->/g, () => faviconTag);
+  html = html.replace(/<!-- {{HEAD_EXTRAS}} -->/g, () => headExtras);
+  html = html.replace(/<!-- {{CONTENT}} -->/g, () => cleanBody);
+  html = html.replace(/<!-- {{RUNTIME_SCRIPT}} -->/g, () => inlinedRuntime);
+  html = html.replace(/<!-- {{CUSTOM_THEMES}} -->/g, () => compiledCustomCss ? `\n${compiledCustomCss}\n  ` : "");
 
   return {
     html,
     activeAddons: activeAddonKeys,
-    mode
+    mode,
+    theme: resolvedTheme || "light",
+    hasCustomTheme: Boolean(compiledCustomCss)
   };
 }
 
@@ -300,12 +336,13 @@ Usage:
   node build-report.mjs --content <fragment.html> [options]
 
 Options:
-  -c, --content <file>    Path to semantic <main> HTML fragment file (required)
-  -t, --title <string>    Report title (default: "HTML Report")
-  -o, --output <file>     Destination HTML file (default: "./report.html")
-  -p, --printable         Enable printable/PDF mode (@media print rules, static mode)
-      --theme <name>      DaisyUI theme name (default: "light")
-      --favicon <emoji>   Favicon emoticon (default: "📊")
+  -c, --content <file>      Path to semantic <main> HTML fragment file (required)
+  -t, --title <string>      Report title (default: "HTML Report")
+  -o, --output <file>       Destination HTML file (default: "./report.html")
+  -p, --printable           Enable printable/PDF mode (@media print rules, static mode)
+      --theme <name>        DaisyUI theme name (default: "light")
+      --custom-theme <path> Path to custom theme definition (.json or .css)
+      --favicon <emoji>     Favicon emoticon (default: "📊")
       --addons <list>     Comma-separated addons (charts, mermaid, gridjs, katex, leaflet, hljs, marked)
       --all-addons        Include all catalog addons in <head>
       --charts            Explicitly include Chart.js
@@ -351,11 +388,18 @@ if (isDirectCli) {
   const rawContent = fs.readFileSync(contentPath, "utf-8");
   const startTime = performance.now();
 
+  const customThemePath = options.customTheme
+    ? (fs.existsSync(path.resolve(process.cwd(), options.customTheme))
+      ? path.resolve(process.cwd(), options.customTheme)
+      : options.customTheme)
+    : null;
+
   const { html, activeAddons, mode } = buildReport({
     title: options.title,
     content: rawContent,
     printable: options.printable,
     theme: options.theme,
+    customTheme: customThemePath,
     addons: options.addons,
     favicon: options.favicon
   });

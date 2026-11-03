@@ -1,0 +1,547 @@
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+  <!-- Journey Status Hero -->
+  <header class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-base-200">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-success/15 text-success mb-2">
+          <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> All 16 Tasks Implemented &amp; Verified &bull; Ready to Ship
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-base-content" id="journey-overview">
+          User-Defined Custom DaisyUI Theme Engine
+        </h1>
+        <p class="text-base text-base-content/70 mt-1">
+          OpenSpec Planning Blueprint, Architectural Design &amp; Journey Dashboard
+        </p>
+      </div>
+
+      <!-- Markdown Artifact Backlinks -->
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="./proposal.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4"></i> proposal.md
+        </a>
+        <a href="./design.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="compass" class="w-4 h-4"></i> design.md
+        </a>
+        <a href="./tasks.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="check-square" class="w-4 h-4"></i> tasks.md
+        </a>
+        <a href="./specs/" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="layers" class="w-4 h-4"></i> specs/
+        </a>
+      </div>
+    </div>
+
+    <!-- Journey Stepper -->
+    <div class="mt-8">
+      <h2 class="text-xs font-bold uppercase tracking-wider text-base-content/60 mb-3" id="journey-stepper">
+        Current State of Our Journey
+      </h2>
+      <ul class="steps steps-vertical sm:steps-horizontal w-full">
+        <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
+        <li class="step step-primary font-medium" data-content="✓">Planning &amp; Specs</li>
+        <li class="step step-primary font-medium" data-content="✓">Implementing</li>
+        <li class="step step-primary font-medium" data-content="✓">Verifying</li>
+        <li class="step step-primary font-bold text-primary" data-content="●">Shipped / Ready</li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Live Progress Stats -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" aria-label="Progress Metrics">
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-primary">
+        <i data-lucide="palette" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Native Themes</div>
+      <div class="stat-value text-primary text-2xl sm:text-3xl">32 + Custom</div>
+      <div class="stat-desc text-xs text-base-content/70 truncate">DaisyUI 4 compatible</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-secondary">
+        <i data-lucide="check-check" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Decisions Aligned</div>
+      <div class="stat-value text-secondary text-2xl sm:text-3xl">4 / 4</div>
+      <div class="stat-desc text-xs text-success truncate">D1:A, D2:A, D3:A, D4:A</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-accent">
+        <i data-lucide="list-todo" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Roadmap Tasks</div>
+      <div class="stat-value text-accent text-2xl sm:text-3xl">17</div>
+      <div class="stat-desc text-xs text-accent truncate">Across 4 planned phases</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl shadow-sm border border-base-200 p-4 sm:p-5">
+      <div class="stat-figure text-info">
+        <i data-lucide="sparkles" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60 truncate">Color Engine</div>
+      <div class="stat-value text-info text-2xl sm:text-3xl">Pure JS</div>
+      <div class="stat-desc text-xs text-info truncate">Zero-dependency OKLCH</div>
+    </div>
+  </section>
+
+  <!-- Autonomous Execution Prompt Card (Copy-Paste Ready) -->
+  <section class="card bg-base-100 rounded-2xl shadow-md border-2 border-primary/30 p-6 sm:p-8 space-y-4 break-inside-avoid" id="execution-prompt-section">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-base-200">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-primary/10 text-primary">
+          <i data-lucide="terminal" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg sm:text-xl font-bold text-base-content" id="autonomous-execution-prompt">
+              Autonomous Execution Prompt (/goal)
+            </h2>
+            <span class="badge badge-success badge-sm font-semibold gap-1">
+              <i data-lucide="check" class="w-3 h-3"></i> Ready to Run
+            </span>
+          </div>
+          <p class="text-xs text-base-content/70">
+            One-click copy-paste prompt granting full autonomous execution through Phases 1–4, live dashboard sync, and git push to main.
+          </p>
+        </div>
+      </div>
+
+      <!-- Copy Action Button with instant feedback -->
+      <div class="flex-shrink-0" x-data="{ copied: false }">
+        <button
+          type="button"
+          id="copy-goal-prompt-btn"
+          class="btn btn-sm btn-primary gap-2 shadow-sm font-semibold transition-all"
+          :class="copied ? 'btn-success text-success-content' : 'btn-primary'"
+          @click="
+            const text = document.getElementById('goal-prompt-code').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+              copied = true;
+              setTimeout(() => { copied = false; }, 2500);
+            });
+          "
+        >
+          <span x-show="!copied" class="flex items-center gap-1.5">
+            <i data-lucide="copy" class="w-4 h-4"></i> Copy /goal Prompt
+          </span>
+          <span x-show="copied" class="flex items-center gap-1.5" style="display: none;">
+            <i data-lucide="check-check" class="w-4 h-4"></i> Copied to Clipboard!
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Formatted Code Container -->
+    <div class="relative group">
+      <pre class="bg-base-200/80 text-base-content p-4 sm:p-5 rounded-xl text-xs font-mono leading-relaxed overflow-x-auto border border-base-300 max-h-96 select-all whitespace-pre-wrap"><code id="goal-prompt-code">/goal Execute the complete implementation of the OpenSpec change `custom-daisyui-themes` from Phase 1 through Phase 4 according to `openspec/changes/custom-daisyui-themes/tasks.md` and `design.md`.
+
+You have full autonomous authorization to execute all required tool calls without pausing for intermediate approval: create/edit files, run builds, execute unit tests, update templates and runtimes, and interact with git.
+
+Implementation Scope:
+1. Phase 1 (OKLCH Engine &amp; Compiler):
+   - Implement zero-dependency pure JS sRGB -&gt; Linear -&gt; XYZ -&gt; OKLab -&gt; OKLCH matrix conversion.
+   - Implement auto-contrast for content variables (`--pc`, `--sc`, etc.).
+   - Implement theme compiler supporting DaisyUI JSON objects, `extends: "&lt;baseTheme&gt;"` inheritance, and raw CSS rules.
+   - Add unit tests verifying color math accuracy, inheritance, and DaisyUI 4 CSS variable formatting.
+2. Phase 2 (Build CLI &amp; Shell Integration):
+   - Update `skills/html-report/scripts/build-report.mjs` to accept `--custom-theme &lt;path&gt;` (JSON &amp; CSS) and `--theme &lt;custom-name&gt;`.
+   - Inject generated `[data-theme="..."]` CSS into `&lt;style id="daisyui-custom-themes"&gt;`.
+   - Add automated build integration tests.
+3. Phase 3 (Runtime &amp; Top Collapsible Studio in example.html):
+   - Register dynamic custom themes in `report-runtime.js` and render swatches in the navbar dropdown.
+   - Implement the Top Collapsible Theme Studio (`collapse collapse-arrow`) in `skills/html-report/examples/example.html` with color pickers, OKLCH monitors, inheritance selector, live preview on charts/Mermaid, `localStorage` persistence, and one-click CSS/Tailwind export.
+4. Phase 4 (Verification, Documentation &amp; Git Push):
+   - Run the complete test suite (`node --test tests/*.test.mjs`) ensuring 100% pass rate.
+   - Validate OpenSpec compliance with `openspec validate custom-daisyui-themes`.
+   - Update `skills/html-report/SKILL.md` and `README.md`.
+   - Keep `openspec/changes/custom-daisyui-themes/tasks.md` and `http://localhost:3000` (via `implementation-progress.html`) continuously updated at every phase.
+   - Once all 16 tasks are verified, stage all changes, commit with a conventional commit message, and push directly to `origin/main`.</code></pre>
+    </div>
+  </section>
+
+  <!-- Confirmed Architecture Decisions Grid -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 rounded-xl bg-success/10 text-success">
+        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-base-content" id="confirmed-decisions">
+          Confirmed Architectural Decisions
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70">
+          Core foundations aligned during brainstorming
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="card bg-base-200/50 p-5 rounded-xl border border-base-300/50 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-primary badge-sm">D1: Hybrid Input Formats</span>
+          <span class="text-2xs font-mono text-success">CONFIRMED (A)</span>
+        </div>
+        <p class="text-xs text-base-content/70">
+          Accepts standard DaisyUI JSON configuration objects (<code class="font-mono text-2xs">themes: [ { "mytheme": { ... } } ]</code>) with automatic sRGB &rarr; OKLCH conversion and content auto-contrast, alongside direct raw <code class="font-mono text-2xs">[data-theme="..."]</code> CSS blocks.
+        </p>
+      </div>
+
+      <div class="card bg-base-200/50 p-5 rounded-xl border border-base-300/50 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-secondary badge-sm">D2: In-Browser Theme Studio</span>
+          <span class="text-2xs font-mono text-success">CONFIRMED (A)</span>
+        </div>
+        <p class="text-xs text-base-content/70">
+          A dedicated "Customize Theme" modal accessible from the navbar theme dropdown. Features live interactive color pickers, real-time Chart.js/Mermaid diagram updates, <code class="font-mono text-2xs">localStorage</code> persistence, and one-click copy to DaisyUI CSS & Tailwind config.
+        </p>
+      </div>
+
+      <div class="card bg-base-200/50 p-5 rounded-xl border border-base-300/50 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-accent badge-sm">D3: Pure JS Matrix Math</span>
+          <span class="text-2xs font-mono text-success">CONFIRMED (A)</span>
+        </div>
+        <p class="text-xs text-base-content/70">
+          Zero-dependency inlined color conversion math (<code class="font-mono text-2xs">sRGB &rarr; Linear &rarr; XYZ &rarr; OKLab &rarr; OKLCH</code>) executing in &lt;1ms without external CDN dependencies or bundle bloat.
+        </p>
+      </div>
+
+      <div class="card bg-base-200/50 p-5 rounded-xl border border-base-300/50 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-info badge-sm">D4: Base Theme Inheritance</span>
+          <span class="text-2xs font-mono text-success">CONFIRMED (A)</span>
+        </div>
+        <p class="text-xs text-base-content/70">
+          Themes can declare <code class="font-mono text-2xs">"extends": "dark"</code> or <code class="font-mono text-2xs">"extends": "emerald"</code> to inherit all base surface, neutral, and geometry tokens while overriding only specific branding colors.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Architecture Flow Diagram -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-xl font-bold text-base-content" id="architecture-flow">
+          Custom Theme Engine Lifecycle Flow
+        </h2>
+        <p class="text-sm text-base-content/70">
+          How custom theme definitions compile deterministically and synchronize across DOM, charts, and diagrams
+        </p>
+      </div>
+      <span class="badge badge-primary badge-outline text-xs">Architecture</span>
+    </div>
+
+    <pre class="mermaid">
+flowchart LR
+    subgraph Inputs ["Theme Input Sources"]
+        CLI["CLI: --custom-theme brand.json | .css"]
+        Studio["In-Browser Theme Studio Modal"]
+        Storage["LocalStorage (Saved Themes)"]
+    end
+
+    subgraph Compiler ["DaisyUI Theming Compiler"]
+        Inherit["Resolve 'extends' Base Theme"]
+        HexToOklch["Pure JS sRGB to OKLCH (L% C H)"]
+        AutoContrast["Auto-Contrast for -content Tokens"]
+        CSSGen["CSS Rule [data-theme='name'] Gen"]
+    end
+
+    subgraph Runtime ["Live Report Synchronization"]
+        StyleTag["Inject to style#daisyui-custom-themes"]
+        Dropdown["Add to Navbar Theme Dropdown"]
+        Palette["resolveDaisyUIThemePalette()"]
+        Visuals["Sync Chart.js & Mermaid Diagrams"]
+    end
+
+    CLI --> Inherit
+    Studio --> Inherit
+    Storage --> Inherit
+
+    Inherit --> HexToOklch --> AutoContrast --> CSSGen
+    CSSGen --> StyleTag
+    CSSGen --> Dropdown
+    Dropdown --> Palette
+    Palette --> Visuals
+    </pre>
+  </section>
+
+  <!-- UX Exploration: Live Component Showcase & Placement in example.html -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-success/10 text-success">
+          <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-base-content" id="placement-confirmed">
+            Confirmed Layout: Top Collapsible Accordion in example.html
+          </h2>
+          <p class="text-xs sm:text-sm text-base-content/70">
+            Compact 48px collapsed banner expanding into the full DaisyUI Theme Studio over the 800-line showcase
+          </p>
+        </div>
+      </div>
+      <span class="badge badge-success badge-outline text-xs">Confirmed Design</span>
+    </div>
+
+    <!-- Live Interactive Collapsible Wireframe Simulation -->
+    <div class="space-y-4">
+      <div class="collapse collapse-arrow bg-base-200/60 border border-base-300 rounded-2xl shadow-sm">
+        <input type="checkbox" id="demo-top-collapsed-toggle" checked />
+        <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
+          <div class="flex items-center gap-2">
+            <span class="p-1 rounded bg-primary/20 text-primary">
+              <i data-lucide="palette" class="w-4 h-4"></i>
+            </span>
+            <span>🎨 DaisyUI Theme Generator &amp; Studio</span>
+            <span class="badge badge-primary badge-xs">Active: Custom Brand</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="bg-primary rounded-badge w-2 h-4"></span>
+            <span class="bg-secondary rounded-badge w-2 h-4"></span>
+            <span class="bg-accent rounded-badge w-2 h-4"></span>
+            <span class="bg-neutral rounded-badge w-2 h-4"></span>
+          </div>
+        </div>
+
+        <div class="collapse-content space-y-4 pt-2 border-t border-base-300/60">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-base-300/40">
+            <div>
+              <p class="text-xs text-base-content/70">
+                Adjust palette tokens live. Changes cascade instantly to all sections in <code class="font-mono text-2xs">example.html</code> underneath.
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="btn btn-xs btn-outline gap-1">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy DaisyUI CSS
+              </button>
+              <button class="btn btn-xs btn-outline gap-1">
+                <i data-lucide="code" class="w-3.5 h-3.5"></i> Copy Tailwind Config
+              </button>
+              <button class="btn btn-xs btn-primary gap-1">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i> Save &amp; Apply
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-base-100 p-2.5 rounded-lg border border-base-300 space-y-1">
+              <span class="text-3xs font-bold uppercase text-base-content/60">Primary (--p)</span>
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded shadow-sm bg-[#3b82f6]"></div>
+                <span class="font-mono text-xs">#3B82F6</span>
+              </div>
+              <span class="text-3xs text-base-content/50 font-mono">oklch(62% 0.21 259)</span>
+            </div>
+
+            <div class="bg-base-100 p-2.5 rounded-lg border border-base-300 space-y-1">
+              <span class="text-3xs font-bold uppercase text-base-content/60">Secondary (--s)</span>
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded shadow-sm bg-[#ec4899]"></div>
+                <span class="font-mono text-xs">#EC4899</span>
+              </div>
+              <span class="text-3xs text-base-content/50 font-mono">oklch(65% 0.24 340)</span>
+            </div>
+
+            <div class="bg-base-100 p-2.5 rounded-lg border border-base-300 space-y-1">
+              <span class="text-3xs font-bold uppercase text-base-content/60">Accent (--a)</span>
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded shadow-sm bg-[#10b981]"></div>
+                <span class="font-mono text-xs">#10B981</span>
+              </div>
+              <span class="text-3xs text-base-content/50 font-mono">oklch(70% 0.17 160)</span>
+            </div>
+
+            <div class="bg-base-100 p-2.5 rounded-lg border border-base-300 space-y-1">
+              <span class="text-3xs font-bold uppercase text-base-content/60">Base-100 (--b1)</span>
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded shadow-sm bg-[#ffffff]"></div>
+                <span class="font-mono text-xs">#FFFFFF</span>
+              </div>
+              <span class="text-3xs text-base-content/50 font-mono">oklch(100% 0 0)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow Indicator to Showcase Underneath -->
+      <div class="text-center py-2">
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-base-200 text-base-content/70">
+          <i data-lucide="arrow-down" class="w-3.5 h-3.5 text-primary animate-bounce"></i>
+          <span>Live example.html components underneath (Buttons, Badges, Charts, Tables) render in real-time</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Live Concept: Theme Customizer Studio -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-primary/10 text-primary">
+          <i data-lucide="sliders-horizontal" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-base-content" id="interactive-preview">
+            Interactive Concept: Theme Customizer Studio
+          </h2>
+          <p class="text-xs sm:text-sm text-base-content/70">
+            Preview of the in-browser theme builder interface being designed
+          </p>
+        </div>
+      </div>
+      <span class="badge badge-primary badge-outline text-xs">Studio Blueprint</span>
+    </div>
+
+    <!-- Mockup Card -->
+    <div class="mockup-window border border-base-300 bg-base-200/50">
+      <div class="p-6 bg-base-100 space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-base-200">
+          <div>
+            <h3 class="font-bold text-base text-base-content">Theme Builder: "My Custom Brand"</h3>
+            <p class="text-xs text-base-content/60">Extends: "dark" &bull; Live sync with Chart.js & Mermaid</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="btn btn-xs btn-outline gap-1">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy DaisyUI CSS
+            </button>
+            <button class="btn btn-xs btn-outline gap-1">
+              <i data-lucide="code" class="w-3.5 h-3.5"></i> Copy Tailwind Config
+            </button>
+            <button class="btn btn-xs btn-primary gap-1">
+              <i data-lucide="save" class="w-3.5 h-3.5"></i> Apply & Save
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="bg-base-200/60 p-3 rounded-lg border border-base-300 space-y-1.5">
+            <span class="text-2xs font-bold uppercase text-base-content/60">Primary (--p)</span>
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-md shadow-sm border border-base-content/20 bg-[#3b82f6]"></div>
+              <span class="font-mono text-xs">#3B82F6</span>
+            </div>
+            <span class="text-3xs text-base-content/50 font-mono">oklch(62% 0.21 259)</span>
+          </div>
+
+          <div class="bg-base-200/60 p-3 rounded-lg border border-base-300 space-y-1.5">
+            <span class="text-2xs font-bold uppercase text-base-content/60">Secondary (--s)</span>
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-md shadow-sm border border-base-content/20 bg-[#ec4899]"></div>
+              <span class="font-mono text-xs">#EC4899</span>
+            </div>
+            <span class="text-3xs text-base-content/50 font-mono">oklch(65% 0.24 340)</span>
+          </div>
+
+          <div class="bg-base-200/60 p-3 rounded-lg border border-base-300 space-y-1.5">
+            <span class="text-2xs font-bold uppercase text-base-content/60">Accent (--a)</span>
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-md shadow-sm border border-base-content/20 bg-[#10b981]"></div>
+              <span class="font-mono text-xs">#10B981</span>
+            </div>
+            <span class="text-3xs text-base-content/50 font-mono">oklch(70% 0.17 160)</span>
+          </div>
+
+          <div class="bg-base-200/60 p-3 rounded-lg border border-base-300 space-y-1.5">
+            <span class="text-2xs font-bold uppercase text-base-content/60">Base-100 (--b1)</span>
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-md shadow-sm border border-base-content/20 bg-[#111827]"></div>
+              <span class="font-mono text-xs">#111827</span>
+            </div>
+            <span class="text-3xs text-base-content/50 font-mono">oklch(20% 0.02 260)</span>
+          </div>
+        </div>
+
+        <!-- Component Preview in Theme -->
+        <div class="p-4 bg-base-200/40 rounded-xl border border-base-200 space-y-3">
+          <div class="text-2xs font-bold uppercase text-base-content/50">Component Preview with Active Theme</div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button class="btn btn-sm btn-primary">Primary Button</button>
+            <button class="btn btn-sm btn-secondary">Secondary Button</button>
+            <button class="btn btn-sm btn-accent">Accent Button</button>
+            <span class="badge badge-primary">Primary Badge</span>
+            <span class="badge badge-secondary">Secondary Badge</span>
+            <span class="badge badge-accent">Accent Badge</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Connected Task Checklist -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8 space-y-6">
+    <div class="flex items-center justify-between pb-4 border-b border-base-200">
+      <div>
+        <h2 class="text-xl font-bold text-base-content" id="roadmap-tasks">
+          OpenSpec Roadmap Tasks (tasks.md)
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70">
+          Planned milestone tasks for implementation
+        </p>
+      </div>
+      <a href="./tasks.md" target="_blank" class="btn btn-xs btn-outline gap-1">
+        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> View tasks.md
+      </a>
+    </div>
+
+    <div class="space-y-6">
+      <!-- Phase 1 -->
+      <div class="space-y-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-success flex items-center gap-2">
+          <span>Phase 1: Pure JS OKLCH Engine &amp; DaisyUI Compiler (D1, D3, D4)</span>
+          <span class="badge badge-xs badge-success text-success-content font-bold">Verified &bull; 4/4</span>
+        </h3>
+        <ul class="space-y-1.5 text-xs text-base-content/80 font-mono bg-base-200/30 p-3 rounded-lg border border-base-200">
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 1.1 Implement pure JS color conversion utility (sRGB to OKLCH L% C H string).</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 1.2 Implement automatic contrast generator for -content variables (--pc, --sc, etc.).</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 1.3 Implement theme compiler supporting JSON definitions, base theme inheritance (extends), and raw CSS.</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 1.4 Add unit tests verifying color conversion accuracy, inheritance, and CSS output.</li>
+        </ul>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="space-y-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-success flex items-center gap-2">
+          <span>Phase 2: Build-Time &amp; CLI Integration (D1)</span>
+          <span class="badge badge-xs badge-success text-success-content font-bold">Verified &bull; 4/4</span>
+        </h3>
+        <ul class="space-y-1.5 text-xs text-base-content/80 font-mono bg-base-200/30 p-3 rounded-lg border border-base-200">
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 2.1 Update scripts/build-report.mjs to accept --custom-theme &lt;path&gt; (JSON and CSS).</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 2.2 Inject custom theme CSS into template shell &lt;style id="daisyui-custom-themes"&gt;.</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 2.3 Ensure custom theme names are recognized and selectable via --theme &lt;name&gt;.</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 2.4 Add build test verifying custom theme builds deterministically with matching palette.</li>
+        </ul>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="space-y-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-success flex items-center gap-2">
+          <span>Phase 3: Runtime Registration &amp; Top Collapsible Studio in example.html (D2)</span>
+          <span class="badge badge-xs badge-success text-success-content font-bold">Verified &bull; 5/5</span>
+        </h3>
+        <ul class="space-y-1.5 text-xs text-base-content/80 font-mono bg-base-200/30 p-3 rounded-lg border border-base-200">
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 3.1 Update report-runtime.js to register dynamic custom themes into DAISYUI_THEMES.</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 3.2 Update initThemeDropdown() to display custom themes with swatches and add indicator.</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 3.3 Create Top Collapsible Accordion (collapse collapse-arrow) in example.html with real-time color pickers and base theme dropdown.</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 3.4 Wire real-time live preview updating DOM, Chart.js instances, and Mermaid diagrams.</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 3.5 Implement localStorage persistence and one-click export (DaisyUI CSS &amp; Tailwind config).</li>
+        </ul>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="space-y-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-success flex items-center gap-2">
+          <span>Phase 4: Verification &amp; Documentation</span>
+          <span class="badge badge-xs badge-success text-success-content font-bold">Verified &bull; 3/3</span>
+        </h3>
+        <ul class="space-y-1.5 text-xs text-base-content/80 font-mono bg-base-200/30 p-3 rounded-lg border border-base-200">
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 4.1 Run Playwright responsive checks across custom themes.</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 4.2 Verify dynamic palette resolution with Chart.js and Mermaid when switching custom themes.</li>
+          <li class="flex items-center gap-2 text-success font-semibold"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" /> 4.3 Update skills/html-report/SKILL.md and project README with theme customization instructions.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>

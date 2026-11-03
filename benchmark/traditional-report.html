@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Cloud Migration & Multi-Region Resiliency Q4 2026</title>
+
+  <!-- Tailwind CSS & DaisyUI CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Print & Export Media Styles */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #111827 !important;
+        font-size: 11pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .card, .stat, .alert {
+        box-shadow: none !important;
+        border: 1px solid #e5e7eb !important;
+      }
+      .chart-container {
+        page-break-inside: avoid;
+        height: 280px !important;
+      }
+    }
+
+    /* Container & Chart Resiliency */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 320px;
+    }
+    
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    /* Smooth transitions */
+    * {
+      transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-base-200 text-base-content antialiased flex flex-col justify-between">
+
+  <!-- Sticky Navbar -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-base-100/90 border-b border-base-300 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto navbar px-4 sm:px-6 lg:px-8">
+      <div class="navbar-start gap-2">
+        <i data-lucide="cloud-cog" class="w-7 h-7 text-primary"></i>
+        <div>
+          <span class="font-bold text-lg tracking-tight block sm:inline">CloudOps Quarterly</span>
+          <span class="badge badge-primary badge-outline text-xs ml-1 hidden sm:inline-flex">Q4 2026</span>
+        </div>
+      </div>
+
+      <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1 font-medium gap-1 text-sm">
+          <li><a href="#executive-summary">Executive Summary</a></li>
+          <li><a href="#regional-status">Regional Status</a></li>
+          <li><a href="#cost-performance">Cost & Latency</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#risks-alerts">Key Risks</a></li>
+        </ul>
+      </div>
+
+      <div class="navbar-end gap-2">
+        <!-- Theme Switcher Dropdown -->
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-2">
+            <i data-lucide="palette" class="w-4 h-4"></i>
+            <span class="hidden sm:inline">Theme</span>
+            <i data-lucide="chevron-down" class="w-3 h-3"></i>
+          </div>
+          <ul tabindex="0" class="dropdown-content z-50 menu p-2 shadow-xl bg-base-100 rounded-box w-44 border border-base-300 mt-2">
+            <li><button type="button" onclick="changeTheme('light')"><span class="badge badge-sm badge-outline">☀️</span> Light</button></li>
+            <li><button type="button" onclick="changeTheme('dark')"><span class="badge badge-sm badge-neutral">🌙</span> Dark</button></li>
+            <li><button type="button" onclick="changeTheme('corporate')"><span class="badge badge-sm badge-info">💼</span> Corporate</button></li>
+            <li><button type="button" onclick="changeTheme('cyberpunk')"><span class="badge badge-sm badge-warning">⚡</span> Cyberpunk</button></li>
+            <li><button type="button" onclick="changeTheme('synthwave')"><span class="badge badge-sm badge-secondary">🌆</span> Synthwave</button></li>
+          </ul>
+        </div>
+
+        <button onclick="window.print()" class="btn btn-primary btn-sm gap-1">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Print / PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow space-y-10">
+
+    <!-- Document Header / Hero -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-base-300 gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="badge badge-info badge-sm uppercase font-semibold">Strategic Engineering Review</span>
+          <span class="text-xs text-base-content/60 font-mono">ID: ARCH-2026-Q4-RESIL</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Global Cloud Migration & Multi-Region Resiliency</h1>
+        <p class="text-base-content/70 mt-1 max-w-3xl">Comprehensive Q4 2026 scorecard evaluating worldwide workload migration, cross-zone failover metrics, distributed CockroachDB performance, and cost containment targets.</p>
+      </div>
+      <div class="flex items-center gap-3 self-start md:self-auto text-sm">
+        <div class="text-right hidden sm:block">
+          <p class="font-semibold">VP Infrastructure Engineering</p>
+          <p class="text-xs text-base-content/60">Updated: Dec 18, 2026</p>
+        </div>
+        <div class="avatar placeholder">
+          <div class="bg-primary text-primary-content rounded-full w-10">
+            <span class="text-xs font-bold">OPS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: Executive Summary & KPIs -->
+    <section id="executive-summary" class="scroll-mt-20">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-2xl font-bold flex items-center gap-2">
+            <i data-lucide="activity" class="w-6 h-6 text-primary"></i>
+            Section 1: Executive Summary & KPIs
+          </h2>
+          <p class="text-sm text-base-content/70">Key multi-region migration metrics measured across all tier-1 distributed workloads.</p>
+        </div>
+        <span class="badge badge-success badge-sm gap-1">
+          <i data-lucide="check-circle-2" class="w-3 h-3"></i> Milestones On Track
+        </span>
+      </div>
+
+      <!-- 4 Stat Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Stat 1 -->
+        <div class="card bg-base-100 shadow border border-base-300">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-base-content/70">Workloads Migrated</span>
+              <div class="p-2 rounded-lg bg-primary/10 text-primary">
+                <i data-lucide="server" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span class="text-3xl font-extrabold tracking-tight">84%</span>
+              <span class="text-xs font-semibold text-success flex items-center">
+                <i data-lucide="arrow-up-right" class="w-3 h-3"></i> +14% QoQ
+              </span>
+            </div>
+            <progress class="progress progress-primary w-full mt-3" value="84" max="100"></progress>
+            <p class="text-xs text-base-content/60 mt-1">420 of 500 core stateful microservices</p>
+          </div>
+        </div>
+
+        <!-- Stat 2 -->
+        <div class="card bg-base-100 shadow border border-base-300">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-base-content/70">Annualized Savings</span>
+              <div class="p-2 rounded-lg bg-success/10 text-success">
+                <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span class="text-3xl font-extrabold tracking-tight">$4.2M</span>
+              <span class="text-xs font-semibold text-success flex items-center">
+                <i data-lucide="arrow-up-right" class="w-3 h-3"></i> vs $3.8M Est.
+              </span>
+            </div>
+            <progress class="progress progress-success w-full mt-3" value="110" max="100"></progress>
+            <p class="text-xs text-base-content/60 mt-1">Capex decommission & rightsizing</p>
+          </div>
+        </div>
+
+        <!-- Stat 3 -->
+        <div class="card bg-base-100 shadow border border-base-300">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-base-content/70">Multi-Region SLA</span>
+              <div class="p-2 rounded-lg bg-info/10 text-info">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span class="text-3xl font-extrabold tracking-tight">99.995%</span>
+              <span class="text-xs font-semibold text-info flex items-center">
+                <i data-lucide="check" class="w-3 h-3"></i> Target Met
+              </span>
+            </div>
+            <progress class="progress progress-info w-full mt-3" value="99.995" max="100"></progress>
+            <p class="text-xs text-base-content/60 mt-1">&lt; 2.6 mins allowable downtime/yr</p>
+          </div>
+        </div>
+
+        <!-- Stat 4 -->
+        <div class="card bg-base-100 shadow border border-base-300">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-base-content/70">Incident MTTR</span>
+              <div class="p-2 rounded-lg bg-accent/10 text-accent">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span class="text-3xl font-extrabold tracking-tight">4.2m</span>
+              <span class="text-xs font-semibold text-success flex items-center">
+                <i data-lucide="trending-down" class="w-3 h-3"></i> -68% YoY
+              </span>
+            </div>
+            <progress class="progress progress-accent w-full mt-3" value="30" max="100"></progress>
+            <p class="text-xs text-base-content/60 mt-1">Automated BGP & DNS drain rerouting</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Regional Deployment Status Table -->
+    <section id="regional-status" class="scroll-mt-20">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-2xl font-bold flex items-center gap-2">
+            <i data-lucide="globe-2" class="w-6 h-6 text-primary"></i>
+            Section 2: Regional Deployment Status
+          </h2>
+          <p class="text-sm text-base-content/70">Operational health, cluster topology, and migration completion by geo-replicated zone.</p>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 shadow border border-base-300 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="table table-zebra w-full text-left">
+            <thead class="bg-base-200/60 text-xs uppercase font-bold text-base-content/70">
+              <tr>
+                <th class="py-4">Region & Zone</th>
+                <th>Clusters (EKS/GKE)</th>
+                <th>Database Tier</th>
+                <th>Migration Progress</th>
+                <th>Traffic Allocation</th>
+                <th>Active Health</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm divide-y divide-base-200">
+              <!-- US-East -->
+              <tr>
+                <td class="font-semibold flex items-center gap-2 py-4">
+                  <div class="w-2.5 h-2.5 rounded-full bg-success"></div>
+                  <div>
+                    <span class="block">US-East (N. Virginia)</span>
+                    <span class="text-xs text-base-content/60 font-mono">us-east-1 / us-east4</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="font-mono font-medium">18 EKS / 6 GKE</span>
+                </td>
+                <td>
+                  <div class="flex items-center gap-1.5">
+                    <span class="badge badge-sm badge-primary">CockroachDB v24.2</span>
+                    <span class="text-xs text-base-content/60 font-mono">(9 Nodes)</span>
+                  </div>
+                </td>
+                <td class="w-48">
+                  <div class="flex items-center gap-2">
+                    <progress class="progress progress-success w-28" value="100" max="100"></progress>
+                    <span class="text-xs font-bold text-success">100%</span>
+                  </div>
+                  <span class="text-xs text-base-content/50">Primary Hub Complete</span>
+                </td>
+                <td>
+                  <span class="badge badge-outline badge-md font-semibold">40% Global</span>
+                </td>
+                <td>
+                  <span class="badge badge-success gap-1 text-xs">
+                    <i data-lucide="check" class="w-3 h-3"></i> Healthy
+                  </span>
+                </td>
+              </tr>
+
+              <!-- US-West -->
+              <tr>
+                <td class="font-semibold flex items-center gap-2 py-4">
+                  <div class="w-2.5 h-2.5 rounded-full bg-success"></div>
+                  <div>
+                    <span class="block">US-West (Oregon)</span>
+                    <span class="text-xs text-base-content/60 font-mono">us-west-2 / us-west1</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="font-mono font-medium">14 EKS / 4 GKE</span>
+                </td>
+                <td>
+                  <div class="flex items-center gap-1.5">
+                    <span class="badge badge-sm badge-primary">CockroachDB v24.2</span>
+                    <span class="text-xs text-base-content/60 font-mono">(6 Nodes)</span>
+                  </div>
+                </td>
+                <td class="w-48">
+                  <div class="flex items-center gap-2">
+                    <progress class="progress progress-info w-28" value="92" max="100"></progress>
+                    <span class="text-xs font-bold">92%</span>
+                  </div>
+                  <span class="text-xs text-base-content/50">Dual-run validation</span>
+                </td>
+                <td>
+                  <span class="badge badge-outline badge-md font-semibold">25% Global</span>
+                </td>
+                <td>
+                  <span class="badge badge-success gap-1 text-xs">
+                    <i data-lucide="check" class="w-3 h-3"></i> Healthy
+                  </span>
+                </td>
+              </tr>
+
+              <!-- EU-Central -->
+              <tr>
+                <td class="font-semibold flex items-center gap-2 py-4">
+                  <div class="w-2.5 h-2.5 rounded-full bg-success"></div>
+                  <div>
+                    <span class="block">EU-Central (Frankfurt)</span>
+                    <span class="text-xs text-base-content/60 font-mono">eu-central-1 / europe-west3</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="font-mono font-medium">12 EKS / 6 GKE</span>
+                </td>
+                <td>
+                  <div class="flex items-center gap-1.5">
+                    <span class="badge badge-sm badge-secondary">Google Cloud Spanner</span>
+                    <span class="text-xs text-base-content/60 font-mono">(GDPR Vault)</span>
+                  </div>
+                </td>
+                <td class="w-48">
+                  <div class="flex items-center gap-2">
+                    <progress class="progress progress-info w-28" value="80" max="100"></progress>
+                    <span class="text-xs font-bold">80%</span>
+                  </div>
+                  <span class="text-xs text-base-content/50">Data residency audit</span>
+                </td>
+                <td>
+                  <span class="badge badge-outline badge-md font-semibold">25% Global</span>
+                </td>
+                <td>
+                  <span class="badge badge-success gap-1 text-xs">
+                    <i data-lucide="check" class="w-3 h-3"></i> Compliant
+                  </span>
+                </td>
+              </tr>
+
+              <!-- AP-Southeast -->
+              <tr>
+                <td class="font-semibold flex items-center gap-2 py-4">
+                  <div class="w-2.5 h-2.5 rounded-full bg-warning"></div>
+                  <div>
+                    <span class="block">AP-Southeast (Singapore)</span>
+                    <span class="text-xs text-base-content/60 font-mono">ap-southeast-1 / asia-southeast1</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="font-mono font-medium">8 EKS / 4 GKE</span>
+                </td>
+                <td>
+                  <div class="flex items-center gap-1.5">
+                    <span class="badge badge-sm badge-primary">CockroachDB v24.2</span>
+                    <span class="text-xs text-base-content/60 font-mono">(6 Nodes)</span>
+                  </div>
+                </td>
+                <td class="w-48">
+                  <div class="flex items-center gap-2">
+                    <progress class="progress progress-warning w-28" value="64" max="100"></progress>
+                    <span class="text-xs font-bold text-warning">64%</span>
+                  </div>
+                  <span class="text-xs text-base-content/50">Storage migration in flight</span>
+                </td>
+                <td>
+                  <span class="badge badge-outline badge-md font-semibold">10% Global</span>
+                </td>
+                <td>
+                  <span class="badge badge-warning gap-1 text-xs">
+                    <i data-lucide="alert-triangle" class="w-3 h-3"></i> Syncing
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Cost & Latency Performance Visuals -->
+    <section id="cost-performance" class="scroll-mt-20">
+      <div class="mb-4">
+        <h2 class="text-2xl font-bold flex items-center gap-2">
+          <i data-lucide="bar-chart-3" class="w-6 h-6 text-primary"></i>
+          Section 3: Cost & Latency Performance Visuals
+        </h2>
+        <p class="text-sm text-base-content/70">Empirical comparison of legacy on-prem colocation costs vs cloud expenditure, and multi-region tail latency curves.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Chart 1: Spend Comparison -->
+        <div class="card bg-base-100 shadow border border-base-300">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-base flex items-center gap-2">
+                <i data-lucide="wallet" class="w-4 h-4 text-primary"></i>
+                Pre vs Post Migration Monthly Spend ($k)
+              </h3>
+              <span class="badge badge-outline text-xs">2026 Monthly Breakdown</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="costSpendChart"></canvas>
+            </div>
+            <div class="mt-3 text-xs text-base-content/60 flex items-center justify-between border-t border-base-200 pt-2">
+              <span>*Reflects compute, direct connects, and reserved instance discounts.</span>
+              <span class="text-success font-semibold">Net Savings: -34.8% by Q4</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart 2: P99 Latency Curve -->
+        <div class="card bg-base-100 shadow border border-base-300">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-base flex items-center gap-2">
+                <i data-lucide="gauge" class="w-4 h-4 text-info"></i>
+                P99 Tail Latency Trend (ms)
+              </h3>
+              <span class="badge badge-outline text-xs">Global Edge to Storage</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="latencyTrendChart"></canvas>
+            </div>
+            <div class="mt-3 text-xs text-base-content/60 flex items-center justify-between border-t border-base-200 pt-2">
+              <span>*Measured at 99.9th percentile across worldwide synthetic probes.</span>
+              <span class="text-info font-semibold">P99 Stabilized: ~42ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: System Architecture Diagram -->
+    <section id="architecture" class="scroll-mt-20">
+      <div class="mb-4">
+        <h2 class="text-2xl font-bold flex items-center gap-2">
+          <i data-lucide="network" class="w-6 h-6 text-primary"></i>
+          Section 4: Multi-Region Resiliency Architecture
+        </h2>
+        <p class="text-sm text-base-content/70">End-to-end topological pipeline showcasing hybrid edge routing, dual transit backbones, container clusters, and distributed global databases.</p>
+      </div>
+
+      <div class="card bg-base-100 shadow border border-base-300">
+        <div class="card-body p-6">
+          <div class="bg-base-200/50 rounded-xl p-4 border border-base-300 overflow-x-auto flex justify-center">
+            <div class="mermaid">
+flowchart TD
+    subgraph OnPrem["Legacy Physical Footprint"]
+        DC1["On-Prem Data Center A<br/>(Equinix DC)"]
+        DC2["On-Prem Data Center B<br/>(CoreSite NY)"]
+    end
+
+    subgraph Interconnect["Redundant Dedicated Connectivity"]
+        DX["AWS DirectConnect &<br/>GCP Interconnect 100Gbps"]
+        IPSec["Encrypted Backup<br/>IPsec VPN Mesh"]
+    end
+
+    subgraph EdgeTransit["Multi-Region Transit & Edge Routing"]
+        Edge["Anycast Cloudflare Edge & Route 53"]
+        TransitGW["Multi-Region API Gateway &<br/>Global Cloud Transit Mesh"]
+    end
+
+    subgraph ComputeClusters["Multi-Region Container Fabric"]
+        EKS_US["AWS EKS Clusters<br/>(US-East & US-West)"]
+        GKE_EU["GCP GKE Clusters<br/>(EU-Central Frankfurt)"]
+        EKS_AP["AWS EKS Clusters<br/>(AP-Southeast Singapore)"]
+    end
+
+    subgraph DistributedData["Managed Distributed Resilient DBs"]
+        CRDB["CockroachDB v24.2 Multi-Region<br/>(Global Serializable Consensus)"]
+        Spanner["Cloud Spanner Engine<br/>(Regional GDPR Partition)"]
+    end
+
+    DC1 --> DX
+    DC2 --> IPSec
+    DX --> TransitGW
+    IPSec --> TransitGW
+    Edge --> TransitGW
+
+    TransitGW --> EKS_US
+    TransitGW --> GKE_EU
+    TransitGW --> EKS_AP
+
+    EKS_US <--> CRDB
+    EKS_AP <--> CRDB
+    GKE_EU <--> Spanner
+    CRDB <-.->|Cross-Cloud CDC Sync| Spanner
+
+    classDef legacy fill:#fee2e2,stroke:#ef4444,stroke-width:1px,color:#991b1b;
+    classDef conn fill:#fef3c7,stroke:#f59e0b,stroke-width:1px,color:#92400e;
+    classDef edge fill:#e0e7ff,stroke:#6366f1,stroke-width:1px,color:#3730a3;
+    classDef compute fill:#dcfce7,stroke:#22c55e,stroke-width:1px,color:#166534;
+    classDef db fill:#f3e8ff,stroke:#a855f7,stroke-width:1px,color:#6b21a8;
+
+    class DC1,DC2 legacy;
+    class DX,IPSec conn;
+    class Edge,TransitGW edge;
+    class EKS_US,GKE_EU,EKS_AP compute;
+    class CRDB,Spanner db;
+            </div>
+          </div>
+          <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-base-content/70 pt-2">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+              <span><strong>Zero-Downtime BGP Failover:</strong> Sub-second dynamic transit switching</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-indigo-500 inline-block"></span>
+              <span><strong>Raft Consensus:</strong> Distributed quorum preserved with 3-region quorum</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+              <span><strong>Dual-Write Reconciliation:</strong> CDC Kafka pipe handles cross-cloud parity</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Key Risk & Operational Alerts -->
+    <section id="risks-alerts" class="scroll-mt-20">
+      <div class="mb-4">
+        <h2 class="text-2xl font-bold flex items-center gap-2">
+          <i data-lucide="shield-alert" class="w-6 h-6 text-primary"></i>
+          Section 5: Key Risk & Operational Alerts
+        </h2>
+        <p class="text-sm text-base-content/70">Proactive incident safeguards, automated policy gates, and ongoing chaos engineering validation.</p>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Alert 1: Egress Spikes -->
+        <div class="alert alert-warning shadow border border-warning/30 flex items-start gap-4">
+          <i data-lucide="alert-octagon" class="w-6 h-6 shrink-0 mt-0.5"></i>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-base">Egress Spike Threshold Warning: AP-Southeast to US-East</h3>
+              <span class="badge badge-warning badge-sm font-semibold">Priority P2</span>
+            </div>
+            <p class="text-sm mt-1">Cross-continental replication bandwidth spiked +42% during the AP batch analytics cycle. Risk of variable cloud interconnect overages. Automated bandwidth throttling applied with Kafka rate-limiting.</p>
+            <div class="mt-2 text-xs flex gap-4">
+              <span><strong>Action:</strong> Route analytics queries to local read-only CockroachDB follower replicas.</span>
+              <span><strong>ETA:</strong> Mitigated (Auto-Throttle Active)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alert 2: Dual-Write Gate -->
+        <div class="alert alert-info shadow border border-info/30 flex items-start gap-4">
+          <i data-lucide="git-merge" class="w-6 h-6 shrink-0 mt-0.5"></i>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-base">Dual-Write Schema Gate: Zero-Data-Loss Enforcement Active</h3>
+              <span class="badge badge-info badge-sm font-semibold">Active Gate</span>
+            </div>
+            <p class="text-sm mt-1">Schema mutations on core ledger services are strictly governed via Debezium CDC and Liquibase gates. Any out-of-order sequence automatically halts downstream cutover until cryptographic ledger integrity validates.</p>
+            <div class="mt-2 text-xs flex gap-4">
+              <span><strong>Guardrail:</strong> 0 Drift Tolerated between Oracle Exadata & Cloud Spanner.</span>
+              <span><strong>Auditor:</strong> ArgoCD GitOps Hook</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alert 3: Chaos Drills -->
+        <div class="alert alert-success shadow border border-success/30 flex items-start gap-4">
+          <i data-lucide="flame" class="w-6 h-6 shrink-0 mt-0.5"></i>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-base">Automated Chaos Engineering Drills: Complete (Chaos Mesh & Gremlin)</h3>
+              <span class="badge badge-success badge-sm font-semibold">PASSED</span>
+            </div>
+            <p class="text-sm mt-1">Simulated full blackhole outage of AWS us-east-1 availability zone 1a. Global traffic automatically redistributed to US-West and EU-Central within 18.4 seconds with zero HTTP 5xx errors recorded on Edge gateways.</p>
+            <div class="mt-2 text-xs flex gap-4">
+              <span><strong>RTO Observed:</strong> 18.4 sec (SLA Goal: &lt; 60s)</span>
+              <span><strong>RPO Observed:</strong> 0ms (Zero lost transactions)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer Boilerplate -->
+  <footer class="bg-base-100 border-t border-base-300 py-6 text-sm text-base-content/70 mt-12 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <i data-lucide="terminal" class="w-4 h-4 text-primary"></i>
+        <span>Global Cloud Infrastructure Governance Board &copy; 2026. Confidential & Proprietary.</span>
+      </div>
+      <div class="flex items-center gap-4 text-xs font-mono">
+        <span>STATUS: ALL_SYSTEMS_OPERATIONAL</span>
+        <span>BUILD: v4.8.2-prod</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts: Theme switcher, Mermaid, Chart.js, Lucide -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Initialize Mermaid.js
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      securityLevel: 'loose',
+      fontFamily: 'inherit'
+    });
+
+    // Theme Switcher Logic
+    function changeTheme(themeName) {
+      document.documentElement.setAttribute('data-theme', themeName);
+      localStorage.setItem('report-theme', themeName);
+      
+      // Update Chart text colors based on theme brightness
+      const isDark = ['dark', 'cyberpunk', 'synthwave'].includes(themeName);
+      const textColor = isDark ? '#e5e7eb' : '#374151';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)';
+
+      [costChart, latencyChart].forEach(chart => {
+        if (chart) {
+          chart.options.scales.x.ticks.color = textColor;
+          chart.options.scales.y.ticks.color = textColor;
+          chart.options.scales.x.grid.color = gridColor;
+          chart.options.scales.y.grid.color = gridColor;
+          if (chart.options.plugins.legend) {
+            chart.options.plugins.legend.labels.color = textColor;
+          }
+          chart.update();
+        }
+      });
+    }
+
+    // Chart.js Implementations
+    let costChart, latencyChart;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Spend Comparison Chart (Bar Chart)
+      const costCtx = document.getElementById('costSpendChart').getContext('2d');
+      costChart = new Chart(costCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Mar', 'May', 'Jul', 'Sep', 'Nov', 'Dec (Proj)'],
+          datasets: [
+            {
+              label: 'Legacy On-Prem Spend ($k)',
+              data: [850, 840, 780, 690, 480, 310, 180],
+              backgroundColor: 'rgba(239, 68, 68, 0.75)',
+              borderColor: 'rgba(239, 68, 68, 1)',
+              borderWidth: 1,
+              borderRadius: 4
+            },
+            {
+              label: 'Cloud Infrastructure Spend ($k)',
+              data: [210, 240, 290, 340, 380, 410, 420],
+              backgroundColor: 'rgba(59, 130, 246, 0.8)',
+              borderColor: 'rgba(59, 130, 246, 1)',
+              borderWidth: 1,
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { font: { size: 12, weight: '500' } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return ` ${context.dataset.label}: $${context.parsed.y}k`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Monthly Cost (USD Thousands)'
+              },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      // 2. Latency Trend Chart (Line Chart)
+      const latencyCtx = document.getElementById('latencyTrendChart').getContext('2d');
+      latencyChart = new Chart(latencyCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          datasets: [
+            {
+              label: 'P99 Latency (ms)',
+              data: [142, 138, 126, 115, 98, 82, 69, 58, 51, 46, 43, 41.8],
+              borderColor: 'rgba(16, 185, 129, 1)',
+              backgroundColor: 'rgba(16, 185, 129, 0.12)',
+              fill: true,
+              tension: 0.35,
+              pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+              pointRadius: 4,
+              borderWidth: 2.5
+            },
+            {
+              label: 'SLA Ceiling (100ms)',
+              data: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+              borderColor: 'rgba(239, 68, 68, 0.8)',
+              borderDash: [6, 6],
+              fill: false,
+              pointRadius: 0,
+              borderWidth: 1.5
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { font: { size: 12, weight: '500' } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return ` ${context.dataset.label}: ${context.parsed.y} ms`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Round-trip Latency (ms)'
+              },
+              beginAtZero: true,
+              suggestedMax: 160
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

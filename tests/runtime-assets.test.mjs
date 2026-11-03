@@ -175,9 +175,52 @@ end`;
 
       try {
         initThemeDropdown();
-        assert.equal(appendedChildren.length, 32);
+        assert.ok(appendedChildren.length >= 32);
         assert.equal(appendedChildren[0].getAttribute("data-theme"), "light");
         assert.ok(appendedChildren[0].innerHTML.includes("data-swatch-preview=\"light\""));
+      } finally {
+        globalThis.document = originalDoc;
+      }
+    });
+
+    it("should register custom themes and include them in swatch dropdown with custom indicator", () => {
+      const { registerCustomTheme, DAISYUI_THEMES } = runtime;
+      const appendedChildren = [];
+      const mockListEl = {
+        innerHTML: "",
+        appendChild: (child) => appendedChildren.push(child)
+      };
+
+      const originalDoc = globalThis.document;
+      globalThis.document = {
+        head: {
+          appendChild() {}
+        },
+        documentElement: {
+          getAttribute: () => "light"
+        },
+        getElementById: (id) => (id === "theme-swatch-list" ? mockListEl : null),
+        createElement: (tag) => {
+          return {
+            tagName: tag,
+            attributes: {},
+            setAttribute(k, v) { this.attributes[k] = v; },
+            getAttribute(k) { return this.attributes[k]; },
+            addEventListener() {},
+            innerHTML: "",
+            className: ""
+          };
+        }
+      };
+
+      try {
+        registerCustomTheme("test-brand-theme", "[data-theme=\"test-brand-theme\"] { --p: 60% 0.2 250; }");
+        assert.ok(DAISYUI_THEMES.includes("test-brand-theme"));
+
+        initThemeDropdown();
+        const customItem = appendedChildren.find((el) => el.getAttribute("data-theme") === "test-brand-theme");
+        assert.ok(customItem, "Custom theme button must be rendered in dropdown");
+        assert.ok(customItem.innerHTML.includes("custom"), "Must include custom badge indicator");
       } finally {
         globalThis.document = originalDoc;
       }

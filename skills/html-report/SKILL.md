@@ -40,8 +40,13 @@ Before writing any HTML report, read the relevant reference guides in this skill
    - Fixed-height responsive containers (`h-72 sm:h-80`) and print/PDF resize hooks.
    - Defense against ordered list tokens (`1. `, `2. `) in Mermaid subgraphs.
 3. **[Full-Featured Showcase Example (`example.html`)](./examples/example.html)**:
-   - Complete working reference implementation explicitly demonstrating all 11 CDNs and CSV-driven interactive workflows.
-4. **[Caller-Aware Integration Registry (`caller-registry.mjs`)](./scripts/caller-registry.mjs)** *(Required when invoked by agent skills or CLI tools)*:
+   - Complete working reference implementation explicitly demonstrating all 11 CDNs, top collapsible theme generator studio, and CSV-driven interactive workflows.
+4. **[Custom DaisyUI Theme Engine & Compiler (`theme-compiler.mjs`)](./scripts/theme-compiler.mjs)**:
+   - Zero-dependency pure JS matrix conversion (`sRGB` &rarr; `Linear` &rarr; `XYZ` &rarr; `OKLab` &rarr; `OKLCH`).
+   - Base theme inheritance (`extends: "dark"` or any of 32 native DaisyUI themes) and automatic high-contrast content generator (`--pc`, `--sc`, etc.).
+   - Support for both JSON configuration objects and raw CSS rules (`[data-theme="..."]`).
+   - CLI integration via `build-report.mjs --custom-theme <path>` and in-browser top collapsible studio (`example.html`).
+5. **[Caller-Aware Integration Registry (`caller-registry.mjs`)](./scripts/caller-registry.mjs)** *(Required when invoked by agent skills or CLI tools)*:
    - Dedicated gitignored vault at `.caller-requests/` holding persistent caller profiles (`profiles/<caller-id>.md`) and ephemeral run payloads (`runs/<caller-id>/<run-id>/`).
    - Zero-config auto-scaffolding, 10-run pruning, and non-destructive override hierarchy.
    - Default output routing: `./report-<caller-id>.html` and `./report-<caller-id>.pdf`.
@@ -149,9 +154,34 @@ If you need to execute compilation and verification separately:
 # Assembly only:
 node skills/html-report/scripts/build-report.mjs --title "Report Title" --content report-fragment.html --output report.html --theme light
 
+# Assembly with custom theme (JSON or CSS):
+node skills/html-report/scripts/build-report.mjs \
+  --title "Brand Report" \
+  --content report-fragment.html \
+  --custom-theme brand-theme.json \
+  --output report.html
+
 # Verification only:
 node skills/html-report/playwright/verify-report.mjs report.html --quick
 ```
+
+### Custom DaisyUI Theme Specification & Studio
+Reports support user-defined themes via:
+1. **JSON Theme Definition**: Conforms to DaisyUI 4 format with optional base theme inheritance:
+   ```json
+   {
+     "acme-brand": {
+       "extends": "dark",
+       "primary": "#3b82f6",
+       "secondary": "#ec4899",
+       "accent": "#10b981",
+       "--rounded-box": "1rem",
+       "--rounded-btn": "0.5rem"
+     }
+   }
+   ```
+2. **Raw CSS Passthrough**: `[data-theme="acme"] { --p: 62.3% 0.188 259.8; ... }`.
+3. **In-Browser Top Collapsible Studio**: Expand the top accordion banner beneath the document title to customize colors in real-time with zero-dependency OKLCH monitors, live Chart.js/Mermaid reactivity, `localStorage` persistence, and one-click CSS & Tailwind export.
 
 ### Step 3: Auto-Open & Single-Tab Live-Reload Dev Server
 Launch the local live-reload server to view and iterate on the report:

@@ -66,6 +66,12 @@ describe("Phase 2: build-report.mjs Deterministic Assembly Unit Tests", () => {
       assert.ok(opts.addons.includes("katex")); // alias for math
       assert.ok(opts.addons.includes("leaflet"));
     });
+
+    it("should parse --custom-theme flag correctly", () => {
+      const argv = ["node", "build-report.mjs", "-c", "frag.html", "--custom-theme", "brand.json"];
+      const opts = parseArgs(argv);
+      assert.equal(opts.customTheme, "brand.json");
+    });
   });
 
   describe("detectAddons: Content Signature Scanning", () => {
@@ -201,6 +207,28 @@ addons: [charts]
       });
       assert.ok(result.html.includes('data-theme="synthwave"'));
     });
+
+    it("should inject custom theme CSS and activate theme via customTheme option", () => {
+      const fragment = `<h1 id="custom-theme-test">Custom Themed Report</h1>`;
+      const result = buildReport({
+        title: "Custom Themed Report",
+        content: fragment,
+        customTheme: {
+          "galaxy-corp": {
+            extends: "dark",
+            primary: "#3b82f6",
+            secondary: "#ec4899"
+          }
+        }
+      });
+
+      assert.equal(result.theme, "galaxy-corp");
+      assert.ok(result.html.includes('data-theme="galaxy-corp"'));
+      assert.ok(result.html.includes('<style id="daisyui-custom-themes">'));
+      assert.ok(result.html.includes('[data-theme="galaxy-corp"]'));
+      assert.ok(result.html.includes("--p: 62.3"));
+      assert.ok(result.hasCustomTheme);
+    });
   });
 
   describe("CLI Execution via subprocess", () => {
@@ -230,6 +258,42 @@ addons: [charts]
       assert.ok(builtHtml.includes("chart.umd.min.js"));
       // Verify sub-second speed
       assert.ok(elapsed < 2000, `Execution took ${elapsed}ms`);
+    });
+
+    it("should build report with --custom-theme via CLI and inject custom styles", () => {
+      const fragmentFile = path.join(tmpDir, "frag.html");
+      const themeFile = path.join(tmpDir, "theme.json");
+      const outputFile = path.join(tmpDir, "out-custom.html");
+
+      fs.writeFileSync(
+        fragmentFile,
+        `<h1 id="brand-heading">Acme Analytics</h1>`,
+        "utf-8"
+      );
+
+      fs.writeFileSync(
+        themeFile,
+        JSON.stringify({
+          "acme-brand": {
+            extends: "emerald",
+            primary: "#2563eb",
+            secondary: "#f43f5e"
+          }
+        }),
+        "utf-8"
+      );
+
+      const stdout = execSync(
+        `node ${cliPath} --content "${fragmentFile}" --output "${outputFile}" --custom-theme "${themeFile}"`,
+        { encoding: "utf-8" }
+      );
+
+      assert.ok(stdout.includes("Report assembled"));
+      assert.ok(fs.existsSync(outputFile));
+      const builtHtml = fs.readFileSync(outputFile, "utf-8");
+      assert.ok(builtHtml.includes('data-theme="acme-brand"'));
+      assert.ok(builtHtml.includes('<style id="daisyui-custom-themes">'));
+      assert.ok(builtHtml.includes('[data-theme="acme-brand"]'));
     });
   });
 });

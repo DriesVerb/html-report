@@ -59,6 +59,390 @@
       </div>
     </section>
 
+    <!-- Top Collapsible DaisyUI Theme Generator & Studio (Collapsed by default, Sleek 48px banner) -->
+    <section
+      id="theme-studio-section"
+      x-data="themeStudioController()"
+      x-init="init()"
+      class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid print:hidden overflow-hidden"
+    >
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="checkbox" id="theme-studio-accordion" x-model="isOpen" class="cursor-pointer" />
+        
+        <!-- Collapsed Sleek 48px Banner Header -->
+        <div class="collapse-title text-sm sm:text-base font-bold flex items-center justify-between py-3 px-5 sm:px-6 cursor-pointer select-none">
+          <div class="flex items-center gap-2.5">
+            <span class="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <i data-lucide="palette" class="w-4 h-4"></i>
+            </span>
+            <span>🎨 DaisyUI Theme Generator &amp; Studio</span>
+            <span class="text-2xs font-normal opacity-75 hidden sm:inline">
+              [Active: <strong class="capitalize text-primary" x-text="activeTheme">light</strong>]
+            </span>
+          </div>
+
+          <!-- Color Swatch Dots Preview in Header -->
+          <div class="flex items-center gap-2 mr-6">
+            <div class="flex items-center gap-1">
+              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + primary"></span>
+              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + secondary"></span>
+              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + accent"></span>
+              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + neutral"></span>
+            </div>
+            <span class="badge badge-xs badge-outline hidden md:inline font-normal" x-text="isOpen ? 'Click to Collapse' : 'Click to Customize'">Click to Customize</span>
+          </div>
+        </div>
+
+        <!-- Expanded Studio Drawer Content -->
+        <div class="collapse-content px-5 sm:px-6 pb-6 pt-2 border-t border-base-200 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-base-200">
+            <div>
+              <h3 id="theme-studio-title" class="text-base font-bold text-base-content flex items-center gap-2">
+                <span>Interactive Theme Customizer</span>
+                <span class="badge badge-primary badge-sm font-semibold">Live OKLCH</span>
+              </h3>
+              <p class="text-xs opacity-75">
+                Customize colors, base inheritance, and geometry with zero-dependency real-time OKLCH compilation synced directly to Chart.js and Mermaid.
+              </p>
+            </div>
+
+            <!-- Action Buttons: Apply, Copy CSS, Copy Tailwind, Reset -->
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                id="studio-apply-save-btn"
+                class="btn btn-xs sm:btn-sm btn-primary gap-1.5 shadow-xs font-semibold"
+                @click="saveTheme()"
+              >
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span x-text="savedNotice ? 'Saved!' : 'Apply & Save'">Apply & Save</span>
+              </button>
+
+              <button
+                type="button"
+                id="studio-copy-css-btn"
+                class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-semibold"
+                @click="copyCss()"
+              >
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                <span x-text="copiedCss ? 'Copied CSS!' : 'Copy DaisyUI CSS'">Copy DaisyUI CSS</span>
+              </button>
+
+              <button
+                type="button"
+                id="studio-copy-tailwind-btn"
+                class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-semibold"
+                @click="copyTailwind()"
+              >
+                <i data-lucide="code" class="w-3.5 h-3.5"></i>
+                <span x-text="copiedTailwind ? 'Copied Tailwind!' : 'Copy Tailwind Config'">Copy Tailwind Config</span>
+              </button>
+
+              <button
+                type="button"
+                id="studio-reset-btn"
+                class="btn btn-xs sm:btn-sm btn-ghost gap-1.5"
+                @click="resetDefaults()"
+                title="Reset to Defaults"
+              >
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                <span>Reset</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Configuration Controls: Theme Name & Extends Selector -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-xs font-bold uppercase tracking-wider">Custom Theme Name</span>
+              </label>
+              <input
+                type="text"
+                id="studio-theme-name-input"
+                x-model="themeName"
+                @input="applyLiveTheme()"
+                placeholder="my-brand-theme"
+                class="input input-sm input-bordered font-mono text-xs w-full"
+              />
+            </div>
+
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-xs font-bold uppercase tracking-wider">Base Theme Inheritance (extends)</span>
+              </label>
+              <select
+                id="studio-extends-select"
+                x-model="extendsTheme"
+                @change="applyLiveTheme()"
+                class="select select-sm select-bordered font-mono text-xs w-full capitalize"
+              >
+                <template x-for="t in baseThemeOptions" :key="t">
+                  <option :value="t" x-text="t" :selected="t === extendsTheme"></option>
+                </template>
+              </select>
+            </div>
+
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-xs font-bold uppercase tracking-wider">Color Scheme Mode</span>
+              </label>
+              <select
+                id="studio-color-scheme-select"
+                x-model="colorScheme"
+                @change="applyLiveTheme()"
+                class="select select-sm select-bordered font-mono text-xs w-full"
+              >
+                <option value="auto">Auto (Deduces from base-100)</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Semantic Color Inputs Grid -->
+          <div class="space-y-2">
+            <div class="text-xs font-bold uppercase tracking-wider opacity-80 flex items-center justify-between">
+              <span>Semantic Colors &amp; Live OKLCH Monitors</span>
+              <span class="text-3xs font-normal opacity-60">Auto-Contrast Active for Content Tokens</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <!-- Primary -->
+              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold">Primary (--p)</span>
+                  <span class="badge badge-primary badge-xs">Active</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-primary-picker"
+                    x-model="primary"
+                    @input="applyLiveTheme()"
+                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-primary-hex"
+                    x-model="primary"
+                    @input="applyLiveTheme()"
+                    class="input input-xs input-bordered font-mono w-24 text-xs"
+                  />
+                </div>
+                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(primary)"></div>
+              </div>
+
+              <!-- Secondary -->
+              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold">Secondary (--s)</span>
+                  <span class="badge badge-secondary badge-xs">Active</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-secondary-picker"
+                    x-model="secondary"
+                    @input="applyLiveTheme()"
+                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-secondary-hex"
+                    x-model="secondary"
+                    @input="applyLiveTheme()"
+                    class="input input-xs input-bordered font-mono w-24 text-xs"
+                  />
+                </div>
+                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(secondary)"></div>
+              </div>
+
+              <!-- Accent -->
+              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold">Accent (--a)</span>
+                  <span class="badge badge-accent badge-xs">Active</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-accent-picker"
+                    x-model="accent"
+                    @input="applyLiveTheme()"
+                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-accent-hex"
+                    x-model="accent"
+                    @input="applyLiveTheme()"
+                    class="input input-xs input-bordered font-mono w-24 text-xs"
+                  />
+                </div>
+                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(accent)"></div>
+              </div>
+
+              <!-- Neutral -->
+              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold">Neutral (--n)</span>
+                  <span class="badge badge-neutral badge-xs">Active</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-neutral-picker"
+                    x-model="neutral"
+                    @input="applyLiveTheme()"
+                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-neutral-hex"
+                    x-model="neutral"
+                    @input="applyLiveTheme()"
+                    class="input input-xs input-bordered font-mono w-24 text-xs"
+                  />
+                </div>
+                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(neutral)"></div>
+              </div>
+            </div>
+
+            <!-- Base Colors Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              <div class="bg-base-200/30 p-2.5 rounded-box border border-base-300 flex items-center justify-between gap-2">
+                <span class="text-xs font-bold">Base-100 (--b1)</span>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-base100-picker"
+                    x-model="base100"
+                    @input="applyLiveTheme()"
+                    class="w-7 h-7 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-base100-hex"
+                    x-model="base100"
+                    @input="applyLiveTheme()"
+                    class="input input-2xs input-bordered font-mono w-20 text-3xs"
+                  />
+                </div>
+              </div>
+
+              <div class="bg-base-200/30 p-2.5 rounded-box border border-base-300 flex items-center justify-between gap-2">
+                <span class="text-xs font-bold">Base-200 (--b2)</span>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-base200-picker"
+                    x-model="base200"
+                    @input="applyLiveTheme()"
+                    class="w-7 h-7 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-base200-hex"
+                    x-model="base200"
+                    @input="applyLiveTheme()"
+                    class="input input-2xs input-bordered font-mono w-20 text-3xs"
+                  />
+                </div>
+              </div>
+
+              <div class="bg-base-200/30 p-2.5 rounded-box border border-base-300 flex items-center justify-between gap-2">
+                <span class="text-xs font-bold">Base-300 (--b3)</span>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    id="studio-base300-picker"
+                    x-model="base300"
+                    @input="applyLiveTheme()"
+                    class="w-7 h-7 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    id="studio-base300-hex"
+                    x-model="base300"
+                    @input="applyLiveTheme()"
+                    class="input input-2xs input-bordered font-mono w-20 text-3xs"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Geometry Sliders -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-base-200">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-bold">Button Radius (--rounded-btn)</span>
+                <span class="font-mono text-3xs" x-text="roundedBtn">0.5rem</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="2"
+                step="0.125"
+                x-model="roundedBtnNum"
+                @input="roundedBtn = roundedBtnNum + 'rem'; applyLiveTheme()"
+                class="range range-xs range-primary"
+              />
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-bold">Box Radius (--rounded-box)</span>
+                <span class="font-mono text-3xs" x-text="roundedBox">1rem</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="2.5"
+                step="0.25"
+                x-model="roundedBoxNum"
+                @input="roundedBox = roundedBoxNum + 'rem'; applyLiveTheme()"
+                class="range range-xs range-secondary"
+              />
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-bold">Badge Radius (--rounded-badge)</span>
+                <span class="font-mono text-3xs" x-text="roundedBadge">1.9rem</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="2.5"
+                step="0.1"
+                x-model="roundedBadgeNum"
+                @input="roundedBadge = roundedBadgeNum + 'rem'; applyLiveTheme()"
+                class="range range-xs range-accent"
+              />
+            </div>
+          </div>
+
+          <!-- Real-Time Theme Preview Strip -->
+          <div class="bg-base-200/60 p-3.5 rounded-box border border-base-300 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold uppercase tracking-wider">Live Preview:</span>
+              <button type="button" class="btn btn-xs btn-primary">Primary</button>
+              <button type="button" class="btn btn-xs btn-secondary">Secondary</button>
+              <button type="button" class="btn btn-xs btn-accent">Accent</button>
+              <span class="badge badge-primary badge-sm">Badge</span>
+              <span class="badge badge-secondary badge-sm">Badge</span>
+              <span class="badge badge-accent badge-sm">Badge</span>
+            </div>
+            <div class="text-3xs font-mono opacity-60">
+              Updates active Chart.js and Mermaid diagrams live below
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Section 1: Complete 11-CDN Stack Directory (All Cards Linkable to Their Live Examples) -->
     <section class="space-y-4 break-inside-avoid">
       <h2 id="cdn-stack-directory" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
@@ -807,3 +1191,184 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
         </div>
       </div>
     </section>
+
+    <script>
+      window.themeStudioController = function themeStudioController() {
+        return {
+          isOpen: false,
+          themeName: "custom-brand",
+          extendsTheme: "light",
+          colorScheme: "auto",
+          primary: "#3b82f6",
+          secondary: "#ec4899",
+          accent: "#10b981",
+          neutral: "#1f2937",
+          base100: "#ffffff",
+          base200: "#f3f4f6",
+          base300: "#e5e7eb",
+          roundedBtn: "0.5rem",
+          roundedBtnNum: 0.5,
+          roundedBox: "1rem",
+          roundedBoxNum: 1.0,
+          roundedBadge: "1.9rem",
+          roundedBadgeNum: 1.9,
+          copiedCss: false,
+          copiedTailwind: false,
+          savedNotice: false,
+          activeTheme: "light",
+          baseThemeOptions: [
+            "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
+            "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden",
+            "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black",
+            "luxury", "dracula", "cmyk", "autumn", "business", "acid", "lemonade",
+            "night", "coffee", "winter", "dim", "nord", "sunset"
+          ],
+
+          init() {
+            this.activeTheme = document.documentElement.getAttribute("data-theme") || "light";
+            try {
+              if (typeof localStorage !== "undefined") {
+                const savedJson = localStorage.getItem("html_report_custom_themes");
+                if (savedJson) {
+                  const saved = JSON.parse(savedJson);
+                  if (saved[this.themeName]) {
+                    const item = saved[this.themeName];
+                    if (item.primary) this.primary = item.primary;
+                    if (item.secondary) this.secondary = item.secondary;
+                    if (item.accent) this.accent = item.accent;
+                    if (item.neutral) this.neutral = item.neutral;
+                    if (item.base100) this.base100 = item.base100;
+                    if (item.base200) this.base200 = item.base200;
+                    if (item.base300) this.base300 = item.base300;
+                    if (item.extends) this.extendsTheme = item.extends;
+                  }
+                }
+              }
+            } catch (_) {}
+          },
+
+          getOklch(hex) {
+            if (!hex) return "";
+            try {
+              if (window.rgbToOklch && window.hexToRgb) {
+                const [r, g, b] = window.hexToRgb(hex);
+                return window.rgbToOklch(r, g, b).formatted;
+              }
+            } catch (_) {}
+            return hex;
+          },
+
+          getCompiledCss() {
+            if (typeof window.compileTheme === "function") {
+              const res = window.compileTheme({
+                [this.themeName]: {
+                  extends: this.extendsTheme,
+                  primary: this.primary,
+                  secondary: this.secondary,
+                  accent: this.accent,
+                  neutral: this.neutral,
+                  "base-100": this.base100,
+                  "base-200": this.base200,
+                  "base-300": this.base300,
+                  "--rounded-btn": this.roundedBtn,
+                  "--rounded-box": this.roundedBox,
+                  "--rounded-badge": this.roundedBadge,
+                  ...(this.colorScheme !== "auto" ? { "color-scheme": this.colorScheme } : {})
+                }
+              });
+              return res.css;
+            }
+            return `[data-theme="${this.themeName}"] {\n  --p: ${this.primary};\n}`;
+          },
+
+          getTailwindSnippet() {
+            if (typeof window.tailwindConfigSnippet === "function") {
+              return window.tailwindConfigSnippet(this.themeName, {
+                primary: this.getOklch(this.primary),
+                secondary: this.getOklch(this.secondary),
+                accent: this.getOklch(this.accent),
+                neutral: this.getOklch(this.neutral),
+                "base-100": this.getOklch(this.base100),
+                "base-200": this.getOklch(this.base200),
+                "base-300": this.getOklch(this.base300),
+                "--rounded-btn": this.roundedBtn,
+                "--rounded-box": this.roundedBox,
+                "--rounded-badge": this.roundedBadge
+              });
+            }
+            return `// Tailwind config for ${this.themeName}`;
+          },
+
+          applyLiveTheme() {
+            const css = this.getCompiledCss();
+            if (typeof window.registerCustomTheme === "function") {
+              window.registerCustomTheme(this.themeName, css);
+            }
+            if (typeof window.setReportTheme === "function") {
+              window.setReportTheme(this.themeName);
+              this.activeTheme = this.themeName;
+            }
+          },
+
+          saveTheme() {
+            this.applyLiveTheme();
+            try {
+              if (typeof localStorage !== "undefined") {
+                const saved = JSON.parse(localStorage.getItem("html_report_custom_themes") || "{}");
+                saved[this.themeName] = {
+                  extends: this.extendsTheme,
+                  colorScheme: this.colorScheme,
+                  primary: this.primary,
+                  secondary: this.secondary,
+                  accent: this.accent,
+                  neutral: this.neutral,
+                  base100: this.base100,
+                  base200: this.base200,
+                  base300: this.base300,
+                  roundedBtn: this.roundedBtn,
+                  roundedBox: this.roundedBox,
+                  roundedBadge: this.roundedBadge,
+                  css: this.getCompiledCss()
+                };
+                localStorage.setItem("html_report_custom_themes", JSON.stringify(saved));
+                this.savedNotice = true;
+                setTimeout(() => { this.savedNotice = false; }, 2500);
+              }
+            } catch (_) {}
+          },
+
+          copyCss() {
+            const css = this.getCompiledCss();
+            navigator.clipboard.writeText(css).then(() => {
+              this.copiedCss = true;
+              setTimeout(() => { this.copiedCss = false; }, 2500);
+            });
+          },
+
+          copyTailwind() {
+            const tw = this.getTailwindSnippet();
+            navigator.clipboard.writeText(tw).then(() => {
+              this.copiedTailwind = true;
+              setTimeout(() => { this.copiedTailwind = false; }, 2500);
+            });
+          },
+
+          resetDefaults() {
+            this.primary = "#3b82f6";
+            this.secondary = "#ec4899";
+            this.accent = "#10b981";
+            this.neutral = "#1f2937";
+            this.base100 = "#ffffff";
+            this.base200 = "#f3f4f6";
+            this.base300 = "#e5e7eb";
+            this.roundedBtn = "0.5rem";
+            this.roundedBtnNum = 0.5;
+            this.roundedBox = "1rem";
+            this.roundedBoxNum = 1.0;
+            this.roundedBadge = "1.9rem";
+            this.roundedBadgeNum = 1.9;
+            this.applyLiveTheme();
+          }
+        };
+      };
+    </script>

@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html data-report-mode="interactive" lang="en" data-theme="light" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Cloud Migration & Multi-Region Resiliency Q4 2026</title>
+
+  <!-- Content-Aware Favicon Emoticon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
+
+  <!-- Core CDNs -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" crossorigin="anonymous"></script>
+
+  <!-- Optional Addon CDNs & Styles -->
+    <!-- Addon: Chart.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Mermaid -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --grid-bg-1: #ffffff;
+      --grid-bg-2: #f3f4f6;
+      --grid-border: #d1d5db;
+      --grid-text: #111827;
+      --grid-muted: #4b5563;
+      --grid-primary: #2563eb;
+    }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    .mermaid {
+      color: inherit;
+    }
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+      background-color: transparent !important;
+    }
+    [data-insufficient-space="true"] {
+      outline: 2px dashed #f59e0b !important;
+      position: relative;
+    }
+    [data-insufficient-space="true"]::before {
+      content: "⚠ Insufficient horizontal space";
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      background: #f59e0b;
+      color: #111827;
+      border-radius: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+    /* Grid.js Full Light & Dark Mode DaisyUI Theme Integration */
+    .gridjs-container {
+      color: var(--grid-text) !important;
+      background-color: transparent !important;
+      font-size: 0.8125rem;
+      padding: 0 !important;
+    }
+    .gridjs-wrapper {
+      border-radius: 0.5rem;
+      border: 1px solid var(--grid-border) !important;
+      background-color: var(--grid-bg-1) !important;
+      box-shadow: none !important;
+    }
+    .gridjs-table {
+      width: 100% !important;
+      table-layout: fixed !important;
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    .gridjs-tbody,
+    tr.gridjs-tr {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    th.gridjs-th {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    th.gridjs-th:hover,
+    th.gridjs-th-sort:hover {
+      background-color: var(--grid-bg-2) !important;
+      filter: brightness(0.95);
+    }
+    td.gridjs-td {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    .gridjs-footer {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+    }
+    .gridjs-pages button {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border: 1px solid var(--grid-border) !important;
+    }
+    .gridjs-pages button.gridjs-currentPage {
+      background-color: var(--grid-primary) !important;
+      color: #ffffff !important;
+      border-color: var(--grid-primary) !important;
+      font-weight: 700 !important;
+    }
+  </style>
+</head>
+<body class="bg-base-200 text-base-content min-h-screen flex flex-col font-sans antialiased selection:bg-primary selection:text-primary-content">
+
+  <!-- Sticky DaisyUI Navbar -->
+  <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
+    <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
+      <!-- Left: Title -->
+      <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
+        <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
+          Global Cloud Migration & Multi-Region Resiliency Q4 2026
+        </span>
+      </div>
+
+      <!-- Right: TOC + Theme Picker + Download Menu -->
+      <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
+        <!-- 1. TOC Dropdown -->
+        <div class="dropdown dropdown-end" id="toc-dropdown">
+          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            <span>Contents</span>
+          </div>
+          <ul id="report-toc-list" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-72 sm:w-80 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
+            <!-- Populated via initTOC() -->
+          </ul>
+        </div>
+
+        <!-- 2. DaisyUI 32-Themes Dropdown -->
+        <div class="dropdown dropdown-end" id="theme-dropdown">
+          <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
+            <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
+            <div class="flex items-center gap-0.5">
+              <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+              <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+            </div>
+          </div>
+          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
+            <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+              <!-- Populated via initThemeDropdown() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Icon-Only Download Dropdown -->
+        <div class="dropdown dropdown-end" id="download-dropdown">
+          <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Report" title="Download Report">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
+            </svg>
+          </div>
+          <ul id="download-dropdown-menu" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-64 p-2 shadow-2xl border border-base-300">
+            <li>
+              <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <span>Download as HTML</span>
+              </button>
+            </li>
+            <li>
+              <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                <div class="flex items-center gap-2.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span>Download as PDF</span>
+                </div>
+                <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Interactive PDF Warning Modal -->
+  <dialog id="pdf-not-ready-modal" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg text-warning flex items-center gap-2">
+        <span>⚠ Interactive Report Mode</span>
+      </h3>
+      <p class="py-4 text-xs">
+        This report is in interactive web-first mode. To generate a print-ready version with @media print rules, cover page, and PDF pagination, request:
+      </p>
+      <div class="bg-base-200 p-3 rounded font-mono text-2xs overflow-x-auto">
+        <code id="pdf-conversion-prompt-text">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</code>
+      </div>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-sm">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
+<!-- Report Header -->
+  <header class="border-b border-base-300 pb-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="badge badge-primary font-medium tracking-wide">Enterprise Infrastructure</span>
+          <span class="badge badge-outline text-xs">Q4 2026 Executive Brief</span>
+        </div>
+        <h1 id="global-cloud-migration-report" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-base-content">
+          Global Cloud Migration &amp; Multi-Region Resiliency Q4 2026
+        </h1>
+        <p class="mt-2 text-base text-base-content/70">
+          Consolidated progress analysis, cost optimization vectors, latency benchmarks, and operational safeguards across distributed multi-region infrastructure.
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="text-right hidden sm:block">
+          <div class="text-xs font-semibold uppercase tracking-wider text-base-content/50">Target SLA</div>
+          <div class="text-lg font-bold text-success font-mono">99.995% Active-Active</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Section 1: Executive Summary & KPIs -->
+  <section class="space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div>
+        <h2 id="executive-summary-kpis" class="text-2xl font-bold tracking-tight text-base-content">
+          1. Executive Summary &amp; Key Performance Indicators
+        </h2>
+        <p class="text-sm text-base-content/70 mt-1">
+          Quarterly baseline tracking against strategic cloud transformation milestones and resilience objectives.
+        </p>
+      </div>
+    </div>
+
+    <!-- 4 Stat Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Stat 1: Workloads Migrated -->
+      <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-6">
+        <div class="stat-figure text-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z" />
+          </svg>
+        </div>
+        <div class="stat-title text-sm font-medium text-base-content/70">Workloads Migrated</div>
+        <div class="stat-value text-primary font-extrabold text-3xl my-1">84%</div>
+        <div class="stat-desc text-xs font-medium text-success flex items-center gap-1">
+          <span>↗ +18% from Q3 2026</span>
+          <span class="text-base-content/50">(420 / 500 Services)</span>
+        </div>
+      </div>
+
+      <!-- Stat 2: Annualized Cloud Savings -->
+      <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-6">
+        <div class="stat-figure text-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="stat-title text-sm font-medium text-base-content/70">Annualized Cloud Savings</div>
+        <div class="stat-value text-secondary font-extrabold text-3xl my-1">$4.2M</div>
+        <div class="stat-desc text-xs font-medium text-success flex items-center gap-1">
+          <span>↗ 112% of Q4 projection</span>
+          <span class="text-base-content/50">(OPEX reduction)</span>
+        </div>
+      </div>
+
+      <!-- Stat 3: Multi-Region SLA -->
+      <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-6">
+        <div class="stat-figure text-accent">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <div class="stat-title text-sm font-medium text-base-content/70">Multi-Region SLA</div>
+        <div class="stat-value text-accent font-extrabold text-3xl my-1">99.995%</div>
+        <div class="stat-desc text-xs font-medium text-success flex items-center gap-1">
+          <span>Target Met</span>
+          <span class="text-base-content/50">(Zero unbudgeted downtime)</span>
+        </div>
+      </div>
+
+      <!-- Stat 4: Incident MTTR -->
+      <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-6">
+        <div class="stat-figure text-info">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div class="stat-title text-sm font-medium text-base-content/70">Incident MTTR</div>
+        <div class="stat-value text-info font-extrabold text-3xl my-1">4.2m</div>
+        <div class="stat-desc text-xs font-medium text-success flex items-center gap-1">
+          <span>↘ -68% vs on-premises</span>
+          <span class="text-base-content/50">(Automated remediation)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Regional Deployment Status Table -->
+  <section class="space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div>
+        <h2 id="regional-deployment-status" class="text-2xl font-bold tracking-tight text-base-content">
+          2. Regional Deployment Status
+        </h2>
+        <p class="text-sm text-base-content/70 mt-1">
+          Cluster health, rollout completeness, and active telemetry across primary production regions.
+        </p>
+      </div>
+      <span class="badge badge-outline badge-sm self-start sm:self-auto">Last Reconciled: Q4 2026 Audit</span>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto w-full">
+        <table class="table table-xs sm:table-sm table-zebra w-full text-left">
+          <thead class="bg-base-200/60 text-base-content text-xs uppercase font-bold tracking-wider">
+            <tr>
+              <th class="py-2 px-2.5 text-xs sm:text-sm">Region</th>
+              <th class="py-2 px-2.5 text-xs sm:text-sm hidden md:table-cell">Provider &amp; Zones</th>
+              <th class="py-2 px-2.5 text-xs sm:text-sm hidden lg:table-cell">Cluster Scale</th>
+              <th class="py-2 px-2.5 text-xs sm:text-sm">Workload Progress</th>
+              <th class="py-2 px-2.5 text-xs sm:text-sm hidden sm:table-cell">P95 Gateway Latency</th>
+              <th class="py-2 px-2.5 text-xs sm:text-sm">Deployment Status</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm divide-y divide-base-300">
+            <!-- Row 1: US-East -->
+            <tr class="hover:bg-base-200/40 transition-colors">
+              <td class="py-2 px-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-success inline-block"></span>
+                <span>US-East</span>
+                <span class="text-xs text-base-content/50 font-normal">(us-east-1 / us-east-2)</span>
+              </td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm hidden md:table-cell text-base-content/80">AWS &bull; 6 AZs</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm hidden lg:table-cell font-mono text-xs">128 Nodes &bull; 2,400 Pods</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm">
+                <div class="flex items-center gap-3">
+                  <progress class="progress progress-success w-24" value="96" max="100"></progress>
+                  <span class="text-xs font-mono font-bold">96%</span>
+                </div>
+              </td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm font-mono text-xs text-success font-semibold hidden sm:table-cell">14.2 ms</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm">
+                <span class="badge badge-success badge-sm gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                  Active-Active
+                </span>
+              </td>
+            </tr>
+
+            <!-- Row 2: US-West -->
+            <tr class="hover:bg-base-200/40 transition-colors">
+              <td class="py-2 px-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-success inline-block"></span>
+                <span>US-West</span>
+                <span class="text-xs text-base-content/50 font-normal">(us-west-2 / us-west-1)</span>
+              </td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm hidden md:table-cell text-base-content/80">AWS &bull; 4 AZs</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm hidden lg:table-cell font-mono text-xs">96 Nodes &bull; 1,850 Pods</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm">
+                <div class="flex items-center gap-3">
+                  <progress class="progress progress-success w-24" value="92" max="100"></progress>
+                  <span class="text-xs font-mono font-bold">92%</span>
+                </div>
+              </td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm font-mono text-xs text-success font-semibold hidden sm:table-cell">18.6 ms</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm">
+                <span class="badge badge-success badge-sm gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                  Active-Active
+                </span>
+              </td>
+            </tr>
+
+            <!-- Row 3: EU-Central -->
+            <tr class="hover:bg-base-200/40 transition-colors">
+              <td class="py-2 px-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-info inline-block"></span>
+                <span>EU-Central</span>
+                <span class="text-xs text-base-content/50 font-normal">(europe-west3 / eu-central-1)</span>
+              </td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm hidden md:table-cell text-base-content/80">GCP &bull; 3 AZs</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm hidden lg:table-cell font-mono text-xs">84 Nodes &bull; 1,420 Pods</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm">
+                <div class="flex items-center gap-3">
+                  <progress class="progress progress-info w-24" value="78" max="100"></progress>
+                  <span class="text-xs font-mono font-bold">78%</span>
+                </div>
+              </td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm font-mono text-xs text-info font-semibold hidden sm:table-cell">22.4 ms</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm">
+                <span class="badge badge-info badge-sm gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                  Phase 3 Dual-Write
+                </span>
+              </td>
+            </tr>
+
+            <!-- Row 4: AP-Southeast -->
+            <tr class="hover:bg-base-200/40 transition-colors">
+              <td class="py-2 px-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-warning inline-block"></span>
+                <span>AP-Southeast</span>
+                <span class="text-xs text-base-content/50 font-normal">(ap-southeast-1)</span>
+              </td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm hidden md:table-cell text-base-content/80">AWS &bull; 3 AZs</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm hidden lg:table-cell font-mono text-xs">64 Nodes &bull; 980 Pods</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm">
+                <div class="flex items-center gap-3">
+                  <progress class="progress progress-warning w-24" value="68" max="100"></progress>
+                  <span class="text-xs font-mono font-bold">68%</span>
+                </div>
+              </td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm font-mono text-xs text-warning font-semibold hidden sm:table-cell">31.8 ms</td>
+              <td class="py-2 px-2.5 text-xs sm:text-sm">
+                <span class="badge badge-warning badge-sm gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                  Cutover In-Flight
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Cost & Latency Performance Visuals -->
+  <section class="space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div>
+        <h2 id="cost-latency-performance" class="text-2xl font-bold tracking-tight text-base-content">
+          3. Cost &amp; Latency Performance Visuals
+        </h2>
+        <p class="text-sm text-base-content/70 mt-1">
+          Empirical financial and architectural benchmarks confirming unit cost reduction and tail latency stabilization.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Chart 1: Pre vs Post Migration Spend -->
+      <div class="card bg-base-100 border border-base-300 shadow-sm p-6 flex flex-col justify-between">
+        <div>
+          <h3 id="cost-comparison-pre-vs-post" class="text-lg font-bold text-base-content flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Pre vs. Post Migration Monthly Spend ($k)
+          </h3>
+          <p class="text-xs text-base-content/70 mt-1 mb-4">
+            Direct comparison across compute infrastructure, database licensing, storage tiering, and operational networking.
+          </p>
+        </div>
+        <div class="w-full h-72 relative">
+          <canvas id="costSpendBarChart"></canvas>
+        </div>
+        <div class="mt-4 pt-3 border-t border-base-200 text-xs text-base-content/60 flex justify-between">
+          <span>Gross Infrastructure Savings: <strong>34.8%</strong></span>
+          <span>Source: FinOps Cloud Billing Ledger</span>
+        </div>
+      </div>
+
+      <!-- Chart 2: P99 Latency Trend -->
+      <div class="card bg-base-100 border border-base-300 shadow-sm p-6 flex flex-col justify-between">
+        <div>
+          <h3 id="p99-latency-trend" class="text-lg font-bold text-base-content flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+            Global P99 Latency Trend (Q1 - Q4 2026)
+          </h3>
+          <p class="text-xs text-base-content/70 mt-1 mb-4">
+            Edge-to-core round-trip latency (ms) across stateful requests as services transitioned to distributed active-active topology.
+          </p>
+        </div>
+        <div class="w-full h-72 relative">
+          <canvas id="latencyTrendLineChart"></canvas>
+        </div>
+        <div class="mt-4 pt-3 border-t border-base-200 text-xs text-base-content/60 flex justify-between">
+          <span>P99 Tail Latency Improvement: <strong>-59.3%</strong></span>
+          <span>Telemetry: Distributed APM Traces</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inline Script for Chart.js -->
+    <script>
+      (function() {
+        function initCharts() {
+          if (typeof Chart === 'undefined') {
+            setTimeout(initCharts, 100);
+            return;
+          }
+
+          let chart1 = null;
+          let chart2 = null;
+
+          // Chart 1: Bar Chart (Pre vs Post Spend)
+          const ctxCost = document.getElementById('costSpendBarChart');
+          if (ctxCost) {
+            chart1 = new Chart(ctxCost, {
+              type: 'bar',
+              data: {
+                labels: ['Compute / VMs', 'Databases', 'Storage & Backup', 'Networking & Transit', 'Management & Ops'],
+                datasets: [
+                  {
+                    label: 'Pre-Migration (Legacy)',
+                    data: [420, 310, 180, 140, 110],
+                    backgroundColor: 'rgba(148, 163, 184, 0.75)',
+                    borderColor: 'rgb(100, 116, 139)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                  },
+                  {
+                    label: 'Post-Migration (Cloud Q4)',
+                    data: [250, 195, 105, 95, 65],
+                    backgroundColor: 'rgba(79, 70, 229, 0.85)',
+                    borderColor: 'rgb(67, 56, 202)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'bottom',
+                    labels: { boxWidth: 12, font: { size: 11 } }
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        return context.dataset.label + ': $' + context.raw + 'k / mo';
+                      }
+                    }
+                  }
+                },
+                scales: {
+                  x: {
+                    grid: { display: false }
+                  },
+                  y: {
+                    beginAtZero: true,
+                    ticks: {
+                      callback: function(value) { return '$' + value + 'k'; }
+                    },
+                    grid: { color: 'rgba(150, 150, 150, 0.15)' }
+                  }
+                }
+              }
+            });
+          }
+
+          // Chart 2: Line Chart (P99 Latency Trend)
+          const ctxLatency = document.getElementById('latencyTrendLineChart');
+          if (ctxLatency) {
+            chart2 = new Chart(ctxLatency, {
+              type: 'line',
+              data: {
+                labels: ['Jan 26', 'Mar 26', 'May 26', 'Jul 26', 'Sep 26', 'Nov 26', 'Dec 26'],
+                datasets: [
+                  {
+                    label: 'Observed Global P99 (ms)',
+                    data: [128, 115, 94, 76, 62, 54, 52],
+                    borderColor: 'rgb(14, 165, 233)',
+                    backgroundColor: 'rgba(14, 165, 233, 0.12)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                  },
+                  {
+                    label: 'Target Resilience Threshold (ms)',
+                    data: [80, 80, 80, 80, 80, 80, 80],
+                    borderColor: 'rgba(239, 68, 68, 0.75)',
+                    borderWidth: 2,
+                    borderDash: [6, 6],
+                    pointRadius: 0,
+                    fill: false
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'bottom',
+                    labels: { boxWidth: 12, font: { size: 11 } }
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        return context.dataset.label + ': ' + context.raw + ' ms';
+                      }
+                    }
+                  }
+                },
+                scales: {
+                  x: {
+                    grid: { display: false }
+                  },
+                  y: {
+                    beginAtZero: false,
+                    suggestedMin: 40,
+                    suggestedMax: 140,
+                    ticks: {
+                      callback: function(value) { return value + ' ms'; }
+                    },
+                    grid: { color: 'rgba(150, 150, 150, 0.15)' }
+                  }
+                }
+              }
+            });
+          }
+
+          window.reportCharts = [chart1, chart2].filter(Boolean);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initCharts);
+        } else {
+          initCharts();
+        }
+      })();
+    </script>
+  </section>
+
+  <!-- Section 4: System Architecture Diagram -->
+  <section class="space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div>
+        <h2 id="system-architecture-diagram" class="text-2xl font-bold tracking-tight text-base-content">
+          4. System Architecture Diagram
+        </h2>
+        <p class="text-sm text-base-content/70 mt-1">
+          Target topology detailing redundant hybrid interconnects, multi-region API orchestration, container scheduling, and distributed database consensus.
+        </p>
+      </div>
+      <span class="badge badge-accent badge-sm font-mono self-start sm:self-auto">Mermaid Flowchart</span>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 sm:p-6 w-full max-w-full overflow-x-auto">
+      <div class="overflow-x-auto w-full flex justify-center">
+        <pre class="mermaid text-center max-w-full">
+flowchart TD
+    subgraph S1["Legacy Edge Tier"]
+        DC1["On-Prem Data Centers<br/>(Equinix Ashburn & Frankfurt)"]
+    end
+
+    subgraph S2["Hybrid Dedicated Interconnect"]
+        DX["DirectConnect / Dedicated Cloud Interconnect & IPSec VPN"]
+    end
+
+    subgraph S3["Global Traffic & Mesh Routing"]
+        TGW["Multi-Region API & Transit Gateway Mesh<br/>(Anycast Edge Routing + Envoy / Istio Mesh)"]
+    end
+
+    subgraph S4["Resilient Container Compute Plane"]
+        C1["US-East EKS / GKE Clusters<br/>(Primary Active)"]
+        C2["US-West EKS / GKE Clusters<br/>(Secondary Active)"]
+        C3["EU-Central EKS / GKE Clusters<br/>(Sovereign Active)"]
+    end
+
+    subgraph S5["Distributed Consensus Persistence"]
+        DB["Managed Distributed DBs<br/>(CockroachDB Multi-Region & Cloud Spanner Consensus)"]
+    end
+
+    DC1 -->|100Gbps Dedicated Link| DX
+    DX -->|Cross-Cloud Interconnect| TGW
+    TGW -->|Low-Latency Anycast Ingress| C1
+    TGW -->|Low-Latency Anycast Ingress| C2
+    TGW -->|Low-Latency Anycast Ingress| C3
+    C1 -->|Raft / Paxos Write Latency &lt; 25ms| DB
+    C2 -->|Distributed Global Replicas| DB
+    C3 -->|GDPR Partitioned Consensus| DB
+      </pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Key Risk & Operational Alerts -->
+  <section class="space-y-6">
+    <div>
+      <h2 id="key-risks-operational-alerts" class="text-2xl font-bold tracking-tight text-base-content">
+        5. Key Risk &amp; Operational Alerts
+      </h2>
+      <p class="text-sm text-base-content/70 mt-1">
+        Active guardrails, automated circuit breakers, and verification protocols mitigating cutover risks.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <!-- Alert 1: Egress Spike Warning -->
+      <div class="alert alert-warning shadow-sm border border-warning/30 flex items-start gap-4 p-4 rounded-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6 mt-0.5 text-warning" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <div class="space-y-1">
+          <h3 id="risk-alert-egress-spike" class="font-bold text-sm tracking-wide uppercase text-warning-content">
+            Egress Spike Warning &bull; AP-Southeast Cross-Region Replication
+          </h3>
+          <p class="text-xs text-warning-content/80 leading-relaxed">
+            Data egress between AP-Southeast and US-East showed a 28% variance surge during bulk transaction index synchronization. Active throttles and local read-replica caching policies have been enforced via Cloudflare Magic Transit and Regional Cache-Aside rules to prevent cost overrun.
+          </p>
+        </div>
+      </div>
+
+      <!-- Alert 2: Dual-Write Schema Gate -->
+      <div class="alert alert-info shadow-sm border border-info/30 flex items-start gap-4 p-4 rounded-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6 mt-0.5 text-info" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div class="space-y-1">
+          <h3 id="risk-alert-dual-write-schema" class="font-bold text-sm tracking-wide uppercase text-info-content">
+            Dual-Write Schema Gate &bull; EU-Central Migration Phase 3
+          </h3>
+          <p class="text-xs text-info-content/80 leading-relaxed">
+            Automated schema compatibility verification is currently gating legacy Oracle to distributed CockroachDB dual-writing. Zero data drift tolerance has been confirmed across 45 million replicated events over the last 72 continuous test hours. Final switchover scheduled for Nov 18.
+          </p>
+        </div>
+      </div>
+
+      <!-- Alert 3: Automated Chaos Drills -->
+      <div class="alert alert-success shadow-sm border border-success/30 flex items-start gap-4 p-4 rounded-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6 mt-0.5 text-success" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div class="space-y-1">
+          <h3 id="risk-alert-chaos-drills" class="font-bold text-sm tracking-wide uppercase text-success-content">
+            Automated Chaos Drill Passed &bull; US-East Availability Zone Blackhole Simulation
+          </h3>
+          <p class="text-xs text-success-content/80 leading-relaxed">
+            Chaos Mesh injected a full zonal partition taking down 33% of US-East nodes at 14:00 UTC. Anycast DNS failover routed 100% of synthetic traffic to US-West within 2.4 seconds with zero 5xx error spikes or committed state loss.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <!-- Minimal Centered Footer -->
+  <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
+    generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a>
+  </footer>
+
+  <!-- Runtime Scripts -->
+  <script>
+/**
+ * html-report client runtime (report-runtime.js)
+ * Pre-bundled runtime for 32 DaisyUI themes, canvas 2D OKLCH palette resolution,
+ * Mermaid list syntax defense, dynamic TOC generation, snapshot bundler,
+ * and horizontal space detection.
+ */
+
+const DAISYUI_THEMES = [
+  "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
+  "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden",
+  "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black",
+  "luxury", "dracula", "cmyk", "autumn", "business", "acid", "lemonade",
+  "night", "coffee", "winter", "dim", "nord", "sunset"
+];
+
+/**
+ * Resolves any valid CSS color string (including oklch, color-mix, rgb, hsl, hex)
+ * into a strict 8-bit hex string and rgba generator via an offscreen 2D canvas.
+ */
+function cssColorToHexAndRgba(colorStr, customCtx = null) {
+  if (!colorStr) {
+    return { hex: "#3b82f6", r: 59, g: 130, b: 246, a: 1, rgba: (a = 1) => `rgba(59, 130, 246, ${a})` };
+  }
+
+  try {
+    let ctx = customCtx;
+    if (!ctx && typeof document !== "undefined") {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      ctx = canvas.getContext("2d", { willReadFrequently: true });
+    }
+
+    if (ctx) {
+      ctx.fillStyle = colorStr;
+      ctx.fillRect(0, 0, 1, 1);
+      const [r, g, b, aRaw] = ctx.getImageData(0, 0, 1, 1).data;
+      const a = aRaw / 255;
+      const hex = "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
+      return {
+        hex,
+        r,
+        g,
+        b,
+        a,
+        rgba: (alpha = a) => `rgba(${r}, ${g}, ${b}, ${alpha})`
+      };
+    }
+  } catch (_) {}
+
+  // Fallback if canvas is unavailable or failed
+  return { hex: "#3b82f6", r: 59, g: 130, b: 246, a: 1, rgba: (alpha = 1) => `rgba(59, 130, 246, ${alpha})` };
+}
+
+/**
+ * Resolves active DaisyUI semantic palette tokens (primary, secondary, accent, neutral, base, content)
+ * into deterministic hex/rgba colors.
+ */
+function resolveDaisyUIThemePalette(doc = (typeof document !== "undefined" ? document : null)) {
+  if (!doc) return {};
+
+  const probeContainer = doc.createElement("div");
+  probeContainer.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none;";
+  const roles = {
+    primary: "bg-primary",
+    secondary: "bg-secondary",
+    accent: "bg-accent",
+    neutral: "bg-neutral",
+    base100: "bg-base-100",
+    base200: "bg-base-200",
+    base300: "bg-base-300"
+  };
+
+  const nodes = {};
+  for (const [key, cls] of Object.entries(roles)) {
+    const el = doc.createElement("span");
+    el.className = cls;
+    probeContainer.appendChild(el);
+    nodes[key] = el;
+  }
+  const textNode = doc.createElement("span");
+  textNode.className = "text-base-content";
+  probeContainer.appendChild(textNode);
+  doc.body.appendChild(probeContainer);
+
+  const palette = {};
+  const getStyle = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle : () => ({ backgroundColor: "#3b82f6", color: "#1f2937" });
+
+  for (const [key, el] of Object.entries(nodes)) {
+    palette[key] = cssColorToHexAndRgba(getStyle(el).backgroundColor);
+  }
+  palette.content = cssColorToHexAndRgba(getStyle(textNode).color);
+  probeContainer.remove();
+  return palette;
+}
+
+/**
+ * Sanitizes Mermaid diagram source code to defend against Mermaid 11.4 markdown list parser bugs.
+ * Disallows starting subgraph or node titles with numbered list tokens (e.g. `1. `, `2. `).
+ */
+function sanitizeMermaidSource(source) {
+  if (!source || typeof source !== "string") return "";
+
+  // 1. Replace numbered list pattern in subgraphs: e.g. subgraph ["1. Title"] or subgraph sub1 ["1. Title"]
+  let sanitized = source.replace(
+    /(subgraph\s+(?:[a-zA-Z0-9_-]+\s*)?\[\s*")(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 2. Replace numbered list pattern in unquoted subgraphs: e.g. subgraph 1. Title
+  sanitized = sanitized.replace(
+    /(subgraph\s+)(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 3. Replace numbered list tokens in bracketed nodes: e.g. ["1. Step Description"]
+  sanitized = sanitized.replace(
+    /(\[\s*")(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 4. Replace numbered list tokens in unquoted node brackets: e.g. [1. Step Description]
+  sanitized = sanitized.replace(
+    /(\[\s*)(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  return sanitized;
+}
+
+/**
+ * Dynamic Mermaid theme re-rendering synced with DaisyUI theme palette.
+ */
+async function renderMermaidWithTheme(palette) {
+  if (typeof window === "undefined" || !window.mermaid) return;
+  const mermaidNodes = document.querySelectorAll(".mermaid");
+  if (!mermaidNodes.length) return;
+
+  mermaidNodes.forEach((node) => {
+    if (!node.dataset.mermaidSource) {
+      node.dataset.mermaidSource = node.textContent.trim();
+    }
+    node.removeAttribute("data-processed");
+    node.textContent = sanitizeMermaidSource(node.dataset.mermaidSource);
+  });
+
+  const base100 = palette.base100 ? palette.base100.hex : "#ffffff";
+  const base200 = palette.base200 ? palette.base200.hex : "#f3f4f6";
+  const base300 = palette.base300 ? palette.base300.hex : "#e5e7eb";
+  const content = palette.content ? palette.content.hex : "#1f2937";
+  const primary = palette.primary ? palette.primary.hex : "#3b82f6";
+  const secondary = palette.secondary ? palette.secondary.hex : "#6b7280";
+  const accent = palette.accent ? palette.accent.hex : "#10b981";
+
+  window.mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: "loose",
+    theme: "base",
+    themeVariables: {
+      background: base100,
+      primaryColor: base200,
+      primaryTextColor: content,
+      primaryBorderColor: primary,
+      secondaryColor: base300,
+      secondaryTextColor: content,
+      secondaryBorderColor: secondary,
+      tertiaryColor: base100,
+      tertiaryTextColor: content,
+      tertiaryBorderColor: accent,
+      lineColor: primary,
+      textColor: content,
+      mainBkg: base100,
+      nodeBorder: primary,
+      clusterBkg: base200,
+      clusterBorder: base300,
+      titleColor: content,
+      edgeLabelBackground: base200,
+      nodeTextColor: content
+    }
+  });
+
+  try {
+    await window.mermaid.run({ querySelector: ".mermaid" });
+  } catch (err) {
+    console.warn("[html-report] Mermaid render notice:", err);
+  }
+}
+
+/**
+ * Initializes the 32 DaisyUI theme color swatch picker dropdown.
+ */
+function initThemeDropdown() {
+  if (typeof document === "undefined") return;
+  const listEl = document.getElementById("theme-swatch-list");
+  if (!listEl) return;
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  listEl.innerHTML = "";
+
+  DAISYUI_THEMES.forEach((theme) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.setAttribute("data-theme", theme);
+    btn.setAttribute("data-set-theme", theme);
+    btn.className = "theme-swatch-item outline-base-content text-start outline-offset-4 rounded-btn w-full cursor-pointer font-sans";
+    btn.innerHTML = `
+      <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
+        <span class="grid grid-cols-5 grid-rows-3">
+          <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
+              <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
+            </svg>
+            <span class="flex-grow text-xs font-semibold capitalize">${theme}</span>
+            <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
+              <span class="bg-primary rounded-badge w-2 h-4"></span>
+              <span class="bg-secondary rounded-badge w-2 h-4"></span>
+              <span class="bg-accent rounded-badge w-2 h-4"></span>
+              <span class="bg-neutral rounded-badge w-2 h-4"></span>
+            </span>
+          </span>
+        </span>
+      </span>
+    `;
+    btn.addEventListener("click", () => setReportTheme(theme));
+    listEl.appendChild(btn);
+  });
+}
+
+/**
+ * Sets active DaisyUI theme dynamically and updates charts/Mermaid.
+ */
+async function setReportTheme(themeName) {
+  if (!DAISYUI_THEMES.includes(themeName)) return;
+  if (typeof document === "undefined") return;
+
+  document.documentElement.setAttribute("data-theme", themeName);
+  const activeLabel = document.getElementById("active-theme-label");
+  if (activeLabel) activeLabel.textContent = themeName;
+
+  document.querySelectorAll("#theme-swatch-list .theme-swatch-item").forEach((btn) => {
+    const check = btn.querySelector(".theme-check");
+    if (check) {
+      const isCurrent = btn.getAttribute("data-set-theme") === themeName;
+      check.classList.toggle("opacity-100", isCurrent);
+      check.classList.toggle("opacity-0", !isCurrent);
+    }
+  });
+
+  const palette = resolveDaisyUIThemePalette();
+
+  // Dynamic Chart.js color sync
+  if (typeof window !== "undefined" && window.reportCharts && Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((chart, idx) => {
+      if (chart?.data?.datasets) {
+        chart.data.datasets.forEach((ds, dsIdx) => {
+          const colorKey = dsIdx % 3 === 0 ? "primary" : dsIdx % 3 === 1 ? "secondary" : "accent";
+          const chosen = palette[colorKey] ? palette[colorKey].hex : "#3b82f6";
+          if (ds.borderColor) ds.borderColor = chosen;
+          if (ds.backgroundColor && typeof ds.backgroundColor === "string" && ds.backgroundColor.includes("rgba")) {
+            ds.backgroundColor = palette[colorKey] ? palette[colorKey].rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+          }
+        });
+        chart.update();
+      }
+    });
+  }
+
+  // Dynamic Mermaid sync
+  await renderMermaidWithTheme(palette);
+}
+
+/**
+ * Builds Table of Contents from main h1, h2, h3 elements.
+ */
+function initTOC() {
+  if (typeof document === "undefined") return;
+  const tocList = document.getElementById("report-toc-list");
+  if (!tocList) return;
+  const headings = document.querySelectorAll("main h1, main h2, main h3");
+  tocList.innerHTML = "";
+
+  headings.forEach((h) => {
+    if (!h.id) {
+      h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    }
+    const level = parseInt(h.tagName.substring(1), 10);
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = `#${h.id}`;
+    a.textContent = h.textContent.trim();
+    a.className = level === 1 ? "font-bold text-xs" : level === 2 ? "pl-3 text-xs" : "pl-6 text-2xs opacity-80";
+    a.addEventListener("click", () => {
+      const dropdown = document.getElementById("toc-dropdown");
+      if (dropdown) dropdown.removeAttribute("open");
+    });
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+}
+
+/**
+ * Horizontal Scrollbar -> Insufficient Space Detector.
+ * Flags elements where scrollWidth > clientWidth with [data-insufficient-space="true"].
+ */
+function checkInsufficientHorizontalSpace() {
+  if (typeof document === "undefined") return [];
+  const mainEl = document.querySelector("main");
+  if (!mainEl) return [];
+
+  const insufficient = [];
+  const candidates = mainEl.querySelectorAll("section, div, pre, table, .card, .overflow-x-auto, .gridjs-wrapper");
+
+  candidates.forEach((el) => {
+    const style = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle(el) : el.style;
+    if (style.display === "none" || style.visibility === "hidden" || el.clientWidth === 0) {
+      el.removeAttribute("data-insufficient-space");
+      return;
+    }
+    const hasHorizontalScrollbar =
+      el.scrollWidth > el.clientWidth + 2 &&
+      ["auto", "scroll"].includes(style.overflowX);
+
+    if (hasHorizontalScrollbar) {
+      el.setAttribute("data-insufficient-space", "true");
+      insufficient.push({
+        tag: el.tagName.toLowerCase(),
+        id: el.id || null,
+        className: typeof el.className === "string" ? el.className : "",
+        scrollWidth: el.scrollWidth,
+        clientWidth: el.clientWidth,
+        message: "Element has a horizontal scrollbar and does not have enough space"
+      });
+    } else {
+      el.removeAttribute("data-insufficient-space");
+    }
+  });
+
+  return insufficient;
+}
+
+/**
+ * Builds a standalone, inlined HTML snapshot with fetched CSS and JS bundled directly.
+ */
+async function buildInlinedHtmlSnapshot() {
+  if (typeof document === "undefined") return "";
+  const clone = document.documentElement.cloneNode(true);
+  clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
+
+  // Inline external stylesheets
+  const linkEls = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
+  await Promise.allSettled(
+    linkEls.map(async (linkEl) => {
+      const href = linkEl.getAttribute("href");
+      if (!href || (!href.startsWith("http://") && !href.startsWith("https://"))) return;
+      try {
+        const res = await fetch(href);
+        if (!res.ok) return;
+        let cssText = await res.text();
+        cssText = cssText.replace(/url\((['"]?)(?!data:|https?:|#)([^'")]+)\1\)/g, (match, quote, relPath) => {
+          try {
+            return `url("${new URL(relPath, href).href}")`;
+          } catch {
+            return match;
+          }
+        });
+        const styleEl = document.createElement("style");
+        styleEl.setAttribute("data-inlined-href", href);
+        styleEl.textContent = cssText;
+        linkEl.replaceWith(styleEl);
+      } catch (_) {}
+    })
+  );
+
+  // Inline external scripts
+  const scriptEls = Array.from(clone.querySelectorAll("script[src]"));
+  await Promise.allSettled(
+    scriptEls.map(async (scriptEl) => {
+      const src = scriptEl.getAttribute("src");
+      if (!src || (!src.startsWith("http://") && !src.startsWith("https://"))) return;
+      if (src.includes("cdn.tailwindcss.com")) {
+        const marker = document.createElement("script");
+        marker.setAttribute("data-inlined-src", src);
+        marker.textContent = "/* Tailwind CSS styles pre-compiled inline in <head> */";
+        scriptEl.replaceWith(marker);
+        return;
+      }
+      try {
+        const res = await fetch(src);
+        if (!res.ok) return;
+        const jsText = await res.text();
+        const inlineScript = document.createElement("script");
+        inlineScript.setAttribute("data-inlined-src", src);
+        inlineScript.textContent = jsText.replace(/<\/script>/gi, "<\\/script>");
+        scriptEl.replaceWith(inlineScript);
+      } catch (_) {}
+    })
+  );
+
+  return "<!DOCTYPE html>\n" + clone.outerHTML;
+}
+
+/**
+ * Triggers PDF export / print dialog.
+ */
+function exportReportPdf() {
+  if (typeof window === "undefined") return;
+  if (window.reportCharts && Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((c) => c?.resize?.());
+  }
+  if (window.reportLeafletMap && typeof window.reportLeafletMap.invalidateSize === "function") {
+    window.reportLeafletMap.invalidateSize();
+  }
+  window.print();
+}
+
+/**
+ * Initializes the download menu actions (HTML & PDF).
+ */
+function initDownloadButton() {
+  if (typeof document === "undefined") return;
+  const htmlBtn = document.getElementById("download-html-btn");
+  const pdfBtn = document.getElementById("download-pdf-btn");
+
+  if (htmlBtn) {
+    htmlBtn.addEventListener("click", async () => {
+      try {
+        htmlBtn.disabled = true;
+        const htmlContent = await buildInlinedHtmlSnapshot();
+        const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const docTitle = document.title || "html-report";
+        a.download = `${docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-standalone.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("[html-report] Failed to bundle inlined HTML snapshot:", err);
+      } finally {
+        htmlBtn.disabled = false;
+      }
+    });
+  }
+
+  if (pdfBtn) {
+    pdfBtn.addEventListener("click", () => {
+      const reportMode = document.documentElement.getAttribute("data-report-mode") || "interactive";
+      if (reportMode === "interactive") {
+        const modal = document.getElementById("pdf-not-ready-modal");
+        if (modal && typeof modal.showModal === "function") {
+          modal.showModal();
+          return;
+        }
+      }
+      exportReportPdf();
+    });
+  }
+}
+
+// Global browser window bindings
+if (typeof window !== "undefined") {
+  window.DAISYUI_THEMES = DAISYUI_THEMES;
+  window.cssColorToHexAndRgba = cssColorToHexAndRgba;
+  window.resolveDaisyUIThemePalette = resolveDaisyUIThemePalette;
+  window.sanitizeMermaidSource = sanitizeMermaidSource;
+  window.renderMermaidWithTheme = renderMermaidWithTheme;
+  window.initThemeDropdown = initThemeDropdown;
+  window.setReportTheme = setReportTheme;
+  window.initTOC = initTOC;
+  window.checkInsufficientHorizontalSpace = checkInsufficientHorizontalSpace;
+  window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
+  window.exportReportPdf = exportReportPdf;
+  window.initDownloadButton = initDownloadButton;
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
+    try { initTOC(); } catch (_) {}
+    try { initThemeDropdown(); } catch (_) {}
+    try { initDownloadButton(); } catch (_) {}
+    try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
+
+    const palette = resolveDaisyUIThemePalette();
+    try { await renderMermaidWithTheme(palette); } catch (_) {}
+    try { checkInsufficientHorizontalSpace(); } catch (_) {}
+    window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.__REPORT_READY__ = true;
+  });
+}
+
+// Node.js CommonJS exports for unit testing
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    DAISYUI_THEMES,
+    cssColorToHexAndRgba,
+    resolveDaisyUIThemePalette,
+    sanitizeMermaidSource,
+    renderMermaidWithTheme,
+    initThemeDropdown,
+    setReportTheme,
+    initTOC,
+    checkInsufficientHorizontalSpace,
+    buildInlinedHtmlSnapshot,
+    exportReportPdf,
+    initDownloadButton
+  };
+}
+
+  </script>
+</body>
+</html>
