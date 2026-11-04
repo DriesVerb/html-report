@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-report-mode="live-report" lang="en" data-theme="light" class="scroll-smooth">
+<html data-report-mode="report" lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <!-- Pre-paint theme restore: apply the saved theme before any CSS renders (prevents light-theme flash on reload) -->
@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Live-Updating HTML Reports & Public Feed Bus - Journey & Plan</title>
+  <title>Native OpenSpec BDD-as-TDD Verification Harness</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -31,17 +31,11 @@
   </style>
 
   <!-- Optional Addon CDNs & Styles -->
-    <!-- Addon: Chart.js -->
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
-
-  <!-- Addon: Marked -->
-  <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>
-
-  <!-- Addon: Showdown -->
+    <!-- Addon: Showdown -->
   <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
 
-  <!-- Addon: Datastar -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
+  <!-- Addon: Mermaid -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
 
   <style>
     :root {
@@ -234,7 +228,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Live-Updating HTML Reports & Public Feed Bus - Journey & Plan
+          Native OpenSpec BDD-as-TDD Verification Harness
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -333,25 +327,25 @@
 <header class="space-y-6 border-b border-base-300 pb-8">
   <div class="flex items-center gap-2 flex-wrap">
     <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
-    <span class="badge badge-outline font-mono text-xs">declarative-public-feeds</span>
+    <span class="badge badge-outline font-mono text-xs">native-openspec-bdd</span>
     <span class="badge badge-success font-mono text-xs font-semibold gap-1">
-      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Phase 5: Shipped &amp; Verified (8 / 8 Tasks · 100%)
+      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Phase 5: Feature Complete &amp; Verified
     </span>
     <span class="badge badge-success font-mono text-xs font-semibold gap-1 animate-pulse">
-      <i data-lucide="radio" class="w-3.5 h-3.5"></i> North Star: Live-Updating Reports
+      <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Zero External Frameworks
     </span>
     <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
-      <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Nickname Registry (@name)
+      <i data-lucide="repeat" class="w-3.5 h-3.5"></i> Double-Loop BDD-as-TDD
     </span>
   </div>
 
   <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
     <div class="space-y-2">
       <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
-        Live-Updating HTML Reports &amp; Public Feed Bus
+        Native OpenSpec BDD-as-TDD Verification Harness
       </h1>
       <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
-        The core goal: <strong>HTML reports that live-update in real time</strong>. Turn static reports into living dashboards that capture real open public feeds, stream live ticks, smoothly slide Chart.js trends, and flash updates using a central <strong>Nickname Registry</strong> (<code>#feed-registry</code>) and zero backend server dependencies.
+        Establish a zero-framework BDD test harness directly on native <code>node:test</code> and <code>node:assert/strict</code> that transforms OpenSpec <code>spec.md</code> files into executable test gates. Runs side-by-side with our existing 18+ test suites with zero external dependencies and zero regressions.
       </p>
     </div>
 
@@ -366,7 +360,7 @@
       <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
         <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
       </button>
-      <button type="button" onclick="openMarkdownViewer('specs/declarative-public-feeds/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+      <button type="button" onclick="openMarkdownViewer('specs/native-openspec-bdd/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
         <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
       </button>
     </div>
@@ -378,7 +372,7 @@
       <span class="flex items-center gap-1.5">
         <i data-lucide="git-pull-request" class="w-4 h-4 text-primary"></i> Current Journey State
       </span>
-      <span class="font-mono text-success">Stage 5 Complete · Shipped &amp; Verified</span>
+      <span class="font-mono text-success">Stage 5 Active · Verified &amp; Shipped</span>
     </div>
     <div class="w-full overflow-x-auto py-2">
       <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
@@ -393,360 +387,233 @@
 </header>
 
 <!-- ========================================== -->
-<!-- LIVE-UPDATING SHOWCASE (UNDER CONSTRUCTION)-->
+<!-- 1. COPYABLE PROMPT CARD (PRIMARY GOAL)     -->
 <!-- ========================================== -->
-<section aria-labelledby="live-showcase-heading" class="space-y-4">
-  <div class="alert alert-primary/10 border border-primary/30 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
-    <div class="space-y-1">
-      <div class="flex items-center gap-2">
-        <span class="badge badge-primary font-bold text-2xs uppercase">Live Showcase · Under Construction</span>
-        <h2 id="live-showcase-heading" class="text-lg font-bold text-base-content flex items-center gap-2">
-          <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i> Real Open API Feeds &amp; Nickname Registry
-        </h2>
-      </div>
-      <p class="text-xs text-base-content/80 max-w-2xl leading-relaxed">
-        Demonstrates the Nickname Registry pattern. Real open sources (<code class="font-mono">@crypto</code>, <code class="font-mono">@weather</code>, <code class="font-mono">@github</code>) are registered once at the top. Cards and charts reference short nicknames (<code class="font-mono">@crypto</code>) to prevent AI URL hallucinations and eliminate duplicate network calls.
+<section id="copyable-prompt" class="space-y-4">
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="copy" class="w-6 h-6 text-primary"></i>
+        Copyable BDD-as-TDD Verification Prompt
+      </h2>
+      <p class="text-xs sm:text-sm text-base-content/70">
+        Copy this prompt directly into any agent session (Antigravity, Claude Code, Codex) to execute features under the BDD-as-TDD workflow.
       </p>
     </div>
-    <div class="flex items-center gap-2 shrink-0">
-      <button id="toggle-live-feed-btn" onclick="toggleLiveFeedSimulation()" class="btn btn-sm btn-primary gap-1.5">
-        <i id="live-btn-icon" data-lucide="pause" class="w-4 h-4"></i>
-        <span id="live-btn-text">Pause Live Stream</span>
-      </button>
-      <button onclick="triggerManualTick()" class="btn btn-sm btn-outline gap-1.5">
-        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Force Tick
-      </button>
-    </div>
+
+    <button id="copy-prompt-btn" type="button" onclick="copyBddPrompt()" class="btn btn-primary gap-2 shadow-sm hover:scale-105 active:scale-95 transition-all">
+      <i id="copy-btn-icon" data-lucide="clipboard-copy" class="w-4 h-4"></i>
+      <span id="copy-btn-text">Copy Prompt to Clipboard</span>
+    </button>
   </div>
 
-  <!-- Real Open API Nicknames Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <!-- Card 1: Bitcoin Ticker (@crypto) -->
-    <div class="card bg-base-100 border border-base-300 rounded-2xl shadow-sm p-4 space-y-2">
-      <div class="flex items-center justify-between">
-        <span class="badge badge-sm badge-outline font-mono text-2xs">@crypto &middot; CoinGecko</span>
-        <span id="crypto-delta-badge" class="badge badge-xs badge-success font-mono font-bold">+2.4%</span>
-      </div>
-      <div class="stat-title text-xs font-semibold uppercase">Bitcoin / USD</div>
-      <div id="crypto-price-val" class="stat-value text-2xl font-mono text-primary transition-colors duration-300">
-        $68,420
-      </div>
-      <div class="stat-desc text-xs flex items-center justify-between">
-        <span class="font-mono opacity-70">24h Vol: $32.4B</span>
-        <span class="text-2xs text-success flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-success animate-ping"></span> Live Tick
-        </span>
-      </div>
-    </div>
-
-    <!-- Card 2: Weather Sensor (@weather) -->
-    <div class="card bg-base-100 border border-base-300 rounded-2xl shadow-sm p-4 space-y-2">
-      <div class="flex items-center justify-between">
-        <span class="badge badge-sm badge-outline font-mono text-2xs">@weather &middot; Open-Meteo</span>
-        <span class="badge badge-xs badge-info font-mono">52.5° N, 13.4° E</span>
-      </div>
-      <div class="stat-title text-xs font-semibold uppercase">Berlin Temp &amp; Wind</div>
-      <div id="weather-temp-val" class="stat-value text-2xl font-mono text-secondary transition-colors duration-300">
-        18.4 °C
-      </div>
-      <div class="stat-desc text-xs flex items-center justify-between">
-        <span id="weather-wind-val" class="font-mono opacity-70">Wind: 12.2 km/h</span>
-        <span class="text-2xs opacity-70">Humidity: 64%</span>
-      </div>
-    </div>
-
-    <!-- Card 3: Tailwind CSS Stars (@github) -->
-    <div class="card bg-base-100 border border-base-300 rounded-2xl shadow-sm p-4 space-y-2">
-      <div class="flex items-center justify-between">
-        <span class="badge badge-sm badge-outline font-mono text-2xs">@github &middot; GitHub API</span>
-        <span class="badge badge-xs badge-accent font-mono">tailwindlabs</span>
-      </div>
-      <div class="stat-title text-xs font-semibold uppercase">Tailwind Stargazers</div>
-      <div id="github-stars-val" class="stat-value text-2xl font-mono text-accent transition-colors duration-300">
-        82,540
-      </div>
-      <div class="stat-desc text-xs flex items-center justify-between">
-        <span class="font-mono opacity-70">Forks: 4,120</span>
-        <span class="text-2xs opacity-70">Open Issues: 18</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Real-Time Sliding Chart.js Graph -->
-  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <i data-lucide="activity" class="w-5 h-5 text-primary"></i>
-        <h3 class="font-bold text-sm text-base-content">Live Chart.js Ring Buffer (<code class="font-mono text-xs text-primary">data-feed-chart="crypto_price"</code>)</h3>
-      </div>
-      <span class="badge badge-xs badge-outline font-mono">chart.update('none') &middot; Bounded 20 Pts</span>
-    </div>
-    <div class="h-64 w-full">
-      <canvas id="liveShowcaseChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Nickname Registry Architectural Anchor Banner -->
-  <div class="alert alert-success/15 border border-success/40 rounded-2xl p-4 flex items-center justify-between shadow-sm">
-    <div class="flex items-center gap-3">
-      <div class="p-2 rounded-xl bg-success/20 text-success shrink-0">
-        <i data-lucide="check-check" class="w-5 h-5"></i>
-      </div>
-      <div class="space-y-0.5">
-        <h3 class="text-sm font-bold text-base-content flex items-center gap-2">
-          <span>Nickname Registry Architecture Locked into Plan</span>
-          <span class="badge badge-xs badge-success font-mono font-bold">Confirmed</span>
-        </h3>
-        <p class="text-xs text-base-content/80 leading-relaxed">
-          &bull; <strong>Phase 1:</strong> Automatic <code class="font-mono bg-base-300/60 px-1 rounded">#feed-registry</code> JSON lookup in <code class="font-mono text-primary font-semibold">initPublicFeeds()</code> supporting <code class="font-mono text-accent">@nickname</code> or direct <code class="font-mono">https://...</code> fallback &amp; request deduplication.<br/>
-          &bull; <strong>Phase 3:</strong> Build CLI flag <code class="font-mono text-secondary font-semibold">--feed &lt;name&gt;=&lt;url&gt;</code> in <code class="font-mono">build-report.mjs</code> to auto-inject registry blocks without manual JSON editing.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========================================== -->
-<!-- COLLAPSIBLE END-TO-END IMPLEMENTATION PROMPT-->
-<!-- ========================================== -->
-<section aria-labelledby="prompt-heading" class="space-y-4">
-  <div class="flex items-center justify-between">
-    <div class="space-y-0.5">
-      <h2 id="prompt-heading" class="text-xl font-bold flex items-center gap-2 text-base-content">
-        <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i> End-to-End Implementation Prompt
-      </h2>
-      <p class="text-xs text-base-content/70">1-Click copyable autonomous prompt to execute the entire journey to main.</p>
-    </div>
-    <span class="badge badge-primary font-mono text-xs">Ready to Copy</span>
-  </div>
-
-  <div class="collapse collapse-plus bg-base-100 border border-primary/30 rounded-2xl shadow-sm">
-    <input type="checkbox" id="prompt-collapse-toggle" /> 
-    <div class="collapse-title text-sm font-bold flex items-center justify-between pr-12 text-base-content">
-      <span class="flex items-center gap-2">
-        <i data-lucide="terminal" class="w-4 h-4 text-primary"></i> 
-        Autonomous Implementation, Code Review, Archival &amp; Git Push Prompt
+  <div class="card bg-base-200/60 border border-base-300 shadow-md overflow-hidden">
+    <div class="bg-base-300/80 px-4 py-2.5 flex items-center justify-between border-b border-base-300 text-xs font-mono">
+      <span class="flex items-center gap-2 text-base-content/80">
+        <i data-lucide="terminal" class="w-4 h-4 text-accent"></i>
+        reusable-bdd-tdd-prompt.md
       </span>
-      <span class="badge badge-xs badge-ghost font-mono">Click to Expand / Collapse</span>
+      <span class="badge badge-sm badge-success">Verified &amp; Ready</span>
     </div>
-    <div class="collapse-content space-y-4 pt-2 border-t border-base-200">
-      <div class="flex items-center justify-between bg-base-200/50 p-3 rounded-xl">
-        <p class="text-xs text-base-content/80">
-          Feed this prompt into your coding assistant to implement all tasks in <code class="font-mono font-bold">tasks.md</code>, verify tests, code review, archive, and push to main.
-        </p>
-        <button id="copy-prompt-btn" onclick="copyAgentPrompt()" class="btn btn-xs btn-primary gap-1.5 shrink-0 ml-3">
-          <i id="copy-prompt-icon" data-lucide="copy" class="w-3.5 h-3.5"></i>
-          <span id="copy-prompt-label">Copy Implementation Prompt</span>
-        </button>
-      </div>
+    <div class="p-4 sm:p-6 bg-base-100">
+      <pre id="prompt-content" class="text-xs sm:text-sm font-mono whitespace-pre-wrap leading-relaxed text-base-content/90 overflow-x-auto select-all">We are implementing the feature `&lt;feature-name&gt;` using OpenSpec and our zero-framework BDD-as-TDD workflow.
 
-      <!-- Raw Text Area for Immediate Inspection & Selection -->
-      <textarea id="agent-prompt-text" readonly class="textarea textarea-bordered w-full h-80 font-mono text-2xs leading-relaxed bg-neutral text-neutral-content rounded-xl p-4">You are an autonomous senior engineer implementing the OpenSpec change `declarative-public-feeds` in `html-report`. Follow this exact, verified journey from beginning to end:
+Follow these strict constraints:
+1. Zero External Frameworks:
+   - Do not install Cucumber or third-party test runners.
+   - Use our native Node.js test harness: `node:test`, `node:assert/strict`, `tests/harness/bdd.mjs`, and `tests/harness/openspec-bdd.mjs`.
 
-### 1. Context & Setup
-- Inspect `openspec/changes/declarative-public-feeds/tasks.md`, `design.md`, and `specs/declarative-public-feeds/spec.md`.
-- Inspect `current-feature.html` and ensure the live dev server is running on `http://localhost:3000` (`node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3000`).
+2. Double-Loop BDD-as-TDD Workflow:
+   - Step 1 (Outer Loop - Red Scenario Gate):
+     Read the scenarios in `openspec/specs/&lt;feature-name&gt;/spec.md` (or the change delta spec) and create `tests/&lt;feature-name&gt;.bdd.test.mjs`.
+     Bind the Given-When-Then scenarios using `bindOpenSpec()`. Run `node --test tests/&lt;feature-name&gt;.bdd.test.mjs` to verify scenarios show as `todo` or failing.
+   - Step 2 (Inner Loop - Unit TDD):
+     Write focused unit tests in `tests/&lt;feature-name&gt;.test.mjs` for low-level algorithms, edge cases, and helper functions. Implement minimal code to turn them green.
+   - Step 3 (Outer Loop - Green Scenario Gate):
+     Implement the scenario steps in `tests/&lt;feature-name&gt;.bdd.test.mjs` until all BDD acceptance scenarios pass.
 
-### 2. Implementation Execution
-Work through all 8 tasks across the 4 numbered phases in `tasks.md`, checking them off as they are completed:
-- **Phase 1: Declarative Feed Engine & Nickname Registry**
-  - In `skills/html-report/assets/report-runtime.js`, implement `initPublicFeeds()`. Discover `[data-public-feed]`.
-  - Resolve `@nickname` references against `<script id="feed-registry" type="application/json">`. If the attribute is a standard URL (`https://...`), use it directly.
-  - Implement request deduplication: if multiple cards or charts reference the same feed with identical intervals, execute only ONE network `fetch()` and broadcast the parsed payload.
-  - Bind parsed JSON keys to Datastar reactive signals (with optional `data-feed-prefix`).
-  - Implement interval polling (`data-feed-interval`, default 60s, min 10s backoff guard) and ensure all timers and AbortControllers are tracked and cleaned up on `reinitReportContent()` and unmount.
-  - Dispatch window-level `feed:tick` custom event with `{ feedId, url, data, timestamp }`.
-- **Phase 2: Universal Field Extraction & Chart.js Ring Buffer Hook**
-  - Implement `data-feed-fields` parser to extract specified top-level or nested dot-notated paths (e.g. `data.value`).
-  - Implement `[data-feed-chart]` hook in `report-runtime.js`. When a numeric signal updates, push the new tick to Chart.js dataset 0, maintain a ring buffer capped at `data-feed-buffer` (default 20), and call `chart.update('none')`.
-- **Phase 3: Builder Auto-Detection & CLI Flags**
-  - In `skills/html-report/scripts/build-report.mjs`, add regex detection for `data-public-feed` to auto-bundle Datastar CDN and set `data-report-mode="live"`.
-  - Add CLI flags `--feed <name>=<url>` (injects into `#feed-registry`), `--freeze-feeds` (pre-fetches feeds and bakes into `data-feed-fallback` for offline/PDF use), and `--feed-interval <ms>`.
-  - In `skills/html-report/scripts/serve-report.mjs`, add `--feed-proxy <prefix=targetUrl>` route for local CORS proxying.
-- **Phase 4: Unit Testing & Verification**
-  - Create `tests/public-feed.test.mjs` testing nickname resolution, deduplication, URL fetching, field extraction, timer teardown, and CLI flags.
-  - Run `node --test tests/*.test.mjs` and confirm all tests pass with zero regressions.
-  - Run `openspec validate declarative-public-feeds` and confirm valid status.
-
-### 3. Rigorous Code Review & Cleanliness Gate
-- Verify zero new external npm dependencies were introduced.
-- Verify 32 DaisyUI theme switcher and Chart.js theme color adaptation work seamlessly.
-- Verify deterministic assembly time (<100ms).
-- Verify Playwright PDF export handles `--freeze-feeds` and fallback snapshots without timing out.
-
-### 4. OpenSpec Archive & Git Main Push
-- Update `openspec/changes/declarative-public-feeds/tasks.md` to ensure all 8 checklist tasks are marked `[x]`.
-- Rebuild companion `index.html` and mirror to `implementation-progress.html`.
-- Run `openspec archive declarative-public-feeds`.
-- Stage all changes, commit with descriptive message: `feat(feed): implement declarative public feed runtime, nickname registry, and live chart buffers`, and push to `origin/main`:
-  `git add -A && git commit -m "feat(feed): implement declarative public feed runtime, nickname registry, and live chart buffers" && git push origin main`.</textarea>
+3. Repository Verification Gate:
+   - Execute the complete test suite: `node --test tests/*.test.mjs`.
+   - Ensure zero regressions against all existing test suites.
+   - Update `tasks.md` checklist and the companion `index.html` to reflect live journey progress.
+   - Ensure `http://localhost:3000` reflects the updated journey dashboard.</pre>
     </div>
   </div>
 </section>
 
 <!-- ========================================== -->
-<!-- CONNECTED TASK CHECKLIST (tasks.md)        -->
+<!-- 2. ARCHITECTURAL WORKFLOW (MERMAID)        -->
 <!-- ========================================== -->
-<section aria-labelledby="tasks-heading" class="space-y-4">
-  <div class="flex items-center justify-between">
-    <div class="space-y-0.5">
-      <h2 id="tasks-heading" class="text-xl font-bold flex items-center gap-2 text-base-content">
-        <i data-lucide="check-square" class="w-5 h-5 text-accent"></i> Task Tracking Checklist
-      </h2>
-      <p class="text-xs text-base-content/70">Connected directly to <code>tasks.md</code> milestones (Universal URLs &middot; Nickname Registry).</p>
+<section id="architecture" class="space-y-4">
+  <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+    <i data-lucide="git-merge" class="w-6 h-6 text-secondary"></i>
+    Double-Loop BDD-as-TDD Architecture
+  </h2>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <h3 class="text-base font-bold flex items-center gap-2">
+        <i data-lucide="refresh-cw" class="w-4 h-4 text-primary"></i> Execution Cycle
+      </h3>
+      <div class="mermaid text-xs">
+flowchart TD
+    subgraph Outer ["Outer Loop: BDD Acceptance Gate"]
+        S1["1. Author spec.md with Scenarios"] --> S2["2. Bind scenarios in .bdd.test.mjs"]
+        S2 --> S3{"Scenarios Passing?"}
+        S3 -->|No / TODO| Inner
+        S3 -->|Yes| S4["4. Gate Passed · Update tasks.md"]
+    end
+
+    subgraph Inner ["Inner Loop: Unit TDD"]
+        U1["Write unit test in .test.mjs"] --> U2["Implement minimal code"]
+        U2 --> U3["Verify edge cases & refactor"]
+    end
+
+    Inner --> S3
+      </div>
     </div>
-    <span class="badge badge-success font-mono text-xs font-semibold">8 / 8 Completed (100%)</span>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <h3 class="text-base font-bold flex items-center gap-2">
+        <i data-lucide="layers" class="w-4 h-4 text-secondary"></i> Test Suite Coexistence
+      </h3>
+      <div class="mermaid text-xs">
+flowchart TD
+    Runner["node --test tests/*.test.mjs"]
+    Runner --> SuiteA["Existing Unit Tests (18+ files)"]
+    Runner --> SuiteB["Native BDD Suites (*.bdd.test.mjs)"]
+    
+    SuiteA -->|Pure JS| ResA["Fast low-level regression checks (<1s)"]
+    SuiteB -->|OpenSpec Binder| ResB["Feature requirement contract checks"]
+    
+    ResA --> Total["Unified TAP / Spec Output · Zero Conflicts"]
+    ResB --> Total
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 3. IMPLEMENTATION PLAN & TASK BREAKDOWN    -->
+<!-- ========================================== -->
+<section id="implementation-plan" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+      <i data-lucide="list-checks" class="w-6 h-6 text-accent"></i>
+      Implementation Plan &amp; Tasks
+    </h2>
+    <span class="badge badge-success text-xs font-mono">4 of 4 Phases Complete (100%)</span>
   </div>
 
-  <div class="space-y-4">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <!-- Phase 1 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between border-b border-base-200 pb-2">
-        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
-          <span class="badge badge-sm badge-primary font-mono">1</span> Declarative Feed Engine &amp; Nickname Registry in report-runtime.js
-        </h3>
-        <span class="badge badge-xs badge-success font-mono">2 Tasks Done</span>
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-success font-mono text-xs">Phase 1 Complete</span>
+        <span class="text-xs text-base-content/70">Scaffolding</span>
       </div>
-      <div class="space-y-2 text-xs">
-        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
-          <span class="text-base-content/80">
-            <strong>1.1</strong> Implement <code>#feed-registry</code> JSON resolution and universal <code>fetch()</code> in <code>initPublicFeeds()</code> supporting <code>@nickname</code> references, URL fallback, and request deduplication across identical feeds.
-          </span>
-        </label>
-        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
-          <span class="text-base-content/80">
-            <strong>1.2</strong> Implement interval polling with <code>data-feed-interval</code>, minimum backoff guards, and clean timer teardown on unmount or <code>reinitReportContent()</code>.
-          </span>
-        </label>
+      <h3 class="font-bold text-base text-base-content">Zero-Framework BDD Micro-DSL</h3>
+      <p class="text-xs text-base-content/80">
+        Created <code>tests/harness/bdd.mjs</code> providing <code>Feature</code>, <code>Scenario</code>, <code>Given</code>, <code>When</code>, <code>Then</code>, <code>And</code>, and <code>executeScenario</code> without external npm packages.
+      </p>
+      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 1.1 Implement BDD DSL primitives over node:test</div>
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 1.2 Verify execution and step error contextualization</div>
       </div>
     </div>
 
     <!-- Phase 2 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between border-b border-base-200 pb-2">
-        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
-          <span class="badge badge-sm badge-secondary font-mono">2</span> Universal Field Extraction &amp; Chart.js Ring Buffer Hook
-        </h3>
-        <span class="badge badge-xs badge-success font-mono">2 Tasks Done</span>
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-success font-mono text-xs">Phase 2 Complete</span>
+        <span class="text-xs text-base-content/70">Specification</span>
       </div>
-      <div class="space-y-2 text-xs">
-        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
-          <span class="text-base-content/80">
-            <strong>2.1</strong> Implement <code>data-feed-fields</code> key extraction in <code>report-runtime.js</code> supporting top-level and nested dot-notated paths (e.g. <code>data.val</code>).
-          </span>
-        </label>
-        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
-          <span class="text-base-content/80">
-            <strong>2.2</strong> Implement <code>[data-feed-chart]</code> hook in <code>report-runtime.js</code> to auto-append live ticks to Chart.js dataset 0 with bounded ring buffer (<code>data-feed-buffer</code>) and <code>chart.update('none')</code>.
-          </span>
-        </label>
+      <h3 class="font-bold text-base text-base-content">OpenSpec Markdown Scenario Discovery</h3>
+      <p class="text-xs text-base-content/80">
+        Created <code>tests/harness/openspec-bdd.mjs</code> to parse <code>spec.md</code> directly and auto-register unbound scenarios as <code>test.todo()</code>.
+      </p>
+      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 2.1 Implement regex scenario extraction from spec.md</div>
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 2.2 Auto-bind test functions and flag gaps as test.todo</div>
       </div>
     </div>
 
     <!-- Phase 3 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between border-b border-base-200 pb-2">
-        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
-          <span class="badge badge-sm badge-accent font-mono">3</span> Builder CLI Flags &amp; Dev Server Proxy
-        </h3>
-        <span class="badge badge-xs badge-success font-mono">3 Tasks Done</span>
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-success font-mono text-xs">Phase 3 Complete</span>
+        <span class="text-xs text-base-content/70">Verification</span>
       </div>
-      <div class="space-y-2 text-xs">
-        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
-          <span class="text-base-content/80">
-            <strong>3.1</strong> Update <code>skills/html-report/scripts/build-report.mjs</code> to auto-detect <code>data-public-feed</code> / <code>data-feed</code> signatures, include <code>datastar</code> CDN, and set <code>data-report-mode="live"</code>.
-          </span>
-        </label>
-        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
-          <span class="text-base-content/80">
-            <strong>3.2</strong> Add <code>--feed &lt;name&gt;=&lt;url&gt;</code>, <code>--freeze-feeds</code>, and <code>--feed-interval</code> CLI flags in <code>build-report.mjs</code> to inject the <code>#feed-registry</code> and snapshot live data into <code>data-feed-fallback</code> for offline archival and Playwright PDF export.
-          </span>
-        </label>
-        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
-          <span class="text-base-content/80">
-            <strong>3.3</strong> Add <code>--feed-proxy</code> option to <code>skills/html-report/scripts/serve-report.mjs</code> for routing non-CORS public endpoints.
-          </span>
-        </label>
+      <h3 class="font-bold text-base text-base-content">Pilot Verification &amp; Coexistence</h3>
+      <p class="text-xs text-base-content/80">
+        Created <code>tests/agent-tracker.bdd.test.mjs</code> and <code>tests/native-openspec-bdd.bdd.test.mjs</code> binding all scenarios with 100% pass rate.
+      </p>
+      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 3.1 Create agent-tracker BDD pilot suite</div>
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 3.2 Run node --test tests/*.test.mjs with zero regressions</div>
       </div>
     </div>
 
     <!-- Phase 4 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between border-b border-base-200 pb-2">
-        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
-          <span class="badge badge-sm badge-info font-mono">4</span> Verification &amp; Testing
-        </h3>
-        <span class="badge badge-xs badge-success font-mono">3 Tasks Done</span>
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-success font-mono text-xs">Phase 4 Complete</span>
+        <span class="text-xs text-base-content/70">Delivery</span>
       </div>
-      <div class="space-y-2 text-xs">
-        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
-          <span class="text-base-content/80">
-            <strong>4.1</strong> Create unit test suite <code>tests/public-feed.test.mjs</code> covering nickname resolution, deduplication, universal URL fetching, field extraction, timer cleanup, CLI flag snapshotting, and signal assignment.
-          </span>
-        </label>
-        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
-          <span class="text-base-content/80">
-            <strong>4.2</strong> Verify full test suite passes with <code>node --test tests/*.test.mjs</code> with zero regressions.
-          </span>
-        </label>
-        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
-          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
-          <span class="text-base-content/80">
-            <strong>4.3</strong> Validate change compliance with <code>openspec validate declarative-public-feeds</code>.
-          </span>
-        </label>
+      <h3 class="font-bold text-base text-base-content">Companion Dashboard &amp; Live Server Sync</h3>
+      <p class="text-xs text-base-content/80">
+        Updated companion <code>index.html</code>, synced live to <code>localhost:3000</code>, verified Showdown markdown viewer modal and Playwright test suite.
+      </p>
+      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 4.1 Sync index.html with live journey progress</div>
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 4.2 Validate Showdown modal & Playwright checks</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ========================================== -->
-<!-- SHOWDOWN MARKDOWN ARTIFACT VIEWER MODAL    -->
+<!-- SHOWDOWN IN-BROWSER ARTIFACT VIEWER MODAL  -->
 <!-- ========================================== -->
 <dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
   <div class="modal-box w-11/12 max-w-4xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl rounded-2xl">
     <!-- Modal Header -->
-    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50 shrink-0">
       <div class="flex items-center gap-3">
         <div class="p-2 rounded-lg bg-primary/10 text-primary">
           <i data-lucide="file-code" class="w-5 h-5"></i>
         </div>
         <div>
           <h3 id="markdown-modal-title" class="font-bold text-base text-base-content font-mono">proposal.md</h3>
+          <span id="modal-doc-title" class="hidden">proposal.md</span>
           <p class="text-2xs opacity-60">OpenSpec Planning Artifact · Formatted Markdown</p>
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button id="copy-markdown-btn" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1">
+        <button id="copy-markdown-btn" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1 font-mono">
           <i data-lucide="copy" class="w-3 h-3"></i> Copy
         </button>
-        <form method="dialog">
-          <button class="btn btn-sm btn-circle btn-ghost">✕</button>
-        </form>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-circle btn-ghost">✕</button>
       </div>
     </div>
 
     <!-- Quick Navigation Sub-Tabs -->
-    <div class="flex items-center gap-1 px-6 py-2 border-b border-base-300 bg-base-100 text-xs overflow-x-auto">
-      <button class="btn btn-xs btn-primary md-tab-btn" data-doc="proposal.md" onclick="openMarkdownViewer('proposal.md')">proposal.md</button>
-      <button class="btn btn-xs btn-ghost md-tab-btn" data-doc="design.md" onclick="openMarkdownViewer('design.md')">design.md</button>
-      <button class="btn btn-xs btn-ghost md-tab-btn" data-doc="tasks.md" onclick="openMarkdownViewer('tasks.md')">tasks.md</button>
-      <button class="btn btn-xs btn-ghost md-tab-btn" data-doc="specs/declarative-public-feeds/spec.md" onclick="openMarkdownViewer('specs/declarative-public-feeds/spec.md')">spec.md</button>
+    <div class="flex items-center gap-1 px-6 py-2 border-b border-base-300 bg-base-100 text-xs overflow-x-auto shrink-0">
+      <button class="btn btn-xs btn-primary doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="openMarkdownViewer('proposal.md')">proposal.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="design.md" onclick="openMarkdownViewer('design.md')">design.md</button>
+      <button id="tab-btn-tasks" class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="openMarkdownViewer('tasks.md')">tasks.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="specs/native-openspec-bdd/spec.md" onclick="openMarkdownViewer('specs/native-openspec-bdd/spec.md')">spec.md</button>
     </div>
 
     <!-- Rendered Markdown Body -->
-    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none text-base-content/90 font-sans">
-      <div class="flex items-center justify-center p-12">
-        <span class="loading loading-spinner loading-md text-primary"></span>
+    <div class="p-6 overflow-y-auto flex-1">
+      <div id="modal-markdown-container" class="prose prose-sm max-w-none text-base-content/90 font-sans leading-relaxed">
+        <div id="modal-markdown-body">
+          <div id="markdown-modal-body">
+            <div class="flex items-center justify-center p-12">
+              <span class="loading loading-spinner loading-md text-primary"></span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -756,49 +623,83 @@ Work through all 8 tasks across the 4 numbered phases in `tasks.md`, checking th
 </dialog>
 
 <!-- ========================================== -->
-<!-- OFFLINE ARTIFACT DATA & LIVE DEMO SCRIPT   -->
+<!-- OFFLINE ARTIFACT DATA & LIVE SCRIPTS       -->
 <!-- ========================================== -->
-<script>
-  window.OPEN_SPEC_ARTIFACTS = {
-    "proposal.md": `# Proposal: Live-Updating HTML Reports via Declarative Public Feeds\\n\\n## The North Star: HTML Reports that Live-Update in Real-Time\\nThe primary goal is to empower html-report to generate HTML reports that live-update in real time.\\n\\nUniversal Standard URLs & Nickname Registry: Declare feeds once in #feed-registry, reference everywhere with @nickname. Zero vendor lock-in.`,
-    "design.md": `# Design: Declarative Public Feeds & Client Signal Bus\\n\\n## Decisions\\n1. The Nickname Registry Pattern (#feed-registry): AI outputs URLs once; widgets reference @nickname.\\n2. Declarative Chart.js Ring Buffer: Live updates without canvas tearing.\\n3. Dedicated CLI Flags: --feed, --freeze-feeds and --feed-proxy.`,
-    "tasks.md": `# Tasks: Declarative Public Feeds & Client Signal Bus\\n\\n## 1. Declarative Feed Engine & Nickname Registry in report-runtime.js\\n- [x] 1.1 Implement #feed-registry JSON resolution & deduplication\\n- [x] 1.2 Implement interval polling with clean timer teardown\\n\\n## 2. Universal Field Extraction & Chart.js Ring Buffer Hook\\n- [x] 2.1 Implement data-feed-fields key extraction\\n- [x] 2.2 Implement [data-feed-chart] hook with bounded ring buffer\\n\\n## 3. Builder CLI Flags & Dev Server Proxy\\n- [x] 3.1 Update build-report.mjs to auto-detect data-public-feed\\n- [x] 3.2 Add --feed, --freeze-feeds and --feed-interval CLI flags\\n- [x] 3.3 Add --feed-proxy option to serve-report.mjs\\n\\n## 4. Verification & Testing\\n- [x] 4.1 Create unit test suite tests/public-feed.test.mjs\\n- [x] 4.2 Verify full test suite passes\\n- [x] 4.3 Validate change compliance`,
-    "specs/declarative-public-feeds/spec.md": `# Spec Delta: Declarative Public Feeds & Client Signal Bus\\n\\n## ADDED Requirements\\n- Requirement: Declarative Feed Discovery & Nickname Registry Ingestion\\n- Requirement: Field Extraction for Complex JSON Payloads\\n- Requirement: Declarative Chart.js Ring Buffer Hook\\n- Requirement: Playwright PDF & Offline Snapshot Fallback\\n- Requirement: Dedicated CLI Flags for Feed Freezing & Dev Server Proxy`
-  };
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Native OpenSpec BDD-as-TDD Verification Harness\n\n## Why\nOpenSpec specifications in this repository already declare behavior and acceptance criteria in Gherkin-style **Given-When-Then** scenarios. However, executing and verifying these scenarios currently requires developers or agents to manually translate them into arbitrary test assertions without a unified behavioral DSL or automated spec drift detection.\n\nThird-party BDD frameworks like Cucumber impose heavy npm dependency trees, complex step registries, regex matching overhead, and fractured state passing—violating the project's zero-root-dependency, lightweight ESM philosophy.\n\nWe need a **zero-framework, native BDD-as-TDD test harness** that:\n1. Runs directly on Node.js built-ins (`node:test`, `node:assert/strict`) alongside our existing 18+ test suites without rewriting anything.\n2. Uses OpenSpec `spec.md` directly as the executable feature specification.\n3. Enables **Double-Loop BDD-as-TDD**: outer BDD scenario gate (Red &rarr; Green) paired with inner unit test cycles.\n4. Auto-detects unimplemented scenarios in `spec.md` as `test.todo()`, ensuring complete testability and quality gates.\n\n## What Changes\n- **Zero-Framework BDD DSL (`tests/harness/bdd.mjs`)**: Lightweight, pure ESM wrapper over `node:test` providing `Feature`, `Scenario`, `Given`, `When`, `Then`, and `And` with step execution tracking and failure isolation.\n- **OpenSpec Spec-to-BDD Binder (`tests/harness/openspec-bdd.mjs`)**: Parses `spec.md` markdown files directly, auto-binding scenarios to test functions and registering unbound scenarios as `test.todo()`.\n- **Pilot BDD Suite (`tests/agent-tracker.bdd.test.mjs`)**: Direct BDD verification of `openspec/specs/agent-tracker/spec.md` scenarios, proving side-by-side coexistence with existing unit tests.\n- **Interactive Companion Plan & Copyable Prompt Dashboard (`index.html`)**: Interactive dashboard visualizing the plan, stage stepper (`Planning` &rarr; `Verifying` &rarr; `Shipped`), and a dedicated 1-click copy card containing the BDD-as-TDD prompt.",
+  "design.md": "# Design: Native OpenSpec BDD-as-TDD Verification Harness\n\n## Context\nSee [proposal.md](proposal.md) for background and motivation.\n\nThe repository's test architecture relies on native Node.js ESM test runners (`node:test`, `node:assert/strict`) for rapid execution (<2s across all 18+ suites) and avoids adding npm packages to the repository root. At the same time, OpenSpec specifications are authored in Markdown with explicit `#### Scenario:` headings containing `GIVEN`, `WHEN`, and `THEN` steps.\n\nThis design establishes a minimal, zero-dependency BDD harness that transforms OpenSpec markdown files into executable test suites, enabling a structured **Double-Loop BDD-as-TDD** workflow.\n\n## Decisions\n\n### 1. Native ESM Primitives over Cucumber CLI\n- Build `tests/harness/bdd.mjs` as a direct wrapper around `node:test`'s `describe` and `it` with `AsyncLocalStorage`.\n- Keeps the root workspace 100% dependency-free, boots in milliseconds, runs in any environment with standard Node.js >= 18.\n\n### 2. Direct OpenSpec `spec.md` Parsing for Scenario Binding\n- In `tests/harness/openspec-bdd.mjs`, parse Markdown headers matching `/^####\\s+Scenario:\\s*(.+)$/gm` directly from the feature's `spec.md`.\n- Eliminates the 'Two Masters' problem. Developers and AI agents only edit the OpenSpec `spec.md`.\n\n### 3. Graceful Todo Drift Detection\n- If a scenario in `spec.md` is not present in the test binder, automatically invoke `test.todo(scenarioName)`.\n- Enables true BDD-as-TDD without crashing CI suites.",
+  "tasks.md": "# Tasks: Native OpenSpec BDD-as-TDD Verification Harness\n\n## 1. Zero-Framework BDD Micro-DSL\n- [x] 1.1 Implement `tests/harness/bdd.mjs` providing `Feature`, `Scenario`, `Given`, `When`, `Then`, `And` wrapping `node:test` with step execution tracking and failure contextualization\n- [x] 1.2 Verify `tests/harness/bdd.mjs` executes sequential and async steps correctly using a self-test\n\n## 2. OpenSpec Markdown Scenario Discovery & Binder\n- [x] 2.1 Implement `tests/harness/openspec-bdd.mjs` with regex-based scenario parsing (`#### Scenario: <title>`) from any `spec.md` file\n- [x] 2.2 Implement auto-binding logic that invokes test functions for bound scenarios and registers unbound scenarios as `test.todo()`, and verify with unit tests\n\n## 3. Pilot BDD Verification & Mixed-Suite Coexistence\n- [x] 3.1 Create `tests/agent-tracker.bdd.test.mjs` binding scenarios from `openspec/specs/agent-tracker/spec.md` using the native BDD harness\n- [x] 3.2 Run full test suite (`node --test tests/*.test.mjs`) to verify zero regressions across all 18+ existing test suites and flawless coexistence\n\n## 4. Companion HTML Report & Copyable BDD-TDD Prompt Dashboard\n- [x] 4.1 Generate `openspec/changes/native-openspec-bdd/index.html` presenting the architecture, interactive Mermaid workflows, direct backlinks to markdown artifacts, and a prominent 1-click copyable BDD-as-TDD prompt card\n- [x] 4.2 Sync `index.html` with `implementation-progress.html` and verify live reload on `http://localhost:3000`",
+  "specs/native-openspec-bdd/spec.md": "# Spec Delta: Native OpenSpec BDD-as-TDD Verification Harness\n\n## Purpose\nProvides a zero-framework, native Node.js BDD domain-specific language and OpenSpec markdown scenario binder that enables Double-Loop BDD-as-TDD verification running side-by-side with existing unit tests.\n\n## ADDED Requirements\n\n### Requirement: Zero-Framework BDD Domain-Specific Language\nThe test harness SHALL provide native ESM BDD primitives (`Feature`, `Scenario`, `Given`, `When`, `Then`, `And`) implemented directly on top of Node.js `node:test` and `node:assert/strict` without third-party frameworks.\n\n#### Scenario: Executing a structured BDD scenario\n- **GIVEN** a test suite importing `Feature` and `Scenario` from the BDD harness\n- **WHEN** a scenario executes sequential `Given`, `When`, and `Then` step functions\n- **THEN** the harness MUST run the scenario under native `node:test`, verify assertions, and preserve step execution order.\n\n#### Scenario: Step assertion failure diagnostics\n- **GIVEN** a scenario with a failing assertion inside a `Then` step\n- **WHEN** the assertion throws an error\n- **THEN** the harness MUST fail the test with actionable step context identifying the failed step name.\n\n---\n\n### Requirement: OpenSpec Markdown Scenario Discovery & Binding\nThe test harness SHALL provide an OpenSpec scenario loader that parses any OpenSpec `spec.md` markdown file, discovers declared `#### Scenario:` titles, and binds them to executable test implementations.\n\n#### Scenario: Executing bound OpenSpec scenarios\n- **GIVEN** an OpenSpec `spec.md` containing defined scenarios\n- **WHEN** a test file binds matching scenario titles using `bindOpenSpec()`\n- **THEN** the harness MUST execute each bound scenario as a distinct test case under `node:test`.\n\n#### Scenario: Auto-registering unbound scenarios as pending todos\n- **GIVEN** an OpenSpec `spec.md` with declared scenarios that have not yet been implemented in the test file\n- **WHEN** `bindOpenSpec()` loads the specification\n- **THEN** the harness MUST register each unimplemented scenario as `test.todo()`, visibly signaling pending tasks without failing the overall suite.\n\n---\n\n### Requirement: Double-Loop Coexistence with Standard Test Suites\nThe BDD harness SHALL execute seamlessly alongside all existing `node:test` suites when invoked with standard wildcards (`node --test tests/*.test.mjs`) without polluting global scope or breaking unit test runners.\n\n#### Scenario: Running mixed unit and BDD suites simultaneously\n- **GIVEN** a test directory containing both traditional unit test files and `.bdd.test.mjs` files\n- **WHEN** `node --test tests/*.test.mjs` is executed\n- **THEN** the test runner MUST execute all suites in a single pass, outputting standard TAP or spec reports with zero runner collisions."
+}
+</script>
 
-  let _showdownConverter = null;
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
   function getShowdownConverter() {
-    if (!_showdownConverter && window.showdown) {
-      _showdownConverter = new window.showdown.Converter({
+    if (!showdownConverter && window.showdown) {
+      showdownConverter = new window.showdown.Converter({
         tables: true,
         tasklists: true,
         strikethrough: true,
-        emoji: true,
+        ghCodeBlocks: true,
+        simplifiedAutoLink: true,
         openLinksInNewWindow: false
       });
     }
-    return _showdownConverter;
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    if (window.OPEN_SPEC_ARTIFACTS) return window.OPEN_SPEC_ARTIFACTS;
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
   }
 
   async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
     const modal = document.getElementById("markdown-viewer-modal");
-    const titleEl = document.getElementById("markdown-modal-title");
-    const bodyEl = document.getElementById("markdown-modal-body");
     if (!modal) return;
-
-    if (titleEl) titleEl.textContent = docName;
-    if (bodyEl) {
-      bodyEl.innerHTML = '<div class="flex items-center justify-center p-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
-    }
-
     if (typeof modal.showModal === "function") {
       modal.showModal();
     } else {
       modal.setAttribute("open", "true");
     }
+    await renderMarkdownDoc(activeDocKey);
+  }
 
-    const tabBtns = document.querySelectorAll(".md-tab-btn");
-    tabBtns.forEach((btn) => {
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    activeDocKey = docName;
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    const titleEl = document.getElementById("markdown-modal-title");
+    const hiddenTitleEl = document.getElementById("modal-doc-title");
+    const bodyEls = [
+      document.getElementById("modal-markdown-container"),
+      document.getElementById("modal-markdown-body"),
+      document.getElementById("markdown-modal-body")
+    ];
+
+    if (titleEl) titleEl.textContent = docName;
+    if (hiddenTitleEl) hiddenTitleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn, .md-tab-btn").forEach((btn) => {
       if (btn.getAttribute("data-doc") === docName) {
         btn.classList.add("btn-primary");
         btn.classList.remove("btn-ghost");
@@ -808,196 +709,73 @@ Work through all 8 tasks across the 4 numbered phases in `tasks.md`, checking th
       }
     });
 
-    let markdownText = "";
-    try {
-      const res = await fetch("/" + docName + "?raw=true");
-      if (res.ok) {
-        markdownText = await res.text();
-      } else {
-        markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\\nFile not found.";
-      }
-    } catch (_) {
-      markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\\nFile loaded from offline cache.";
+    const artifacts = getOpenSpecArtifacts();
+    let rawContent = artifacts[docName];
+
+    if (!rawContent) {
+      try {
+        const res = await fetch("/" + docName);
+        if (res.ok) {
+          rawContent = await res.text();
+        }
+      } catch (_) {}
     }
 
-    window._currentMarkdownRaw = markdownText;
+    if (!rawContent) {
+      rawContent = "# " + docName + "\n\nArtifact content loading...";
+    }
 
     const converter = getShowdownConverter();
-    if (converter && bodyEl) {
-      bodyEl.innerHTML = converter.makeHtml(markdownText);
-    } else if (bodyEl) {
-      bodyEl.textContent = markdownText;
-    }
+    const html = converter ? converter.makeHtml(rawContent) : "<pre>" + rawContent + "</pre>";
 
+    const targetEl = document.getElementById("markdown-modal-body") || document.getElementById("modal-markdown-body") || document.getElementById("modal-markdown-container");
+    if (targetEl) {
+      targetEl.innerHTML = html;
+    }
     if (window.lucide) window.lucide.createIcons();
   }
 
   function copyMarkdownToClipboard() {
-    const text = window._currentMarkdownRaw || "";
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(() => {
-        const btn = document.getElementById("copy-markdown-btn");
-        if (btn) {
-          btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!';
-          if (window.lucide) window.lucide.createIcons();
-          setTimeout(() => {
-            btn.innerHTML = '<i data-lucide="copy" class="w-3 h-3"></i> Copy';
-            if (window.lucide) window.lucide.createIcons();
-          }, 2000);
-        }
-      });
-    }
-  }
-
-  function copyAgentPrompt() {
-    const promptEl = document.getElementById("agent-prompt-text");
-    if (!promptEl) return;
-    const text = promptEl.value;
-
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(() => {
-        const btnLabel = document.getElementById("copy-prompt-label");
-        const btnIcon = document.getElementById("copy-prompt-icon");
-        if (btnLabel) btnLabel.textContent = "Copied to Clipboard!";
-        if (btnIcon) btnIcon.setAttribute("data-lucide", "check");
+    const artifacts = getOpenSpecArtifacts();
+    const text = artifacts[activeDocKey] || "";
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById("copy-markdown-btn");
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!';
         if (window.lucide) window.lucide.createIcons();
-
         setTimeout(() => {
-          if (btnLabel) btnLabel.textContent = "Copy Implementation Prompt";
-          if (btnIcon) btnIcon.setAttribute("data-lucide", "copy");
+          btn.innerHTML = orig;
           if (window.lucide) window.lucide.createIcons();
-        }, 2500);
-      });
-    }
-  }
-
-  // ==========================================
-  // REAL-TIME LIVE UPDATE SHOWCASE SIMULATOR
-  // ==========================================
-  let _liveChartInstance = null;
-  let _liveSimulationTimer = null;
-  let _liveIsRunning = true;
-  let _btcBase = 68420;
-  let _weatherBase = 18.4;
-  let _githubBase = 82540;
-
-  function initLiveShowcaseChart() {
-    const canvas = document.getElementById("liveShowcaseChart");
-    if (!canvas || !window.Chart) return;
-    const ctx = canvas.getContext("2d");
-
-    const initialLabels = [new Date().toLocaleTimeString()];
-    const initialData = [_btcBase];
-
-    _liveChartInstance = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: initialLabels,
-        datasets: [{
-          label: "Bitcoin / USD Live Ticks (@crypto)",
-          data: initialData,
-          borderColor: "#3b82f6",
-          backgroundColor: "rgba(59, 130, 246, 0.08)",
-          borderWidth: 2.5,
-          tension: 0.3,
-          fill: true,
-          pointRadius: 3,
-          pointHoverRadius: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: false,
-        scales: {
-          x: { grid: { display: false } },
-          y: { grid: { color: "rgba(150, 150, 150, 0.1)" } }
-        }
+        }, 2000);
       }
     });
-
-    startLiveSimulation();
   }
 
-  function performLiveTick() {
-    const btcDrift = (Math.random() - 0.48) * 85;
-    _btcBase = Math.max(50000, Math.round(_btcBase + btcDrift));
+  function copyBddPrompt() {
+    const text = document.getElementById("prompt-content").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById("copy-prompt-btn");
+      const btnText = document.getElementById("copy-btn-text");
+      const btnIcon = document.getElementById("copy-btn-icon");
 
-    const tempDrift = (Math.random() - 0.5) * 0.4;
-    _weatherBase = parseFloat((_weatherBase + tempDrift).toFixed(1));
+      btn.classList.remove("btn-primary");
+      btn.classList.add("btn-success");
+      btnText.textContent = "Copied to Clipboard!";
+      if (btnIcon) btnIcon.setAttribute("data-lucide", "check");
+      if (window.lucide) window.lucide.createIcons();
 
-    if (Math.random() > 0.6) _githubBase += 1;
-
-    const nowStr = new Date().toLocaleTimeString();
-
-    // 1. Update BTC Card with flash
-    const btcValEl = document.getElementById("crypto-price-val");
-    const btcBadge = document.getElementById("crypto-delta-badge");
-    if (btcValEl) {
-      btcValEl.textContent = "$" + _btcBase.toLocaleString();
-      btcValEl.classList.remove("text-success", "text-error");
-      btcValEl.classList.add(btcDrift >= 0 ? "text-success" : "text-error");
-      setTimeout(() => { btcValEl.classList.remove("text-success", "text-error"); }, 600);
-    }
-    if (btcBadge) {
-      const pct = ((btcDrift / _btcBase) * 100).toFixed(2);
-      btcBadge.textContent = (btcDrift >= 0 ? "+" : "") + pct + "%";
-      btcBadge.className = "badge badge-xs font-mono font-bold " + (btcDrift >= 0 ? "badge-success" : "badge-error");
-    }
-
-    // 2. Update Weather Card
-    const tempEl = document.getElementById("weather-temp-val");
-    if (tempEl) tempEl.textContent = _weatherBase + " °C";
-
-    // 3. Update GitHub Stars Card
-    const starsEl = document.getElementById("github-stars-val");
-    if (starsEl) starsEl.textContent = _githubBase.toLocaleString();
-
-    // 4. Update Chart.js Ring Buffer
-    if (_liveChartInstance) {
-      _liveChartInstance.data.labels.push(nowStr);
-      _liveChartInstance.data.datasets[0].data.push(_btcBase);
-      if (_liveChartInstance.data.labels.length > 20) {
-        _liveChartInstance.data.labels.shift();
-        _liveChartInstance.data.datasets[0].data.shift();
-      }
-      _liveChartInstance.update("none");
-    }
-  }
-
-  function startLiveSimulation() {
-    if (_liveSimulationTimer) clearInterval(_liveSimulationTimer);
-    _liveSimulationTimer = setInterval(performLiveTick, 2000);
-    _liveIsRunning = true;
-    updateSimulationControlsUI();
-  }
-
-  function pauseLiveSimulation() {
-    if (_liveSimulationTimer) clearInterval(_liveSimulationTimer);
-    _liveSimulationTimer = null;
-    _liveIsRunning = false;
-    updateSimulationControlsUI();
-  }
-
-  function toggleLiveFeedSimulation() {
-    if (_liveIsRunning) pauseLiveSimulation();
-    else startLiveSimulation();
-  }
-
-  function triggerManualTick() {
-    performLiveTick();
-  }
-
-  function updateSimulationControlsUI() {
-    const btnText = document.getElementById("live-btn-text");
-    if (btnText) btnText.textContent = _liveIsRunning ? "Pause Live Stream" : "Resume Stream";
-  }
-
-  // Boot chart when document is ready
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initLiveShowcaseChart);
-  } else {
-    setTimeout(initLiveShowcaseChart, 150);
+      setTimeout(() => {
+        btn.classList.remove("btn-success");
+        btn.classList.add("btn-primary");
+        btnText.textContent = "Copy Prompt to Clipboard";
+        if (btnIcon) btnIcon.setAttribute("data-lucide", "clipboard-copy");
+        if (window.lucide) window.lucide.createIcons();
+      }, 2500);
+    }).catch(err => {
+      alert("Failed to copy: " + err);
+    });
   }
 </script>
   </main>

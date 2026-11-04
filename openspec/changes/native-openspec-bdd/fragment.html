@@ -1,0 +1,457 @@
+<!-- ========================================== -->
+<!-- HERO BANNER & JOURNEY STEPPER              -->
+<!-- ========================================== -->
+<header class="space-y-6 border-b border-base-300 pb-8">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">native-openspec-bdd</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1">
+      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Phase 5: Feature Complete &amp; Verified
+    </span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1 animate-pulse">
+      <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Zero External Frameworks
+    </span>
+    <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
+      <i data-lucide="repeat" class="w-3.5 h-3.5"></i> Double-Loop BDD-as-TDD
+    </span>
+  </div>
+
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div class="space-y-2">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+        Native OpenSpec BDD-as-TDD Verification Harness
+      </h1>
+      <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+        Establish a zero-framework BDD test harness directly on native <code>node:test</code> and <code>node:assert/strict</code> that transforms OpenSpec <code>spec.md</code> files into executable test gates. Runs side-by-side with our existing 18+ test suites with zero external dependencies and zero regressions.
+      </p>
+    </div>
+
+    <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+      </button>
+      <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/native-openspec-bdd/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
+      </button>
+    </div>
+  </div>
+
+  <!-- Mandatory Journey Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+    <div class="flex items-center justify-between text-xs font-bold text-base-content/70">
+      <span class="flex items-center gap-1.5">
+        <i data-lucide="git-pull-request" class="w-4 h-4 text-primary"></i> Current Journey State
+      </span>
+      <span class="font-mono text-success">Stage 5 Active · Verified &amp; Shipped</span>
+    </div>
+    <div class="w-full overflow-x-auto py-2">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
+        <li id="stepper-phase-2" class="step step-primary">2. Planning</li>
+        <li id="stepper-phase-3" class="step step-primary">3. Implementing</li>
+        <li id="stepper-phase-4" class="step step-primary">4. Verifying</li>
+        <li id="stepper-phase-5" class="step step-primary">5. Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- ========================================== -->
+<!-- 1. COPYABLE PROMPT CARD (PRIMARY GOAL)     -->
+<!-- ========================================== -->
+<section id="copyable-prompt" class="space-y-4">
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="copy" class="w-6 h-6 text-primary"></i>
+        Copyable BDD-as-TDD Verification Prompt
+      </h2>
+      <p class="text-xs sm:text-sm text-base-content/70">
+        Copy this prompt directly into any agent session (Antigravity, Claude Code, Codex) to execute features under the BDD-as-TDD workflow.
+      </p>
+    </div>
+
+    <button id="copy-prompt-btn" type="button" onclick="copyBddPrompt()" class="btn btn-primary gap-2 shadow-sm hover:scale-105 active:scale-95 transition-all">
+      <i id="copy-btn-icon" data-lucide="clipboard-copy" class="w-4 h-4"></i>
+      <span id="copy-btn-text">Copy Prompt to Clipboard</span>
+    </button>
+  </div>
+
+  <div class="card bg-base-200/60 border border-base-300 shadow-md overflow-hidden">
+    <div class="bg-base-300/80 px-4 py-2.5 flex items-center justify-between border-b border-base-300 text-xs font-mono">
+      <span class="flex items-center gap-2 text-base-content/80">
+        <i data-lucide="terminal" class="w-4 h-4 text-accent"></i>
+        reusable-bdd-tdd-prompt.md
+      </span>
+      <span class="badge badge-sm badge-success">Verified &amp; Ready</span>
+    </div>
+    <div class="p-4 sm:p-6 bg-base-100">
+      <pre id="prompt-content" class="text-xs sm:text-sm font-mono whitespace-pre-wrap leading-relaxed text-base-content/90 overflow-x-auto select-all">We are implementing the feature `&lt;feature-name&gt;` using OpenSpec and our zero-framework BDD-as-TDD workflow.
+
+Follow these strict constraints:
+1. Zero External Frameworks:
+   - Do not install Cucumber or third-party test runners.
+   - Use our native Node.js test harness: `node:test`, `node:assert/strict`, `tests/harness/bdd.mjs`, and `tests/harness/openspec-bdd.mjs`.
+
+2. Double-Loop BDD-as-TDD Workflow:
+   - Step 1 (Outer Loop - Red Scenario Gate):
+     Read the scenarios in `openspec/specs/&lt;feature-name&gt;/spec.md` (or the change delta spec) and create `tests/&lt;feature-name&gt;.bdd.test.mjs`.
+     Bind the Given-When-Then scenarios using `bindOpenSpec()`. Run `node --test tests/&lt;feature-name&gt;.bdd.test.mjs` to verify scenarios show as `todo` or failing.
+   - Step 2 (Inner Loop - Unit TDD):
+     Write focused unit tests in `tests/&lt;feature-name&gt;.test.mjs` for low-level algorithms, edge cases, and helper functions. Implement minimal code to turn them green.
+   - Step 3 (Outer Loop - Green Scenario Gate):
+     Implement the scenario steps in `tests/&lt;feature-name&gt;.bdd.test.mjs` until all BDD acceptance scenarios pass.
+
+3. Repository Verification Gate:
+   - Execute the complete test suite: `node --test tests/*.test.mjs`.
+   - Ensure zero regressions against all existing test suites.
+   - Update `tasks.md` checklist and the companion `index.html` to reflect live journey progress.
+   - Ensure `http://localhost:3000` reflects the updated journey dashboard.</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 2. ARCHITECTURAL WORKFLOW (MERMAID)        -->
+<!-- ========================================== -->
+<section id="architecture" class="space-y-4">
+  <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+    <i data-lucide="git-merge" class="w-6 h-6 text-secondary"></i>
+    Double-Loop BDD-as-TDD Architecture
+  </h2>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <h3 class="text-base font-bold flex items-center gap-2">
+        <i data-lucide="refresh-cw" class="w-4 h-4 text-primary"></i> Execution Cycle
+      </h3>
+      <div class="mermaid text-xs">
+flowchart TD
+    subgraph Outer ["Outer Loop: BDD Acceptance Gate"]
+        S1["1. Author spec.md with Scenarios"] --> S2["2. Bind scenarios in .bdd.test.mjs"]
+        S2 --> S3{"Scenarios Passing?"}
+        S3 -->|No / TODO| Inner
+        S3 -->|Yes| S4["4. Gate Passed · Update tasks.md"]
+    end
+
+    subgraph Inner ["Inner Loop: Unit TDD"]
+        U1["Write unit test in .test.mjs"] --> U2["Implement minimal code"]
+        U2 --> U3["Verify edge cases & refactor"]
+    end
+
+    Inner --> S3
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <h3 class="text-base font-bold flex items-center gap-2">
+        <i data-lucide="layers" class="w-4 h-4 text-secondary"></i> Test Suite Coexistence
+      </h3>
+      <div class="mermaid text-xs">
+flowchart TD
+    Runner["node --test tests/*.test.mjs"]
+    Runner --> SuiteA["Existing Unit Tests (18+ files)"]
+    Runner --> SuiteB["Native BDD Suites (*.bdd.test.mjs)"]
+    
+    SuiteA -->|Pure JS| ResA["Fast low-level regression checks (<1s)"]
+    SuiteB -->|OpenSpec Binder| ResB["Feature requirement contract checks"]
+    
+    ResA --> Total["Unified TAP / Spec Output · Zero Conflicts"]
+    ResB --> Total
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 3. IMPLEMENTATION PLAN & TASK BREAKDOWN    -->
+<!-- ========================================== -->
+<section id="implementation-plan" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+      <i data-lucide="list-checks" class="w-6 h-6 text-accent"></i>
+      Implementation Plan &amp; Tasks
+    </h2>
+    <span class="badge badge-success text-xs font-mono">4 of 4 Phases Complete (100%)</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Phase 1 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-success font-mono text-xs">Phase 1 Complete</span>
+        <span class="text-xs text-base-content/70">Scaffolding</span>
+      </div>
+      <h3 class="font-bold text-base text-base-content">Zero-Framework BDD Micro-DSL</h3>
+      <p class="text-xs text-base-content/80">
+        Created <code>tests/harness/bdd.mjs</code> providing <code>Feature</code>, <code>Scenario</code>, <code>Given</code>, <code>When</code>, <code>Then</code>, <code>And</code>, and <code>executeScenario</code> without external npm packages.
+      </p>
+      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 1.1 Implement BDD DSL primitives over node:test</div>
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 1.2 Verify execution and step error contextualization</div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-success font-mono text-xs">Phase 2 Complete</span>
+        <span class="text-xs text-base-content/70">Specification</span>
+      </div>
+      <h3 class="font-bold text-base text-base-content">OpenSpec Markdown Scenario Discovery</h3>
+      <p class="text-xs text-base-content/80">
+        Created <code>tests/harness/openspec-bdd.mjs</code> to parse <code>spec.md</code> directly and auto-register unbound scenarios as <code>test.todo()</code>.
+      </p>
+      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 2.1 Implement regex scenario extraction from spec.md</div>
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 2.2 Auto-bind test functions and flag gaps as test.todo</div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-success font-mono text-xs">Phase 3 Complete</span>
+        <span class="text-xs text-base-content/70">Verification</span>
+      </div>
+      <h3 class="font-bold text-base text-base-content">Pilot Verification &amp; Coexistence</h3>
+      <p class="text-xs text-base-content/80">
+        Created <code>tests/agent-tracker.bdd.test.mjs</code> and <code>tests/native-openspec-bdd.bdd.test.mjs</code> binding all scenarios with 100% pass rate.
+      </p>
+      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 3.1 Create agent-tracker BDD pilot suite</div>
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 3.2 Run node --test tests/*.test.mjs with zero regressions</div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-success font-mono text-xs">Phase 4 Complete</span>
+        <span class="text-xs text-base-content/70">Delivery</span>
+      </div>
+      <h3 class="font-bold text-base text-base-content">Companion Dashboard &amp; Live Server Sync</h3>
+      <p class="text-xs text-base-content/80">
+        Updated companion <code>index.html</code>, synced live to <code>localhost:3000</code>, verified Showdown markdown viewer modal and Playwright test suite.
+      </p>
+      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 4.1 Sync index.html with live journey progress</div>
+        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 4.2 Validate Showdown modal & Playwright checks</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SHOWDOWN IN-BROWSER ARTIFACT VIEWER MODAL  -->
+<!-- ========================================== -->
+<dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box w-11/12 max-w-4xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl rounded-2xl">
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50 shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="p-2 rounded-lg bg-primary/10 text-primary">
+          <i data-lucide="file-code" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 id="markdown-modal-title" class="font-bold text-base text-base-content font-mono">proposal.md</h3>
+          <span id="modal-doc-title" class="hidden">proposal.md</span>
+          <p class="text-2xs opacity-60">OpenSpec Planning Artifact · Formatted Markdown</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="copy-markdown-btn" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1 font-mono">
+          <i data-lucide="copy" class="w-3 h-3"></i> Copy
+        </button>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-circle btn-ghost">✕</button>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Sub-Tabs -->
+    <div class="flex items-center gap-1 px-6 py-2 border-b border-base-300 bg-base-100 text-xs overflow-x-auto shrink-0">
+      <button class="btn btn-xs btn-primary doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="openMarkdownViewer('proposal.md')">proposal.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="design.md" onclick="openMarkdownViewer('design.md')">design.md</button>
+      <button id="tab-btn-tasks" class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="openMarkdownViewer('tasks.md')">tasks.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="specs/native-openspec-bdd/spec.md" onclick="openMarkdownViewer('specs/native-openspec-bdd/spec.md')">spec.md</button>
+    </div>
+
+    <!-- Rendered Markdown Body -->
+    <div class="p-6 overflow-y-auto flex-1">
+      <div id="modal-markdown-container" class="prose prose-sm max-w-none text-base-content/90 font-sans leading-relaxed">
+        <div id="modal-markdown-body">
+          <div id="markdown-modal-body">
+            <div class="flex items-center justify-center p-12">
+              <span class="loading loading-spinner loading-md text-primary"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- ========================================== -->
+<!-- OFFLINE ARTIFACT DATA & LIVE SCRIPTS       -->
+<!-- ========================================== -->
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Native OpenSpec BDD-as-TDD Verification Harness\n\n## Why\nOpenSpec specifications in this repository already declare behavior and acceptance criteria in Gherkin-style **Given-When-Then** scenarios. However, executing and verifying these scenarios currently requires developers or agents to manually translate them into arbitrary test assertions without a unified behavioral DSL or automated spec drift detection.\n\nThird-party BDD frameworks like Cucumber impose heavy npm dependency trees, complex step registries, regex matching overhead, and fractured state passing—violating the project's zero-root-dependency, lightweight ESM philosophy.\n\nWe need a **zero-framework, native BDD-as-TDD test harness** that:\n1. Runs directly on Node.js built-ins (`node:test`, `node:assert/strict`) alongside our existing 18+ test suites without rewriting anything.\n2. Uses OpenSpec `spec.md` directly as the executable feature specification.\n3. Enables **Double-Loop BDD-as-TDD**: outer BDD scenario gate (Red &rarr; Green) paired with inner unit test cycles.\n4. Auto-detects unimplemented scenarios in `spec.md` as `test.todo()`, ensuring complete testability and quality gates.\n\n## What Changes\n- **Zero-Framework BDD DSL (`tests/harness/bdd.mjs`)**: Lightweight, pure ESM wrapper over `node:test` providing `Feature`, `Scenario`, `Given`, `When`, `Then`, and `And` with step execution tracking and failure isolation.\n- **OpenSpec Spec-to-BDD Binder (`tests/harness/openspec-bdd.mjs`)**: Parses `spec.md` markdown files directly, auto-binding scenarios to test functions and registering unbound scenarios as `test.todo()`.\n- **Pilot BDD Suite (`tests/agent-tracker.bdd.test.mjs`)**: Direct BDD verification of `openspec/specs/agent-tracker/spec.md` scenarios, proving side-by-side coexistence with existing unit tests.\n- **Interactive Companion Plan & Copyable Prompt Dashboard (`index.html`)**: Interactive dashboard visualizing the plan, stage stepper (`Planning` &rarr; `Verifying` &rarr; `Shipped`), and a dedicated 1-click copy card containing the BDD-as-TDD prompt.",
+  "design.md": "# Design: Native OpenSpec BDD-as-TDD Verification Harness\n\n## Context\nSee [proposal.md](proposal.md) for background and motivation.\n\nThe repository's test architecture relies on native Node.js ESM test runners (`node:test`, `node:assert/strict`) for rapid execution (<2s across all 18+ suites) and avoids adding npm packages to the repository root. At the same time, OpenSpec specifications are authored in Markdown with explicit `#### Scenario:` headings containing `GIVEN`, `WHEN`, and `THEN` steps.\n\nThis design establishes a minimal, zero-dependency BDD harness that transforms OpenSpec markdown files into executable test suites, enabling a structured **Double-Loop BDD-as-TDD** workflow.\n\n## Decisions\n\n### 1. Native ESM Primitives over Cucumber CLI\n- Build `tests/harness/bdd.mjs` as a direct wrapper around `node:test`'s `describe` and `it` with `AsyncLocalStorage`.\n- Keeps the root workspace 100% dependency-free, boots in milliseconds, runs in any environment with standard Node.js >= 18.\n\n### 2. Direct OpenSpec `spec.md` Parsing for Scenario Binding\n- In `tests/harness/openspec-bdd.mjs`, parse Markdown headers matching `/^####\\s+Scenario:\\s*(.+)$/gm` directly from the feature's `spec.md`.\n- Eliminates the 'Two Masters' problem. Developers and AI agents only edit the OpenSpec `spec.md`.\n\n### 3. Graceful Todo Drift Detection\n- If a scenario in `spec.md` is not present in the test binder, automatically invoke `test.todo(scenarioName)`.\n- Enables true BDD-as-TDD without crashing CI suites.",
+  "tasks.md": "# Tasks: Native OpenSpec BDD-as-TDD Verification Harness\n\n## 1. Zero-Framework BDD Micro-DSL\n- [x] 1.1 Implement `tests/harness/bdd.mjs` providing `Feature`, `Scenario`, `Given`, `When`, `Then`, `And` wrapping `node:test` with step execution tracking and failure contextualization\n- [x] 1.2 Verify `tests/harness/bdd.mjs` executes sequential and async steps correctly using a self-test\n\n## 2. OpenSpec Markdown Scenario Discovery & Binder\n- [x] 2.1 Implement `tests/harness/openspec-bdd.mjs` with regex-based scenario parsing (`#### Scenario: <title>`) from any `spec.md` file\n- [x] 2.2 Implement auto-binding logic that invokes test functions for bound scenarios and registers unbound scenarios as `test.todo()`, and verify with unit tests\n\n## 3. Pilot BDD Verification & Mixed-Suite Coexistence\n- [x] 3.1 Create `tests/agent-tracker.bdd.test.mjs` binding scenarios from `openspec/specs/agent-tracker/spec.md` using the native BDD harness\n- [x] 3.2 Run full test suite (`node --test tests/*.test.mjs`) to verify zero regressions across all 18+ existing test suites and flawless coexistence\n\n## 4. Companion HTML Report & Copyable BDD-TDD Prompt Dashboard\n- [x] 4.1 Generate `openspec/changes/native-openspec-bdd/index.html` presenting the architecture, interactive Mermaid workflows, direct backlinks to markdown artifacts, and a prominent 1-click copyable BDD-as-TDD prompt card\n- [x] 4.2 Sync `index.html` with `implementation-progress.html` and verify live reload on `http://localhost:3000`",
+  "specs/native-openspec-bdd/spec.md": "# Spec Delta: Native OpenSpec BDD-as-TDD Verification Harness\n\n## Purpose\nProvides a zero-framework, native Node.js BDD domain-specific language and OpenSpec markdown scenario binder that enables Double-Loop BDD-as-TDD verification running side-by-side with existing unit tests.\n\n## ADDED Requirements\n\n### Requirement: Zero-Framework BDD Domain-Specific Language\nThe test harness SHALL provide native ESM BDD primitives (`Feature`, `Scenario`, `Given`, `When`, `Then`, `And`) implemented directly on top of Node.js `node:test` and `node:assert/strict` without third-party frameworks.\n\n#### Scenario: Executing a structured BDD scenario\n- **GIVEN** a test suite importing `Feature` and `Scenario` from the BDD harness\n- **WHEN** a scenario executes sequential `Given`, `When`, and `Then` step functions\n- **THEN** the harness MUST run the scenario under native `node:test`, verify assertions, and preserve step execution order.\n\n#### Scenario: Step assertion failure diagnostics\n- **GIVEN** a scenario with a failing assertion inside a `Then` step\n- **WHEN** the assertion throws an error\n- **THEN** the harness MUST fail the test with actionable step context identifying the failed step name.\n\n---\n\n### Requirement: OpenSpec Markdown Scenario Discovery & Binding\nThe test harness SHALL provide an OpenSpec scenario loader that parses any OpenSpec `spec.md` markdown file, discovers declared `#### Scenario:` titles, and binds them to executable test implementations.\n\n#### Scenario: Executing bound OpenSpec scenarios\n- **GIVEN** an OpenSpec `spec.md` containing defined scenarios\n- **WHEN** a test file binds matching scenario titles using `bindOpenSpec()`\n- **THEN** the harness MUST execute each bound scenario as a distinct test case under `node:test`.\n\n#### Scenario: Auto-registering unbound scenarios as pending todos\n- **GIVEN** an OpenSpec `spec.md` with declared scenarios that have not yet been implemented in the test file\n- **WHEN** `bindOpenSpec()` loads the specification\n- **THEN** the harness MUST register each unimplemented scenario as `test.todo()`, visibly signaling pending tasks without failing the overall suite.\n\n---\n\n### Requirement: Double-Loop Coexistence with Standard Test Suites\nThe BDD harness SHALL execute seamlessly alongside all existing `node:test` suites when invoked with standard wildcards (`node --test tests/*.test.mjs`) without polluting global scope or breaking unit test runners.\n\n#### Scenario: Running mixed unit and BDD suites simultaneously\n- **GIVEN** a test directory containing both traditional unit test files and `.bdd.test.mjs` files\n- **WHEN** `node --test tests/*.test.mjs` is executed\n- **THEN** the test runner MUST execute all suites in a single pass, outputting standard TAP or spec reports with zero runner collisions."
+}
+</script>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown) {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        ghCodeBlocks: true,
+        simplifiedAutoLink: true,
+        openLinksInNewWindow: false
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    if (window.OPEN_SPEC_ARTIFACTS) return window.OPEN_SPEC_ARTIFACTS;
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    activeDocKey = docName;
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    const titleEl = document.getElementById("markdown-modal-title");
+    const hiddenTitleEl = document.getElementById("modal-doc-title");
+    const bodyEls = [
+      document.getElementById("modal-markdown-container"),
+      document.getElementById("modal-markdown-body"),
+      document.getElementById("markdown-modal-body")
+    ];
+
+    if (titleEl) titleEl.textContent = docName;
+    if (hiddenTitleEl) hiddenTitleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn, .md-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-primary");
+        btn.classList.remove("btn-ghost");
+      } else {
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-ghost");
+      }
+    });
+
+    const artifacts = getOpenSpecArtifacts();
+    let rawContent = artifacts[docName];
+
+    if (!rawContent) {
+      try {
+        const res = await fetch("/" + docName);
+        if (res.ok) {
+          rawContent = await res.text();
+        }
+      } catch (_) {}
+    }
+
+    if (!rawContent) {
+      rawContent = "# " + docName + "\n\nArtifact content loading...";
+    }
+
+    const converter = getShowdownConverter();
+    const html = converter ? converter.makeHtml(rawContent) : "<pre>" + rawContent + "</pre>";
+
+    const targetEl = document.getElementById("markdown-modal-body") || document.getElementById("modal-markdown-body") || document.getElementById("modal-markdown-container");
+    if (targetEl) {
+      targetEl.innerHTML = html;
+    }
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function copyMarkdownToClipboard() {
+    const artifacts = getOpenSpecArtifacts();
+    const text = artifacts[activeDocKey] || "";
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById("copy-markdown-btn");
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!';
+        if (window.lucide) window.lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          if (window.lucide) window.lucide.createIcons();
+        }, 2000);
+      }
+    });
+  }
+
+  function copyBddPrompt() {
+    const text = document.getElementById("prompt-content").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById("copy-prompt-btn");
+      const btnText = document.getElementById("copy-btn-text");
+      const btnIcon = document.getElementById("copy-btn-icon");
+
+      btn.classList.remove("btn-primary");
+      btn.classList.add("btn-success");
+      btnText.textContent = "Copied to Clipboard!";
+      if (btnIcon) btnIcon.setAttribute("data-lucide", "check");
+      if (window.lucide) window.lucide.createIcons();
+
+      setTimeout(() => {
+        btn.classList.remove("btn-success");
+        btn.classList.add("btn-primary");
+        btnText.textContent = "Copy Prompt to Clipboard";
+        if (btnIcon) btnIcon.setAttribute("data-lucide", "clipboard-copy");
+        if (window.lucide) window.lucide.createIcons();
+      }, 2500);
+    }).catch(err => {
+      alert("Failed to copy: " + err);
+    });
+  }
+</script>
