@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-report-mode="interactive" lang="en" data-theme="light" class="scroll-smooth">
+<html data-report-mode="dashboard" lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,7 +22,10 @@
   </style>
 
   <!-- Optional Addon CDNs & Styles -->
-    <!-- Addon: Chart.js -->
+    <!-- Addon: Datastar -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
+
+  <!-- Addon: Chart.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
 
   <!-- Addon: Mermaid -->
@@ -65,9 +68,6 @@
 
   <!-- Addon: FullCalendar -->
   <script defer src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" crossorigin="anonymous"></script>
-
-  <!-- Addon: Datastar -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
 
   <style>
     :root {
@@ -203,7 +203,8 @@
     }
 
     /* Impress.js Presentation Guard & Print-Equivalent Treatment */
-    html:not([data-presentation="true"]) .step {
+    html:not([data-presentation="true"]) .step,
+    .impress-static-fallback .step {
       position: relative !important;
       opacity: 1 !important;
       transform: none !important;
@@ -216,15 +217,26 @@
       position: relative;
       overflow: hidden;
       width: 100%;
-      min-height: 420px;
       border-radius: 0.75rem;
     }
-    html[data-presentation="true"] .impress-wrapper #impress {
+    html[data-presentation="true"] .impress-wrapper {
+      min-height: 420px;
+      height: 420px;
+    }
+    html[data-presentation="true"] .impress-wrapper #impress:not(.impress-static-fallback) {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+    }
+
+    @media print {
+      header,
+      .navbar,
+      nav {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -419,7 +431,7 @@
               <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + accent"></span>
               <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + neutral"></span>
             </div>
-            <span class="badge badge-xs badge-outline hidden md:inline font-normal" x-text="isOpen ? 'Click to Collapse' : 'Click to Customize'">Click to Customize</span>
+            <span class="badge badge-xs badge-outline hidden md:inline-flex font-normal whitespace-nowrap shrink-0" x-text="isOpen ? 'Click to Collapse' : 'Click to Customize'">Click to Customize</span>
           </div>
         </div>
 
@@ -1622,14 +1634,16 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
               <i data-lucide="presentation" class="w-5 h-5 text-warning"></i>
               <span>11.2 Impress.js: Presentation Guard &amp; Print-Equivalent Static Fallback</span>
             </h3>
-            <button
-              type="button"
-              @click="isPresentation = !isPresentation; document.documentElement.setAttribute('data-presentation', isPresentation ? 'true' : 'false')"
-              class="btn btn-xs sm:btn-sm btn-outline btn-warning gap-1"
-            >
-              <i data-lucide="monitor-play" class="w-3.5 h-3.5"></i>
-              <span x-text="isPresentation ? 'Exit Presentation Mode' : 'Simulate Presentation Mode'">Simulate Presentation Mode</span>
-            </button>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                @click="isPresentation = !isPresentation; document.documentElement.setAttribute('data-presentation', isPresentation ? 'true' : 'false')"
+                class="btn btn-xs sm:btn-sm btn-outline btn-warning gap-1"
+              >
+                <i data-lucide="monitor-play" class="w-3.5 h-3.5"></i>
+                <span x-text="isPresentation ? 'Exit Presentation Mode' : 'Simulate Presentation Mode'">Simulate Presentation Mode</span>
+              </button>
+            </div>
           </div>
           <div class="alert alert-warning/15 border border-warning/30 text-xs p-3">
             <i data-lucide="shield-alert" class="w-4 h-4 text-warning shrink-0"></i>
@@ -1637,6 +1651,23 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
               <strong>Presentation Guard Active:</strong> Impress.js receives the exact same treatment as a print by default. All <code>.step</code> slides remain static, stacked printable cards unless explicitly invoked via <code>--presentation</code> or <code>data-presentation="true"</code>, strictly preventing 3D viewport coordinate transforms from capturing report scrolling.
             </div>
           </div>
+
+          <!-- Slide Controls Active in Presentation Mode -->
+          <div x-show="isPresentation" x-cloak class="flex flex-wrap items-center justify-between gap-2 bg-warning/10 p-2.5 rounded-lg border border-warning/30 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="badge badge-warning badge-sm font-semibold">3D Presentation Active</span>
+              <span class="opacity-80">Use controls below or arrow keys / spacebar:</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" @click="window.impressPrev && window.impressPrev()" class="btn btn-xs btn-outline gap-1">
+                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Prev
+              </button>
+              <button type="button" @click="window.impressNext && window.impressNext()" class="btn btn-xs btn-warning gap-1">
+                Next <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
           <div class="impress-wrapper border border-base-300 bg-base-200/40 p-4 rounded-box">
             <div id="impress" class="space-y-3">
               <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="0" data-y="0">
@@ -1644,10 +1675,15 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
                 <div class="text-sm font-semibold mt-1">Autonomous Quality Engineering at Scale</div>
                 <p class="text-xs opacity-75 mt-0.5">Continuous verification across 5 responsive breakpoints with 100% test reliability.</p>
               </div>
-              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="500" data-y="0">
+              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="600" data-y="0">
                 <div class="text-xs uppercase font-bold text-secondary">Slide 2: Deterministic Harness</div>
                 <div class="text-sm font-semibold mt-1">Zero-Dependency Finite State Machine</div>
                 <p class="text-xs opacity-75 mt-0.5">Automated heading repair, bare table isolation, and badge multi-line safeguard.</p>
+              </div>
+              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="1200" data-y="0">
+                <div class="text-xs uppercase font-bold text-accent">Slide 3: Real-Time Telemetry</div>
+                <div class="text-sm font-semibold mt-1">17-CDN Non-Blocking Publication Stack</div>
+                <p class="text-xs opacity-75 mt-0.5">Instant theme reactivity, Day.js relative formatting, and FullCalendar synchronization.</p>
               </div>
             </div>
           </div>
@@ -2334,12 +2370,31 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
         // Marked
         if (window.marked && document.getElementById("markdown-source") && document.getElementById("markdown-output")) {
           const src = document.getElementById("markdown-source").textContent.trim();
-          document.getElementById("markdown-output").innerHTML = window.marked.parse(src);
+          const outEl = document.getElementById("markdown-output");
+          outEl.innerHTML = window.marked.parse(src);
+          outEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
+            if (!h.id) {
+              h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+            }
+          });
+          if (typeof window.initTOC === "function") {
+            window.initTOC();
+          }
         }
 
         // Highlight.js
         if (window.hljs) {
           window.hljs.highlightAll();
+        }
+
+        // FullCalendar Hydration
+        if (typeof window.initFullCalendar === "function") {
+          window.initFullCalendar();
+        }
+
+        // Impress.js Presentation Mode Hydration
+        if (typeof window.initImpress === "function") {
+          window.initImpress();
         }
       }
 
@@ -3089,12 +3144,15 @@ function initTOC() {
   if (typeof document === "undefined") return;
   const tocList = document.getElementById("report-toc-list");
   if (!tocList) return;
-  const headings = document.querySelectorAll("main h1, main h2, main h3");
+  const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).filter(
+    (h) => !h.closest(".fc, .katex, .gridjs, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
+  );
   tocList.innerHTML = "";
 
   headings.forEach((h) => {
     if (!h.id) {
-      h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const slug = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      h.id = slug || `section-${Math.random().toString(36).slice(2, 7)}`;
     }
     const level = parseInt(h.tagName.substring(1), 10);
     const li = document.createElement("li");
@@ -3310,10 +3368,22 @@ function initDayjs() {
  * Only initializes 3D canvas when explicitly requested as a presentation.
  */
 function initImpress() {
-  if (typeof window === "undefined" || !window.impress) return;
+  if (typeof window === "undefined") return;
 
   const impressRoot = document.getElementById("impress");
   if (!impressRoot) return;
+
+  // Setup presentation mode observer once
+  if (!window._impressObserverInstalled) {
+    window._impressObserverInstalled = true;
+    const observer = new MutationObserver(() => {
+      initImpress();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-presentation"] });
+    if (document.body) {
+      observer.observe(document.body, { attributes: true, attributeFilter: ["data-presentation"] });
+    }
+  }
 
   // Presentation Guard: Impress 3D initialization ONLY activates when explicitly requested
   const isPresentationRequested =
@@ -3328,15 +3398,43 @@ function initImpress() {
     return;
   }
 
+  // Presentation mode active: clear static fallback
+  impressRoot.classList.remove("impress-static-fallback");
+
+  if (!window.impress) {
+    console.warn("[html-report] Impress.js script not loaded.");
+    return;
+  }
+
   try {
     if (!impressRoot.dataset.impressInitialized) {
       impressRoot.dataset.impressInitialized = "true";
       const api = window.impress("impress");
       api.init();
       window.impressApi = api;
+    } else if (window.impressApi && typeof window.impressApi.goto === "function") {
+      window.impressApi.goto(0);
     }
   } catch (err) {
     console.warn("[html-report] Impress.js initialization notice:", err);
+  }
+}
+
+function impressNext() {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.next === "function") {
+    return window.impressApi.next();
+  }
+}
+
+function impressPrev() {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.prev === "function") {
+    return window.impressApi.prev();
+  }
+}
+
+function impressGoto(step) {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.goto === "function") {
+    return window.impressApi.goto(step);
   }
 }
 
@@ -3412,14 +3510,25 @@ function initShowdown() {
 /**
  * FullCalendar runtime initialization & DaisyUI theme synchronization.
  */
-function initFullCalendar() {
-  if (typeof window === "undefined" || !window.FullCalendar) return;
+function initFullCalendar(retries = 25) {
+  if (typeof window === "undefined") return;
+  const calendarEls = document.querySelectorAll(
+    "div[data-fullcalendar], div#calendar, [data-fullcalendar]:not(style):not(head *)"
+  );
+  if (!calendarEls.length) return;
+
+  if (!window.FullCalendar) {
+    if (retries > 0) {
+      setTimeout(() => initFullCalendar(retries - 1), 100);
+    }
+    return;
+  }
+
   window.reportCalendars = window.reportCalendars || [];
 
   try {
-    const calendarEls = document.querySelectorAll("[data-fullcalendar], #calendar");
     calendarEls.forEach((el) => {
-      if (el.dataset.calendarInitialized) return;
+      if (el.dataset.calendarInitialized || el.tagName === "STYLE" || el.closest("head")) return;
       el.dataset.calendarInitialized = "true";
 
       let events = [];
@@ -3579,6 +3688,9 @@ if (typeof window !== "undefined") {
   window.initDownloadButton = initDownloadButton;
   window.initDayjs = initDayjs;
   window.initImpress = initImpress;
+  window.impressNext = impressNext;
+  window.impressPrev = impressPrev;
+  window.impressGoto = impressGoto;
   window.initMockjs = initMockjs;
   window.initShowdown = initShowdown;
   window.initFullCalendar = initFullCalendar;
@@ -3637,6 +3749,9 @@ if (typeof module !== "undefined" && module.exports) {
     initDownloadButton,
     initDayjs,
     initImpress,
+    impressNext,
+    impressPrev,
+    impressGoto,
     initMockjs,
     initShowdown,
     initFullCalendar,

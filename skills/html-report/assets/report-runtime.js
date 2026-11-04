@@ -727,12 +727,15 @@ function initTOC() {
   if (typeof document === "undefined") return;
   const tocList = document.getElementById("report-toc-list");
   if (!tocList) return;
-  const headings = document.querySelectorAll("main h1, main h2, main h3");
+  const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).filter(
+    (h) => !h.closest(".fc, .katex, .gridjs, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
+  );
   tocList.innerHTML = "";
 
   headings.forEach((h) => {
     if (!h.id) {
-      h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const slug = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      h.id = slug || `section-${Math.random().toString(36).slice(2, 7)}`;
     }
     const level = parseInt(h.tagName.substring(1), 10);
     const li = document.createElement("li");
@@ -865,12 +868,62 @@ function exportReportPdf() {
 }
 
 /**
+ * Mode-adaptive navbar status badge and download options.
+ */
+function initModeBadge() {
+  if (typeof document === "undefined") return;
+  const rawMode = document.documentElement.getAttribute("data-report-mode") || "report";
+  const badgeEl = document.getElementById("navbar-mode-badge");
+  const pdfStatusBadge = document.querySelector("#download-pdf-btn .badge");
+
+  if (badgeEl) {
+    badgeEl.classList.remove("hidden", "badge-neutral", "badge-primary", "badge-secondary", "badge-accent", "badge-info", "badge-success", "badge-warning", "badge-ghost");
+
+    switch (rawMode) {
+      case "print":
+        badgeEl.textContent = "PRINT";
+        badgeEl.classList.add("badge-neutral");
+        break;
+      case "presentation":
+        badgeEl.textContent = "PRESENTATION";
+        badgeEl.classList.add("badge-secondary");
+        break;
+      case "dashboard":
+        badgeEl.textContent = "DASHBOARD";
+        badgeEl.classList.add("badge-info");
+        break;
+      case "working-report":
+        badgeEl.textContent = "JOURNEY";
+        badgeEl.classList.add("badge-accent");
+        break;
+      case "live-report":
+        badgeEl.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-success animate-pulse mr-1"></span>LIVE`;
+        badgeEl.classList.add("badge-success", "badge-outline");
+        break;
+      case "report":
+      default:
+        badgeEl.textContent = "REPORT";
+        badgeEl.classList.add("badge-ghost");
+        break;
+    }
+  }
+
+  if (pdfStatusBadge && rawMode === "print") {
+    pdfStatusBadge.textContent = "PDF-Ready";
+    pdfStatusBadge.classList.remove("badge-warning");
+    pdfStatusBadge.classList.add("badge-success");
+  }
+}
+
+/**
  * Initializes the download menu actions (HTML & PDF).
  */
 function initDownloadButton() {
   if (typeof document === "undefined") return;
   const htmlBtn = document.getElementById("download-html-btn");
   const pdfBtn = document.getElementById("download-pdf-btn");
+
+  initModeBadge();
 
   if (htmlBtn) {
     htmlBtn.addEventListener("click", async () => {
@@ -897,8 +950,8 @@ function initDownloadButton() {
 
   if (pdfBtn) {
     pdfBtn.addEventListener("click", () => {
-      const reportMode = document.documentElement.getAttribute("data-report-mode") || "interactive";
-      if (reportMode === "interactive") {
+      const reportMode = document.documentElement.getAttribute("data-report-mode") || "report";
+      if (reportMode !== "print") {
         const modal = document.getElementById("pdf-not-ready-modal");
         if (modal && typeof modal.showModal === "function") {
           modal.showModal();
@@ -948,10 +1001,22 @@ function initDayjs() {
  * Only initializes 3D canvas when explicitly requested as a presentation.
  */
 function initImpress() {
-  if (typeof window === "undefined" || !window.impress) return;
+  if (typeof window === "undefined") return;
 
   const impressRoot = document.getElementById("impress");
   if (!impressRoot) return;
+
+  // Setup presentation mode observer once
+  if (!window._impressObserverInstalled) {
+    window._impressObserverInstalled = true;
+    const observer = new MutationObserver(() => {
+      initImpress();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-presentation"] });
+    if (document.body) {
+      observer.observe(document.body, { attributes: true, attributeFilter: ["data-presentation"] });
+    }
+  }
 
   // Presentation Guard: Impress 3D initialization ONLY activates when explicitly requested
   const isPresentationRequested =
@@ -966,15 +1031,43 @@ function initImpress() {
     return;
   }
 
+  // Presentation mode active: clear static fallback
+  impressRoot.classList.remove("impress-static-fallback");
+
+  if (!window.impress) {
+    console.warn("[html-report] Impress.js script not loaded.");
+    return;
+  }
+
   try {
     if (!impressRoot.dataset.impressInitialized) {
       impressRoot.dataset.impressInitialized = "true";
       const api = window.impress("impress");
       api.init();
       window.impressApi = api;
+    } else if (window.impressApi && typeof window.impressApi.goto === "function") {
+      window.impressApi.goto(0);
     }
   } catch (err) {
     console.warn("[html-report] Impress.js initialization notice:", err);
+  }
+}
+
+function impressNext() {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.next === "function") {
+    return window.impressApi.next();
+  }
+}
+
+function impressPrev() {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.prev === "function") {
+    return window.impressApi.prev();
+  }
+}
+
+function impressGoto(step) {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.goto === "function") {
+    return window.impressApi.goto(step);
   }
 }
 
@@ -1006,6 +1099,43 @@ function initMockjs() {
   } catch (err) {
     console.warn("[html-report] Mock.js hydration notice:", err);
   }
+}
+
+/**
+ * Auto-links any mentioned *.md files in text nodes to interactive viewer triggers.
+ */
+function autoLinkMarkdownFiles(root = document.body) {
+  if (typeof document === "undefined" || !root) return;
+  try {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.nodeValue || !node.nodeValue.includes(".md")) return NodeFilter.FILTER_REJECT;
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        const tag = parent.tagName.toLowerCase();
+        if (tag === "a" || tag === "script" || tag === "style" || tag === "button" || tag === "textarea") {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const nodes = [];
+    while (walker.nextNode()) {
+      nodes.push(walker.currentNode);
+    }
+
+    const mdRegex = /\b([a-zA-Z0-9_\/-]+\.md)\b/g;
+    for (const node of nodes) {
+      const text = node.nodeValue;
+      if (!text || !text.match(mdRegex)) continue;
+      const span = document.createElement("span");
+      span.innerHTML = text.replace(mdRegex, (match) => {
+        return `<a href="${match}" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('${match}');return false;}" class="link link-primary font-mono text-xs underline decoration-primary/40 hover:decoration-primary cursor-pointer">${match}</a>`;
+      });
+      node.parentNode.replaceChild(span, node);
+    }
+  } catch (_) {}
 }
 
 /**
@@ -1050,14 +1180,25 @@ function initShowdown() {
 /**
  * FullCalendar runtime initialization & DaisyUI theme synchronization.
  */
-function initFullCalendar() {
-  if (typeof window === "undefined" || !window.FullCalendar) return;
+function initFullCalendar(retries = 25) {
+  if (typeof window === "undefined") return;
+  const calendarEls = document.querySelectorAll(
+    "div[data-fullcalendar], div#calendar, [data-fullcalendar]:not(style):not(head *)"
+  );
+  if (!calendarEls.length) return;
+
+  if (!window.FullCalendar) {
+    if (retries > 0) {
+      setTimeout(() => initFullCalendar(retries - 1), 100);
+    }
+    return;
+  }
+
   window.reportCalendars = window.reportCalendars || [];
 
   try {
-    const calendarEls = document.querySelectorAll("[data-fullcalendar], #calendar");
     calendarEls.forEach((el) => {
-      if (el.dataset.calendarInitialized) return;
+      if (el.dataset.calendarInitialized || el.tagName === "STYLE" || el.closest("head")) return;
       el.dataset.calendarInitialized = "true";
 
       let events = [];
@@ -1214,20 +1355,26 @@ if (typeof window !== "undefined") {
   window.checkInsufficientHorizontalSpace = checkInsufficientHorizontalSpace;
   window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
   window.exportReportPdf = exportReportPdf;
+  window.initModeBadge = initModeBadge;
   window.initDownloadButton = initDownloadButton;
   window.initDayjs = initDayjs;
   window.initImpress = initImpress;
+  window.impressNext = impressNext;
+  window.impressPrev = impressPrev;
+  window.impressGoto = impressGoto;
   window.initMockjs = initMockjs;
   window.initShowdown = initShowdown;
   window.initFullCalendar = initFullCalendar;
   window.rehydrateLucideIcons = rehydrateLucideIcons;
   window.initDatastarObserver = initDatastarObserver;
   window.syncDatastarTheme = syncDatastarTheme;
+  window.autoLinkMarkdownFiles = autoLinkMarkdownFiles;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
     try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
     try { initTOC(); } catch (_) {}
+    try { initModeBadge(); } catch (_) {}
     try { initThemeDropdown(); } catch (_) {}
     try { initDownloadButton(); } catch (_) {}
     try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
@@ -1237,6 +1384,7 @@ if (typeof window !== "undefined") {
     try { initFullCalendar(); } catch (_) {}
     try { initImpress(); } catch (_) {}
     try { initDatastarObserver(); } catch (_) {}
+    try { autoLinkMarkdownFiles(); } catch (_) {}
 
     const palette = resolveDaisyUIThemePalette();
     try { await renderMermaidWithTheme(palette); } catch (_) {}
@@ -1272,14 +1420,19 @@ if (typeof module !== "undefined" && module.exports) {
     checkInsufficientHorizontalSpace,
     buildInlinedHtmlSnapshot,
     exportReportPdf,
+    initModeBadge,
     initDownloadButton,
     initDayjs,
     initImpress,
+    impressNext,
+    impressPrev,
+    impressGoto,
     initMockjs,
     initShowdown,
     initFullCalendar,
     rehydrateLucideIcons,
     initDatastarObserver,
-    syncDatastarTheme
+    syncDatastarTheme,
+    autoLinkMarkdownFiles
   };
 }

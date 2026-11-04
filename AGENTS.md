@@ -38,6 +38,12 @@ Whenever we brainstorm, plan, or use **OpenSpec** in this repository, agents and
   * Ensure the active feature's `index.html` is mirrored or linked to the active dev server file (e.g., `implementation-progress.html` at workspace root) served on `http://localhost:3000` via `skills/html-report/scripts/serve-report.mjs`.
   * As code is written, tests pass, and checklist items in `tasks.md` are marked complete, immediately update the report file so `localhost:3000` automatically live-reloads and reflects the live journey state.
 
+### 4. Mandatory Markdown Artifact Linking Rule (`*.md`)
+* **Rule**: Whenever any `.md` file (e.g., `proposal.md`, `design.md`, `tasks.md`, `spec.md`, `README.md`, or sub-specs) is mentioned in prose, reports, dashboards, or documentation:
+  * **Never leave it as plain, dead text**. It MUST ALWAYS be rendered as an active, clickable link or trigger.
+  * In HTML reports, wire `.md` mentions to the in-browser Showdown Markdown Viewer (`openMarkdownViewer('filename.md')`) or direct URL preview, allowing users to immediately click and view the formatted artifact in a modal or preview tab.
+  * In text and assistant messages, always format `.md` file paths as clickable file:// or workspace links.
+
 ---
 
 ### Generation & Serving Workflow

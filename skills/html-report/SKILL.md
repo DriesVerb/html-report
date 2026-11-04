@@ -160,6 +160,30 @@ node skills/html-report/scripts/harness.mjs run report-fragment.html \
 6. **RECORDING_RUN** *(Caller mode only)*: Persists `run.json`, `trace.json`, and `overrides.json` in caller vault and prunes to 10-run limit.
 7. **COMPLETED / REMEDIATING / FAILED**: Prints success message or high-contrast remediation banner with spoon-fed prescriptive instructions for small models.
 
+#### Distinguishable Rendering Modes & Dev Server Orchestration
+
+The harness and builder enforce six canonical rendering modes with deterministic dev server orchestration policies:
+
+| Mode | Stamped Tag | Dev Server Policy | Datastar Ingestion | Navbar Affordance |
+| :--- | :--- | :--- | :--- | :--- |
+| **`print`** | `data-report-mode="print"` | **NO Server** (`requiresServer: false`) | On-demand | `PRINT` badge + `PDF-Ready` highlight |
+| **`report`** | `data-report-mode="report"` | **NO Server** (`requiresServer: false`) | On-demand | `REPORT` ghost badge |
+| **`presentation`** | `data-report-mode="presentation"` | **NO Server** (`requiresServer: false`) | On-demand | `PRESENTATION` secondary badge |
+| **`dashboard`** | `data-report-mode="dashboard"` | **Runs Server** (`localhost:3000`) | On-demand | `DASHBOARD` info badge |
+| **`working-report`** | `data-report-mode="working-report"` | **Runs Server** (`localhost:3000`) | On-demand | `JOURNEY` accent badge + Showdown viewer |
+| **`live-report`** | `data-report-mode="live-report"` | **Runs Server** (`localhost:3000`) | **Mandatory** | `LIVE` success badge with green pulse |
+
+```bash
+# Execute standalone print deliverable (zero server overhead):
+node skills/html-report/scripts/harness.mjs run fragment.html --mode print
+
+# Execute interactive dashboard with live dev server:
+node skills/html-report/scripts/harness.mjs run fragment.html --mode dashboard
+
+# Execute live real-time report with Datastar hypermedia streaming:
+node skills/html-report/scripts/harness.mjs run fragment.html --mode live-report
+```
+
 *(Low-Level Modular Alternative)*:
 If you need to execute compilation and verification separately:
 ```bash

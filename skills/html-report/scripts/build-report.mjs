@@ -94,6 +94,47 @@ export const ADDON_REGISTRY = {
   }
 };
 
+export const CANONICAL_MODES = [
+  "print",
+  "report",
+  "presentation",
+  "dashboard",
+  "working-report",
+  "live-report"
+];
+
+export const MODE_ALIASES = {
+  print: "print",
+  printable: "print",
+  "-p": "print",
+  pdf: "print",
+  report: "report",
+  standard: "report",
+  static: "report",
+  default: "report",
+  interactive: "report",
+  presentation: "presentation",
+  deck: "presentation",
+  slides: "presentation",
+  impress: "presentation",
+  dashboard: "dashboard",
+  dash: "dashboard",
+  working: "working-report",
+  journey: "working-report",
+  "working-report": "working-report",
+  live: "live-report",
+  stream: "live-report",
+  realtime: "live-report",
+  "-l": "live-report",
+  "live-report": "live-report"
+};
+
+export function normalizeMode(rawMode) {
+  if (!rawMode || typeof rawMode !== "string") return null;
+  const cleaned = rawMode.toLowerCase().trim();
+  return MODE_ALIASES[cleaned] || null;
+}
+
 const ADDON_ALIASES = {
   chart: "charts",
   chartjs: "charts",
@@ -236,6 +277,7 @@ export function parseArgs(argv) {
     title: "HTML Report",
     content: null,
     output: "./report.html",
+    mode: null,
     printable: false,
     presentation: false,
     live: false,
@@ -257,14 +299,37 @@ export function parseArgs(argv) {
       options.content = args[++i];
     } else if ((arg === "--output" || arg === "-o") && args[i + 1]) {
       options.output = args[++i];
-    } else if (arg === "--printable" || arg === "-p") {
+    } else if ((arg === "--mode" || arg === "-m") && args[i + 1]) {
+      const rawMode = args[++i];
+      const normalized = normalizeMode(rawMode);
+      if (!normalized) {
+        throw new Error(`Invalid report mode "${rawMode}". Allowed modes: ${CANONICAL_MODES.join(", ")}`);
+      }
+      options.mode = normalized;
+      if (normalized === "print") options.printable = true;
+      if (normalized === "presentation") {
+        options.presentation = true;
+        if (!options.addons.includes("impress")) options.addons.push("impress");
+      }
+      if (normalized === "live-report") {
+        options.live = true;
+        if (!options.addons.includes("datastar")) options.addons.push("datastar");
+      }
+    } else if (arg === "--print" || arg === "--printable" || arg === "-p") {
+      options.mode = "print";
       options.printable = true;
     } else if (arg === "--presentation") {
+      options.mode = "presentation";
       options.presentation = true;
       if (!options.addons.includes("impress")) {
         options.addons.push("impress");
       }
-    } else if (arg === "--live" || arg === "-l") {
+    } else if (arg === "--dashboard") {
+      options.mode = "dashboard";
+    } else if (arg === "--working" || arg === "--working-report") {
+      options.mode = "working-report";
+    } else if (arg === "--live" || arg === "-l" || arg === "--live-report") {
+      options.mode = "live-report";
       options.live = true;
       if (!options.addons.includes("datastar")) {
         options.addons.push("datastar");
@@ -299,6 +364,7 @@ export function parseArgs(argv) {
 export function buildReport({
   title = "HTML Report",
   content = "",
+  mode = null,
   printable = false,
   presentation = false,
   live = false,
@@ -317,12 +383,34 @@ export function buildReport({
     throw new Error(`Runtime script not found at: ${runtimeScriptPath}`);
   }
 
+  // Resolve canonical report mode
+  let resolvedMode = normalizeMode(mode);
+  if (mode && !resolvedMode) {
+    throw new Error(`Invalid report mode "${mode}". Allowed modes: ${CANONICAL_MODES.join(", ")}`);
+  }
+
+  if (!resolvedMode) {
+    if (live) resolvedMode = "live-report";
+    else if (printable) resolvedMode = "print";
+    else if (presentation) resolvedMode = "presentation";
+    else resolvedMode = "report";
+  }
+
+  const isPrintable = Boolean(printable || resolvedMode === "print");
+  const isPresentation = Boolean(presentation || resolvedMode === "presentation");
+  const isLive = Boolean(live || resolvedMode === "live-report");
+
   const shellTemplate = fs.readFileSync(templateShellPath, "utf-8");
   const runtimeScript = fs.readFileSync(runtimeScriptPath, "utf-8");
 
   const cleanBody = extractMainContent(content);
   const activeAddonKeys = detectAddons(cleanBody, addons);
-  if (live && !activeAddonKeys.includes("datastar")) {
+
+  // Auto-inject required addons for specific modes
+  if (isPresentation && !activeAddonKeys.includes("impress")) {
+    activeAddonKeys.push("impress");
+  }
+  if (isLive && !activeAddonKeys.includes("datastar")) {
     activeAddonKeys.push("datastar");
   }
 
@@ -360,7 +448,7 @@ export function buildReport({
       headExtraParts.push(`  <!-- Addon: ${ADDON_REGISTRY[key].name} -->\n  ${ADDON_REGISTRY[key].head}`);
     }
   }
-  if (printable) {
+  if (isPrintable) {
     headExtraParts.push(PRINT_MEDIA_CSS);
   }
   const headExtras = headExtraParts.join("\n\n");
@@ -380,22 +468,21 @@ export function buildReport({
   }
 
   // Set report mode attribute on <html>
-  const mode = live ? "live" : printable ? "static" : "interactive";
   html = html.replace(
     /<html([^>]*)>/i,
     (match, attrs) => {
       let updated = attrs;
       if (!updated.includes("data-report-mode")) {
-        updated = ` data-report-mode="${mode}"` + updated;
+        updated = ` data-report-mode="${resolvedMode}"` + updated;
       } else {
-        updated = updated.replace(/data-report-mode="[^"]*"/, `data-report-mode="${mode}"`);
+        updated = updated.replace(/data-report-mode="[^"]*"/, `data-report-mode="${resolvedMode}"`);
       }
       return `<html${updated}>`;
     }
   );
 
   // Set presentation attribute on <html> ONLY when explicitly requested
-  if (presentation) {
+  if (isPresentation) {
     html = html.replace(
       /<html([^>]*)>/i,
       (match, attrs) => {
@@ -409,10 +496,10 @@ export function buildReport({
   }
 
   // If printable, update download PDF button styling
-  if (printable) {
+  if (isPrintable) {
     html = html.replace(
       /<span class="badge badge-warning badge-xs font-mono">Not PDF-Ready<\/span>/,
-      ""
+      '<span class="badge badge-success badge-xs font-mono">PDF-Ready</span>'
     );
   }
 
@@ -432,7 +519,7 @@ export function buildReport({
   return {
     html,
     activeAddons: activeAddonKeys,
-    mode,
+    mode: resolvedMode,
     theme: resolvedTheme || "light",
     hasCustomTheme: Boolean(compiledCustomCss)
   };
@@ -449,30 +536,29 @@ Options:
   -c, --content <file>      Path to semantic <main> HTML fragment file (required)
   -t, --title <string>      Report title (default: "HTML Report")
   -o, --output <file>       Destination HTML file (default: "./report.html")
-  -p, --printable           Enable printable/PDF mode (@media print rules, static mode)
+  -m, --mode <name>         Report mode: print, report, presentation, dashboard, working-report, live-report (default: "report")
+  -p, --print, --printable  Enable printable/PDF mode (@media print rules, static mode)
       --presentation        Enable interactive presentation mode for Impress.js
-  -l, --live                Enable real-time Datastar live dashboard mode (sets data-report-mode="live")
+      --dashboard           Enable interactive dashboard mode
+      --working-report      Enable working journey companion mode
+  -l, --live, --live-report Enable real-time Datastar live dashboard mode
       --theme <name>        DaisyUI theme name (default: "light")
       --custom-theme <path> Path to custom theme definition (.json or .css)
       --favicon <emoji>     Favicon emoticon (default: "📊")
-      --addons <list>     Comma-separated addons (charts, mermaid, gridjs, katex, leaflet, hljs, marked, dayjs, impress, mockjs, showdown, fullcalendar)
-      --all-addons        Include all catalog addons in <head>
-      --charts            Explicitly include Chart.js
-      --mermaid           Explicitly include Mermaid
-      --gridjs            Explicitly include Grid.js
-      --math, --katex     Explicitly include KaTeX
-      --leaflet           Explicitly include Leaflet
-      --hljs, --highlight Explicitly include Highlight.js
-      --day, --dayjs      Explicitly include Day.js
-      --impress           Explicitly include Impress.js
-      --mock, --mockjs    Explicitly include Mock.js
-      --showdown          Explicitly include Showdown
-      --fullcalendar, --calendar Explicitly include FullCalendar
-  -h, --help              Show this help message
-
-Auto-Detection:
-  Signatures for <canvas>, .mermaid, data-gridjs, katex, leaflet, hljs, marked,
-  dayjs, impress, mock, showdown, and fullcalendar are automatically detected from the fragment.
+      --addons <list>       Comma-separated addons
+      --all-addons          Include all catalog addons in <head>
+      --charts              Explicitly include Chart.js
+      --mermaid             Explicitly include Mermaid
+      --gridjs              Explicitly include Grid.js
+      --math, --katex       Explicitly include KaTeX
+      --leaflet             Explicitly include Leaflet
+      --hljs, --highlight   Explicitly include Highlight.js
+      --day, --dayjs        Explicitly include Day.js
+      --impress             Explicitly include Impress.js
+      --mock, --mockjs      Explicitly include Mock.js
+      --showdown            Explicitly include Showdown
+      --fullcalendar        Explicitly include FullCalendar
+  -h, --help                Show this help message
 `);
 }
 
@@ -514,6 +600,7 @@ if (isDirectCli) {
   const { html, activeAddons, mode } = buildReport({
     title: options.title,
     content: rawContent,
+    mode: options.mode,
     printable: options.printable,
     presentation: options.presentation,
     live: options.live,

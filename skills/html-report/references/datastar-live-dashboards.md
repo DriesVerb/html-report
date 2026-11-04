@@ -196,3 +196,32 @@ const observer = new MutationObserver((mutations) => {
 observer.observe(document.body, { childList: true, subtree: true });
 ```
 This guarantees zero broken or empty icon slots during rapid streaming bursts.
+
+---
+
+## 8. DaisyUI Badge Spinner Safeguard
+
+When placing animated loading indicators inside DaisyUI status badges (`badge-xs`, `badge-sm`), default `.loading` classes (`loading-spinner`) render at 1.5rem (24px), which overflows small badges.
+
+Always enforce the badge loading constraint:
+```css
+.badge .loading,
+.badge .loading-spinner,
+.badge .loading-xs,
+.badge .loading-3xs,
+.loading-3xs {
+  width: 0.65rem !important;
+  height: 0.65rem !important;
+  min-width: 0.65rem !important;
+  min-height: 0.65rem !important;
+  vertical-align: middle;
+  display: inline-block;
+}
+```
+
+---
+
+## 9. Reusable Templates & Automatic Markdown Linking
+
+* **Reusable Starter Template**: Located at [`skills/html-report/examples/datastar-live-dashboard.html`](../examples/datastar-live-dashboard.html) demonstrating zero-config SSE connections, Chain-of-Thought feeds, tool call terminal drawers, and reactive signals.
+* **Automatic Markdown File Linking**: Any `.md` file mentioned in dashboard text or rendered Showdown markdown (`proposal.md`, `design.md`, `tasks.md`, `spec.md`) is automatically linked by `autoLinkMarkdownFiles()` to the in-browser Showdown Markdown Viewer modal.

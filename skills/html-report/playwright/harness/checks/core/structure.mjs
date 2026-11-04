@@ -86,7 +86,9 @@ export class StructureCheck extends VerificationCheck {
       const conversionPrompt = document.getElementById("pdf-conversion-prompt-text")?.textContent?.trim() || "";
 
       const tocLinks = Array.from(document.querySelectorAll("#report-toc-list a[href^='#']"));
-      const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3"));
+      const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).filter(
+        (h) => !h.closest(".fc, .katex, .gridjs, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
+      );
       const missingHeadingIds = headings.filter((h) => !h.id).map((h) => h.textContent.trim());
       const unmappedHeadings = headings
         .filter((h) => !tocLinks.some((a) => a.getAttribute("href") === `#${h.id}`))

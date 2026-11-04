@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { exec } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { DatastarBridge } from "./datastar-sse.mjs";
+import { DatastarBridge, escapeHtml } from "./datastar-sse.mjs";
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -20,8 +20,45 @@ const MIME_TYPES = {
   ".pdf": "application/pdf",
   ".csv": "text/csv; charset=utf-8",
   ".ico": "image/x-icon",
-  ".txt": "text/plain; charset=utf-8"
+  ".txt": "text/plain; charset=utf-8",
+  ".md": "text/markdown; charset=utf-8"
 };
+
+function findActiveChangeDir(startDir) {
+  let curr = startDir;
+  while (curr && curr !== path.dirname(curr)) {
+    const changesDir = path.join(curr, "openspec", "changes");
+    if (fs.existsSync(changesDir)) {
+      const entries = fs.readdirSync(changesDir, { withFileTypes: true });
+      const active = entries.filter((e) => e.isDirectory() && e.name !== "archive");
+      if (active.length > 0) {
+        active.sort((a, b) => {
+          const aMtime = fs.statSync(path.join(changesDir, a.name)).mtimeMs;
+          const bMtime = fs.statSync(path.join(changesDir, b.name)).mtimeMs;
+          return bMtime - aMtime;
+        });
+        return path.join(changesDir, active[0].name);
+      }
+
+      // Fallback: If all changes are archived, resolve from the most recent archive
+      const archiveDir = path.join(changesDir, "archive");
+      if (fs.existsSync(archiveDir)) {
+        const archivedEntries = fs.readdirSync(archiveDir, { withFileTypes: true });
+        const archives = archivedEntries.filter((e) => e.isDirectory());
+        if (archives.length > 0) {
+          archives.sort((a, b) => {
+            const aMtime = fs.statSync(path.join(archiveDir, a.name)).mtimeMs;
+            const bMtime = fs.statSync(path.join(archiveDir, b.name)).mtimeMs;
+            return bMtime - aMtime;
+          });
+          return path.join(archiveDir, archives[0].name);
+        }
+      }
+    }
+    curr = path.dirname(curr);
+  }
+  return null;
+}
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -88,6 +125,12 @@ function injectLiveReload(html) {
     return html.replace("</html>", `${snippet}\n</html>`);
   }
   return html + snippet;
+}
+
+function detectReportMode(htmlContent) {
+  if (!htmlContent || typeof htmlContent !== "string") return "report";
+  const match = htmlContent.match(/<html[^>]*data-report-mode=["']([^"']+)["']/i);
+  return match ? match[1].toLowerCase() : "report";
 }
 
 async function startServer(targetFilePath, initialPort, autoOpen) {
@@ -171,14 +214,32 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
       return;
     }
 
+    // 1c. Report Mode Query Endpoint
+    if (pathname === "/__report_mode__") {
+      let detectedMode = "report";
+      try {
+        const rawHtml = fs.readFileSync(resolvedPath, "utf-8");
+        detectedMode = detectReportMode(rawHtml);
+      } catch (_) {}
+      res.writeHead(200, {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache, no-store"
+      });
+      res.end(JSON.stringify({ mode: detectedMode, file: targetFileName }));
+      return;
+    }
+
     // 2. Serve main target report on root /
     if (pathname === "/" || pathname === `/${targetFileName}`) {
       try {
         const rawHtml = fs.readFileSync(resolvedPath, "utf-8");
+        const currentMode = detectReportMode(rawHtml);
         const injectedHtml = injectLiveReload(rawHtml);
         res.writeHead(200, {
           "Content-Type": "text/html; charset=utf-8",
-          "Cache-Control": "no-cache, no-store, must-revalidate"
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "X-Report-Mode": currentMode
         });
         res.end(injectedHtml);
       } catch (err) {
@@ -188,9 +249,33 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
       return;
     }
 
-    // 3. Serve static relative files (e.g. CSVs, PDFs, images)
+    // 3. Serve static relative files (e.g. CSVs, PDFs, images, Markdown artifacts)
     const sanitizedRelPath = pathname.replace(/^\/+/, "");
-    const diskPath = path.resolve(rootDir, sanitizedRelPath);
+    let diskPath = path.resolve(rootDir, sanitizedRelPath);
+
+    // Artifact Fallback Resolution for OpenSpec Markdown files
+    if (!fs.existsSync(diskPath) || fs.statSync(diskPath).isDirectory()) {
+      const activeChangeDir = findActiveChangeDir(rootDir);
+      if (activeChangeDir) {
+        let candidatePath = path.join(activeChangeDir, sanitizedRelPath);
+        if (sanitizedRelPath === "specs" || sanitizedRelPath === "specs/") {
+          const specsDir = path.join(activeChangeDir, "specs");
+          if (fs.existsSync(specsDir)) {
+            const specSubs = fs.readdirSync(specsDir, { withFileTypes: true });
+            for (const sub of specSubs) {
+              const candidate = path.join(specsDir, sub.name, "spec.md");
+              if (fs.existsSync(candidate)) {
+                candidatePath = candidate;
+                break;
+              }
+            }
+          }
+        }
+        if (fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
+          diskPath = candidatePath;
+        }
+      }
+    }
 
     // Security check: prevent directory traversal outside rootDir
     if (!diskPath.startsWith(rootDir)) {
@@ -201,6 +286,63 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
 
     if (fs.existsSync(diskPath) && fs.statSync(diskPath).isFile()) {
       const ext = path.extname(diskPath).toLowerCase();
+      const isHtmlRequest = (req.headers.accept || "").includes("text/html");
+      const isRawRequest = parsedUrl.searchParams.has("raw");
+
+      // Serve Markdown with dedicated in-browser Showdown Viewer when requested as HTML
+      if (ext === ".md" && isHtmlRequest && !isRawRequest) {
+        try {
+          const rawMd = fs.readFileSync(diskPath, "utf-8");
+          const fileName = path.basename(diskPath);
+          const previewHtml = `<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(fileName)} - OpenSpec Artifact</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+</head>
+<body class="bg-base-200 min-h-screen p-4 sm:p-8 font-sans">
+  <div class="max-w-4xl mx-auto card bg-base-100 shadow-xl border border-base-300">
+    <div class="card-body p-6 sm:p-10">
+      <div class="flex items-center justify-between pb-4 border-b border-base-200 flex-wrap gap-2">
+        <a href="/" class="btn btn-sm btn-ghost gap-1.5"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard</a>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-primary font-mono text-xs">${escapeHtml(fileName)}</span>
+          <a href="${pathname}?raw=true" class="btn btn-xs btn-outline font-mono">Raw Markdown</a>
+        </div>
+      </div>
+      <div id="markdown-body" class="prose prose-sm sm:prose max-w-none text-base-content mt-6"></div>
+    </div>
+  </div>
+  <script>
+    const markdownContent = ${JSON.stringify(rawMd)};
+    const converter = new showdown.Converter({
+      tables: true,
+      tasklists: true,
+      strikethrough: true,
+      ghCodeBlocks: true,
+      simplifiedAutoLink: true
+    });
+    document.getElementById("markdown-body").innerHTML = converter.makeHtml(markdownContent);
+    if (window.lucide) window.lucide.createIcons();
+  </script>
+</body>
+</html>`;
+          res.writeHead(200, {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "no-cache"
+          });
+          res.end(previewHtml);
+          return;
+        } catch (e) {
+          // fallback to standard stream
+        }
+      }
+
       const mime = MIME_TYPES[ext] || "application/octet-stream";
       res.writeHead(200, {
         "Content-Type": mime,
@@ -287,10 +429,16 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
   return new Promise((resolve) => {
     server.listen(serverPort, () => {
       const serverUrl = `http://localhost:${serverPort}/`;
+      let currentMode = "report";
+      try {
+        const raw = fs.readFileSync(resolvedPath, "utf-8");
+        currentMode = detectReportMode(raw);
+      } catch (_) {}
+
       if (process.env.NODE_ENV !== "test") {
         console.log(`\n======================================================`);
         console.log(` 🚀 html-report Live-Reload Dev Server`);
-        console.log(` Serving: ${resolvedPath}`);
+        console.log(` Serving: ${resolvedPath} [mode: ${currentMode}]`);
         console.log(` URL:     ${serverUrl}`);
         console.log(` Status:  Watching for updates...`);
         console.log(`\n  • When updated while tab is open: refreshes existing tab in place.`);
@@ -327,7 +475,7 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
   });
 }
 
-export { startServer, parseArgs, injectLiveReload, MIME_TYPES };
+export { startServer, parseArgs, injectLiveReload, detectReportMode, MIME_TYPES };
 
 const isMainModule = process.argv[1] && (
   process.argv[1].endsWith("serve-report.mjs") ||

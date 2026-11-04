@@ -56,10 +56,16 @@ Every report MUST include the following 11-library CDN stack. Scripts use `defer
 > <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>" />
 > ```
 >
-> **Interactive Mode vs. Static Mode Rule**:
-> - **Interactive Mode** (`data-report-mode="interactive"`): For interactive dashboards with filters, tabs, dynamic charts, and file inputs. Do NOT add print queries or spend time focusing on PDF readiness. In the navbar Download Dropdown, the PDF button displays `"Not PDF-Ready"` and opens `#pdf-not-ready-modal` suggesting the conversion prompt:
->   `Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC`
-> - **Static Mode** (`data-report-mode="static"`): ONLY when the report is static / print-first should you include `@media print` rules, Page 1 TOC (`#print-cover-page`), static print fallbacks, and run multi-theme PDF verification.
+> **Distinguishable Report Rendering Modes & Server Orchestration Rules**:
+> Reports support six canonical rendering modes stamped on the root `<html>` tag (`data-report-mode="<mode>"`):
+> - **`print`**: For PDF-first and publication reports. Includes `@media print` queries, Page 1 TOC (`#print-cover-page`), static print fallbacks, and navbar marks PDF as `PDF-Ready`. Spawns **NO** dev server (`requiresServer: false`).
+> - **`report`**: Default standalone HTML deliverable for offline viewing. Spawns **NO** dev server (`requiresServer: false`).
+> - **`presentation`**: 3D interactive slide deck powered by Impress.js. In static fallbacks, slides stack cleanly. Spawns **NO** dev server (`requiresServer: false`).
+> - **`dashboard`**: Interactive analytics dashboard with widgets, dynamic charts, and filters. Automatically launches and maintains a live dev server (`requiresServer: true` on `localhost:3000`).
+> - **`working-report`**: Living journey dashboard (OpenSpec progress, task checkboxes, live state, and in-browser Showdown markdown viewer). Maintained on the dev server (`requiresServer: true` on `localhost:3000`).
+> - **`live-report`**: Real-time hypermedia streaming dashboard powered by Datastar and SSE (`requiresServer: true`). Automatically injects the Datastar bundle (`@starfederation/datastar@1.0.0-beta.9`).
+>
+> *(Note on Datastar)*: Datastar is mandatory for `live-report`, and loaded on-demand for other server modes (`dashboard`, `working-report`) when requested or when Datastar content signatures are detected.
 >
 > **Leaflet Tile Server Rule (`file://` 403 & API-Key Placeholder Prevention)**: Never use `tile.openstreetmap.org` (which returns `403 Access Blocked` on `file://` origins without a `Referer` header) or `basemaps.cartocdn.com` (which returns an `"API KEY REQUIRED"` placeholder tile when opened from `file://`). Always use Esri ArcGIS World Street Map tiles (`https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}`), which render full map tiles on `file://` origins with no API key and no Referer restriction.
 >
@@ -74,27 +80,29 @@ Every report MUST include the following 11-library CDN stack. Scripts use `defer
 
 ## 2. Sticky DaisyUI Navbar Contract (Left Title + Right Controls) & Default `light` Theme
 
-Every HTML report MUST start with `<html lang="en" data-theme="light" data-report-mode="interactive" class="scroll-smooth">` (or `data-report-mode="static"`, default theme is **always `light`**, never `corporate`) and start its `<body>` with a sticky DaisyUI `navbar` (`print:hidden`) that enforces this exact layout:
+Every HTML report MUST start with `<html lang="en" data-theme="light" data-report-mode="<mode>" class="scroll-smooth">` (default theme is **always `light`**, never `corporate`) and start its `<body>` with a sticky DaisyUI `navbar` (`print:hidden`) that enforces this exact layout:
 
 1. **Left (`navbar-start`)**:
    - **Report Title (`#navbar-report-title`)**: Displays the title of the report aligned to the left.
+   - **Mode Badge (`#navbar-mode-badge`)**: Displays the active report mode (`PRINT`, `REPORT`, `PRESENTATION`, `DASHBOARD`, `JOURNEY`, `LIVE`) with mode-specific DaisyUI color badges and pulse indicators.
 2. **Right (`navbar-end`)**:
    - **Contents Dropdown (`#toc-dropdown`)**: Maps every `h1`, `h2`, and `h3` in `<main>` via anchor links (`href="#heading-id"`).
    - **DaisyUI Color-Swatch Theme Dropdown (`#theme-dropdown`)**: Displays all 32 built-in DaisyUI themes (defaulting to `light`) where **each theme option renders its own color scheme preview** (`data-theme="<theme>"` with `bg-base-100`, `text-base-content`, and 4 swatch pills `bg-primary`, `bg-secondary`, `bg-accent`, `bg-neutral`), identical to the official DaisyUI website, and dynamically updates CSS variables, **Chart.js** charts, and **Mermaid** diagrams.
    - **Icon-Only Download Dropdown (`#download-dropdown`)**: An icon-only trigger button (`#download-dropdown-btn`, `btn-square`, no visible download text) that opens a dropdown menu (`#download-dropdown-menu`) with two options:
      1. **Download as HTML (`#download-html-btn`)**: Downloads the complete HTML report with all external CDN stylesheets and scripts fetched and embedded inline.
-     2. **Download as PDF (`#download-pdf-btn`)**: Calls `window.exportReportPdf()` (resizes charts/maps and triggers `window.print()` with `@media print` styling).
+     2. **Download as PDF (`#download-pdf-btn`)**: Calls `window.exportReportPdf()` (resizes charts/maps and triggers `window.print()` with `@media print` styling). In `print` mode, badge displays `PDF-Ready`.
 
 ### Complete Navbar HTML Blueprint
 
 ```html
 <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
   <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
-    <!-- Left (navbar-start): Report Title -->
-    <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
+    <!-- Left (navbar-start): Report Title & Mode Badge -->
+    <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
       <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate">
         Report Title
       </span>
+      <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider"></span>
     </div>
 
     <!-- Right (navbar-end): Contents TOC Dropdown + DaisyUI Color-Swatch Theme Dropdown + Icon-Only Download Dropdown -->

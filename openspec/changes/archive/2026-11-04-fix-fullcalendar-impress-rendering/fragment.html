@@ -1,0 +1,206 @@
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+  <!-- Journey Status Hero -->
+  <header class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 sm:p-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-base-200">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-success/15 text-success mb-2">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> OpenSpec Change &bull; Verified &amp; Ready
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-base-content" id="journey-overview">
+          Fix FullCalendar Rendering &amp; Impress.js Dynamic Mode
+        </h1>
+        <p class="text-base text-base-content/70 mt-1">
+          Reactive Slide Navigation &bull; MutationObserver Presentation Guard &bull; Calendar Grid Hydration &bull; Harness Timeout Fix
+        </p>
+      </div>
+
+      <!-- Markdown Artifact Backlinks -->
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="./proposal.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4"></i> proposal.md
+        </a>
+        <a href="./design.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="compass" class="w-4 h-4"></i> design.md
+        </a>
+        <a href="./tasks.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="check-square" class="w-4 h-4"></i> tasks.md
+        </a>
+        <a href="./specs/fullcalendar-impress-fixes/spec.md" target="_blank" class="btn btn-sm btn-outline gap-1.5">
+          <i data-lucide="layers" class="w-4 h-4"></i> specs/
+        </a>
+      </div>
+    </div>
+
+    <!-- Journey Stepper -->
+    <div class="mt-8">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-base-content/60" id="journey-stepper">
+          Current State of Our Journey
+        </h2>
+        <span class="badge badge-success badge-sm font-semibold gap-1 text-success-content">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i> Verifying (100% Passed)
+        </span>
+      </div>
+      <div class="w-full overflow-x-auto">
+        <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
+          <li class="step step-primary font-medium" data-content="✓">Planning &amp; Specs</li>
+          <li class="step step-primary font-medium" data-content="✓">Implementing</li>
+          <li class="step step-primary font-bold text-primary" data-content="★">Verifying</li>
+          <li class="step font-medium" data-content="5">Shipped / Archived</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Live Progress Metrics -->
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4">
+      <div class="stat-figure text-primary">
+        <i data-lucide="list-todo" class="w-6 h-6"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60">Total Tasks</div>
+      <div class="stat-value text-2xl font-bold text-base-content">10</div>
+      <div class="stat-desc text-xs text-base-content/50">Across 4 Phases</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4">
+      <div class="stat-figure text-success">
+        <i data-lucide="check-circle" class="w-6 h-6"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60">Completed</div>
+      <div class="stat-value text-2xl font-bold text-success">10</div>
+      <div class="stat-desc text-xs text-success/80">100% Tasks Done</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4">
+      <div class="stat-figure text-success">
+        <i data-lucide="shield-check" class="w-6 h-6"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60">Unit &amp; E2E Tests</div>
+      <div class="stat-value text-2xl font-bold text-success">165 / 165</div>
+      <div class="stat-desc text-xs text-success/80">Zero Failures</div>
+    </div>
+
+    <div class="stat bg-base-100 rounded-2xl border border-base-200 shadow-sm p-4">
+      <div class="stat-figure text-primary">
+        <i data-lucide="percent" class="w-6 h-6"></i>
+      </div>
+      <div class="stat-title text-xs font-medium uppercase text-base-content/60">Progress</div>
+      <div class="stat-value text-2xl font-bold text-primary">100%</div>
+      <div class="stat-desc text-xs text-primary/80">Verification Complete</div>
+    </div>
+  </section>
+
+  <!-- Architecture & Diagnostic Flow -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 space-y-4">
+    <div class="flex items-center justify-between border-b border-base-200 pb-3">
+      <h2 class="text-lg font-bold flex items-center gap-2" id="architectural-flow">
+        <i data-lucide="git-merge" class="w-5 h-5 text-primary"></i>
+        <span>Dynamic Impress Observer &amp; FullCalendar Hydration Architecture</span>
+      </h2>
+      <span class="badge badge-outline badge-success text-xs">Verified in Headless Playwright</span>
+    </div>
+    <div class="mermaid">
+flowchart LR
+    UserAction["User Toggles 'Simulate Presentation Mode'"] --> Observer["MutationObserver on html[data-presentation]"]
+    Observer --> Fallback["Remove .impress-static-fallback"]
+    Fallback --> Init["window.impress('impress').init()"]
+    Init --> Controls["Enable Prev / Next Slide Controls"]
+    Controls --> ActiveState["Interactive 3D Stage Active"]
+    
+    PageLoad["DOM Loaded & Script Defer"] --> FCPoll["Poll for window.FullCalendar"]
+    FCPoll --> FCMount["Mount FullCalendar on #calendar"]
+    FCMount --> ThemeSync["Sync Theme Borders & Buttons"]
+    </div>
+  </section>
+
+  <!-- Live Connected Task Checklist -->
+  <section class="bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 space-y-6">
+    <div class="flex items-center justify-between border-b border-base-200 pb-3">
+      <h2 class="text-lg font-bold flex items-center gap-2" id="task-checklist">
+        <i data-lucide="check-square" class="w-5 h-5 text-success"></i>
+        <span>Implementation Task Tracking (tasks.md)</span>
+      </h2>
+      <span class="badge badge-sm badge-success font-mono">100% Complete</span>
+    </div>
+
+    <div class="space-y-6 text-sm">
+      <!-- Phase 1 -->
+      <div class="space-y-2">
+        <h3 class="font-bold text-xs uppercase tracking-wider text-success flex items-center gap-1.5" id="phase-1-diagnostics">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i> Phase 1: Diagnostics &amp; Harness Fixes
+        </h3>
+        <div class="space-y-1.5 pl-6">
+          <label class="flex items-center gap-2 text-base-content/90 cursor-default">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+            <span>1.1 Diagnose FullCalendar rendering and Impress mode lifecycle in browser runtime</span>
+          </label>
+          <label class="flex items-center gap-2 text-base-content/90 cursor-default">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+            <span>1.2 Fix <code>timeout: null</code> override bug in <code>runner.mjs</code></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="space-y-2">
+        <h3 class="font-bold text-xs uppercase tracking-wider text-success flex items-center gap-1.5" id="phase-2-impress">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i> Phase 2: Impress.js Dynamic Mode Activation &amp; UI Controls
+        </h3>
+        <div class="space-y-1.5 pl-6">
+          <label class="flex items-center gap-2 text-base-content/90 cursor-default">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+            <span>2.1 Add <code>data-presentation</code> dynamic observer and cleanup in <code>skills/html-report/assets/report-runtime.js</code></span>
+          </label>
+          <label class="flex items-center gap-2 text-base-content/90 cursor-default">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+            <span>2.2 Add Next / Previous slide controls and active slide indicators in Impress showcase</span>
+          </label>
+          <label class="flex items-center gap-2 text-base-content/90 cursor-default">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+            <span>2.3 Expose global helper methods (<code>window.impressNext()</code>, <code>window.impressPrev()</code>)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="space-y-2">
+        <h3 class="font-bold text-xs uppercase tracking-wider text-success flex items-center gap-1.5" id="phase-3-calendar">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i> Phase 3: FullCalendar Robustness &amp; Example Rehydration
+        </h3>
+        <div class="space-y-1.5 pl-6">
+          <label class="flex items-center gap-2 text-base-content/90 cursor-default">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+            <span>3.1 Verify and strengthen FullCalendar auto-polling and container initialization in <code>report-runtime.js</code></span>
+          </label>
+          <label class="flex items-center gap-2 text-base-content/90 cursor-default">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+            <span>3.2 Ensure example showcase markup and data attributes cleanly trigger calendar rendering</span>
+          </label>
+          <label class="flex items-center gap-2 text-base-content/90 cursor-default">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+            <span>3.3 Re-build root <code>index.html</code> via <code>build-report.mjs</code></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="space-y-2">
+        <h3 class="font-bold text-xs uppercase tracking-wider text-success flex items-center gap-1.5" id="phase-4-verification">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i> Phase 4: Verification &amp; Live Dashboard
+        </h3>
+        <div class="space-y-1.5 pl-6">
+          <label class="flex items-center gap-2 text-base-content/90 cursor-default">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+            <span>4.1 Run Playwright <code>--check-calendar</code> and Impress interaction verification tests</span>
+          </label>
+          <label class="flex items-center gap-2 text-base-content/90 cursor-default">
+            <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+            <span>4.2 Update live dashboard on <code>http://localhost:3000</code> reflecting complete test passes</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

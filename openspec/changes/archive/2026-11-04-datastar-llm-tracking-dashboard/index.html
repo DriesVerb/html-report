@@ -1,0 +1,2554 @@
+<!DOCTYPE html>
+<html data-report-mode="live" lang="en" data-theme="light" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="no-referrer" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
+  <title>Datastar Live LLM Tracking Dashboard & Showdown Artifact Viewer</title>
+
+  <!-- Content-Aware Favicon Emoticon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
+
+  <!-- Core CDNs with Cryptographic SRI & Anonymous Cross-Origin -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" integrity="sha384-iMbeRReqpIEp0z+cPe0FZxnbV/GbGyGjDfou8Rjcr6KSJIptc245QXNVjLMtu5TR" crossorigin="anonymous" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" integrity="sha384-ieG+IKD0d/ZPXyCBTMVAbqsQdns8QGJR/e26WMw7M4fkaI/rHcS/YIoi+ah9WGge" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" integrity="sha384-iZD2X8o1Zdq0HR5H/7oa8W30WS4No+zWCKUPD7fHRay9I1Gf+C4F8sVmw7zec1wW" crossorigin="anonymous"></script>
+
+  <!-- DaisyUI Custom Themes (Injected at build or runtime) -->
+  <style id="daisyui-custom-themes">
+
+  </style>
+
+  <!-- Optional Addon CDNs & Styles -->
+    <!-- Addon: Datastar -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
+
+  <!-- Addon: Showdown -->
+  <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Mermaid -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --grid-bg-1: #ffffff;
+      --grid-bg-2: #f3f4f6;
+      --grid-border: #d1d5db;
+      --grid-text: #111827;
+      --grid-muted: #4b5563;
+      --grid-primary: #2563eb;
+    }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    .mermaid {
+      color: inherit;
+    }
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+      background-color: transparent !important;
+    }
+    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping, oversized spinners, and vertical pill overflow */
+    .badge {
+      white-space: nowrap !important;
+      flex-shrink: 0;
+    }
+    .badge .loading,
+    .badge .loading-spinner,
+    .badge .loading-xs,
+    .badge .loading-3xs,
+    .loading-3xs {
+      width: 0.65rem !important;
+      height: 0.65rem !important;
+      min-width: 0.65rem !important;
+      min-height: 0.65rem !important;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    [data-insufficient-space="true"] {
+      outline: 2px dashed #f59e0b !important;
+      position: relative;
+    }
+    [data-insufficient-space="true"]::before {
+      content: "⚠ Insufficient horizontal space";
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      background: #f59e0b;
+      color: #111827;
+      border-radius: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+    /* Grid.js Full Light & Dark Mode DaisyUI Theme Integration */
+    .gridjs-container {
+      color: var(--grid-text) !important;
+      background-color: transparent !important;
+      font-size: 0.8125rem;
+      padding: 0 !important;
+    }
+    .gridjs-wrapper {
+      border-radius: 0.5rem;
+      border: 1px solid var(--grid-border) !important;
+      background-color: var(--grid-bg-1) !important;
+      box-shadow: none !important;
+    }
+    .gridjs-table {
+      width: 100% !important;
+      table-layout: fixed !important;
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    .gridjs-tbody,
+    tr.gridjs-tr {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    th.gridjs-th {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    th.gridjs-th:hover,
+    th.gridjs-th-sort:hover {
+      background-color: var(--grid-bg-2) !important;
+      filter: brightness(0.95);
+    }
+    td.gridjs-td {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    .gridjs-footer {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+    }
+    .gridjs-pages button {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border: 1px solid var(--grid-border) !important;
+    }
+    .gridjs-pages button.gridjs-currentPage {
+      background-color: var(--grid-primary) !important;
+      color: #ffffff !important;
+      border-color: var(--grid-primary) !important;
+      font-weight: 700 !important;
+    }
+
+    /* FullCalendar DaisyUI Theme Integration */
+    :root {
+      --fc-page-bg-color: transparent;
+      --fc-neutral-bg-color: hsl(var(--b2, 0 0% 95%));
+      --fc-list-event-hover-bg-color: hsl(var(--b3, 0 0% 90%));
+      --fc-theme-standard-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
+      --fc-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
+      --fc-button-bg-color: hsl(var(--p, 259 94% 51%));
+      --fc-button-border-color: hsl(var(--p, 259 94% 51%));
+      --fc-button-text-color: hsl(var(--pc, 0 0% 100%));
+    }
+    .fc {
+      max-width: 100%;
+    }
+    .fc .fc-toolbar-title {
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
+    }
+    .fc .fc-button {
+      padding: 0.35rem 0.65rem !important;
+      font-size: 0.8125rem !important;
+      border-radius: 0.375rem !important;
+      text-transform: capitalize !important;
+    }
+
+    /* Impress.js Presentation Guard & Print-Equivalent Treatment */
+    html:not([data-presentation="true"]) .step,
+    .impress-static-fallback .step {
+      position: relative !important;
+      opacity: 1 !important;
+      transform: none !important;
+      display: block !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      margin-bottom: 1.5rem !important;
+    }
+    .impress-wrapper {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      border-radius: 0.75rem;
+    }
+    html[data-presentation="true"] .impress-wrapper {
+      min-height: 420px;
+      height: 420px;
+    }
+    html[data-presentation="true"] .impress-wrapper #impress:not(.impress-static-fallback) {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    @media print {
+      header,
+      .navbar,
+      nav {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-base-200 text-base-content min-h-screen flex flex-col font-sans antialiased selection:bg-primary selection:text-primary-content">
+
+  <!-- Sticky DaisyUI Navbar -->
+  <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
+    <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
+      <!-- Left: Title -->
+      <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
+        <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
+          Datastar Live LLM Tracking Dashboard & Showdown Artifact Viewer
+        </span>
+      </div>
+
+      <!-- Right: TOC + Theme Picker + Download Menu -->
+      <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
+        <!-- 1. TOC Dropdown -->
+        <div class="dropdown dropdown-end" id="toc-dropdown">
+          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            <span>Contents</span>
+          </div>
+          <ul id="report-toc-list" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-72 sm:w-80 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
+            <!-- Populated via initTOC() -->
+          </ul>
+        </div>
+
+        <!-- 2. DaisyUI 32-Themes Dropdown -->
+        <div class="dropdown dropdown-end" id="theme-dropdown">
+          <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
+            <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
+            <div class="flex items-center gap-0.5">
+              <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+              <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+            </div>
+          </div>
+          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
+            <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+              <!-- Populated via initThemeDropdown() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Icon-Only Download Dropdown -->
+        <div class="dropdown dropdown-end" id="download-dropdown">
+          <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Report" title="Download Report">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
+            </svg>
+          </div>
+          <ul id="download-dropdown-menu" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-64 p-2 shadow-2xl border border-base-300">
+            <li>
+              <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <span>Download as HTML</span>
+              </button>
+            </li>
+            <li>
+              <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                <div class="flex items-center gap-2.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span>Download as PDF</span>
+                </div>
+                <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Interactive PDF Warning Modal -->
+  <dialog id="pdf-not-ready-modal" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg text-warning flex items-center gap-2">
+        <span>⚠ Interactive Report Mode</span>
+      </h3>
+      <p class="py-4 text-xs">
+        This report is in interactive web-first mode. To generate a print-ready version with @media print rules, cover page, and PDF pagination, request:
+      </p>
+      <div class="bg-base-200 p-3 rounded font-mono text-2xs overflow-x-auto">
+        <code id="pdf-conversion-prompt-text">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</code>
+      </div>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-sm">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
+<div id="telemetry-dashboard-container" class="space-y-8" data-signals='{"progressPct": 100, "totalTasks": 11, "completedTasks": 11, "runningTasks": 0}'>
+
+  <!-- ========================================== -->
+  <!-- HERO & OPEN-SPEC COMPANION HEADER          -->
+  <!-- ========================================== -->
+  <section id="hero-header" class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body p-6 sm:p-8 space-y-6">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-4">
+        <div class="min-w-0 flex-1 break-words">
+          <div class="flex items-center gap-2 mb-2 flex-wrap">
+            <span class="badge badge-primary gap-1.5 font-semibold text-xs py-2 px-3">
+              <span class="inline-block w-2 h-2 rounded-full bg-success animate-ping"></span>
+              Live Hypermedia
+            </span>
+            <span class="badge badge-outline text-xs font-mono">OpenSpec Companion</span>
+            <span class="badge badge-ghost text-xs font-mono">datastar-llm-tracking-dashboard</span>
+          </div>
+          <h1 id="dashboard-title" class="text-2xl sm:text-3xl font-black tracking-tight text-base-content scroll-mt-24">
+            Datastar Live LLM Tracking Dashboard & Showdown Artifact Viewer
+          </h1>
+          <p class="text-sm text-base-content/70 mt-1 max-w-3xl">
+            Real-time LLM telemetry streaming (Chain-of-Thought reasoning, tool invocations, task checklist) powered by Datastar.js SSE morphing and instant in-browser Showdown.js markdown inspection.
+          </p>
+        </div>
+
+        <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+          <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('specs/live-llm-tracking/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
+          </button>
+        </div>
+      </div>
+
+      <!-- MANDATORY REPO RULE: Journey Phase Stepper Standard -->
+      <div class="pt-4 border-t border-base-200">
+        <div class="text-xs font-bold uppercase tracking-wider text-base-content/60 mb-3 flex items-center justify-between">
+          <span class="flex items-center gap-1.5"><i data-lucide="milestone" class="w-3.5 h-3.5 text-primary"></i> Journey Lifecycle State</span>
+          <span class="badge badge-sm badge-success font-mono">Phase 4: Verifying (Complete)</span>
+        </div>
+        <div class="w-full overflow-x-auto">
+          <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+            <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
+            <li id="stepper-phase-2" class="step step-primary">2. Planning</li>
+            <li id="stepper-phase-3" class="step step-primary">3. Implementing</li>
+            <li id="stepper-phase-4" class="step step-primary">4. Verifying</li>
+            <li id="stepper-phase-5" class="step">5. Shipped / Archived</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- LIVE METRICS & TELEMETRY SUMMARY           -->
+  <!-- ========================================== -->
+  <section id="telemetry-stats" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-4 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs font-medium text-base-content/70">
+        <span>Completion</span>
+        <i data-lucide="pie-chart" class="w-4 h-4 text-primary"></i>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-2xl sm:text-3xl font-black text-primary" data-text="$progressPct + '%'">45%</span>
+        <span class="text-3xs text-base-content/60">overall</span>
+      </div>
+      <progress class="progress progress-success w-full mt-2" value="100" max="100" id="progress-bar-el"></progress>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-4 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs font-medium text-base-content/70">
+        <span>Total Tasks</span>
+        <i data-lucide="list-todo" class="w-4 h-4 text-secondary"></i>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-2xl sm:text-3xl font-black text-base-content" data-text="$totalTasks">11</span>
+        <span class="text-3xs text-base-content/60">milestones</span>
+      </div>
+      <div class="text-3xs text-base-content/60 mt-2 font-mono">across 5 phases</div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-4 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs font-medium text-base-content/70">
+        <span>Completed</span>
+        <i data-lucide="check-circle" class="w-4 h-4 text-success"></i>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-2xl sm:text-3xl font-black text-success" data-text="$completedTasks">5</span>
+        <span class="text-3xs text-success/80">passed</span>
+      </div>
+      <div class="text-3xs text-success/80 mt-2 font-mono">verifications clean</div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-4 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs font-medium text-base-content/70">
+        <span>Active / In Progress</span>
+        <i data-lucide="loader" class="w-4 h-4 text-warning animate-spin"></i>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-2xl sm:text-3xl font-black text-warning" data-text="$runningTasks">2</span>
+        <span class="text-3xs text-warning/80">active</span>
+      </div>
+      <div class="text-3xs text-warning/80 mt-2 font-mono">streaming telemetry</div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-4 flex flex-col justify-between col-span-2 sm:col-span-1">
+      <div class="flex items-center justify-between text-xs font-medium text-base-content/70">
+        <span>SSE Stream Status</span>
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse" id="sse-indicator-dot"></span>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-base sm:text-lg font-bold text-success font-mono" id="sse-status-label">CONNECTED</span>
+      </div>
+      <div class="text-3xs text-base-content/60 mt-2 font-mono">/__datastar_stream__</div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- MAIN TELEMETRY WORKSPACE (2-COLUMN)        -->
+  <!-- ========================================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+    <!-- LEFT COLUMN: LIVE STREAM (THOUGHTS & TOOLS) -->
+    <div class="lg:col-span-7 space-y-6">
+
+      <!-- Real-Time Chain-of-Thought Card -->
+      <section id="cot-stream-section" class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-base-200">
+            <div class="flex items-center gap-2">
+              <i data-lucide="brain-circuit" class="w-5 h-5 text-primary"></i>
+              <h2 id="agent-cot-heading" class="text-base font-bold text-base-content">
+                LLM Thought & Reasoning Stream (CoT)
+              </h2>
+            </div>
+            <span class="badge badge-sm badge-ghost font-mono text-3xs">SSE Idiomorph</span>
+          </div>
+
+          <!-- Thought Feed Container -->
+          <div id="agent-thought-stream" class="mt-4 space-y-3 max-h-72 overflow-y-auto pr-1">
+            <div class="chat chat-start">
+              <div class="chat-header text-3xs font-mono opacity-70 mb-0.5 flex items-center gap-1.5">
+                <span class="badge badge-primary badge-xs">Agent CoT</span>
+                <span>06:49:15</span>
+              </div>
+              <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-mono opacity-90 shadow-sm">
+                Evaluating repository rules and user request. User pointed out that clicking markdown artifact links (.md) fails with 404 or downloads. Updating dev server MIME types and adding dedicated in-browser Showdown viewer modal.
+              </div>
+            </div>
+
+            <div class="chat chat-start">
+              <div class="chat-header text-3xs font-mono opacity-70 mb-0.5 flex items-center gap-1.5">
+                <span class="badge badge-primary badge-xs">Agent CoT</span>
+                <span>06:50:02</span>
+              </div>
+              <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-mono opacity-90 shadow-sm">
+                Dev server artifact resolution implemented in serve-report.mjs. Verified with curl that /proposal.md returns 200 OK text/markdown. Next: assembling Datastar live hypermedia dashboard.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Tool Invocations Feed Card -->
+      <section id="tool-feed-section" class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-base-200">
+            <div class="flex items-center gap-2">
+              <i data-lucide="terminal" class="w-5 h-5 text-secondary"></i>
+              <h2 id="tool-feed-heading" class="text-base font-bold text-base-content">
+                Live Tool Invocations Feed
+              </h2>
+            </div>
+            <span class="badge badge-sm badge-secondary badge-outline font-mono text-3xs">Real-Time Terminal</span>
+          </div>
+
+          <!-- Tool Call Feed Container (Prepend Mode) -->
+          <div id="tool-call-feed" class="mt-4 space-y-3 max-h-96 overflow-y-auto pr-1">
+
+            <!-- Tool Card 1 -->
+            <div id="tool-call-101" data-tool-category="shell" class="rounded-box border border-base-300 bg-base-100 p-3 text-xs shadow-xs transition">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i data-lucide="terminal" class="w-4 h-4 text-primary shrink-0"></i>
+                  <span class="font-mono font-bold text-xs text-primary">run_command</span>
+                  <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1.5 py-0.5 rounded">curl -s -I http://localhost:3000/proposal.md</span>
+                </div>
+                <div class="shrink-0">
+                  <span class="badge badge-success badge-xs gap-1 font-mono">18ms</span>
+                </div>
+              </div>
+              <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-2 px-3 max-h-28 overflow-y-auto">
+                <pre data-prefix=">"><code>HTTP/1.1 200 OK</code></pre>
+                <pre data-prefix=">"><code>Content-Type: text/markdown; charset=utf-8</code></pre>
+                <pre data-prefix=">"><code>Cache-Control: no-cache</code></pre>
+              </div>
+            </div>
+
+            <!-- Tool Card 2 -->
+            <div id="tool-call-102" data-tool-category="file" class="rounded-box border border-base-300 bg-base-100 p-3 text-xs shadow-xs transition">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i data-lucide="file-code" class="w-4 h-4 text-accent shrink-0"></i>
+                  <span class="font-mono font-bold text-xs text-accent">edit_file</span>
+                  <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1.5 py-0.5 rounded">skills/html-report/scripts/serve-report.mjs</span>
+                </div>
+                <div class="shrink-0">
+                  <span class="badge badge-success badge-xs gap-1 font-mono">45ms</span>
+                </div>
+              </div>
+              <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-2 px-3 max-h-24 overflow-y-auto">
+                <pre data-prefix=">"><code>Made 1 replacement in serve-report.mjs starting at line 208</code></pre>
+                <pre data-prefix=">"><code>Added .md MIME & OpenSpec active change artifact fallback resolver</code></pre>
+              </div>
+            </div>
+
+            <!-- Tool Card 3 (Active) -->
+            <div id="tool-call-103" data-tool-category="shell" class="rounded-box border border-warning/60 bg-warning/5 p-3 text-xs shadow-xs transition">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i data-lucide="activity" class="w-4 h-4 text-warning shrink-0"></i>
+                  <span class="font-mono font-bold text-xs text-warning">build-report.mjs</span>
+                  <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1.5 py-0.5 rounded">--live --addons showdown</span>
+                </div>
+                <div class="shrink-0">
+                  <span class="badge badge-warning badge-xs gap-1 font-mono">
+                    <span class="loading loading-spinner loading-xs"></span> running
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT COLUMN: INTERACTIVE CONTROLLER & TASK MATRIX -->
+    <div class="lg:col-span-5 space-y-6">
+
+      <!-- Interactive LLM Telemetry Simulator Card -->
+      <section id="simulator-card" class="card bg-base-100 border border-primary/40 shadow-sm">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-base-200">
+            <div class="flex items-center gap-2">
+              <i data-lucide="play-circle" class="w-5 h-5 text-primary"></i>
+              <h2 id="controller-heading" class="text-base font-bold text-base-content">
+                LLM Telemetry Simulator
+              </h2>
+            </div>
+            <span class="badge badge-primary badge-xs">Interactive Demo</span>
+          </div>
+
+          <p class="text-xs text-base-content/70 mt-2">
+            Test real-time Datastar SSE DOM morphs directly in this browser tab without waiting for external agents.
+          </p>
+
+          <!-- Interactive Control Buttons -->
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <button type="button" onclick="triggerClientSimulationStep()" class="btn btn-sm btn-primary gap-1.5 font-semibold">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i> Next Step
+            </button>
+            <button type="button" onclick="triggerClientRapidBurst()" class="btn btn-sm btn-outline btn-secondary gap-1.5 font-semibold">
+              <i data-lucide="zap" class="w-3.5 h-3.5"></i> Rapid Burst
+            </button>
+            <button type="button" onclick="triggerBackendStreamer()" class="btn btn-sm btn-outline btn-accent gap-1.5 font-semibold">
+              <i data-lucide="radio" class="w-3.5 h-3.5"></i> Stream Server
+            </button>
+            <button type="button" onclick="resetTelemetryDemo()" class="btn btn-sm btn-ghost gap-1.5 font-semibold">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset Demo
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Connected Task Matrix Card -->
+      <section id="task-matrix-section" class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-base-200">
+            <div class="flex items-center gap-2">
+              <i data-lucide="list-checks" class="w-5 h-5 text-accent"></i>
+              <h2 id="task-matrix-heading" class="text-base font-bold text-base-content">
+                OpenSpec Tasks Matrix
+              </h2>
+            </div>
+            <span class="badge badge-sm badge-accent badge-outline font-mono text-3xs">tasks.md</span>
+          </div>
+
+          <!-- Phase 1 Tasks -->
+          <div class="mt-4 space-y-2">
+            <div class="text-3xs font-bold uppercase tracking-wider text-base-content/60">
+              Phase 1: Dev Server & Showdown Artifact Viewer
+            </div>
+
+            <!-- Task 1.1 -->
+            <div id="task-1.1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">1.1 Update serve-report.mjs for .md & active change resolution</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 1.2 -->
+            <div id="task-1.2" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">1.2 Showdown in-browser modal viewer with switcher tabs</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 1.3 -->
+            <div id="task-1.3" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">1.3 Verify artifact buttons render without 404s or downloads</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 2 Tasks -->
+          <div class="mt-4 space-y-2">
+            <div class="text-3xs font-bold uppercase tracking-wider text-base-content/60">
+              Phase 2: Datastar Live Telemetry Engine
+            </div>
+
+            <!-- Task 2.1 -->
+            <div id="task-2.1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">2.1 Assemble thought stream, tool feed & task cards</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 2.2 -->
+            <div id="task-2.2" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">2.2 Wire Datastar reactive signals & SSE fragment morphing</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 2.3 -->
+            <div id="task-2.3" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">2.3 Responsive horizontal journey stepper standard</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 3 Tasks -->
+          <div class="mt-4 space-y-2">
+            <div class="text-3xs font-bold uppercase tracking-wider text-base-content/60">
+              Phase 3 & 4: Streamer CLI, Assembly & Verification
+            </div>
+
+            <!-- Task 3.1 -->
+            <div id="task-3.1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">3.1 Create telemetry-streamer.mjs CLI & simulation controller</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 4.1 -->
+            <div id="task-4.1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">4.1 Compile companion index.html & mirror to localhost:3000</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 5.1 -->
+            <div id="task-5.1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">5.1 Playwright & multi-breakpoint verification</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TECHNICAL ARCHITECTURE (MERMAID)           -->
+  <!-- ========================================== -->
+  <section id="architecture-section" class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body p-6">
+      <div class="flex items-center justify-between pb-3 border-b border-base-200">
+        <div class="flex items-center gap-2">
+          <i data-lucide="network" class="w-5 h-5 text-primary"></i>
+          <h2 id="architecture-heading" class="text-base sm:text-lg font-bold text-base-content">
+            Real-Time Hypermedia & Markdown Resolution Architecture
+          </h2>
+        </div>
+        <span class="badge badge-outline text-xs font-mono">Mermaid Flow</span>
+      </div>
+
+      <div class="mt-4 overflow-x-auto flex justify-center py-2">
+        <div class="mermaid text-xs w-full max-w-4xl">
+flowchart LR
+    subgraph BrowserClient["Browser Tab (localhost:3000)"]
+        UI["Live Dashboard UI"]
+        Modal["Showdown.js Markdown Modal"]
+        DS["Datastar.js Runtime (Idiomorph)"]
+        UI --> Modal
+        DS --> UI
+    end
+
+    subgraph DevServer["Dev Server (serve-report.mjs)"]
+        SSE["/__datastar_stream__ (SSE)"]
+        Resolver["Artifact Path Resolver\n(openspec/changes/<active>/)"]
+        LiveReload["/__live_reload__"]
+    end
+
+    subgraph AgentProcess["LLM Agent Run"]
+        CLI["telemetry-streamer.mjs"]
+        Transcript["transcript.jsonl (CoT & Tools)"]
+        Transcript --> CLI
+    end
+
+    Modal -->|Fetch .md| Resolver
+    Resolver -->|Content-Type: text/markdown| Modal
+    CLI -->|POST Telemetry Events| SSE
+    SSE -->|event: datastar-fragment| DS
+    SSE -->|event: datastar-merge-signals| DS
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SHOWDOWN MARKDOWN ARTIFACT VIEWER MODAL    -->
+  <!-- ========================================== -->
+  <dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box max-w-4xl w-11/12 max-h-[85vh] p-0 flex flex-col bg-base-100 border border-base-300 shadow-2xl">
+      
+      <!-- Modal Top Bar -->
+      <div class="p-4 border-b border-base-200 bg-base-200/50 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <i data-lucide="file-text" class="w-5 h-5 text-primary shrink-0"></i>
+          <span id="modal-doc-title" class="font-bold text-sm sm:text-base truncate font-mono">proposal.md</span>
+          <span class="badge badge-primary badge-xs">Showdown.js GFM</span>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1 font-mono" id="copy-markdown-btn">
+            <i data-lucide="copy" class="w-3 h-3"></i> Copy
+          </button>
+          <a id="modal-raw-link" href="/proposal.md?raw=true" target="_blank" class="btn btn-xs btn-ghost gap-1 font-mono">
+            <i data-lucide="external-link" class="w-3 h-3"></i> Raw
+          </a>
+          <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Document Switcher Tabs -->
+      <div class="px-4 py-2 border-b border-base-200 bg-base-100 flex items-center gap-1 overflow-x-auto shrink-0">
+        <button type="button" onclick="switchViewerTab('proposal.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="proposal.md">
+          proposal.md
+        </button>
+        <button type="button" onclick="switchViewerTab('design.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="design.md">
+          design.md
+        </button>
+        <button type="button" onclick="switchViewerTab('tasks.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="tasks.md">
+          tasks.md
+        </button>
+        <button type="button" onclick="switchViewerTab('specs/live-llm-tracking/spec.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="specs/live-llm-tracking/spec.md">
+          spec.md
+        </button>
+      </div>
+
+      <!-- Rendered Markdown Body -->
+      <div class="p-6 overflow-y-auto flex-1">
+        <div id="modal-markdown-container" class="prose prose-sm sm:prose max-w-none text-base-content leading-relaxed">
+          <div class="flex items-center justify-center py-12">
+            <span class="loading loading-spinner loading-md text-primary"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- ========================================== -->
+  <!-- CLIENT RUNTIME SCRIPTS & DATASTAR BRIDGE   -->
+  <!-- ========================================== -->
+  <script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Datastar Live LLM Tracking Dashboard & Showdown Markdown Artifact Viewer\n\n## Why\nWhen developers and agents work on features in this repository, they need real-time, high-fidelity visibility into what the LLM is doing:\n1. **Live LLM Execution Blindspot**: As autonomous agents (Google Antigravity, OpenAI Codex, etc.) execute multi-step changes, users cannot see the live reasoning (Chain-of-Thought), tool invocations (commands, file operations, subagents), execution durations, or subtask progress without inspecting raw CLI logs or JSONL files.\n2. **Broken Markdown Artifact Backlinks**: In feature companion dashboards (`index.html` and `implementation-progress.html`), the backlink buttons for markdown artifacts (`proposal.md`, `design.md`, `tasks.md`, `specs/`) fail when clicked in `localhost:3000`. The dev server returns 404 because the files reside in `openspec/changes/<feature>/`, and standard browsers do not format `.md` files nicely (often downloading them as `application/octet-stream`).\n3. **Repository-Specific Need**: For this repo's development flow, having an integrated, Showdown-powered in-browser markdown viewer and a Datastar live tracking dashboard transforms the local dev server (`localhost:3000`) into a living command center that seamlessly tracks LLM activity and enables instant, beautiful inspection of OpenSpec artifacts.\n\n## What Changes\n1. **Showdown In-Browser Markdown Viewer & Dev Server Resolution**:\n   - Upgrade `serve-report.mjs` to recognize `.md` files (`text/markdown; charset=utf-8`) and auto-resolve artifact requests (`/proposal.md`, `/design.md`, `/tasks.md`, `/specs/...`) against the active OpenSpec change directory.\n   - Upgrade feature companion headers in `index.html` and `implementation-progress.html` with an interactive Showdown Markdown Viewer modal (`<dialog id=\"markdown-viewer-modal\">`). Clicking any artifact button immediately renders publication-grade GitHub Flavored Markdown with syntax highlighting, task checkboxes, tables, and document switcher tabs without navigating away or downloading raw files.\n   - Provide direct browser preview fallback so loading `.md` URLs directly renders a clean Showdown view.\n2. **Datastar Live LLM Tracking Dashboard**:\n   - Provide a real-time reactive dashboard using `@starfederation/datastar` and SSE (`/__datastar_stream__`).\n   - Live Agent Thought Stream (`#agent-thought-stream`): Displays streaming Chain-of-Thought / reasoning text in real-time.\n   - Live Tool Invocations Feed (`#tool-call-feed`): Renders tool calls (`read_file`, `run_command`, `write_file`, etc.) with running spinners, duration badges, arguments, and collapsible DaisyUI terminal drawers (`mockup-code`).\n   - Live Task Progress Matrix (`#task-matrix`): Displays phases and tasks from `tasks.md`, morphing task cards in place upon status updates (`pending`, `running`, `completed`, `failed`).\n   - Journey Phase Stepper (`#journey-stepper`): Publication-standard horizontal stepper showing current phase (`Brainstorming`, `Planning`, `Implementing`, `Verifying`, `Shipped`).\n   - Live Metrics & Telemetry Controller: Interactive controls (Simulate Burst, Step, Play/Pause, Reset) and an active dev server bridge (`telemetry-streamer.mjs`) enabling live push from real agent executions.\n",
+  "design.md": "# Technical Design: Datastar Live LLM Tracking Dashboard & Showdown Markdown Artifact Viewer\n\n## Architecture Overview\n```mermaid\nflowchart TD\n    subgraph Browser[\"Browser Client (localhost:3000)\"]\n        Navbar[\"Sticky DaisyUI Navbar\"]\n        \n        subgraph MarkdownViewer[\"Showdown Markdown Artifact Viewer\"]\n            ArtifactBtns[\"Backlink Buttons\\n(proposal.md, design.md, tasks.md, specs/)\"]\n            Modal[\"DaisyUI Modal (#markdown-viewer-modal)\"]\n            ShowdownEngine[\"Showdown.js GFM Converter\"]\n            DocTabs[\"Document Switcher Tabs & Copy Button\"]\n            ArtifactBtns --> Modal\n            Modal --> ShowdownEngine\n            ShowdownEngine --> DocTabs\n        end\n\n        subgraph DatastarDashboard[\"Datastar.js Reactive Telemetry Dashboard\"]\n            DSStream[\"data-on-load=@get('/__datastar_stream__')\"]\n            CoTFeed[\"Agent Thought Stream (#agent-thought-stream)\"]\n            ToolFeed[\"Tool Invocations Feed (#tool-call-feed)\"]\n            TaskCards[\"Task Checklist (#task-1.1, #task-1.2)\"]\n            Stepper[\"Journey Stepper (#journey-stepper)\"]\n            MetricsGauges[\"Progress Gauges & Counters\"]\n            \n            DSStream --> CoTFeed\n            DSStream --> ToolFeed\n            DSStream --> TaskCards\n            DSStream --> Stepper\n            DSStream --> MetricsGauges\n        end\n    end\n\n    subgraph DevServer[\"Live Dev Server (serve-report.mjs)\"]\n        SSEEndpoint[\"/__datastar_stream__ (GET & POST)\"]\n        ActiveResolver[\"Active Change Artifact Resolver\\n(openspec/changes/<active>/)\"]\n        MimeHandler[\"MIME Handler (.md -> text/markdown)\"]\n        LiveReload[\"/__live_reload__\"]\n    end\n\n    subgraph LLMAgent[\"LLM Agent Runtimes & Streamers\"]\n        AGY[\"Google Antigravity / Agent Runtimes\"]\n        Transcript[\"transcript.jsonl / Live Steps\"]\n        TelemetryBridge[\"telemetry-streamer.mjs / DatastarBridge\"]\n        AGY --> Transcript\n        Transcript --> TelemetryBridge\n        TelemetryBridge -->|POST SSE Events| SSEEndpoint\n    end\n\n    SSEEndpoint --> DSStream\n    Modal -->|Fetch .md / Fallback cache| ActiveResolver\n    ActiveResolver --> MimeHandler\n```\n\n## Detailed Component Specifications\n\n### 1. Showdown In-Browser Markdown Viewer\n1. **Dev Server Artifact Routing (`serve-report.mjs`)**:\n   - Detects requests for `.md` files or paths like `/proposal.md`, `/design.md`, `/tasks.md`, `/specs/...`.\n   - Resolves from repo root first; if not found, locates the active change directory in `openspec/changes/` and serves the file with `Content-Type: text/markdown; charset=utf-8`.\n   - Supports HTML direct preview fallback if accessed directly in the browser address bar with `Accept: text/html` or query `?preview=true`.\n2. **In-Page Showdown Modal (`<dialog id=\"markdown-viewer-modal\">`)**:\n   - Clean DaisyUI modal dialog with backdrop click dismissal and `Esc` key handling.\n   - Header with Lucide icon (`file-text`), document name badge, switcher tabs (`proposal.md`, `design.md`, `tasks.md`, `specs/`), and copy markdown button.\n   - Showdown converter initialized with:\n     ```javascript\n     const converter = new showdown.Converter({\n       tables: true,\n       tasklists: true,\n       strikethrough: true,\n       ghCodeBlocks: true,\n       simplifiedAutoLink: true,\n       openLinksInNewWindow: true\n     });\n     ```\n   - Renders into DaisyUI `prose prose-sm sm:prose max-w-none text-base-content`.\n   - Embedded cache containing current artifacts so the viewer works instantly even offline or in standalone files.\n\n### 2. Datastar Live LLM Tracking Dashboard\n1. **Real-Time SSE Streaming Pipeline**:\n   - Uses `@starfederation/datastar@1.0.0-beta.9` loaded via addon CDN.\n   - Automatically connects to dev server `/__datastar_stream__` via Datastar SSE attributes or native EventSource bridge.\n2. **Agent Thought Stream (`#agent-thought-stream`)**:\n   - Displays real-time reasoning / Chain-of-Thought logs in expandable, distinct chat bubbles (`chat chat-start`).\n   - Timestamps and token counters.\n3. **Live Tool Invocations Feed (`#tool-call-feed`)**:\n   - Displays real-time cards for executed tools (`read_file`, `write_file`, `edit_file`, `run_command`, `invoke_subagent`).\n   - Category icons (`terminal`, `file-code`, `globe`, `users`).\n   - Real-time running spinner during execution; duration badge (`120ms`) upon completion.\n   - Collapsible DaisyUI terminal drawer (`mockup-code`) with stdout lines.\n4. **Task Matrix & Stepper**:\n   - Synchronized with `tasks.md`.\n   - Surgical DOM morphing: updating task `#task-1.1` from `pending` to `running` to `completed` replaces only `#task-1.1` without reloading the page or losing scroll position.\n5. **Interactive Telemetry Controller & CLI Streamer**:\n   - On-screen controls to simulate live LLM steps (Burst mode, Step mode, Reset) for immediate demonstration on `localhost:3000`.\n   - Streamer script (`skills/html-report/scripts/telemetry-streamer.mjs`) that can tail live agent logs or push synthetic events via `POST /__datastar_stream__`.\n",
+  "tasks.md": "# Tasks: Datastar Live LLM Tracking Dashboard & Showdown Markdown Artifact Viewer\n\n## Phase 1: Dev Server Markdown Resolution & Showdown In-Browser Artifact Viewer\n- [ ] 1.1 Update `skills/html-report/scripts/serve-report.mjs` to add `text/markdown` MIME support and resolve OpenSpec artifact files (`proposal.md`, `design.md`, `tasks.md`, `specs/`) from active change directories\n- [ ] 1.2 Build interactive Showdown markdown viewer modal in companion fragment with document switcher tabs, copy button, and GFM styling\n- [ ] 1.3 Verify clicking artifact buttons in the report immediately renders publication-grade markdown without 404s or download prompts\n\n## Phase 2: Datastar Live Telemetry Engine & Live Tracking Dashboard Components\n- [ ] 2.1 Assemble live tracking dashboard components: agent thought stream (`#agent-thought-stream`), live tool invocation feed (`#tool-call-feed`), and responsive task cards (`#task-matrix`)\n- [ ] 2.2 Wire Datastar reactive signals and SSE fragment morphing (`/__datastar_stream__`) with automatic Lucide icon rehydration\n- [ ] 2.3 Implement DaisyUI journey phase stepper (`#journey-stepper`) adhering to the responsive horizontal overflow standard\n\n## Phase 3: Telemetry Streamer CLI & Live Interactive Simulation Controls\n- [ ] 3.1 Create `skills/html-report/scripts/telemetry-streamer.mjs` to stream real agent transcript steps or synthetic LLM events into `/__datastar_stream__`\n- [ ] 3.2 Add in-browser interactive simulation controls (Simulate LLM Burst, Single Step, Play/Pause, Reset) for instant live demonstration\n\n## Phase 4: Companion Dashboard Assembly & Live Dev Server Sync (`localhost:3000`)\n- [ ] 4.1 Compile `openspec/changes/datastar-llm-tracking-dashboard/index.html` using `build-report.mjs` with `--live` and Showdown addons\n- [ ] 4.2 Mirror to `implementation-progress.html` and verify live-reload on `http://localhost:3000`\n\n## Phase 5: Verification & Playwright Validation\n- [ ] 5.1 Run Playwright validation checks verifying DOM structure, responsiveness, and zero console errors\n- [ ] 5.2 Test live streaming events and confirm real-time DOM morphing and markdown viewer functionality on `localhost:3000`\n",
+  "specs/live-llm-tracking/spec.md": "# Capability Delta: Live LLM Tracking Dashboard & Showdown Artifact Viewer\n\n## ADDED REQUIREMENTS\n\n### Requirement: Dev Server Markdown Resolution & MIME Handling\nThe dev server (`serve-report.mjs`) MUST support `text/markdown; charset=utf-8` and automatically resolve markdown artifact links (`/proposal.md`, `/design.md`, `/tasks.md`, `/specs/...`) against the active OpenSpec change directory if they do not exist at root.\n\n#### Scenario: Requesting Artifact Markdown File\n- **GIVEN** a dev server running against `implementation-progress.html` with an active change in `openspec/changes/<feature-name>/`\n- **WHEN** a client makes an HTTP GET request to `/proposal.md`\n- **THEN** the server MUST resolve the file from `openspec/changes/<feature-name>/proposal.md` and respond with status 200 and `Content-Type: text/markdown; charset=utf-8`.\n\n---\n\n### Requirement: Showdown In-Browser Markdown Artifact Viewer\nThe standard report MUST provide an interactive Showdown-powered modal viewer allowing users to click `.md` artifact buttons and view formatted GitHub Flavored Markdown with syntax highlighting and task checklists without leaving the page or downloading raw files.\n\n#### Scenario: Clicking Markdown Artifact Link\n- **GIVEN** a user viewing the journey dashboard in the browser\n- **WHEN** the user clicks any artifact button (`proposal.md`, `design.md`, `tasks.md`, or `specs/`)\n- **THEN** the report MUST open `<dialog id=\"markdown-viewer-modal\">` and render the document's content using Showdown with GFM tables, tasklists, and code blocks.\n\n#### Scenario: Switching Between Artifact Tabs\n- **GIVEN** the markdown viewer modal is open\n- **WHEN** the user clicks another tab in the modal header (e.g. `design.md` or `tasks.md`)\n- **THEN** the viewer MUST seamlessly switch content and render the selected artifact.\n\n---\n\n### Requirement: Datastar Live LLM Tracking Dashboard\nThe report MUST provide real-time hypermedia tracking components powered by Datastar.js and SSE (`/__datastar_stream__`) displaying LLM thoughts, tool calls, and task progress.\n\n#### Scenario: Live Chain-of-Thought Stream\n- **GIVEN** an active Datastar stream connection\n- **WHEN** an agent emits a thought delta event\n- **THEN** Datastar MUST append or morph the thought into `#agent-thought-stream` without page reload.\n\n#### Scenario: Live Tool Invocation & Terminal Output\n- **GIVEN** an active Datastar stream connection\n- **WHEN** a tool call event is received\n- **THEN** Datastar MUST prepend a tool invocation card to `#tool-call-feed` displaying tool name, arguments, status indicator, and collapsible terminal output drawer.\n\n#### Scenario: Real-Time Task Card Morphing\n- **GIVEN** a task item `#task-${id}` in the dashboard\n- **WHEN** the server broadcasts a `datastar-fragment` with `selector: #task-${id}` and updated status\n- **THEN** Datastar MUST morph the task card in-place, updating the status badge, checkbox, and completion state.\n"
+}
+</script>
+
+  <script>
+    window.OPEN_SPEC_ARTIFACTS = {};
+    try {
+      window.OPEN_SPEC_ARTIFACTS = JSON.parse(document.getElementById("open-spec-artifacts-data").textContent);
+    } catch (_) {}
+
+    let activeDocKey = "proposal.md";
+    let showdownConverter = null;
+
+    function getShowdownConverter() {
+      if (!showdownConverter && window.showdown) {
+        showdownConverter = new window.showdown.Converter({
+          tables: true,
+          tasklists: true,
+          strikethrough: true,
+          ghCodeBlocks: true,
+          simplifiedAutoLink: true,
+          openLinksInNewWindow: true
+        });
+      }
+      return showdownConverter;
+    }
+
+    async function openMarkdownViewer(docName) {
+      activeDocKey = docName || "proposal.md";
+      const modal = document.getElementById("markdown-viewer-modal");
+      if (!modal) return;
+      if (typeof modal.showModal === "function") {
+        modal.showModal();
+      } else {
+        modal.setAttribute("open", "true");
+      }
+      await renderMarkdownDoc(activeDocKey);
+    }
+
+    function closeMarkdownViewer() {
+      const modal = document.getElementById("markdown-viewer-modal");
+      if (modal && typeof modal.close === "function") {
+        modal.close();
+      } else if (modal) {
+        modal.removeAttribute("open");
+      }
+    }
+
+    async function switchViewerTab(docName) {
+      activeDocKey = docName;
+      await renderMarkdownDoc(activeDocKey);
+    }
+
+    async function renderMarkdownDoc(docName) {
+      const titleEl = document.getElementById("modal-doc-title");
+      const rawLinkEl = document.getElementById("modal-raw-link");
+      const containerEl = document.getElementById("modal-markdown-container");
+
+      if (titleEl) titleEl.textContent = docName;
+      if (rawLinkEl) rawLinkEl.href = "/" + docName + "?raw=true";
+
+      document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+        if (btn.getAttribute("data-doc") === docName) {
+          btn.classList.add("btn-primary");
+          btn.classList.remove("btn-ghost");
+        } else {
+          btn.classList.remove("btn-primary");
+          btn.classList.add("btn-ghost");
+        }
+      });
+
+      let markdownText = "";
+      try {
+        const res = await fetch("/" + docName + "?raw=true");
+        if (res.ok) {
+          markdownText = await res.text();
+        } else {
+          markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\nFile not found.";
+        }
+      } catch (_) {
+        markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\nFile loaded from offline cache.";
+      }
+
+      window._currentMarkdownRaw = markdownText;
+
+      const converter = getShowdownConverter();
+      if (converter && containerEl) {
+        containerEl.innerHTML = converter.makeHtml(markdownText);
+        if (window.autoLinkMarkdownFiles) window.autoLinkMarkdownFiles(containerEl);
+      } else if (containerEl) {
+        containerEl.textContent = markdownText;
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function copyMarkdownToClipboard() {
+      const text = window._currentMarkdownRaw || "";
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.getElementById("copy-markdown-btn");
+          if (btn) {
+            btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!';
+            if (window.lucide) window.lucide.createIcons();
+            setTimeout(() => {
+              btn.innerHTML = '<i data-lucide="copy" class="w-3 h-3"></i> Copy';
+              if (window.lucide) window.lucide.createIcons();
+            }, 2000);
+          }
+        });
+      }
+    }
+
+    let simStepIndex = 0;
+    const simSteps = [
+      {
+        thought: "Simulated Agent: Diagnosing DOM reactivity under Datastar SSE stream. Verified #agent-thought-stream and #tool-call-feed mount points.",
+        tool: { name: "read_file", args: "openspec/changes/datastar-llm-tracking-dashboard/tasks.md", duration: "24ms", output: "Read tasks.md (26 lines). Found 11 tasks across 5 phases." },
+        taskUpdate: { id: "2.2", status: "completed" },
+        metrics: { progressPct: 55, completed: 6, running: 1 }
+      },
+      {
+        thought: "Simulated Agent: Validating responsive horizontal journey stepper standard. Verified overflow-x-auto container with min-w-[500px] styling.",
+        tool: { name: "run_command", args: "node skills/html-report/scripts/build-report.mjs --live", duration: "72ms", output: "HTML Report compiled in 72ms. 17 CDN stack auto-detected." },
+        taskUpdate: { id: "2.3", status: "completed" },
+        metrics: { progressPct: 65, completed: 7, running: 1 }
+      },
+      {
+        thought: "Simulated Agent: Activating Task 3.1: Building telemetry-streamer.mjs with HTTP POST connector to /__datastar_stream__.",
+        tool: { name: "write_file", args: "skills/html-report/scripts/telemetry-streamer.mjs", duration: "110ms", output: "Created file skills/html-report/scripts/telemetry-streamer.mjs" },
+        taskUpdate: { id: "3.1", status: "completed" },
+        metrics: { progressPct: 75, completed: 8, running: 1 }
+      },
+      {
+        thought: "Simulated Agent: Compiling companion dashboard and mirroring to implementation-progress.html on localhost:3000.",
+        tool: { name: "run_command", args: "cp openspec/changes/datastar-llm-tracking-dashboard/index.html implementation-progress.html", duration: "15ms", output: "Mirrored report to implementation-progress.html" },
+        taskUpdate: { id: "4.1", status: "completed" },
+        metrics: { progressPct: 85, completed: 9, running: 1 }
+      },
+      {
+        thought: "Simulated Agent: Running verification suites with Playwright lean verification runner.",
+        tool: { name: "run_command", args: "node skills/html-report/playwright/harness/runner.mjs --quick", duration: "1450ms", output: "All checks passed cleanly across 5 themes and mobile/desktop breakpoints." },
+        taskUpdate: { id: "5.1", status: "completed" },
+        metrics: { progressPct: 100, completed: 11, running: 0 }
+      }
+    ];
+
+    function triggerClientSimulationStep() {
+      const step = simSteps[simStepIndex % simSteps.length];
+      simStepIndex++;
+
+      const thoughtContainer = document.getElementById("agent-thought-stream");
+      if (thoughtContainer) {
+        const bubble = document.createElement("div");
+        bubble.className = "chat chat-start animate-fade-in";
+        bubble.innerHTML = `
+          <div class="chat-header text-3xs font-mono opacity-70 mb-0.5 flex items-center gap-1.5">
+            <span class="badge badge-primary badge-xs">Agent CoT</span>
+            <span>${new Date().toLocaleTimeString()}</span>
+          </div>
+          <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-mono opacity-90 shadow-sm">
+            ${step.thought}
+          </div>
+        `;
+        thoughtContainer.insertBefore(bubble, thoughtContainer.firstChild);
+      }
+
+      const toolContainer = document.getElementById("tool-call-feed");
+      if (toolContainer) {
+        const card = document.createElement("div");
+        card.className = "rounded-box border border-base-300 bg-base-100 p-3 text-xs shadow-xs transition animate-fade-in";
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <i data-lucide="terminal" class="w-4 h-4 text-primary shrink-0"></i>
+              <span class="font-mono font-bold text-xs text-primary">${step.tool.name}</span>
+              <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1.5 py-0.5 rounded">${step.tool.args}</span>
+            </div>
+            <div class="shrink-0">
+              <span class="badge badge-success badge-xs gap-1 font-mono">${step.tool.duration}</span>
+            </div>
+          </div>
+          <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-2 px-3 max-h-24 overflow-y-auto">
+            <pre data-prefix=">"><code>${step.tool.output}</code></pre>
+          </div>
+        `;
+        toolContainer.insertBefore(card, toolContainer.firstChild);
+      }
+
+      if (step.taskUpdate) {
+        const taskEl = document.getElementById("task-" + step.taskUpdate.id);
+        if (taskEl) {
+          taskEl.className = "card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all";
+          const badge = taskEl.querySelector(".badge");
+          if (badge) {
+            badge.className = "badge badge-success badge-xs gap-1 font-mono";
+            badge.innerHTML = "completed";
+          }
+          const chk = taskEl.querySelector("input[type='checkbox']");
+          if (chk) chk.checked = true;
+          const label = taskEl.querySelector("span.truncate");
+          if (label) label.classList.add("line-through", "opacity-70");
+        }
+      }
+
+      const progressBar = document.getElementById("progress-bar-el");
+      if (progressBar) progressBar.value = step.metrics.progressPct;
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function triggerClientRapidBurst() {
+      let count = 0;
+      const interval = setInterval(() => {
+        triggerClientSimulationStep();
+        count++;
+        if (count >= 4) clearInterval(interval);
+      }, 400);
+    }
+
+    async function triggerBackendStreamer() {
+      try {
+        await fetch("/__datastar_stream__", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            selector: "#agent-thought-stream",
+            mergeMode: "prepend",
+            html: `
+              <div class="chat chat-start animate-fade-in">
+                <div class="chat-header text-3xs font-mono opacity-70 mb-0.5 flex items-center gap-1.5">
+                  <span class="badge badge-secondary badge-xs">Server SSE</span>
+                  <span>${new Date().toLocaleTimeString()}</span>
+                </div>
+                <div class="chat-bubble chat-bubble-secondary text-xs leading-relaxed font-mono opacity-90 shadow-sm">
+                  Broadcasted live from http://localhost:3000/__datastar_stream__ via POST request!
+                </div>
+              </div>
+            `
+          })
+        });
+      } catch (e) {
+        console.warn("Backend streamer fetch note:", e.message);
+      }
+    }
+
+    function resetTelemetryDemo() {
+      simStepIndex = 0;
+      window.location.reload();
+    }
+
+    // Expose all functions to window
+    window.openMarkdownViewer = openMarkdownViewer;
+    window.closeMarkdownViewer = closeMarkdownViewer;
+    window.switchViewerTab = switchViewerTab;
+    window.copyMarkdownToClipboard = copyMarkdownToClipboard;
+    window.triggerClientSimulationStep = triggerClientSimulationStep;
+    window.triggerClientRapidBurst = triggerClientRapidBurst;
+    window.triggerBackendStreamer = triggerBackendStreamer;
+    window.resetTelemetryDemo = resetTelemetryDemo;
+
+    // Connect to SSE stream on page load if running via dev server
+    (() => {
+      try {
+        const es = new EventSource("/__datastar_stream__");
+        es.onopen = () => {
+          const dot = document.getElementById("sse-indicator-dot");
+          const label = document.getElementById("sse-status-label");
+          if (dot) dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse";
+          if (label) {
+            label.textContent = "CONNECTED";
+            label.className = "text-base sm:text-lg font-bold text-success font-mono";
+          }
+        };
+        es.onerror = () => {
+          const dot = document.getElementById("sse-indicator-dot");
+          const label = document.getElementById("sse-status-label");
+          if (dot) dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-warning";
+          if (label) {
+            label.textContent = "STANDALONE";
+            label.className = "text-base sm:text-lg font-bold text-warning font-mono";
+          }
+        };
+      } catch (_) {}
+    })();
+  </script>
+</div>
+  </main>
+
+  <!-- Minimal Centered Footer -->
+  <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
+    generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a>
+  </footer>
+
+  <!-- Runtime Scripts -->
+  <script>
+/**
+ * html-report client runtime (report-runtime.js)
+ * Pre-bundled runtime for 32 DaisyUI themes, canvas 2D OKLCH palette resolution,
+ * Mermaid list syntax defense, dynamic TOC generation, snapshot bundler,
+ * and horizontal space detection.
+ */
+
+const STANDARD_DAISYUI_THEMES = new Set([
+  "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
+  "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden",
+  "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black",
+  "luxury", "dracula", "cmyk", "autumn", "business", "acid", "lemonade",
+  "night", "coffee", "winter", "dim", "nord", "sunset"
+]);
+
+const DAISYUI_THEMES = Array.from(STANDARD_DAISYUI_THEMES);
+
+// Zero-dependency pure JS OKLCH engine & compiler for browser runtime
+function srgbToLinear(c) {
+  const norm = c / 255;
+  return norm <= 0.04045 ? norm / 12.92 : Math.pow((norm + 0.055) / 1.055, 2.4);
+}
+
+function linearToSrgb(c) {
+  const clamped = Math.max(0, Math.min(1, c));
+  const srgb = clamped <= 0.0031308 ? clamped * 12.92 : 1.055 * Math.pow(clamped, 1 / 2.4) - 0.055;
+  return Math.round(srgb * 255);
+}
+
+function hexToRgb(hex) {
+  let clean = String(hex).replace(/^#/, "").trim();
+  if (clean.length === 3) {
+    clean = clean.split("").map((c) => c + c).join("") + "ff";
+  } else if (clean.length === 4) {
+    clean = clean.split("").map((c) => c + c).join("");
+  } else if (clean.length === 6) {
+    clean += "ff";
+  }
+  if (clean.length !== 8) return [0, 0, 0, 1];
+  const num = parseInt(clean, 16);
+  if (Number.isNaN(num)) return [0, 0, 0, 1];
+  return [
+    (num >>> 24) & 255,
+    (num >>> 16) & 255,
+    (num >>> 8) & 255,
+    ((num & 255) / 255)
+  ];
+}
+
+function hslToRgb(h, s, l) {
+  const hNorm = (((h % 360) + 360) % 360) / 360;
+  const sNorm = Math.max(0, Math.min(1, s / 100));
+  const lNorm = Math.max(0, Math.min(1, l / 100));
+  if (sNorm === 0) {
+    const val = Math.round(lNorm * 255);
+    return [val, val, val];
+  }
+  const q = lNorm < 0.5 ? lNorm * (1 + sNorm) : lNorm + sNorm - lNorm * sNorm;
+  const p = 2 * lNorm - q;
+  const hue2rgb = (t) => {
+    let tNorm = t;
+    if (tNorm < 0) tNorm += 1;
+    if (tNorm > 1) tNorm -= 1;
+    if (tNorm < 1 / 6) return p + (q - p) * 6 * tNorm;
+    if (tNorm < 1 / 2) return q;
+    if (tNorm < 2 / 3) return p + (q - p) * (2 / 3 - tNorm) * 6;
+    return p;
+  };
+  return [
+    Math.round(hue2rgb(hNorm + 1 / 3) * 255),
+    Math.round(hue2rgb(hNorm) * 255),
+    Math.round(hue2rgb(hNorm - 1 / 3) * 255)
+  ];
+}
+
+function parseColor(input) {
+  if (!input || typeof input !== "string") {
+    return { r: 59, g: 130, b: 246, a: 1, oklch: null };
+  }
+  const str = input.trim();
+  const oklchMatch = str.match(/^(?:oklch\s*\(\s*)?([0-9.]+%?)\s+([0-9.]+)\s+([0-9.]+)(?:\s*(?:\/|\s)\s*([0-9.]+%?))?\s*\)?$/i);
+  if (oklchMatch) {
+    let rawL = oklchMatch[1];
+    let L = rawL.endsWith("%") ? parseFloat(rawL) / 100 : parseFloat(rawL);
+    if (L > 1) L = L / 100;
+    const C = parseFloat(oklchMatch[2]);
+    const H = parseFloat(oklchMatch[3]);
+    return {
+      r: null,
+      g: null,
+      b: null,
+      a: 1,
+      oklch: {
+        L,
+        C,
+        H,
+        formatted: `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`
+      }
+    };
+  }
+  if (str.startsWith("#")) {
+    const [r, g, b, a] = hexToRgb(str);
+    return { r, g, b, a, oklch: null };
+  }
+  const rgbMatch = str.match(/^rgba?\s*\(\s*(\d+)(?:,|\s+)\s*(\d+)(?:,|\s+)\s*(\d+)(?:(?:\s*[,/]\s*|\s+)([0-9.]+%?))?\s*\)$/i);
+  if (rgbMatch) {
+    const r = parseInt(rgbMatch[1], 10);
+    const g = parseInt(rgbMatch[2], 10);
+    const b = parseInt(rgbMatch[3], 10);
+    let a = 1;
+    if (rgbMatch[4]) {
+      a = rgbMatch[4].endsWith("%") ? parseFloat(rgbMatch[4]) / 100 : parseFloat(rgbMatch[4]);
+    }
+    return { r, g, b, a, oklch: null };
+  }
+  const hslMatch = str.match(/^hsla?\s*\(\s*(\d+)(?:deg)?(?:,|\s+)\s*(\d+)%(?:,|\s+)\s*(\d+)%(?:(?:\s*[,/]\s*|\s+)([0-9.]+%?))?\s*\)$/i);
+  if (hslMatch) {
+    const h = parseInt(hslMatch[1], 10);
+    const s = parseInt(hslMatch[2], 10);
+    const l = parseInt(hslMatch[3], 10);
+    const [r, g, b] = hslToRgb(h, s, l);
+    let a = 1;
+    if (hslMatch[4]) {
+      a = hslMatch[4].endsWith("%") ? parseFloat(hslMatch[4]) / 100 : parseFloat(hslMatch[4]);
+    }
+    return { r, g, b, a, oklch: null };
+  }
+  return { r: 59, g: 130, b: 246, a: 1, oklch: null };
+}
+
+function rgbToOklch(r, g, b) {
+  if (r === g && g === b) {
+    const L = r === 0 ? 0 : r === 255 ? 1 : 0.2104542553 * Math.cbrt(srgbToLinear(r)) + 0.7936177850 * Math.cbrt(srgbToLinear(r)) - 0.0040720468 * Math.cbrt(srgbToLinear(r));
+    return {
+      L,
+      C: 0,
+      H: 0,
+      formatted: `${(L * 100).toFixed(2)}% 0.000 0.00`
+    };
+  }
+  const lr = srgbToLinear(r);
+  const lg = srgbToLinear(g);
+  const lb = srgbToLinear(b);
+
+  const l = 0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb;
+  const m = 0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb;
+  const s = 0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb;
+
+  const l_ = Math.cbrt(Math.max(0, l));
+  const m_ = Math.cbrt(Math.max(0, m));
+  const s_ = Math.cbrt(Math.max(0, s));
+
+  const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+  const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+  const b_ = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+  let C = Math.sqrt(a * a + b_ * b_);
+  let H = Math.atan2(b_, a) * (180 / Math.PI);
+  if (H < 0) H += 360;
+  if (C < 0.0001) {
+    C = 0;
+    H = 0;
+  }
+  return {
+    L,
+    C,
+    H,
+    formatted: `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`
+  };
+}
+
+function autoContrastContent(colorInput) {
+  const parsed = parseColor(colorInput);
+  let L = 0.5;
+  let H = 0;
+  let luminance = 0.5;
+
+  if (parsed.oklch) {
+    L = parsed.oklch.L;
+    H = parsed.oklch.H;
+    luminance = L;
+  } else {
+    const oklch = rgbToOklch(parsed.r, parsed.g, parsed.b);
+    L = oklch.L;
+    H = oklch.H;
+    const lr = srgbToLinear(parsed.r);
+    const lg = srgbToLinear(parsed.g);
+    const lb = srgbToLinear(parsed.b);
+    luminance = 0.2126 * lr + 0.7152 * lg + 0.0722 * lb;
+  }
+
+  const hVal = Number.isFinite(H) ? H.toFixed(2) : "0";
+  if (L > 0.65 || luminance > 0.4) {
+    return `15% 0.02 ${hVal}`;
+  }
+  return `98% 0.01 ${hVal}`;
+}
+
+const RUNTIME_COLOR_MAP = {
+  primary: "--p",
+  "primary-content": "--pc",
+  secondary: "--s",
+  "secondary-content": "--sc",
+  accent: "--a",
+  "accent-content": "--ac",
+  neutral: "--n",
+  "neutral-content": "--nc",
+  "base-100": "--b1",
+  "base-200": "--b2",
+  "base-300": "--b3",
+  "base-content": "--bc",
+  info: "--in",
+  "info-content": "--inc",
+  success: "--su",
+  "success-content": "--suc",
+  warning: "--wa",
+  "warning-content": "--wac",
+  error: "--er",
+  "error-content": "--erc"
+};
+
+const RUNTIME_BASE_THEMES = {
+  light: {
+    "color-scheme": "light",
+    "--p": "49.12% 0.3096 275.75",
+    "--pc": "89.824% 0.06192 275.75",
+    "--s": "69.71% 0.329 342.55",
+    "--sc": "98.71% 0.0106 342.55",
+    "--a": "76.76% 0.184 183.61",
+    "--ac": "15.352% 0.0368 183.61",
+    "--n": "32.1785% 0.02476 255.701624",
+    "--nc": "89.4994% 0.011585 252.096176",
+    "--b1": "100% 0 0",
+    "--b2": "96.1151% 0 0",
+    "--b3": "92.4169% 0.00108 197.137559",
+    "--bc": "27.8078% 0.029596 256.847952",
+    "--in": "72.06% 0.191 231.6",
+    "--inc": "0% 0 0",
+    "--su": "64.8% 0.150 160",
+    "--suc": "0% 0 0",
+    "--wa": "84.71% 0.199 83.87",
+    "--wac": "0% 0 0",
+    "--er": "71.76% 0.221 22.18",
+    "--erc": "0% 0 0",
+    "--rounded-box": "1rem",
+    "--rounded-btn": "0.5rem",
+    "--rounded-badge": "1.9rem",
+    "--animation-btn": "0.25s",
+    "--animation-input": ".2s",
+    "--btn-focus-scale": "0.95",
+    "--border-btn": "1px",
+    "--tab-border": "1px",
+    "--tab-radius": "0.5rem"
+  },
+  dark: {
+    "color-scheme": "dark",
+    "--p": "65.69% 0.196 275.75",
+    "--pc": "13.138% 0.0392 275.75",
+    "--s": "74.8% 0.26 342.55",
+    "--sc": "14.96% 0.052 342.55",
+    "--a": "74.51% 0.167 183.61",
+    "--ac": "14.902% 0.0334 183.61",
+    "--n": "31.3815% 0.021108 254.139175",
+    "--nc": "74.6477% 0.0216 264.435964",
+    "--b1": "25.3267% 0.015896 252.417568",
+    "--b2": "23.2607% 0.013807 253.100675",
+    "--b3": "21.1484% 0.01165 254.087939",
+    "--bc": "74.6477% 0.0216 264.435964",
+    "--in": "72.06% 0.191 231.6",
+    "--inc": "0% 0 0",
+    "--su": "64.8% 0.150 160",
+    "--suc": "0% 0 0",
+    "--wa": "84.71% 0.199 83.87",
+    "--wac": "0% 0 0",
+    "--er": "71.76% 0.221 22.18",
+    "--erc": "0% 0 0",
+    "--rounded-box": "1rem",
+    "--rounded-btn": "0.5rem",
+    "--rounded-badge": "1.9rem",
+    "--animation-btn": "0.25s",
+    "--animation-input": ".2s",
+    "--btn-focus-scale": "0.95",
+    "--border-btn": "1px",
+    "--tab-border": "1px",
+    "--tab-radius": "0.5rem"
+  }
+};
+
+function compileTheme(themeDefinition, { defaultThemeName = "custom" } = {}) {
+  if (typeof themeDefinition === "string") {
+    const trimmed = themeDefinition.trim();
+    if (trimmed.includes("[data-theme=")) {
+      const match = trimmed.match(/\[data-theme=["']?([a-zA-Z0-9_\-]+)["']?\]/);
+      const themeName = match ? match[1] : defaultThemeName;
+      return { themeName, css: trimmed, variables: {}, isRawCss: true };
+    }
+    try {
+      return compileTheme(JSON.parse(trimmed), { defaultThemeName });
+    } catch (_) {
+      throw new Error("Invalid theme definition");
+    }
+  }
+
+  let themeObj = themeDefinition;
+  let themeName = defaultThemeName;
+
+  if (themeObj.themes && Array.isArray(themeObj.themes) && themeObj.themes.length > 0) {
+    themeObj = themeObj.themes[0];
+  }
+  const topKeys = Object.keys(themeObj);
+  if (topKeys.length === 1 && typeof themeObj[topKeys[0]] === "object" && !themeObj[topKeys[0]].r) {
+    themeName = topKeys[0];
+    themeObj = themeObj[topKeys[0]];
+  } else if (themeObj.name) {
+    themeName = themeObj.name;
+  }
+
+  const baseThemeName = themeObj.extends || "light";
+  const baseVars = RUNTIME_BASE_THEMES[baseThemeName] ? { ...RUNTIME_BASE_THEMES[baseThemeName] } : { ...RUNTIME_BASE_THEMES.light };
+  const resultVars = { ...baseVars };
+
+  for (const [key, rawValue] of Object.entries(themeObj)) {
+    if (key === "extends" || key === "name") continue;
+    if (RUNTIME_COLOR_MAP[key]) {
+      const parsed = parseColor(rawValue);
+      resultVars[RUNTIME_COLOR_MAP[key]] = parsed.oklch ? parsed.oklch.formatted : rgbToOklch(parsed.r, parsed.g, parsed.b).formatted;
+      continue;
+    }
+    if (key.startsWith("--")) {
+      if (Object.values(RUNTIME_COLOR_MAP).includes(key)) {
+        const parsed = parseColor(rawValue);
+        resultVars[key] = parsed.oklch ? parsed.oklch.formatted : rgbToOklch(parsed.r, parsed.g, parsed.b).formatted;
+      } else {
+        resultVars[key] = String(rawValue).trim();
+      }
+      continue;
+    }
+    if (key === "color-scheme" || key === "colorScheme") {
+      resultVars["color-scheme"] = String(rawValue).trim();
+      continue;
+    }
+    resultVars[key] = String(rawValue).trim();
+  }
+
+  // Auto content
+  const pairs = [["--p", "--pc"], ["--s", "--sc"], ["--a", "--ac"], ["--n", "--nc"], ["--b1", "--bc"]];
+  for (const [pVar, cVar] of pairs) {
+    if (resultVars[pVar] && !themeObj[cVar] && !themeObj[Object.keys(RUNTIME_COLOR_MAP).find((k) => RUNTIME_COLOR_MAP[k] === cVar)]) {
+      resultVars[cVar] = autoContrastContent(resultVars[pVar]);
+    }
+  }
+
+  const lines = [`[data-theme="${themeName}"] {`];
+  if (resultVars["color-scheme"]) lines.push(`  color-scheme: ${resultVars["color-scheme"]};`);
+  for (const [k, v] of Object.entries(resultVars)) {
+    if (k === "color-scheme") continue;
+    lines.push(`  ${k}: ${v};`);
+  }
+  lines.push(`}`);
+  return { themeName, css: lines.join("\n"), variables: resultVars, isRawCss: false };
+}
+
+function tailwindConfigSnippet(themeName, variables) {
+  return `daisyui: {\n  themes: [\n    {\n      "${themeName}": ${JSON.stringify(variables, null, 8).replace(/^ {8}/gm, "      ")}\n    }\n  ]\n}`;
+}
+
+/**
+ * Registers a custom DaisyUI theme dynamically in runtime, injecting CSS if provided.
+ */
+function registerCustomTheme(themeName, css = null) {
+  if (!themeName || typeof themeName !== "string") return false;
+  const name = themeName.trim();
+  if (!DAISYUI_THEMES.includes(name)) {
+    DAISYUI_THEMES.push(name);
+  }
+
+  if (css && typeof document !== "undefined") {
+    let styleEl = document.getElementById("daisyui-custom-themes");
+    if (!styleEl) {
+      styleEl = document.createElement("style");
+      styleEl.id = "daisyui-custom-themes";
+      styleEl.textContent = "";
+      if (document.head && typeof document.head.appendChild === "function") {
+        document.head.appendChild(styleEl);
+      }
+    }
+    styleEl.textContent = styleEl.textContent || "";
+    const themeSelector = `[data-theme="${name}"]`;
+    if (styleEl.textContent.includes(themeSelector)) {
+      const escaped = themeSelector.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+      const regex = new RegExp(`${escaped}\\s*\\{[^}]*\\}`, "g");
+      styleEl.textContent = styleEl.textContent.replace(regex, css);
+    } else {
+      styleEl.textContent += `\n${css}\n`;
+    }
+  }
+
+  if (typeof document !== "undefined" && document.getElementById("theme-swatch-list")) {
+    initThemeDropdown();
+  }
+  return true;
+}
+
+/**
+ * Scans for build-time or localStorage custom themes and registers them.
+ */
+function scanAndRegisterExistingCustomThemes() {
+  if (typeof document === "undefined") return;
+
+  // 1. Scan pre-injected <style id="daisyui-custom-themes">
+  const styleEl = document.getElementById("daisyui-custom-themes");
+  if (styleEl && styleEl.textContent) {
+    const themeRegex = /\[data-theme=["']?([a-zA-Z0-9_\-]+)["']?\]/g;
+    let match;
+    while ((match = themeRegex.exec(styleEl.textContent)) !== null) {
+      const name = match[1];
+      if (name && !DAISYUI_THEMES.includes(name)) {
+        DAISYUI_THEMES.push(name);
+      }
+    }
+  }
+
+  // 2. Scan localStorage
+  try {
+    if (typeof localStorage !== "undefined") {
+      const savedThemes = localStorage.getItem("html_report_custom_themes");
+      if (savedThemes) {
+        const parsed = JSON.parse(savedThemes);
+        if (typeof parsed === "object") {
+          for (const [themeName, entry] of Object.entries(parsed)) {
+            const css = typeof entry === "string" ? entry : (entry.css || null);
+            registerCustomTheme(themeName, css);
+          }
+        }
+      }
+      const savedActive = localStorage.getItem("html_report_active_theme");
+      if (savedActive && DAISYUI_THEMES.includes(savedActive)) {
+        document.documentElement.setAttribute("data-theme", savedActive);
+        const activeLabel = document.getElementById("active-theme-label");
+        if (activeLabel) activeLabel.textContent = savedActive;
+      }
+    }
+  } catch (_) {}
+}
+
+/**
+ * Resolves any valid CSS color string (including oklch, color-mix, rgb, hsl, hex)
+ * into a strict 8-bit hex string and rgba generator via an offscreen 2D canvas.
+ */
+function cssColorToHexAndRgba(colorStr, customCtx = null) {
+  if (!colorStr) {
+    return { hex: "#3b82f6", r: 59, g: 130, b: 246, a: 1, rgba: (a = 1) => `rgba(59, 130, 246, ${a})` };
+  }
+
+  try {
+    let ctx = customCtx;
+    if (!ctx && typeof document !== "undefined") {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      ctx = canvas.getContext("2d", { willReadFrequently: true });
+    }
+
+    if (ctx) {
+      ctx.fillStyle = colorStr;
+      ctx.fillRect(0, 0, 1, 1);
+      const [r, g, b, aRaw] = ctx.getImageData(0, 0, 1, 1).data;
+      const a = aRaw / 255;
+      const hex = "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
+      return {
+        hex,
+        r,
+        g,
+        b,
+        a,
+        rgba: (alpha = a) => `rgba(${r}, ${g}, ${b}, ${alpha})`
+      };
+    }
+  } catch (_) {}
+
+  // Fallback if canvas is unavailable or failed
+  return { hex: "#3b82f6", r: 59, g: 130, b: 246, a: 1, rgba: (alpha = 1) => `rgba(59, 130, 246, ${alpha})` };
+}
+
+/**
+ * Resolves active DaisyUI semantic palette tokens (primary, secondary, accent, neutral, base, content)
+ * into deterministic hex/rgba colors.
+ */
+function resolveDaisyUIThemePalette(doc = (typeof document !== "undefined" ? document : null)) {
+  if (!doc) return {};
+
+  const probeContainer = doc.createElement("div");
+  probeContainer.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none;";
+  const roles = {
+    primary: "bg-primary",
+    secondary: "bg-secondary",
+    accent: "bg-accent",
+    neutral: "bg-neutral",
+    base100: "bg-base-100",
+    base200: "bg-base-200",
+    base300: "bg-base-300"
+  };
+
+  const nodes = {};
+  for (const [key, cls] of Object.entries(roles)) {
+    const el = doc.createElement("span");
+    el.className = cls;
+    probeContainer.appendChild(el);
+    nodes[key] = el;
+  }
+  const textNode = doc.createElement("span");
+  textNode.className = "text-base-content";
+  probeContainer.appendChild(textNode);
+  doc.body.appendChild(probeContainer);
+
+  const palette = {};
+  const getStyle = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle : () => ({ backgroundColor: "#3b82f6", color: "#1f2937" });
+
+  for (const [key, el] of Object.entries(nodes)) {
+    palette[key] = cssColorToHexAndRgba(getStyle(el).backgroundColor);
+  }
+  palette.content = cssColorToHexAndRgba(getStyle(textNode).color);
+  probeContainer.remove();
+  return palette;
+}
+
+/**
+ * Sanitizes Mermaid diagram source code to defend against Mermaid 11.4 markdown list parser bugs.
+ * Disallows starting subgraph or node titles with numbered list tokens (e.g. `1. `, `2. `).
+ */
+function sanitizeMermaidSource(source) {
+  if (!source || typeof source !== "string") return "";
+
+  // 1. Replace numbered list pattern in subgraphs: e.g. subgraph ["1. Title"] or subgraph sub1 ["1. Title"]
+  let sanitized = source.replace(
+    /(subgraph\s+(?:[a-zA-Z0-9_-]+\s*)?\[\s*")(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 2. Replace numbered list pattern in unquoted subgraphs: e.g. subgraph 1. Title
+  sanitized = sanitized.replace(
+    /(subgraph\s+)(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 3. Replace numbered list tokens in bracketed nodes: e.g. ["1. Step Description"]
+  sanitized = sanitized.replace(
+    /(\[\s*")(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  // 4. Replace numbered list tokens in unquoted node brackets: e.g. [1. Step Description]
+  sanitized = sanitized.replace(
+    /(\[\s*)(\d+)\.\s+/g,
+    "$1Step $2 - "
+  );
+
+  return sanitized;
+}
+
+/**
+ * Dynamic Mermaid theme re-rendering synced with DaisyUI theme palette.
+ */
+async function renderMermaidWithTheme(palette) {
+  if (typeof window === "undefined" || !window.mermaid) return;
+  const mermaidNodes = document.querySelectorAll(".mermaid");
+  if (!mermaidNodes.length) return;
+
+  mermaidNodes.forEach((node) => {
+    if (!node.dataset.mermaidSource) {
+      node.dataset.mermaidSource = node.textContent.trim();
+    }
+    node.removeAttribute("data-processed");
+    node.textContent = sanitizeMermaidSource(node.dataset.mermaidSource);
+  });
+
+  const base100 = palette.base100 ? palette.base100.hex : "#ffffff";
+  const base200 = palette.base200 ? palette.base200.hex : "#f3f4f6";
+  const base300 = palette.base300 ? palette.base300.hex : "#e5e7eb";
+  const content = palette.content ? palette.content.hex : "#1f2937";
+  const primary = palette.primary ? palette.primary.hex : "#3b82f6";
+  const secondary = palette.secondary ? palette.secondary.hex : "#6b7280";
+  const accent = palette.accent ? palette.accent.hex : "#10b981";
+
+  window.mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: "loose",
+    theme: "base",
+    themeVariables: {
+      background: base100,
+      primaryColor: base200,
+      primaryTextColor: content,
+      primaryBorderColor: primary,
+      secondaryColor: base300,
+      secondaryTextColor: content,
+      secondaryBorderColor: secondary,
+      tertiaryColor: base100,
+      tertiaryTextColor: content,
+      tertiaryBorderColor: accent,
+      lineColor: primary,
+      textColor: content,
+      mainBkg: base100,
+      nodeBorder: primary,
+      clusterBkg: base200,
+      clusterBorder: base300,
+      titleColor: content,
+      edgeLabelBackground: base200,
+      nodeTextColor: content
+    }
+  });
+
+  try {
+    await window.mermaid.run({ querySelector: ".mermaid" });
+  } catch (err) {
+    console.warn("[html-report] Mermaid render notice:", err);
+  }
+}
+
+/**
+ * Initializes the 32 DaisyUI theme color swatch picker dropdown.
+ */
+function initThemeDropdown() {
+  if (typeof document === "undefined") return;
+  const listEl = document.getElementById("theme-swatch-list");
+  if (!listEl) return;
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  listEl.innerHTML = "";
+
+  DAISYUI_THEMES.forEach((theme) => {
+    const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.setAttribute("data-theme", theme);
+    btn.setAttribute("data-set-theme", theme);
+    btn.className = "theme-swatch-item outline-base-content text-start outline-offset-4 rounded-btn w-full cursor-pointer font-sans";
+    btn.innerHTML = `
+      <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
+        <span class="grid grid-cols-5 grid-rows-3">
+          <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
+              <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
+            </svg>
+            <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
+              <span>${theme}</span>
+              ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
+            </span>
+            <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
+              <span class="bg-primary rounded-badge w-2 h-4"></span>
+              <span class="bg-secondary rounded-badge w-2 h-4"></span>
+              <span class="bg-accent rounded-badge w-2 h-4"></span>
+              <span class="bg-neutral rounded-badge w-2 h-4"></span>
+            </span>
+          </span>
+        </span>
+      </span>
+    `;
+    btn.addEventListener("click", () => setReportTheme(theme));
+    listEl.appendChild(btn);
+  });
+}
+
+/**
+ * Sets active DaisyUI theme dynamically and updates charts/Mermaid.
+ */
+async function setReportTheme(themeName) {
+  if (!DAISYUI_THEMES.includes(themeName)) return;
+  if (typeof document === "undefined") return;
+
+  document.documentElement.setAttribute("data-theme", themeName);
+  const activeLabel = document.getElementById("active-theme-label");
+  if (activeLabel) activeLabel.textContent = themeName;
+
+  try {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("html_report_active_theme", themeName);
+    }
+  } catch (_) {}
+
+  document.querySelectorAll("#theme-swatch-list .theme-swatch-item").forEach((btn) => {
+    const check = btn.querySelector(".theme-check");
+    if (check) {
+      const isCurrent = btn.getAttribute("data-set-theme") === themeName;
+      check.classList.toggle("opacity-100", isCurrent);
+      check.classList.toggle("opacity-0", !isCurrent);
+    }
+  });
+
+  const palette = resolveDaisyUIThemePalette();
+
+  // Dynamic Chart.js color sync
+  if (typeof window !== "undefined" && window.reportCharts && Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((chart, idx) => {
+      if (chart?.data?.datasets) {
+        chart.data.datasets.forEach((ds, dsIdx) => {
+          const colorKey = dsIdx % 3 === 0 ? "primary" : dsIdx % 3 === 1 ? "secondary" : "accent";
+          const chosen = palette[colorKey] ? palette[colorKey].hex : "#3b82f6";
+          if (ds.borderColor) ds.borderColor = chosen;
+          if (ds.backgroundColor && typeof ds.backgroundColor === "string" && ds.backgroundColor.includes("rgba")) {
+            ds.backgroundColor = palette[colorKey] ? palette[colorKey].rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+          }
+        });
+        chart.update();
+      }
+    });
+  }
+
+  // Dynamic Mermaid sync
+  await renderMermaidWithTheme(palette);
+
+  // Dynamic FullCalendar sync
+  if (typeof window !== "undefined" && window.reportCalendars && Array.isArray(window.reportCalendars)) {
+    window.reportCalendars.forEach((cal) => {
+      try {
+        cal.render();
+      } catch (_) {}
+    });
+  }
+
+  // Dynamic Datastar reactive $theme signal sync
+  syncDatastarTheme(themeName);
+}
+
+/**
+ * Builds Table of Contents from main h1, h2, h3 elements.
+ */
+function initTOC() {
+  if (typeof document === "undefined") return;
+  const tocList = document.getElementById("report-toc-list");
+  if (!tocList) return;
+  const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).filter(
+    (h) => !h.closest(".fc, .katex, .gridjs, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
+  );
+  tocList.innerHTML = "";
+
+  headings.forEach((h) => {
+    if (!h.id) {
+      const slug = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      h.id = slug || `section-${Math.random().toString(36).slice(2, 7)}`;
+    }
+    const level = parseInt(h.tagName.substring(1), 10);
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = `#${h.id}`;
+    a.textContent = h.textContent.trim();
+    a.className = level === 1 ? "font-bold text-xs" : level === 2 ? "pl-3 text-xs" : "pl-6 text-2xs opacity-80";
+    a.addEventListener("click", () => {
+      const dropdown = document.getElementById("toc-dropdown");
+      if (dropdown) dropdown.removeAttribute("open");
+    });
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+}
+
+/**
+ * Horizontal Scrollbar -> Insufficient Space Detector.
+ * Flags elements where scrollWidth > clientWidth with [data-insufficient-space="true"].
+ */
+function checkInsufficientHorizontalSpace() {
+  if (typeof document === "undefined") return [];
+  const mainEl = document.querySelector("main");
+  if (!mainEl) return [];
+
+  const insufficient = [];
+  const candidates = mainEl.querySelectorAll("section, div, pre, table, .card, .overflow-x-auto, .gridjs-wrapper");
+
+  candidates.forEach((el) => {
+    const style = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle(el) : el.style;
+    if (style.display === "none" || style.visibility === "hidden" || el.clientWidth === 0) {
+      el.removeAttribute("data-insufficient-space");
+      return;
+    }
+    const hasHorizontalScrollbar =
+      el.scrollWidth > el.clientWidth + 2 &&
+      ["auto", "scroll"].includes(style.overflowX);
+
+    if (hasHorizontalScrollbar) {
+      el.setAttribute("data-insufficient-space", "true");
+      insufficient.push({
+        tag: el.tagName.toLowerCase(),
+        id: el.id || null,
+        className: typeof el.className === "string" ? el.className : "",
+        scrollWidth: el.scrollWidth,
+        clientWidth: el.clientWidth,
+        message: "Element has a horizontal scrollbar and does not have enough space"
+      });
+    } else {
+      el.removeAttribute("data-insufficient-space");
+    }
+  });
+
+  return insufficient;
+}
+
+/**
+ * Builds a standalone, inlined HTML snapshot with fetched CSS and JS bundled directly.
+ */
+async function buildInlinedHtmlSnapshot() {
+  if (typeof document === "undefined") return "";
+  const clone = document.documentElement.cloneNode(true);
+  clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
+
+  // Inline external stylesheets
+  const linkEls = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
+  await Promise.allSettled(
+    linkEls.map(async (linkEl) => {
+      const href = linkEl.getAttribute("href");
+      if (!href || (!href.startsWith("http://") && !href.startsWith("https://"))) return;
+      try {
+        const res = await fetch(href);
+        if (!res.ok) return;
+        let cssText = await res.text();
+        cssText = cssText.replace(/url\((['"]?)(?!data:|https?:|#)([^'")]+)\1\)/g, (match, quote, relPath) => {
+          try {
+            return `url("${new URL(relPath, href).href}")`;
+          } catch {
+            return match;
+          }
+        });
+        const styleEl = document.createElement("style");
+        styleEl.setAttribute("data-inlined-href", href);
+        styleEl.textContent = cssText;
+        linkEl.replaceWith(styleEl);
+      } catch (_) {}
+    })
+  );
+
+  // Inline external scripts
+  const scriptEls = Array.from(clone.querySelectorAll("script[src]"));
+  await Promise.allSettled(
+    scriptEls.map(async (scriptEl) => {
+      const src = scriptEl.getAttribute("src");
+      if (!src || (!src.startsWith("http://") && !src.startsWith("https://"))) return;
+      if (src.includes("cdn.tailwindcss.com")) {
+        const marker = document.createElement("script");
+        marker.setAttribute("data-inlined-src", src);
+        marker.textContent = "/* Tailwind CSS styles pre-compiled inline in <head> */";
+        scriptEl.replaceWith(marker);
+        return;
+      }
+      try {
+        const res = await fetch(src);
+        if (!res.ok) return;
+        const jsText = await res.text();
+        const inlineScript = document.createElement("script");
+        inlineScript.setAttribute("data-inlined-src", src);
+        inlineScript.textContent = jsText.replace(/<\/script>/gi, "<\\/script>");
+        scriptEl.replaceWith(inlineScript);
+      } catch (_) {}
+    })
+  );
+
+  return "<!DOCTYPE html>\n" + clone.outerHTML;
+}
+
+/**
+ * Triggers PDF export / print dialog.
+ */
+function exportReportPdf() {
+  if (typeof window === "undefined") return;
+  if (window.reportCharts && Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((c) => c?.resize?.());
+  }
+  if (window.reportLeafletMap && typeof window.reportLeafletMap.invalidateSize === "function") {
+    window.reportLeafletMap.invalidateSize();
+  }
+  window.print();
+}
+
+/**
+ * Initializes the download menu actions (HTML & PDF).
+ */
+function initDownloadButton() {
+  if (typeof document === "undefined") return;
+  const htmlBtn = document.getElementById("download-html-btn");
+  const pdfBtn = document.getElementById("download-pdf-btn");
+
+  if (htmlBtn) {
+    htmlBtn.addEventListener("click", async () => {
+      try {
+        htmlBtn.disabled = true;
+        const htmlContent = await buildInlinedHtmlSnapshot();
+        const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const docTitle = document.title || "html-report";
+        a.download = `${docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-standalone.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("[html-report] Failed to bundle inlined HTML snapshot:", err);
+      } finally {
+        htmlBtn.disabled = false;
+      }
+    });
+  }
+
+  if (pdfBtn) {
+    pdfBtn.addEventListener("click", () => {
+      const reportMode = document.documentElement.getAttribute("data-report-mode") || "interactive";
+      if (reportMode === "interactive") {
+        const modal = document.getElementById("pdf-not-ready-modal");
+        if (modal && typeof modal.showModal === "function") {
+          modal.showModal();
+          return;
+        }
+      }
+      exportReportPdf();
+    });
+  }
+}
+
+/**
+ * Day.js runtime initialization & data-dayjs hydration.
+ */
+function initDayjs() {
+  if (typeof window === "undefined" || !window.dayjs) return;
+  try {
+    if (window.dayjs_plugin_relativeTime) {
+      window.dayjs.extend(window.dayjs_plugin_relativeTime);
+    }
+    if (window.dayjs_plugin_customParseFormat) {
+      window.dayjs.extend(window.dayjs_plugin_customParseFormat);
+    }
+  } catch (err) {
+    console.warn("[html-report] Day.js plugin registration notice:", err);
+  }
+
+  try {
+    document.querySelectorAll("[data-dayjs]").forEach((el) => {
+      const raw = el.getAttribute("data-dayjs");
+      const format = el.getAttribute("data-dayjs-format") || "YYYY-MM-DD HH:mm:ss";
+      const fromNow = el.hasAttribute("data-dayjs-from-now") || el.getAttribute("data-dayjs-relative") === "true";
+      const d = (raw && raw !== "now" && raw !== "true") ? window.dayjs(raw) : window.dayjs();
+      if (fromNow && typeof d.fromNow === "function") {
+        el.textContent = d.fromNow();
+      } else {
+        el.textContent = d.format(format);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Day.js DOM hydration notice:", err);
+  }
+}
+
+/**
+ * Impress.js runtime initialization with strict presentation guard.
+ * Only initializes 3D canvas when explicitly requested as a presentation.
+ */
+function initImpress() {
+  if (typeof window === "undefined") return;
+
+  const impressRoot = document.getElementById("impress");
+  if (!impressRoot) return;
+
+  // Setup presentation mode observer once
+  if (!window._impressObserverInstalled) {
+    window._impressObserverInstalled = true;
+    const observer = new MutationObserver(() => {
+      initImpress();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-presentation"] });
+    if (document.body) {
+      observer.observe(document.body, { attributes: true, attributeFilter: ["data-presentation"] });
+    }
+  }
+
+  // Presentation Guard: Impress 3D initialization ONLY activates when explicitly requested
+  const isPresentationRequested =
+    document.documentElement.getAttribute("data-presentation") === "true" ||
+    document.body.getAttribute("data-presentation") === "true" ||
+    impressRoot.getAttribute("data-presentation") === "true" ||
+    impressRoot.classList.contains("impress-presentation-active");
+
+  if (!isPresentationRequested) {
+    // Treat as print/static: slides remain stacked in standard document flow
+    impressRoot.classList.add("impress-static-fallback");
+    return;
+  }
+
+  // Presentation mode active: clear static fallback
+  impressRoot.classList.remove("impress-static-fallback");
+
+  if (!window.impress) {
+    console.warn("[html-report] Impress.js script not loaded.");
+    return;
+  }
+
+  try {
+    if (!impressRoot.dataset.impressInitialized) {
+      impressRoot.dataset.impressInitialized = "true";
+      const api = window.impress("impress");
+      api.init();
+      window.impressApi = api;
+    } else if (window.impressApi && typeof window.impressApi.goto === "function") {
+      window.impressApi.goto(0);
+    }
+  } catch (err) {
+    console.warn("[html-report] Impress.js initialization notice:", err);
+  }
+}
+
+function impressNext() {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.next === "function") {
+    return window.impressApi.next();
+  }
+}
+
+function impressPrev() {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.prev === "function") {
+    return window.impressApi.prev();
+  }
+}
+
+function impressGoto(step) {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.goto === "function") {
+    return window.impressApi.goto(step);
+  }
+}
+
+/**
+ * Mock.js runtime initialization & data-mock hydration.
+ */
+function initMockjs() {
+  if (typeof window === "undefined" || !window.Mock) return;
+  try {
+    document.querySelectorAll("[data-mock]").forEach((el) => {
+      if (el.dataset.mockInitialized) return;
+      el.dataset.mockInitialized = "true";
+      const raw = el.getAttribute("data-mock");
+      if (!raw) return;
+      try {
+        const schema = JSON.parse(raw);
+        const data = window.Mock.mock(schema);
+        if (el.tagName.toLowerCase() === "code" || el.tagName.toLowerCase() === "pre") {
+          el.textContent = JSON.stringify(data, null, 2);
+        } else if (el.hasAttribute("data-mock-target")) {
+          const target = document.querySelector(el.getAttribute("data-mock-target"));
+          if (target) target.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (parseErr) {
+        const data = window.Mock.mock(raw);
+        el.textContent = String(data);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Mock.js hydration notice:", err);
+  }
+}
+
+/**
+ * Auto-links any mentioned *.md files in text nodes to interactive viewer triggers.
+ */
+function autoLinkMarkdownFiles(root = document.body) {
+  if (typeof document === "undefined" || !root) return;
+  try {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.nodeValue || !node.nodeValue.includes(".md")) return NodeFilter.FILTER_REJECT;
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        const tag = parent.tagName.toLowerCase();
+        if (tag === "a" || tag === "script" || tag === "style" || tag === "button" || tag === "textarea") {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const nodes = [];
+    while (walker.nextNode()) {
+      nodes.push(walker.currentNode);
+    }
+
+    const mdRegex = /\b([a-zA-Z0-9_\/-]+\.md)\b/g;
+    for (const node of nodes) {
+      const text = node.nodeValue;
+      if (!text || !text.match(mdRegex)) continue;
+      const span = document.createElement("span");
+      span.innerHTML = text.replace(mdRegex, (match) => {
+        return `<a href="${match}" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('${match}');return false;}" class="link link-primary font-mono text-xs underline decoration-primary/40 hover:decoration-primary cursor-pointer">${match}</a>`;
+      });
+      node.parentNode.replaceChild(span, node);
+    }
+  } catch (_) {}
+}
+
+/**
+ * Showdown runtime initialization & data-showdown hydration.
+ */
+function initShowdown() {
+  if (typeof window === "undefined" || !window.showdown) return;
+  try {
+    const converter = new window.showdown.Converter({
+      tables: true,
+      tasklists: true,
+      strikethrough: true,
+      emoji: true,
+      ghCodeBlocks: true
+    });
+    window.showdownConverter = converter;
+
+    document.querySelectorAll("[data-showdown], [data-markdown-showdown]").forEach((el) => {
+      if (el._sdInitialized || el.dataset.sdInitialized) return;
+      el._sdInitialized = true;
+      el.dataset.sdInitialized = "true";
+      const srcSelector = el.getAttribute("data-showdown-source") || el.getAttribute("data-markdown-showdown-source");
+      let md = "";
+      if (srcSelector) {
+        const srcEl = document.querySelector(srcSelector);
+        if (srcEl) {
+          md = srcEl.value !== undefined ? srcEl.value : srcEl.textContent;
+        }
+      } else {
+        const rawAttr = el.getAttribute("data-markdown-showdown") || el.getAttribute("data-showdown");
+        md = (rawAttr && rawAttr !== "true") ? rawAttr : el.textContent;
+      }
+      if (md) {
+        el.innerHTML = converter.makeHtml(md);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Showdown markdown rendering notice:", err);
+  }
+}
+
+/**
+ * FullCalendar runtime initialization & DaisyUI theme synchronization.
+ */
+function initFullCalendar(retries = 25) {
+  if (typeof window === "undefined") return;
+  const calendarEls = document.querySelectorAll(
+    "div[data-fullcalendar], div#calendar, [data-fullcalendar]:not(style):not(head *)"
+  );
+  if (!calendarEls.length) return;
+
+  if (!window.FullCalendar) {
+    if (retries > 0) {
+      setTimeout(() => initFullCalendar(retries - 1), 100);
+    }
+    return;
+  }
+
+  window.reportCalendars = window.reportCalendars || [];
+
+  try {
+    calendarEls.forEach((el) => {
+      if (el.dataset.calendarInitialized || el.tagName === "STYLE" || el.closest("head")) return;
+      el.dataset.calendarInitialized = "true";
+
+      let events = [];
+      const rawEvents = el.getAttribute("data-calendar-events");
+      if (rawEvents) {
+        try {
+          events = JSON.parse(rawEvents);
+        } catch (_) {}
+      }
+
+      const calendar = new window.FullCalendar.Calendar(el, {
+        initialView: el.getAttribute("data-calendar-view") || "dayGridMonth",
+        headerToolbar: {
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,listWeek"
+        },
+        height: el.getAttribute("data-calendar-height") || "auto",
+        events: events
+      });
+      calendar.render();
+      window.reportCalendars.push(calendar);
+    });
+  } catch (err) {
+    console.warn("[html-report] FullCalendar initialization notice:", err);
+  }
+}
+
+/**
+ * Rehydrates Lucide icons in the DOM.
+ */
+function rehydrateLucideIcons(root = null) {
+  if (typeof window === "undefined" || !window.lucide || typeof window.lucide.createIcons !== "function") return;
+  try {
+    if (root && root.nodeType === 1) {
+      window.lucide.createIcons({ root });
+    } else {
+      window.lucide.createIcons();
+    }
+  } catch (err) {
+    console.warn("[html-report] Lucide icon rehydration notice:", err);
+  }
+}
+
+/**
+ * Initializes MutationObserver to rehydrate Lucide icons post-morph and handle Datastar signal events.
+ */
+let _datastarObserverInstance = null;
+let _lucideRehydrationTimer = null;
+
+function initDatastarObserver() {
+  if (typeof window === "undefined" || typeof MutationObserver === "undefined") return null;
+  if (typeof document === "undefined" || !document.body) return null;
+  if (_datastarObserverInstance) return _datastarObserverInstance;
+
+  _datastarObserverInstance = new MutationObserver((mutations) => {
+    let needsRehydrate = false;
+    for (const m of mutations) {
+      if (m.type === "childList" && m.addedNodes.length > 0) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === 1) {
+            if (node.hasAttribute && node.hasAttribute("data-lucide")) {
+              needsRehydrate = true;
+              break;
+            }
+            if (node.querySelector && node.querySelector("[data-lucide]")) {
+              needsRehydrate = true;
+              break;
+            }
+          }
+        }
+      }
+      if (needsRehydrate) break;
+    }
+
+    if (needsRehydrate) {
+      if (_lucideRehydrationTimer) clearTimeout(_lucideRehydrationTimer);
+      _lucideRehydrationTimer = setTimeout(() => {
+        rehydrateLucideIcons();
+      }, 16);
+    }
+  });
+
+  _datastarObserverInstance.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Also listen for explicit Datastar fragment events if dispatched
+  document.addEventListener("datastar-fragment-applied", () => {
+    rehydrateLucideIcons();
+  });
+
+  return _datastarObserverInstance;
+}
+
+/**
+ * Synchronizes DaisyUI theme switcher selection with Datastar $theme reactive signal.
+ */
+function syncDatastarTheme(themeName) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  // 1. Dispatch custom event for Datastar signals
+  try {
+    const evt = new CustomEvent("datastar-merge-signals", {
+      bubbles: true,
+      detail: { theme: themeName }
+    });
+    document.dispatchEvent(evt);
+  } catch (_) {}
+
+  // 2. Direct API call if Datastar is active on window
+  if (window.datastar) {
+    if (typeof window.datastar.mergeSignals === "function") {
+      try { window.datastar.mergeSignals({ theme: themeName }); } catch (_) {}
+    } else if (window.datastar.signals && typeof window.datastar.signals === "object") {
+      try { window.datastar.signals.theme = themeName; } catch (_) {}
+    }
+  }
+
+  // 3. Update DOM signal attributes for initial or bound elements
+  try {
+    const signalHolders = document.querySelectorAll("[data-signals]");
+    signalHolders.forEach((el) => {
+      if (el._dsSignals && typeof el._dsSignals === "object") {
+        el._dsSignals.theme = themeName;
+      }
+    });
+  } catch (_) {}
+}
+
+// Global browser window bindings
+if (typeof window !== "undefined") {
+  window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
+  window.DAISYUI_THEMES = DAISYUI_THEMES;
+  window.registerCustomTheme = registerCustomTheme;
+  window.scanAndRegisterExistingCustomThemes = scanAndRegisterExistingCustomThemes;
+  window.srgbToLinear = srgbToLinear;
+  window.linearToSrgb = linearToSrgb;
+  window.hexToRgb = hexToRgb;
+  window.hslToRgb = hslToRgb;
+  window.parseColor = parseColor;
+  window.rgbToOklch = rgbToOklch;
+  window.autoContrastContent = autoContrastContent;
+  window.compileTheme = compileTheme;
+  window.tailwindConfigSnippet = tailwindConfigSnippet;
+  window.cssColorToHexAndRgba = cssColorToHexAndRgba;
+  window.resolveDaisyUIThemePalette = resolveDaisyUIThemePalette;
+  window.sanitizeMermaidSource = sanitizeMermaidSource;
+  window.renderMermaidWithTheme = renderMermaidWithTheme;
+  window.initThemeDropdown = initThemeDropdown;
+  window.setReportTheme = setReportTheme;
+  window.initTOC = initTOC;
+  window.checkInsufficientHorizontalSpace = checkInsufficientHorizontalSpace;
+  window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
+  window.exportReportPdf = exportReportPdf;
+  window.initDownloadButton = initDownloadButton;
+  window.initDayjs = initDayjs;
+  window.initImpress = initImpress;
+  window.impressNext = impressNext;
+  window.impressPrev = impressPrev;
+  window.impressGoto = impressGoto;
+  window.initMockjs = initMockjs;
+  window.initShowdown = initShowdown;
+  window.initFullCalendar = initFullCalendar;
+  window.rehydrateLucideIcons = rehydrateLucideIcons;
+  window.initDatastarObserver = initDatastarObserver;
+  window.syncDatastarTheme = syncDatastarTheme;
+  window.autoLinkMarkdownFiles = autoLinkMarkdownFiles;
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
+    try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
+    try { initTOC(); } catch (_) {}
+    try { initThemeDropdown(); } catch (_) {}
+    try { initDownloadButton(); } catch (_) {}
+    try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
+    try { initDayjs(); } catch (_) {}
+    try { initShowdown(); } catch (_) {}
+    try { initMockjs(); } catch (_) {}
+    try { initFullCalendar(); } catch (_) {}
+    try { initImpress(); } catch (_) {}
+    try { initDatastarObserver(); } catch (_) {}
+    try { autoLinkMarkdownFiles(); } catch (_) {}
+
+    const palette = resolveDaisyUIThemePalette();
+    try { await renderMermaidWithTheme(palette); } catch (_) {}
+    try { checkInsufficientHorizontalSpace(); } catch (_) {}
+    window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.__REPORT_READY__ = true;
+  });
+}
+
+// Node.js CommonJS exports for unit testing
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    STANDARD_DAISYUI_THEMES,
+    DAISYUI_THEMES,
+    registerCustomTheme,
+    scanAndRegisterExistingCustomThemes,
+    srgbToLinear,
+    linearToSrgb,
+    hexToRgb,
+    hslToRgb,
+    parseColor,
+    rgbToOklch,
+    autoContrastContent,
+    compileTheme,
+    tailwindConfigSnippet,
+    cssColorToHexAndRgba,
+    resolveDaisyUIThemePalette,
+    sanitizeMermaidSource,
+    renderMermaidWithTheme,
+    initThemeDropdown,
+    setReportTheme,
+    initTOC,
+    checkInsufficientHorizontalSpace,
+    buildInlinedHtmlSnapshot,
+    exportReportPdf,
+    initDownloadButton,
+    initDayjs,
+    initImpress,
+    impressNext,
+    impressPrev,
+    impressGoto,
+    initMockjs,
+    initShowdown,
+    initFullCalendar,
+    rehydrateLucideIcons,
+    initDatastarObserver,
+    syncDatastarTheme,
+    autoLinkMarkdownFiles
+  };
+}
+
+  </script>
+</body>
+</html>

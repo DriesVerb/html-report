@@ -1,0 +1,840 @@
+<div id="telemetry-dashboard-container" class="space-y-8" data-signals='{"progressPct": 100, "totalTasks": 11, "completedTasks": 11, "runningTasks": 0}'>
+
+  <!-- ========================================== -->
+  <!-- HERO & OPEN-SPEC COMPANION HEADER          -->
+  <!-- ========================================== -->
+  <section id="hero-header" class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body p-6 sm:p-8 space-y-6">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-4">
+        <div class="min-w-0 flex-1 break-words">
+          <div class="flex items-center gap-2 mb-2 flex-wrap">
+            <span class="badge badge-primary gap-1.5 font-semibold text-xs py-2 px-3">
+              <span class="inline-block w-2 h-2 rounded-full bg-success animate-ping"></span>
+              Live Hypermedia
+            </span>
+            <span class="badge badge-outline text-xs font-mono">OpenSpec Companion</span>
+            <span class="badge badge-ghost text-xs font-mono">datastar-llm-tracking-dashboard</span>
+          </div>
+          <h1 id="dashboard-title" class="text-2xl sm:text-3xl font-black tracking-tight text-base-content scroll-mt-24">
+            Datastar Live LLM Tracking Dashboard & Showdown Artifact Viewer
+          </h1>
+          <p class="text-sm text-base-content/70 mt-1 max-w-3xl">
+            Real-time LLM telemetry streaming (Chain-of-Thought reasoning, tool invocations, task checklist) powered by Datastar.js SSE morphing and instant in-browser Showdown.js markdown inspection.
+          </p>
+        </div>
+
+        <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+          <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('specs/live-llm-tracking/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
+          </button>
+        </div>
+      </div>
+
+      <!-- MANDATORY REPO RULE: Journey Phase Stepper Standard -->
+      <div class="pt-4 border-t border-base-200">
+        <div class="text-xs font-bold uppercase tracking-wider text-base-content/60 mb-3 flex items-center justify-between">
+          <span class="flex items-center gap-1.5"><i data-lucide="milestone" class="w-3.5 h-3.5 text-primary"></i> Journey Lifecycle State</span>
+          <span class="badge badge-sm badge-success font-mono">Phase 4: Verifying (Complete)</span>
+        </div>
+        <div class="w-full overflow-x-auto">
+          <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+            <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
+            <li id="stepper-phase-2" class="step step-primary">2. Planning</li>
+            <li id="stepper-phase-3" class="step step-primary">3. Implementing</li>
+            <li id="stepper-phase-4" class="step step-primary">4. Verifying</li>
+            <li id="stepper-phase-5" class="step">5. Shipped / Archived</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- LIVE METRICS & TELEMETRY SUMMARY           -->
+  <!-- ========================================== -->
+  <section id="telemetry-stats" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-4 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs font-medium text-base-content/70">
+        <span>Completion</span>
+        <i data-lucide="pie-chart" class="w-4 h-4 text-primary"></i>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-2xl sm:text-3xl font-black text-primary" data-text="$progressPct + '%'">45%</span>
+        <span class="text-3xs text-base-content/60">overall</span>
+      </div>
+      <progress class="progress progress-success w-full mt-2" value="100" max="100" id="progress-bar-el"></progress>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-4 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs font-medium text-base-content/70">
+        <span>Total Tasks</span>
+        <i data-lucide="list-todo" class="w-4 h-4 text-secondary"></i>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-2xl sm:text-3xl font-black text-base-content" data-text="$totalTasks">11</span>
+        <span class="text-3xs text-base-content/60">milestones</span>
+      </div>
+      <div class="text-3xs text-base-content/60 mt-2 font-mono">across 5 phases</div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-4 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs font-medium text-base-content/70">
+        <span>Completed</span>
+        <i data-lucide="check-circle" class="w-4 h-4 text-success"></i>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-2xl sm:text-3xl font-black text-success" data-text="$completedTasks">5</span>
+        <span class="text-3xs text-success/80">passed</span>
+      </div>
+      <div class="text-3xs text-success/80 mt-2 font-mono">verifications clean</div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-4 flex flex-col justify-between">
+      <div class="flex items-center justify-between text-xs font-medium text-base-content/70">
+        <span>Active / In Progress</span>
+        <i data-lucide="loader" class="w-4 h-4 text-warning animate-spin"></i>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-2xl sm:text-3xl font-black text-warning" data-text="$runningTasks">2</span>
+        <span class="text-3xs text-warning/80">active</span>
+      </div>
+      <div class="text-3xs text-warning/80 mt-2 font-mono">streaming telemetry</div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-4 flex flex-col justify-between col-span-2 sm:col-span-1">
+      <div class="flex items-center justify-between text-xs font-medium text-base-content/70">
+        <span>SSE Stream Status</span>
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse" id="sse-indicator-dot"></span>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-base sm:text-lg font-bold text-success font-mono" id="sse-status-label">CONNECTED</span>
+      </div>
+      <div class="text-3xs text-base-content/60 mt-2 font-mono">/__datastar_stream__</div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- MAIN TELEMETRY WORKSPACE (2-COLUMN)        -->
+  <!-- ========================================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+    <!-- LEFT COLUMN: LIVE STREAM (THOUGHTS & TOOLS) -->
+    <div class="lg:col-span-7 space-y-6">
+
+      <!-- Real-Time Chain-of-Thought Card -->
+      <section id="cot-stream-section" class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-base-200">
+            <div class="flex items-center gap-2">
+              <i data-lucide="brain-circuit" class="w-5 h-5 text-primary"></i>
+              <h2 id="agent-cot-heading" class="text-base font-bold text-base-content">
+                LLM Thought & Reasoning Stream (CoT)
+              </h2>
+            </div>
+            <span class="badge badge-sm badge-ghost font-mono text-3xs">SSE Idiomorph</span>
+          </div>
+
+          <!-- Thought Feed Container -->
+          <div id="agent-thought-stream" class="mt-4 space-y-3 max-h-72 overflow-y-auto pr-1">
+            <div class="chat chat-start">
+              <div class="chat-header text-3xs font-mono opacity-70 mb-0.5 flex items-center gap-1.5">
+                <span class="badge badge-primary badge-xs">Agent CoT</span>
+                <span>06:49:15</span>
+              </div>
+              <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-mono opacity-90 shadow-sm">
+                Evaluating repository rules and user request. User pointed out that clicking markdown artifact links (.md) fails with 404 or downloads. Updating dev server MIME types and adding dedicated in-browser Showdown viewer modal.
+              </div>
+            </div>
+
+            <div class="chat chat-start">
+              <div class="chat-header text-3xs font-mono opacity-70 mb-0.5 flex items-center gap-1.5">
+                <span class="badge badge-primary badge-xs">Agent CoT</span>
+                <span>06:50:02</span>
+              </div>
+              <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-mono opacity-90 shadow-sm">
+                Dev server artifact resolution implemented in serve-report.mjs. Verified with curl that /proposal.md returns 200 OK text/markdown. Next: assembling Datastar live hypermedia dashboard.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Tool Invocations Feed Card -->
+      <section id="tool-feed-section" class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-base-200">
+            <div class="flex items-center gap-2">
+              <i data-lucide="terminal" class="w-5 h-5 text-secondary"></i>
+              <h2 id="tool-feed-heading" class="text-base font-bold text-base-content">
+                Live Tool Invocations Feed
+              </h2>
+            </div>
+            <span class="badge badge-sm badge-secondary badge-outline font-mono text-3xs">Real-Time Terminal</span>
+          </div>
+
+          <!-- Tool Call Feed Container (Prepend Mode) -->
+          <div id="tool-call-feed" class="mt-4 space-y-3 max-h-96 overflow-y-auto pr-1">
+
+            <!-- Tool Card 1 -->
+            <div id="tool-call-101" data-tool-category="shell" class="rounded-box border border-base-300 bg-base-100 p-3 text-xs shadow-xs transition">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i data-lucide="terminal" class="w-4 h-4 text-primary shrink-0"></i>
+                  <span class="font-mono font-bold text-xs text-primary">run_command</span>
+                  <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1.5 py-0.5 rounded">curl -s -I http://localhost:3000/proposal.md</span>
+                </div>
+                <div class="shrink-0">
+                  <span class="badge badge-success badge-xs gap-1 font-mono">18ms</span>
+                </div>
+              </div>
+              <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-2 px-3 max-h-28 overflow-y-auto">
+                <pre data-prefix=">"><code>HTTP/1.1 200 OK</code></pre>
+                <pre data-prefix=">"><code>Content-Type: text/markdown; charset=utf-8</code></pre>
+                <pre data-prefix=">"><code>Cache-Control: no-cache</code></pre>
+              </div>
+            </div>
+
+            <!-- Tool Card 2 -->
+            <div id="tool-call-102" data-tool-category="file" class="rounded-box border border-base-300 bg-base-100 p-3 text-xs shadow-xs transition">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i data-lucide="file-code" class="w-4 h-4 text-accent shrink-0"></i>
+                  <span class="font-mono font-bold text-xs text-accent">edit_file</span>
+                  <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1.5 py-0.5 rounded">skills/html-report/scripts/serve-report.mjs</span>
+                </div>
+                <div class="shrink-0">
+                  <span class="badge badge-success badge-xs gap-1 font-mono">45ms</span>
+                </div>
+              </div>
+              <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-2 px-3 max-h-24 overflow-y-auto">
+                <pre data-prefix=">"><code>Made 1 replacement in serve-report.mjs starting at line 208</code></pre>
+                <pre data-prefix=">"><code>Added .md MIME & OpenSpec active change artifact fallback resolver</code></pre>
+              </div>
+            </div>
+
+            <!-- Tool Card 3 (Active) -->
+            <div id="tool-call-103" data-tool-category="shell" class="rounded-box border border-warning/60 bg-warning/5 p-3 text-xs shadow-xs transition">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i data-lucide="activity" class="w-4 h-4 text-warning shrink-0"></i>
+                  <span class="font-mono font-bold text-xs text-warning">build-report.mjs</span>
+                  <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1.5 py-0.5 rounded">--live --addons showdown</span>
+                </div>
+                <div class="shrink-0">
+                  <span class="badge badge-warning badge-xs gap-1 font-mono">
+                    <span class="loading loading-spinner loading-xs"></span> running
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT COLUMN: INTERACTIVE CONTROLLER & TASK MATRIX -->
+    <div class="lg:col-span-5 space-y-6">
+
+      <!-- Interactive LLM Telemetry Simulator Card -->
+      <section id="simulator-card" class="card bg-base-100 border border-primary/40 shadow-sm">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-base-200">
+            <div class="flex items-center gap-2">
+              <i data-lucide="play-circle" class="w-5 h-5 text-primary"></i>
+              <h2 id="controller-heading" class="text-base font-bold text-base-content">
+                LLM Telemetry Simulator
+              </h2>
+            </div>
+            <span class="badge badge-primary badge-xs">Interactive Demo</span>
+          </div>
+
+          <p class="text-xs text-base-content/70 mt-2">
+            Test real-time Datastar SSE DOM morphs directly in this browser tab without waiting for external agents.
+          </p>
+
+          <!-- Interactive Control Buttons -->
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <button type="button" onclick="triggerClientSimulationStep()" class="btn btn-sm btn-primary gap-1.5 font-semibold">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i> Next Step
+            </button>
+            <button type="button" onclick="triggerClientRapidBurst()" class="btn btn-sm btn-outline btn-secondary gap-1.5 font-semibold">
+              <i data-lucide="zap" class="w-3.5 h-3.5"></i> Rapid Burst
+            </button>
+            <button type="button" onclick="triggerBackendStreamer()" class="btn btn-sm btn-outline btn-accent gap-1.5 font-semibold">
+              <i data-lucide="radio" class="w-3.5 h-3.5"></i> Stream Server
+            </button>
+            <button type="button" onclick="resetTelemetryDemo()" class="btn btn-sm btn-ghost gap-1.5 font-semibold">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset Demo
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Connected Task Matrix Card -->
+      <section id="task-matrix-section" class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-base-200">
+            <div class="flex items-center gap-2">
+              <i data-lucide="list-checks" class="w-5 h-5 text-accent"></i>
+              <h2 id="task-matrix-heading" class="text-base font-bold text-base-content">
+                OpenSpec Tasks Matrix
+              </h2>
+            </div>
+            <span class="badge badge-sm badge-accent badge-outline font-mono text-3xs">tasks.md</span>
+          </div>
+
+          <!-- Phase 1 Tasks -->
+          <div class="mt-4 space-y-2">
+            <div class="text-3xs font-bold uppercase tracking-wider text-base-content/60">
+              Phase 1: Dev Server & Showdown Artifact Viewer
+            </div>
+
+            <!-- Task 1.1 -->
+            <div id="task-1.1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">1.1 Update serve-report.mjs for .md & active change resolution</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 1.2 -->
+            <div id="task-1.2" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">1.2 Showdown in-browser modal viewer with switcher tabs</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 1.3 -->
+            <div id="task-1.3" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">1.3 Verify artifact buttons render without 404s or downloads</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 2 Tasks -->
+          <div class="mt-4 space-y-2">
+            <div class="text-3xs font-bold uppercase tracking-wider text-base-content/60">
+              Phase 2: Datastar Live Telemetry Engine
+            </div>
+
+            <!-- Task 2.1 -->
+            <div id="task-2.1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">2.1 Assemble thought stream, tool feed & task cards</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 2.2 -->
+            <div id="task-2.2" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">2.2 Wire Datastar reactive signals & SSE fragment morphing</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 2.3 -->
+            <div id="task-2.3" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">2.3 Responsive horizontal journey stepper standard</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 3 Tasks -->
+          <div class="mt-4 space-y-2">
+            <div class="text-3xs font-bold uppercase tracking-wider text-base-content/60">
+              Phase 3 & 4: Streamer CLI, Assembly & Verification
+            </div>
+
+            <!-- Task 3.1 -->
+            <div id="task-3.1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">3.1 Create telemetry-streamer.mjs CLI & simulation controller</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 4.1 -->
+            <div id="task-4.1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">4.1 Compile companion index.html & mirror to localhost:3000</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 5.1 -->
+            <div id="task-5.1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all">
+              <div class="card-body p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs truncate line-through opacity-70">5.1 Playwright & multi-breakpoint verification</span>
+                  </div>
+                  <span class="badge badge-success badge-xs gap-1 font-mono">completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TECHNICAL ARCHITECTURE (MERMAID)           -->
+  <!-- ========================================== -->
+  <section id="architecture-section" class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body p-6">
+      <div class="flex items-center justify-between pb-3 border-b border-base-200">
+        <div class="flex items-center gap-2">
+          <i data-lucide="network" class="w-5 h-5 text-primary"></i>
+          <h2 id="architecture-heading" class="text-base sm:text-lg font-bold text-base-content">
+            Real-Time Hypermedia & Markdown Resolution Architecture
+          </h2>
+        </div>
+        <span class="badge badge-outline text-xs font-mono">Mermaid Flow</span>
+      </div>
+
+      <div class="mt-4 overflow-x-auto flex justify-center py-2">
+        <div class="mermaid text-xs w-full max-w-4xl">
+flowchart LR
+    subgraph BrowserClient["Browser Tab (localhost:3000)"]
+        UI["Live Dashboard UI"]
+        Modal["Showdown.js Markdown Modal"]
+        DS["Datastar.js Runtime (Idiomorph)"]
+        UI --> Modal
+        DS --> UI
+    end
+
+    subgraph DevServer["Dev Server (serve-report.mjs)"]
+        SSE["/__datastar_stream__ (SSE)"]
+        Resolver["Artifact Path Resolver\n(openspec/changes/<active>/)"]
+        LiveReload["/__live_reload__"]
+    end
+
+    subgraph AgentProcess["LLM Agent Run"]
+        CLI["telemetry-streamer.mjs"]
+        Transcript["transcript.jsonl (CoT & Tools)"]
+        Transcript --> CLI
+    end
+
+    Modal -->|Fetch .md| Resolver
+    Resolver -->|Content-Type: text/markdown| Modal
+    CLI -->|POST Telemetry Events| SSE
+    SSE -->|event: datastar-fragment| DS
+    SSE -->|event: datastar-merge-signals| DS
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SHOWDOWN MARKDOWN ARTIFACT VIEWER MODAL    -->
+  <!-- ========================================== -->
+  <dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box max-w-4xl w-11/12 max-h-[85vh] p-0 flex flex-col bg-base-100 border border-base-300 shadow-2xl">
+      
+      <!-- Modal Top Bar -->
+      <div class="p-4 border-b border-base-200 bg-base-200/50 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <i data-lucide="file-text" class="w-5 h-5 text-primary shrink-0"></i>
+          <span id="modal-doc-title" class="font-bold text-sm sm:text-base truncate font-mono">proposal.md</span>
+          <span class="badge badge-primary badge-xs">Showdown.js GFM</span>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1 font-mono" id="copy-markdown-btn">
+            <i data-lucide="copy" class="w-3 h-3"></i> Copy
+          </button>
+          <a id="modal-raw-link" href="/proposal.md?raw=true" target="_blank" class="btn btn-xs btn-ghost gap-1 font-mono">
+            <i data-lucide="external-link" class="w-3 h-3"></i> Raw
+          </a>
+          <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Document Switcher Tabs -->
+      <div class="px-4 py-2 border-b border-base-200 bg-base-100 flex items-center gap-1 overflow-x-auto shrink-0">
+        <button type="button" onclick="switchViewerTab('proposal.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="proposal.md">
+          proposal.md
+        </button>
+        <button type="button" onclick="switchViewerTab('design.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="design.md">
+          design.md
+        </button>
+        <button type="button" onclick="switchViewerTab('tasks.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="tasks.md">
+          tasks.md
+        </button>
+        <button type="button" onclick="switchViewerTab('specs/live-llm-tracking/spec.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="specs/live-llm-tracking/spec.md">
+          spec.md
+        </button>
+      </div>
+
+      <!-- Rendered Markdown Body -->
+      <div class="p-6 overflow-y-auto flex-1">
+        <div id="modal-markdown-container" class="prose prose-sm sm:prose max-w-none text-base-content leading-relaxed">
+          <div class="flex items-center justify-center py-12">
+            <span class="loading loading-spinner loading-md text-primary"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- ========================================== -->
+  <!-- CLIENT RUNTIME SCRIPTS & DATASTAR BRIDGE   -->
+  <!-- ========================================== -->
+  <script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Datastar Live LLM Tracking Dashboard & Showdown Markdown Artifact Viewer\n\n## Why\nWhen developers and agents work on features in this repository, they need real-time, high-fidelity visibility into what the LLM is doing:\n1. **Live LLM Execution Blindspot**: As autonomous agents (Google Antigravity, OpenAI Codex, etc.) execute multi-step changes, users cannot see the live reasoning (Chain-of-Thought), tool invocations (commands, file operations, subagents), execution durations, or subtask progress without inspecting raw CLI logs or JSONL files.\n2. **Broken Markdown Artifact Backlinks**: In feature companion dashboards (`index.html` and `implementation-progress.html`), the backlink buttons for markdown artifacts (`proposal.md`, `design.md`, `tasks.md`, `specs/`) fail when clicked in `localhost:3000`. The dev server returns 404 because the files reside in `openspec/changes/<feature>/`, and standard browsers do not format `.md` files nicely (often downloading them as `application/octet-stream`).\n3. **Repository-Specific Need**: For this repo's development flow, having an integrated, Showdown-powered in-browser markdown viewer and a Datastar live tracking dashboard transforms the local dev server (`localhost:3000`) into a living command center that seamlessly tracks LLM activity and enables instant, beautiful inspection of OpenSpec artifacts.\n\n## What Changes\n1. **Showdown In-Browser Markdown Viewer & Dev Server Resolution**:\n   - Upgrade `serve-report.mjs` to recognize `.md` files (`text/markdown; charset=utf-8`) and auto-resolve artifact requests (`/proposal.md`, `/design.md`, `/tasks.md`, `/specs/...`) against the active OpenSpec change directory.\n   - Upgrade feature companion headers in `index.html` and `implementation-progress.html` with an interactive Showdown Markdown Viewer modal (`<dialog id=\"markdown-viewer-modal\">`). Clicking any artifact button immediately renders publication-grade GitHub Flavored Markdown with syntax highlighting, task checkboxes, tables, and document switcher tabs without navigating away or downloading raw files.\n   - Provide direct browser preview fallback so loading `.md` URLs directly renders a clean Showdown view.\n2. **Datastar Live LLM Tracking Dashboard**:\n   - Provide a real-time reactive dashboard using `@starfederation/datastar` and SSE (`/__datastar_stream__`).\n   - Live Agent Thought Stream (`#agent-thought-stream`): Displays streaming Chain-of-Thought / reasoning text in real-time.\n   - Live Tool Invocations Feed (`#tool-call-feed`): Renders tool calls (`read_file`, `run_command`, `write_file`, etc.) with running spinners, duration badges, arguments, and collapsible DaisyUI terminal drawers (`mockup-code`).\n   - Live Task Progress Matrix (`#task-matrix`): Displays phases and tasks from `tasks.md`, morphing task cards in place upon status updates (`pending`, `running`, `completed`, `failed`).\n   - Journey Phase Stepper (`#journey-stepper`): Publication-standard horizontal stepper showing current phase (`Brainstorming`, `Planning`, `Implementing`, `Verifying`, `Shipped`).\n   - Live Metrics & Telemetry Controller: Interactive controls (Simulate Burst, Step, Play/Pause, Reset) and an active dev server bridge (`telemetry-streamer.mjs`) enabling live push from real agent executions.\n",
+  "design.md": "# Technical Design: Datastar Live LLM Tracking Dashboard & Showdown Markdown Artifact Viewer\n\n## Architecture Overview\n```mermaid\nflowchart TD\n    subgraph Browser[\"Browser Client (localhost:3000)\"]\n        Navbar[\"Sticky DaisyUI Navbar\"]\n        \n        subgraph MarkdownViewer[\"Showdown Markdown Artifact Viewer\"]\n            ArtifactBtns[\"Backlink Buttons\\n(proposal.md, design.md, tasks.md, specs/)\"]\n            Modal[\"DaisyUI Modal (#markdown-viewer-modal)\"]\n            ShowdownEngine[\"Showdown.js GFM Converter\"]\n            DocTabs[\"Document Switcher Tabs & Copy Button\"]\n            ArtifactBtns --> Modal\n            Modal --> ShowdownEngine\n            ShowdownEngine --> DocTabs\n        end\n\n        subgraph DatastarDashboard[\"Datastar.js Reactive Telemetry Dashboard\"]\n            DSStream[\"data-on-load=@get('/__datastar_stream__')\"]\n            CoTFeed[\"Agent Thought Stream (#agent-thought-stream)\"]\n            ToolFeed[\"Tool Invocations Feed (#tool-call-feed)\"]\n            TaskCards[\"Task Checklist (#task-1.1, #task-1.2)\"]\n            Stepper[\"Journey Stepper (#journey-stepper)\"]\n            MetricsGauges[\"Progress Gauges & Counters\"]\n            \n            DSStream --> CoTFeed\n            DSStream --> ToolFeed\n            DSStream --> TaskCards\n            DSStream --> Stepper\n            DSStream --> MetricsGauges\n        end\n    end\n\n    subgraph DevServer[\"Live Dev Server (serve-report.mjs)\"]\n        SSEEndpoint[\"/__datastar_stream__ (GET & POST)\"]\n        ActiveResolver[\"Active Change Artifact Resolver\\n(openspec/changes/<active>/)\"]\n        MimeHandler[\"MIME Handler (.md -> text/markdown)\"]\n        LiveReload[\"/__live_reload__\"]\n    end\n\n    subgraph LLMAgent[\"LLM Agent Runtimes & Streamers\"]\n        AGY[\"Google Antigravity / Agent Runtimes\"]\n        Transcript[\"transcript.jsonl / Live Steps\"]\n        TelemetryBridge[\"telemetry-streamer.mjs / DatastarBridge\"]\n        AGY --> Transcript\n        Transcript --> TelemetryBridge\n        TelemetryBridge -->|POST SSE Events| SSEEndpoint\n    end\n\n    SSEEndpoint --> DSStream\n    Modal -->|Fetch .md / Fallback cache| ActiveResolver\n    ActiveResolver --> MimeHandler\n```\n\n## Detailed Component Specifications\n\n### 1. Showdown In-Browser Markdown Viewer\n1. **Dev Server Artifact Routing (`serve-report.mjs`)**:\n   - Detects requests for `.md` files or paths like `/proposal.md`, `/design.md`, `/tasks.md`, `/specs/...`.\n   - Resolves from repo root first; if not found, locates the active change directory in `openspec/changes/` and serves the file with `Content-Type: text/markdown; charset=utf-8`.\n   - Supports HTML direct preview fallback if accessed directly in the browser address bar with `Accept: text/html` or query `?preview=true`.\n2. **In-Page Showdown Modal (`<dialog id=\"markdown-viewer-modal\">`)**:\n   - Clean DaisyUI modal dialog with backdrop click dismissal and `Esc` key handling.\n   - Header with Lucide icon (`file-text`), document name badge, switcher tabs (`proposal.md`, `design.md`, `tasks.md`, `specs/`), and copy markdown button.\n   - Showdown converter initialized with:\n     ```javascript\n     const converter = new showdown.Converter({\n       tables: true,\n       tasklists: true,\n       strikethrough: true,\n       ghCodeBlocks: true,\n       simplifiedAutoLink: true,\n       openLinksInNewWindow: true\n     });\n     ```\n   - Renders into DaisyUI `prose prose-sm sm:prose max-w-none text-base-content`.\n   - Embedded cache containing current artifacts so the viewer works instantly even offline or in standalone files.\n\n### 2. Datastar Live LLM Tracking Dashboard\n1. **Real-Time SSE Streaming Pipeline**:\n   - Uses `@starfederation/datastar@1.0.0-beta.9` loaded via addon CDN.\n   - Automatically connects to dev server `/__datastar_stream__` via Datastar SSE attributes or native EventSource bridge.\n2. **Agent Thought Stream (`#agent-thought-stream`)**:\n   - Displays real-time reasoning / Chain-of-Thought logs in expandable, distinct chat bubbles (`chat chat-start`).\n   - Timestamps and token counters.\n3. **Live Tool Invocations Feed (`#tool-call-feed`)**:\n   - Displays real-time cards for executed tools (`read_file`, `write_file`, `edit_file`, `run_command`, `invoke_subagent`).\n   - Category icons (`terminal`, `file-code`, `globe`, `users`).\n   - Real-time running spinner during execution; duration badge (`120ms`) upon completion.\n   - Collapsible DaisyUI terminal drawer (`mockup-code`) with stdout lines.\n4. **Task Matrix & Stepper**:\n   - Synchronized with `tasks.md`.\n   - Surgical DOM morphing: updating task `#task-1.1` from `pending` to `running` to `completed` replaces only `#task-1.1` without reloading the page or losing scroll position.\n5. **Interactive Telemetry Controller & CLI Streamer**:\n   - On-screen controls to simulate live LLM steps (Burst mode, Step mode, Reset) for immediate demonstration on `localhost:3000`.\n   - Streamer script (`skills/html-report/scripts/telemetry-streamer.mjs`) that can tail live agent logs or push synthetic events via `POST /__datastar_stream__`.\n",
+  "tasks.md": "# Tasks: Datastar Live LLM Tracking Dashboard & Showdown Markdown Artifact Viewer\n\n## Phase 1: Dev Server Markdown Resolution & Showdown In-Browser Artifact Viewer\n- [ ] 1.1 Update `skills/html-report/scripts/serve-report.mjs` to add `text/markdown` MIME support and resolve OpenSpec artifact files (`proposal.md`, `design.md`, `tasks.md`, `specs/`) from active change directories\n- [ ] 1.2 Build interactive Showdown markdown viewer modal in companion fragment with document switcher tabs, copy button, and GFM styling\n- [ ] 1.3 Verify clicking artifact buttons in the report immediately renders publication-grade markdown without 404s or download prompts\n\n## Phase 2: Datastar Live Telemetry Engine & Live Tracking Dashboard Components\n- [ ] 2.1 Assemble live tracking dashboard components: agent thought stream (`#agent-thought-stream`), live tool invocation feed (`#tool-call-feed`), and responsive task cards (`#task-matrix`)\n- [ ] 2.2 Wire Datastar reactive signals and SSE fragment morphing (`/__datastar_stream__`) with automatic Lucide icon rehydration\n- [ ] 2.3 Implement DaisyUI journey phase stepper (`#journey-stepper`) adhering to the responsive horizontal overflow standard\n\n## Phase 3: Telemetry Streamer CLI & Live Interactive Simulation Controls\n- [ ] 3.1 Create `skills/html-report/scripts/telemetry-streamer.mjs` to stream real agent transcript steps or synthetic LLM events into `/__datastar_stream__`\n- [ ] 3.2 Add in-browser interactive simulation controls (Simulate LLM Burst, Single Step, Play/Pause, Reset) for instant live demonstration\n\n## Phase 4: Companion Dashboard Assembly & Live Dev Server Sync (`localhost:3000`)\n- [ ] 4.1 Compile `openspec/changes/datastar-llm-tracking-dashboard/index.html` using `build-report.mjs` with `--live` and Showdown addons\n- [ ] 4.2 Mirror to `implementation-progress.html` and verify live-reload on `http://localhost:3000`\n\n## Phase 5: Verification & Playwright Validation\n- [ ] 5.1 Run Playwright validation checks verifying DOM structure, responsiveness, and zero console errors\n- [ ] 5.2 Test live streaming events and confirm real-time DOM morphing and markdown viewer functionality on `localhost:3000`\n",
+  "specs/live-llm-tracking/spec.md": "# Capability Delta: Live LLM Tracking Dashboard & Showdown Artifact Viewer\n\n## ADDED REQUIREMENTS\n\n### Requirement: Dev Server Markdown Resolution & MIME Handling\nThe dev server (`serve-report.mjs`) MUST support `text/markdown; charset=utf-8` and automatically resolve markdown artifact links (`/proposal.md`, `/design.md`, `/tasks.md`, `/specs/...`) against the active OpenSpec change directory if they do not exist at root.\n\n#### Scenario: Requesting Artifact Markdown File\n- **GIVEN** a dev server running against `implementation-progress.html` with an active change in `openspec/changes/<feature-name>/`\n- **WHEN** a client makes an HTTP GET request to `/proposal.md`\n- **THEN** the server MUST resolve the file from `openspec/changes/<feature-name>/proposal.md` and respond with status 200 and `Content-Type: text/markdown; charset=utf-8`.\n\n---\n\n### Requirement: Showdown In-Browser Markdown Artifact Viewer\nThe standard report MUST provide an interactive Showdown-powered modal viewer allowing users to click `.md` artifact buttons and view formatted GitHub Flavored Markdown with syntax highlighting and task checklists without leaving the page or downloading raw files.\n\n#### Scenario: Clicking Markdown Artifact Link\n- **GIVEN** a user viewing the journey dashboard in the browser\n- **WHEN** the user clicks any artifact button (`proposal.md`, `design.md`, `tasks.md`, or `specs/`)\n- **THEN** the report MUST open `<dialog id=\"markdown-viewer-modal\">` and render the document's content using Showdown with GFM tables, tasklists, and code blocks.\n\n#### Scenario: Switching Between Artifact Tabs\n- **GIVEN** the markdown viewer modal is open\n- **WHEN** the user clicks another tab in the modal header (e.g. `design.md` or `tasks.md`)\n- **THEN** the viewer MUST seamlessly switch content and render the selected artifact.\n\n---\n\n### Requirement: Datastar Live LLM Tracking Dashboard\nThe report MUST provide real-time hypermedia tracking components powered by Datastar.js and SSE (`/__datastar_stream__`) displaying LLM thoughts, tool calls, and task progress.\n\n#### Scenario: Live Chain-of-Thought Stream\n- **GIVEN** an active Datastar stream connection\n- **WHEN** an agent emits a thought delta event\n- **THEN** Datastar MUST append or morph the thought into `#agent-thought-stream` without page reload.\n\n#### Scenario: Live Tool Invocation & Terminal Output\n- **GIVEN** an active Datastar stream connection\n- **WHEN** a tool call event is received\n- **THEN** Datastar MUST prepend a tool invocation card to `#tool-call-feed` displaying tool name, arguments, status indicator, and collapsible terminal output drawer.\n\n#### Scenario: Real-Time Task Card Morphing\n- **GIVEN** a task item `#task-${id}` in the dashboard\n- **WHEN** the server broadcasts a `datastar-fragment` with `selector: #task-${id}` and updated status\n- **THEN** Datastar MUST morph the task card in-place, updating the status badge, checkbox, and completion state.\n"
+}
+</script>
+
+  <script>
+    window.OPEN_SPEC_ARTIFACTS = {};
+    try {
+      window.OPEN_SPEC_ARTIFACTS = JSON.parse(document.getElementById("open-spec-artifacts-data").textContent);
+    } catch (_) {}
+
+    let activeDocKey = "proposal.md";
+    let showdownConverter = null;
+
+    function getShowdownConverter() {
+      if (!showdownConverter && window.showdown) {
+        showdownConverter = new window.showdown.Converter({
+          tables: true,
+          tasklists: true,
+          strikethrough: true,
+          ghCodeBlocks: true,
+          simplifiedAutoLink: true,
+          openLinksInNewWindow: true
+        });
+      }
+      return showdownConverter;
+    }
+
+    async function openMarkdownViewer(docName) {
+      activeDocKey = docName || "proposal.md";
+      const modal = document.getElementById("markdown-viewer-modal");
+      if (!modal) return;
+      if (typeof modal.showModal === "function") {
+        modal.showModal();
+      } else {
+        modal.setAttribute("open", "true");
+      }
+      await renderMarkdownDoc(activeDocKey);
+    }
+
+    function closeMarkdownViewer() {
+      const modal = document.getElementById("markdown-viewer-modal");
+      if (modal && typeof modal.close === "function") {
+        modal.close();
+      } else if (modal) {
+        modal.removeAttribute("open");
+      }
+    }
+
+    async function switchViewerTab(docName) {
+      activeDocKey = docName;
+      await renderMarkdownDoc(activeDocKey);
+    }
+
+    async function renderMarkdownDoc(docName) {
+      const titleEl = document.getElementById("modal-doc-title");
+      const rawLinkEl = document.getElementById("modal-raw-link");
+      const containerEl = document.getElementById("modal-markdown-container");
+
+      if (titleEl) titleEl.textContent = docName;
+      if (rawLinkEl) rawLinkEl.href = "/" + docName + "?raw=true";
+
+      document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+        if (btn.getAttribute("data-doc") === docName) {
+          btn.classList.add("btn-primary");
+          btn.classList.remove("btn-ghost");
+        } else {
+          btn.classList.remove("btn-primary");
+          btn.classList.add("btn-ghost");
+        }
+      });
+
+      let markdownText = "";
+      try {
+        const res = await fetch("/" + docName + "?raw=true");
+        if (res.ok) {
+          markdownText = await res.text();
+        } else {
+          markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\nFile not found.";
+        }
+      } catch (_) {
+        markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\nFile loaded from offline cache.";
+      }
+
+      window._currentMarkdownRaw = markdownText;
+
+      const converter = getShowdownConverter();
+      if (converter && containerEl) {
+        containerEl.innerHTML = converter.makeHtml(markdownText);
+        if (window.autoLinkMarkdownFiles) window.autoLinkMarkdownFiles(containerEl);
+      } else if (containerEl) {
+        containerEl.textContent = markdownText;
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function copyMarkdownToClipboard() {
+      const text = window._currentMarkdownRaw || "";
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.getElementById("copy-markdown-btn");
+          if (btn) {
+            btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!';
+            if (window.lucide) window.lucide.createIcons();
+            setTimeout(() => {
+              btn.innerHTML = '<i data-lucide="copy" class="w-3 h-3"></i> Copy';
+              if (window.lucide) window.lucide.createIcons();
+            }, 2000);
+          }
+        });
+      }
+    }
+
+    let simStepIndex = 0;
+    const simSteps = [
+      {
+        thought: "Simulated Agent: Diagnosing DOM reactivity under Datastar SSE stream. Verified #agent-thought-stream and #tool-call-feed mount points.",
+        tool: { name: "read_file", args: "openspec/changes/datastar-llm-tracking-dashboard/tasks.md", duration: "24ms", output: "Read tasks.md (26 lines). Found 11 tasks across 5 phases." },
+        taskUpdate: { id: "2.2", status: "completed" },
+        metrics: { progressPct: 55, completed: 6, running: 1 }
+      },
+      {
+        thought: "Simulated Agent: Validating responsive horizontal journey stepper standard. Verified overflow-x-auto container with min-w-[500px] styling.",
+        tool: { name: "run_command", args: "node skills/html-report/scripts/build-report.mjs --live", duration: "72ms", output: "HTML Report compiled in 72ms. 17 CDN stack auto-detected." },
+        taskUpdate: { id: "2.3", status: "completed" },
+        metrics: { progressPct: 65, completed: 7, running: 1 }
+      },
+      {
+        thought: "Simulated Agent: Activating Task 3.1: Building telemetry-streamer.mjs with HTTP POST connector to /__datastar_stream__.",
+        tool: { name: "write_file", args: "skills/html-report/scripts/telemetry-streamer.mjs", duration: "110ms", output: "Created file skills/html-report/scripts/telemetry-streamer.mjs" },
+        taskUpdate: { id: "3.1", status: "completed" },
+        metrics: { progressPct: 75, completed: 8, running: 1 }
+      },
+      {
+        thought: "Simulated Agent: Compiling companion dashboard and mirroring to implementation-progress.html on localhost:3000.",
+        tool: { name: "run_command", args: "cp openspec/changes/datastar-llm-tracking-dashboard/index.html implementation-progress.html", duration: "15ms", output: "Mirrored report to implementation-progress.html" },
+        taskUpdate: { id: "4.1", status: "completed" },
+        metrics: { progressPct: 85, completed: 9, running: 1 }
+      },
+      {
+        thought: "Simulated Agent: Running verification suites with Playwright lean verification runner.",
+        tool: { name: "run_command", args: "node skills/html-report/playwright/harness/runner.mjs --quick", duration: "1450ms", output: "All checks passed cleanly across 5 themes and mobile/desktop breakpoints." },
+        taskUpdate: { id: "5.1", status: "completed" },
+        metrics: { progressPct: 100, completed: 11, running: 0 }
+      }
+    ];
+
+    function triggerClientSimulationStep() {
+      const step = simSteps[simStepIndex % simSteps.length];
+      simStepIndex++;
+
+      const thoughtContainer = document.getElementById("agent-thought-stream");
+      if (thoughtContainer) {
+        const bubble = document.createElement("div");
+        bubble.className = "chat chat-start animate-fade-in";
+        bubble.innerHTML = `
+          <div class="chat-header text-3xs font-mono opacity-70 mb-0.5 flex items-center gap-1.5">
+            <span class="badge badge-primary badge-xs">Agent CoT</span>
+            <span>${new Date().toLocaleTimeString()}</span>
+          </div>
+          <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-mono opacity-90 shadow-sm">
+            ${step.thought}
+          </div>
+        `;
+        thoughtContainer.insertBefore(bubble, thoughtContainer.firstChild);
+      }
+
+      const toolContainer = document.getElementById("tool-call-feed");
+      if (toolContainer) {
+        const card = document.createElement("div");
+        card.className = "rounded-box border border-base-300 bg-base-100 p-3 text-xs shadow-xs transition animate-fade-in";
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <i data-lucide="terminal" class="w-4 h-4 text-primary shrink-0"></i>
+              <span class="font-mono font-bold text-xs text-primary">${step.tool.name}</span>
+              <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1.5 py-0.5 rounded">${step.tool.args}</span>
+            </div>
+            <div class="shrink-0">
+              <span class="badge badge-success badge-xs gap-1 font-mono">${step.tool.duration}</span>
+            </div>
+          </div>
+          <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-2 px-3 max-h-24 overflow-y-auto">
+            <pre data-prefix=">"><code>${step.tool.output}</code></pre>
+          </div>
+        `;
+        toolContainer.insertBefore(card, toolContainer.firstChild);
+      }
+
+      if (step.taskUpdate) {
+        const taskEl = document.getElementById("task-" + step.taskUpdate.id);
+        if (taskEl) {
+          taskEl.className = "card card-compact bg-base-100 border border-success/50 bg-success/5 transition-all";
+          const badge = taskEl.querySelector(".badge");
+          if (badge) {
+            badge.className = "badge badge-success badge-xs gap-1 font-mono";
+            badge.innerHTML = "completed";
+          }
+          const chk = taskEl.querySelector("input[type='checkbox']");
+          if (chk) chk.checked = true;
+          const label = taskEl.querySelector("span.truncate");
+          if (label) label.classList.add("line-through", "opacity-70");
+        }
+      }
+
+      const progressBar = document.getElementById("progress-bar-el");
+      if (progressBar) progressBar.value = step.metrics.progressPct;
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function triggerClientRapidBurst() {
+      let count = 0;
+      const interval = setInterval(() => {
+        triggerClientSimulationStep();
+        count++;
+        if (count >= 4) clearInterval(interval);
+      }, 400);
+    }
+
+    async function triggerBackendStreamer() {
+      try {
+        await fetch("/__datastar_stream__", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            selector: "#agent-thought-stream",
+            mergeMode: "prepend",
+            html: `
+              <div class="chat chat-start animate-fade-in">
+                <div class="chat-header text-3xs font-mono opacity-70 mb-0.5 flex items-center gap-1.5">
+                  <span class="badge badge-secondary badge-xs">Server SSE</span>
+                  <span>${new Date().toLocaleTimeString()}</span>
+                </div>
+                <div class="chat-bubble chat-bubble-secondary text-xs leading-relaxed font-mono opacity-90 shadow-sm">
+                  Broadcasted live from http://localhost:3000/__datastar_stream__ via POST request!
+                </div>
+              </div>
+            `
+          })
+        });
+      } catch (e) {
+        console.warn("Backend streamer fetch note:", e.message);
+      }
+    }
+
+    function resetTelemetryDemo() {
+      simStepIndex = 0;
+      window.location.reload();
+    }
+
+    // Expose all functions to window
+    window.openMarkdownViewer = openMarkdownViewer;
+    window.closeMarkdownViewer = closeMarkdownViewer;
+    window.switchViewerTab = switchViewerTab;
+    window.copyMarkdownToClipboard = copyMarkdownToClipboard;
+    window.triggerClientSimulationStep = triggerClientSimulationStep;
+    window.triggerClientRapidBurst = triggerClientRapidBurst;
+    window.triggerBackendStreamer = triggerBackendStreamer;
+    window.resetTelemetryDemo = resetTelemetryDemo;
+
+    // Connect to SSE stream on page load if running via dev server
+    (() => {
+      try {
+        const es = new EventSource("/__datastar_stream__");
+        es.onopen = () => {
+          const dot = document.getElementById("sse-indicator-dot");
+          const label = document.getElementById("sse-status-label");
+          if (dot) dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse";
+          if (label) {
+            label.textContent = "CONNECTED";
+            label.className = "text-base sm:text-lg font-bold text-success font-mono";
+          }
+        };
+        es.onerror = () => {
+          const dot = document.getElementById("sse-indicator-dot");
+          const label = document.getElementById("sse-status-label");
+          if (dot) dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-warning";
+          if (label) {
+            label.textContent = "STANDALONE";
+            label.className = "text-base sm:text-lg font-bold text-warning font-mono";
+          }
+        };
+      } catch (_) {}
+    })();
+  </script>
+</div>

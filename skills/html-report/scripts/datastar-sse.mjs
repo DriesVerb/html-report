@@ -579,7 +579,7 @@ export class DatastarBridge extends EventEmitter {
     }
 
     const statusBadge = isRunning
-      ? `<span class="badge badge-warning badge-xs gap-1"><span class="loading loading-spinner loading-3xs"></span> running</span>`
+      ? `<span class="badge badge-warning badge-xs gap-1"><span class="loading loading-spinner loading-xs"></span> running</span>`
       : isError
       ? `<span class="badge badge-error badge-xs">error</span>`
       : `<span class="badge badge-success badge-xs">${tool.durationMs || 0}ms</span>`;

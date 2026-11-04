@@ -16,6 +16,7 @@ export async function runHarness(htmlPath, rawOptions = {}) {
   }
 
   const options = {
+    ...rawOptions,
     quick: Boolean(rawOptions.quick),
     headed: Boolean(rawOptions.headed),
     bail: Boolean(rawOptions.bail),
@@ -34,8 +35,7 @@ export async function runHarness(htmlPath, rawOptions = {}) {
     screenshots: rawOptions.screenshots || null,
     colorContrast: Boolean(rawOptions.colorContrast || rawOptions["color-contrast"]),
     allCdns: Boolean(rawOptions.allCdns || rawOptions["all-cdns"]),
-    cdns: rawOptions.cdns || null,
-    ...rawOptions
+    cdns: rawOptions.cdns || null
   };
 
   const reporter = new Reporter(options);
@@ -107,7 +107,7 @@ export async function runHarness(htmlPath, rawOptions = {}) {
     hasMarkdown: Boolean(document.querySelector("#markdown-output, [data-markdown]")),
     hasLucide: Boolean(document.querySelector("[data-lucide], svg.lucide")),
     hasAlpine: Boolean(document.querySelector("[x-data], #alpine-example-card")),
-    hasFullCalendar: Boolean(document.querySelector("#calendar, .fc, [data-fullcalendar]"))
+    hasFullCalendar: Boolean(document.body && document.body.querySelector("#calendar, .fc, [data-fullcalendar]:not(style)"))
   }));
 
   const candidateChecks = registry.filter(options);

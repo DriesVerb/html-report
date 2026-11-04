@@ -15,17 +15,17 @@ export class FullCalendarCheck extends VerificationCheck {
     if (options.allCdns || options.checkCalendar || options.checkFullcalendar || options.cdnFullcalendar) return true;
     if (options.cdns?.includes("fullcalendar") || options.cdns?.includes("calendar")) return true;
     if (detectedFeatures) return Boolean(detectedFeatures.hasFullCalendar);
-    return await page.evaluate(() => Boolean(document.querySelector("#calendar, .fc, [data-fullcalendar]")));
+    return await page.evaluate(() => Boolean(document.body && document.body.querySelector("#calendar, .fc, [data-fullcalendar]:not(style)")));
   }
 
   async run({ page }) {
     const errors = [];
     const check = await page.evaluate(() => {
-      const container = document.querySelector("#calendar, .fc, [data-fullcalendar]");
+      const container = (document.body || document).querySelector("div#calendar, div.fc, div[data-fullcalendar], [data-fullcalendar]:not(style)");
       if (!container) return { hasCalendar: false };
 
-      const fcRendered = Boolean(document.querySelector(".fc"));
-      const toolbarRendered = Boolean(document.querySelector(".fc-toolbar, .fc-header-toolbar"));
+      const fcRendered = Boolean(container.querySelector(".fc-view-harness") || container.classList.contains("fc"));
+      const toolbarRendered = Boolean(container.querySelector(".fc-toolbar, .fc-header-toolbar") || document.querySelector(".fc-toolbar, .fc-header-toolbar"));
       const eventCount = document.querySelectorAll(".fc-event").length;
 
       return { hasCalendar: true, fcRendered, toolbarRendered, eventCount };

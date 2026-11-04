@@ -253,7 +253,7 @@ addons: [charts]
         printable: false
       });
 
-      assert.equal(result.mode, "interactive");
+      assert.equal(result.mode, "report");
       assert.ok(result.activeAddons.includes("charts"));
       assert.ok(result.activeAddons.includes("mermaid"));
       assert.ok(!result.activeAddons.includes("leaflet"));
@@ -262,7 +262,7 @@ addons: [charts]
       assert.ok(html.includes("<title>Deterministic Benchmark Report</title>"));
       assert.ok(html.includes('id="navbar-report-title"'));
       assert.ok(html.includes("Deterministic Benchmark Report"));
-      assert.ok(html.includes('data-report-mode="interactive"'));
+      assert.ok(html.includes('data-report-mode="report"'));
       assert.ok(html.includes('id="perf-metrics"'));
       assert.ok(html.includes("chart.umd.min.js"));
       assert.ok(html.includes("mermaid.min.js"));
@@ -279,8 +279,8 @@ addons: [charts]
         printable: true
       });
 
-      assert.equal(result.mode, "static");
-      assert.ok(result.html.includes('data-report-mode="static"'));
+      assert.equal(result.mode, "print");
+      assert.ok(result.html.includes('data-report-mode="print"'));
       assert.ok(result.html.includes("@media print"));
       assert.ok(result.html.includes('id="printable-media-styles"'));
       assert.ok(!result.html.includes("Not PDF-Ready"));
@@ -295,8 +295,8 @@ addons: [charts]
         live: true
       });
 
-      assert.equal(result.mode, "live");
-      assert.ok(result.html.includes('data-report-mode="live"'));
+      assert.equal(result.mode, "live-report");
+      assert.ok(result.html.includes('data-report-mode="live-report"'));
       assert.ok(result.activeAddons.includes("datastar"));
       assert.ok(result.html.includes("@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"));
     });

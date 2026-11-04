@@ -89,7 +89,7 @@
               <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + accent"></span>
               <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + neutral"></span>
             </div>
-            <span class="badge badge-xs badge-outline hidden md:inline font-normal" x-text="isOpen ? 'Click to Collapse' : 'Click to Customize'">Click to Customize</span>
+            <span class="badge badge-xs badge-outline hidden md:inline-flex font-normal whitespace-nowrap shrink-0" x-text="isOpen ? 'Click to Collapse' : 'Click to Customize'">Click to Customize</span>
           </div>
         </div>
 
@@ -1292,14 +1292,16 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
               <i data-lucide="presentation" class="w-5 h-5 text-warning"></i>
               <span>11.2 Impress.js: Presentation Guard &amp; Print-Equivalent Static Fallback</span>
             </h3>
-            <button
-              type="button"
-              @click="isPresentation = !isPresentation; document.documentElement.setAttribute('data-presentation', isPresentation ? 'true' : 'false')"
-              class="btn btn-xs sm:btn-sm btn-outline btn-warning gap-1"
-            >
-              <i data-lucide="monitor-play" class="w-3.5 h-3.5"></i>
-              <span x-text="isPresentation ? 'Exit Presentation Mode' : 'Simulate Presentation Mode'">Simulate Presentation Mode</span>
-            </button>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                @click="isPresentation = !isPresentation; document.documentElement.setAttribute('data-presentation', isPresentation ? 'true' : 'false')"
+                class="btn btn-xs sm:btn-sm btn-outline btn-warning gap-1"
+              >
+                <i data-lucide="monitor-play" class="w-3.5 h-3.5"></i>
+                <span x-text="isPresentation ? 'Exit Presentation Mode' : 'Simulate Presentation Mode'">Simulate Presentation Mode</span>
+              </button>
+            </div>
           </div>
           <div class="alert alert-warning/15 border border-warning/30 text-xs p-3">
             <i data-lucide="shield-alert" class="w-4 h-4 text-warning shrink-0"></i>
@@ -1307,6 +1309,23 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
               <strong>Presentation Guard Active:</strong> Impress.js receives the exact same treatment as a print by default. All <code>.step</code> slides remain static, stacked printable cards unless explicitly invoked via <code>--presentation</code> or <code>data-presentation="true"</code>, strictly preventing 3D viewport coordinate transforms from capturing report scrolling.
             </div>
           </div>
+
+          <!-- Slide Controls Active in Presentation Mode -->
+          <div x-show="isPresentation" x-cloak class="flex flex-wrap items-center justify-between gap-2 bg-warning/10 p-2.5 rounded-lg border border-warning/30 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="badge badge-warning badge-sm font-semibold">3D Presentation Active</span>
+              <span class="opacity-80">Use controls below or arrow keys / spacebar:</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" @click="window.impressPrev && window.impressPrev()" class="btn btn-xs btn-outline gap-1">
+                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Prev
+              </button>
+              <button type="button" @click="window.impressNext && window.impressNext()" class="btn btn-xs btn-warning gap-1">
+                Next <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
           <div class="impress-wrapper border border-base-300 bg-base-200/40 p-4 rounded-box">
             <div id="impress" class="space-y-3">
               <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="0" data-y="0">
@@ -1314,10 +1333,15 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
                 <div class="text-sm font-semibold mt-1">Autonomous Quality Engineering at Scale</div>
                 <p class="text-xs opacity-75 mt-0.5">Continuous verification across 5 responsive breakpoints with 100% test reliability.</p>
               </div>
-              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="500" data-y="0">
+              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="600" data-y="0">
                 <div class="text-xs uppercase font-bold text-secondary">Slide 2: Deterministic Harness</div>
                 <div class="text-sm font-semibold mt-1">Zero-Dependency Finite State Machine</div>
                 <p class="text-xs opacity-75 mt-0.5">Automated heading repair, bare table isolation, and badge multi-line safeguard.</p>
+              </div>
+              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="1200" data-y="0">
+                <div class="text-xs uppercase font-bold text-accent">Slide 3: Real-Time Telemetry</div>
+                <div class="text-sm font-semibold mt-1">17-CDN Non-Blocking Publication Stack</div>
+                <p class="text-xs opacity-75 mt-0.5">Instant theme reactivity, Day.js relative formatting, and FullCalendar synchronization.</p>
               </div>
             </div>
           </div>
@@ -2004,12 +2028,31 @@ SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
         // Marked
         if (window.marked && document.getElementById("markdown-source") && document.getElementById("markdown-output")) {
           const src = document.getElementById("markdown-source").textContent.trim();
-          document.getElementById("markdown-output").innerHTML = window.marked.parse(src);
+          const outEl = document.getElementById("markdown-output");
+          outEl.innerHTML = window.marked.parse(src);
+          outEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
+            if (!h.id) {
+              h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+            }
+          });
+          if (typeof window.initTOC === "function") {
+            window.initTOC();
+          }
         }
 
         // Highlight.js
         if (window.hljs) {
           window.hljs.highlightAll();
+        }
+
+        // FullCalendar Hydration
+        if (typeof window.initFullCalendar === "function") {
+          window.initFullCalendar();
+        }
+
+        // Impress.js Presentation Mode Hydration
+        if (typeof window.initImpress === "function") {
+          window.initImpress();
         }
       }
 

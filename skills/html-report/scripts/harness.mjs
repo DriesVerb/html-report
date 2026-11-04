@@ -10,7 +10,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import { spawnSync } from "node:child_process";
+import http from "node:http";
+import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import {
   REPORTER_VERSION,
@@ -21,9 +22,70 @@ import {
   getOutputPath,
   getOutputPaths
 } from "./caller-registry.mjs";
+import {
+  CANONICAL_MODES,
+  MODE_ALIASES,
+  normalizeMode
+} from "./build-report.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+export { CANONICAL_MODES, MODE_ALIASES, normalizeMode };
+
+export const MODE_SERVER_POLICIES = Object.freeze({
+  print: { requiresServer: false, defaultAction: "export_or_static" },
+  report: { requiresServer: false, defaultAction: "open_static" },
+  presentation: { requiresServer: false, defaultAction: "open_static" },
+  dashboard: { requiresServer: true, defaultAction: "serve" },
+  "working-report": { requiresServer: true, defaultAction: "serve" },
+  "live-report": { requiresServer: true, defaultAction: "serve" }
+});
+
+export async function isPortActive(port, host = "localhost") {
+  return new Promise((resolve) => {
+    const req = http.get(`http://${host}:${port}/`, { timeout: 800 }, (res) => {
+      resolve(true);
+      req.destroy();
+    });
+    req.on("error", () => resolve(false));
+    req.on("timeout", () => {
+      req.destroy();
+      resolve(false);
+    });
+  });
+}
+
+export async function ensureDevServerRunning({
+  filePath,
+  port = 3000,
+  mode = "dashboard"
+}) {
+  const active = await isPortActive(port);
+  if (active) {
+    return {
+      running: true,
+      alreadyRunning: true,
+      port,
+      url: `http://localhost:${port}/`
+    };
+  }
+
+  const serveScript = path.resolve(__dirname, "./serve-report.mjs");
+  const child = spawn(process.execPath, [serveScript, filePath, "--port", String(port)], {
+    detached: true,
+    stdio: "ignore"
+  });
+  child.unref();
+
+  return {
+    running: true,
+    alreadyRunning: false,
+    port,
+    url: `http://localhost:${port}/`,
+    pid: child.pid
+  };
+}
 
 export const STATES = Object.freeze({
   IDLE: "IDLE",
@@ -558,7 +620,9 @@ export async function runLifecycle({
   autoFix = true,
   verify = true,
   quick = true,
-  mode = "interactive",
+  mode = null,
+  serve = null,
+  port = 3000,
   caller = null,
   pdf = null,
   attempt = 1,
@@ -566,7 +630,9 @@ export async function runLifecycle({
   json = false,
   onStateChange = null,
   // Optional test verifier injection hook for hermetic testing
-  verifier = null
+  verifier = null,
+  // Optional test server runner hook
+  serverRunner = null
 } = {}) {
   const startTime = performance.now();
   let currentState = STATES.IDLE;
@@ -586,6 +652,30 @@ export async function runLifecycle({
       onStateChange(toState, history);
     }
   }
+
+  // Resolve and validate canonical report mode
+  let resolvedMode = normalizeMode(mode);
+  if (mode && !resolvedMode) {
+    transition(STATES.FAILED);
+    const errPayload = {
+      status: "FAILED",
+      attempt,
+      maxAttempts,
+      failureType: "INVALID_MODE",
+      instruction_for_agent: `Invalid report mode "${mode}". Allowed modes: ${CANONICAL_MODES.join(", ")}`
+    };
+    if (json) console.log(JSON.stringify(errPayload, null, 2));
+    else printRemediationBanner(errPayload);
+    return { success: false, state: currentState, history, error: errPayload };
+  }
+
+  if (!resolvedMode) {
+    if (printable) resolvedMode = "print";
+    else resolvedMode = "report";
+  }
+
+  const serverPolicy = MODE_SERVER_POLICIES[resolvedMode] || { requiresServer: false, defaultAction: "open_static" };
+  const shouldServe = serve !== null ? Boolean(serve) : serverPolicy.requiresServer;
 
   // Caller resolution & 3-tier configuration merge (strictly when caller is provided)
   let leafCallerId = null;
@@ -638,13 +728,13 @@ export async function runLifecycle({
       default_theme: "light",
       required_cdns: ["tailwind", "daisyui", "lucide", "alpinejs"],
       instructions: "Adhere to the responsive DaisyUI sticky navbar contract.",
-      reportMode: "interactive"
+      reportMode: "report"
     };
     const profileRules = callerInfo.frontmatter || {};
     const runtimeOverrides = {
       theme: theme || null,
       required_cdns: [],
-      reportMode: printable ? "static" : (mode || "interactive")
+      reportMode: resolvedMode
     };
     mergedConfig = mergeInstructions(coreStandards, profileRules, runtimeOverrides);
   }
@@ -795,11 +885,12 @@ export async function runLifecycle({
     const { buildReport } = await import("./build-report.mjs");
     const activeTheme = mergedConfig ? mergedConfig.theme : (theme || null);
     const activeAddons = mergedConfig ? mergedConfig.required_cdns : [];
-    const isPrintable = printable || (mergedConfig && mergedConfig.reportMode === "static");
+    const isPrintable = printable || resolvedMode === "print" || (mergedConfig && mergedConfig.reportMode === "print");
 
     const buildRes = buildReport({
       title,
       content: raw,
+      mode: resolvedMode,
       printable: isPrintable,
       theme: activeTheme,
       addons: activeAddons
@@ -841,7 +932,7 @@ export async function runLifecycle({
       const vResult = await verifier({
         htmlPath: resolvedOutput,
         quick,
-        mode: mergedConfig?.reportMode || mode,
+        mode: resolvedMode,
         caller,
         pdf: resolvedPdf
       });
@@ -852,7 +943,7 @@ export async function runLifecycle({
       const verifyScript = path.resolve(__dirname, "../playwright/verify-report.mjs");
       const vArgs = [verifyScript, resolvedOutput];
       if (quick) vArgs.push("--quick");
-      if (mode || mergedConfig?.reportMode) vArgs.push("--mode", mergedConfig?.reportMode || mode);
+      if (resolvedMode) vArgs.push("--mode", resolvedMode);
       if (caller) vArgs.push("--caller", caller);
       if (resolvedPdf) vArgs.push("--pdf", resolvedPdf);
 
@@ -895,6 +986,29 @@ export async function runLifecycle({
   } else {
     transition(STATES.COMPLETED);
   }
+
+  // Dev Server Orchestration according to MODE_SERVER_POLICIES
+  let serverInfo = null;
+  if (shouldServe) {
+    try {
+      if (typeof serverRunner === "function") {
+        serverInfo = await serverRunner({
+          filePath: resolvedOutput,
+          port,
+          mode: resolvedMode
+        });
+      } else {
+        serverInfo = await ensureDevServerRunning({
+          filePath: resolvedOutput,
+          port,
+          mode: resolvedMode
+        });
+      }
+    } catch (serverErr) {
+      console.warn(`[html-report] Server orchestration notice: ${serverErr.message}`);
+    }
+  }
+
   const successPayload = {
     status: "COMPLETED",
     output: resolvedOutput,
@@ -902,7 +1016,9 @@ export async function runLifecycle({
     state: currentState,
     history,
     runId: activeRunId,
-    caller: leafCallerId
+    caller: leafCallerId,
+    mode: resolvedMode,
+    server: serverInfo
   };
 
   if (json) {
@@ -912,6 +1028,11 @@ export async function runLifecycle({
     if (resolvedPdf) {
       console.log(`✔ [HARNESS] PDF deliverable generated -> ${resolvedPdf}`);
     }
+    if (shouldServe && serverInfo) {
+      console.log(`✔ [HARNESS] Dev server active on ${serverInfo.url} (${resolvedMode} mode)`);
+    } else {
+      console.log(`✔ [HARNESS] Standalone deliverable ready (no background server for ${resolvedMode} mode)`);
+    }
     if (caller) {
       console.log(`✔ [HARNESS] Run recorded to vault -> .caller-requests/runs/${leafCallerId}/${activeRunId}\n`);
     } else {
@@ -919,7 +1040,16 @@ export async function runLifecycle({
     }
   }
 
-  return { success: true, state: currentState, history, output: resolvedOutput, pdf: resolvedPdf, runId: activeRunId };
+  return {
+    success: true,
+    state: currentState,
+    history,
+    output: resolvedOutput,
+    pdf: resolvedPdf,
+    runId: activeRunId,
+    mode: resolvedMode,
+    server: serverInfo
+  };
 }
 
 export const runHarness = runLifecycle;
@@ -944,13 +1074,20 @@ OPTIONS:
   --title, -t <title>       Report title (default: "HTML Report")
   --theme <name>            DaisyUI theme override (e.g. "light", "cupcake", "synthwave")
   --run-id <runId>          Run ID for multi-attempt correlation in vault
-  --printable, -p           Enable printable styles (@media print)
+  --mode, -m <name>         Report mode: print, report, presentation, dashboard, working-report, live-report
+  --print, -p, --printable  Enable printable styles (@media print, static mode)
+  --presentation            Enable interactive presentation mode
+  --dashboard               Enable interactive dashboard mode
+  --working-report          Enable working journey companion mode
+  --live-report, -l         Enable real-time live streaming mode
+  --serve                   Force start/check dev server
+  --no-serve                Disable dev server regardless of mode policy
+  --port <number>           Target dev server port (default: 3000)
   --no-auto-fix             Disable mechanical auto-fix transforms during run/validate
   --no-verify               Skip Playwright responsive & console verification
   --full-verify             Verify across all 5 responsive breakpoints (default: quick 2)
   --attempt <number>        Current retry attempt number (default: 1)
   --max-attempts <number>   Maximum allowed remediation attempts before failure (default: 3)
-  --mode <interactive|static> Report mode (default: interactive)
   --caller <id>             Caller identifier for profile-aware overrides and vault tracking
   --pdf [file.pdf]          Generate on-demand PDF export during verification
   --json                    Output machine-readable JSON diagnostics
@@ -975,7 +1112,9 @@ export function parseArgs(argv = process.argv.slice(2)) {
     quick: true,
     attempt: 1,
     maxAttempts: 3,
-    mode: "interactive",
+    mode: null,
+    serve: null,
+    port: 3000,
     caller: null,
     pdf: null,
     json: false,
@@ -995,8 +1134,23 @@ export function parseArgs(argv = process.argv.slice(2)) {
       args.verify = false;
     } else if (arg === "--full-verify") {
       args.quick = false;
-    } else if (arg === "--printable" || arg === "-p") {
+    } else if (arg === "--print" || arg === "--printable" || arg === "-p") {
       args.printable = true;
+      args.mode = "print";
+    } else if (arg === "--presentation") {
+      args.mode = "presentation";
+    } else if (arg === "--dashboard") {
+      args.mode = "dashboard";
+    } else if (arg === "--working" || arg === "--working-report") {
+      args.mode = "working-report";
+    } else if (arg === "--live" || arg === "--live-report" || arg === "-l") {
+      args.mode = "live-report";
+    } else if (arg === "--serve") {
+      args.serve = true;
+    } else if (arg === "--no-serve") {
+      args.serve = false;
+    } else if ((arg === "--port") && argv[i + 1]) {
+      args.port = parseInt(argv[++i], 10) || 3000;
     } else if ((arg === "--output" || arg === "-o") && argv[i + 1]) {
       args.output = argv[++i];
     } else if ((arg === "--title" || arg === "-t") && argv[i + 1]) {
@@ -1009,7 +1163,7 @@ export function parseArgs(argv = process.argv.slice(2)) {
       args.attempt = parseInt(argv[++i], 10) || 1;
     } else if (arg === "--max-attempts" && argv[i + 1]) {
       args.maxAttempts = parseInt(argv[++i], 10) || 3;
-    } else if (arg === "--mode" && argv[i + 1]) {
+    } else if ((arg === "--mode" || arg === "-m") && argv[i + 1]) {
       args.mode = argv[++i];
     } else if (arg === "--caller" && argv[i + 1]) {
       args.caller = argv[++i];
@@ -1110,6 +1264,8 @@ export async function main(argv = process.argv.slice(2)) {
       verify: args.verify,
       quick: args.quick,
       mode: args.mode,
+      serve: args.serve,
+      port: args.port,
       caller: args.caller,
       pdf: args.pdf,
       attempt: args.attempt,

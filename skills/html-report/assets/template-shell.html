@@ -45,10 +45,22 @@
       height: auto !important;
       background-color: transparent !important;
     }
-    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping and vertical pill overflow */
+    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping, oversized spinners, and vertical pill overflow */
     .badge {
       white-space: nowrap !important;
       flex-shrink: 0;
+    }
+    .badge .loading,
+    .badge .loading-spinner,
+    .badge .loading-xs,
+    .badge .loading-3xs,
+    .loading-3xs {
+      width: 0.65rem !important;
+      height: 0.65rem !important;
+      min-width: 0.65rem !important;
+      min-height: 0.65rem !important;
+      vertical-align: middle;
+      display: inline-block;
     }
     [data-insufficient-space="true"] {
       outline: 2px dashed #f59e0b !important;
@@ -158,7 +170,8 @@
     }
 
     /* Impress.js Presentation Guard & Print-Equivalent Treatment */
-    html:not([data-presentation="true"]) .step {
+    html:not([data-presentation="true"]) .step,
+    .impress-static-fallback .step {
       position: relative !important;
       opacity: 1 !important;
       transform: none !important;
@@ -171,15 +184,26 @@
       position: relative;
       overflow: hidden;
       width: 100%;
-      min-height: 420px;
       border-radius: 0.75rem;
     }
-    html[data-presentation="true"] .impress-wrapper #impress {
+    html[data-presentation="true"] .impress-wrapper {
+      min-height: 420px;
+      height: 420px;
+    }
+    html[data-presentation="true"] .impress-wrapper #impress:not(.impress-static-fallback) {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+    }
+
+    @media print {
+      header,
+      .navbar,
+      nav {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -188,11 +212,12 @@
   <!-- Sticky DaisyUI Navbar -->
   <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
     <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
-      <!-- Left: Title -->
-      <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
+      <!-- Left: Title & Mode Badge -->
+      <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
           <!-- {{TITLE}} -->
         </span>
+        <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
 
       <!-- Right: TOC + Theme Picker + Download Menu -->

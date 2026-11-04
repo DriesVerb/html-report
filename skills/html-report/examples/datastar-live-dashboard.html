@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="scroll-smooth" data-report-mode="live">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reusable Datastar.js Live Telemetry Dashboard Example</title>
+
+  <!-- Core CDNs -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Datastar 1.0.0-beta.9 ESM -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
+
+  <style>
+    /* Safeguard: Ensure spinners inside badges never exceed badge bounds */
+    .badge .loading,
+    .badge .loading-spinner,
+    .badge .loading-xs,
+    .badge .loading-3xs,
+    .loading-3xs {
+      width: 0.65rem !important;
+      height: 0.65rem !important;
+      min-width: 0.65rem !important;
+      min-height: 0.65rem !important;
+      vertical-align: middle;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body class="bg-base-200 text-base-content min-h-screen flex flex-col font-sans">
+
+  <!-- Sticky Navbar -->
+  <header class="navbar bg-base-100 border-b border-base-300 sticky top-0 z-50 px-4 sm:px-8">
+    <div class="navbar-start gap-2">
+      <i data-lucide="radio" class="w-5 h-5 text-primary animate-pulse"></i>
+      <span class="font-bold text-sm sm:text-base">Datastar Live Agent Dashboard</span>
+      <span class="badge badge-primary badge-xs">Reusable Example</span>
+    </div>
+    <div class="navbar-end gap-2">
+      <div id="connection-status" class="badge badge-success badge-sm gap-1 font-mono">
+        <span class="inline-block w-2 h-2 rounded-full bg-success animate-ping"></span> Live SSE
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Telemetry Container with Datastar Signals -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 flex-1 w-full"
+        data-signals='{"progressPct": 25, "totalTasks": 4, "completedTasks": 1, "runningTasks": 1}'>
+
+    <!-- Live Metrics Grid -->
+    <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="card bg-base-100 border border-base-300 p-4 shadow-xs">
+        <div class="text-xs text-base-content/70 flex justify-between items-center">
+          <span>Progress</span>
+          <i data-lucide="percent" class="w-4 h-4 text-primary"></i>
+        </div>
+        <div class="text-2xl font-black text-primary mt-1" data-text="$progressPct + '%'">25%</div>
+        <progress class="progress progress-primary w-full mt-2" value="25" max="100" id="example-progress-bar"></progress>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 shadow-xs">
+        <div class="text-xs text-base-content/70 flex justify-between items-center">
+          <span>Total Tasks</span>
+          <i data-lucide="list-todo" class="w-4 h-4 text-secondary"></i>
+        </div>
+        <div class="text-2xl font-black text-base-content mt-1" data-text="$totalTasks">4</div>
+        <div class="text-3xs text-base-content/60 mt-1">all phases</div>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 shadow-xs">
+        <div class="text-xs text-base-content/70 flex justify-between items-center">
+          <span>Completed</span>
+          <i data-lucide="check-circle" class="w-4 h-4 text-success"></i>
+        </div>
+        <div class="text-2xl font-black text-success mt-1" data-text="$completedTasks">1</div>
+        <div class="text-3xs text-success/80 mt-1">clean passes</div>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 shadow-xs">
+        <div class="text-xs text-base-content/70 flex justify-between items-center">
+          <span>Active</span>
+          <i data-lucide="loader" class="w-4 h-4 text-warning animate-spin"></i>
+        </div>
+        <div class="text-2xl font-black text-warning mt-1" data-text="$runningTasks">1</div>
+        <div class="text-3xs text-warning/80 mt-1">executing tool</div>
+      </div>
+    </section>
+
+    <!-- 2-Column Telemetry Stream & Task Matrix -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- LEFT: Live Streaming Feed -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- Agent Thought Stream (CoT) -->
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between pb-3 border-b border-base-200">
+              <div class="flex items-center gap-2">
+                <i data-lucide="brain" class="w-5 h-5 text-primary"></i>
+                <h2 class="text-sm font-bold">Agent Chain-of-Thought (CoT) Stream</h2>
+              </div>
+              <span class="badge badge-xs badge-ghost font-mono">#agent-thought-stream</span>
+            </div>
+            <div id="agent-thought-stream" class="mt-4 space-y-3 max-h-64 overflow-y-auto">
+              <div class="chat chat-start">
+                <div class="chat-header text-3xs font-mono opacity-70 mb-0.5">Agent CoT</div>
+                <div class="chat-bubble chat-bubble-primary text-xs font-mono">
+                  Ingesting tasks.md. Validating requirements for real-time Datastar SSE streaming.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Live Tool Invocations Feed -->
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between pb-3 border-b border-base-200">
+              <div class="flex items-center gap-2">
+                <i data-lucide="terminal" class="w-5 h-5 text-secondary"></i>
+                <h2 class="text-sm font-bold">Live Tool Invocations Feed</h2>
+              </div>
+              <span class="badge badge-xs badge-ghost font-mono">#tool-call-feed</span>
+            </div>
+            <div id="tool-call-feed" class="mt-4 space-y-3 max-h-80 overflow-y-auto">
+              <!-- Reusable Tool Card Example -->
+              <div id="tool-call-demo" class="rounded-box border border-base-300 bg-base-100 p-3 text-xs shadow-xs">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <i data-lucide="terminal" class="w-4 h-4 text-primary shrink-0"></i>
+                    <span class="font-mono font-bold text-xs text-primary">read_file</span>
+                    <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1.5 py-0.5 rounded">tasks.md</span>
+                  </div>
+                  <span class="badge badge-success badge-xs font-mono">32ms</span>
+                </div>
+                <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-2 px-3 max-h-24 overflow-y-auto">
+                  <pre data-prefix=">"><code>Read 4 tasks successfully from tasks.md</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT: Task Matrix & Simulation Controls -->
+      <div class="lg:col-span-5 space-y-6">
+
+        <!-- Simulation Controller -->
+        <section class="card bg-base-100 border border-primary/40 shadow-sm">
+          <div class="card-body p-5">
+            <h2 class="text-sm font-bold flex items-center gap-2">
+              <i data-lucide="play-circle" class="w-4 h-4 text-primary"></i> Simulation Controller
+            </h2>
+            <p class="text-xs text-base-content/70 mt-1">
+              Trigger simulated LLM actions in this browser tab.
+            </p>
+            <div class="grid grid-cols-2 gap-2 mt-3">
+              <button onclick="demoStep()" class="btn btn-sm btn-primary">Next Step</button>
+              <button onclick="demoReset()" class="btn btn-sm btn-outline">Reset</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Reusable Task Checklist Card -->
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between pb-3 border-b border-base-200">
+              <h2 class="text-sm font-bold flex items-center gap-2">
+                <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> Tasks Checklist
+              </h2>
+              <span class="badge badge-xs badge-ghost font-mono">#task-matrix</span>
+            </div>
+            <div id="task-matrix" class="mt-4 space-y-2">
+              <div id="task-1" class="card card-compact bg-base-100 border border-success/50 bg-success/5 p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" checked disabled />
+                    <span class="font-medium text-xs line-through opacity-70">1. Setup SSE Endpoint</span>
+                  </div>
+                  <span class="badge badge-success badge-xs font-mono">completed</span>
+                </div>
+              </div>
+
+              <div id="task-2" class="card card-compact bg-base-100 border border-primary p-3 shadow-xs">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" disabled />
+                    <span class="font-medium text-xs">2. Ingest LLM Thought Stream</span>
+                  </div>
+                  <span class="badge badge-primary badge-xs gap-1 font-mono">
+                    <span class="loading loading-spinner loading-xs"></span> running
+                  </span>
+                </div>
+              </div>
+
+              <div id="task-3" class="card card-compact bg-base-100 border border-base-300 p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" disabled />
+                    <span class="font-medium text-xs">3. Render Tool Terminals</span>
+                  </div>
+                  <span class="badge badge-ghost badge-xs font-mono">pending</span>
+                </div>
+              </div>
+
+              <div id="task-4" class="card card-compact bg-base-100 border border-base-300 p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <input type="checkbox" class="checkbox checkbox-xs checkbox-primary" disabled />
+                    <span class="font-medium text-xs">4. Morph Reactive Signals</span>
+                  </div>
+                  <span class="badge badge-ghost badge-xs font-mono">pending</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Lucide Icon Mutation Observer (Auto-rehydration post-morph)
+    const observer = new MutationObserver((mutations) => {
+      let needsRehydrate = false;
+      for (const m of mutations) {
+        if (m.type === "childList" && m.addedNodes.length > 0) {
+          for (const node of m.addedNodes) {
+            if (node.nodeType === 1 && (node.hasAttribute("data-lucide") || node.querySelector("[data-lucide]"))) {
+              needsRehydrate = true;
+              break;
+            }
+          }
+        }
+      }
+      if (needsRehydrate && window.lucide) window.lucide.createIcons();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Connect to active SSE stream if dev server is running
+    try {
+      const es = new EventSource("/__datastar_stream__");
+      es.onopen = () => console.log("[datastar-live] Connected to SSE stream");
+    } catch (_) {}
+
+    // In-browser demo simulation
+    let stepCount = 0;
+    function demoStep() {
+      stepCount++;
+      const cot = document.getElementById("agent-thought-stream");
+      if (cot) {
+        const bubble = document.createElement("div");
+        bubble.className = "chat chat-start";
+        bubble.innerHTML = `
+          <div class="chat-header text-3xs font-mono opacity-70 mb-0.5">Agent CoT (${new Date().toLocaleTimeString()})</div>
+          <div class="chat-bubble chat-bubble-primary text-xs font-mono">Simulated action step ${stepCount}: Executed tool and verified assertions.</div>
+        `;
+        cot.insertBefore(bubble, cot.firstChild);
+      }
+
+      if (stepCount === 1) {
+        const t2 = document.getElementById("task-2");
+        if (t2) {
+          t2.className = "card card-compact bg-base-100 border border-success/50 bg-success/5 p-3";
+          t2.querySelector(".badge").className = "badge badge-success badge-xs font-mono";
+          t2.querySelector(".badge").innerHTML = "completed";
+          t2.querySelector("input").checked = true;
+          t2.querySelector("span.font-medium").classList.add("line-through", "opacity-70");
+        }
+      }
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function demoReset() {
+      window.location.reload();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
