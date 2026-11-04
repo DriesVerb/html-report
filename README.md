@@ -5,20 +5,21 @@
 **Publication-grade, interactive, and print-ready HTML5 reports for AI coding agents.**  
 Generate theme-adaptive dashboards with **~70% fewer tokens** and **<100ms compilation**.
 
-[Live Showcase](https://driesverb.github.io/html-report/) · [Quickstart](#-quickstart-in-30-seconds) · [Key Features](#-key-features) · [Documentation Hub](#-documentation-hub) · [License](#-license)
+[Live GitHub Pages Showcase](https://driesverb.github.io/html-report/) · [Quickstart](#-quickstart-in-30-seconds) · [Key Features](#-key-features) · [Documentation Hub](#-documentation-hub) · [License](#-license)
 
 <br/>
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success.svg?logo=github&style=flat-square)](https://driesverb.github.io/html-report/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Agent Skill: LLM-Agnostic](https://img.shields.io/badge/Agent%20Skill-LLM--Agnostic-blueviolet.svg?style=flat-square)](https://agentskills.io)
 [![CDN Stack: 17 Libraries](https://img.shields.io/badge/CDN%20Stack-17%20Libraries-3b82f6.svg?style=flat-square)](docs/cdn-stack.md)
-[![Verified: 244 Tests Passing](https://img.shields.io/badge/Verified-244%20Tests%20Passing-2ea44f.svg?style=flat-square)](docs/testing-and-verification.md)
+[![Verified: 249 Tests Passing](https://img.shields.io/badge/Verified-249%20Tests%20Passing-2ea44f.svg?style=flat-square)](docs/testing-and-verification.md)
 
 </div>
 
 ---
 
-> 🌐 **Interactive Demo & Showcase:** [https://driesverb.github.io/html-report/](https://driesverb.github.io/html-report/)  
+> 🌐 **Live GitHub Pages Showcase:** [https://driesverb.github.io/html-report/](https://driesverb.github.io/html-report/)  
 > Works natively with **Antigravity, Claude Code, Cursor, Codex, OpenCode, Gemini CLI**, and autonomous agent pipelines.
 
 ---
