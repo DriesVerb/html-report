@@ -60,6 +60,10 @@ Before writing any HTML report, read the relevant reference guides in this skill
    - Real-time SSE hypermedia streaming using `@starfederation/datastar@1.0.0-beta.9` ESM with zero npm dependencies.
    - `TaskTelemetrySchema`, `SessionState`, `DatastarBridge`, and vendor-neutral LLM adapters for Google Antigravity (AGY) and OpenAI Codex.
    - Active dev server SSE endpoint `/__datastar_stream__` with live fragment morphing and reactive `$theme` signal sync.
+8. **[OpenAI Codex & Multi-Model Agent Telemetry Reference (`openai-codex-telemetry-reference.md`)](./references/openai-codex-telemetry-reference.md)** *(Codex, OpenAI Agents, Swarm, and Tool Telemetry)*:
+   - Deep architectural breakdown of OpenAI streaming tool calls (`delta.tool_calls`), argument accumulation, non-streaming function calls, and Assistants API v2 (`requires_action`).
+   - Human-in-the-loop (HITL) approval gates, clarification question patterns (`ask_user`), model snapshot extraction (`model`, `x-request-id`), and reasoning token telemetry (`reasoning_content`, `reasoning_tokens` for o1/o3).
+   - Turn and session termination signals (`finish_reason`, run state lifecycle), official streaming hooks (`openai.beta.threads.runs.stream`), Swarm agent handoffs, Webhooks, and direct official documentation links.
 
 ---
 

@@ -1,0 +1,944 @@
+<div id="agent-tracker-container" class="space-y-8" data-signals='{"progressPct": 42, "totalTasks": 12, "completedTasks": 5, "runningTasks": 0, "agentState": "idle", "activeTool": "none", "toolElapsed": 0.0}'>
+
+  <!-- ========================================== -->
+  <!-- 1. HERO & OPEN-SPEC COMPANION HEADER       -->
+  <!-- ========================================== -->
+  <section id="hero-header" class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body p-6 sm:p-8 space-y-6">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-4">
+        <div class="min-w-0 flex-1 break-words">
+          <div class="flex items-center gap-2 mb-2 flex-wrap">
+            <span class="badge badge-primary gap-1.5 font-semibold text-xs py-2 px-3">
+              <span class="inline-block w-2 h-2 rounded-full bg-success animate-ping"></span>
+              Live Hypermedia
+            </span>
+            <span class="badge badge-outline text-xs font-mono">OpenSpec Companion</span>
+            <span class="badge badge-ghost text-xs font-mono">agent-tracker</span>
+            <span class="badge badge-accent text-xs font-mono">Simple-First Architecture</span>
+          </div>
+          <h1 id="dashboard-title" class="text-2xl sm:text-3xl font-black tracking-tight text-base-content scroll-mt-24">
+            Live Agent Tracker: Core Observer First $\rightarrow$ Advanced Swarms
+          </h1>
+          <p class="text-sm text-base-content/70 mt-1 max-w-3xl">
+            Inverting agent observation from "hard-to-easy" to <strong>"simple-to-hard"</strong>: Nailing the essential real-time observer loop (Heartbeat, Active Action, Current Thought, and Recent History) before layering multi-agent swarms and system daemons.
+          </p>
+        </div>
+
+        <!-- Markdown Artifact Backlinks with Showdown Modal Viewer & Live Verification Link -->
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+          <a href="/current-feature.html" class="btn btn-sm btn-primary gap-1.5 shadow-sm">
+            <i data-lucide="columns-2" class="w-4 h-4"></i> Live Verification (current-feature.html)
+          </a>
+          <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('specs/agent-tracker/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/agent-tracker
+          </button>
+          <button type="button" onclick="openMarkdownViewer('specs/live-llm-tracking/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+            <i data-lucide="git-merge" class="w-4 h-4 text-warning"></i> specs/live-llm-tracking
+          </button>
+        </div>
+      </div>
+
+      <!-- MANDATORY REPO RULE: Journey Phase Stepper Standard -->
+      <div class="pt-4 border-t border-base-200">
+        <div class="text-xs font-bold uppercase tracking-wider text-base-content/60 mb-3 flex items-center justify-between">
+          <span class="flex items-center gap-1.5"><i data-lucide="milestone" class="w-3.5 h-3.5 text-primary"></i> Journey Lifecycle State</span>
+          <span class="badge badge-sm badge-primary font-mono animate-pulse">Phase 1: Brainstorming (Active)</span>
+        </div>
+        <div class="w-full overflow-x-auto">
+          <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+            <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
+            <li id="stepper-phase-2" class="step">2. Planning</li>
+            <li id="stepper-phase-3" class="step">3. Implementing</li>
+            <li id="stepper-phase-4" class="step">4. Verifying</li>
+            <li id="stepper-phase-5" class="step">5. Shipped / Archived</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 2. CORE OBSERVER: WHAT WE OBSERVE FIRST    -->
+  <!-- ========================================== -->
+  <section id="core-observer-concept" class="space-y-6">
+    <div class="flex items-center justify-between border-b border-base-200 pb-3 flex-wrap gap-2">
+      <div>
+        <h2 id="core-philosophy-heading" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="target" class="w-6 h-6 text-primary"></i>
+          The Core: What We Want to Observe First
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70">
+          Before tackling background daemons and swarm trees, what are the fundamental questions every developer needs answered in real time?
+        </p>
+      </div>
+      <div class="badge badge-primary gap-1 text-xs">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> The 4 Core Observation Pillars
+      </div>
+    </div>
+
+    <!-- 4 Pillars Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Pillar 1: Heartbeat State -->
+      <div class="card bg-base-100 border border-primary/40 shadow-xs">
+        <div class="card-body p-5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-primary">Pillar 1</span>
+            <i data-lucide="activity" class="w-4 h-4 text-primary"></i>
+          </div>
+          <div class="font-bold text-sm text-base-content">Agent Heartbeat & State</div>
+          <p class="text-xs text-base-content/70 leading-relaxed">
+            Instantly answers: <em>"Is my agent alive?"</em>. Displays whether it is <strong>Thinking</strong>, <strong>Executing Tool</strong>, <strong>Waiting on User</strong>, <strong>Idle</strong>, or <strong>Error</strong> with a live running stopwatch.
+          </p>
+        </div>
+      </div>
+
+      <!-- Pillar 2: Active Action -->
+      <div class="card bg-base-100 border border-secondary/40 shadow-xs">
+        <div class="card-body p-5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-secondary">Pillar 2</span>
+            <i data-lucide="play-circle" class="w-4 h-4 text-secondary"></i>
+          </div>
+          <div class="font-bold text-sm text-base-content">Current Active Action</div>
+          <p class="text-xs text-base-content/70 leading-relaxed">
+            Instantly answers: <em>"What is it executing right this second?"</em>. Shows the exact tool name (e.g. <code class="text-3xs font-mono">run_command</code>) and its primary target/command with real-time execution duration.
+          </p>
+        </div>
+      </div>
+
+      <!-- Pillar 3: Latest Thought / Intent -->
+      <div class="card bg-base-100 border border-accent/40 shadow-xs">
+        <div class="card-body p-5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-accent">Pillar 3</span>
+            <i data-lucide="brain" class="w-4 h-4 text-accent"></i>
+          </div>
+          <div class="font-bold text-sm text-base-content">Latest Reasoning / Intent</div>
+          <p class="text-xs text-base-content/70 leading-relaxed">
+            Instantly answers: <em>"Why is it doing this?"</em>. Captures the latest high-level chain-of-thought summary so you understand the agent's immediate hypothesis and next steps.
+          </p>
+        </div>
+      </div>
+
+      <!-- Pillar 4: Recent History Stream -->
+      <div class="card bg-base-100 border border-info/40 shadow-xs">
+        <div class="card-body p-5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-info">Pillar 4</span>
+            <i data-lucide="history" class="w-4 h-4 text-info"></i>
+          </div>
+          <div class="font-bold text-sm text-base-content">Recent Action Feed</div>
+          <p class="text-xs text-base-content/70 leading-relaxed">
+            Instantly answers: <em>"What did it just finish?"</em>. Displays a clean chronological list of the last 5-10 actions with duration badges, exit codes, and success/error status.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phased Progression Architecture Diagram -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 id="progression-diagram-title" class="font-bold text-sm flex items-center gap-2">
+          <i data-lucide="git-merge" class="w-4 h-4 text-secondary"></i>
+          Architecture: Simple-to-Hard 3-Phase Progression
+        </h3>
+        <span class="badge badge-sm badge-outline font-mono text-3xs">Phased Roadmap</span>
+      </div>
+      <div class="p-4 bg-base-200/40 rounded-lg overflow-x-auto text-xs">
+        <div class="mermaid">
+flowchart LR
+    subgraph P1["Phase 1: Simple Core Observer (The Essentials)"]
+        direction TB
+        P1Heartbeat["1. Live Heartbeat & Stopwatch\n(Thinking / Tool / Idle / Error)"]
+        P1Active["2. Active Tool Execution Card\n(Target command & running timer)"]
+        P1Thought["3. Latest Intent & Goal\n(Clear reasoning summary)"]
+        P1Feed["4. Recent Action Stream\n(Last 5-10 tools + status)"]
+        P1Heartbeat --> P1Active --> P1Thought --> P1Feed
+    end
+
+    subgraph P2["Phase 2: Deep Tool Inspection & Attention (The Middle)"]
+        direction TB
+        P2Drawers["Expandable Output Drawers\n(ANSI stdout/stderr)"]
+        P2Diffs["Target vs Replacement Previews\n(edit_file diff snippets)"]
+        P2Alerts["Human Attention Banners\n(Audio chimes on waiting/error)"]
+        P2Drawers --> P2Diffs --> P2Alerts
+    end
+
+    subgraph P3["Phase 3: Advanced Swarms & System Telemetry (Hard)"]
+        direction TB
+        P3Trees["Subagent Swarm Trees\n(invoke_subagent swimlanes)"]
+        P3Daemon["Byte-Offset File Daemon\n(transcript.jsonl watcher)"]
+        P3Gauges["Context Saturation Gauges\n(token velocity & buffer limits)"]
+        P3Trees --> P3Daemon --> P3Gauges
+    end
+
+    P1 -->|Validated Core Experience| P2
+    P2 -->|Rich Tooling Layer| P3
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 2B. COLLAPSIBLE AGENT IMPLEMENTATION PROMPT-->
+  <!-- ========================================== -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm overflow-hidden">
+    <div class="collapse collapse-arrow bg-base-200/50">
+      <input type="checkbox" id="main-prompt-collapse-toggle" />
+      <div class="collapse-title text-sm font-bold flex items-center justify-between pr-10">
+        <div class="flex items-center gap-2 flex-wrap">
+          <i data-lucide="bot" class="w-4 h-4 text-primary"></i>
+          <span>Agent Implementation Prompt (Copyable Directive for Phase 1)</span>
+          <span class="badge badge-primary badge-xs font-mono">Ready to Copy</span>
+        </div>
+        <div class="flex items-center gap-2" onclick="event.stopPropagation();">
+          <button type="button" onclick="copyAgentPromptMain()" id="copy-main-prompt-btn" class="btn btn-xs btn-primary gap-1">
+            <i data-lucide="copy" class="w-3 h-3"></i> Copy Prompt
+          </button>
+        </div>
+      </div>
+      <div class="collapse-content space-y-3 pt-2">
+        <div class="p-2.5 bg-base-300/60 rounded-lg text-2xs font-mono text-base-content/70 flex items-center justify-between flex-wrap gap-2">
+          <span>Copy this prompt directly into your agent (Google Antigravity, Claude Code, Cursor, OpenCode) to start implementation:</span>
+          <button type="button" onclick="copyAgentPromptMain()" class="btn btn-2xs btn-outline gap-1 font-mono">
+            <i data-lucide="clipboard" class="w-3 h-3"></i> 1-Click Copy
+          </button>
+        </div>
+        <pre id="agent-main-prompt-text" class="bg-neutral text-neutral-content p-4 rounded-lg font-mono text-xs overflow-x-auto whitespace-pre-wrap max-h-96 leading-relaxed selection:bg-primary selection:text-primary-content">You are an autonomous senior software engineer working in `/home/eta/projects/html-report`.
+
+### Objective
+Implement Phase 1 of the OpenSpec change `agent-tracker` following the **"Simple Core Observer First"** progression and the **Agent-Agnostic Facade + Strategy Pattern**, providing continuous live visual verification on `http://localhost:3000/current-feature.html`.
+
+---
+
+### Mandatory Work Tracking & Live Verification Rule (`current-feature.html`)
+
+The developer is watching `http://localhost:3000/current-feature.html` side-by-side to follow your work live. 
+
+1. **Spotlight the Single Active Task**:
+   - The top banner of `current-feature.html` (`#active-work-spotlight`) MUST clearly show the exact task in flight (e.g. `TASK 1.1 IN PROGRESS`, `TASK 1.2 IN PROGRESS`).
+   - Clearly state:
+     - **Active Sub-Task ID & Title**
+     - **Active Milestone Count** (e.g. `1 of 12`, `2 of 12`)
+     - **Completed Milestones**
+     - **Next Up**
+2. **Update After Every Task**:
+   - As each task in `openspec/changes/agent-tracker/tasks.md` is implemented and verified, mark its checkbox (`- [x]`), recompile `current-feature.html` via `node skills/html-report/scripts/build-report.mjs`, and verify `http://localhost:3000/current-feature.html` reflects the new active task.
+   - Also mirror updates to `implementation-progress.html` to keep the main journey dashboard in sync.
+
+---
+
+### Architectural Design Pattern Requirements
+
+Do NOT couple the tracker directly to Google Antigravity or any single LLM provider. Every LLM (Antigravity, Claude Code, OpenAI Codex) has its own payload shape; you must implement the **Facade + Strategy Pattern**:
+
+1. **`AgentTelemetryStrategy` Interface** (`skills/html-report/scripts/agent-tracker.mjs`):
+   - `providerId: string`
+   - `displayName: string`
+   - `canHandle(rawPayload): boolean`
+   - `normalize(rawPayload): CanonicalAgentEvent`
+2. **Concrete Strategies**:
+   - `AgyTelemetryStrategy`: Parses Google Antigravity steps (`thinking`, `tool_calls: [{ call: { name, args } }]`).
+   - `ClaudeCodeTelemetryStrategy`: Parses Anthropic Claude Code content blocks (`type: "tool_use"`, `type: "thinking"` / `thinking_delta`).
+   - `CodexSwarmTelemetryStrategy`: Parses OpenAI Codex / Swarm chat completion chunks (`delta.tool_calls`, `reasoning_content`).
+   - `GenericTelemetryStrategy`: Universal REST payload `{ state, activeTool, thought, recentHistory }`.
+3. **`AgentTrackerFacade`**:
+   - Unified entry point that accepts raw payloads, selects the active strategy, validates zero vendor-specific leakage, and emits the canonical `AgentHeartbeatState` to the dev server SSE stream (`/__datastar_stream__`).
+
+---
+
+### Implementation Milestones (Phase 1)
+
+Execute the tasks in strict order:
+
+- [ ] **Task 1.1: Implement Facade & Strategies**
+  - Create/export `AgentTelemetryStrategy`, `AgyTelemetryStrategy`, `ClaudeCodeTelemetryStrategy`, `CodexSwarmTelemetryStrategy`, and `AgentTrackerFacade` in `skills/html-report/scripts/agent-tracker.mjs`.
+  - Update `current-feature.html` spotlight to `TASK 1.1 IN PROGRESS` -> `TASK 1.2 IN PROGRESS`.
+
+- [ ] **Task 1.2: Build Active Action & Latest Thought Component**
+  - Wire the Core Observer component displaying:
+    - Heartbeat status pill (`Thinking` [purple], `Executing Tool` [blue], `Waiting on User` [amber], `Idle` [green], `Error` [red]) with live stopwatch.
+    - Active tool name and target/command with elapsed execution bar.
+    - Latest reasoning intent bubble.
+  - Update `current-feature.html`.
+
+- [ ] **Task 1.3: Build Chronological Recent Activity Feed**
+  - Render a clean chronological list of the last 5-10 completed tools with execution duration badges (`42ms`) and exit status pills (`✔ ok`, `❌ failed`).
+  - Update `current-feature.html`.
+
+- [ ] **Task 1.4: Wire Dev Server SSE Stream & Live Reactive Morphing**
+  - Wire `AgentTrackerFacade` to emit SSE chunks to `/__datastar_stream__` on `serve-report.mjs`.
+  - Ensure Datastar or EventSource in `current-feature.html` updates the Core Observer DOM in real time with sub-10ms latency.
+
+- [ ] **Task 1.5: Automated Test Suite & Multi-Model Verification**
+  - Create `tests/agent-tracker.test.mjs` verifying:
+    1. Strategy normalization across all 4 agent models without runtime errors.
+    2. Zero vendor-specific leaked fields in canonical output.
+    3. HTTP SSE delivery to `/__datastar_stream__`.
+    4. Playwright headless verification of `http://localhost:3000/current-feature.html`.
+  - Mark Phase 1 complete in `openspec/changes/agent-tracker/tasks.md` and advance `current-feature.html` to Phase 2.
+
+---
+
+### Verification Commands
+Run before concluding each task:
+```bash
+# 1. Run unit & integration tests
+node --test tests/agent-tracker.test.mjs
+
+# 2. Validate OpenSpec consistency
+openspec validate agent-tracker
+
+# 3. Verify dev server status
+curl -s -I http://localhost:3000/current-feature.html
+```</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 3. LIVE INTERACTIVE CORE OBSERVER DEMO     -->
+  <!-- ========================================== -->
+  <section id="live-core-observer-demo" class="space-y-6">
+    <div class="flex items-center justify-between border-b border-base-200 pb-3 flex-wrap gap-2">
+      <div>
+        <h2 id="demo-heading" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="monitor" class="w-6 h-6 text-success"></i>
+          Interactive Core Observer Prototype (Phase 1 Target)
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70">
+          Experience the clean, focused core observer in action with live state switching and action updates.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span id="sse-indicator-dot" class="inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse"></span>
+        <span id="sse-status-label" class="text-xs font-bold text-success font-mono">CONNECTED (localhost:3000)</span>
+      </div>
+    </div>
+
+    <!-- The Core Command Center Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- LEFT: Heartbeat, Active Tool & Latest Thought (7 Cols) -->
+      <div class="lg:col-span-7 space-y-4">
+        
+        <!-- Live Agent Heartbeat & Active Action Card -->
+        <div id="agent-heartbeat-card" class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-base-200 pb-3 flex-wrap gap-2">
+            <div class="flex items-center gap-2.5">
+              <span id="heartbeat-pulse-badge" class="badge badge-success gap-1.5 py-3 px-3 text-xs font-mono font-bold">
+                <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+                <span id="heartbeat-state-text">EXECUTING TOOL</span>
+              </span>
+              <span class="text-xs font-mono text-base-content/60">Session: <strong class="text-base-content font-bold">Main Agent</strong></span>
+            </div>
+            <div class="flex items-center gap-2 font-mono text-xs text-base-content/70">
+              <i data-lucide="clock" class="w-3.5 h-3.5 text-primary"></i>
+              <span>Active Duration:</span>
+              <span id="active-stopwatch" class="font-bold text-base-content text-sm">2.4s</span>
+            </div>
+          </div>
+
+          <!-- Active Tool In-Flight -->
+          <div class="bg-base-200/60 rounded-lg p-4 space-y-2 border border-base-200">
+            <div class="flex items-center justify-between text-2xs uppercase tracking-wider text-base-content/60 font-bold">
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="zap" class="w-3.5 h-3.5 text-warning"></i> Active Tool Being Executed Right Now
+              </span>
+              <span class="badge badge-xs badge-primary font-mono" id="active-tool-category">bash</span>
+            </div>
+            <div class="flex items-baseline gap-2 flex-wrap">
+              <span class="font-mono font-black text-sm text-primary" id="active-tool-name">run_command</span>
+              <span class="font-mono text-xs text-base-content/80 truncate max-w-xl" id="active-tool-target">
+                openspec validate agent-tracker
+              </span>
+            </div>
+            <div class="w-full bg-base-300 h-1.5 rounded-full overflow-hidden">
+              <div id="active-tool-progress-bar" class="bg-primary h-full animate-pulse" style="width: 65%"></div>
+            </div>
+          </div>
+
+          <!-- Latest Reasoning Intent -->
+          <div class="space-y-1.5">
+            <div class="text-2xs uppercase tracking-wider text-base-content/60 font-bold flex items-center gap-1">
+              <i data-lucide="brain" class="w-3.5 h-3.5 text-accent"></i> Latest Reasoning / Goal
+            </div>
+            <div class="chat chat-start">
+              <div id="latest-thought-bubble" class="chat-bubble chat-bubble-primary text-xs font-mono leading-relaxed opacity-95 shadow-xs">
+                Inverting the agent-tracker plan from hard-to-easy to simple-to-hard: solidifying the core observer (Heartbeat, Active Action, Current Thought, Recent Feed) before tackling swarms and daemons.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Recent Chronological Tool Feed (5 Cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+          <div class="flex items-center justify-between border-b border-base-200 pb-2">
+            <h3 id="recent-feed-title" class="font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="list-ordered" class="w-4 h-4 text-info"></i>
+              Recent Action Feed (Last Completed Tools)
+            </h3>
+            <span class="badge badge-xs badge-ghost font-mono">Chronological</span>
+          </div>
+
+          <div id="recent-tools-list" class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+            <!-- Tool Item 1 -->
+            <div class="flex items-center justify-between p-2.5 bg-base-200/50 rounded-lg border border-base-200 text-xs font-mono">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="badge badge-xs badge-success">✔</span>
+                <span class="font-bold text-primary truncate">write_file</span>
+                <span class="text-3xs text-base-content/60 truncate">tasks.md</span>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-3xs text-base-content/50">42ms</span>
+                <span class="badge badge-xs badge-outline">ok</span>
+              </div>
+            </div>
+
+            <!-- Tool Item 2 -->
+            <div class="flex items-center justify-between p-2.5 bg-base-200/50 rounded-lg border border-base-200 text-xs font-mono">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="badge badge-xs badge-success">✔</span>
+                <span class="font-bold text-secondary truncate">read_file</span>
+                <span class="text-3xs text-base-content/60 truncate">design.md</span>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-3xs text-base-content/50">18ms</span>
+                <span class="badge badge-xs badge-outline">ok</span>
+              </div>
+            </div>
+
+            <!-- Tool Item 3 -->
+            <div class="flex items-center justify-between p-2.5 bg-base-200/50 rounded-lg border border-base-200 text-xs font-mono">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="badge badge-xs badge-success">✔</span>
+                <span class="font-bold text-accent truncate">run_command</span>
+                <span class="text-3xs text-base-content/60 truncate">openspec validate</span>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-3xs text-base-content/50">320ms</span>
+                <span class="badge badge-xs badge-outline">ok</span>
+              </div>
+            </div>
+
+            <!-- Tool Item 4 -->
+            <div class="flex items-center justify-between p-2.5 bg-base-200/50 rounded-lg border border-base-200 text-xs font-mono">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="badge badge-xs badge-success">✔</span>
+                <span class="font-bold text-info truncate">build_report</span>
+                <span class="text-3xs text-base-content/60 truncate">index.html</span>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-3xs text-base-content/50">6ms</span>
+                <span class="badge badge-xs badge-outline">ok</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Interactive Simulation Controls for Testing the Core Observer -->
+    <div class="card bg-base-100 border border-base-300 p-4 shadow-xs">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
+            <i data-lucide="sliders" class="w-4 h-4 text-primary"></i> Observer Playground:
+          </span>
+          <span class="text-3xs font-mono text-base-content/60">Test core state transitions</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="setDemoState('thinking')" class="btn btn-xs btn-outline btn-primary gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> Set Thinking
+          </button>
+          <button type="button" onclick="setDemoState('running_tool')" class="btn btn-xs btn-outline btn-success gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span> Set Running Tool
+          </button>
+          <button type="button" onclick="setDemoState('waiting_user')" class="btn btn-xs btn-outline btn-warning gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-warning animate-pulse"></span> Set Waiting User
+          </button>
+          <button type="button" onclick="setDemoState('idle')" class="btn btn-xs btn-outline btn-ghost gap-1">
+            Set Idle
+          </button>
+          <button type="button" onclick="simulateNewToolCall()" class="btn btn-xs btn-accent gap-1">
+            <i data-lucide="plus" class="w-3 h-3"></i> Push Tool Call
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 4. REVISED CONNECTED TASK CHECKLIST        -->
+  <!-- ========================================== -->
+  <section id="task-checklist-section" class="card bg-base-100 border border-base-300 shadow-sm p-6 space-y-6">
+    <div class="flex items-center justify-between border-b border-base-200 pb-3 flex-wrap gap-2">
+      <div>
+        <h2 id="tasks-heading" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="check-square" class="w-6 h-6 text-accent"></i>
+          Connected Task Checklist: Simple $\rightarrow$ Hard (tasks.md)
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70">
+          Actionable milestone tracking synchronized with <button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono text-xs">tasks.md</button>.
+        </p>
+      </div>
+      <div class="badge badge-outline text-xs font-mono">12 Milestones Across 3 Phases</div>
+    </div>
+
+    <div class="space-y-6">
+      <!-- Phase 1: Simple Core Observer -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-primary border-b border-base-200 pb-1">
+          <span class="flex items-center gap-1.5">
+            <i data-lucide="star" class="w-4 h-4 text-primary"></i>
+            1. Simple Core Observer (The Essentials First)
+          </span>
+          <span class="badge badge-xs badge-primary font-mono">Phase 1 Target</span>
+        </div>
+        <div class="grid grid-cols-1 gap-2">
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" checked disabled class="checkbox checkbox-sm checkbox-primary mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content line-through opacity-70">1.1 Implement AgentTrackerFacade and Strategy interfaces</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Implemented AgentTrackerFacade, AgyTelemetryStrategy, ClaudeCodeTelemetryStrategy, CodexSwarmTelemetryStrategy</p>
+            </div>
+            <span class="badge badge-xs badge-success font-mono">Done</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" checked disabled class="checkbox checkbox-sm checkbox-primary mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content line-through opacity-70">1.2 Build Active Action & Latest Thought component</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Displays 5-color status pill, live stopwatch, active tool progress bar, and latest reasoning bubble</p>
+            </div>
+            <span class="badge badge-xs badge-success font-mono">Done</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" checked disabled class="checkbox checkbox-sm checkbox-primary mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content line-through opacity-70">1.3 Build Chronological Recent Activity Feed</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Renders last 5-10 tool calls with execution duration badges and exit status pills (✔ ok, ❌ failed)</p>
+            </div>
+            <span class="badge badge-xs badge-success font-mono">Done</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" checked disabled class="checkbox checkbox-sm checkbox-primary mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content line-through opacity-70">1.4 Wire minimal live streaming event payload to dev server /__datastar_stream__</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Wired AgentTrackerFacade to push real-time SSE fragments to localhost:3000</p>
+            </div>
+            <span class="badge badge-xs badge-success font-mono">Done</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" checked disabled class="checkbox checkbox-sm checkbox-primary mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content line-through opacity-70">1.5 Automated test suite & multi-model verification</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Automated test suite in tests/agent-tracker.test.mjs with Playwright side-by-side verification</p>
+            </div>
+            <span class="badge badge-xs badge-success font-mono">Done</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" disabled class="checkbox checkbox-sm checkbox-primary mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content">1.4 Wire minimal live streaming event payload to dev server /__datastar_stream__</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Verify real-time browser reactivity on localhost:3000</p>
+            </div>
+            <span class="badge badge-xs badge-ghost font-mono">Pending</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2: Tool Inspection & Human Attention -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-secondary border-b border-base-200 pb-1">
+          <span class="flex items-center gap-1.5">
+            <i data-lucide="layers" class="w-4 h-4 text-secondary"></i>
+            2. Tool Inspection & Human Attention (The Middle Layer)
+          </span>
+          <span class="badge badge-xs badge-outline font-mono">Phase 2</span>
+        </div>
+        <div class="grid grid-cols-1 gap-2">
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" disabled class="checkbox checkbox-sm checkbox-secondary mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content">2.1 Add expandable command output drawer (mockup-code)</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Inspect executed terminal command stdout and stderr</p>
+            </div>
+            <span class="badge badge-xs badge-ghost font-mono">Pending</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" disabled class="checkbox checkbox-sm checkbox-secondary mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content">2.2 Add code modification preview showing target vs replacement snippets</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Highlight additions and removals for edit_file and write_file</p>
+            </div>
+            <span class="badge badge-xs badge-ghost font-mono">Pending</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" disabled class="checkbox checkbox-sm checkbox-secondary mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content">2.3 Implement prominent Human Attention banner & audio alert</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Trigger amber banner when agent enters Waiting on User or Error</p>
+            </div>
+            <span class="badge badge-xs badge-ghost font-mono">Pending</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" disabled class="checkbox checkbox-sm checkbox-secondary mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content">2.4 Create automated integration tests in tests/agent-tracker.test.mjs</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Verify core observer and attention flow with node --test</p>
+            </div>
+            <span class="badge badge-xs badge-ghost font-mono">Pending</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3: Advanced Swarms, Daemon & System Telemetry -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-accent border-b border-base-200 pb-1">
+          <span class="flex items-center gap-1.5">
+            <i data-lucide="cpu" class="w-4 h-4 text-accent"></i>
+            3. Advanced Swarms, Daemon & System Telemetry (Hard Layer)
+          </span>
+          <span class="badge badge-xs badge-outline font-mono">Phase 3</span>
+        </div>
+        <div class="grid grid-cols-1 gap-2">
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" disabled class="checkbox checkbox-sm checkbox-accent mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content">3.1 Implement multi-agent swarm hierarchy tracking orchestrator & subagents</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Visual tree and swimlanes for invoke_subagent</p>
+            </div>
+            <span class="badge badge-xs badge-ghost font-mono">Pending</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" disabled class="checkbox checkbox-sm checkbox-accent mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content">3.2 Build background byte-offset JSONL transcript tailing daemon</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">agent-tracker.mjs auto-discovering active sessions</p>
+            </div>
+            <span class="badge badge-xs badge-ghost font-mono">Pending</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" disabled class="checkbox checkbox-sm checkbox-accent mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content">3.3 Add context window saturation gauges and token velocity telemetry</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Real-time tokens/sec and context buffer limit tracking</p>
+            </div>
+            <span class="badge badge-xs badge-ghost font-mono">Pending</span>
+          </div>
+
+          <div class="card bg-base-200/40 border border-base-300 p-3 flex items-start gap-3">
+            <input type="checkbox" disabled class="checkbox checkbox-sm checkbox-accent mt-0.5" />
+            <div class="flex-1 text-xs">
+              <span class="font-bold text-base-content">3.4 Multi-breakpoint mobile and desktop verification across 32 themes</span>
+              <p class="text-3xs text-base-content/60 font-mono mt-0.5">Ensure perfect contrast and responsiveness</p>
+            </div>
+            <span class="badge badge-xs badge-ghost font-mono">Pending</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 5. IN-BROWSER SHOWDOWN MARKDOWN MODAL      -->
+  <!-- ========================================== -->
+  <dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box w-11/12 max-w-4xl max-h-[85vh] p-0 flex flex-col bg-base-100 border border-base-300 shadow-2xl">
+      <!-- Modal Header -->
+      <div class="p-4 bg-base-200/70 border-b border-base-300 flex items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <i data-lucide="file-code" class="w-5 h-5 text-primary shrink-0"></i>
+          <span id="modal-doc-title" class="font-mono font-bold text-sm truncate">proposal.md</span>
+          <span class="badge badge-primary badge-xs font-mono">OpenSpec</span>
+        </div>
+        
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1">
+            <i data-lucide="copy" class="w-3 h-3"></i> Copy MD
+          </button>
+          <a id="modal-raw-link" href="/proposal.md?raw=true" target="_blank" class="btn btn-xs btn-ghost gap-1">
+            <i data-lucide="external-link" class="w-3 h-3"></i> Raw
+          </a>
+          <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost">✕</button>
+        </div>
+      </div>
+
+      <!-- Document Switcher Tabs -->
+      <div class="px-4 py-2 bg-base-200/40 border-b border-base-300 flex items-center gap-1.5 overflow-x-auto shrink-0 text-xs">
+        <button type="button" onclick="switchViewerTab('proposal.md')" class="doc-tab-btn btn btn-xs btn-primary font-mono" data-doc="proposal.md">proposal.md</button>
+        <button type="button" onclick="switchViewerTab('design.md')" class="doc-tab-btn btn btn-xs btn-ghost font-mono" data-doc="design.md">design.md</button>
+        <button type="button" onclick="switchViewerTab('tasks.md')" class="doc-tab-btn btn btn-xs btn-ghost font-mono" data-doc="tasks.md">tasks.md</button>
+        <button type="button" onclick="switchViewerTab('specs/agent-tracker/spec.md')" class="doc-tab-btn btn btn-xs btn-ghost font-mono" data-doc="specs/agent-tracker/spec.md">specs/agent-tracker</button>
+        <button type="button" onclick="switchViewerTab('specs/live-llm-tracking/spec.md')" class="doc-tab-btn btn btn-xs btn-ghost font-mono" data-doc="specs/live-llm-tracking/spec.md">specs/live-llm-tracking</button>
+      </div>
+
+      <!-- Rendered Markdown Body -->
+      <div id="modal-markdown-container" class="p-6 overflow-y-auto prose prose-sm max-w-none text-base-content flex-1">
+        <div class="flex items-center justify-center p-8 text-base-content/50">
+          <span class="loading loading-spinner loading-md"></span>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- ========================================== -->
+  <!-- 6. RUNTIME SCRIPT & ARTIFACTS CACHE        -->
+  <!-- ========================================== -->
+  <script>
+    let activeDocKey = "proposal.md";
+
+    async function openMarkdownViewer(docName) {
+      activeDocKey = docName || "proposal.md";
+      const modal = document.getElementById("markdown-viewer-modal");
+      if (!modal) return;
+      if (typeof modal.showModal === "function") {
+        modal.showModal();
+      } else {
+        modal.setAttribute("open", "true");
+      }
+      await renderMarkdownDoc(activeDocKey);
+    }
+
+    function closeMarkdownViewer() {
+      const modal = document.getElementById("markdown-viewer-modal");
+      if (modal && typeof modal.close === "function") {
+        modal.close();
+      } else if (modal) {
+        modal.removeAttribute("open");
+      }
+    }
+
+    async function switchViewerTab(docName) {
+      activeDocKey = docName;
+      await renderMarkdownDoc(activeDocKey);
+    }
+
+    async function renderMarkdownDoc(docName) {
+      const titleEl = document.getElementById("modal-doc-title");
+      const rawLinkEl = document.getElementById("modal-raw-link");
+      const containerEl = document.getElementById("modal-markdown-container");
+
+      if (titleEl) titleEl.textContent = docName;
+      if (rawLinkEl) rawLinkEl.href = "/" + docName + "?raw=true";
+
+      document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+        if (btn.getAttribute("data-doc") === docName) {
+          btn.classList.add("btn-primary");
+          btn.classList.remove("btn-ghost");
+        } else {
+          btn.classList.remove("btn-primary");
+          btn.classList.add("btn-ghost");
+        }
+      });
+
+      let markdownText = "";
+      try {
+        const res = await fetch("/" + docName + "?raw=true");
+        if (res.ok) {
+          markdownText = await res.text();
+        } else {
+          markdownText = "# " + docName + "\nFile not found.";
+        }
+      } catch (_) {
+        markdownText = "# " + docName + "\nLoaded offline.";
+      }
+
+      if (window.showdown) {
+        const converter = new showdown.Converter({
+          tables: true,
+          tasklists: true,
+          strikethrough: true,
+          ghCodeBlocks: true,
+          simplifiedAutoLink: true,
+          openLinksInNewWindow: true
+        });
+        containerEl.innerHTML = converter.makeHtml(markdownText);
+      } else {
+        containerEl.innerHTML = "<pre class='font-mono text-xs whitespace-pre-wrap'>" + 
+          markdownText.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</pre>";
+      }
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function copyMarkdownToClipboard() {
+      fetch("/" + activeDocKey + "?raw=true")
+        .then(r => r.text())
+        .then(text => {
+          navigator.clipboard.writeText(text);
+          const btn = document.querySelector("#markdown-viewer-modal .btn-outline");
+          if (btn) {
+            const orig = btn.innerHTML;
+            btn.innerHTML = "<i data-lucide='check' class='w-3 h-3 text-success'></i> Copied!";
+            if (window.lucide) lucide.createIcons();
+            setTimeout(() => { btn.innerHTML = orig; if (window.lucide) lucide.createIcons(); }, 1500);
+          }
+        });
+    }
+
+    // Core Observer Playground State Transitions
+    function setDemoState(state) {
+      const badge = document.getElementById("heartbeat-pulse-badge");
+      const text = document.getElementById("heartbeat-state-text");
+      const toolName = document.getElementById("active-tool-name");
+      const toolTarget = document.getElementById("active-tool-target");
+      const toolCategory = document.getElementById("active-tool-category");
+      const thought = document.getElementById("latest-thought-bubble");
+
+      if (state === "thinking") {
+        badge.className = "badge badge-primary gap-1.5 py-3 px-3 text-xs font-mono font-bold";
+        text.textContent = "THINKING";
+        toolName.textContent = "synthesizing_intent";
+        toolTarget.textContent = "Evaluating plan dependencies and preparing next tool execution...";
+        toolCategory.textContent = "reasoning";
+        thought.textContent = "Formulating solution for simple-first tracking. Validating core observer components.";
+      } else if (state === "running_tool") {
+        badge.className = "badge badge-success gap-1.5 py-3 px-3 text-xs font-mono font-bold";
+        text.textContent = "EXECUTING TOOL";
+        toolName.textContent = "run_command";
+        toolTarget.textContent = "node --test tests/core-observer.test.mjs";
+        toolCategory.textContent = "bash";
+        thought.textContent = "Executing automated unit tests to verify zero-latency event dispatch.";
+      } else if (state === "waiting_user") {
+        badge.className = "badge badge-warning gap-1.5 py-3 px-3 text-xs font-mono font-bold animate-bounce";
+        text.textContent = "WAITING ON USER";
+        toolName.textContent = "ask_question";
+        toolTarget.textContent = "Do you want to enable audio chimes for blocked states?";
+        toolCategory.textContent = "interaction";
+        thought.textContent = "Paused execution. Awaiting confirmation from developer.";
+      } else if (state === "idle") {
+        badge.className = "badge badge-ghost gap-1.5 py-3 px-3 text-xs font-mono font-bold";
+        text.textContent = "IDLE / READY";
+        toolName.textContent = "none";
+        toolTarget.textContent = "Standing by for next user prompt.";
+        toolCategory.textContent = "idle";
+        thought.textContent = "All milestones for current phase complete. Session ready.";
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function simulateNewToolCall() {
+      const feed = document.getElementById("recent-tools-list");
+      if (!feed) return;
+      const tools = [
+        { name: "read_file", target: "proposal.md", time: "14ms", cat: "badge-primary" },
+        { name: "edit_file", target: "tasks.md", time: "28ms", cat: "badge-secondary" },
+        { name: "run_command", target: "openspec status", time: "180ms", cat: "badge-accent" }
+      ];
+      const t = tools[Math.floor(Math.random() * tools.length)];
+      const el = document.createElement("div");
+      el.className = "flex items-center justify-between p-2.5 bg-base-200/50 rounded-lg border border-base-200 text-xs font-mono animate-fade-in";
+      el.innerHTML = `
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="badge badge-xs badge-success">✔</span>
+          <span class="font-bold \${t.cat === 'badge-primary' ? 'text-primary' : t.cat === 'badge-secondary' ? 'text-secondary' : 'text-accent'} truncate">\${t.name}</span>
+          <span class="text-3xs text-base-content/60 truncate">\${t.target}</span>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="text-3xs text-base-content/50">\${t.time}</span>
+          <span class="badge badge-xs badge-outline">ok</span>
+        </div>
+      `;
+      feed.insertBefore(el, feed.firstChild);
+      if (feed.children.length > 8) {
+        feed.removeChild(feed.lastChild);
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function copyAgentPromptMain() {
+      const el = document.getElementById("agent-main-prompt-text");
+      if (!el) return;
+      const text = el.innerText || el.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById("copy-main-prompt-btn");
+        if (btn) {
+          const orig = btn.innerHTML;
+          btn.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!`;
+          if (window.lucide) lucide.createIcons();
+          setTimeout(() => {
+            btn.innerHTML = orig;
+            if (window.lucide) lucide.createIcons();
+          }, 2000);
+        }
+      }).catch(() => {
+        const area = document.createElement("textarea");
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        document.body.removeChild(area);
+        const btn = document.getElementById("copy-main-prompt-btn");
+        if (btn) {
+          btn.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!`;
+          if (window.lucide) lucide.createIcons();
+          setTimeout(() => { btn.innerHTML = `<i data-lucide="copy" class="w-3 h-3"></i> Copy Prompt`; if (window.lucide) lucide.createIcons(); }, 2000);
+        }
+      });
+    }
+
+    window.copyAgentPromptMain = copyAgentPromptMain;
+    window.openMarkdownViewer = openMarkdownViewer;
+    window.closeMarkdownViewer = closeMarkdownViewer;
+    window.switchViewerTab = switchViewerTab;
+    window.copyMarkdownToClipboard = copyMarkdownToClipboard;
+    window.setDemoState = setDemoState;
+    window.simulateNewToolCall = simulateNewToolCall;
+
+    // Connect to Dev Server SSE Hub
+    (() => {
+      try {
+        const es = new EventSource("/__datastar_stream__");
+        es.onopen = () => {
+          const dot = document.getElementById("sse-indicator-dot");
+          const label = document.getElementById("sse-status-label");
+          if (dot) dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse";
+          if (label) {
+            label.textContent = "CONNECTED (localhost:3000)";
+            label.className = "text-xs font-bold text-success font-mono";
+          }
+        };
+        es.onerror = () => {
+          const dot = document.getElementById("sse-indicator-dot");
+          const label = document.getElementById("sse-status-label");
+          if (dot) dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-warning";
+          if (label) {
+            label.textContent = "STANDALONE PREVIEW";
+            label.className = "text-xs font-bold text-warning font-mono";
+          }
+        };
+      } catch (_) {}
+    })();
+  </script>
+</div>

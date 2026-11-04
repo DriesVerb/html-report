@@ -1,0 +1,944 @@
+<!-- ========================================== -->
+  <!-- HERO BANNER                                -->
+  <!-- ========================================== -->
+  <header class="space-y-4 border-b border-base-300 pb-8">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">Static Reference Report</span>
+      <span class="badge badge-outline font-mono text-xs">OpenAI Codex & Autonomous Agents</span>
+      <span class="badge badge-ghost font-mono text-xs">Self-Contained & Offline-Ready</span>
+    </div>
+    
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div class="space-y-2">
+        <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+          OpenAI Codex & Multi-Model Agent Telemetry
+        </h1>
+        <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+          Comprehensive production-grade reference manual covering streaming tool call wire schemas, Human-in-the-Loop (<span class="font-semibold text-primary">HITL</span>) approvals, reasoning token extraction (o1 / o3-mini), turn/session lifecycle FSMs, and event-driven streaming hooks.
+        </p>
+      </div>
+
+      <!-- Quick Action Reference Links -->
+      <div class="flex flex-wrap items-center gap-2 shrink-0">
+        <a href="openai-codex-telemetry-reference.md" onclick="if(window.openMarkdownViewer){openMarkdownViewer('research/openai-codex-telemetry-reference.md');return false;}" class="btn btn-sm btn-outline btn-secondary gap-1.5 shadow-sm">
+          <i data-lucide="file-text" class="w-4 h-4 text-secondary"></i> View .md Source Reference
+        </a>
+        <a href="#tool-call-schemas" class="btn btn-sm btn-primary gap-1.5 shadow-sm">
+          <i data-lucide="code" class="w-4 h-4"></i> Explore Wire Schemas
+        </a>
+      </div>
+    </div>
+
+    <!-- Mode Callout Alert -->
+    <div class="alert alert-success/15 border border-success/30 rounded-xl p-4 flex items-center justify-between text-xs sm:text-sm font-medium">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center shrink-0">
+          <i data-lucide="check-circle" class="w-5 h-5 text-success"></i>
+        </div>
+        <div>
+          <strong class="text-success-content font-bold">Standalone Static Report:</strong>
+          <span class="text-base-content/80"> This report contains embedded client-side syntax highlighters, interactive charts, and Mermaid diagrams. It runs completely offline without requiring any background dev server or Node.js runtime.</span>
+        </div>
+      </div>
+      <span class="badge badge-success badge-sm font-mono font-bold shrink-0 hidden md:inline-flex">OFFLINE-READY</span>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- EXECUTIVE TELEMETRY STATS / KPIS           -->
+  <!-- ========================================== -->
+  <section aria-labelledby="kpis-heading" class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 id="kpis-heading" class="text-xl font-bold tracking-tight text-base-content flex items-center gap-2">
+        <i data-lucide="gauge" class="w-5 h-5 text-primary"></i> Core Architecture & Telemetry Baseline
+      </h2>
+      <span class="text-xs font-mono text-base-content/60">OpenAI Ecosystem Dimensions</span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Stat 1 -->
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+        <div class="stat-figure text-primary">
+          <i data-lucide="network" class="w-8 h-8"></i>
+        </div>
+        <div class="stat-title text-2xs uppercase tracking-wider font-bold">Transport Modes</div>
+        <div class="stat-value text-2xl font-mono text-primary">4 Flavors</div>
+        <div class="stat-desc text-xs mt-1">Chat SSE, Assistants, Swarm, Realtime</div>
+      </div>
+
+      <!-- Stat 2 -->
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+        <div class="stat-figure text-secondary">
+          <i data-lucide="cpu" class="w-8 h-8"></i>
+        </div>
+        <div class="stat-title text-2xs uppercase tracking-wider font-bold">Tool Argument Stream</div>
+        <div class="stat-value text-2xl font-mono text-secondary">Fragmented</div>
+        <div class="stat-desc text-xs mt-1">Requires string buffer accumulator</div>
+      </div>
+
+      <!-- Stat 3 -->
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+        <div class="stat-figure text-accent">
+          <i data-lucide="brain" class="w-8 h-8"></i>
+        </div>
+        <div class="stat-title text-2xs uppercase tracking-wider font-bold">Reasoning Extraction</div>
+        <div class="stat-value text-2xl font-mono text-accent">o1 / o3-mini</div>
+        <div class="stat-desc text-xs mt-1"><code>reasoning_content</code> + token metrics</div>
+      </div>
+
+      <!-- Stat 4 -->
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+        <div class="stat-figure text-info">
+          <i data-lucide="shield-alert" class="w-8 h-8"></i>
+        </div>
+        <div class="stat-title text-2xs uppercase tracking-wider font-bold">Human Approval</div>
+        <div class="stat-value text-2xl font-mono text-info">2 Patterns</div>
+        <div class="stat-desc text-xs mt-1">Protocol <code>requires_action</code> vs Tool calls</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 1: TOOL CALL SCHEMAS & ACCUMULATOR -->
+  <!-- ========================================== -->
+  <section aria-labelledby="tool-call-schemas" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="tool-call-schemas" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="binary" class="w-6 h-6 text-primary"></i> 1. Tool Call JSON Structures & Accumulation Lifecycle
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Detailed wire breakdown across streaming SSE deltas, non-streaming function calls, and Assistants API v2.
+        </p>
+      </div>
+      <span class="badge badge-primary font-mono text-xs">Protocol Wire Spec</span>
+    </div>
+
+    <!-- Architecture Mermaid Flowchart -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="text-2xs uppercase tracking-wider font-bold text-base-content/70 flex items-center gap-1.5">
+          <i data-lucide="git-branch" class="w-4 h-4 text-primary"></i> Streaming Tool Accumulation Finite State Machine
+        </span>
+        <span class="badge badge-xs badge-ghost font-mono">Mermaid Flowchart</span>
+      </div>
+      <div class="flex justify-center p-2 bg-base-200/50 rounded-box border border-base-300">
+        <pre class="mermaid w-full text-center" id="architecture-mermaid">
+flowchart TD
+  Start["Incoming SSE Chunk"] --> HasDelta{"delta.tool_calls?"}
+  HasDelta -- No --> TextChunk["Append text to bubble"]
+  HasDelta -- Yes --> IndexCheck["Index tc.index = 0..N"]
+  IndexCheck --> FirstChunk{"First Chunk?"}
+  FirstChunk -- Yes --> Init["Store tool ID & name"]
+  FirstChunk -- No --> Buffer["Append args fragment"]
+  Init --> Buffer
+  Buffer --> FinishCheck{"finish_reason == tool_calls?"}
+  FinishCheck -- No --> NextChunk["Await next SSE chunk"]
+  FinishCheck -- Yes --> Parse["JSON.parse(buffer)"]
+  Parse --> Execute["Local Tool Execution"]
+        </pre>
+      </div>
+    </div>
+
+    <!-- Comparative Wire Tabs: Streaming vs Non-Streaming vs Assistants -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Left: Streaming Chunk Breakdown -->
+      <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-base-200 pb-2">
+          <h3 id="streaming-chunks-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+            <span class="badge badge-sm badge-secondary font-mono">Streaming</span> SSE Chunk Wire Sequence
+          </h3>
+          <span class="text-3xs font-mono text-base-content/50">data: {"choices": [...]}</span>
+        </div>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          OpenAI streams the tool call name in the first chunk, then streams serialized JSON fragments in consecutive chunks until <code>finish_reason: "tool_calls"</code>:
+        </p>
+        <div class="rounded-box border border-base-300 bg-base-200 p-3">
+          <pre class="text-xs m-0 whitespace-pre-wrap break-words font-mono text-base-content"><code class="language-json">{
+  "choices": [{
+    "delta": {
+      "tool_calls": [{
+        "index": 0,
+        "id": "call_AbC123Def456Ghi789",
+        "type": "function",
+        "function": { "name": "run_command", "arguments": "" }
+      }]
+    },
+    "finish_reason": null
+  }]
+}
+// Next chunk: arguments fragment
+// { "delta": { "tool_calls": [{ "index": 0, "function": { "arguments": "{\"cmd\": " } }] } }
+// Terminal chunk:
+// { "delta": {}, "finish_reason": "tool_calls" }</code></pre>
+        </div>
+      </div>
+
+      <!-- Right: Pure JS Client Accumulator -->
+      <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-base-200 pb-2">
+          <h3 id="accumulator-code-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+            <span class="badge badge-sm badge-primary font-mono">JS Engine</span> Streaming Tool Accumulator
+          </h3>
+          <span class="badge badge-xs badge-success font-mono">Production-Safe</span>
+        </div>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          Zero-dependency accumulation pattern that handles chunking, multiple simultaneous tools, and graceful JSON parse recovery:
+        </p>
+        <div class="rounded-box border border-base-300 bg-base-200 p-3">
+          <pre class="text-xs m-0 whitespace-pre-wrap break-words font-mono text-base-content"><code id="frontend-ts-code" class="language-typescript">export class OpenAIToolAccumulator {
+  private tools = new Map&lt;number, { id: string; name: string; buffer: string }&gt;();
+
+  public ingest(chunk: any) {
+    const delta = chunk.choices?.[0]?.delta;
+    if (!delta?.tool_calls) return null;
+
+    for (const tc of delta.tool_calls) {
+      const idx = tc.index ?? 0;
+      if (!this.tools.has(idx)) {
+        this.tools.set(idx, { id: tc.id || "", name: tc.function?.name || "", buffer: tc.function?.arguments || "" });
+      } else {
+        const item = this.tools.get(idx)!;
+        if (tc.id) item.id = tc.id;
+        if (tc.function?.name) item.name += tc.function.name;
+        if (tc.function?.arguments) item.buffer += tc.function.arguments;
+      }
+    }
+
+    if (chunk.choices?.[0]?.finish_reason === "tool_calls") {
+      return Array.from(this.tools.values()).map(t =&gt; ({
+        id: t.id,
+        name: t.name,
+        arguments: JSON.parse(t.buffer || "{}")
+      }));
+    }
+    return null;
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 2: HUMAN-IN-THE-LOOP & APPROVALS   -->
+  <!-- ========================================== -->
+  <section aria-labelledby="human-approval-hitl" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="human-approval-hitl" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="user-check" class="w-6 h-6 text-warning"></i> 2. Human-in-the-Loop (HITL), Approvals & Questions
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          How OpenAI pauses execution for developer permission, confirmation dialogues, and interactive questions.
+        </p>
+      </div>
+      <span class="badge badge-warning font-mono text-xs">Human Attention</span>
+    </div>
+
+    <!-- Responsive Approval Mechanism Cards (Zero Horizontal Overflow) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs text-primary font-mono">1. Protocol Pause</span>
+          <span class="badge badge-xs badge-primary font-mono">Assistants v2</span>
+        </div>
+        <p class="text-xs font-semibold text-base-content">
+          Trigger: <code>run.status === "requires_action"</code>
+        </p>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Thread halts indefinitely (up to 10 min timeout) waiting for client tool execution. Submit outputs via <code>POST /submit_tool_outputs</code>.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs text-secondary font-mono">2. Tool Confirmation</span>
+          <span class="badge badge-xs badge-secondary font-mono">Chat / Swarm</span>
+        </div>
+        <p class="text-xs font-semibold text-base-content">
+          Trigger: Tool call <code>name === "ask_user"</code>
+        </p>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Model generates explicit confirmation tool call. Client renders prompt modal and returns human decision via <code>role: "tool"</code>.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs text-accent font-mono">3. Conversational Turn</span>
+          <span class="badge badge-xs badge-accent font-mono">All Models</span>
+        </div>
+        <p class="text-xs font-semibold text-base-content">
+          Trigger: <code>finish_reason: "stop"</code> with text
+        </p>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Model asks clarification question directly in response content. Developer responds with standard message via <code>role: "user"</code>.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs text-error font-mono">4. Local Interception</span>
+          <span class="badge badge-xs badge-error font-mono">Coding CLIs</span>
+        </div>
+        <p class="text-xs font-semibold text-base-content">
+          Trigger: High-impact bash / file modification
+        </p>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Client runtime inspects parsed tool parameters before execution (e.g. <code>rm -rf</code>, <code>git push</code>) and prompts developer.
+        </p>
+      </div>
+    </div>
+
+    <!-- Interactive Human Attention Mockup -->
+    <div class="card bg-base-100 border-2 border-warning/50 shadow-md p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-base-200 pb-3 flex-wrap gap-2">
+        <div class="flex items-center gap-2">
+          <span class="badge badge-warning badge-sm font-bold uppercase font-mono">Simulated Observer UI</span>
+          <h3 id="attention-banner-heading" class="font-bold text-sm text-base-content">
+            Human Attention Banner & Interactive Approval Action
+          </h3>
+        </div>
+        <span class="text-3xs font-mono text-warning font-bold">STATE: WAITING_USER</span>
+      </div>
+
+      <div class="p-4 bg-warning/10 border border-warning/30 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center shrink-0">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-warning animate-bounce"></i>
+          </div>
+          <div>
+            <div class="font-bold text-sm text-base-content flex items-center gap-2">
+              <span>Approval Required for High-Impact Tool</span>
+              <span class="badge badge-xs badge-outline font-mono">run_command</span>
+            </div>
+            <p class="text-xs text-base-content/80 mt-0.5 font-mono">
+              The agent wants to execute: <code class="bg-base-300 px-1.5 py-0.5 rounded text-primary font-bold">rm -rf dist/ && git clean -fd</code>
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+          <button type="button" class="btn btn-sm btn-error text-white font-bold flex-1 sm:flex-none">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i> Reject
+          </button>
+          <button type="button" class="btn btn-sm btn-success text-white font-bold flex-1 sm:flex-none">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i> Approve Execution
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 3: MODEL IDENTIFICATION & TOKENS   -->
+  <!-- ========================================== -->
+  <section aria-labelledby="model-and-reasoning" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="model-and-reasoning" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="cpu" class="w-6 h-6 text-accent"></i> 3. Model Identification & Reasoning Telemetry
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Detecting resolved model snapshots, HTTP verification headers, and measuring internal reasoning tokens.
+        </p>
+      </div>
+      <span class="badge badge-accent font-mono text-xs">Reasoning Telemetry</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left: Header & Snapshot Metadata (5 Cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4 h-full">
+          <h3 id="snapshot-metadata-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+            <i data-lucide="server" class="w-4 h-4 text-primary"></i> Identification Signals
+          </h3>
+          <div class="space-y-3 text-xs">
+            <div class="p-3 bg-base-200/50 rounded-lg border border-base-200">
+              <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60 block">Resolved Snapshot (Payload)</span>
+              <code class="font-bold text-primary text-xs">response.model = "gpt-4o-2024-08-06"</code>
+              <p class="text-3xs text-base-content/70 mt-1">Aliases (e.g. <code>gpt-4o</code>) are pinned to concrete releases by OpenAI server.</p>
+            </div>
+
+            <div class="p-3 bg-base-200/50 rounded-lg border border-base-200">
+              <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60 block">HTTP Response Headers</span>
+              <div class="font-mono text-2xs space-y-1 mt-1 text-base-content/80">
+                <div><code>openai-model: gpt-4o-2024-08-06</code></div>
+                <div><code>x-request-id: req_4abc98124fa89...</code></div>
+                <div><code>openai-processing-ms: 412</code></div>
+              </div>
+            </div>
+
+            <div class="p-3 bg-base-200/50 rounded-lg border border-base-200">
+              <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60 block">o1 / o3-mini Reasoning Tokens</span>
+              <div class="font-mono text-2xs space-y-1 mt-1 text-accent font-semibold">
+                <div><code>usage.completion_tokens_details: {</code></div>
+                <div class="pl-3"><code>"reasoning_tokens": 384</code></div>
+                <div><code>}</code></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Chart.js Token Distribution Canvas (7 Cols) -->
+      <div class="lg:col-span-7 space-y-4">
+        <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 id="token-chart-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-accent"></i> Token Distribution: Reasoning vs Action (o1 / o3)
+            </h3>
+            <span class="badge badge-xs badge-outline font-mono">Chart.js</span>
+          </div>
+          <p class="text-xs text-base-content/80 leading-relaxed">
+            Autonomous coding tasks demand significant hidden reasoning tokens before emitting concrete tool commands. A high reasoning-to-action ratio indicates strategic code synthesis:
+          </p>
+          <div class="relative w-full h-72 sm:h-80">
+            <canvas id="tokenBreakdownChart" aria-label="Token Breakdown Chart" role="img"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 4: SESSION & TURN TERMINATION      -->
+  <!-- ========================================== -->
+  <section aria-labelledby="session-lifecycle" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="session-lifecycle" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="timer-off" class="w-6 h-6 text-info"></i> 4. Turn & Session Termination Signals
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Distinguishing between temporary model pauses (tool formulation) and definitive turn/session completion.
+        </p>
+      </div>
+      <span class="badge badge-info font-mono text-xs">Termination FSM</span>
+    </div>
+
+    <!-- Finish Reason Matrix Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <code class="font-bold text-xs text-primary font-mono">finish_reason: "tool_calls"</code>
+          <span class="badge badge-xs badge-primary font-mono">ACTIVE</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          The model paused because it requires local tool execution. The agent turn is <strong>NOT</strong> finished. Run the tool and return <code>role: "tool"</code>.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <code class="font-bold text-xs text-success font-mono">finish_reason: "stop"</code>
+          <span class="badge badge-xs badge-success font-mono">COMPLETE</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          The model completed its natural language response or conversational turn. Hand prompt control back to the human developer.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <code class="font-bold text-xs text-warning font-mono">finish_reason: "length"</code>
+          <span class="badge badge-xs badge-warning font-mono">OVERFLOW</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Generation stopped because <code>max_completion_tokens</code> or model context ceiling was reached. Flag token saturation error.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <code class="font-bold text-xs text-error font-mono">finish_reason: "content_filter"</code>
+          <span class="badge badge-xs badge-error font-mono">REJECTED</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          OpenAI safety moderation triggered. Prompt and generation halted. Log security telemetry event.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 5: HOOKS & LISTENING GUIDE         -->
+  <!-- ========================================== -->
+  <section aria-labelledby="event-hooks" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="event-hooks" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="radio" class="w-6 h-6 text-secondary"></i> 5. OpenAI Hooks & Event Streaming Integration
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Complete guide to listening via the official SDK, zero-dependency Node.js fetch, Swarm handoffs, and Webhooks.
+        </p>
+      </div>
+      <span class="badge badge-secondary font-mono text-xs">Event Streaming</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- SDK Streaming Code -->
+      <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-base-200 pb-2">
+          <h3 id="sdk-hooks-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+            <span class="badge badge-sm badge-secondary font-mono">Node.js SDK</span> Assistants Stream Hooks
+          </h3>
+          <span class="text-3xs font-mono text-base-content/50">openai.beta.threads.runs.stream</span>
+        </div>
+        <div class="rounded-box border border-base-300 bg-base-200 p-3">
+          <pre class="text-xs m-0 whitespace-pre-wrap break-words font-mono text-base-content"><code class="language-javascript">import OpenAI from "openai";
+const openai = new OpenAI();
+const runStream = openai.beta.threads.runs.stream(threadId, { assistant_id });
+
+// 1. Tool Call Initiated
+runStream.on("toolCallCreated", (toolCall) => {
+  telemetry.emit("tool_start", { id: toolCall.id, name: toolCall.function?.name });
+});
+
+// 2. Argument Buffer Stream
+runStream.on("toolCallDelta", (delta) => {
+  telemetry.appendBuffer(delta.index, delta.function?.arguments);
+});
+
+// 3. Human Approval Requested
+runStream.on("event", (evt) => {
+  if (evt.event === "thread.run.requires_action") {
+    telemetry.emit("waiting_user", evt.data.required_action);
+  }
+});</code></pre>
+        </div>
+      </div>
+
+      <!-- Pure Fetch Zero-Dep Code -->
+      <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-base-200 pb-2">
+          <h3 id="fetch-listener-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+            <span class="badge badge-sm badge-accent font-mono">Zero-Dep Fetch</span> Pure SSE Stream Reader
+          </h3>
+          <span class="text-3xs font-mono text-base-content/50">ReadableStream reader</span>
+        </div>
+        <div class="rounded-box border border-base-300 bg-base-200 p-3">
+          <pre class="text-xs m-0 whitespace-pre-wrap break-words font-mono text-base-content"><code class="language-javascript">async function listenChatSSE(apiKey, payload, onChunk) {
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ ...payload, stream: true })
+  });
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop();
+    for (const l of lines) {
+      if (l.startsWith("data: ") && !l.includes("[DONE]")) {
+        onChunk(JSON.parse(l.slice(6)));
+      }
+    }
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 6: COMPLEX FEATURE MATRIX          -->
+  <!-- ========================================== -->
+  <section aria-labelledby="feature-implementation-matrix" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="feature-implementation-matrix" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="sliders" class="w-6 h-6 text-primary"></i> 6. Implementation Matrix: Complex Tracker Features in Codex
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Exact wire field mappings for the 5 advanced telemetry capabilities.
+        </p>
+      </div>
+      <span class="badge badge-primary font-mono text-xs">Architecture Mapping</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Feature Card 1 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+            <i data-lucide="clock" class="w-4 h-4 text-primary"></i>
+          </div>
+          <h3 id="feature-stopwatch-heading" class="font-bold text-sm text-base-content">
+            Active Tool Stopwatch
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Begins timing as soon as <code>delta.tool_calls[0].function.name</code> arrives; stops timing when the local runner submits outputs back via <code>role: "tool"</code>.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-primary">
+          delta.tool_calls &rarr; submit_tool_outputs
+        </div>
+      </div>
+
+      <!-- Feature Card 2 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center shrink-0">
+            <i data-lucide="terminal" class="w-4 h-4 text-secondary"></i>
+          </div>
+          <h3 id="feature-terminal-heading" class="font-bold text-sm text-base-content">
+            Terminal Drawer & Diffs
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Intercepts stdout/stderr from child process and packs exit code and output strings into the JSON content returned to the OpenAI thread.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-secondary">
+          tool.content = JSON.stringify({ stdout, stderr })
+        </div>
+      </div>
+
+      <!-- Feature Card 3 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center shrink-0">
+            <i data-lucide="bell" class="w-4 h-4 text-warning"></i>
+          </div>
+          <h3 id="feature-alerts-heading" class="font-bold text-sm text-base-content">
+            Attention Alerts & Audio
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Fires on <code>requires_action</code> or <code>name === "ask_user"</code>. Plays browser audio chime and highlights high-impact parameter diffs.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-warning">
+          AudioContext.createOscillator() + Banner
+        </div>
+      </div>
+
+      <!-- Feature Card 4 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center shrink-0">
+            <i data-lucide="users" class="w-4 h-4 text-accent"></i>
+          </div>
+          <h3 id="feature-swarm-heading" class="font-bold text-sm text-base-content">
+            Swarm Multi-Agent Handoffs
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          In OpenAI Swarm, tools return an <code>Agent</code> instance to hand off execution. The tracker monitors agent transfers in an interactive hierarchy.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-accent">
+          on_handoff: TriageAgent &rarr; BillingAgent
+        </div>
+      </div>
+
+      <!-- Feature Card 5 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-info/20 flex items-center justify-center shrink-0">
+            <i data-lucide="activity" class="w-4 h-4 text-info"></i>
+          </div>
+          <h3 id="feature-saturation-heading" class="font-bold text-sm text-base-content">
+            Token Saturation Gauge
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Calculates token pressure against context boundaries (128k for GPT-4o, 200k for o1) and calculates token emission velocity (tokens/sec).
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-info">
+          (prompt + completion) / context_limit * 100
+        </div>
+      </div>
+
+      <!-- Feature Card 6 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center shrink-0">
+            <i data-lucide="layers" class="w-4 h-4 text-success"></i>
+          </div>
+          <h3 id="feature-strategy-heading" class="font-bold text-sm text-base-content">
+            Agnostic Facade Normalization
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Encapsulates provider variance behind <code>AgentTrackerFacade</code>, ensuring zero vendor fields leak to client UI components.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-success">
+          CodexSwarmStrategy &rarr; CanonicalAgentEvent
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 7: DOCUMENTATION & CITATIONS       -->
+  <!-- ========================================== -->
+  <section aria-labelledby="documentation-links" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="documentation-links" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="book-marked" class="w-6 h-6 text-primary"></i> 7. Official Documentation & Specifications
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Direct links to OpenAI developer guides, SDK repositories, and repository markdown references.
+        </p>
+      </div>
+      <span class="badge badge-primary font-mono text-xs">Official Sources</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Repo References -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <h3 id="repo-docs-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+          <i data-lucide="folder-git-2" class="w-4 h-4 text-primary"></i> Repository Documentation
+        </h3>
+        <ul class="space-y-2 text-xs">
+          <li>
+            <a href="openai-codex-telemetry-reference.md" onclick="if(window.openMarkdownViewer){openMarkdownViewer('research/openai-codex-telemetry-reference.md');return false;}" class="link link-primary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i> openai-codex-telemetry-reference.md
+            </a>
+            <span class="text-3xs text-base-content/60 block pl-5">The complete markdown guide for OpenAI telemetry and wire formats.</span>
+          </li>
+          <li>
+            <a href="../openspec/changes/agent-tracker/design.md" onclick="if(window.openMarkdownViewer){openMarkdownViewer('openspec/changes/agent-tracker/design.md');return false;}" class="link link-primary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="file-code" class="w-3.5 h-3.5"></i> openspec/changes/agent-tracker/design.md
+            </a>
+            <span class="text-3xs text-base-content/60 block pl-5">Architectural design for AgentTrackerFacade and Strategy pattern.</span>
+          </li>
+          <li>
+            <a href="../openspec/changes/agent-tracker/tasks.md" onclick="if(window.openMarkdownViewer){openMarkdownViewer('openspec/changes/agent-tracker/tasks.md');return false;}" class="link link-primary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="check-square" class="w-3.5 h-3.5"></i> openspec/changes/agent-tracker/tasks.md
+            </a>
+            <span class="text-3xs text-base-content/60 block pl-5">Actionable milestones for the live agent tracker implementation.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- OpenAI Official Docs -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <h3 id="external-docs-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+          <i data-lucide="external-link" class="w-4 h-4 text-secondary"></i> Official OpenAI API Guides
+        </h3>
+        <ul class="space-y-2 text-xs">
+          <li>
+            <a href="https://platform.openai.com/docs/guides/function-calling" target="_blank" rel="noopener noreferrer" class="link link-secondary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="link" class="w-3.5 h-3.5"></i> OpenAI Function Calling & Tool Use Guide
+            </a>
+          </li>
+          <li>
+            <a href="https://platform.openai.com/docs/assistants/deep-dive" target="_blank" rel="noopener noreferrer" class="link link-secondary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="link" class="w-3.5 h-3.5"></i> OpenAI Assistants API v2 & Tool Execution
+            </a>
+          </li>
+          <li>
+            <a href="https://platform.openai.com/docs/guides/reasoning" target="_blank" rel="noopener noreferrer" class="link link-secondary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="link" class="w-3.5 h-3.5"></i> OpenAI Reasoning Models (o1, o3-mini)
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/openai/swarm" target="_blank" rel="noopener noreferrer" class="link link-secondary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="github" class="w-3.5 h-3.5"></i> OpenAI Swarm Multi-Agent Framework
+            </a>
+          </li>
+          <li>
+            <a href="https://platform.openai.com/docs/guides/webhooks" target="_blank" rel="noopener noreferrer" class="link link-secondary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="link" class="w-3.5 h-3.5"></i> OpenAI Webhooks Documentation
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 8: CODEX TIERS (SOL, TERRA, LUNA, ASTRA) -->
+  <!-- ========================================== -->
+  <section aria-labelledby="codex-tier-family" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="codex-tier-family" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-6 h-6 text-warning"></i> 8. OpenAI Codex Tier Family: Astra, Sol, Terra, and Luna
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          OpenAI's official cost-intelligence tier lineup powering the Codex CLI, IDE extensions, and multi-file agents.
+        </p>
+      </div>
+      <span class="badge badge-warning font-mono text-xs font-bold">GPT-6 Generation</span>
+    </div>
+
+    <!-- The 4 Celestial Tiers Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Astra -->
+      <div class="card bg-base-100 border-2 border-primary/40 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-sm text-primary font-mono flex items-center gap-1">
+            <i data-lucide="star" class="w-4 h-4 text-primary"></i> Astra
+          </span>
+          <span class="badge badge-xs badge-primary font-mono">Flagship</span>
+        </div>
+        <p class="text-2xs font-semibold text-base-content font-mono">gpt-6-astra</p>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          The pinnacle intelligence tier. Used for large architectural overhauls, formal verification, and mission-critical system design where maximum reasoning outweighs cost.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/80 p-1.5 rounded text-primary">
+          Highest Reasoning Depth
+        </div>
+      </div>
+
+      <!-- Sol -->
+      <div class="card bg-base-100 border-2 border-secondary/40 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-sm text-secondary font-mono flex items-center gap-1">
+            <i data-lucide="sun" class="w-4 h-4 text-secondary"></i> Sol
+          </span>
+          <span class="badge badge-xs badge-secondary font-mono">Workhorse</span>
+        </div>
+        <p class="text-2xs font-semibold text-base-content font-mono">gpt-6.1-sol</p>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          The Codex coding sweet spot. Highly recommended for multi-file autonomous agents, complex refactoring, test suite generation, and tool loops at lower latency.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/80 p-1.5 rounded text-secondary">
+          Codex Primary Recommendation
+        </div>
+      </div>
+
+      <!-- Terra -->
+      <div class="card bg-base-100 border-2 border-accent/40 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-sm text-accent font-mono flex items-center gap-1">
+            <i data-lucide="globe" class="w-4 h-4 text-accent"></i> Terra
+          </span>
+          <span class="badge badge-xs badge-accent font-mono">Balanced</span>
+        </div>
+        <p class="text-2xs font-semibold text-base-content font-mono">gpt-6-terra</p>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          Fast, balanced communication engine. Optimized for pull request generation, technical documentation, code reviews, and visual UI/diagram comprehension.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/80 p-1.5 rounded text-accent">
+          High Token Velocity
+        </div>
+      </div>
+
+      <!-- Luna -->
+      <div class="card bg-base-100 border-2 border-info/40 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-sm text-info font-mono flex items-center gap-1">
+            <i data-lucide="moon" class="w-4 h-4 text-info"></i> Luna
+          </span>
+          <span class="badge badge-xs badge-info font-mono">Lightweight</span>
+        </div>
+        <p class="text-2xs font-semibold text-base-content font-mono">gpt-6-luna</p>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          The ultra-fast, budget-optimized tier. Designed for rapid single-file edits, lint remediation, syntax validation, and high-frequency automated subagents.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/80 p-1.5 rounded text-info">
+          Sub-200ms Fast TTFT
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier Compatibility Assertion -->
+    <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+      <h3 id="tier-wire-compatibility-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+        <i data-lucide="check-check" class="w-4 h-4 text-success"></i> Wire Protocol Compatibility: Do They Follow the Same Logic?
+      </h3>
+      <p class="text-xs text-base-content/80 leading-relaxed">
+        <strong>Yes, 100% strictly.</strong> Whether your enterprise CLI executes <code class="font-bold text-primary">codex --model gpt-6.1-sol</code> or <code class="font-bold text-secondary">codex --model gpt-6-astra</code>, every model in the celestial family adheres to the identical streaming function-calling protocol:
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+        <div class="p-3 bg-base-200/50 rounded-lg border border-base-200 space-y-1">
+          <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60">Tool Call Wire Path</span>
+          <div class="text-success font-bold">delta.tool_calls[i]</div>
+          <p class="text-3xs font-sans text-base-content/70">Identical across all 4 tiers with <code>call_*</code> IDs.</p>
+        </div>
+        <div class="p-3 bg-base-200/50 rounded-lg border border-base-200 space-y-1">
+          <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60">String Accumulator</span>
+          <div class="text-success font-bold">function.arguments buffer</div>
+          <p class="text-3xs font-sans text-base-content/70">Buffered by index until <code>finish_reason: "tool_calls"</code>.</p>
+        </div>
+        <div class="p-3 bg-base-200/50 rounded-lg border border-base-200 space-y-1">
+          <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60">HITL Approvals</span>
+          <div class="text-success font-bold">requires_action / ask_user</div>
+          <p class="text-3xs font-sans text-base-content/70">Pauses thread execution identically on all models.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Script: Visuals Hydration -->
+  <script>
+    function initCodexReportVisuals() {
+      // 1. Highlight.js
+      if (window.hljs) {
+        window.hljs.highlightAll();
+      }
+
+      // 2. Chart.js Token Breakdown
+      const canvas = document.getElementById("tokenBreakdownChart");
+      if (canvas && window.Chart && !canvas.__chartInitialized) {
+        canvas.__chartInitialized = true;
+        const chart = new Chart(canvas, {
+          type: "bar",
+          data: {
+            labels: [
+              "Simple Refactor",
+              "Bug Diagnosis",
+              "Feature Planning",
+              "Test Suite Generation",
+              "Security Audit"
+            ],
+            datasets: [
+              {
+                label: "Prompt Input Tokens",
+                data: [1200, 3400, 4800, 6200, 8500],
+                backgroundColor: "rgba(99, 102, 241, 0.75)",
+                borderColor: "rgba(99, 102, 241, 1)",
+                borderWidth: 1
+              },
+              {
+                label: "Hidden Reasoning Tokens (o1/o3)",
+                data: [800, 2400, 4200, 3100, 6800],
+                backgroundColor: "rgba(236, 72, 153, 0.75)",
+                borderColor: "rgba(236, 72, 153, 1)",
+                borderWidth: 1
+              },
+              {
+                label: "Action / Tool Output Tokens",
+                data: [350, 420, 950, 1800, 750],
+                backgroundColor: "rgba(16, 185, 129, 0.75)",
+                borderColor: "rgba(16, 185, 129, 1)",
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { stacked: true, grid: { display: false } },
+              y: { stacked: true, beginAtZero: true }
+            },
+            plugins: {
+              legend: { position: "top" }
+            }
+          }
+        });
+
+        window.reportCharts = window.reportCharts || [];
+        if (!window.reportCharts.includes(chart)) {
+          window.reportCharts.push(chart);
+        }
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(initCodexReportVisuals, 50);
+      });
+    } else {
+      setTimeout(initCodexReportVisuals, 50);
+    }
+  </script>

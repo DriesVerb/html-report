@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html data-report-mode="interactive" lang="en" data-theme="light" class="scroll-smooth">
+<html data-report-mode="report" lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss:;" />
-  <title>Zero-Dependency CDN Architecture & Security Threat Model</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
+  <title>OpenAI Codex & Agent Telemetry Reference</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -28,6 +28,14 @@
   <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
 
+  <!-- Addon: Highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/kotlin.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Marked -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>
+
   <style>
     :root {
       --grid-bg-1: #ffffff;
@@ -49,10 +57,22 @@
       height: auto !important;
       background-color: transparent !important;
     }
-    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping and vertical pill overflow */
+    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping, oversized spinners, and vertical pill overflow */
     .badge {
       white-space: nowrap !important;
       flex-shrink: 0;
+    }
+    .badge .loading,
+    .badge .loading-spinner,
+    .badge .loading-xs,
+    .badge .loading-3xs,
+    .loading-3xs {
+      width: 0.65rem !important;
+      height: 0.65rem !important;
+      min-width: 0.65rem !important;
+      min-height: 0.65rem !important;
+      vertical-align: middle;
+      display: inline-block;
     }
     [data-insufficient-space="true"] {
       outline: 2px dashed #f59e0b !important;
@@ -162,7 +182,8 @@
     }
 
     /* Impress.js Presentation Guard & Print-Equivalent Treatment */
-    html:not([data-presentation="true"]) .step {
+    html:not([data-presentation="true"]) .step,
+    .impress-static-fallback .step {
       position: relative !important;
       opacity: 1 !important;
       transform: none !important;
@@ -175,15 +196,26 @@
       position: relative;
       overflow: hidden;
       width: 100%;
-      min-height: 420px;
       border-radius: 0.75rem;
     }
-    html[data-presentation="true"] .impress-wrapper #impress {
+    html[data-presentation="true"] .impress-wrapper {
+      min-height: 420px;
+      height: 420px;
+    }
+    html[data-presentation="true"] .impress-wrapper #impress:not(.impress-static-fallback) {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+    }
+
+    @media print {
+      header,
+      .navbar,
+      nav {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -192,11 +224,12 @@
   <!-- Sticky DaisyUI Navbar -->
   <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
     <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
-      <!-- Left: Title -->
-      <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
+      <!-- Left: Title & Mode Badge -->
+      <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Zero-Dependency CDN Architecture & Security Threat Model
+          OpenAI Codex & Agent Telemetry Reference
         </span>
+        <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
 
       <!-- Right: TOC + Theme Picker + Download Menu -->
@@ -287,818 +320,949 @@
 
   <!-- Main Content Container -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
-<!-- HERO SECTION -->
-  <header class="card bg-base-100 shadow-xl border border-base-300 overflow-hidden">
-    <div class="card-body p-6 sm:p-8">
-      <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-4 w-full">
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="badge badge-primary font-mono text-xs font-semibold uppercase tracking-wider">Zero Node Modules</span>
-            <span class="badge badge-secondary font-mono text-xs font-semibold uppercase tracking-wider">Air-Gapped Architecture</span>
-            <span class="badge badge-accent font-mono text-xs font-semibold uppercase tracking-wider">Security Hardened</span>
-          </div>
-          <h1 id="executive-summary" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-base-content scroll-mt-20">
-            Zero-Dependency CDN Architecture: Option 1 vs. Option 2
-          </h1>
-          <p class="text-base text-base-content/70 mt-2 max-w-3xl leading-relaxed">
-            Eliminating <code>node_modules</code> entirely while delivering high-speed, 100% offline-capable HTML reports. 
-            A comprehensive architectural and cybersecurity comparison between a <strong>Pure Native Node.js Asset Server</strong> (Option 1) and a <strong>Fully Inlined Single-File Report</strong> (Option 2).
-          </p>
-        </div>
-        <div class="shrink-0 flex items-center gap-2">
-          <div class="badge badge-outline badge-lg font-mono font-bold text-success border-success gap-1.5 py-4 px-4">
-            <i data-lucide="shield-check" class="w-4 h-4 text-success"></i>
-            Air-Gapped & Audited
-          </div>
-        </div>
+<!-- ========================================== -->
+  <!-- HERO BANNER                                -->
+  <!-- ========================================== -->
+  <header class="space-y-4 border-b border-base-300 pb-8">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">Static Reference Report</span>
+      <span class="badge badge-outline font-mono text-xs">OpenAI Codex & Autonomous Agents</span>
+      <span class="badge badge-ghost font-mono text-xs">Self-Contained & Offline-Ready</span>
+    </div>
+    
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div class="space-y-2">
+        <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+          OpenAI Codex & Multi-Model Agent Telemetry
+        </h1>
+        <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+          Comprehensive production-grade reference manual covering streaming tool call wire schemas, Human-in-the-Loop (<span class="font-semibold text-primary">HITL</span>) approvals, reasoning token extraction (o1 / o3-mini), turn/session lifecycle FSMs, and event-driven streaming hooks.
+        </p>
       </div>
 
-      <!-- KEY METRICS BANNER -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-base-200">
-        <div class="bg-base-200/60 rounded-xl p-4 text-center border border-base-300">
-          <div class="text-xs uppercase font-bold text-base-content/60 tracking-wider">Node Modules Required</div>
-          <div class="text-2xl sm:text-3xl font-black text-primary mt-1">0</div>
-          <div class="text-xs text-base-content/60 mt-1 font-medium">Both options: zero npm packages</div>
+      <!-- Quick Action Reference Links -->
+      <div class="flex flex-wrap items-center gap-2 shrink-0">
+        <a href="openai-codex-telemetry-reference.md" onclick="if(window.openMarkdownViewer){openMarkdownViewer('research/openai-codex-telemetry-reference.md');return false;}" class="btn btn-sm btn-outline btn-secondary gap-1.5 shadow-sm">
+          <i data-lucide="file-text" class="w-4 h-4 text-secondary"></i> View .md Source Reference
+        </a>
+        <a href="#tool-call-schemas" class="btn btn-sm btn-primary gap-1.5 shadow-sm">
+          <i data-lucide="code" class="w-4 h-4"></i> Explore Wire Schemas
+        </a>
+      </div>
+    </div>
+
+    <!-- Mode Callout Alert -->
+    <div class="alert alert-success/15 border border-success/30 rounded-xl p-4 flex items-center justify-between text-xs sm:text-sm font-medium">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center shrink-0">
+          <i data-lucide="check-circle" class="w-5 h-5 text-success"></i>
         </div>
-        <div class="bg-base-200/60 rounded-xl p-4 text-center border border-base-300">
-          <div class="text-xs uppercase font-bold text-base-content/60 tracking-wider">Startup Latency</div>
-          <div class="text-2xl sm:text-3xl font-black text-secondary mt-1">&lt;2ms vs 0ms</div>
-          <div class="text-xs text-base-content/60 mt-1 font-medium">Option 1: &lt;2ms | Option 2: instant</div>
-        </div>
-        <div class="bg-base-200/60 rounded-xl p-4 text-center border border-base-300">
-          <div class="text-xs uppercase font-bold text-base-content/60 tracking-wider">Network Attack Surface</div>
-          <div class="text-2xl sm:text-3xl font-black text-accent mt-1">1 Port vs 0</div>
-          <div class="text-xs text-base-content/60 mt-1 font-medium">Opt 1: 127.0.0.1 | Opt 2: 0 listening</div>
-        </div>
-        <div class="bg-base-200/60 rounded-xl p-4 text-center border border-base-300">
-          <div class="text-xs uppercase font-bold text-base-content/60 tracking-wider">Supply Chain Exposure</div>
-          <div class="text-2xl sm:text-3xl font-black text-success mt-1">Pinned</div>
-          <div class="text-xs text-base-content/60 mt-1 font-medium">Zero external runtime fetches</div>
+        <div>
+          <strong class="text-success-content font-bold">Standalone Static Report:</strong>
+          <span class="text-base-content/80"> This report contains embedded client-side syntax highlighters, interactive charts, and Mermaid diagrams. It runs completely offline without requiring any background dev server or Node.js runtime.</span>
         </div>
       </div>
+      <span class="badge badge-success badge-sm font-mono font-bold shrink-0 hidden md:inline-flex">OFFLINE-READY</span>
     </div>
   </header>
 
-  <!-- ARCHITECTURAL VISUALIZATION SECTION -->
-  <section class="space-y-6">
-    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
-      <div class="min-w-0 flex-1">
-        <h2 id="architectural-diagrams" class="text-2xl font-bold tracking-tight text-base-content scroll-mt-20">
-          System Dataflow Visualizations
+  <!-- ========================================== -->
+  <!-- EXECUTIVE TELEMETRY STATS / KPIS           -->
+  <!-- ========================================== -->
+  <section aria-labelledby="kpis-heading" class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 id="kpis-heading" class="text-xl font-bold tracking-tight text-base-content flex items-center gap-2">
+        <i data-lucide="gauge" class="w-5 h-5 text-primary"></i> Core Architecture & Telemetry Baseline
+      </h2>
+      <span class="text-xs font-mono text-base-content/60">OpenAI Ecosystem Dimensions</span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Stat 1 -->
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+        <div class="stat-figure text-primary">
+          <i data-lucide="network" class="w-8 h-8"></i>
+        </div>
+        <div class="stat-title text-2xs uppercase tracking-wider font-bold">Transport Modes</div>
+        <div class="stat-value text-2xl font-mono text-primary">4 Flavors</div>
+        <div class="stat-desc text-xs mt-1">Chat SSE, Assistants, Swarm, Realtime</div>
+      </div>
+
+      <!-- Stat 2 -->
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+        <div class="stat-figure text-secondary">
+          <i data-lucide="cpu" class="w-8 h-8"></i>
+        </div>
+        <div class="stat-title text-2xs uppercase tracking-wider font-bold">Tool Argument Stream</div>
+        <div class="stat-value text-2xl font-mono text-secondary">Fragmented</div>
+        <div class="stat-desc text-xs mt-1">Requires string buffer accumulator</div>
+      </div>
+
+      <!-- Stat 3 -->
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+        <div class="stat-figure text-accent">
+          <i data-lucide="brain" class="w-8 h-8"></i>
+        </div>
+        <div class="stat-title text-2xs uppercase tracking-wider font-bold">Reasoning Extraction</div>
+        <div class="stat-value text-2xl font-mono text-accent">o1 / o3-mini</div>
+        <div class="stat-desc text-xs mt-1"><code>reasoning_content</code> + token metrics</div>
+      </div>
+
+      <!-- Stat 4 -->
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+        <div class="stat-figure text-info">
+          <i data-lucide="shield-alert" class="w-8 h-8"></i>
+        </div>
+        <div class="stat-title text-2xs uppercase tracking-wider font-bold">Human Approval</div>
+        <div class="stat-value text-2xl font-mono text-info">2 Patterns</div>
+        <div class="stat-desc text-xs mt-1">Protocol <code>requires_action</code> vs Tool calls</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 1: TOOL CALL SCHEMAS & ACCUMULATOR -->
+  <!-- ========================================== -->
+  <section aria-labelledby="tool-call-schemas" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="tool-call-schemas" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="binary" class="w-6 h-6 text-primary"></i> 1. Tool Call JSON Structures & Accumulation Lifecycle
         </h2>
-        <p class="text-sm text-base-content/70 mt-1">
-          How assets are resolved and delivered to the browser under both zero-<code>node_modules</code> models.
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Detailed wire breakdown across streaming SSE deltas, non-streaming function calls, and Assistants API v2.
         </p>
       </div>
+      <span class="badge badge-primary font-mono text-xs">Protocol Wire Spec</span>
+    </div>
+
+    <!-- Architecture Mermaid Flowchart -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="text-2xs uppercase tracking-wider font-bold text-base-content/70 flex items-center gap-1.5">
+          <i data-lucide="git-branch" class="w-4 h-4 text-primary"></i> Streaming Tool Accumulation Finite State Machine
+        </span>
+        <span class="badge badge-xs badge-ghost font-mono">Mermaid Flowchart</span>
+      </div>
+      <div class="flex justify-center p-2 bg-base-200/50 rounded-box border border-base-300">
+        <pre class="mermaid w-full text-center" id="architecture-mermaid">
+flowchart TD
+  Start["Incoming SSE Chunk"] --> HasDelta{"delta.tool_calls?"}
+  HasDelta -- No --> TextChunk["Append text to bubble"]
+  HasDelta -- Yes --> IndexCheck["Index tc.index = 0..N"]
+  IndexCheck --> FirstChunk{"First Chunk?"}
+  FirstChunk -- Yes --> Init["Store tool ID & name"]
+  FirstChunk -- No --> Buffer["Append args fragment"]
+  Init --> Buffer
+  Buffer --> FinishCheck{"finish_reason == tool_calls?"}
+  FinishCheck -- No --> NextChunk["Await next SSE chunk"]
+  FinishCheck -- Yes --> Parse["JSON.parse(buffer)"]
+  Parse --> Execute["Local Tool Execution"]
+        </pre>
+      </div>
+    </div>
+
+    <!-- Comparative Wire Tabs: Streaming vs Non-Streaming vs Assistants -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Left: Streaming Chunk Breakdown -->
+      <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-base-200 pb-2">
+          <h3 id="streaming-chunks-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+            <span class="badge badge-sm badge-secondary font-mono">Streaming</span> SSE Chunk Wire Sequence
+          </h3>
+          <span class="text-3xs font-mono text-base-content/50">data: {"choices": [...]}</span>
+        </div>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          OpenAI streams the tool call name in the first chunk, then streams serialized JSON fragments in consecutive chunks until <code>finish_reason: "tool_calls"</code>:
+        </p>
+        <div class="rounded-box border border-base-300 bg-base-200 p-3">
+          <pre class="text-xs m-0 whitespace-pre-wrap break-words font-mono text-base-content"><code class="language-json">{
+  "choices": [{
+    "delta": {
+      "tool_calls": [{
+        "index": 0,
+        "id": "call_AbC123Def456Ghi789",
+        "type": "function",
+        "function": { "name": "run_command", "arguments": "" }
+      }]
+    },
+    "finish_reason": null
+  }]
+}
+// Next chunk: arguments fragment
+// { "delta": { "tool_calls": [{ "index": 0, "function": { "arguments": "{\"cmd\": " } }] } }
+// Terminal chunk:
+// { "delta": {}, "finish_reason": "tool_calls" }</code></pre>
+        </div>
+      </div>
+
+      <!-- Right: Pure JS Client Accumulator -->
+      <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-base-200 pb-2">
+          <h3 id="accumulator-code-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+            <span class="badge badge-sm badge-primary font-mono">JS Engine</span> Streaming Tool Accumulator
+          </h3>
+          <span class="badge badge-xs badge-success font-mono">Production-Safe</span>
+        </div>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          Zero-dependency accumulation pattern that handles chunking, multiple simultaneous tools, and graceful JSON parse recovery:
+        </p>
+        <div class="rounded-box border border-base-300 bg-base-200 p-3">
+          <pre class="text-xs m-0 whitespace-pre-wrap break-words font-mono text-base-content"><code id="frontend-ts-code" class="language-typescript">export class OpenAIToolAccumulator {
+  private tools = new Map&lt;number, { id: string; name: string; buffer: string }&gt;();
+
+  public ingest(chunk: any) {
+    const delta = chunk.choices?.[0]?.delta;
+    if (!delta?.tool_calls) return null;
+
+    for (const tc of delta.tool_calls) {
+      const idx = tc.index ?? 0;
+      if (!this.tools.has(idx)) {
+        this.tools.set(idx, { id: tc.id || "", name: tc.function?.name || "", buffer: tc.function?.arguments || "" });
+      } else {
+        const item = this.tools.get(idx)!;
+        if (tc.id) item.id = tc.id;
+        if (tc.function?.name) item.name += tc.function.name;
+        if (tc.function?.arguments) item.buffer += tc.function.arguments;
+      }
+    }
+
+    if (chunk.choices?.[0]?.finish_reason === "tool_calls") {
+      return Array.from(this.tools.values()).map(t =&gt; ({
+        id: t.id,
+        name: t.name,
+        arguments: JSON.parse(t.buffer || "{}")
+      }));
+    }
+    return null;
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 2: HUMAN-IN-THE-LOOP & APPROVALS   -->
+  <!-- ========================================== -->
+  <section aria-labelledby="human-approval-hitl" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="human-approval-hitl" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="user-check" class="w-6 h-6 text-warning"></i> 2. Human-in-the-Loop (HITL), Approvals & Questions
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          How OpenAI pauses execution for developer permission, confirmation dialogues, and interactive questions.
+        </p>
+      </div>
+      <span class="badge badge-warning font-mono text-xs">Human Attention</span>
+    </div>
+
+    <!-- Responsive Approval Mechanism Cards (Zero Horizontal Overflow) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs text-primary font-mono">1. Protocol Pause</span>
+          <span class="badge badge-xs badge-primary font-mono">Assistants v2</span>
+        </div>
+        <p class="text-xs font-semibold text-base-content">
+          Trigger: <code>run.status === "requires_action"</code>
+        </p>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Thread halts indefinitely (up to 10 min timeout) waiting for client tool execution. Submit outputs via <code>POST /submit_tool_outputs</code>.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs text-secondary font-mono">2. Tool Confirmation</span>
+          <span class="badge badge-xs badge-secondary font-mono">Chat / Swarm</span>
+        </div>
+        <p class="text-xs font-semibold text-base-content">
+          Trigger: Tool call <code>name === "ask_user"</code>
+        </p>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Model generates explicit confirmation tool call. Client renders prompt modal and returns human decision via <code>role: "tool"</code>.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs text-accent font-mono">3. Conversational Turn</span>
+          <span class="badge badge-xs badge-accent font-mono">All Models</span>
+        </div>
+        <p class="text-xs font-semibold text-base-content">
+          Trigger: <code>finish_reason: "stop"</code> with text
+        </p>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Model asks clarification question directly in response content. Developer responds with standard message via <code>role: "user"</code>.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs text-error font-mono">4. Local Interception</span>
+          <span class="badge badge-xs badge-error font-mono">Coding CLIs</span>
+        </div>
+        <p class="text-xs font-semibold text-base-content">
+          Trigger: High-impact bash / file modification
+        </p>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Client runtime inspects parsed tool parameters before execution (e.g. <code>rm -rf</code>, <code>git push</code>) and prompts developer.
+        </p>
+      </div>
+    </div>
+
+    <!-- Interactive Human Attention Mockup -->
+    <div class="card bg-base-100 border-2 border-warning/50 shadow-md p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-base-200 pb-3 flex-wrap gap-2">
+        <div class="flex items-center gap-2">
+          <span class="badge badge-warning badge-sm font-bold uppercase font-mono">Simulated Observer UI</span>
+          <h3 id="attention-banner-heading" class="font-bold text-sm text-base-content">
+            Human Attention Banner & Interactive Approval Action
+          </h3>
+        </div>
+        <span class="text-3xs font-mono text-warning font-bold">STATE: WAITING_USER</span>
+      </div>
+
+      <div class="p-4 bg-warning/10 border border-warning/30 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center shrink-0">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-warning animate-bounce"></i>
+          </div>
+          <div>
+            <div class="font-bold text-sm text-base-content flex items-center gap-2">
+              <span>Approval Required for High-Impact Tool</span>
+              <span class="badge badge-xs badge-outline font-mono">run_command</span>
+            </div>
+            <p class="text-xs text-base-content/80 mt-0.5 font-mono">
+              The agent wants to execute: <code class="bg-base-300 px-1.5 py-0.5 rounded text-primary font-bold">rm -rf dist/ && git clean -fd</code>
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+          <button type="button" class="btn btn-sm btn-error text-white font-bold flex-1 sm:flex-none">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i> Reject
+          </button>
+          <button type="button" class="btn btn-sm btn-success text-white font-bold flex-1 sm:flex-none">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i> Approve Execution
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 3: MODEL IDENTIFICATION & TOKENS   -->
+  <!-- ========================================== -->
+  <section aria-labelledby="model-and-reasoning" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="model-and-reasoning" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="cpu" class="w-6 h-6 text-accent"></i> 3. Model Identification & Reasoning Telemetry
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Detecting resolved model snapshots, HTTP verification headers, and measuring internal reasoning tokens.
+        </p>
+      </div>
+      <span class="badge badge-accent font-mono text-xs">Reasoning Telemetry</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left: Header & Snapshot Metadata (5 Cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4 h-full">
+          <h3 id="snapshot-metadata-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+            <i data-lucide="server" class="w-4 h-4 text-primary"></i> Identification Signals
+          </h3>
+          <div class="space-y-3 text-xs">
+            <div class="p-3 bg-base-200/50 rounded-lg border border-base-200">
+              <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60 block">Resolved Snapshot (Payload)</span>
+              <code class="font-bold text-primary text-xs">response.model = "gpt-4o-2024-08-06"</code>
+              <p class="text-3xs text-base-content/70 mt-1">Aliases (e.g. <code>gpt-4o</code>) are pinned to concrete releases by OpenAI server.</p>
+            </div>
+
+            <div class="p-3 bg-base-200/50 rounded-lg border border-base-200">
+              <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60 block">HTTP Response Headers</span>
+              <div class="font-mono text-2xs space-y-1 mt-1 text-base-content/80">
+                <div><code>openai-model: gpt-4o-2024-08-06</code></div>
+                <div><code>x-request-id: req_4abc98124fa89...</code></div>
+                <div><code>openai-processing-ms: 412</code></div>
+              </div>
+            </div>
+
+            <div class="p-3 bg-base-200/50 rounded-lg border border-base-200">
+              <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60 block">o1 / o3-mini Reasoning Tokens</span>
+              <div class="font-mono text-2xs space-y-1 mt-1 text-accent font-semibold">
+                <div><code>usage.completion_tokens_details: {</code></div>
+                <div class="pl-3"><code>"reasoning_tokens": 384</code></div>
+                <div><code>}</code></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Chart.js Token Distribution Canvas (7 Cols) -->
+      <div class="lg:col-span-7 space-y-4">
+        <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 id="token-chart-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-accent"></i> Token Distribution: Reasoning vs Action (o1 / o3)
+            </h3>
+            <span class="badge badge-xs badge-outline font-mono">Chart.js</span>
+          </div>
+          <p class="text-xs text-base-content/80 leading-relaxed">
+            Autonomous coding tasks demand significant hidden reasoning tokens before emitting concrete tool commands. A high reasoning-to-action ratio indicates strategic code synthesis:
+          </p>
+          <div class="relative w-full h-72 sm:h-80">
+            <canvas id="tokenBreakdownChart" aria-label="Token Breakdown Chart" role="img"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 4: SESSION & TURN TERMINATION      -->
+  <!-- ========================================== -->
+  <section aria-labelledby="session-lifecycle" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="session-lifecycle" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="timer-off" class="w-6 h-6 text-info"></i> 4. Turn & Session Termination Signals
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Distinguishing between temporary model pauses (tool formulation) and definitive turn/session completion.
+        </p>
+      </div>
+      <span class="badge badge-info font-mono text-xs">Termination FSM</span>
+    </div>
+
+    <!-- Finish Reason Matrix Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <code class="font-bold text-xs text-primary font-mono">finish_reason: "tool_calls"</code>
+          <span class="badge badge-xs badge-primary font-mono">ACTIVE</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          The model paused because it requires local tool execution. The agent turn is <strong>NOT</strong> finished. Run the tool and return <code>role: "tool"</code>.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <code class="font-bold text-xs text-success font-mono">finish_reason: "stop"</code>
+          <span class="badge badge-xs badge-success font-mono">COMPLETE</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          The model completed its natural language response or conversational turn. Hand prompt control back to the human developer.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <code class="font-bold text-xs text-warning font-mono">finish_reason: "length"</code>
+          <span class="badge badge-xs badge-warning font-mono">OVERFLOW</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Generation stopped because <code>max_completion_tokens</code> or model context ceiling was reached. Flag token saturation error.
+        </p>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <code class="font-bold text-xs text-error font-mono">finish_reason: "content_filter"</code>
+          <span class="badge badge-xs badge-error font-mono">REJECTED</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          OpenAI safety moderation triggered. Prompt and generation halted. Log security telemetry event.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 5: HOOKS & LISTENING GUIDE         -->
+  <!-- ========================================== -->
+  <section aria-labelledby="event-hooks" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="event-hooks" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="radio" class="w-6 h-6 text-secondary"></i> 5. OpenAI Hooks & Event Streaming Integration
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Complete guide to listening via the official SDK, zero-dependency Node.js fetch, Swarm handoffs, and Webhooks.
+        </p>
+      </div>
+      <span class="badge badge-secondary font-mono text-xs">Event Streaming</span>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- OPTION 1 MERMAID -->
-      <div class="card bg-base-100 shadow-lg border border-base-300">
-        <div class="card-body p-6">
-          <div class="flex items-center justify-between gap-2 border-b border-base-200 pb-3 mb-4">
-            <div class="flex items-center gap-2">
-              <span class="badge badge-primary font-bold">Option 1</span>
-              <h3 id="option-1-flow" class="text-lg font-bold text-base-content scroll-mt-20">Native Node.js CDN Server</h3>
-            </div>
-            <span class="badge badge-outline text-xs font-mono">node:http + node:zlib</span>
-          </div>
-          <p class="text-xs text-base-content/70 mb-4">
-            A single zero-dependency Node script serves pre-cached vendor libraries from disk over HTTP loopback or LAN.
-          </p>
-          <div class="overflow-x-auto bg-base-200/40 p-4 rounded-xl border border-base-300/60">
-            <div class="mermaid">
-flowchart TD
-    subgraph Host["Local Host / Private LAN"]
-        Vendored["Vendor Folder\n(./vendor-cdn/*.min.js)"]
-        Server["Pure Node Server\n(node:http + node:zlib)\nZero node_modules (&lt;2ms)"]
-        Vendored -->|Zero-Copy Stream| Server
-    end
-    
-    subgraph Clients["Browser Contexts"]
-        ReportA["Report A\n(index.html)"]
-        ReportB["Report B\n(metrics.html)"]
-        BrowserCache[("Browser Cache\nETag / 304 Not Mod")]
-    end
-    
-    ReportA -->|"GET http://127.0.0.1:8080/cdn/*"| Server
-    ReportB -->|"GET http://127.0.0.1:8080/cdn/*"| Server
-    Server -->|"200 OK (Brotli/Gzip) / 304"| BrowserCache
-    BrowserCache -.->|"Instant Cached Load"| ReportA
-    BrowserCache -.->|"Instant Cached Load"| ReportB
-            </div>
-          </div>
+      <!-- SDK Streaming Code -->
+      <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-base-200 pb-2">
+          <h3 id="sdk-hooks-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+            <span class="badge badge-sm badge-secondary font-mono">Node.js SDK</span> Assistants Stream Hooks
+          </h3>
+          <span class="text-3xs font-mono text-base-content/50">openai.beta.threads.runs.stream</span>
+        </div>
+        <div class="rounded-box border border-base-300 bg-base-200 p-3">
+          <pre class="text-xs m-0 whitespace-pre-wrap break-words font-mono text-base-content"><code class="language-javascript">import OpenAI from "openai";
+const openai = new OpenAI();
+const runStream = openai.beta.threads.runs.stream(threadId, { assistant_id });
+
+// 1. Tool Call Initiated
+runStream.on("toolCallCreated", (toolCall) => {
+  telemetry.emit("tool_start", { id: toolCall.id, name: toolCall.function?.name });
+});
+
+// 2. Argument Buffer Stream
+runStream.on("toolCallDelta", (delta) => {
+  telemetry.appendBuffer(delta.index, delta.function?.arguments);
+});
+
+// 3. Human Approval Requested
+runStream.on("event", (evt) => {
+  if (evt.event === "thread.run.requires_action") {
+    telemetry.emit("waiting_user", evt.data.required_action);
+  }
+});</code></pre>
         </div>
       </div>
 
-      <!-- OPTION 2 MERMAID -->
-      <div class="card bg-base-100 shadow-lg border border-base-300">
-        <div class="card-body p-6">
-          <div class="flex items-center justify-between gap-2 border-b border-base-200 pb-3 mb-4">
-            <div class="flex items-center gap-2">
-              <span class="badge badge-secondary font-bold">Option 2</span>
-              <h3 id="option-2-flow" class="text-lg font-bold text-base-content scroll-mt-20">Full Inlined Single File</h3>
-            </div>
-            <span class="badge badge-outline text-xs font-mono">Zero Network / Zero Port</span>
-          </div>
-          <p class="text-xs text-base-content/70 mb-4">
-            The build step inlines the full CSS and JS bundles directly into the HTML document. No network activity whatsoever.
-          </p>
-          <div class="overflow-x-auto bg-base-200/40 p-4 rounded-xl border border-base-300/60">
-            <div class="mermaid">
-flowchart TD
-    subgraph BuildStep["Zero-Dep Build Engine"]
-        SourceHTML["Semantic &lt;main&gt;\nFragment"]
-        VendorAssets["Local Asset Vault\n(CSS & JS files)"]
-        Stitcher["build-report.mjs\n(node:fs inline stitching)"]
-        SourceHTML --> Stitcher
-        VendorAssets --> Stitcher
-    end
-
-    subgraph OutputArtifact["Portable Air-Gapped Deliverable"]
-        SingleFile["Single report.html\n(&lt;style&gt; + &lt;script&gt; inlined)\n~1.8MB Total"]
-    end
-    Stitcher -->|Generates| SingleFile
-
-    subgraph Delivery["Zero-Network Execution"]
-        OfflinePC["Air-Gapped Workstation\n(USB / Email / AirDrop)"]
-        Browser["Any Web Browser\n(file:///report.html)"]
-        SingleFile --> OfflinePC --> Browser
-    end
-            </div>
-          </div>
+      <!-- Pure Fetch Zero-Dep Code -->
+      <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-base-200 pb-2">
+          <h3 id="fetch-listener-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+            <span class="badge badge-sm badge-accent font-mono">Zero-Dep Fetch</span> Pure SSE Stream Reader
+          </h3>
+          <span class="text-3xs font-mono text-base-content/50">ReadableStream reader</span>
+        </div>
+        <div class="rounded-box border border-base-300 bg-base-200 p-3">
+          <pre class="text-xs m-0 whitespace-pre-wrap break-words font-mono text-base-content"><code class="language-javascript">async function listenChatSSE(apiKey, payload, onChunk) {
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ ...payload, stream: true })
+  });
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop();
+    for (const l of lines) {
+      if (l.startsWith("data: ") && !l.includes("[DONE]")) {
+        onChunk(JSON.parse(l.slice(6)));
+      }
+    }
+  }
+}</code></pre>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- DEEP-DIVE CARDS -->
-  <section class="space-y-6">
-    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
-      <div class="min-w-0 flex-1">
-        <h2 id="deep-dive-comparison" class="text-2xl font-bold tracking-tight text-base-content scroll-mt-20">
-          In-Depth Architecture Analysis
-        </h2>
-        <p class="text-sm text-base-content/70 mt-1">
-          Detailed technical breakdown, operational characteristics, strengths, and constraints of each option.
-        </p>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      
-      <!-- OPTION 1 CARD -->
-      <div class="card bg-base-100 shadow-lg border border-base-300">
-        <div class="card-body p-6 sm:p-8 space-y-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-lg">
-              1
-            </div>
-            <div>
-              <h3 id="option-1-details" class="text-xl font-bold text-base-content scroll-mt-20">Option 1: Pure Node.js Standard Library CDN Server</h3>
-              <p class="text-xs text-base-content/60 font-mono">scripts/local-cdn.mjs &bull; zero npm install</p>
-            </div>
-          </div>
-
-          <p class="text-sm text-base-content/80 leading-relaxed">
-            You vendor the required libraries (DaisyUI, Tailwind, Chart.js, etc.) once into a local folder. A lightweight 60-line script using Node's native <code>node:http</code>, <code>node:fs</code>, and <code>node:zlib</code> serves them with HTTP caching, ETag validation, and Brotli/Gzip compression.
-          </p>
-
-          <div class="bg-base-200 rounded-xl p-4 font-mono text-xs space-y-2 border border-base-300">
-            <div class="text-primary font-bold">Execution Blueprint:</div>
-            <div class="text-base-content/80"># 1. Start the zero-dependency CDN (cold startup &lt;2ms)</div>
-            <div class="text-success font-semibold">node scripts/local-cdn.mjs --port 8080</div>
-            <div class="text-base-content/80"># 2. Reports reference assets locally:</div>
-            <div class="text-base-content/60">&lt;script src="http://127.0.0.1:8080/cdn/chart.js"&gt;&lt;/script&gt;</div>
-          </div>
-
-          <div class="space-y-3 pt-2">
-            <div class="text-sm font-bold text-base-content flex items-center gap-2">
-              <i data-lucide="check-circle" class="w-4 h-4 text-success"></i> Key Advantages
-            </div>
-            <ul class="text-xs space-y-1.5 text-base-content/70 list-disc list-inside">
-              <li><strong>Tiny HTML Reports:</strong> Individual HTML files remain tiny (~30KB–80KB) because they link to shared URLs.</li>
-              <li><strong>Browser Cache Multiplier:</strong> If an operator opens 20 different reports, the browser downloads the 16 libraries once; the next 19 load instantaneously from cache.</li>
-              <li><strong>Team/LAN Distribution:</strong> Can run on one machine in a private lab and serve assets to all workstations on the subnet.</li>
-              <li><strong>Zero Dependencies:</strong> No <code>node_modules</code>, zero supply-chain risk.</li>
-            </ul>
-
-            <div class="text-sm font-bold text-base-content flex items-center gap-2 pt-2">
-              <i data-lucide="alert-triangle" class="w-4 h-4 text-warning"></i> Limitations
-            </div>
-            <ul class="text-xs space-y-1.5 text-base-content/70 list-disc list-inside">
-              <li>Requires a background process running (e.g. on port 8080).</li>
-              <li>Double-clicking an HTML file without the server running results in unstyled reports.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- OPTION 2 CARD -->
-      <div class="card bg-base-100 shadow-lg border border-base-300">
-        <div class="card-body p-6 sm:p-8 space-y-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center font-bold text-lg">
-              2
-            </div>
-            <div>
-              <h3 id="option-2-details" class="text-xl font-bold text-base-content scroll-mt-20">Option 2: Full Inlined Single-File Report</h3>
-              <p class="text-xs text-base-content/60 font-mono">build-report.mjs --inline &bull; zero network</p>
-            </div>
-          </div>
-
-          <p class="text-sm text-base-content/80 leading-relaxed">
-            The build script reads the vendor files from disk and injects them directly into <code>&lt;style&gt;</code> and <code>&lt;script&gt;</code> tags inside the generated HTML report. The result is a 100% self-contained document that needs no internet, no server, and no port.
-          </p>
-
-          <div class="bg-base-200 rounded-xl p-4 font-mono text-xs space-y-2 border border-base-300">
-            <div class="text-secondary font-bold">Execution Blueprint:</div>
-            <div class="text-base-content/80"># 1. Build self-contained artifact in &lt;100ms</div>
-            <div class="text-success font-semibold">node scripts/build-report.mjs --inline --output report.html</div>
-            <div class="text-base-content/80"># 2. Open anywhere with zero network:</div>
-            <div class="text-base-content/60">xdg-open report.html # Opens directly via file://</div>
-          </div>
-
-          <div class="space-y-3 pt-2">
-            <div class="text-sm font-bold text-base-content flex items-center gap-2">
-              <i data-lucide="check-circle" class="w-4 h-4 text-success"></i> Key Advantages
-            </div>
-            <ul class="text-xs space-y-1.5 text-base-content/70 list-disc list-inside">
-              <li><strong>Zero Running Processes:</strong> No background Node server, no daemon, no port allocations.</li>
-              <li><strong>Maximum Portability:</strong> A single file can be emailed, transferred via USB stick, or archived permanently in compliance vaults.</li>
-              <li><strong>Double-Click Safe:</strong> Works over <code>file:///</code> protocol on any browser without server dependencies.</li>
-              <li><strong>Zero Dependencies:</strong> Built entirely with native Node.js string operations.</li>
-            </ul>
-
-            <div class="text-sm font-bold text-base-content flex items-center gap-2 pt-2">
-              <i data-lucide="alert-triangle" class="w-4 h-4 text-warning"></i> Limitations
-            </div>
-            <ul class="text-xs space-y-1.5 text-base-content/70 list-disc list-inside">
-              <li>Larger HTML file size (~1.5MB–3.5MB depending on which of the 16 CDNs are active).</li>
-              <li>Assets are duplicated in each HTML file rather than shared across reports in browser cache.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
     </div>
   </section>
 
   <!-- ========================================== -->
-  <!-- COMPREHENSIVE CYBERSECURITY ARCHITECTURE  -->
+  <!-- SECTION 6: COMPLEX FEATURE MATRIX          -->
   <!-- ========================================== -->
-  <section class="space-y-6">
-    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
-      <div class="min-w-0 flex-1">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="badge badge-error font-mono text-xs uppercase font-bold">Threat Modeling</span>
-          <span class="badge badge-warning font-mono text-xs uppercase font-bold">OPSEC</span>
-        </div>
-        <h2 id="security-architecture" class="text-2xl font-bold tracking-tight text-base-content scroll-mt-20">
-          Cybersecurity & Attack Surface Analysis
-        </h2>
-        <p class="text-sm text-base-content/70 mt-1">
-          Each deployment model shifts the trust boundary and introduces distinct vulnerability vectors across the supply chain, local network, and browser runtime.
-        </p>
-      </div>
-    </div>
-
-    <!-- SECURITY THREAT MATRIX TABLE -->
-    <div class="card bg-base-100 shadow-xl border border-base-300 overflow-hidden">
-      <div class="p-6 border-b border-base-200 flex items-center justify-between">
-        <div>
-          <h3 id="threat-matrix" class="text-xl font-bold text-base-content scroll-mt-20">Comprehensive Threat Comparison Matrix</h3>
-          <p class="text-xs text-base-content/60 mt-0.5">Evaluating trust boundaries, attack vectors, and operational liabilities</p>
-        </div>
-        <span class="badge badge-outline font-mono text-xs">4 Architectures Audited</span>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="table table-zebra w-full text-xs sm:text-sm">
-          <thead>
-            <tr class="bg-base-200 text-base-content font-bold">
-              <th>Threat Vector / Dimension</th>
-              <th class="text-error font-black">Public Third-Party CDN</th>
-              <th class="text-warning font-black">Fastify CDN (Node Modules)</th>
-              <th class="text-primary font-black">Option 1: Native Node CDN</th>
-              <th class="text-secondary font-black">Option 2: Single-File Inlining</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="font-bold">Supply-Chain Attacks</td>
-              <td><span class="badge badge-error text-xs font-bold">High Risk</span><br/><span class="text-2xs text-base-content/60">Third-party edge compromise</span></td>
-              <td><span class="badge badge-warning text-xs font-bold">Medium Risk</span><br/><span class="text-2xs text-base-content/60">Transitive npm dependencies</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Very Low</span><br/><span class="text-2xs text-base-content/60">Local pinned vendor files</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Very Low</span><br/><span class="text-2xs text-base-content/60">Local pinned vendor files</span></td>
-            </tr>
-            <tr>
-              <td class="font-bold">Path Traversal (Arbitrary File Read)</td>
-              <td><span class="badge badge-ghost text-xs">N/A</span><br/><span class="text-2xs text-base-content/60">Hosted remotely</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Safe</span><br/><span class="text-2xs text-base-content/60">Protected by @fastify/static</span></td>
-              <td><span class="badge badge-warning text-xs font-bold">Critical Implementation Risk</span><br/><span class="text-2xs text-base-content/60">Requires path.normalize & startsWith checks</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Immune</span><br/><span class="text-2xs text-base-content/60">No server running</span></td>
-            </tr>
-            <tr>
-              <td class="font-bold">Network Attack Surface</td>
-              <td><span class="badge badge-success text-xs">Zero Inbound</span><br/><span class="text-2xs text-base-content/60">Client outbound only</span></td>
-              <td><span class="badge badge-warning text-xs">Open Port</span><br/><span class="text-2xs text-base-content/60">Background Node daemon</span></td>
-              <td><span class="badge badge-warning text-xs">Open Port</span><br/><span class="text-2xs text-base-content/60">Port 8080 (must bind 127.0.0.1)</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Zero Inbound & Outbound</span><br/><span class="text-2xs text-base-content/60">0 ports open, file:// ready</span></td>
-            </tr>
-            <tr>
-              <td class="font-bold">OPSEC & Metadata Exfiltration</td>
-              <td><span class="badge badge-error text-xs font-bold">Active Leakage</span><br/><span class="text-2xs text-base-content/60">Leaks client IP, user-agent, referer</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Zero Outbound</span><br/><span class="text-2xs text-base-content/60">Internal loopback/LAN only</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Zero Outbound</span><br/><span class="text-2xs text-base-content/60">Internal loopback/LAN only</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Zero Outbound</span><br/><span class="text-2xs text-base-content/60">100% offline isolation</span></td>
-            </tr>
-            <tr>
-              <td class="font-bold">Content Security Policy (CSP)</td>
-              <td><span class="badge badge-warning text-xs">Requires Whitelist</span><br/><span class="text-2xs text-base-content/60">cdn.jsdelivr.net etc.</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Strict CSP</span><br/><span class="text-2xs text-base-content/60">Full header control</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Strict CSP</span><br/><span class="text-2xs text-base-content/60">Full header control</span></td>
-              <td><span class="badge badge-error text-xs font-bold">Triggers 'unsafe-inline'</span><br/><span class="text-2xs text-base-content/60">Or requires SHA-256 script hashes</span></td>
-            </tr>
-            <tr>
-              <td class="font-bold">DNS Rebinding / Cross-Origin Probing</td>
-              <td><span class="badge badge-ghost text-xs">Low</span><br/><span class="text-2xs text-base-content/60">Standard public domain</span></td>
-              <td><span class="badge badge-warning text-xs">Possible</span><br/><span class="text-2xs text-base-content/60">If bound to 0.0.0.0 / open CORS</span></td>
-              <td><span class="badge badge-warning text-xs">Possible</span><br/><span class="text-2xs text-base-content/60">If bound to 0.0.0.0 / open CORS</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Immune</span><br/><span class="text-2xs text-base-content/60">No HTTP listener</span></td>
-            </tr>
-            <tr>
-              <td class="font-bold">Process Privilege / RCE Exposure</td>
-              <td><span class="badge badge-ghost text-xs">None</span><br/><span class="text-2xs text-base-content/60">Static browser client</span></td>
-              <td><span class="badge badge-warning text-xs">Vulnerable</span><br/><span class="text-2xs text-base-content/60">If run as root with unpatched npm CVE</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Minimal</span><br/><span class="text-2xs text-base-content/60">Zero npm code, tiny attack surface</span></td>
-              <td><span class="badge badge-success text-xs font-bold">Immune</span><br/><span class="text-2xs text-base-content/60">No running daemon</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- 4 DEEP-DIVE SECURITY CARDS (2x2 GRID) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-      <!-- THREAT 1: PUBLIC CDN -->
-      <div class="card bg-base-100 shadow-lg border border-base-300">
-        <div class="card-body p-6 space-y-3">
-          <div class="flex items-center gap-2 text-error font-bold text-base">
-            <i data-lucide="globe" class="w-5 h-5"></i>
-            <h3 id="public-cdn-risks" class="text-base font-bold scroll-mt-20">1. Public Third-Party CDN Vectors</h3>
-          </div>
-          <p class="text-xs text-base-content/70 leading-relaxed">
-            Relying on external hosts (<code>cdn.jsdelivr.net</code>, <code>cdnjs.com</code>) outsources operational uptime and client trust to third parties.
-          </p>
-          <div class="bg-base-200/80 rounded-xl p-3 text-xs space-y-2 border border-base-300">
-            <div><strong class="text-error">&bull; Poisoned CDN Edge:</strong> If a CDN maintainer account or cache is breached, injected JavaScript executes on the user machine with the report's origin privileges.</div>
-            <div><strong class="text-error">&bull; OPSEC / Intelligence Leak:</strong> Classified or internal networks leak IP addresses, browser configurations, and document titles via the HTTP <code>Referer</code> header on every asset fetch.</div>
-            <div><strong class="text-warning">&bull; Essential Mitigation:</strong> Enforce Subresource Integrity (SRI) hashes (<code>integrity="sha384-..."</code>) on all tags.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- THREAT 2: FASTIFY DEPENDENCIES -->
-      <div class="card bg-base-100 shadow-lg border border-base-300">
-        <div class="card-body p-6 space-y-3">
-          <div class="flex items-center gap-2 text-warning font-bold text-base">
-            <i data-lucide="package-x" class="w-5 h-5"></i>
-            <h3 id="fastify-security-risks" class="text-base font-bold scroll-mt-20">2. Fastify & `node_modules` Vectors</h3>
-          </div>
-          <p class="text-xs text-base-content/70 leading-relaxed">
-            Introducing full server frameworks imports dozens of transitive packages into the air-gapped environment.
-          </p>
-          <div class="bg-base-200/80 rounded-xl p-3 text-xs space-y-2 border border-base-300">
-            <div><strong class="text-warning">&bull; Transitive Supply Chain:</strong> Packages like <code>fastify</code>, <code>@fastify/static</code>, and <code>@fastify/compress</code> pull in dependency trees subject to periodic prototype pollution and ReDoS CVEs.</div>
-            <div><strong class="text-warning">&bull; Air-Gapped Maintenance:</strong> Security patches cannot be automatically installed via <code>npm audit</code> in disconnected environments, leaving known vulnerabilities unpatched indefinitely.</div>
-            <div><strong class="text-error">&bull; Process Escalation:</strong> If executed under a privileged account (e.g. root in Docker), framework flaws can compromise the host machine.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- THREAT 3: OPTION 1 SERVER HARDENING -->
-      <div class="card bg-base-100 shadow-lg border border-base-300">
-        <div class="card-body p-6 space-y-3">
-          <div class="flex items-center gap-2 text-primary font-bold text-base">
-            <i data-lucide="server-crash" class="w-5 h-5"></i>
-            <h3 id="option-1-security-risks" class="text-base font-bold scroll-mt-20">3. Option 1: Native Node Server Implementation Risks</h3>
-          </div>
-          <p class="text-xs text-base-content/70 leading-relaxed">
-            Writing a zero-dependency server means you must manually implement the defenses that web frameworks handle automatically.
-          </p>
-          <div class="bg-base-200/80 rounded-xl p-3 text-xs space-y-2 border border-base-300">
-            <div><strong class="text-error">&bull; Path Traversal Vulnerability:</strong> Failure to sanitize incoming URLs can allow attackers to read <code>/etc/passwd</code> or SSH keys via <code>/cdn/../../../../etc/shadow</code>.</div>
-            <div><strong class="text-warning">&bull; 0.0.0.0 vs 127.0.0.1 Binding:</strong> Binding to <code>0.0.0.0</code> inadvertently broadcasts the asset server to the entire LAN/Wi-Fi subnet.</div>
-            <div><strong class="text-warning">&bull; Compression DoS:</strong> Unrestricted on-the-fly Brotli/Gzip compression on concurrent streams can exhaust CPU cores without thread isolation.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- THREAT 4: OPTION 2 CSP & INLINING -->
-      <div class="card bg-base-100 shadow-lg border border-base-300">
-        <div class="card-body p-6 space-y-3">
-          <div class="flex items-center gap-2 text-secondary font-bold text-base">
-            <i data-lucide="file-code" class="w-5 h-5"></i>
-            <h3 id="option-2-security-risks" class="text-base font-bold scroll-mt-20">4. Option 2: Full Inlining & CSP Hardening</h3>
-          </div>
-          <p class="text-xs text-base-content/70 leading-relaxed">
-            Eliminating network ports shifts the entire security boundary to client-side Content Security Policies and browser sandboxes.
-          </p>
-          <div class="bg-base-200/80 rounded-xl p-3 text-xs space-y-2 border border-base-300">
-            <div><strong class="text-error">&bull; CSP 'unsafe-inline' Dilemma:</strong> Inlining scripts into HTML forces the document to declare <code>script-src 'unsafe-inline'</code>, opening the door for DOM-based XSS attacks.</div>
-            <div><strong class="text-success">&bull; Cryptographic Hash Defense:</strong> Inlining scripts with pre-calculated <code>sha256-...</code> hashes restores strict CSP without requiring <code>'unsafe-inline'</code>.</div>
-            <div><strong class="text-warning">&bull; file:/// Origin Boundaries:</strong> Different browsers treat <code>file:///</code> paths with varying degrees of origin isolation, requiring verification in locked-down environments.</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- SECURITY HARDENING CHECKLIST -->
-    <div class="card bg-gradient-to-r from-base-100 to-base-200 shadow-xl border border-base-300 p-6 sm:p-8 space-y-4">
-      <div class="flex items-center gap-3">
-        <div class="p-3 bg-success text-success-content rounded-xl shadow-md">
-          <i data-lucide="shield-alert" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <h3 id="security-hardening-checklist" class="text-xl font-bold text-base-content scroll-mt-20">Production Hardening Checklist for Air-Gapped Environments</h3>
-          <p class="text-xs text-base-content/70">Mandatory engineering safeguards before shipping either zero-dependency setup</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-        <div class="p-4 bg-base-100 rounded-xl border border-primary/30 space-y-2">
-          <div class="text-primary font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
-            <i data-lucide="check" class="w-4 h-4 text-primary"></i> For Option 1 (Native Node CDN)
-          </div>
-          <ul class="text-xs space-y-1.5 text-base-content/80 list-disc list-inside">
-            <li><strong>Enforce Canonical Prefix Guard:</strong> Always verify <code>fullPath.startsWith(ASSET_DIR)</code> after <code>path.normalize()</code>.</li>
-            <li><strong>Bind to 127.0.0.1 Only:</strong> Never default to <code>0.0.0.0</code> unless explicit LAN sharing is authorized.</li>
-            <li><strong>Run as Unprivileged User:</strong> Execute Node under a sandboxed UID/GID with read-only filesystem permissions on <code>vendor-cdn/</code>.</li>
-            <li><strong>Pre-Compress Assets:</strong> Store <code>.br</code> and <code>.gz</code> pre-built files on disk to eliminate live CPU compression overhead.</li>
-          </ul>
-        </div>
-
-        <div class="p-4 bg-base-100 rounded-xl border border-secondary/30 space-y-2">
-          <div class="text-secondary font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
-            <i data-lucide="check" class="w-4 h-4 text-secondary"></i> For Option 2 (Full Inlining)
-          </div>
-          <ul class="text-xs space-y-1.5 text-base-content/80 list-disc list-inside">
-            <li><strong>SHA-256 Script Hashes:</strong> Automatically inject SHA-256 hashes into <code>&lt;meta http-equiv="Content-Security-Policy"&gt;</code> to block XSS.</li>
-            <li><strong>Pre-Audit Vendored Code:</strong> Run automated static analysis (e.g. Semgrep) against vendor JS files before initial bundle inclusion.</li>
-            <li><strong>Memory-Cap Safeguards:</strong> Strip redundant map files and comments to keep overall document size under 3MB.</li>
-            <li><strong>Sanitize HTML Dynamic Injectors:</strong> Ensure user data fragments passed into the builder are escaped before inlining.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- BENCHMARK / COMPARISON CHART -->
-  <section class="card bg-base-100 shadow-xl border border-base-300 p-6 sm:p-8 space-y-6">
-    <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
-      <div class="min-w-0 flex-1">
-        <h2 id="metrics-evaluation" class="text-2xl font-bold tracking-tight text-base-content scroll-mt-20">
-          Quantitative Comparison: Option 1 vs. Option 2
-        </h2>
-        <p class="text-sm text-base-content/70 mt-1">
-          Scoring architectural attributes on a 0–10 scale across performance, operational simplicity, and portability.
-        </p>
-      </div>
-      <div class="shrink-0 flex items-center gap-2">
-        <span class="badge badge-primary font-mono text-xs">Radar Comparison</span>
-      </div>
-    </div>
-
-    <!-- RESPONSIVE CHART CONTAINER WITH AUTO-FALLBACK -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-      <!-- CANVAS RADAR -->
-      <div class="lg:col-span-7 relative w-full h-80 sm:h-96 bg-base-200/30 rounded-2xl p-2 border border-base-200">
-        <canvas id="comparisonChart" class="w-full h-full" aria-label="Quantitative comparison radar chart" role="img"></canvas>
-      </div>
-
-      <!-- ZERO-JS VISUAL SCORECARD (ALWAYS VISIBLE EVEN IF OFFLINE) -->
-      <div class="lg:col-span-5 space-y-3 bg-base-200/50 p-5 rounded-2xl border border-base-300/70">
-        <div class="flex items-center justify-between pb-2 border-b border-base-300">
-          <span class="text-xs font-bold uppercase tracking-wider text-base-content/70">Dimension Breakdown</span>
-          <div class="flex items-center gap-3 text-xs">
-            <span class="flex items-center gap-1 font-bold text-primary"><span class="w-2.5 h-2.5 rounded-full bg-primary inline-block"></span> Opt 1</span>
-            <span class="flex items-center gap-1 font-bold text-secondary"><span class="w-2.5 h-2.5 rounded-full bg-secondary inline-block"></span> Opt 2</span>
-          </div>
-        </div>
-
-        <!-- 7 CRITERIA PROGRESS BARS -->
-        <div class="space-y-2 text-xs">
-          <div>
-            <div class="flex justify-between font-semibold mb-1">
-              <span>Zero node_modules</span>
-              <span class="font-mono text-2xs text-base-content/70">10 vs 10</span>
-            </div>
-            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
-              <div class="bg-primary h-full" style="width: 50%"></div>
-              <div class="bg-secondary h-full" style="width: 50%"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between font-semibold mb-1">
-              <span>Zero Port Conflicts</span>
-              <span class="font-mono text-2xs text-base-content/70">5 (Opt 1) vs 10 (Opt 2)</span>
-            </div>
-            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
-              <div class="bg-primary h-full" style="width: 33%"></div>
-              <div class="bg-secondary h-full" style="width: 67%"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between font-semibold mb-1">
-              <span>Air-Gapped Portability (USB/Mail)</span>
-              <span class="font-mono text-2xs text-base-content/70">7 (Opt 1) vs 10 (Opt 2)</span>
-            </div>
-            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
-              <div class="bg-primary h-full" style="width: 41%"></div>
-              <div class="bg-secondary h-full" style="width: 59%"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between font-semibold mb-1">
-              <span>Disk Footprint per Report</span>
-              <span class="font-mono text-2xs text-base-content/70">10 (~50KB) vs 4 (~2MB)</span>
-            </div>
-            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
-              <div class="bg-primary h-full" style="width: 71%"></div>
-              <div class="bg-secondary h-full" style="width: 29%"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between font-semibold mb-1">
-              <span>Browser Cache Multiplier</span>
-              <span class="font-mono text-2xs text-base-content/70">10 (Shared) vs 3 (Per-file)</span>
-            </div>
-            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
-              <div class="bg-primary h-full" style="width: 77%"></div>
-              <div class="bg-secondary h-full" style="width: 23%"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between font-semibold mb-1">
-              <span>LAN Subnet Reusability</span>
-              <span class="font-mono text-2xs text-base-content/70">10 (Hostable) vs 4 (Local only)</span>
-            </div>
-            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
-              <div class="bg-primary h-full" style="width: 71%"></div>
-              <div class="bg-secondary h-full" style="width: 29%"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between font-semibold mb-1">
-              <span>Supply-Chain Isolation</span>
-              <span class="font-mono text-2xs text-base-content/70">9 (Local code) vs 10 (Static)</span>
-            </div>
-            <div class="w-full bg-base-300 h-2 rounded-full overflow-hidden flex">
-              <div class="bg-primary h-full" style="width: 47%"></div>
-              <div class="bg-secondary h-full" style="width: 53%"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- STRUCTURED FEATURE COMPARISON TABLE -->
-  <section class="card bg-base-100 shadow-xl border border-base-300 overflow-hidden">
-    <div class="p-6 border-b border-base-200">
-      <h2 id="feature-matrix" class="text-2xl font-bold tracking-tight text-base-content scroll-mt-20">
-        Direct Architectural Matrix
-      </h2>
-      <p class="text-sm text-base-content/70 mt-1">
-        Side-by-side technical evaluation including the rejected Fastify model for context.
-      </p>
-    </div>
-
-    <div class="overflow-x-auto">
-      <table class="table table-zebra w-full text-sm">
-        <thead>
-          <tr class="bg-base-200 text-base-content font-bold">
-            <th>Evaluation Dimension</th>
-            <th class="text-primary font-black">Option 1: Native Node CDN</th>
-            <th class="text-secondary font-black">Option 2: Single-File Inlining</th>
-            <th class="text-base-content/50">Fastify CDN (Rejected)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="font-bold">node_modules Dependency</td>
-            <td><span class="badge badge-success font-mono font-bold text-xs">0 Packages</span></td>
-            <td><span class="badge badge-success font-mono font-bold text-xs">0 Packages</span></td>
-            <td><span class="badge badge-error font-mono font-bold text-xs">10+ Packages</span></td>
-          </tr>
-          <tr>
-            <td class="font-bold">Server Process Required</td>
-            <td><span class="badge badge-warning text-xs font-semibold">Yes (Port 8080)</span></td>
-            <td><span class="badge badge-success text-xs font-semibold">None (0 Ports)</span></td>
-            <td><span class="badge badge-error text-xs font-semibold">Yes (Heavy Runtime)</span></td>
-          </tr>
-          <tr>
-            <td class="font-bold">Cold Startup Latency</td>
-            <td class="font-mono text-success font-bold">&lt;2ms (Native Node)</td>
-            <td class="font-mono text-success font-bold">0ms (Static file)</td>
-            <td class="font-mono text-error">50ms–150ms</td>
-          </tr>
-          <tr>
-            <td class="font-bold">Memory Footprint (RAM)</td>
-            <td class="font-mono text-xs">~15MB RSS</td>
-            <td class="font-mono text-xs">0MB (Client-only)</td>
-            <td class="font-mono text-xs">~50MB–80MB RSS</td>
-          </tr>
-          <tr>
-            <td class="font-bold">Generated Report File Size</td>
-            <td class="font-mono text-xs">~30KB–80KB (Tiny)</td>
-            <td class="font-mono text-xs">~1.5MB–3.5MB (Self-contained)</td>
-            <td class="font-mono text-xs">~30KB–80KB</td>
-          </tr>
-          <tr>
-            <td class="font-bold">Browser Cache Multiplier</td>
-            <td><span class="badge badge-success text-xs font-bold">High (Shared across reports)</span></td>
-            <td><span class="badge badge-ghost text-xs">N/A (Embedded per report)</span></td>
-            <td><span class="badge badge-success text-xs font-bold">High</span></td>
-          </tr>
-          <tr>
-            <td class="font-bold">Air-Gapped USB / Email Portability</td>
-            <td><span class="badge badge-warning text-xs font-semibold">Moderate (Needs local server)</span></td>
-            <td><span class="badge badge-success text-xs font-bold">Flawless (Double-click ready)</span></td>
-            <td><span class="badge badge-warning text-xs font-semibold">Moderate</span></td>
-          </tr>
-          <tr>
-            <td class="font-bold">Network Security / Firewall Safe</td>
-            <td><span class="badge badge-success text-xs">100% Loopback / Private</span></td>
-            <td><span class="badge badge-success text-xs">100% Zero-Network</span></td>
-            <td><span class="badge badge-success text-xs">100% Private</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- DECISION GUIDE / RECOMMENDATION -->
-  <section class="card bg-gradient-to-br from-base-100 to-base-200/50 shadow-xl border border-base-300 p-6 sm:p-8 space-y-6">
-    <div class="flex items-center gap-3">
-      <div class="p-3 bg-primary text-primary-content rounded-xl shadow-md">
-        <i data-lucide="compass" class="w-6 h-6"></i>
-      </div>
+  <section aria-labelledby="feature-implementation-matrix" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
       <div>
-        <h2 id="strategic-verdict" class="text-2xl font-bold text-base-content scroll-mt-20">Strategic Recommendation</h2>
-        <p class="text-sm text-base-content/70">How to choose the ideal pattern for your specific environment</p>
+        <h2 id="feature-implementation-matrix" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="sliders" class="w-6 h-6 text-primary"></i> 6. Implementation Matrix: Complex Tracker Features in Codex
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Exact wire field mappings for the 5 advanced telemetry capabilities.
+        </p>
       </div>
+      <span class="badge badge-primary font-mono text-xs">Architecture Mapping</span>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-      <div class="p-5 rounded-2xl bg-base-100 border-2 border-primary/30 space-y-3">
-        <div class="flex items-center gap-2 text-primary font-bold">
-          <i data-lucide="server" class="w-5 h-5"></i>
-          Choose Option 1 (Native Node CDN) when:
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Feature Card 1 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+            <i data-lucide="clock" class="w-4 h-4 text-primary"></i>
+          </div>
+          <h3 id="feature-stopwatch-heading" class="font-bold text-sm text-base-content">
+            Active Tool Stopwatch
+          </h3>
         </div>
-        <ul class="text-xs space-y-2 text-base-content/80 list-disc list-inside leading-relaxed">
-          <li>You are actively developing locally and running the dev server (<code>localhost:3000</code>).</li>
-          <li>You generate dozens of reports per day and want to keep report files small (~50KB each).</li>
-          <li>You want all reports to share the browser cache for instant loading.</li>
-          <li>You want to serve reports across an internal team subnet or local staging container.</li>
+        <p class="text-xs text-base-content/80">
+          Begins timing as soon as <code>delta.tool_calls[0].function.name</code> arrives; stops timing when the local runner submits outputs back via <code>role: "tool"</code>.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-primary">
+          delta.tool_calls &rarr; submit_tool_outputs
+        </div>
+      </div>
+
+      <!-- Feature Card 2 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center shrink-0">
+            <i data-lucide="terminal" class="w-4 h-4 text-secondary"></i>
+          </div>
+          <h3 id="feature-terminal-heading" class="font-bold text-sm text-base-content">
+            Terminal Drawer & Diffs
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Intercepts stdout/stderr from child process and packs exit code and output strings into the JSON content returned to the OpenAI thread.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-secondary">
+          tool.content = JSON.stringify({ stdout, stderr })
+        </div>
+      </div>
+
+      <!-- Feature Card 3 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center shrink-0">
+            <i data-lucide="bell" class="w-4 h-4 text-warning"></i>
+          </div>
+          <h3 id="feature-alerts-heading" class="font-bold text-sm text-base-content">
+            Attention Alerts & Audio
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Fires on <code>requires_action</code> or <code>name === "ask_user"</code>. Plays browser audio chime and highlights high-impact parameter diffs.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-warning">
+          AudioContext.createOscillator() + Banner
+        </div>
+      </div>
+
+      <!-- Feature Card 4 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center shrink-0">
+            <i data-lucide="users" class="w-4 h-4 text-accent"></i>
+          </div>
+          <h3 id="feature-swarm-heading" class="font-bold text-sm text-base-content">
+            Swarm Multi-Agent Handoffs
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          In OpenAI Swarm, tools return an <code>Agent</code> instance to hand off execution. The tracker monitors agent transfers in an interactive hierarchy.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-accent">
+          on_handoff: TriageAgent &rarr; BillingAgent
+        </div>
+      </div>
+
+      <!-- Feature Card 5 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-info/20 flex items-center justify-center shrink-0">
+            <i data-lucide="activity" class="w-4 h-4 text-info"></i>
+          </div>
+          <h3 id="feature-saturation-heading" class="font-bold text-sm text-base-content">
+            Token Saturation Gauge
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Calculates token pressure against context boundaries (128k for GPT-4o, 200k for o1) and calculates token emission velocity (tokens/sec).
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-info">
+          (prompt + completion) / context_limit * 100
+        </div>
+      </div>
+
+      <!-- Feature Card 6 -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center shrink-0">
+            <i data-lucide="layers" class="w-4 h-4 text-success"></i>
+          </div>
+          <h3 id="feature-strategy-heading" class="font-bold text-sm text-base-content">
+            Agnostic Facade Normalization
+          </h3>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Encapsulates provider variance behind <code>AgentTrackerFacade</code>, ensuring zero vendor fields leak to client UI components.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/60 p-2 rounded text-success">
+          CodexSwarmStrategy &rarr; CanonicalAgentEvent
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SECTION 7: DOCUMENTATION & CITATIONS       -->
+  <!-- ========================================== -->
+  <section aria-labelledby="documentation-links" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="documentation-links" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="book-marked" class="w-6 h-6 text-primary"></i> 7. Official Documentation & Specifications
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          Direct links to OpenAI developer guides, SDK repositories, and repository markdown references.
+        </p>
+      </div>
+      <span class="badge badge-primary font-mono text-xs">Official Sources</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Repo References -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <h3 id="repo-docs-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+          <i data-lucide="folder-git-2" class="w-4 h-4 text-primary"></i> Repository Documentation
+        </h3>
+        <ul class="space-y-2 text-xs">
+          <li>
+            <a href="openai-codex-telemetry-reference.md" onclick="if(window.openMarkdownViewer){openMarkdownViewer('research/openai-codex-telemetry-reference.md');return false;}" class="link link-primary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i> openai-codex-telemetry-reference.md
+            </a>
+            <span class="text-3xs text-base-content/60 block pl-5">The complete markdown guide for OpenAI telemetry and wire formats.</span>
+          </li>
+          <li>
+            <a href="../openspec/changes/agent-tracker/design.md" onclick="if(window.openMarkdownViewer){openMarkdownViewer('openspec/changes/agent-tracker/design.md');return false;}" class="link link-primary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="file-code" class="w-3.5 h-3.5"></i> openspec/changes/agent-tracker/design.md
+            </a>
+            <span class="text-3xs text-base-content/60 block pl-5">Architectural design for AgentTrackerFacade and Strategy pattern.</span>
+          </li>
+          <li>
+            <a href="../openspec/changes/agent-tracker/tasks.md" onclick="if(window.openMarkdownViewer){openMarkdownViewer('openspec/changes/agent-tracker/tasks.md');return false;}" class="link link-primary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="check-square" class="w-3.5 h-3.5"></i> openspec/changes/agent-tracker/tasks.md
+            </a>
+            <span class="text-3xs text-base-content/60 block pl-5">Actionable milestones for the live agent tracker implementation.</span>
+          </li>
         </ul>
       </div>
 
-      <div class="p-5 rounded-2xl bg-base-100 border-2 border-secondary/30 space-y-3">
-        <div class="flex items-center gap-2 text-secondary font-bold">
-          <i data-lucide="file-check-2" class="w-5 h-5"></i>
-          Choose Option 2 (Full Inlining) when:
-        </div>
-        <ul class="text-xs space-y-2 text-base-content/80 list-disc list-inside leading-relaxed">
-          <li>You need to email or deliver the report to external stakeholders or executives.</li>
-          <li>The recipient is on an air-gapped machine and will open it with double-click (<code>file:///</code>).</li>
-          <li>You cannot guarantee background services or ports (like port 8080) are open.</li>
-          <li>The deliverable must remain permanently archived and render identically in 10 years with 0 infrastructure.</li>
+      <!-- OpenAI Official Docs -->
+      <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+        <h3 id="external-docs-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+          <i data-lucide="external-link" class="w-4 h-4 text-secondary"></i> Official OpenAI API Guides
+        </h3>
+        <ul class="space-y-2 text-xs">
+          <li>
+            <a href="https://platform.openai.com/docs/guides/function-calling" target="_blank" rel="noopener noreferrer" class="link link-secondary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="link" class="w-3.5 h-3.5"></i> OpenAI Function Calling & Tool Use Guide
+            </a>
+          </li>
+          <li>
+            <a href="https://platform.openai.com/docs/assistants/deep-dive" target="_blank" rel="noopener noreferrer" class="link link-secondary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="link" class="w-3.5 h-3.5"></i> OpenAI Assistants API v2 & Tool Execution
+            </a>
+          </li>
+          <li>
+            <a href="https://platform.openai.com/docs/guides/reasoning" target="_blank" rel="noopener noreferrer" class="link link-secondary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="link" class="w-3.5 h-3.5"></i> OpenAI Reasoning Models (o1, o3-mini)
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/openai/swarm" target="_blank" rel="noopener noreferrer" class="link link-secondary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="github" class="w-3.5 h-3.5"></i> OpenAI Swarm Multi-Agent Framework
+            </a>
+          </li>
+          <li>
+            <a href="https://platform.openai.com/docs/guides/webhooks" target="_blank" rel="noopener noreferrer" class="link link-secondary font-mono font-semibold flex items-center gap-1.5">
+              <i data-lucide="link" class="w-3.5 h-3.5"></i> OpenAI Webhooks Documentation
+            </a>
+          </li>
         </ul>
       </div>
     </div>
   </section>
 
+  <!-- ========================================== -->
+  <!-- SECTION 8: CODEX TIERS (SOL, TERRA, LUNA, ASTRA) -->
+  <!-- ========================================== -->
+  <section aria-labelledby="codex-tier-family" class="space-y-6">
+    <div class="border-b border-base-300 pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 id="codex-tier-family" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-6 h-6 text-warning"></i> 8. OpenAI Codex Tier Family: Astra, Sol, Terra, and Luna
+        </h2>
+        <p class="text-xs sm:text-sm text-base-content/70 mt-1">
+          OpenAI's official cost-intelligence tier lineup powering the Codex CLI, IDE extensions, and multi-file agents.
+        </p>
+      </div>
+      <span class="badge badge-warning font-mono text-xs font-bold">GPT-6 Generation</span>
+    </div>
+
+    <!-- The 4 Celestial Tiers Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Astra -->
+      <div class="card bg-base-100 border-2 border-primary/40 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-sm text-primary font-mono flex items-center gap-1">
+            <i data-lucide="star" class="w-4 h-4 text-primary"></i> Astra
+          </span>
+          <span class="badge badge-xs badge-primary font-mono">Flagship</span>
+        </div>
+        <p class="text-2xs font-semibold text-base-content font-mono">gpt-6-astra</p>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          The pinnacle intelligence tier. Used for large architectural overhauls, formal verification, and mission-critical system design where maximum reasoning outweighs cost.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/80 p-1.5 rounded text-primary">
+          Highest Reasoning Depth
+        </div>
+      </div>
+
+      <!-- Sol -->
+      <div class="card bg-base-100 border-2 border-secondary/40 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-sm text-secondary font-mono flex items-center gap-1">
+            <i data-lucide="sun" class="w-4 h-4 text-secondary"></i> Sol
+          </span>
+          <span class="badge badge-xs badge-secondary font-mono">Workhorse</span>
+        </div>
+        <p class="text-2xs font-semibold text-base-content font-mono">gpt-6.1-sol</p>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          The Codex coding sweet spot. Highly recommended for multi-file autonomous agents, complex refactoring, test suite generation, and tool loops at lower latency.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/80 p-1.5 rounded text-secondary">
+          Codex Primary Recommendation
+        </div>
+      </div>
+
+      <!-- Terra -->
+      <div class="card bg-base-100 border-2 border-accent/40 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-sm text-accent font-mono flex items-center gap-1">
+            <i data-lucide="globe" class="w-4 h-4 text-accent"></i> Terra
+          </span>
+          <span class="badge badge-xs badge-accent font-mono">Balanced</span>
+        </div>
+        <p class="text-2xs font-semibold text-base-content font-mono">gpt-6-terra</p>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          Fast, balanced communication engine. Optimized for pull request generation, technical documentation, code reviews, and visual UI/diagram comprehension.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/80 p-1.5 rounded text-accent">
+          High Token Velocity
+        </div>
+      </div>
+
+      <!-- Luna -->
+      <div class="card bg-base-100 border-2 border-info/40 p-4 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-sm text-info font-mono flex items-center gap-1">
+            <i data-lucide="moon" class="w-4 h-4 text-info"></i> Luna
+          </span>
+          <span class="badge badge-xs badge-info font-mono">Lightweight</span>
+        </div>
+        <p class="text-2xs font-semibold text-base-content font-mono">gpt-6-luna</p>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          The ultra-fast, budget-optimized tier. Designed for rapid single-file edits, lint remediation, syntax validation, and high-frequency automated subagents.
+        </p>
+        <div class="text-3xs font-mono bg-base-200/80 p-1.5 rounded text-info">
+          Sub-200ms Fast TTFT
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier Compatibility Assertion -->
+    <div class="card bg-base-100 border border-base-300 p-5 space-y-3 shadow-xs">
+      <h3 id="tier-wire-compatibility-heading" class="font-bold text-sm text-base-content flex items-center gap-2">
+        <i data-lucide="check-check" class="w-4 h-4 text-success"></i> Wire Protocol Compatibility: Do They Follow the Same Logic?
+      </h3>
+      <p class="text-xs text-base-content/80 leading-relaxed">
+        <strong>Yes, 100% strictly.</strong> Whether your enterprise CLI executes <code class="font-bold text-primary">codex --model gpt-6.1-sol</code> or <code class="font-bold text-secondary">codex --model gpt-6-astra</code>, every model in the celestial family adheres to the identical streaming function-calling protocol:
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+        <div class="p-3 bg-base-200/50 rounded-lg border border-base-200 space-y-1">
+          <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60">Tool Call Wire Path</span>
+          <div class="text-success font-bold">delta.tool_calls[i]</div>
+          <p class="text-3xs font-sans text-base-content/70">Identical across all 4 tiers with <code>call_*</code> IDs.</p>
+        </div>
+        <div class="p-3 bg-base-200/50 rounded-lg border border-base-200 space-y-1">
+          <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60">String Accumulator</span>
+          <div class="text-success font-bold">function.arguments buffer</div>
+          <p class="text-3xs font-sans text-base-content/70">Buffered by index until <code>finish_reason: "tool_calls"</code>.</p>
+        </div>
+        <div class="p-3 bg-base-200/50 rounded-lg border border-base-200 space-y-1">
+          <span class="text-3xs uppercase tracking-wider font-bold text-base-content/60">HITL Approvals</span>
+          <div class="text-success font-bold">requires_action / ask_user</div>
+          <p class="text-3xs font-sans text-base-content/70">Pauses thread execution identically on all models.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Script: Visuals Hydration -->
   <script>
-  // Bulletproof Chart.js initialization with auto-polling & theme-sync
-  (function initRadarComparison() {
-    let attempts = 0;
-    const maxAttempts = 50;
-
-    function render() {
-      const canvas = document.getElementById('comparisonChart');
-      if (!canvas) return;
-
-      if (typeof Chart === 'undefined') {
-        attempts++;
-        if (attempts < maxAttempts) {
-          setTimeout(render, 80);
-        }
-        return;
+    function initCodexReportVisuals() {
+      // 1. Highlight.js
+      if (window.hljs) {
+        window.hljs.highlightAll();
       }
 
-      if (canvas.__initialized) return;
-      canvas.__initialized = true;
-
-      const chart = new Chart(canvas, {
-        type: 'radar',
-        data: {
-          labels: [
-            'Zero node_modules',
-            'Zero Port Conflicts',
-            'Air-Gapped Portability',
-            'Low Disk per Report',
-            'Browser Cache Reuse',
-            'LAN Subnet Sharing',
-            'Supply-Chain Isolation'
-          ],
-          datasets: [
-            {
-              label: 'Option 1: Native Node CDN Server',
-              data: [10, 5, 7, 10, 10, 10, 9],
-              backgroundColor: 'rgba(37, 99, 235, 0.25)',
-              borderColor: 'rgba(37, 99, 235, 1)',
-              borderWidth: 2,
-              pointBackgroundColor: 'rgba(37, 99, 235, 1)',
-              pointRadius: 4
-            },
-            {
-              label: 'Option 2: Single-File Inlining',
-              data: [10, 10, 10, 4, 3, 4, 10],
-              backgroundColor: 'rgba(217, 70, 239, 0.25)',
-              borderColor: 'rgba(217, 70, 239, 1)',
-              borderWidth: 2,
-              pointBackgroundColor: 'rgba(217, 70, 239, 1)',
-              pointRadius: 4
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'top',
-              labels: {
-                boxWidth: 14,
-                font: {
-                  weight: 'bold',
-                  size: 12
-                }
+      // 2. Chart.js Token Breakdown
+      const canvas = document.getElementById("tokenBreakdownChart");
+      if (canvas && window.Chart && !canvas.__chartInitialized) {
+        canvas.__chartInitialized = true;
+        const chart = new Chart(canvas, {
+          type: "bar",
+          data: {
+            labels: [
+              "Simple Refactor",
+              "Bug Diagnosis",
+              "Feature Planning",
+              "Test Suite Generation",
+              "Security Audit"
+            ],
+            datasets: [
+              {
+                label: "Prompt Input Tokens",
+                data: [1200, 3400, 4800, 6200, 8500],
+                backgroundColor: "rgba(99, 102, 241, 0.75)",
+                borderColor: "rgba(99, 102, 241, 1)",
+                borderWidth: 1
+              },
+              {
+                label: "Hidden Reasoning Tokens (o1/o3)",
+                data: [800, 2400, 4200, 3100, 6800],
+                backgroundColor: "rgba(236, 72, 153, 0.75)",
+                borderColor: "rgba(236, 72, 153, 1)",
+                borderWidth: 1
+              },
+              {
+                label: "Action / Tool Output Tokens",
+                data: [350, 420, 950, 1800, 750],
+                backgroundColor: "rgba(16, 185, 129, 0.75)",
+                borderColor: "rgba(16, 185, 129, 1)",
+                borderWidth: 1
               }
-            },
-            tooltip: {
-              callbacks: {
-                label: (context) => ` ${context.dataset.label}: ${context.raw}/10`
-              }
-            }
+            ]
           },
-          scales: {
-            r: {
-              min: 0,
-              max: 10,
-              ticks: {
-                stepSize: 2,
-                backdropColor: 'transparent',
-                font: { size: 10 }
-              },
-              grid: {
-                color: 'rgba(150, 150, 150, 0.2)'
-              },
-              angleLines: {
-                color: 'rgba(150, 150, 150, 0.2)'
-              },
-              pointLabels: {
-                font: {
-                  size: 11,
-                  weight: '600'
-                }
-              }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { stacked: true, grid: { display: false } },
+              y: { stacked: true, beginAtZero: true }
+            },
+            plugins: {
+              legend: { position: "top" }
             }
           }
+        });
+
+        window.reportCharts = window.reportCharts || [];
+        if (!window.reportCharts.includes(chart)) {
+          window.reportCharts.push(chart);
         }
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(initCodexReportVisuals, 50);
       });
-
-      window.reportCharts = window.reportCharts || [];
-      window.reportCharts.push(chart);
-    }
-
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      render();
     } else {
-      document.addEventListener('DOMContentLoaded', render);
+      setTimeout(initCodexReportVisuals, 50);
     }
-    window.addEventListener('load', render);
-  })();
   </script>
   </main>
 
@@ -1826,6 +1990,9 @@ async function setReportTheme(themeName) {
       } catch (_) {}
     });
   }
+
+  // Dynamic Datastar reactive $theme signal sync
+  syncDatastarTheme(themeName);
 }
 
 /**
@@ -1835,12 +2002,15 @@ function initTOC() {
   if (typeof document === "undefined") return;
   const tocList = document.getElementById("report-toc-list");
   if (!tocList) return;
-  const headings = document.querySelectorAll("main h1, main h2, main h3");
+  const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).filter(
+    (h) => !h.closest(".fc, .katex, .gridjs, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
+  );
   tocList.innerHTML = "";
 
   headings.forEach((h) => {
     if (!h.id) {
-      h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const slug = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      h.id = slug || `section-${Math.random().toString(36).slice(2, 7)}`;
     }
     const level = parseInt(h.tagName.substring(1), 10);
     const li = document.createElement("li");
@@ -1973,12 +2143,62 @@ function exportReportPdf() {
 }
 
 /**
+ * Mode-adaptive navbar status badge and download options.
+ */
+function initModeBadge() {
+  if (typeof document === "undefined") return;
+  const rawMode = document.documentElement.getAttribute("data-report-mode") || "report";
+  const badgeEl = document.getElementById("navbar-mode-badge");
+  const pdfStatusBadge = document.querySelector("#download-pdf-btn .badge");
+
+  if (badgeEl) {
+    badgeEl.classList.remove("hidden", "badge-neutral", "badge-primary", "badge-secondary", "badge-accent", "badge-info", "badge-success", "badge-warning", "badge-ghost");
+
+    switch (rawMode) {
+      case "print":
+        badgeEl.textContent = "PRINT";
+        badgeEl.classList.add("badge-neutral");
+        break;
+      case "presentation":
+        badgeEl.textContent = "PRESENTATION";
+        badgeEl.classList.add("badge-secondary");
+        break;
+      case "dashboard":
+        badgeEl.textContent = "DASHBOARD";
+        badgeEl.classList.add("badge-info");
+        break;
+      case "working-report":
+        badgeEl.textContent = "JOURNEY";
+        badgeEl.classList.add("badge-accent");
+        break;
+      case "live-report":
+        badgeEl.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-success animate-pulse mr-1"></span>LIVE`;
+        badgeEl.classList.add("badge-success", "badge-outline");
+        break;
+      case "report":
+      default:
+        badgeEl.textContent = "REPORT";
+        badgeEl.classList.add("badge-ghost");
+        break;
+    }
+  }
+
+  if (pdfStatusBadge && rawMode === "print") {
+    pdfStatusBadge.textContent = "PDF-Ready";
+    pdfStatusBadge.classList.remove("badge-warning");
+    pdfStatusBadge.classList.add("badge-success");
+  }
+}
+
+/**
  * Initializes the download menu actions (HTML & PDF).
  */
 function initDownloadButton() {
   if (typeof document === "undefined") return;
   const htmlBtn = document.getElementById("download-html-btn");
   const pdfBtn = document.getElementById("download-pdf-btn");
+
+  initModeBadge();
 
   if (htmlBtn) {
     htmlBtn.addEventListener("click", async () => {
@@ -2005,8 +2225,8 @@ function initDownloadButton() {
 
   if (pdfBtn) {
     pdfBtn.addEventListener("click", () => {
-      const reportMode = document.documentElement.getAttribute("data-report-mode") || "interactive";
-      if (reportMode === "interactive") {
+      const reportMode = document.documentElement.getAttribute("data-report-mode") || "report";
+      if (reportMode !== "print") {
         const modal = document.getElementById("pdf-not-ready-modal");
         if (modal && typeof modal.showModal === "function") {
           modal.showModal();
@@ -2056,10 +2276,22 @@ function initDayjs() {
  * Only initializes 3D canvas when explicitly requested as a presentation.
  */
 function initImpress() {
-  if (typeof window === "undefined" || !window.impress) return;
+  if (typeof window === "undefined") return;
 
   const impressRoot = document.getElementById("impress");
   if (!impressRoot) return;
+
+  // Setup presentation mode observer once
+  if (!window._impressObserverInstalled) {
+    window._impressObserverInstalled = true;
+    const observer = new MutationObserver(() => {
+      initImpress();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-presentation"] });
+    if (document.body) {
+      observer.observe(document.body, { attributes: true, attributeFilter: ["data-presentation"] });
+    }
+  }
 
   // Presentation Guard: Impress 3D initialization ONLY activates when explicitly requested
   const isPresentationRequested =
@@ -2074,15 +2306,43 @@ function initImpress() {
     return;
   }
 
+  // Presentation mode active: clear static fallback
+  impressRoot.classList.remove("impress-static-fallback");
+
+  if (!window.impress) {
+    console.warn("[html-report] Impress.js script not loaded.");
+    return;
+  }
+
   try {
     if (!impressRoot.dataset.impressInitialized) {
       impressRoot.dataset.impressInitialized = "true";
       const api = window.impress("impress");
       api.init();
       window.impressApi = api;
+    } else if (window.impressApi && typeof window.impressApi.goto === "function") {
+      window.impressApi.goto(0);
     }
   } catch (err) {
     console.warn("[html-report] Impress.js initialization notice:", err);
+  }
+}
+
+function impressNext() {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.next === "function") {
+    return window.impressApi.next();
+  }
+}
+
+function impressPrev() {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.prev === "function") {
+    return window.impressApi.prev();
+  }
+}
+
+function impressGoto(step) {
+  if (typeof window !== "undefined" && window.impressApi && typeof window.impressApi.goto === "function") {
+    return window.impressApi.goto(step);
   }
 }
 
@@ -2117,6 +2377,43 @@ function initMockjs() {
 }
 
 /**
+ * Auto-links any mentioned *.md files in text nodes to interactive viewer triggers.
+ */
+function autoLinkMarkdownFiles(root = document.body) {
+  if (typeof document === "undefined" || !root) return;
+  try {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.nodeValue || !node.nodeValue.includes(".md")) return NodeFilter.FILTER_REJECT;
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        const tag = parent.tagName.toLowerCase();
+        if (tag === "a" || tag === "script" || tag === "style" || tag === "button" || tag === "textarea") {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const nodes = [];
+    while (walker.nextNode()) {
+      nodes.push(walker.currentNode);
+    }
+
+    const mdRegex = /\b([a-zA-Z0-9_\/-]+\.md)\b/g;
+    for (const node of nodes) {
+      const text = node.nodeValue;
+      if (!text || !text.match(mdRegex)) continue;
+      const span = document.createElement("span");
+      span.innerHTML = text.replace(mdRegex, (match) => {
+        return `<a href="${match}" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('${match}');return false;}" class="link link-primary font-mono text-xs underline decoration-primary/40 hover:decoration-primary cursor-pointer">${match}</a>`;
+      });
+      node.parentNode.replaceChild(span, node);
+    }
+  } catch (_) {}
+}
+
+/**
  * Showdown runtime initialization & data-showdown hydration.
  */
 function initShowdown() {
@@ -2131,10 +2428,11 @@ function initShowdown() {
     });
     window.showdownConverter = converter;
 
-    document.querySelectorAll("[data-showdown]").forEach((el) => {
-      if (el.dataset.showdownInitialized) return;
-      el.dataset.showdownInitialized = "true";
-      const srcSelector = el.getAttribute("data-showdown-source");
+    document.querySelectorAll("[data-showdown], [data-markdown-showdown]").forEach((el) => {
+      if (el._sdInitialized || el.dataset.sdInitialized) return;
+      el._sdInitialized = true;
+      el.dataset.sdInitialized = "true";
+      const srcSelector = el.getAttribute("data-showdown-source") || el.getAttribute("data-markdown-showdown-source");
       let md = "";
       if (srcSelector) {
         const srcEl = document.querySelector(srcSelector);
@@ -2142,7 +2440,7 @@ function initShowdown() {
           md = srcEl.value !== undefined ? srcEl.value : srcEl.textContent;
         }
       } else {
-        const rawAttr = el.getAttribute("data-showdown");
+        const rawAttr = el.getAttribute("data-markdown-showdown") || el.getAttribute("data-showdown");
         md = (rawAttr && rawAttr !== "true") ? rawAttr : el.textContent;
       }
       if (md) {
@@ -2157,14 +2455,25 @@ function initShowdown() {
 /**
  * FullCalendar runtime initialization & DaisyUI theme synchronization.
  */
-function initFullCalendar() {
-  if (typeof window === "undefined" || !window.FullCalendar) return;
+function initFullCalendar(retries = 25) {
+  if (typeof window === "undefined") return;
+  const calendarEls = document.querySelectorAll(
+    "div[data-fullcalendar], div#calendar, [data-fullcalendar]:not(style):not(head *)"
+  );
+  if (!calendarEls.length) return;
+
+  if (!window.FullCalendar) {
+    if (retries > 0) {
+      setTimeout(() => initFullCalendar(retries - 1), 100);
+    }
+    return;
+  }
+
   window.reportCalendars = window.reportCalendars || [];
 
   try {
-    const calendarEls = document.querySelectorAll("[data-fullcalendar], #calendar");
     calendarEls.forEach((el) => {
-      if (el.dataset.calendarInitialized) return;
+      if (el.dataset.calendarInitialized || el.tagName === "STYLE" || el.closest("head")) return;
       el.dataset.calendarInitialized = "true";
 
       let events = [];
@@ -2193,6 +2502,109 @@ function initFullCalendar() {
   }
 }
 
+/**
+ * Rehydrates Lucide icons in the DOM.
+ */
+function rehydrateLucideIcons(root = null) {
+  if (typeof window === "undefined" || !window.lucide || typeof window.lucide.createIcons !== "function") return;
+  try {
+    if (root && root.nodeType === 1) {
+      window.lucide.createIcons({ root });
+    } else {
+      window.lucide.createIcons();
+    }
+  } catch (err) {
+    console.warn("[html-report] Lucide icon rehydration notice:", err);
+  }
+}
+
+/**
+ * Initializes MutationObserver to rehydrate Lucide icons post-morph and handle Datastar signal events.
+ */
+let _datastarObserverInstance = null;
+let _lucideRehydrationTimer = null;
+
+function initDatastarObserver() {
+  if (typeof window === "undefined" || typeof MutationObserver === "undefined") return null;
+  if (typeof document === "undefined" || !document.body) return null;
+  if (_datastarObserverInstance) return _datastarObserverInstance;
+
+  _datastarObserverInstance = new MutationObserver((mutations) => {
+    let needsRehydrate = false;
+    for (const m of mutations) {
+      if (m.type === "childList" && m.addedNodes.length > 0) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === 1) {
+            if (node.hasAttribute && node.hasAttribute("data-lucide")) {
+              needsRehydrate = true;
+              break;
+            }
+            if (node.querySelector && node.querySelector("[data-lucide]")) {
+              needsRehydrate = true;
+              break;
+            }
+          }
+        }
+      }
+      if (needsRehydrate) break;
+    }
+
+    if (needsRehydrate) {
+      if (_lucideRehydrationTimer) clearTimeout(_lucideRehydrationTimer);
+      _lucideRehydrationTimer = setTimeout(() => {
+        rehydrateLucideIcons();
+      }, 16);
+    }
+  });
+
+  _datastarObserverInstance.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Also listen for explicit Datastar fragment events if dispatched
+  document.addEventListener("datastar-fragment-applied", () => {
+    rehydrateLucideIcons();
+  });
+
+  return _datastarObserverInstance;
+}
+
+/**
+ * Synchronizes DaisyUI theme switcher selection with Datastar $theme reactive signal.
+ */
+function syncDatastarTheme(themeName) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  // 1. Dispatch custom event for Datastar signals
+  try {
+    const evt = new CustomEvent("datastar-merge-signals", {
+      bubbles: true,
+      detail: { theme: themeName }
+    });
+    document.dispatchEvent(evt);
+  } catch (_) {}
+
+  // 2. Direct API call if Datastar is active on window
+  if (window.datastar) {
+    if (typeof window.datastar.mergeSignals === "function") {
+      try { window.datastar.mergeSignals({ theme: themeName }); } catch (_) {}
+    } else if (window.datastar.signals && typeof window.datastar.signals === "object") {
+      try { window.datastar.signals.theme = themeName; } catch (_) {}
+    }
+  }
+
+  // 3. Update DOM signal attributes for initial or bound elements
+  try {
+    const signalHolders = document.querySelectorAll("[data-signals]");
+    signalHolders.forEach((el) => {
+      if (el._dsSignals && typeof el._dsSignals === "object") {
+        el._dsSignals.theme = themeName;
+      }
+    });
+  } catch (_) {}
+}
+
 // Global browser window bindings
 if (typeof window !== "undefined") {
   window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
@@ -2218,17 +2630,26 @@ if (typeof window !== "undefined") {
   window.checkInsufficientHorizontalSpace = checkInsufficientHorizontalSpace;
   window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
   window.exportReportPdf = exportReportPdf;
+  window.initModeBadge = initModeBadge;
   window.initDownloadButton = initDownloadButton;
   window.initDayjs = initDayjs;
   window.initImpress = initImpress;
+  window.impressNext = impressNext;
+  window.impressPrev = impressPrev;
+  window.impressGoto = impressGoto;
   window.initMockjs = initMockjs;
   window.initShowdown = initShowdown;
   window.initFullCalendar = initFullCalendar;
+  window.rehydrateLucideIcons = rehydrateLucideIcons;
+  window.initDatastarObserver = initDatastarObserver;
+  window.syncDatastarTheme = syncDatastarTheme;
+  window.autoLinkMarkdownFiles = autoLinkMarkdownFiles;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
     try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
     try { initTOC(); } catch (_) {}
+    try { initModeBadge(); } catch (_) {}
     try { initThemeDropdown(); } catch (_) {}
     try { initDownloadButton(); } catch (_) {}
     try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
@@ -2237,6 +2658,8 @@ if (typeof window !== "undefined") {
     try { initMockjs(); } catch (_) {}
     try { initFullCalendar(); } catch (_) {}
     try { initImpress(); } catch (_) {}
+    try { initDatastarObserver(); } catch (_) {}
+    try { autoLinkMarkdownFiles(); } catch (_) {}
 
     const palette = resolveDaisyUIThemePalette();
     try { await renderMermaidWithTheme(palette); } catch (_) {}
@@ -2272,12 +2695,20 @@ if (typeof module !== "undefined" && module.exports) {
     checkInsufficientHorizontalSpace,
     buildInlinedHtmlSnapshot,
     exportReportPdf,
+    initModeBadge,
     initDownloadButton,
     initDayjs,
     initImpress,
+    impressNext,
+    impressPrev,
+    impressGoto,
     initMockjs,
     initShowdown,
-    initFullCalendar
+    initFullCalendar,
+    rehydrateLucideIcons,
+    initDatastarObserver,
+    syncDatastarTheme,
+    autoLinkMarkdownFiles
   };
 }
 

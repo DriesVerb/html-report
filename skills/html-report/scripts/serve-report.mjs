@@ -343,6 +343,26 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
         }
       }
 
+      // Inject live-reload into any requested HTML file so all tabs reload on changes!
+      if (ext === ".html") {
+        try {
+          const rawHtml = fs.readFileSync(diskPath, "utf-8");
+          const currentMode = detectReportMode(rawHtml);
+          const injectedHtml = injectLiveReload(rawHtml);
+          res.writeHead(200, {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "X-Report-Mode": currentMode
+          });
+          res.end(injectedHtml);
+          return;
+        } catch (err) {
+          res.writeHead(500, { "Content-Type": "text/plain" });
+          res.end(`Internal Error reading html file: ${err.message}`);
+          return;
+        }
+      }
+
       const mime = MIME_TYPES[ext] || "application/octet-stream";
       res.writeHead(200, {
         "Content-Type": mime,
@@ -374,30 +394,37 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
     }
   }, 15000);
 
-  // File watcher with debounce to handle editor double-saves
+  // File watcher with debounce to handle editor double-saves across HTML files
   let debounceTimer = null;
-  let lastMtime = 0;
+  const mtimes = new Map();
   try {
-    lastMtime = fs.statSync(resolvedPath).mtimeMs;
+    mtimes.set(resolvedPath, fs.statSync(resolvedPath).mtimeMs);
   } catch (_) {}
 
-  const watcher = fs.watch(resolvedPath, () => {
+  const currentFeaturePath = path.resolve(rootDir, "current-feature.html");
+  if (fs.existsSync(currentFeaturePath)) {
+    try { mtimes.set(currentFeaturePath, fs.statSync(currentFeaturePath).mtimeMs); } catch (_) {}
+  }
+
+  const watchers = [];
+
+  function broadcastReload(updatedFile) {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
       try {
-        const currentMtime = fs.statSync(resolvedPath).mtimeMs;
-        if (currentMtime === lastMtime) return;
-        lastMtime = currentMtime;
+        const currentMtime = fs.statSync(updatedFile).mtimeMs;
+        if (currentMtime === mtimes.get(updatedFile)) return;
+        mtimes.set(updatedFile, currentMtime);
       } catch (_) {
         return;
       }
 
       const activeCount = sseClients.size;
+      const fileName = path.basename(updatedFile);
       const targetUrl = `http://localhost:${serverPort}/`;
 
       if (activeCount > 0) {
-        // Tab is ALREADY open: broadcast reload in place (do NOT start a new tab)
-        console.log(`\n[html-report] File updated: ${targetFileName}`);
+        console.log(`\n[html-report] File updated: ${fileName}`);
         console.log(`[html-report] -> Refreshing ${activeCount} active tab(s) in place without opening new tabs.`);
         for (const client of sseClients) {
           try {
@@ -407,13 +434,36 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
           }
         }
       } else {
-        // Tab is NOT open: reopen in browser
-        console.log(`\n[html-report] File updated: ${targetFileName}`);
+        console.log(`\n[html-report] File updated: ${fileName}`);
         console.log(`[html-report] -> No active tabs detected. Reopening in browser: ${targetUrl}`);
         openBrowser(targetUrl);
       }
     }, 150);
-  });
+  }
+
+  try {
+    const mainWatcher = fs.watch(resolvedPath, () => broadcastReload(resolvedPath));
+    watchers.push(mainWatcher);
+  } catch (_) {}
+
+  // Watch current-feature.html specifically
+  try {
+    if (fs.existsSync(currentFeaturePath)) {
+      const featureWatcher = fs.watch(currentFeaturePath, () => broadcastReload(currentFeaturePath));
+      watchers.push(featureWatcher);
+    }
+  } catch (_) {}
+
+  // Also watch directory for new/updated HTML files
+  try {
+    const dirWatcher = fs.watch(rootDir, (event, filename) => {
+      if (filename && (filename === "current-feature.html" || filename === targetFileName)) {
+        const full = path.resolve(rootDir, filename);
+        broadcastReload(full);
+      }
+    });
+    watchers.push(dirWatcher);
+  } catch (_) {}
 
   // Handle port conflicts with auto-retry
   server.on("error", (err) => {
@@ -456,7 +506,7 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
         serverPort,
         close: () => {
           clearInterval(heartbeat);
-          try { watcher.close(); } catch (_) {}
+          for (const w of watchers) { try { w.close(); } catch (_) {} }
           for (const c of sseClients) { try { c.end(); } catch (_) {} }
           for (const c of datastarClients) { try { c.end(); } catch (_) {} }
           return new Promise((res) => server.close(res));
@@ -467,7 +517,7 @@ async function startServer(targetFilePath, initialPort, autoOpen) {
     // Graceful shutdown
     const cleanup = () => {
       clearInterval(heartbeat);
-      try { watcher.close(); } catch (_) {}
+      for (const w of watchers) { try { w.close(); } catch (_) {} }
       server.close(() => process.exit(0));
     };
     process.on("SIGINT", cleanup);

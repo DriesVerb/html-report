@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<script>
+  // --- Early theme injection (pre‑paint) ---
+  // Prefer stored theme; fall back to the default "light".
+  const stored = localStorage.getItem('daisyui-theme') || 'light';
+  document.documentElement.dataset.theme = stored;
+</script>
 <html lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />

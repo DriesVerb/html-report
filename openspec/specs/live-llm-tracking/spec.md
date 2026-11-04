@@ -1,7 +1,7 @@
 # live-llm-tracking Specification
 
 ## Purpose
-TBD - created by archiving change datastar-llm-tracking-dashboard. Update Purpose after archive.
+Provides live streaming hypermedia telemetry, in-browser Markdown previewing, and real-time LLM observation dashboards for active engineering workflows.
 
 ## Requirements
 
@@ -31,7 +31,7 @@ The standard report MUST provide an interactive Showdown-powered modal viewer al
 ---
 
 ### Requirement: Datastar Live LLM Tracking Dashboard
-The report MUST provide real-time hypermedia tracking components powered by Datastar.js and SSE (`/__datastar_stream__`) displaying LLM thoughts, tool calls, and task progress.
+The report MUST provide real-time hypermedia tracking components powered by Datastar.js and SSE (`/__datastar_stream__`) displaying LLM thoughts, tool calls, subagent activity, and task progress with live fragment morphing.
 
 #### Scenario: Live Chain-of-Thought Stream
 - **GIVEN** an active Datastar stream connection
@@ -47,3 +47,8 @@ The report MUST provide real-time hypermedia tracking components powered by Data
 - **GIVEN** a task item `#task-${id}` in the dashboard
 - **WHEN** the server broadcasts a `datastar-fragment` with `selector: #task-${id}` and updated status
 - **THEN** Datastar MUST morph the task card in-place, updating the status badge, checkbox, and completion state.
+
+#### Scenario: Subagent Swarm Stream Routing
+- **GIVEN** an active Datastar stream connection
+- **WHEN** a subagent event is broadcast with a target conversation ID or subagent name
+- **THEN** Datastar MUST route and morph the subagent fragment into the appropriate thread in `#agent-swarm-hierarchy`.
