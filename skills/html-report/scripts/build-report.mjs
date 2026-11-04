@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
+import child_process from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { compileTheme, compileThemeFile } from "./theme-compiler.mjs";
 
@@ -88,6 +89,9 @@ export const ADDON_REGISTRY = {
       /data-show\b/i,
       /data-ref\b/i,
       /data-fetch-indicator\b/i,
+      /data-public-feed\b/i,
+      /data-feed\b/i,
+      /data-feed-chart\b/i,
       /\bdatastar\b/i
     ],
     head: `<script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>`
@@ -285,6 +289,9 @@ export function parseArgs(argv) {
     customTheme: null,
     addons: [],
     favicon: "📊",
+    feeds: {},
+    freezeFeeds: false,
+    feedInterval: null,
     help: false
   };
 
@@ -343,6 +350,19 @@ export function parseArgs(argv) {
       options.addons.push(...items);
     } else if (arg === "--favicon" && args[i + 1]) {
       options.favicon = args[++i];
+    } else if (arg === "--feed" && args[i + 1]) {
+      const val = args[++i];
+      const eqIdx = val.indexOf("=");
+      if (eqIdx !== -1) {
+        const name = val.slice(0, eqIdx).trim();
+        const url = val.slice(eqIdx + 1).trim();
+        if (!options.feeds) options.feeds = {};
+        options.feeds[name] = url;
+      }
+    } else if (arg === "--freeze-feeds") {
+      options.freezeFeeds = true;
+    } else if (arg === "--feed-interval" && args[i + 1]) {
+      options.feedInterval = parseInt(args[++i], 10);
     } else if (arg === "--all-addons") {
       options.addons.push(...Object.keys(ADDON_REGISTRY));
     } else if (arg.startsWith("--") && ADDON_ALIASES[arg.slice(2)]) {
@@ -355,6 +375,22 @@ export function parseArgs(argv) {
   }
 
   return options;
+}
+
+/**
+ * Synchronously fetches a feed URL for build-time freezing.
+ */
+export function fetchFeedSnapshotSync(url) {
+  if (!url || typeof url !== "string") return null;
+  try {
+    const stdout = child_process.execSync(
+      `curl -sSL -m 5 "${url.replace(/"/g, '\\"')}"`,
+      { encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] }
+    );
+    return JSON.parse(stdout);
+  } catch (_) {
+    return null;
+  }
 }
 
 /**
@@ -373,6 +409,11 @@ export function buildReport({
   theme = null,
   customTheme = null,
   customThemeCss = null,
+  feeds = {},
+  freezeFeeds = false,
+  feedInterval = null,
+  mockFeeds = null,
+  fetchSnapshot = null,
   templateShellPath = path.resolve(__dirname, "../assets/template-shell.html"),
   runtimeScriptPath = path.resolve(__dirname, "../assets/report-runtime.js")
 } = {}) {
@@ -383,6 +424,75 @@ export function buildReport({
     throw new Error(`Runtime script not found at: ${runtimeScriptPath}`);
   }
 
+  let cleanBody = extractMainContent(content);
+
+  // Inject CLI feeds into #feed-registry if provided
+  if (feeds && Object.keys(feeds).length > 0) {
+    const regRegex = /<script\s+id=["']feed-registry["']\s+type=["']application\/json["']>([\s\S]*?)<\/script>/i;
+    const match = cleanBody.match(regRegex);
+    if (match) {
+      let existing = {};
+      try { existing = JSON.parse(match[1]); } catch (_) {}
+      Object.assign(existing, feeds);
+      cleanBody = cleanBody.replace(regRegex, `<script id="feed-registry" type="application/json">\n${JSON.stringify(existing, null, 2)}\n</script>`);
+    } else {
+      cleanBody = `<script id="feed-registry" type="application/json">\n${JSON.stringify(feeds, null, 2)}\n</script>\n` + cleanBody;
+    }
+  }
+
+  const hasPublicFeed = /data-public-feed\b/i.test(cleanBody) || /data-feed\b/i.test(cleanBody);
+
+  // Apply feed interval if provided
+  if (feedInterval && hasPublicFeed) {
+    cleanBody = cleanBody.replace(
+      /(<[^>]*\bdata-public-feed\b[^>]*?)(\/?>)/gi,
+      (match, prefix, suffix) => {
+        if (/data-feed-interval\b/i.test(prefix)) return match;
+        return `${prefix} data-feed-interval="${feedInterval}"${suffix}`;
+      }
+    );
+  }
+
+  // Freeze feeds if requested
+  if (freezeFeeds && hasPublicFeed) {
+    const combinedRegistry = Object.assign({}, feeds || {});
+    const regMatch = cleanBody.match(/<script\s+id=["']feed-registry["']\s+type=["']application\/json["']>([\s\S]*?)<\/script>/i);
+    if (regMatch) {
+      try { Object.assign(combinedRegistry, JSON.parse(regMatch[1])); } catch (_) {}
+    }
+
+    cleanBody = cleanBody.replace(
+      /(<[^>]*\bdata-public-feed=["']([^"']+)["'][^>]*?)(\/?>)/gi,
+      (match, prefix, feedRef, suffix) => {
+        let targetUrl = feedRef;
+        if (feedRef.startsWith("@")) {
+          targetUrl = combinedRegistry[feedRef.slice(1)] || feedRef;
+        }
+
+        let snapshot = null;
+        if (mockFeeds && mockFeeds[feedRef]) {
+          snapshot = mockFeeds[feedRef];
+        } else if (mockFeeds && mockFeeds[targetUrl]) {
+          snapshot = mockFeeds[targetUrl];
+        } else if (typeof fetchSnapshot === "function") {
+          snapshot = fetchSnapshot(targetUrl, feedRef);
+        } else if (targetUrl && (targetUrl.startsWith("http://") || targetUrl.startsWith("https://"))) {
+          snapshot = fetchFeedSnapshotSync(targetUrl);
+        }
+
+        if (snapshot !== null) {
+          const serialized = JSON.stringify(snapshot).replace(/"/g, "&quot;");
+          if (/data-feed-fallback\b/i.test(prefix)) {
+            prefix = prefix.replace(/data-feed-fallback=["'][^"']*["']/i, `data-feed-fallback="${serialized}"`);
+            return `${prefix}${suffix}`;
+          }
+          return `${prefix} data-feed-fallback="${serialized}"${suffix}`;
+        }
+        return match;
+      }
+    );
+  }
+
   // Resolve canonical report mode
   let resolvedMode = normalizeMode(mode);
   if (mode && !resolvedMode) {
@@ -390,7 +500,7 @@ export function buildReport({
   }
 
   if (!resolvedMode) {
-    if (live) resolvedMode = "live-report";
+    if (live || hasPublicFeed) resolvedMode = "live-report";
     else if (printable) resolvedMode = "print";
     else if (presentation) resolvedMode = "presentation";
     else resolvedMode = "report";
@@ -398,12 +508,11 @@ export function buildReport({
 
   const isPrintable = Boolean(printable || resolvedMode === "print");
   const isPresentation = Boolean(presentation || resolvedMode === "presentation");
-  const isLive = Boolean(live || resolvedMode === "live-report");
+  const isLive = Boolean(live || hasPublicFeed || resolvedMode === "live-report");
 
   const shellTemplate = fs.readFileSync(templateShellPath, "utf-8");
   const runtimeScript = fs.readFileSync(runtimeScriptPath, "utf-8");
 
-  const cleanBody = extractMainContent(content);
   const activeAddonKeys = detectAddons(cleanBody, addons);
 
   // Auto-inject required addons for specific modes
@@ -558,6 +667,9 @@ Options:
       --mock, --mockjs      Explicitly include Mock.js
       --showdown            Explicitly include Showdown
       --fullcalendar        Explicitly include FullCalendar
+      --feed <name>=<url>   Inject feed nickname mapping into #feed-registry
+      --freeze-feeds        Fetch and bake snapshot payloads into data-feed-fallback
+      --feed-interval <ms>  Override polling interval for public feeds
   -h, --help                Show this help message
 `);
 }
@@ -607,7 +719,10 @@ if (isDirectCli) {
     theme: options.theme,
     customTheme: customThemePath,
     addons: options.addons,
-    favicon: options.favicon
+    favicon: options.favicon,
+    feeds: options.feeds,
+    freezeFeeds: options.freezeFeeds,
+    feedInterval: options.feedInterval
   });
 
   const outputPath = path.resolve(process.cwd(), options.output);

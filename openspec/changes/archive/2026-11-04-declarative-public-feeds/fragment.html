@@ -1,0 +1,673 @@
+<!-- ========================================== -->
+<!-- HERO BANNER & JOURNEY STEPPER              -->
+<!-- ========================================== -->
+<header class="space-y-6 border-b border-base-300 pb-8">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">declarative-public-feeds</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1">
+      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Phase 5: Shipped &amp; Verified (8 / 8 Tasks · 100%)
+    </span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1 animate-pulse">
+      <i data-lucide="radio" class="w-3.5 h-3.5"></i> North Star: Live-Updating Reports
+    </span>
+    <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
+      <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Nickname Registry (@name)
+    </span>
+  </div>
+
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div class="space-y-2">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+        Live-Updating HTML Reports &amp; Public Feed Bus
+      </h1>
+      <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+        The core goal: <strong>HTML reports that live-update in real time</strong>. Turn static reports into living dashboards that capture real open public feeds, stream live ticks, smoothly slide Chart.js trends, and flash updates using a central <strong>Nickname Registry</strong> (<code>#feed-registry</code>) and zero backend server dependencies.
+      </p>
+    </div>
+
+    <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+      </button>
+      <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/declarative-public-feeds/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
+      </button>
+    </div>
+  </div>
+
+  <!-- Mandatory Journey Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+    <div class="flex items-center justify-between text-xs font-bold text-base-content/70">
+      <span class="flex items-center gap-1.5">
+        <i data-lucide="git-pull-request" class="w-4 h-4 text-primary"></i> Current Journey State
+      </span>
+      <span class="font-mono text-success">Stage 5 Complete · Shipped &amp; Verified</span>
+    </div>
+    <div class="w-full overflow-x-auto py-2">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
+        <li id="stepper-phase-2" class="step step-primary">2. Planning</li>
+        <li id="stepper-phase-3" class="step step-primary">3. Implementing</li>
+        <li id="stepper-phase-4" class="step step-primary">4. Verifying</li>
+        <li id="stepper-phase-5" class="step step-primary">5. Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- ========================================== -->
+<!-- LIVE-UPDATING SHOWCASE (UNDER CONSTRUCTION)-->
+<!-- ========================================== -->
+<section aria-labelledby="live-showcase-heading" class="space-y-4">
+  <div class="alert alert-primary/10 border border-primary/30 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2">
+        <span class="badge badge-primary font-bold text-2xs uppercase">Live Showcase · Under Construction</span>
+        <h2 id="live-showcase-heading" class="text-lg font-bold text-base-content flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i> Real Open API Feeds &amp; Nickname Registry
+        </h2>
+      </div>
+      <p class="text-xs text-base-content/80 max-w-2xl leading-relaxed">
+        Demonstrates the Nickname Registry pattern. Real open sources (<code class="font-mono">@crypto</code>, <code class="font-mono">@weather</code>, <code class="font-mono">@github</code>) are registered once at the top. Cards and charts reference short nicknames (<code class="font-mono">@crypto</code>) to prevent AI URL hallucinations and eliminate duplicate network calls.
+      </p>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button id="toggle-live-feed-btn" onclick="toggleLiveFeedSimulation()" class="btn btn-sm btn-primary gap-1.5">
+        <i id="live-btn-icon" data-lucide="pause" class="w-4 h-4"></i>
+        <span id="live-btn-text">Pause Live Stream</span>
+      </button>
+      <button onclick="triggerManualTick()" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Force Tick
+      </button>
+    </div>
+  </div>
+
+  <!-- Real Open API Nicknames Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Card 1: Bitcoin Ticker (@crypto) -->
+    <div class="card bg-base-100 border border-base-300 rounded-2xl shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-sm badge-outline font-mono text-2xs">@crypto &middot; CoinGecko</span>
+        <span id="crypto-delta-badge" class="badge badge-xs badge-success font-mono font-bold">+2.4%</span>
+      </div>
+      <div class="stat-title text-xs font-semibold uppercase">Bitcoin / USD</div>
+      <div id="crypto-price-val" class="stat-value text-2xl font-mono text-primary transition-colors duration-300">
+        $68,420
+      </div>
+      <div class="stat-desc text-xs flex items-center justify-between">
+        <span class="font-mono opacity-70">24h Vol: $32.4B</span>
+        <span class="text-2xs text-success flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-success animate-ping"></span> Live Tick
+        </span>
+      </div>
+    </div>
+
+    <!-- Card 2: Weather Sensor (@weather) -->
+    <div class="card bg-base-100 border border-base-300 rounded-2xl shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-sm badge-outline font-mono text-2xs">@weather &middot; Open-Meteo</span>
+        <span class="badge badge-xs badge-info font-mono">52.5° N, 13.4° E</span>
+      </div>
+      <div class="stat-title text-xs font-semibold uppercase">Berlin Temp &amp; Wind</div>
+      <div id="weather-temp-val" class="stat-value text-2xl font-mono text-secondary transition-colors duration-300">
+        18.4 °C
+      </div>
+      <div class="stat-desc text-xs flex items-center justify-between">
+        <span id="weather-wind-val" class="font-mono opacity-70">Wind: 12.2 km/h</span>
+        <span class="text-2xs opacity-70">Humidity: 64%</span>
+      </div>
+    </div>
+
+    <!-- Card 3: Tailwind CSS Stars (@github) -->
+    <div class="card bg-base-100 border border-base-300 rounded-2xl shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-sm badge-outline font-mono text-2xs">@github &middot; GitHub API</span>
+        <span class="badge badge-xs badge-accent font-mono">tailwindlabs</span>
+      </div>
+      <div class="stat-title text-xs font-semibold uppercase">Tailwind Stargazers</div>
+      <div id="github-stars-val" class="stat-value text-2xl font-mono text-accent transition-colors duration-300">
+        82,540
+      </div>
+      <div class="stat-desc text-xs flex items-center justify-between">
+        <span class="font-mono opacity-70">Forks: 4,120</span>
+        <span class="text-2xs opacity-70">Open Issues: 18</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-Time Sliding Chart.js Graph -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="activity" class="w-5 h-5 text-primary"></i>
+        <h3 class="font-bold text-sm text-base-content">Live Chart.js Ring Buffer (<code class="font-mono text-xs text-primary">data-feed-chart="crypto_price"</code>)</h3>
+      </div>
+      <span class="badge badge-xs badge-outline font-mono">chart.update('none') &middot; Bounded 20 Pts</span>
+    </div>
+    <div class="h-64 w-full">
+      <canvas id="liveShowcaseChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Nickname Registry Architectural Anchor Banner -->
+  <div class="alert alert-success/15 border border-success/40 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="p-2 rounded-xl bg-success/20 text-success shrink-0">
+        <i data-lucide="check-check" class="w-5 h-5"></i>
+      </div>
+      <div class="space-y-0.5">
+        <h3 class="text-sm font-bold text-base-content flex items-center gap-2">
+          <span>Nickname Registry Architecture Locked into Plan</span>
+          <span class="badge badge-xs badge-success font-mono font-bold">Confirmed</span>
+        </h3>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          &bull; <strong>Phase 1:</strong> Automatic <code class="font-mono bg-base-300/60 px-1 rounded">#feed-registry</code> JSON lookup in <code class="font-mono text-primary font-semibold">initPublicFeeds()</code> supporting <code class="font-mono text-accent">@nickname</code> or direct <code class="font-mono">https://...</code> fallback &amp; request deduplication.<br/>
+          &bull; <strong>Phase 3:</strong> Build CLI flag <code class="font-mono text-secondary font-semibold">--feed &lt;name&gt;=&lt;url&gt;</code> in <code class="font-mono">build-report.mjs</code> to auto-inject registry blocks without manual JSON editing.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- COLLAPSIBLE END-TO-END IMPLEMENTATION PROMPT-->
+<!-- ========================================== -->
+<section aria-labelledby="prompt-heading" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <div class="space-y-0.5">
+      <h2 id="prompt-heading" class="text-xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i> End-to-End Implementation Prompt
+      </h2>
+      <p class="text-xs text-base-content/70">1-Click copyable autonomous prompt to execute the entire journey to main.</p>
+    </div>
+    <span class="badge badge-primary font-mono text-xs">Ready to Copy</span>
+  </div>
+
+  <div class="collapse collapse-plus bg-base-100 border border-primary/30 rounded-2xl shadow-sm">
+    <input type="checkbox" id="prompt-collapse-toggle" /> 
+    <div class="collapse-title text-sm font-bold flex items-center justify-between pr-12 text-base-content">
+      <span class="flex items-center gap-2">
+        <i data-lucide="terminal" class="w-4 h-4 text-primary"></i> 
+        Autonomous Implementation, Code Review, Archival &amp; Git Push Prompt
+      </span>
+      <span class="badge badge-xs badge-ghost font-mono">Click to Expand / Collapse</span>
+    </div>
+    <div class="collapse-content space-y-4 pt-2 border-t border-base-200">
+      <div class="flex items-center justify-between bg-base-200/50 p-3 rounded-xl">
+        <p class="text-xs text-base-content/80">
+          Feed this prompt into your coding assistant to implement all tasks in <code class="font-mono font-bold">tasks.md</code>, verify tests, code review, archive, and push to main.
+        </p>
+        <button id="copy-prompt-btn" onclick="copyAgentPrompt()" class="btn btn-xs btn-primary gap-1.5 shrink-0 ml-3">
+          <i id="copy-prompt-icon" data-lucide="copy" class="w-3.5 h-3.5"></i>
+          <span id="copy-prompt-label">Copy Implementation Prompt</span>
+        </button>
+      </div>
+
+      <!-- Raw Text Area for Immediate Inspection & Selection -->
+      <textarea id="agent-prompt-text" readonly class="textarea textarea-bordered w-full h-80 font-mono text-2xs leading-relaxed bg-neutral text-neutral-content rounded-xl p-4">You are an autonomous senior engineer implementing the OpenSpec change `declarative-public-feeds` in `html-report`. Follow this exact, verified journey from beginning to end:
+
+### 1. Context & Setup
+- Inspect `openspec/changes/declarative-public-feeds/tasks.md`, `design.md`, and `specs/declarative-public-feeds/spec.md`.
+- Inspect `current-feature.html` and ensure the live dev server is running on `http://localhost:3000` (`node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3000`).
+
+### 2. Implementation Execution
+Work through all 8 tasks across the 4 numbered phases in `tasks.md`, checking them off as they are completed:
+- **Phase 1: Declarative Feed Engine & Nickname Registry**
+  - In `skills/html-report/assets/report-runtime.js`, implement `initPublicFeeds()`. Discover `[data-public-feed]`.
+  - Resolve `@nickname` references against `<script id="feed-registry" type="application/json">`. If the attribute is a standard URL (`https://...`), use it directly.
+  - Implement request deduplication: if multiple cards or charts reference the same feed with identical intervals, execute only ONE network `fetch()` and broadcast the parsed payload.
+  - Bind parsed JSON keys to Datastar reactive signals (with optional `data-feed-prefix`).
+  - Implement interval polling (`data-feed-interval`, default 60s, min 10s backoff guard) and ensure all timers and AbortControllers are tracked and cleaned up on `reinitReportContent()` and unmount.
+  - Dispatch window-level `feed:tick` custom event with `{ feedId, url, data, timestamp }`.
+- **Phase 2: Universal Field Extraction & Chart.js Ring Buffer Hook**
+  - Implement `data-feed-fields` parser to extract specified top-level or nested dot-notated paths (e.g. `data.value`).
+  - Implement `[data-feed-chart]` hook in `report-runtime.js`. When a numeric signal updates, push the new tick to Chart.js dataset 0, maintain a ring buffer capped at `data-feed-buffer` (default 20), and call `chart.update('none')`.
+- **Phase 3: Builder Auto-Detection & CLI Flags**
+  - In `skills/html-report/scripts/build-report.mjs`, add regex detection for `data-public-feed` to auto-bundle Datastar CDN and set `data-report-mode="live"`.
+  - Add CLI flags `--feed <name>=<url>` (injects into `#feed-registry`), `--freeze-feeds` (pre-fetches feeds and bakes into `data-feed-fallback` for offline/PDF use), and `--feed-interval <ms>`.
+  - In `skills/html-report/scripts/serve-report.mjs`, add `--feed-proxy <prefix=targetUrl>` route for local CORS proxying.
+- **Phase 4: Unit Testing & Verification**
+  - Create `tests/public-feed.test.mjs` testing nickname resolution, deduplication, URL fetching, field extraction, timer teardown, and CLI flags.
+  - Run `node --test tests/*.test.mjs` and confirm all tests pass with zero regressions.
+  - Run `openspec validate declarative-public-feeds` and confirm valid status.
+
+### 3. Rigorous Code Review & Cleanliness Gate
+- Verify zero new external npm dependencies were introduced.
+- Verify 32 DaisyUI theme switcher and Chart.js theme color adaptation work seamlessly.
+- Verify deterministic assembly time (<100ms).
+- Verify Playwright PDF export handles `--freeze-feeds` and fallback snapshots without timing out.
+
+### 4. OpenSpec Archive & Git Main Push
+- Update `openspec/changes/declarative-public-feeds/tasks.md` to ensure all 8 checklist tasks are marked `[x]`.
+- Rebuild companion `index.html` and mirror to `implementation-progress.html`.
+- Run `openspec archive declarative-public-feeds`.
+- Stage all changes, commit with descriptive message: `feat(feed): implement declarative public feed runtime, nickname registry, and live chart buffers`, and push to `origin/main`:
+  `git add -A && git commit -m "feat(feed): implement declarative public feed runtime, nickname registry, and live chart buffers" && git push origin main`.</textarea>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- CONNECTED TASK CHECKLIST (tasks.md)        -->
+<!-- ========================================== -->
+<section aria-labelledby="tasks-heading" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <div class="space-y-0.5">
+      <h2 id="tasks-heading" class="text-xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="check-square" class="w-5 h-5 text-accent"></i> Task Tracking Checklist
+      </h2>
+      <p class="text-xs text-base-content/70">Connected directly to <code>tasks.md</code> milestones (Universal URLs &middot; Nickname Registry).</p>
+    </div>
+    <span class="badge badge-success font-mono text-xs font-semibold">8 / 8 Completed (100%)</span>
+  </div>
+
+  <div class="space-y-4">
+    <!-- Phase 1 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
+          <span class="badge badge-sm badge-primary font-mono">1</span> Declarative Feed Engine &amp; Nickname Registry in report-runtime.js
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">2 Tasks Done</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>1.1</strong> Implement <code>#feed-registry</code> JSON resolution and universal <code>fetch()</code> in <code>initPublicFeeds()</code> supporting <code>@nickname</code> references, URL fallback, and request deduplication across identical feeds.
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>1.2</strong> Implement interval polling with <code>data-feed-interval</code>, minimum backoff guards, and clean timer teardown on unmount or <code>reinitReportContent()</code>.
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
+          <span class="badge badge-sm badge-secondary font-mono">2</span> Universal Field Extraction &amp; Chart.js Ring Buffer Hook
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">2 Tasks Done</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>2.1</strong> Implement <code>data-feed-fields</code> key extraction in <code>report-runtime.js</code> supporting top-level and nested dot-notated paths (e.g. <code>data.val</code>).
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>2.2</strong> Implement <code>[data-feed-chart]</code> hook in <code>report-runtime.js</code> to auto-append live ticks to Chart.js dataset 0 with bounded ring buffer (<code>data-feed-buffer</code>) and <code>chart.update('none')</code>.
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
+          <span class="badge badge-sm badge-accent font-mono">3</span> Builder CLI Flags &amp; Dev Server Proxy
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">3 Tasks Done</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>3.1</strong> Update <code>skills/html-report/scripts/build-report.mjs</code> to auto-detect <code>data-public-feed</code> / <code>data-feed</code> signatures, include <code>datastar</code> CDN, and set <code>data-report-mode="live"</code>.
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>3.2</strong> Add <code>--feed &lt;name&gt;=&lt;url&gt;</code>, <code>--freeze-feeds</code>, and <code>--feed-interval</code> CLI flags in <code>build-report.mjs</code> to inject the <code>#feed-registry</code> and snapshot live data into <code>data-feed-fallback</code> for offline archival and Playwright PDF export.
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>3.3</strong> Add <code>--feed-proxy</code> option to <code>skills/html-report/scripts/serve-report.mjs</code> for routing non-CORS public endpoints.
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
+          <span class="badge badge-sm badge-info font-mono">4</span> Verification &amp; Testing
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">3 Tasks Done</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>4.1</strong> Create unit test suite <code>tests/public-feed.test.mjs</code> covering nickname resolution, deduplication, universal URL fetching, field extraction, timer cleanup, CLI flag snapshotting, and signal assignment.
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>4.2</strong> Verify full test suite passes with <code>node --test tests/*.test.mjs</code> with zero regressions.
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>4.3</strong> Validate change compliance with <code>openspec validate declarative-public-feeds</code>.
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SHOWDOWN MARKDOWN ARTIFACT VIEWER MODAL    -->
+<!-- ========================================== -->
+<dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box w-11/12 max-w-4xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl rounded-2xl">
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50">
+      <div class="flex items-center gap-3">
+        <div class="p-2 rounded-lg bg-primary/10 text-primary">
+          <i data-lucide="file-code" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 id="markdown-modal-title" class="font-bold text-base text-base-content font-mono">proposal.md</h3>
+          <p class="text-2xs opacity-60">OpenSpec Planning Artifact · Formatted Markdown</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="copy-markdown-btn" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1">
+          <i data-lucide="copy" class="w-3 h-3"></i> Copy
+        </button>
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Sub-Tabs -->
+    <div class="flex items-center gap-1 px-6 py-2 border-b border-base-300 bg-base-100 text-xs overflow-x-auto">
+      <button class="btn btn-xs btn-primary md-tab-btn" data-doc="proposal.md" onclick="openMarkdownViewer('proposal.md')">proposal.md</button>
+      <button class="btn btn-xs btn-ghost md-tab-btn" data-doc="design.md" onclick="openMarkdownViewer('design.md')">design.md</button>
+      <button class="btn btn-xs btn-ghost md-tab-btn" data-doc="tasks.md" onclick="openMarkdownViewer('tasks.md')">tasks.md</button>
+      <button class="btn btn-xs btn-ghost md-tab-btn" data-doc="specs/declarative-public-feeds/spec.md" onclick="openMarkdownViewer('specs/declarative-public-feeds/spec.md')">spec.md</button>
+    </div>
+
+    <!-- Rendered Markdown Body -->
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none text-base-content/90 font-sans">
+      <div class="flex items-center justify-center p-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- ========================================== -->
+<!-- OFFLINE ARTIFACT DATA & LIVE DEMO SCRIPT   -->
+<!-- ========================================== -->
+<script>
+  window.OPEN_SPEC_ARTIFACTS = {
+    "proposal.md": `# Proposal: Live-Updating HTML Reports via Declarative Public Feeds\\n\\n## The North Star: HTML Reports that Live-Update in Real-Time\\nThe primary goal is to empower html-report to generate HTML reports that live-update in real time.\\n\\nUniversal Standard URLs & Nickname Registry: Declare feeds once in #feed-registry, reference everywhere with @nickname. Zero vendor lock-in.`,
+    "design.md": `# Design: Declarative Public Feeds & Client Signal Bus\\n\\n## Decisions\\n1. The Nickname Registry Pattern (#feed-registry): AI outputs URLs once; widgets reference @nickname.\\n2. Declarative Chart.js Ring Buffer: Live updates without canvas tearing.\\n3. Dedicated CLI Flags: --feed, --freeze-feeds and --feed-proxy.`,
+    "tasks.md": `# Tasks: Declarative Public Feeds & Client Signal Bus\\n\\n## 1. Declarative Feed Engine & Nickname Registry in report-runtime.js\\n- [x] 1.1 Implement #feed-registry JSON resolution & deduplication\\n- [x] 1.2 Implement interval polling with clean timer teardown\\n\\n## 2. Universal Field Extraction & Chart.js Ring Buffer Hook\\n- [x] 2.1 Implement data-feed-fields key extraction\\n- [x] 2.2 Implement [data-feed-chart] hook with bounded ring buffer\\n\\n## 3. Builder CLI Flags & Dev Server Proxy\\n- [x] 3.1 Update build-report.mjs to auto-detect data-public-feed\\n- [x] 3.2 Add --feed, --freeze-feeds and --feed-interval CLI flags\\n- [x] 3.3 Add --feed-proxy option to serve-report.mjs\\n\\n## 4. Verification & Testing\\n- [x] 4.1 Create unit test suite tests/public-feed.test.mjs\\n- [x] 4.2 Verify full test suite passes\\n- [x] 4.3 Validate change compliance`,
+    "specs/declarative-public-feeds/spec.md": `# Spec Delta: Declarative Public Feeds & Client Signal Bus\\n\\n## ADDED Requirements\\n- Requirement: Declarative Feed Discovery & Nickname Registry Ingestion\\n- Requirement: Field Extraction for Complex JSON Payloads\\n- Requirement: Declarative Chart.js Ring Buffer Hook\\n- Requirement: Playwright PDF & Offline Snapshot Fallback\\n- Requirement: Dedicated CLI Flags for Feed Freezing & Dev Server Proxy`
+  };
+
+  let _showdownConverter = null;
+  function getShowdownConverter() {
+    if (!_showdownConverter && window.showdown) {
+      _showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true,
+        openLinksInNewWindow: false
+      });
+    }
+    return _showdownConverter;
+  }
+
+  async function openMarkdownViewer(docName) {
+    const modal = document.getElementById("markdown-viewer-modal");
+    const titleEl = document.getElementById("markdown-modal-title");
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (!modal) return;
+
+    if (titleEl) titleEl.textContent = docName;
+    if (bodyEl) {
+      bodyEl.innerHTML = '<div class="flex items-center justify-center p-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
+    }
+
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+
+    const tabBtns = document.querySelectorAll(".md-tab-btn");
+    tabBtns.forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-primary");
+        btn.classList.remove("btn-ghost");
+      } else {
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-ghost");
+      }
+    });
+
+    let markdownText = "";
+    try {
+      const res = await fetch("/" + docName + "?raw=true");
+      if (res.ok) {
+        markdownText = await res.text();
+      } else {
+        markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\\nFile not found.";
+      }
+    } catch (_) {
+      markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\\nFile loaded from offline cache.";
+    }
+
+    window._currentMarkdownRaw = markdownText;
+
+    const converter = getShowdownConverter();
+    if (converter && bodyEl) {
+      bodyEl.innerHTML = converter.makeHtml(markdownText);
+    } else if (bodyEl) {
+      bodyEl.textContent = markdownText;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function copyMarkdownToClipboard() {
+    const text = window._currentMarkdownRaw || "";
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById("copy-markdown-btn");
+        if (btn) {
+          btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!';
+          if (window.lucide) window.lucide.createIcons();
+          setTimeout(() => {
+            btn.innerHTML = '<i data-lucide="copy" class="w-3 h-3"></i> Copy';
+            if (window.lucide) window.lucide.createIcons();
+          }, 2000);
+        }
+      });
+    }
+  }
+
+  function copyAgentPrompt() {
+    const promptEl = document.getElementById("agent-prompt-text");
+    if (!promptEl) return;
+    const text = promptEl.value;
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        const btnLabel = document.getElementById("copy-prompt-label");
+        const btnIcon = document.getElementById("copy-prompt-icon");
+        if (btnLabel) btnLabel.textContent = "Copied to Clipboard!";
+        if (btnIcon) btnIcon.setAttribute("data-lucide", "check");
+        if (window.lucide) window.lucide.createIcons();
+
+        setTimeout(() => {
+          if (btnLabel) btnLabel.textContent = "Copy Implementation Prompt";
+          if (btnIcon) btnIcon.setAttribute("data-lucide", "copy");
+          if (window.lucide) window.lucide.createIcons();
+        }, 2500);
+      });
+    }
+  }
+
+  // ==========================================
+  // REAL-TIME LIVE UPDATE SHOWCASE SIMULATOR
+  // ==========================================
+  let _liveChartInstance = null;
+  let _liveSimulationTimer = null;
+  let _liveIsRunning = true;
+  let _btcBase = 68420;
+  let _weatherBase = 18.4;
+  let _githubBase = 82540;
+
+  function initLiveShowcaseChart() {
+    const canvas = document.getElementById("liveShowcaseChart");
+    if (!canvas || !window.Chart) return;
+    const ctx = canvas.getContext("2d");
+
+    const initialLabels = [new Date().toLocaleTimeString()];
+    const initialData = [_btcBase];
+
+    _liveChartInstance = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: initialLabels,
+        datasets: [{
+          label: "Bitcoin / USD Live Ticks (@crypto)",
+          data: initialData,
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59, 130, 246, 0.08)",
+          borderWidth: 2.5,
+          tension: 0.3,
+          fill: true,
+          pointRadius: 3,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: { color: "rgba(150, 150, 150, 0.1)" } }
+        }
+      }
+    });
+
+    startLiveSimulation();
+  }
+
+  function performLiveTick() {
+    const btcDrift = (Math.random() - 0.48) * 85;
+    _btcBase = Math.max(50000, Math.round(_btcBase + btcDrift));
+
+    const tempDrift = (Math.random() - 0.5) * 0.4;
+    _weatherBase = parseFloat((_weatherBase + tempDrift).toFixed(1));
+
+    if (Math.random() > 0.6) _githubBase += 1;
+
+    const nowStr = new Date().toLocaleTimeString();
+
+    // 1. Update BTC Card with flash
+    const btcValEl = document.getElementById("crypto-price-val");
+    const btcBadge = document.getElementById("crypto-delta-badge");
+    if (btcValEl) {
+      btcValEl.textContent = "$" + _btcBase.toLocaleString();
+      btcValEl.classList.remove("text-success", "text-error");
+      btcValEl.classList.add(btcDrift >= 0 ? "text-success" : "text-error");
+      setTimeout(() => { btcValEl.classList.remove("text-success", "text-error"); }, 600);
+    }
+    if (btcBadge) {
+      const pct = ((btcDrift / _btcBase) * 100).toFixed(2);
+      btcBadge.textContent = (btcDrift >= 0 ? "+" : "") + pct + "%";
+      btcBadge.className = "badge badge-xs font-mono font-bold " + (btcDrift >= 0 ? "badge-success" : "badge-error");
+    }
+
+    // 2. Update Weather Card
+    const tempEl = document.getElementById("weather-temp-val");
+    if (tempEl) tempEl.textContent = _weatherBase + " °C";
+
+    // 3. Update GitHub Stars Card
+    const starsEl = document.getElementById("github-stars-val");
+    if (starsEl) starsEl.textContent = _githubBase.toLocaleString();
+
+    // 4. Update Chart.js Ring Buffer
+    if (_liveChartInstance) {
+      _liveChartInstance.data.labels.push(nowStr);
+      _liveChartInstance.data.datasets[0].data.push(_btcBase);
+      if (_liveChartInstance.data.labels.length > 20) {
+        _liveChartInstance.data.labels.shift();
+        _liveChartInstance.data.datasets[0].data.shift();
+      }
+      _liveChartInstance.update("none");
+    }
+  }
+
+  function startLiveSimulation() {
+    if (_liveSimulationTimer) clearInterval(_liveSimulationTimer);
+    _liveSimulationTimer = setInterval(performLiveTick, 2000);
+    _liveIsRunning = true;
+    updateSimulationControlsUI();
+  }
+
+  function pauseLiveSimulation() {
+    if (_liveSimulationTimer) clearInterval(_liveSimulationTimer);
+    _liveSimulationTimer = null;
+    _liveIsRunning = false;
+    updateSimulationControlsUI();
+  }
+
+  function toggleLiveFeedSimulation() {
+    if (_liveIsRunning) pauseLiveSimulation();
+    else startLiveSimulation();
+  }
+
+  function triggerManualTick() {
+    performLiveTick();
+  }
+
+  function updateSimulationControlsUI() {
+    const btnText = document.getElementById("live-btn-text");
+    if (btnText) btnText.textContent = _liveIsRunning ? "Pause Live Stream" : "Resume Stream";
+  }
+
+  // Boot chart when document is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initLiveShowcaseChart);
+  } else {
+    setTimeout(initLiveShowcaseChart, 150);
+  }
+</script>

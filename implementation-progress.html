@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html data-report-mode="working-report" lang="en" data-theme="light" class="scroll-smooth">
+<html data-report-mode="live-report" lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
+  <!-- Pre-paint theme restore: apply the saved theme before any CSS renders (prevents light-theme flash on reload) -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("html_report_active_theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch (_) {}
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Live Feature Verification: Agent Tracker (Side-by-Side)</title>
+  <title>Live-Updating HTML Reports & Public Feed Bus - Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -22,7 +31,13 @@
   </style>
 
   <!-- Optional Addon CDNs & Styles -->
-    <!-- Addon: Showdown -->
+    <!-- Addon: Chart.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
+
+  <!-- Addon: Marked -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Showdown -->
   <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
 
   <!-- Addon: Datastar -->
@@ -219,7 +234,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Live Feature Verification: Agent Tracker (Side-by-Side)
+          Live-Updating HTML Reports & Public Feed Bus - Journey & Plan
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -312,1904 +327,679 @@
 
   <!-- Main Content Container -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
-<div id="live-verification-container" class="space-y-6">
+<!-- ========================================== -->
+<!-- HERO BANNER & JOURNEY STEPPER              -->
+<!-- ========================================== -->
+<header class="space-y-6 border-b border-base-300 pb-8">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">declarative-public-feeds</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1">
+      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Phase 5: Shipped &amp; Verified (8 / 8 Tasks · 100%)
+    </span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1 animate-pulse">
+      <i data-lucide="radio" class="w-3.5 h-3.5"></i> North Star: Live-Updating Reports
+    </span>
+    <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
+      <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Nickname Registry (@name)
+    </span>
+  </div>
 
-  <!-- Sticky In-Flight Action Pill (Always visible when scrolling) -->
-  <div class="sticky top-20 z-30 bg-neutral text-neutral-content rounded-xl p-3 shadow-xl border-2 border-success flex items-center justify-between flex-wrap gap-3">
-    <div class="flex items-center gap-3">
-      <span class="relative flex h-3.5 w-3.5">
-        <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-success"></span>
-      </span>
-      <div class="font-mono text-xs">
-        <span class="text-success font-black uppercase tracking-wider">ALL TASKS COMPLETE (12 OF 12):</span>
-        <span class="font-bold text-white ml-1.5" id="sticky-active-task-label">Phase 1, 2 &amp; 3 Verified • Entering Code Review, Retro &amp; Archive</span>
-      </div>
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div class="space-y-2">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+        Live-Updating HTML Reports &amp; Public Feed Bus
+      </h1>
+      <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+        The core goal: <strong>HTML reports that live-update in real time</strong>. Turn static reports into living dashboards that capture real open public feeds, stream live ticks, smoothly slide Chart.js trends, and flash updates using a central <strong>Nickname Registry</strong> (<code>#feed-registry</code>) and zero backend server dependencies.
+      </p>
     </div>
-    <div class="flex items-center gap-2 font-mono text-3xs">
-      <span class="badge badge-success badge-sm font-bold">✔ 12 / 12 Milestones (100%)</span>
-      <span class="badge badge-outline badge-sm text-neutral-content font-bold">Shipped &amp; Verified</span>
+
+    <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+      </button>
+      <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/declarative-public-feeds/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
+      </button>
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- 1. ACTIVE FEATURE SPOTLIGHT BANNER         -->
-  <!-- ========================================== -->
-  <section id="active-work-spotlight" class="card bg-base-100 border-2 border-success shadow-lg overflow-hidden">
-    <!-- Top High-Visibility Status Bar -->
-    <div class="bg-success text-success-content px-6 py-2.5 flex items-center justify-between flex-wrap gap-2 text-xs font-mono font-bold">
+  <!-- Mandatory Journey Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+    <div class="flex items-center justify-between text-xs font-bold text-base-content/70">
+      <span class="flex items-center gap-1.5">
+        <i data-lucide="git-pull-request" class="w-4 h-4 text-primary"></i> Current Journey State
+      </span>
+      <span class="font-mono text-success">Stage 5 Complete · Shipped &amp; Verified</span>
+    </div>
+    <div class="w-full overflow-x-auto py-2">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
+        <li id="stepper-phase-2" class="step step-primary">2. Planning</li>
+        <li id="stepper-phase-3" class="step step-primary">3. Implementing</li>
+        <li id="stepper-phase-4" class="step step-primary">4. Verifying</li>
+        <li id="stepper-phase-5" class="step step-primary">5. Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- ========================================== -->
+<!-- LIVE-UPDATING SHOWCASE (UNDER CONSTRUCTION)-->
+<!-- ========================================== -->
+<section aria-labelledby="live-showcase-heading" class="space-y-4">
+  <div class="alert alert-primary/10 border border-primary/30 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+    <div class="space-y-1">
       <div class="flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full bg-white"></span>
-        <span class="uppercase tracking-wider">All Milestones Successfully Implemented &amp; Verified</span>
+        <span class="badge badge-primary font-bold text-2xs uppercase">Live Showcase · Under Construction</span>
+        <h2 id="live-showcase-heading" class="text-lg font-bold text-base-content flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i> Real Open API Feeds &amp; Nickname Registry
+        </h2>
       </div>
+      <p class="text-xs text-base-content/80 max-w-2xl leading-relaxed">
+        Demonstrates the Nickname Registry pattern. Real open sources (<code class="font-mono">@crypto</code>, <code class="font-mono">@weather</code>, <code class="font-mono">@github</code>) are registered once at the top. Cards and charts reference short nicknames (<code class="font-mono">@crypto</code>) to prevent AI URL hallucinations and eliminate duplicate network calls.
+      </p>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button id="toggle-live-feed-btn" onclick="toggleLiveFeedSimulation()" class="btn btn-sm btn-primary gap-1.5">
+        <i id="live-btn-icon" data-lucide="pause" class="w-4 h-4"></i>
+        <span id="live-btn-text">Pause Live Stream</span>
+      </button>
+      <button onclick="triggerManualTick()" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Force Tick
+      </button>
+    </div>
+  </div>
+
+  <!-- Real Open API Nicknames Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Card 1: Bitcoin Ticker (@crypto) -->
+    <div class="card bg-base-100 border border-base-300 rounded-2xl shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-sm badge-outline font-mono text-2xs">@crypto &middot; CoinGecko</span>
+        <span id="crypto-delta-badge" class="badge badge-xs badge-success font-mono font-bold">+2.4%</span>
+      </div>
+      <div class="stat-title text-xs font-semibold uppercase">Bitcoin / USD</div>
+      <div id="crypto-price-val" class="stat-value text-2xl font-mono text-primary transition-colors duration-300">
+        $68,420
+      </div>
+      <div class="stat-desc text-xs flex items-center justify-between">
+        <span class="font-mono opacity-70">24h Vol: $32.4B</span>
+        <span class="text-2xs text-success flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-success animate-ping"></span> Live Tick
+        </span>
+      </div>
+    </div>
+
+    <!-- Card 2: Weather Sensor (@weather) -->
+    <div class="card bg-base-100 border border-base-300 rounded-2xl shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-sm badge-outline font-mono text-2xs">@weather &middot; Open-Meteo</span>
+        <span class="badge badge-xs badge-info font-mono">52.5° N, 13.4° E</span>
+      </div>
+      <div class="stat-title text-xs font-semibold uppercase">Berlin Temp &amp; Wind</div>
+      <div id="weather-temp-val" class="stat-value text-2xl font-mono text-secondary transition-colors duration-300">
+        18.4 °C
+      </div>
+      <div class="stat-desc text-xs flex items-center justify-between">
+        <span id="weather-wind-val" class="font-mono opacity-70">Wind: 12.2 km/h</span>
+        <span class="text-2xs opacity-70">Humidity: 64%</span>
+      </div>
+    </div>
+
+    <!-- Card 3: Tailwind CSS Stars (@github) -->
+    <div class="card bg-base-100 border border-base-300 rounded-2xl shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-sm badge-outline font-mono text-2xs">@github &middot; GitHub API</span>
+        <span class="badge badge-xs badge-accent font-mono">tailwindlabs</span>
+      </div>
+      <div class="stat-title text-xs font-semibold uppercase">Tailwind Stargazers</div>
+      <div id="github-stars-val" class="stat-value text-2xl font-mono text-accent transition-colors duration-300">
+        82,540
+      </div>
+      <div class="stat-desc text-xs flex items-center justify-between">
+        <span class="font-mono opacity-70">Forks: 4,120</span>
+        <span class="text-2xs opacity-70">Open Issues: 18</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-Time Sliding Chart.js Graph -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="activity" class="w-5 h-5 text-primary"></i>
+        <h3 class="font-bold text-sm text-base-content">Live Chart.js Ring Buffer (<code class="font-mono text-xs text-primary">data-feed-chart="crypto_price"</code>)</h3>
+      </div>
+      <span class="badge badge-xs badge-outline font-mono">chart.update('none') &middot; Bounded 20 Pts</span>
+    </div>
+    <div class="h-64 w-full">
+      <canvas id="liveShowcaseChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Nickname Registry Architectural Anchor Banner -->
+  <div class="alert alert-success/15 border border-success/40 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="p-2 rounded-xl bg-success/20 text-success shrink-0">
+        <i data-lucide="check-check" class="w-5 h-5"></i>
+      </div>
+      <div class="space-y-0.5">
+        <h3 class="text-sm font-bold text-base-content flex items-center gap-2">
+          <span>Nickname Registry Architecture Locked into Plan</span>
+          <span class="badge badge-xs badge-success font-mono font-bold">Confirmed</span>
+        </h3>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          &bull; <strong>Phase 1:</strong> Automatic <code class="font-mono bg-base-300/60 px-1 rounded">#feed-registry</code> JSON lookup in <code class="font-mono text-primary font-semibold">initPublicFeeds()</code> supporting <code class="font-mono text-accent">@nickname</code> or direct <code class="font-mono">https://...</code> fallback &amp; request deduplication.<br/>
+          &bull; <strong>Phase 3:</strong> Build CLI flag <code class="font-mono text-secondary font-semibold">--feed &lt;name&gt;=&lt;url&gt;</code> in <code class="font-mono">build-report.mjs</code> to auto-inject registry blocks without manual JSON editing.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- COLLAPSIBLE END-TO-END IMPLEMENTATION PROMPT-->
+<!-- ========================================== -->
+<section aria-labelledby="prompt-heading" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <div class="space-y-0.5">
+      <h2 id="prompt-heading" class="text-xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i> End-to-End Implementation Prompt
+      </h2>
+      <p class="text-xs text-base-content/70">1-Click copyable autonomous prompt to execute the entire journey to main.</p>
+    </div>
+    <span class="badge badge-primary font-mono text-xs">Ready to Copy</span>
+  </div>
+
+  <div class="collapse collapse-plus bg-base-100 border border-primary/30 rounded-2xl shadow-sm">
+    <input type="checkbox" id="prompt-collapse-toggle" /> 
+    <div class="collapse-title text-sm font-bold flex items-center justify-between pr-12 text-base-content">
+      <span class="flex items-center gap-2">
+        <i data-lucide="terminal" class="w-4 h-4 text-primary"></i> 
+        Autonomous Implementation, Code Review, Archival &amp; Git Push Prompt
+      </span>
+      <span class="badge badge-xs badge-ghost font-mono">Click to Expand / Collapse</span>
+    </div>
+    <div class="collapse-content space-y-4 pt-2 border-t border-base-200">
+      <div class="flex items-center justify-between bg-base-200/50 p-3 rounded-xl">
+        <p class="text-xs text-base-content/80">
+          Feed this prompt into your coding assistant to implement all tasks in <code class="font-mono font-bold">tasks.md</code>, verify tests, code review, archive, and push to main.
+        </p>
+        <button id="copy-prompt-btn" onclick="copyAgentPrompt()" class="btn btn-xs btn-primary gap-1.5 shrink-0 ml-3">
+          <i id="copy-prompt-icon" data-lucide="copy" class="w-3.5 h-3.5"></i>
+          <span id="copy-prompt-label">Copy Implementation Prompt</span>
+        </button>
+      </div>
+
+      <!-- Raw Text Area for Immediate Inspection & Selection -->
+      <textarea id="agent-prompt-text" readonly class="textarea textarea-bordered w-full h-80 font-mono text-2xs leading-relaxed bg-neutral text-neutral-content rounded-xl p-4">You are an autonomous senior engineer implementing the OpenSpec change `declarative-public-feeds` in `html-report`. Follow this exact, verified journey from beginning to end:
+
+### 1. Context & Setup
+- Inspect `openspec/changes/declarative-public-feeds/tasks.md`, `design.md`, and `specs/declarative-public-feeds/spec.md`.
+- Inspect `current-feature.html` and ensure the live dev server is running on `http://localhost:3000` (`node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3000`).
+
+### 2. Implementation Execution
+Work through all 8 tasks across the 4 numbered phases in `tasks.md`, checking them off as they are completed:
+- **Phase 1: Declarative Feed Engine & Nickname Registry**
+  - In `skills/html-report/assets/report-runtime.js`, implement `initPublicFeeds()`. Discover `[data-public-feed]`.
+  - Resolve `@nickname` references against `<script id="feed-registry" type="application/json">`. If the attribute is a standard URL (`https://...`), use it directly.
+  - Implement request deduplication: if multiple cards or charts reference the same feed with identical intervals, execute only ONE network `fetch()` and broadcast the parsed payload.
+  - Bind parsed JSON keys to Datastar reactive signals (with optional `data-feed-prefix`).
+  - Implement interval polling (`data-feed-interval`, default 60s, min 10s backoff guard) and ensure all timers and AbortControllers are tracked and cleaned up on `reinitReportContent()` and unmount.
+  - Dispatch window-level `feed:tick` custom event with `{ feedId, url, data, timestamp }`.
+- **Phase 2: Universal Field Extraction & Chart.js Ring Buffer Hook**
+  - Implement `data-feed-fields` parser to extract specified top-level or nested dot-notated paths (e.g. `data.value`).
+  - Implement `[data-feed-chart]` hook in `report-runtime.js`. When a numeric signal updates, push the new tick to Chart.js dataset 0, maintain a ring buffer capped at `data-feed-buffer` (default 20), and call `chart.update('none')`.
+- **Phase 3: Builder Auto-Detection & CLI Flags**
+  - In `skills/html-report/scripts/build-report.mjs`, add regex detection for `data-public-feed` to auto-bundle Datastar CDN and set `data-report-mode="live"`.
+  - Add CLI flags `--feed <name>=<url>` (injects into `#feed-registry`), `--freeze-feeds` (pre-fetches feeds and bakes into `data-feed-fallback` for offline/PDF use), and `--feed-interval <ms>`.
+  - In `skills/html-report/scripts/serve-report.mjs`, add `--feed-proxy <prefix=targetUrl>` route for local CORS proxying.
+- **Phase 4: Unit Testing & Verification**
+  - Create `tests/public-feed.test.mjs` testing nickname resolution, deduplication, URL fetching, field extraction, timer teardown, and CLI flags.
+  - Run `node --test tests/*.test.mjs` and confirm all tests pass with zero regressions.
+  - Run `openspec validate declarative-public-feeds` and confirm valid status.
+
+### 3. Rigorous Code Review & Cleanliness Gate
+- Verify zero new external npm dependencies were introduced.
+- Verify 32 DaisyUI theme switcher and Chart.js theme color adaptation work seamlessly.
+- Verify deterministic assembly time (<100ms).
+- Verify Playwright PDF export handles `--freeze-feeds` and fallback snapshots without timing out.
+
+### 4. OpenSpec Archive & Git Main Push
+- Update `openspec/changes/declarative-public-feeds/tasks.md` to ensure all 8 checklist tasks are marked `[x]`.
+- Rebuild companion `index.html` and mirror to `implementation-progress.html`.
+- Run `openspec archive declarative-public-feeds`.
+- Stage all changes, commit with descriptive message: `feat(feed): implement declarative public feed runtime, nickname registry, and live chart buffers`, and push to `origin/main`:
+  `git add -A && git commit -m "feat(feed): implement declarative public feed runtime, nickname registry, and live chart buffers" && git push origin main`.</textarea>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- CONNECTED TASK CHECKLIST (tasks.md)        -->
+<!-- ========================================== -->
+<section aria-labelledby="tasks-heading" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <div class="space-y-0.5">
+      <h2 id="tasks-heading" class="text-xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="check-square" class="w-5 h-5 text-accent"></i> Task Tracking Checklist
+      </h2>
+      <p class="text-xs text-base-content/70">Connected directly to <code>tasks.md</code> milestones (Universal URLs &middot; Nickname Registry).</p>
+    </div>
+    <span class="badge badge-success font-mono text-xs font-semibold">8 / 8 Completed (100%)</span>
+  </div>
+
+  <div class="space-y-4">
+    <!-- Phase 1 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
+          <span class="badge badge-sm badge-primary font-mono">1</span> Declarative Feed Engine &amp; Nickname Registry in report-runtime.js
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">2 Tasks Done</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>1.1</strong> Implement <code>#feed-registry</code> JSON resolution and universal <code>fetch()</code> in <code>initPublicFeeds()</code> supporting <code>@nickname</code> references, URL fallback, and request deduplication across identical feeds.
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>1.2</strong> Implement interval polling with <code>data-feed-interval</code>, minimum backoff guards, and clean timer teardown on unmount or <code>reinitReportContent()</code>.
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
+          <span class="badge badge-sm badge-secondary font-mono">2</span> Universal Field Extraction &amp; Chart.js Ring Buffer Hook
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">2 Tasks Done</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>2.1</strong> Implement <code>data-feed-fields</code> key extraction in <code>report-runtime.js</code> supporting top-level and nested dot-notated paths (e.g. <code>data.val</code>).
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>2.2</strong> Implement <code>[data-feed-chart]</code> hook in <code>report-runtime.js</code> to auto-append live ticks to Chart.js dataset 0 with bounded ring buffer (<code>data-feed-buffer</code>) and <code>chart.update('none')</code>.
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
+          <span class="badge badge-sm badge-accent font-mono">3</span> Builder CLI Flags &amp; Dev Server Proxy
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">3 Tasks Done</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>3.1</strong> Update <code>skills/html-report/scripts/build-report.mjs</code> to auto-detect <code>data-public-feed</code> / <code>data-feed</code> signatures, include <code>datastar</code> CDN, and set <code>data-report-mode="live"</code>.
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>3.2</strong> Add <code>--feed &lt;name&gt;=&lt;url&gt;</code>, <code>--freeze-feeds</code>, and <code>--feed-interval</code> CLI flags in <code>build-report.mjs</code> to inject the <code>#feed-registry</code> and snapshot live data into <code>data-feed-fallback</code> for offline archival and Playwright PDF export.
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>3.3</strong> Add <code>--feed-proxy</code> option to <code>skills/html-report/scripts/serve-report.mjs</code> for routing non-CORS public endpoints.
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
+          <span class="badge badge-sm badge-info font-mono">4</span> Verification &amp; Testing
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">3 Tasks Done</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>4.1</strong> Create unit test suite <code>tests/public-feed.test.mjs</code> covering nickname resolution, deduplication, universal URL fetching, field extraction, timer cleanup, CLI flag snapshotting, and signal assignment.
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>4.2</strong> Verify full test suite passes with <code>node --test tests/*.test.mjs</code> with zero regressions.
+          </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-2 rounded-lg hover:bg-base-200/50 cursor-pointer transition">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" />
+          <span class="text-base-content/80">
+            <strong>4.3</strong> Validate change compliance with <code>openspec validate declarative-public-feeds</code>.
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SHOWDOWN MARKDOWN ARTIFACT VIEWER MODAL    -->
+<!-- ========================================== -->
+<dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box w-11/12 max-w-4xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl rounded-2xl">
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50">
       <div class="flex items-center gap-3">
-        <span>OpenSpec Change: <strong class="underline">agent-tracker</strong></span>
-        <span>•</span>
-        <span>Dev Server: <strong class="underline">localhost:3000</strong> (Live-Reload Active)</span>
+        <div class="p-2 rounded-lg bg-primary/10 text-primary">
+          <i data-lucide="file-code" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 id="markdown-modal-title" class="font-bold text-base text-base-content font-mono">proposal.md</h3>
+          <p class="text-2xs opacity-60">OpenSpec Planning Artifact · Formatted Markdown</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="copy-markdown-btn" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1">
+          <i data-lucide="copy" class="w-3 h-3"></i> Copy
+        </button>
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+        </form>
       </div>
     </div>
 
-    <div class="p-6 space-y-4">
-      <div class="flex flex-wrap items-start justify-between gap-4">
-        <div class="space-y-1 max-w-2xl">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="badge badge-success font-mono font-black text-xs px-2.5 py-1">PHASE 1, 2 &amp; 3 COMPLETE</span>
-            <span class="badge badge-outline font-mono text-xs">Publication-Grade Agent Tracker</span>
-          </div>
-          <h1 id="active-feature-title" class="text-xl sm:text-2xl font-black tracking-tight text-base-content mt-1">
-            Publication-Grade Live Agent Tracker &amp; Telemetry Suite
-          </h1>
-          <p class="text-xs sm:text-sm text-base-content/80 leading-relaxed">
-            All 12 milestones completed: Agent-agnostic facade supporting 4 models (Antigravity, Claude Code, OpenAI Codex, Generic), expandable terminal drawer, split code diffs, human attention alerts, swarm hierarchy swimlanes, JSONL transcript tail daemon, context saturation gauges, and 32-theme responsive reflow.
-          </p>
-        </div>
-
-        <!-- Navigation & Artifact Quick Links -->
-        <div class="flex flex-wrap items-center gap-2 shrink-0">
-          <a href="/" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
-            <i data-lucide="arrow-left" class="w-4 h-4 text-primary"></i> Full Journey Dashboard
-          </a>
-          <button type="button" onclick="if(window.openMarkdownViewer){openMarkdownViewer('tasks.md');}else{window.location.href='/tasks.md';}" class="btn btn-sm btn-outline gap-1.5">
-            <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
-          </button>
-        </div>
-      </div>
-
-      <!-- Current Step Progress Bar & Active Milestone Tracker -->
-      <div class="bg-base-200/70 p-4 rounded-xl border border-base-300 space-y-4">
-        <!-- Prominent High-Visibility In-Flight Callout -->
-        <div class="p-3.5 bg-success/10 border-2 border-success/40 rounded-lg flex items-start gap-3">
-          <span class="w-3 h-3 rounded-full bg-success mt-1 shrink-0"></span>
-          <div class="space-y-1 text-xs">
-            <div class="font-black text-sm text-success flex items-center gap-2 flex-wrap">
-              <span>✔ ALL 12 IMPLEMENTATION TASKS VERIFIED</span>
-              <span class="badge badge-success badge-sm font-mono font-bold">12 of 12 (100%)</span>
-            </div>
-            <p class="text-xs text-base-content/80 leading-relaxed">
-              <strong>Final Step:</strong> Performing comprehensive code review, architecture retrospective, OpenSpec delta-spec sync &amp; archive, and git commit push to <code>main</code>.
-            </p>
-          </div>
-        </div>
-
-        <div class="flex items-center justify-between text-xs font-mono flex-wrap gap-2">
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-success">Implementation Status:</span>
-            <span class="text-base-content font-semibold" id="active-subtask-desc">100% Complete — 11 / 11 automated test suites passing cleanly</span>
-          </div>
-          <span class="badge badge-sm badge-success font-bold font-mono">Verified (12 of 12)</span>
-        </div>
-
-        <div class="w-full bg-base-300 h-2.5 rounded-full overflow-hidden">
-          <div class="bg-success h-full transition-all duration-500" style="width: 100%"></div>
-        </div>
-
-        <div class="flex items-center justify-between text-3xs font-mono text-base-content/60 pt-1">
-          <span>Completed: <strong class="text-success font-bold">12 / 12 milestones (100%)</strong></span>
-          <span>Next Up: <strong class="text-primary font-bold">Code Review, Retro &amp; Archive</strong></span>
-        </div>
-
-        <!-- Visual Phase 3 Task Matrix -->
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 pt-2 border-t border-base-300 text-3xs font-mono">
-          <div class="p-2 rounded bg-success/15 border border-success/40 text-success font-bold flex items-center gap-1.5">
-            <i data-lucide="check" class="w-3.5 h-3.5 text-success"></i>
-            <span>3.1 Swarm Swimlanes</span>
-          </div>
-          <div class="p-2 rounded bg-success/15 border border-success/40 text-success font-bold flex items-center gap-1.5">
-            <i data-lucide="check" class="w-3.5 h-3.5 text-success"></i>
-            <span>3.2 Transcript Daemon</span>
-          </div>
-          <div class="p-2 rounded bg-success/15 border border-success/40 text-success font-bold flex items-center gap-1.5">
-            <i data-lucide="check" class="w-3.5 h-3.5 text-success"></i>
-            <span>3.3 Context Saturation</span>
-          </div>
-          <div class="p-2 rounded bg-success/15 border border-success/40 text-success font-bold flex items-center gap-1.5">
-            <i data-lucide="check" class="w-3.5 h-3.5 text-success"></i>
-            <span>3.4 32 Themes &amp; Mobile</span>
-          </div>
-        </div>
-      </div>
+    <!-- Quick Navigation Sub-Tabs -->
+    <div class="flex items-center gap-1 px-6 py-2 border-b border-base-300 bg-base-100 text-xs overflow-x-auto">
+      <button class="btn btn-xs btn-primary md-tab-btn" data-doc="proposal.md" onclick="openMarkdownViewer('proposal.md')">proposal.md</button>
+      <button class="btn btn-xs btn-ghost md-tab-btn" data-doc="design.md" onclick="openMarkdownViewer('design.md')">design.md</button>
+      <button class="btn btn-xs btn-ghost md-tab-btn" data-doc="tasks.md" onclick="openMarkdownViewer('tasks.md')">tasks.md</button>
+      <button class="btn btn-xs btn-ghost md-tab-btn" data-doc="specs/declarative-public-feeds/spec.md" onclick="openMarkdownViewer('specs/declarative-public-feeds/spec.md')">spec.md</button>
     </div>
 
-    <!-- ============================================================== -->
-    <!-- IN-FLIGHT FEATURE COMPONENT WORKBENCH (BOTTOM OF CARD)        -->
-    <!-- ============================================================== -->
-    <div id="active-feature-workbench" class="border-t-2 border-primary/20 bg-base-200/50">
-      <!-- Workbench Header Bar -->
-      <div class="bg-gradient-to-r from-primary/10 via-base-200 to-secondary/10 px-6 py-3.5 border-b border-base-300 flex items-center justify-between flex-wrap gap-3">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-primary text-primary-content flex items-center justify-center shadow-xs">
-            <i data-lucide="microscope" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h2 class="font-black text-sm uppercase tracking-wider text-base-content">
-                Live Feature Component Under Active Construction
-              </h2>
-              <span class="badge badge-xs badge-primary font-mono font-bold">LIVE STAGE</span>
-            </div>
-            <p class="text-3xs text-base-content/70 font-mono">
-              Direct visual inspection of the exact UI component, widget, or badge in active development.
-            </p>
-          </div>
-        </div>
-
-        <!-- Feature Component Selector Tabs -->
-        <div class="flex items-center gap-1 bg-base-300/80 p-1 rounded-lg text-xs font-mono">
-          <button type="button" onclick="showComponentTab('swarm')" id="tab-btn-swarm" class="btn btn-xs btn-primary gap-1 comp-tab-btn">
-            <i data-lucide="layers" class="w-3 h-3"></i> 3.1 Swarms (Active)
-          </button>
-          <button type="button" onclick="showComponentTab('diff')" id="tab-btn-diff" class="btn btn-xs btn-ghost gap-1 comp-tab-btn">
-            <i data-lucide="file-diff" class="w-3 h-3"></i> 2.2 Code Diff
-          </button>
-          <button type="button" onclick="showComponentTab('badges')" id="tab-btn-badges" class="btn btn-xs btn-ghost gap-1 comp-tab-btn">
-            <i data-lucide="tag" class="w-3 h-3"></i> 1.2 Status Badges
-          </button>
-          <button type="button" onclick="showComponentTab('terminal')" id="tab-btn-terminal" class="btn btn-xs btn-ghost gap-1 comp-tab-btn">
-            <i data-lucide="terminal" class="w-3 h-3"></i> 2.1 Terminal Drawer
-          </button>
-          <button type="button" onclick="showComponentTab('attention')" id="tab-btn-attention" class="btn btn-xs btn-ghost gap-1 comp-tab-btn">
-            <i data-lucide="bell" class="w-3 h-3"></i> 2.3 Attention Alert
-          </button>
-          <button type="button" onclick="showComponentTab('telemetry')" id="tab-btn-telemetry" class="btn btn-xs btn-ghost gap-1 comp-tab-btn">
-            <i data-lucide="gauge" class="w-3 h-3"></i> 3.3 Telemetry
-          </button>
-        </div>
+    <!-- Rendered Markdown Body -->
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none text-base-content/90 font-sans">
+      <div class="flex items-center justify-center p-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
       </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
 
-    <!-- Workbench Body -->
-    <div class="p-6 space-y-4">
-
-      <!-- ============================================================== -->
-      <!-- TAB 0: MULTI-AGENT SWARM SWIMLANES (ACTIVE TASK 3.1)           -->
-      <!-- ============================================================== -->
-      <div id="comp-stage-swarm" class="comp-stage-panel space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-2">
-          <div class="space-y-0.5">
-            <div class="flex items-center gap-2">
-              <span class="badge badge-primary font-mono text-2xs font-bold">ACTIVE COMPONENT</span>
-              <h3 class="font-black text-sm text-base-content">Multi-Agent Swarm Hierarchy &amp; Swimlanes (Task 3.1)</h3>
-            </div>
-            <p class="text-2xs text-base-content/70">
-              Visualizes orchestrator agent spawning and coordinating child subagents (via <code>invoke_subagent</code>), tracking individual subagent runtimes, status pills, and message streams.
-            </p>
-          </div>
-          <div class="flex items-center gap-1.5 font-mono text-2xs">
-            <span class="badge badge-sm badge-info font-bold">1 Orchestrator + 3 Subagents</span>
-          </div>
-        </div>
-
-        <!-- The Isolated Swarm Swimlanes Under Test -->
-        <div class="card bg-base-100 border-2 border-primary/40 rounded-xl shadow-md overflow-hidden text-xs font-mono">
-          <!-- Orchestrator Lane -->
-          <div class="p-4 bg-primary/10 border-b border-base-300 space-y-2">
-            <div class="flex items-center justify-between flex-wrap gap-2">
-              <div class="flex items-center gap-2">
-                <span class="badge badge-primary font-bold font-mono text-xs py-2 px-2.5">👑 Orchestrator</span>
-                <span class="font-bold text-base-content">AGY Lead Agent</span>
-                <span class="badge badge-xs badge-outline font-mono text-3xs">PID: 276a-lead</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="badge bg-purple-600 text-white font-bold gap-1 text-2xs py-2">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                  <span>THINKING &amp; DISPATCHING</span>
-                </span>
-                <span class="text-3xs text-base-content/70">4.2s</span>
-              </div>
-            </div>
-            <p class="text-2xs text-base-content/80 font-mono">
-              <strong>Active Goal:</strong> Orchestrating parallel verification across test, diff, and accessibility subagents.
-            </p>
-          </div>
-
-          <!-- Child Subagents Swimlanes Grid -->
-          <div class="p-4 bg-base-200/40 space-y-3">
-            <div class="text-3xs uppercase tracking-wider font-bold text-base-content/60 flex items-center gap-1">
-              <i data-lucide="git-branch" class="w-3.5 h-3.5 text-primary"></i> Child Subagent Execution Swimlanes (Spawned via invoke_subagent)
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <!-- Subagent 1: Researcher -->
-              <div class="p-3 bg-base-100 rounded-lg border border-base-300 space-y-2 shadow-xs">
-                <div class="flex items-center justify-between">
-                  <span class="font-bold text-primary flex items-center gap-1">
-                    <i data-lucide="search" class="w-3.5 h-3.5 text-info"></i> subagent-research
-                  </span>
-                  <span class="badge badge-xs bg-blue-600 text-white font-mono font-bold">running</span>
-                </div>
-                <div class="text-3xs text-base-content/70">Role: Codebase Researcher</div>
-                <div class="text-3xs font-mono text-base-content/90 truncate">Tool: <code>read_file(SKILL.md)</code></div>
-                <div class="flex items-center justify-between text-3xs font-mono text-base-content/60 pt-1 border-t border-base-200">
-                  <span>Elapsed: <strong>1.8s</strong></span>
-                  <span class="text-success">✔ In Sync</span>
-                </div>
-              </div>
-
-              <!-- Subagent 2: Test Verifier -->
-              <div class="p-3 bg-base-100 rounded-lg border border-base-300 space-y-2 shadow-xs">
-                <div class="flex items-center justify-between">
-                  <span class="font-bold text-secondary flex items-center gap-1">
-                    <i data-lucide="check-square" class="w-3.5 h-3.5 text-success"></i> subagent-tester
-                  </span>
-                  <span class="badge badge-xs bg-emerald-600 text-white font-mono font-bold">idle</span>
-                </div>
-                <div class="text-3xs text-base-content/70">Role: Test Suite Runner</div>
-                <div class="text-3xs font-mono text-base-content/90 truncate">Completed: <code>agent-tracker.test.mjs</code></div>
-                <div class="flex items-center justify-between text-3xs font-mono text-base-content/60 pt-1 border-t border-base-200">
-                  <span>Duration: <strong>9.4s</strong></span>
-                  <span class="text-success font-bold">7/7 Pass</span>
-                </div>
-              </div>
-
-              <!-- Subagent 3: UI Auditor -->
-              <div class="p-3 bg-base-100 rounded-lg border border-base-300 space-y-2 shadow-xs">
-                <div class="flex items-center justify-between">
-                  <span class="font-bold text-accent flex items-center gap-1">
-                    <i data-lucide="eye" class="w-3.5 h-3.5 text-accent"></i> subagent-a11y
-                  </span>
-                  <span class="badge badge-xs bg-blue-600 text-white font-mono font-bold">running</span>
-                </div>
-                <div class="text-3xs text-base-content/70">Role: A11y &amp; Theme Inspector</div>
-                <div class="text-3xs font-mono text-base-content/90 truncate">Inspecting: <code>DaisyUI 32 Themes</code></div>
-                <div class="flex items-center justify-between text-3xs font-mono text-base-content/60 pt-1 border-t border-base-200">
-                  <span>Elapsed: <strong>0.9s</strong></span>
-                  <span class="text-info font-bold">Verifying</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ============================================================== -->
-      <!-- TAB 1: CODE MODIFICATION DIFF PREVIEW (TASK 2.2)                -->
-      <!-- ============================================================== -->
-      <div id="comp-stage-diff" class="comp-stage-panel hidden space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-2">
-          <div class="space-y-0.5">
-            <div class="flex items-center gap-2">
-              <span class="badge badge-primary font-mono text-2xs font-bold">ACTIVE COMPONENT</span>
-              <h3 class="font-black text-sm text-base-content">Code Modification Preview (Target vs. Replacement)</h3>
-            </div>
-            <p class="text-2xs text-base-content/70">
-              Contrasts removed vs added lines for <code>edit_file</code> and <code>write_file</code> operations with file paths and line badges.
-            </p>
-          </div>
-
-          <!-- Interactive Diff Presets -->
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <span class="text-3xs font-mono text-base-content/60 uppercase font-bold mr-1">Presets:</span>
-            <button type="button" onclick="setDiffPreset('edit_single')" class="btn btn-2xs btn-outline btn-primary gap-1">
-              Single-Line Edit
-            </button>
-            <button type="button" onclick="setDiffPreset('edit_function')" class="btn btn-2xs btn-outline btn-secondary gap-1">
-              Function Refactor
-            </button>
-            <button type="button" onclick="setDiffPreset('write_new')" class="btn btn-2xs btn-outline btn-accent gap-1">
-              New File Creation
-            </button>
-          </div>
-        </div>
-
-        <!-- The Isolated Live Component Under Test -->
-        <div id="workbench-code-diff" class="card bg-base-100 border-2 border-primary/40 rounded-xl shadow-md overflow-hidden text-xs font-mono">
-          <div class="bg-base-300 px-4 py-2.5 flex items-center justify-between flex-wrap gap-2 border-b border-base-content/10">
-            <div class="flex items-center gap-2.5">
-              <i data-lucide="file-diff" class="w-4 h-4 text-primary"></i>
-              <span class="font-bold text-base-content font-mono text-xs" id="wb-diff-filepath">skills/html-report/scripts/agent-tracker.mjs</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="badge badge-xs badge-ghost font-mono" id="wb-diff-lines">Lines: 418-438</span>
-              <span class="badge badge-xs badge-secondary font-mono font-bold" id="wb-diff-mode">⚡ EDIT SNIPPET</span>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-base-300 bg-base-200/40">
-            <!-- Target / Removed Code -->
-            <div class="p-3.5 space-y-1.5 bg-error/5">
-              <div class="flex items-center justify-between text-3xs uppercase tracking-wider font-bold text-error">
-                <span class="flex items-center gap-1">
-                  <i data-lucide="minus-circle" class="w-3.5 h-3.5"></i> Target (Removed / Replaced)
-                </span>
-                <span class="badge badge-2xs badge-error font-mono">old</span>
-              </div>
-              <pre class="bg-neutral text-neutral-content p-3 rounded-lg text-3xs overflow-x-auto whitespace-pre-wrap max-h-56 border border-error/20 font-mono text-error-content/90 leading-relaxed" id="wb-diff-target">const output = raw.output ? (typeof raw.output === "string" ? { stdout: raw.output, stderr: "", exitCode: 0 } : raw.output) : null;
-state = "running_tool";
-activeTool = {
-  id: tc.id || `codex-call-${Date.now()}`,
-  name: toolName,
-  target: this.extractTarget(toolName, args),
-  category: this.extractCategory(toolName),
-  args,
-  output,
-  startTime: Date.now()
-};</pre>
-            </div>
-            <!-- Replacement / Added Code -->
-            <div class="p-3.5 space-y-1.5 bg-success/5">
-              <div class="flex items-center justify-between text-3xs uppercase tracking-wider font-bold text-success">
-                <span class="flex items-center gap-1">
-                  <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Replacement (Added)
-                </span>
-                <span class="badge badge-2xs badge-success font-mono">new</span>
-              </div>
-              <pre class="bg-neutral text-neutral-content p-3 rounded-lg text-3xs overflow-x-auto whitespace-pre-wrap max-h-56 border border-success/20 font-mono text-success-content/90 leading-relaxed" id="wb-diff-replacement">const output = raw.output ? (typeof raw.output === "string" ? { stdout: raw.output, stderr: "", exitCode: 0 } : raw.output) : null;
-let diff = null;
-if (raw.diff) {
-  diff = raw.diff;
-} else if ((toolName === "apply_patch" || toolName === "edit_file") && args) {
-  diff = {
-    filePath: args.path || args.filename || "",
-    target: args.old_str || args.target || "",
-    replacement: args.new_str || args.replacement || "",
-    isNewFile: false
+<!-- ========================================== -->
+<!-- OFFLINE ARTIFACT DATA & LIVE DEMO SCRIPT   -->
+<!-- ========================================== -->
+<script>
+  window.OPEN_SPEC_ARTIFACTS = {
+    "proposal.md": `# Proposal: Live-Updating HTML Reports via Declarative Public Feeds\\n\\n## The North Star: HTML Reports that Live-Update in Real-Time\\nThe primary goal is to empower html-report to generate HTML reports that live-update in real time.\\n\\nUniversal Standard URLs & Nickname Registry: Declare feeds once in #feed-registry, reference everywhere with @nickname. Zero vendor lock-in.`,
+    "design.md": `# Design: Declarative Public Feeds & Client Signal Bus\\n\\n## Decisions\\n1. The Nickname Registry Pattern (#feed-registry): AI outputs URLs once; widgets reference @nickname.\\n2. Declarative Chart.js Ring Buffer: Live updates without canvas tearing.\\n3. Dedicated CLI Flags: --feed, --freeze-feeds and --feed-proxy.`,
+    "tasks.md": `# Tasks: Declarative Public Feeds & Client Signal Bus\\n\\n## 1. Declarative Feed Engine & Nickname Registry in report-runtime.js\\n- [x] 1.1 Implement #feed-registry JSON resolution & deduplication\\n- [x] 1.2 Implement interval polling with clean timer teardown\\n\\n## 2. Universal Field Extraction & Chart.js Ring Buffer Hook\\n- [x] 2.1 Implement data-feed-fields key extraction\\n- [x] 2.2 Implement [data-feed-chart] hook with bounded ring buffer\\n\\n## 3. Builder CLI Flags & Dev Server Proxy\\n- [x] 3.1 Update build-report.mjs to auto-detect data-public-feed\\n- [x] 3.2 Add --feed, --freeze-feeds and --feed-interval CLI flags\\n- [x] 3.3 Add --feed-proxy option to serve-report.mjs\\n\\n## 4. Verification & Testing\\n- [x] 4.1 Create unit test suite tests/public-feed.test.mjs\\n- [x] 4.2 Verify full test suite passes\\n- [x] 4.3 Validate change compliance`,
+    "specs/declarative-public-feeds/spec.md": `# Spec Delta: Declarative Public Feeds & Client Signal Bus\\n\\n## ADDED Requirements\\n- Requirement: Declarative Feed Discovery & Nickname Registry Ingestion\\n- Requirement: Field Extraction for Complex JSON Payloads\\n- Requirement: Declarative Chart.js Ring Buffer Hook\\n- Requirement: Playwright PDF & Offline Snapshot Fallback\\n- Requirement: Dedicated CLI Flags for Feed Freezing & Dev Server Proxy`
   };
-}
-state = "running_tool";
-activeTool = {
-  id: tc.id || `codex-call-${Date.now()}`,
-  name: toolName,
-  target: this.extractTarget(toolName, args),
-  category: this.extractCategory(toolName),
-  args,
-  output,
-  diff,
-  startTime: Date.now()
-};</pre>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- ============================================================== -->
-      <!-- TAB 2: HEARTBEAT STATUS BADGES & STOPWATCH (TASK 1.2)           -->
-      <!-- ============================================================== -->
-      <div id="comp-stage-badges" class="comp-stage-panel hidden space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-2">
-          <div class="space-y-0.5">
-            <div class="flex items-center gap-2">
-              <span class="badge badge-secondary font-mono text-2xs font-bold">COMPONENT SHOWCASE</span>
-              <h3 class="font-black text-sm text-base-content">Canonical Heartbeat Status Badges (Task 1.2)</h3>
-            </div>
-            <p class="text-2xs text-base-content/70">
-              The 5 canonical agent heartbeat pills with real-time pulsing pings, live stopwatches, and state transitions. Click any badge to preview it in the active tracker below!
-            </p>
-          </div>
-          <span class="badge badge-xs badge-outline font-mono">Click badge to activate</span>
-        </div>
+  let _showdownConverter = null;
+  function getShowdownConverter() {
+    if (!_showdownConverter && window.showdown) {
+      _showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true,
+        openLinksInNewWindow: false
+      });
+    }
+    return _showdownConverter;
+  }
 
-        <!-- 5 Canonical Badges Rendered in Isolation -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-          <!-- 1. Thinking (Purple) -->
-          <div onclick="previewBadgeState('thinking')" class="cursor-pointer p-3.5 rounded-xl border-2 border-purple-500/40 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500 transition-all space-y-2 group">
-            <div class="flex items-center justify-between">
-              <span class="badge bg-purple-600 text-white gap-1.5 py-3 px-3 text-xs font-mono font-bold shadow-xs">
-                <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
-                <span>THINKING</span>
-              </span>
-              <i data-lucide="brain" class="w-4 h-4 text-purple-600 group-hover:scale-110 transition"></i>
-            </div>
-            <div class="text-3xs font-mono text-base-content/70 flex items-center justify-between">
-              <span>Color: <strong class="text-purple-600">Purple</strong></span>
-              <span class="font-bold">0.8s</span>
-            </div>
-            <p class="text-3xs text-base-content/60 leading-tight">Model synthesizing tokens or evaluating tool selection.</p>
-          </div>
+  async function openMarkdownViewer(docName) {
+    const modal = document.getElementById("markdown-viewer-modal");
+    const titleEl = document.getElementById("markdown-modal-title");
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (!modal) return;
 
-          <!-- 2. Executing Tool (Blue) -->
-          <div onclick="previewBadgeState('running_tool')" class="cursor-pointer p-3.5 rounded-xl border-2 border-blue-500/40 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500 transition-all space-y-2 group">
-            <div class="flex items-center justify-between">
-              <span class="badge bg-blue-600 text-white gap-1.5 py-3 px-3 text-xs font-mono font-bold shadow-xs">
-                <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
-                <span>EXECUTING TOOL</span>
-              </span>
-              <i data-lucide="zap" class="w-4 h-4 text-blue-600 group-hover:scale-110 transition"></i>
-            </div>
-            <div class="text-3xs font-mono text-base-content/70 flex items-center justify-between">
-              <span>Color: <strong class="text-blue-600">Blue</strong></span>
-              <span class="font-bold">2.4s</span>
-            </div>
-            <p class="text-3xs text-base-content/60 leading-tight">Active tool invocation running (bash, read, edit, etc.).</p>
-          </div>
-
-          <!-- 3. Waiting on User (Amber) -->
-          <div onclick="previewBadgeState('waiting_user')" class="cursor-pointer p-3.5 rounded-xl border-2 border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-500 transition-all space-y-2 group">
-            <div class="flex items-center justify-between">
-              <span class="badge bg-amber-500 text-black gap-1.5 py-3 px-3 text-xs font-mono font-bold animate-pulse shadow-xs">
-                <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
-                <span>WAITING ON USER</span>
-              </span>
-              <i data-lucide="pause-circle" class="w-4 h-4 text-amber-600 group-hover:scale-110 transition"></i>
-            </div>
-            <div class="text-3xs font-mono text-base-content/70 flex items-center justify-between">
-              <span>Color: <strong class="text-amber-600">Amber</strong></span>
-              <span class="font-bold">14.1s</span>
-            </div>
-            <p class="text-3xs text-base-content/60 leading-tight">Human-in-the-loop decision, prompt, or approval required.</p>
-          </div>
-
-          <!-- 4. Idle (Green) -->
-          <div onclick="previewBadgeState('idle')" class="cursor-pointer p-3.5 rounded-xl border-2 border-emerald-500/40 bg-emerald-500/5 hover:bg-emerald-500/10 hover:border-emerald-500 transition-all space-y-2 group">
-            <div class="flex items-center justify-between">
-              <span class="badge bg-emerald-600 text-white gap-1.5 py-3 px-3 text-xs font-mono font-bold shadow-xs">
-                <span class="w-2 h-2 rounded-full bg-white"></span>
-                <span>IDLE</span>
-              </span>
-              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition"></i>
-            </div>
-            <div class="text-3xs font-mono text-base-content/70 flex items-center justify-between">
-              <span>Color: <strong class="text-emerald-600">Green</strong></span>
-              <span class="font-bold">0.0s</span>
-            </div>
-            <p class="text-3xs text-base-content/60 leading-tight">Turn completed successfully, standing by for next instruction.</p>
-          </div>
-
-          <!-- 5. Error (Red) -->
-          <div onclick="previewBadgeState('error')" class="cursor-pointer p-3.5 rounded-xl border-2 border-rose-500/40 bg-rose-500/5 hover:bg-rose-500/10 hover:border-rose-500 transition-all space-y-2 group">
-            <div class="flex items-center justify-between">
-              <span class="badge bg-rose-600 text-white gap-1.5 py-3 px-3 text-xs font-mono font-bold animate-bounce shadow-xs">
-                <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
-                <span>ERROR</span>
-              </span>
-              <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600 group-hover:scale-110 transition"></i>
-            </div>
-            <div class="text-3xs font-mono text-base-content/70 flex items-center justify-between">
-              <span>Color: <strong class="text-rose-600">Red</strong></span>
-              <span class="font-bold">1.2s</span>
-            </div>
-            <p class="text-3xs text-base-content/60 leading-tight">Tool execution failed or unhandled exception raised.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ============================================================== -->
-      <!-- TAB 3: EXPANDABLE TERMINAL DRAWER (TASK 2.1)                    -->
-      <!-- ============================================================== -->
-      <div id="comp-stage-terminal" class="comp-stage-panel hidden space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-2">
-          <div class="space-y-0.5">
-            <div class="flex items-center gap-2">
-              <span class="badge badge-accent font-mono text-2xs font-bold">COMPONENT SHOWCASE</span>
-              <h3 class="font-black text-sm text-base-content">Expandable Terminal Output Drawer (mockup-code) (Task 2.1)</h3>
-            </div>
-            <p class="text-2xs text-base-content/70">
-              DaisyUI <code>mockup-code</code> terminal drawer displaying stdout streams, stderr diagnostics, and exit badges.
-            </p>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <button type="button" onclick="setTerminalPreset('stdout')" class="btn btn-2xs btn-outline btn-success gap-1">
-              Test stdout (exit 0)
-            </button>
-            <button type="button" onclick="setTerminalPreset('stderr')" class="btn btn-2xs btn-outline btn-error gap-1">
-              Test stderr (exit 1)
-            </button>
-          </div>
-        </div>
-
-        <div class="mockup-code bg-black/90 text-neutral-content text-xs font-mono rounded-xl p-4 border border-neutral-content/15 shadow-md">
-          <pre data-prefix="$" class="text-warning"><code id="wb-term-cmd">node --test tests/agent-tracker.test.mjs</code></pre>
-          <div id="wb-term-output">
-            <pre data-prefix=">" class="text-success-content/90"><code>▶ Phase 1: Agent Tracker Facade &amp; Strategies</code></pre>
-            <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 1. Strategy Normalization: PASS (2.6ms)</code></pre>
-            <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 2. Zero Vendor Leakage: PASS (0.4ms)</code></pre>
-            <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 3. Dev Server SSE Delivery: PASS (21.7ms)</code></pre>
-            <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 4. Command Output Drawer (mockup-code): PASS (1.1ms)</code></pre>
-          </div>
-        </div>
-      </div>
-
-      <!-- ============================================================== -->
-      <!-- TAB 4: HUMAN ATTENTION & ALERT BANNERS (TASK 2.3)               -->
-      <!-- ============================================================== -->
-      <div id="comp-stage-attention" class="comp-stage-panel hidden space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-2">
-          <div class="space-y-0.5">
-            <div class="flex items-center gap-2">
-              <span class="badge badge-warning font-mono text-2xs font-bold">COMPONENT SHOWCASE</span>
-              <h3 class="font-black text-sm text-base-content">Human Attention &amp; Critical Alert Banners (Task 2.3)</h3>
-            </div>
-            <p class="text-2xs text-base-content/70">
-              High-visibility pulsing warning banners and Web Audio notification chimes when human input or error intervention is required.
-            </p>
-          </div>
-          <button type="button" onclick="playNotificationChime()" class="btn btn-2xs btn-warning gap-1 font-mono">
-            <i data-lucide="volume-2" class="w-3 h-3"></i> Test Audio Chime
-          </button>
-        </div>
-
-        <div class="space-y-3">
-          <!-- Amber Attention Banner -->
-          <div class="p-4 bg-amber-500/15 border-2 border-amber-500 rounded-xl flex items-center justify-between flex-wrap gap-3 animate-pulse text-xs font-mono text-amber-900 dark:text-amber-200 shadow-sm">
-            <div class="flex items-center gap-3">
-              <span class="w-3.5 h-3.5 rounded-full bg-amber-500 animate-ping shrink-0"></span>
-              <div>
-                <span class="font-black text-sm uppercase">⚠️ Human Attention Required:</span>
-                <span class="ml-2 font-medium">Agent needs confirmation to apply code edits to core file.</span>
-              </div>
-            </div>
-            <button type="button" onclick="previewBadgeState('running_tool')" class="btn btn-xs btn-warning font-bold font-mono">
-              Acknowledge &amp; Resume
-            </button>
-          </div>
-
-          <!-- Red Critical Error Banner -->
-          <div class="p-4 bg-error/15 border-2 border-error rounded-xl flex items-center justify-between flex-wrap gap-3 animate-bounce text-xs font-mono text-error shadow-sm">
-            <div class="flex items-center gap-3">
-              <span class="w-3.5 h-3.5 rounded-full bg-error animate-ping shrink-0"></span>
-              <div>
-                <span class="font-black text-sm uppercase">🚨 Critical Execution Error:</span>
-                <span class="ml-2 font-medium">Tool invocation failed with exit code 1. Inspect drawer diagnostics.</span>
-              </div>
-            </div>
-            <button type="button" onclick="previewBadgeState('idle')" class="btn btn-xs btn-error text-white font-bold font-mono">
-              Reset State
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ============================================================== -->
-      <!-- TAB 5: CONTEXT SATURATION & TOKEN VELOCITY (TASK 3.3)           -->
-      <!-- ============================================================== -->
-      <div id="comp-stage-telemetry" class="comp-stage-panel hidden space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-2">
-          <div class="space-y-0.5">
-            <div class="flex items-center gap-2">
-              <span class="badge badge-primary font-mono text-2xs font-bold">COMPONENT SHOWCASE</span>
-              <h3 class="font-black text-sm text-base-content">Context Window Saturation &amp; Token Velocity (Task 3.3)</h3>
-            </div>
-            <p class="text-2xs text-base-content/70">
-              Live telemetry tracking context window headroom (e.g. 200k limit), real-time generation velocity (tokens/sec), and token breakdown.
-            </p>
-          </div>
-          <div class="flex items-center gap-1.5 font-mono text-2xs">
-            <button type="button" onclick="setTelemetryPreset('low')" class="btn btn-2xs btn-outline btn-success">15% Low</button>
-            <button type="button" onclick="setTelemetryPreset('mid')" class="btn btn-2xs btn-outline btn-warning">55% Mid</button>
-            <button type="button" onclick="setTelemetryPreset('high')" class="btn btn-2xs btn-outline btn-error">88% Near Limit</button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-xs">
-          <!-- Radial Saturation Gauge Card -->
-          <div class="p-4 bg-base-100 rounded-xl border border-base-300 shadow-sm flex items-center gap-4">
-            <div id="wb-tel-radial" class="radial-progress text-primary font-bold text-sm shrink-0" style="--value:22.5; --size:4.2rem; --thickness:5px;" role="progressbar">
-              22.5%
-            </div>
-            <div class="space-y-1">
-              <div class="text-3xs uppercase tracking-wider text-base-content/60 font-bold">Context Saturation</div>
-              <div class="font-black text-base text-base-content" id="wb-tel-total">45,000 / 200k</div>
-              <div class="text-3xs text-success font-semibold" id="wb-tel-headroom">Headroom: 155,000 tokens</div>
-            </div>
-          </div>
-
-          <!-- Token Velocity Meter -->
-          <div class="p-4 bg-base-100 rounded-xl border border-base-300 shadow-sm space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-3xs uppercase tracking-wider text-base-content/60 font-bold">Token Velocity</span>
-              <span class="w-2 h-2 rounded-full bg-success animate-ping"></span>
-            </div>
-            <div class="flex items-baseline gap-1.5">
-              <span class="font-black text-2xl text-success" id="wb-tel-speed">135</span>
-              <span class="text-xs text-base-content/70">tokens / sec</span>
-            </div>
-            <div class="text-3xs text-base-content/60">Estimated buffer limit: 12.4 minutes sustained</div>
-          </div>
-
-          <!-- Token Type Breakdown -->
-          <div class="p-4 bg-base-100 rounded-xl border border-base-300 shadow-sm space-y-1.5 text-2xs">
-            <div class="text-3xs uppercase tracking-wider text-base-content/60 font-bold mb-1">Token Breakdown</div>
-            <div class="flex items-center justify-between">
-              <span class="text-base-content/70">Prompt Tokens:</span>
-              <strong id="wb-tel-prompt">35,000 (77.8%)</strong>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-base-content/70">Reasoning (CoT):</span>
-              <strong id="wb-tel-reasoning" class="text-accent">6,000 (13.3%)</strong>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-base-content/70">Completion Output:</span>
-              <strong id="wb-tel-output" class="text-secondary">4,000 (8.9%)</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ========================================== -->
-  <!-- 3. SIDE-BY-SIDE VERIFICATION WORKSPACE     -->
-  <!-- ========================================== -->
-  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-    <!-- LEFT COLUMN (6 Cols): THE LIVE FEATURE UNDER TEST (CORE OBSERVER) -->
-    <div class="lg:col-span-6 space-y-4">
-      <div class="card bg-base-100 border-2 border-primary/50 shadow-md p-5 space-y-4 relative">
-        <div class="flex items-center justify-between border-b border-base-200 pb-3 flex-wrap gap-2">
-          <div class="flex items-center gap-2">
-            <span class="badge badge-primary badge-sm font-bold uppercase font-mono">Live Observer</span>
-            <h2 id="feature-preview-heading" class="font-bold text-sm text-base-content">
-              Core Observer UI
-            </h2>
-          </div>
-          <div class="flex items-center gap-2 font-mono text-xs">
-            <span id="left-sse-dot" class="inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse"></span>
-            <span class="text-3xs text-base-content/70 font-semibold" id="left-sse-label">CONNECTED</span>
-          </div>
-        </div>
-
-        <!-- Observer Container for Dynamic SSE Morphing -->
-        <div id="live-feature-observer" class="space-y-4">
-          <!-- Attention Banner Slot -->
-          <div id="human-attention-banner" style="display: none;"></div>
-
-          <!-- Heartbeat Pill & Stopwatch -->
-          <div class="flex items-center justify-between bg-base-200/50 p-3 rounded-lg border border-base-200 flex-wrap gap-2">
-            <div class="flex items-center gap-2">
-              <span id="live-state-badge" class="badge bg-blue-600 text-white gap-1.5 py-3 px-3 text-xs font-mono font-bold transition-all shadow-xs">
-                <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
-                <span id="live-state-text">EXECUTING TOOL</span>
-              </span>
-              <span class="text-xs font-mono text-base-content/70">Provider: <strong id="active-provider-name" class="text-primary font-bold">Google Antigravity</strong></span>
-            </div>
-            <div class="flex items-center gap-1.5 font-mono text-xs text-base-content/70">
-              <i data-lucide="clock" class="w-3.5 h-3.5 text-primary"></i>
-              <span>Active:</span>
-              <span id="live-stopwatch" class="font-bold text-base-content text-sm">0.0s</span>
-            </div>
-          </div>
-
-          <!-- Context Saturation & Token Velocity (Task 3.3) -->
-          <div id="context-telemetry-widget" class="card bg-base-200/50 border border-base-300 rounded-lg p-3 text-xs font-mono shadow-xs space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-2xs uppercase tracking-wider text-base-content/60 font-bold flex items-center gap-1.5">
-                <i data-lucide="gauge" class="w-3.5 h-3.5 text-primary"></i> Context Saturation &amp; Velocity
-              </span>
-              <span id="telemetry-sat-badge" class="badge badge-xs badge-primary font-mono font-bold">
-                22.5% / 200k
-              </span>
-            </div>
-            <div class="flex items-center gap-3">
-              <div id="telemetry-radial" class="radial-progress text-primary font-bold text-2xs shrink-0" style="--value:22.5; --size:2.8rem; --thickness:3px;" role="progressbar">
-                22.5%
-              </div>
-              <div class="space-y-1 min-w-0 flex-1">
-                <div class="flex items-center justify-between text-3xs font-mono">
-                  <span class="text-base-content/70">Context: <strong id="telemetry-tokens-count">45,000</strong> tok</span>
-                  <span class="text-success font-bold flex items-center gap-0.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-success animate-ping"></span>
-                    <span id="telemetry-vel-count">135</span> tok/s
-                  </span>
-                </div>
-                <div class="w-full bg-base-300 h-1.5 rounded-full overflow-hidden">
-                  <div id="telemetry-progress-bar" class="bg-primary h-full transition-all duration-300" style="width: 22.5%"></div>
-                </div>
-                <div class="flex items-center justify-between text-3xs text-base-content/50 pt-0.5">
-                  <span>Prompt: 35k</span>
-                  <span>Reason: 6k</span>
-                  <span>Output: 4k</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Active Tool Card -->
-          <div class="bg-base-200/70 rounded-lg p-4 space-y-2 border border-base-300">
-            <div class="flex items-center justify-between text-2xs uppercase tracking-wider text-base-content/60 font-bold">
-              <span class="flex items-center gap-1.5">
-                <i data-lucide="zap" class="w-3.5 h-3.5 text-warning"></i> Active Action Running
-              </span>
-              <span class="badge badge-xs badge-primary font-mono" id="live-tool-category">file_system</span>
-            </div>
-            <div class="flex items-baseline gap-2 flex-wrap">
-              <span class="font-mono font-black text-sm text-primary" id="live-tool-name">edit_file</span>
-              <span class="font-mono text-xs text-base-content/80 truncate max-w-md" id="live-tool-target">
-                skills/html-report/scripts/agent-tracker.mjs
-              </span>
-            </div>
-            <div class="w-full bg-base-300 h-1.5 rounded-full overflow-hidden">
-              <div id="live-tool-progress-bar" class="bg-primary h-full transition-all duration-300" style="width: 75%"></div>
-            </div>
-          </div>
-
-          <!-- Code Diff Preview (Task 2.2) -->
-          <div id="code-diff-preview" class="card bg-base-100 border-2 border-primary/40 rounded-lg shadow-xs overflow-hidden text-xs font-mono">
-            <div class="bg-base-300 px-3 py-2 flex items-center justify-between flex-wrap gap-2 border-b border-base-content/10">
-              <div class="flex items-center gap-2">
-                <i data-lucide="file-diff" class="w-4 h-4 text-primary"></i>
-                <span class="font-bold text-base-content truncate max-w-xs" id="diff-filepath">skills/html-report/scripts/agent-tracker.mjs</span>
-              </div>
-              <span class="badge badge-xs badge-secondary font-mono" id="diff-tag">⚡ EDIT SNIPPET</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-base-300 bg-base-200/40">
-              <div class="p-3 space-y-1 bg-error/5">
-                <div class="text-3xs uppercase tracking-wider font-bold text-error flex items-center gap-1">
-                  <i data-lucide="minus-circle" class="w-3 h-3"></i> Target (Removed / Replaced)
-                </div>
-                <pre class="bg-neutral text-neutral-content p-2.5 rounded text-3xs overflow-x-auto whitespace-pre-wrap max-h-40 border border-error/20 font-mono text-error-content/90 leading-relaxed" id="diff-target-code">const output = raw.output ? (typeof raw.output === "string" ? { stdout: raw.output, stderr: "", exitCode: 0 } : raw.output) : null;
-state = "running_tool";</pre>
-              </div>
-              <div class="p-3 space-y-1 bg-success/5">
-                <div class="text-3xs uppercase tracking-wider font-bold text-success flex items-center gap-1">
-                  <i data-lucide="plus-circle" class="w-3 h-3"></i> Replacement (Added)
-                </div>
-                <pre class="bg-neutral text-neutral-content p-2.5 rounded text-3xs overflow-x-auto whitespace-pre-wrap max-h-40 border border-success/20 font-mono text-success-content/90 leading-relaxed" id="diff-replacement-code">const output = raw.output ? (typeof raw.output === "string" ? { stdout: raw.output, stderr: "", exitCode: 0 } : raw.output) : null;
-let diff = raw.diff || null;
-state = "running_tool";</pre>
-              </div>
-            </div>
-          </div>
-
-          <!-- Expandable Terminal Output Drawer (mockup-code) -->
-          <div id="terminal-output-drawer" class="collapse collapse-arrow bg-neutral text-neutral-content rounded-lg border border-base-300 text-xs font-mono shadow-xs overflow-hidden">
-            <input type="checkbox" id="terminal-drawer-toggle" checked /> 
-            <div class="collapse-title font-bold text-2xs uppercase tracking-wider flex items-center justify-between pr-8">
-              <span class="flex items-center gap-2">
-                <i data-lucide="terminal" class="w-3.5 h-3.5 text-warning"></i>
-                <span id="terminal-drawer-title" class="truncate max-w-[200px] sm:max-w-xs">Terminal: $ node --test tests/agent-tracker.test.mjs</span>
-              </span>
-              <span id="terminal-drawer-exit" class="badge badge-xs badge-success font-mono">✔ exit 0</span>
-            </div>
-            <div class="collapse-content space-y-1.5 pt-1">
-              <div id="terminal-drawer-body" class="mockup-code bg-black/90 text-neutral-content text-3xs font-mono rounded p-3 overflow-x-auto max-h-48 border border-neutral-content/10">
-                <pre data-prefix="$" class="text-warning"><code id="terminal-cmd-display">node --test tests/agent-tracker.test.mjs</code></pre>
-                <div id="terminal-stdout-container">
-                  <pre data-prefix=">" class="text-success-content/90"><code>▶ Phase 1: Agent Tracker Facade &amp; Strategies</code></pre>
-                  <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 1. Strategy Normalization: PASS (2.6ms)</code></pre>
-                  <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 2. Zero Vendor Leakage: PASS (0.4ms)</code></pre>
-                  <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 3. Dev Server SSE Delivery: PASS (21.7ms)</code></pre>
-                  <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 4. Playwright Headless Verification: PASS (1942ms)</code></pre>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Multi-Agent Swarm Hierarchy & Swimlanes (Task 3.1) -->
-          <div id="agent-swarm-hierarchy" class="card bg-base-100 border-2 border-primary/40 rounded-lg shadow-xs overflow-hidden text-xs font-mono" style="display: none;">
-            <div class="bg-base-300 px-3 py-2 flex items-center justify-between flex-wrap gap-2 border-b border-base-content/10">
-              <div class="flex items-center gap-2">
-                <i data-lucide="layers" class="w-4 h-4 text-primary"></i>
-                <span class="font-bold text-base-content">Agent Swarm Hierarchy &amp; Swimlanes</span>
-              </div>
-              <span class="badge badge-xs badge-info font-mono" id="swarm-count-badge">1 Subagent</span>
-            </div>
-            <div class="p-3 space-y-2 bg-base-200/40" id="swarm-lanes-container"></div>
-          </div>
-
-          <!-- Latest Thought Bubble -->
-          <div class="space-y-1.5">
-            <div class="text-2xs uppercase tracking-wider text-base-content/60 font-bold flex items-center gap-1">
-              <i data-lucide="brain" class="w-3.5 h-3.5 text-accent"></i> Latest Reasoning / Goal
-            </div>
-            <div class="chat chat-start">
-              <div id="live-thought-bubble" class="chat-bubble chat-bubble-primary text-xs font-mono leading-relaxed opacity-95 shadow-xs">
-                Normalized via AgyTelemetryStrategy: Inspecting active OpenSpec change boundaries.
-              </div>
-            </div>
-          </div>
-
-          <!-- Recent Activity Feed -->
-          <div class="space-y-2 pt-2 border-t border-base-200">
-            <div class="flex items-center justify-between">
-              <div class="text-2xs uppercase tracking-wider text-base-content/60 font-bold flex items-center gap-1">
-                <i data-lucide="history" class="w-3.5 h-3.5 text-info"></i> Chronological Activity Stream
-              </div>
-              <span class="text-3xs font-mono text-base-content/50" id="recent-count-label">4 actions</span>
-            </div>
-            <div id="live-recent-feed" class="space-y-2 max-h-[220px] overflow-y-auto pr-1">
-              <div class="flex items-center justify-between p-2 bg-base-200/50 rounded border border-base-200 text-xs font-mono animate-fade-in">
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="badge badge-xs badge-success font-bold">✔ ok</span>
-                  <span class="font-bold text-primary truncate">read_file</span>
-                  <span class="text-3xs text-base-content/60 truncate">tasks.md</span>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                  <span class="badge badge-xs badge-ghost font-mono">14ms</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RIGHT COLUMN (6 Cols): AGENT-AGNOSTIC FACADE & STRATEGY TEST RUNNER -->
-    <div class="lg:col-span-6 space-y-4">
-      <div class="card bg-base-100 border-2 border-secondary/50 shadow-md p-5 space-y-4">
-        <div class="flex items-center justify-between border-b border-base-200 pb-3 flex-wrap gap-2">
-          <div class="flex items-center gap-2">
-            <span class="badge badge-secondary badge-sm font-bold uppercase font-mono">Strategy Harness</span>
-            <h2 id="strategy-harness-heading" class="font-bold text-sm text-base-content">
-              Agent-Agnostic Facade
-            </h2>
-          </div>
-          <span class="badge badge-xs badge-outline font-mono text-3xs">Pattern: Strategy + Facade</span>
-        </div>
-
-        <!-- Model / Strategy Switcher Tabs -->
-        <div class="space-y-1.5">
-          <div class="text-2xs uppercase tracking-wider text-base-content/60 font-bold">
-            Select Active Agent Strategy:
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <button type="button" onclick="selectStrategy('agy')" class="btn btn-sm btn-outline btn-primary strategy-btn active-strategy" data-strat="agy">
-              Antigravity
-            </button>
-            <button type="button" onclick="selectStrategy('claude')" class="btn btn-sm btn-outline btn-secondary strategy-btn" data-strat="claude">
-              Claude Code
-            </button>
-            <button type="button" onclick="selectStrategy('codex')" class="btn btn-sm btn-outline btn-accent strategy-btn" data-strat="codex">
-              OpenAI Codex
-            </button>
-            <button type="button" onclick="selectStrategy('generic')" class="btn btn-sm btn-outline btn-info strategy-btn" data-strat="generic">
-              Generic REST
-            </button>
-          </div>
-        </div>
-
-        <!-- Strategy Interactive Action Controls -->
-        <div class="flex items-center gap-2 flex-wrap">
-          <button type="button" onclick="fireStrategyAction('step')" class="btn btn-xs btn-primary gap-1">
-            <i data-lucide="play" class="w-3.5 h-3.5"></i> Fire Ingest Step
-          </button>
-          <button type="button" onclick="fireStrategyAction('tool')" class="btn btn-xs btn-secondary gap-1">
-            <i data-lucide="zap" class="w-3.5 h-3.5"></i> Tool Execution
-          </button>
-          <button type="button" onclick="fireStrategyAction('edit_diff')" class="btn btn-xs btn-accent gap-1">
-            <i data-lucide="file-diff" class="w-3.5 h-3.5"></i> Diff (edit_file)
-          </button>
-          <button type="button" onclick="fireStrategyAction('subagent')" class="btn btn-xs btn-info gap-1">
-            <i data-lucide="layers" class="w-3.5 h-3.5"></i> Swarm (invoke_subagent)
-          </button>
-          <button type="button" onclick="fireStrategyAction('telemetry')" class="btn btn-xs btn-outline btn-primary gap-1">
-            <i data-lucide="gauge" class="w-3.5 h-3.5"></i> Telemetry Pulse
-          </button>
-          <button type="button" onclick="fireStrategyAction('cmd_stdout')" class="btn btn-xs btn-outline gap-1">
-            <i data-lucide="terminal" class="w-3.5 h-3.5"></i> Terminal (stdout)
-          </button>
-          <button type="button" onclick="fireStrategyAction('cmd_stderr')" class="btn btn-xs btn-error gap-1">
-            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Terminal (stderr)
-          </button>
-          <button type="button" onclick="fireStrategyAction('waiting')" class="btn btn-xs btn-warning gap-1">
-            <i data-lucide="pause-circle" class="w-3.5 h-3.5"></i> Waiting User
-          </button>
-          <button type="button" onclick="fireStrategyAction('error')" class="btn btn-xs btn-error gap-1">
-            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Error State
-          </button>
-          <button type="button" onclick="fireStrategyAction('idle')" class="btn btn-xs btn-ghost gap-1">
-            <i data-lucide="check" class="w-3.5 h-3.5"></i> Idle Turn
-          </button>
-        </div>
-
-        <!-- Collapsible Payloads: Raw Ingested vs. Normalized Output -->
-        <div class="space-y-2">
-          <!-- Raw Ingested Payload -->
-          <div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-lg">
-            <input type="checkbox" checked /> 
-            <div class="collapse-title text-2xs uppercase tracking-wider font-bold text-base-content flex items-center justify-between pr-8">
-              <span class="flex items-center gap-1.5">
-                <i data-lucide="inbox" class="w-3.5 h-3.5 text-warning"></i> 1. Raw Ingested Vendor Payload (Incoming JSON)
-              </span>
-              <span class="badge badge-xs badge-ghost font-mono" id="raw-vendor-badge">Antigravity transcript.jsonl</span>
-            </div>
-            <div class="collapse-content">
-              <pre class="bg-base-300 p-3 rounded font-mono text-3xs overflow-x-auto text-base-content" id="raw-payload-display"></pre>
-            </div>
-          </div>
-
-          <!-- Normalized Facade Output -->
-          <div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-lg">
-            <input type="checkbox" checked /> 
-            <div class="collapse-title text-2xs uppercase tracking-wider font-bold text-base-content flex items-center justify-between pr-8">
-              <span class="flex items-center gap-1.5">
-                <i data-lucide="check-check" class="w-3.5 h-3.5 text-success"></i> 2. Normalized Canonical Event (Facade Output)
-              </span>
-              <span class="badge badge-xs badge-success font-mono">AgentHeartbeatState</span>
-            </div>
-            <div class="collapse-content">
-              <pre class="bg-base-300 p-3 rounded font-mono text-3xs overflow-x-auto text-success" id="normalized-payload-display"></pre>
-            </div>
-          </div>
-        </div>
-
-        <!-- Live Assertion Checks -->
-        <div class="p-3 bg-base-200/40 rounded-lg border border-base-200 space-y-1.5 text-xs font-mono">
-          <div class="text-3xs uppercase tracking-wider text-base-content/60 font-bold mb-1">
-            Live Strategy Contract Assertions:
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="flex items-center gap-1.5 text-success">
-              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Strategy implements canHandle() &amp; normalize()
-            </span>
-            <span class="text-3xs font-bold text-success">PASSED</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="flex items-center gap-1.5 text-success">
-              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Zero vendor-specific fields leaked to Core UI
-            </span>
-            <span class="text-3xs font-bold text-success">PASSED</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="flex items-center gap-1.5 text-success">
-              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Code diff normalization verified
-            </span>
-            <span class="text-3xs font-bold text-success">PASSED</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="flex items-center gap-1.5 text-success">
-              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Normalization Latency
-            </span>
-            <span class="text-3xs font-bold text-success" id="norm-latency">0.38ms</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </section>
-
-  <!-- ========================================== -->
-  <!-- 4. CLIENT STRATEGY & FACADE IMPLEMENTATION -->
-  <!-- ========================================== -->
-  <script>
-    function escapeHtml(str) {
-      if (!str) return "";
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    if (titleEl) titleEl.textContent = docName;
+    if (bodyEl) {
+      bodyEl.innerHTML = '<div class="flex items-center justify-center p-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
     }
 
-    // Component Workbench Tab Switcher
-    function showComponentTab(tabId) {
-      document.querySelectorAll(".comp-stage-panel").forEach((panel) => {
-        panel.classList.add("hidden");
-      });
-      document.querySelectorAll(".comp-tab-btn").forEach((btn) => {
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+
+    const tabBtns = document.querySelectorAll(".md-tab-btn");
+    tabBtns.forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-primary");
+        btn.classList.remove("btn-ghost");
+      } else {
         btn.classList.remove("btn-primary");
         btn.classList.add("btn-ghost");
-      });
-
-      const activePanel = document.getElementById("comp-stage-" + tabId);
-      const activeBtn = document.getElementById("tab-btn-" + tabId);
-      if (activePanel) activePanel.classList.remove("hidden");
-      if (activeBtn) {
-        activeBtn.classList.remove("btn-ghost");
-        activeBtn.classList.add("btn-primary");
       }
-      if (window.lucide) lucide.createIcons();
-    }
-    window.showComponentTab = showComponentTab;
-
-    // Diff Preset Switcher for Workbench
-    function setDiffPreset(preset) {
-      const fileEl = document.getElementById("wb-diff-filepath");
-      const linesEl = document.getElementById("wb-diff-lines");
-      const modeEl = document.getElementById("wb-diff-mode");
-      const targetEl = document.getElementById("wb-diff-target");
-      const replEl = document.getElementById("wb-diff-replacement");
-
-      if (preset === "edit_single") {
-        if (fileEl) fileEl.textContent = "skills/html-report/scripts/serve-report.mjs";
-        if (linesEl) linesEl.textContent = "Line: 348";
-        if (modeEl) { modeEl.textContent = "⚡ EDIT SNIPPET"; modeEl.className = "badge badge-xs badge-secondary font-mono font-bold"; }
-        if (targetEl) targetEl.textContent = "- const allowedPaths = [\"/implementation-progress.html\"];";
-        if (replEl) replEl.textContent = "+ const allowedPaths = [\"/implementation-progress.html\", \"/current-feature.html\"];";
-      } else if (preset === "edit_function") {
-        if (fileEl) fileEl.textContent = "skills/html-report/scripts/agent-tracker.mjs";
-        if (linesEl) linesEl.textContent = "Lines: 418-438";
-        if (modeEl) { modeEl.textContent = "⚡ EDIT SNIPPET"; modeEl.className = "badge badge-xs badge-secondary font-mono font-bold"; }
-        if (targetEl) targetEl.textContent = `const output = raw.output ? (typeof raw.output === "string" ? { stdout: raw.output, stderr: "", exitCode: 0 } : raw.output) : null;
-state = "running_tool";
-activeTool = { id: tc.id, name: toolName, target: this.extractTarget(toolName, args) };`;
-        if (replEl) replEl.textContent = `const output = raw.output ? (typeof raw.output === "string" ? { stdout: raw.output, stderr: "", exitCode: 0 } : raw.output) : null;
-let diff = raw.diff || this.extractDiff(toolName, args);
-state = "running_tool";
-activeTool = { id: tc.id, name: toolName, target: this.extractTarget(toolName, args), diff };`;
-      } else if (preset === "write_new") {
-        if (fileEl) fileEl.textContent = "tests/agent-tracker.test.mjs";
-        if (linesEl) linesEl.textContent = "New File (270 lines)";
-        if (modeEl) { modeEl.textContent = "+ NEW FILE"; modeEl.className = "badge badge-xs badge-accent font-mono font-bold"; }
-        if (targetEl) targetEl.textContent = "[New File Creation — no existing content]";
-        if (replEl) replEl.textContent = `import test, { describe, it } from "node:test";
-import assert from "node:assert/strict";
-import { AgentTrackerFacade } from "../skills/html-report/scripts/agent-tracker.mjs";
-
-describe("Phase 2: Code Diff Preview & Attention Alerts", () => {
-  it("should extract diff accurately", () => {
-    // Verified
-  });
-});`;
-      }
-    }
-    window.setDiffPreset = setDiffPreset;
-
-    function setTerminalPreset(type) {
-      const cmdEl = document.getElementById("wb-term-cmd");
-      const outEl = document.getElementById("wb-term-output");
-      if (type === "stdout") {
-        if (cmdEl) cmdEl.textContent = "node --test tests/agent-tracker.test.mjs";
-        if (outEl) outEl.innerHTML = `
-          <pre data-prefix=">" class="text-success-content/90"><code>▶ Phase 1 &amp; Phase 2: Agent Tracker Verification</code></pre>
-          <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 1. Strategy Normalization: PASS (2.6ms)</code></pre>
-          <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 2. Code Diff Preview Extraction: PASS (0.5ms)</code></pre>
-          <pre data-prefix=">" class="text-success-content/90"><code>  ✔ 3. Human Attention Banner Alert: PASS (0.3ms)</code></pre>
-          <pre data-prefix=">" class="text-success-content/90"><code>ℹ tests 7 | pass 7 | fail 0 | cancelled 0</code></pre>
-        `;
-      } else {
-        if (cmdEl) cmdEl.textContent = "node --invalid-flag";
-        if (outEl) outEl.innerHTML = `
-          <pre data-prefix="!" class="text-error font-bold font-mono"><code>node: bad option: --invalid-flag</code></pre>
-          <pre data-prefix="!" class="text-error font-bold font-mono"><code>Process exited with status code 9 (Command failed)</code></pre>
-        `;
-      }
-    }
-    window.setTerminalPreset = setTerminalPreset;
-
-    // Web Audio Synthesizer for Alert Chimes
-    function playNotificationChime() {
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        const ctx = new AudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.45);
-      } catch (_) {}
-    }
-    window.playNotificationChime = playNotificationChime;
-
-    function setTelemetryPreset(level) {
-      const radEl = document.getElementById("wb-tel-radial");
-      const totEl = document.getElementById("wb-tel-total");
-      const headEl = document.getElementById("wb-tel-headroom");
-      const spdEl = document.getElementById("wb-tel-speed");
-      const pEl = document.getElementById("wb-tel-prompt");
-      const rEl = document.getElementById("wb-tel-reasoning");
-      const oEl = document.getElementById("wb-tel-output");
-
-      let pct = 15;
-      let total = 30000;
-      let speed = 95;
-      if (level === "low") {
-        pct = 15; total = 30000; speed = 95;
-        if (pEl) pEl.textContent = "22,000 (73.3%)";
-        if (rEl) rEl.textContent = "5,000 (16.7%)";
-        if (oEl) oEl.textContent = "3,000 (10.0%)";
-      } else if (level === "mid") {
-        pct = 55; total = 110000; speed = 142;
-        if (pEl) pEl.textContent = "85,000 (77.3%)";
-        if (rEl) rEl.textContent = "15,000 (13.6%)";
-        if (oEl) oEl.textContent = "10,000 (9.1%)";
-      } else if (level === "high") {
-        pct = 88; total = 176000; speed = 188;
-        if (pEl) pEl.textContent = "140,000 (79.5%)";
-        if (rEl) rEl.textContent = "22,000 (12.5%)";
-        if (oEl) oEl.textContent = "14,000 (8.0%)";
-      }
-
-      if (radEl) {
-        radEl.style.setProperty("--value", pct);
-        radEl.textContent = pct + "%";
-        radEl.className = `radial-progress ${pct > 80 ? 'text-error' : (pct > 50 ? 'text-warning' : 'text-primary')} font-bold text-sm shrink-0`;
-      }
-      if (totEl) totEl.textContent = total.toLocaleString() + " / 200k";
-      if (headEl) headEl.textContent = `Headroom: ${(200000 - total).toLocaleString()} tokens`;
-      if (spdEl) spdEl.textContent = speed;
-
-      const obsRad = document.getElementById("telemetry-radial");
-      const obsBadge = document.getElementById("telemetry-sat-badge");
-      const obsTok = document.getElementById("telemetry-tokens-count");
-      const obsVel = document.getElementById("telemetry-vel-count");
-      const obsBar = document.getElementById("telemetry-progress-bar");
-
-      if (obsRad) {
-        obsRad.style.setProperty("--value", pct);
-        obsRad.textContent = pct + "%";
-        obsRad.className = `radial-progress ${pct > 80 ? 'text-error' : (pct > 50 ? 'text-warning' : 'text-primary')} font-bold text-2xs shrink-0`;
-      }
-      if (obsBadge) {
-        obsBadge.textContent = `${pct}% / 200k`;
-        obsBadge.className = `badge badge-xs ${pct > 80 ? 'badge-error' : (pct > 50 ? 'badge-warning' : 'badge-primary')} font-mono font-bold`;
-      }
-      if (obsTok) obsTok.textContent = total.toLocaleString();
-      if (obsVel) obsVel.textContent = speed;
-      if (obsBar) obsBar.style.width = pct + "%";
-    }
-    window.setTelemetryPreset = setTelemetryPreset;
-
-    function previewBadgeState(state) {
-      if (state === "waiting_user") fireStrategyAction("waiting");
-      else if (state === "error") fireStrategyAction("error");
-      else if (state === "running_tool") fireStrategyAction("tool");
-      else if (state === "idle") fireStrategyAction("idle");
-      else fireStrategyAction("step");
-    }
-    window.previewBadgeState = previewBadgeState;
-
-    class AgentTelemetryStrategy {
-      constructor(providerId, displayName) {
-        this.providerId = providerId;
-        this.displayName = displayName;
-      }
-      canHandle(raw) { return false; }
-      normalize(raw) { throw new Error("normalize() must be implemented"); }
-    }
-
-    class AgyTelemetryStrategy extends AgentTelemetryStrategy {
-      constructor() { super("agy", "Google Antigravity"); }
-      canHandle(raw) { return raw && (raw.step_index !== undefined || raw.source === "MODEL"); }
-      normalize(raw) {
-        let state = "thinking";
-        let activeTool = null;
-        if (raw.tool_calls && raw.tool_calls.length > 0) {
-          const call = raw.tool_calls[0];
-          state = (raw.status === "ERROR" || raw.type === "ERROR") ? "error" : "running_tool";
-          const args = (call.call && call.call.args) ? call.call.args : {};
-          const toolName = call.call ? call.call.name : (call.name || "tool");
-          let diff = raw.diff || null;
-          if (!diff && toolName === "edit_file" && args) {
-            diff = { filePath: args.Path || "", target: args.Target || "", replacement: args.Replacement || "", isNewFile: false };
-          } else if (!diff && toolName === "write_file" && args) {
-            diff = { filePath: args.Path || "", target: "[New File Creation]", replacement: args.Content || "", isNewFile: true };
-          }
-
-          activeTool = {
-            id: call.id || "tool-agy-" + Date.now(),
-            name: toolName,
-            target: args.CommandLine || args.Path || JSON.stringify(args).slice(0, 50),
-            category: toolName.includes("command") ? "bash" : "file_system",
-            diff,
-            output: raw.output || null
-          };
-        } else if (raw.status === "WAITING_USER") {
-          state = "waiting_user";
-        } else if (raw.status === "DONE" || raw.type === "USER_INPUT") {
-          state = "idle";
-        }
-        return {
-          providerId: this.providerId,
-          providerName: this.displayName,
-          state,
-          activeTool,
-          thought: raw.thinking || raw.content || "Analyzing next step...",
-          timestamp: Date.now()
-        };
-      }
-    }
-
-    class ClaudeCodeTelemetryStrategy extends AgentTelemetryStrategy {
-      constructor() { super("claude", "Anthropic Claude Code"); }
-      canHandle(raw) { return raw && (raw.type === "content_block_start" || raw.type === "tool_use" || raw.tool_use !== undefined); }
-      normalize(raw) {
-        let state = "thinking";
-        let activeTool = null;
-        const tool = (raw.type === "tool_use") ? raw : (raw.tool_use || raw.content_block);
-        if (tool && (tool.name || tool.type === "tool_use")) {
-          state = "running_tool";
-          const input = tool.input || {};
-          let diff = raw.diff || null;
-          if (!diff && (tool.name === "FileEditTool" || tool.name === "edit_file")) {
-            diff = { filePath: input.path || "", target: input.old_string || "", replacement: input.new_string || "", isNewFile: false };
-          }
-          activeTool = {
-            id: tool.id || "tool-claude-" + Date.now(),
-            name: tool.name || "Bash",
-            target: typeof tool.input === "object" ? (tool.input.command || tool.input.path || JSON.stringify(tool.input).slice(0, 50)) : String(tool.input || "active"),
-            category: (tool.name && tool.name.toLowerCase().includes("file")) ? "file_system" : "terminal",
-            diff,
-            output: raw.output || null
-          };
-        } else if (raw.type === "ask_user" || raw.subtype === "confirmation") {
-          state = "waiting_user";
-        } else if (raw.type === "turn_complete") {
-          state = "idle";
-        }
-        return {
-          providerId: this.providerId,
-          providerName: this.displayName,
-          state,
-          activeTool,
-          thought: raw.thinking || (raw.delta && raw.delta.thinking) || "Evaluating dependencies with Claude reasoning...",
-          timestamp: Date.now()
-        };
-      }
-    }
-
-    class CodexSwarmTelemetryStrategy extends AgentTelemetryStrategy {
-      constructor() { super("codex", "OpenAI Codex / Swarm"); }
-      canHandle(raw) { return raw && (raw.delta?.tool_calls !== undefined || raw.function_call !== undefined); }
-      normalize(raw) {
-        let state = "thinking";
-        let activeTool = null;
-        if (raw.delta?.tool_calls && raw.delta.tool_calls.length > 0) {
-          const call = raw.delta.tool_calls[0];
-          state = "running_tool";
-          let args = {};
-          try { args = JSON.parse(call.function?.arguments || "{}"); } catch(_) {}
-          let diff = raw.diff || null;
-          if (!diff && (call.function?.name === "apply_patch" || call.function?.name === "edit_file")) {
-            diff = { filePath: args.file || args.path || "", target: args.old_code || "", replacement: args.new_code || "", isNewFile: false };
-          }
-          activeTool = {
-            id: call.id || "tool-codex-" + Date.now(),
-            name: call.function?.name || "execute_code",
-            target: args.file || (call.function?.arguments ? call.function.arguments.slice(0, 50) : "arguments"),
-            category: "file_system",
-            diff,
-            output: raw.output || null
-          };
-        } else if (raw.status === "requires_action") {
-          state = "waiting_user";
-        } else if (raw.finish_reason === "stop") {
-          state = "idle";
-        }
-        return {
-          providerId: this.providerId,
-          providerName: this.displayName,
-          state,
-          activeTool,
-          thought: raw.reasoning_content || "Synthesizing function parameters for target repository.",
-          timestamp: Date.now()
-        };
-      }
-    }
-
-    class GenericTelemetryStrategy extends AgentTelemetryStrategy {
-      constructor() { super("generic", "Generic Agent Webhook"); }
-      canHandle(raw) { return true; }
-      normalize(raw) {
-        const toolObj = raw.activeTool || raw.tool;
-        return {
-          providerId: this.providerId,
-          providerName: this.displayName,
-          state: raw.state || "thinking",
-          activeTool: toolObj ? {
-            id: toolObj.id || "tool-gen-" + Date.now(),
-            name: toolObj.name || "custom_action",
-            target: toolObj.target || "endpoint",
-            category: "generic",
-            diff: raw.diff || toolObj.diff || null,
-            output: raw.output || toolObj.output || null
-          } : null,
-          thought: raw.thought || "Processing universal agent event.",
-          timestamp: Date.now()
-        };
-      }
-    }
-
-    class AgentTrackerFacade {
-      constructor() {
-        this.strategies = {
-          agy: new AgyTelemetryStrategy(),
-          claude: new ClaudeCodeTelemetryStrategy(),
-          codex: new CodexSwarmTelemetryStrategy(),
-          generic: new GenericTelemetryStrategy()
-        };
-        this.currentStrategy = this.strategies.agy;
-      }
-      setStrategy(key) {
-        if (this.strategies[key]) {
-          this.currentStrategy = this.strategies[key];
-        }
-      }
-      ingest(rawPayload) {
-        const t0 = performance.now();
-        const normalized = this.currentStrategy.normalize(rawPayload);
-        const elapsed = (performance.now() - t0).toFixed(2);
-        return { raw: rawPayload, normalized, elapsed };
-      }
-    }
-
-    const facade = new AgentTrackerFacade();
-    let currentStrategyKey = "agy";
-
-    function selectStrategy(key) {
-      currentStrategyKey = key;
-      facade.setStrategy(key);
-      document.querySelectorAll(".strategy-btn").forEach((btn) => {
-        if (btn.getAttribute("data-strat") === key) {
-          btn.classList.add("btn-active");
-        } else {
-          btn.classList.remove("btn-active");
-        }
-      });
-      fireStrategyAction("step");
-    }
-    window.selectStrategy = selectStrategy;
-
-    function fireStrategyAction(actionType) {
-      let rawSample = {};
-      if (currentStrategyKey === "agy") {
-        if (actionType === "step") {
-          rawSample = {
-            step_index: 14,
-            source: "MODEL",
-            type: "PLANNER_RESPONSE",
-            status: "DONE",
-            thinking: "Analyzing strategy facade requirements and verifying side-by-side verification view.",
-            tool_calls: []
-          };
-        } else if (actionType === "tool") {
-          rawSample = {
-            step_index: 15,
-            source: "MODEL",
-            type: "PLANNER_RESPONSE",
-            tool_calls: [{
-              id: "call_981a",
-              call: { name: "run_command", args: { CommandLine: "node skills/html-report/scripts/serve-report.mjs" } }
-            }]
-          };
-        } else if (actionType === "edit_diff") {
-          rawSample = {
-            step_index: 18,
-            source: "MODEL",
-            type: "PLANNER_RESPONSE",
-            tool_calls: [{
-              id: "call_diff_1",
-              call: {
-                name: "edit_file",
-                args: {
-                  Path: "skills/html-report/scripts/agent-tracker.mjs",
-                  Target: "const output = raw.output ? (typeof raw.output === \"string\" ? { stdout: raw.output, stderr: \"\", exitCode: 0 } : raw.output) : null;\nstate = \"running_tool\";",
-                  Replacement: "const output = raw.output ? (typeof raw.output === \"string\" ? { stdout: raw.output, stderr: \"\", exitCode: 0 } : raw.output) : null;\nlet diff = raw.diff || null;\nstate = \"running_tool\";"
-                }
-              }
-            }]
-          };
-        } else if (actionType === "subagent") {
-          rawSample = {
-            step_index: 25,
-            source: "MODEL",
-            type: "PLANNER_RESPONSE",
-            tool_calls: [{
-              id: "call_subagent_1",
-              call: {
-                name: "invoke_subagent",
-                args: {
-                  TypeName: "research",
-                  Role: "Codebase Researcher",
-                  Prompt: "Researching telemetry specifications"
-                }
-              }
-            }],
-            subagents: [{
-              id: "sub-res-1",
-              typeName: "research",
-              role: "Codebase Researcher",
-              state: "running_tool",
-              activeTool: { name: "read_file", target: "skills/html-report/SKILL.md" },
-              thought: "Researching telemetry specifications",
-              startedAt: Date.now() - 3200,
-              durationMs: 3200,
-              status: "active"
-            }, {
-              id: "sub-test-2",
-              typeName: "tester",
-              role: "Unit Test Executor",
-              state: "idle",
-              activeTool: { name: "node_test", target: "tests/agent-tracker.test.mjs" },
-              thought: "All 7 tests passed",
-              startedAt: Date.now() - 7500,
-              durationMs: 7500,
-              status: "idle"
-            }]
-          };
-        } else if (actionType === "cmd_stdout") {
-          rawSample = {
-            step_index: 20,
-            source: "MODEL",
-            type: "PLANNER_RESPONSE",
-            tool_calls: [{
-              id: "call_stdout_1",
-              call: { name: "run_command", args: { CommandLine: "node --test tests/agent-tracker.test.mjs" } }
-            }],
-            output: {
-              stdout: "▶ Phase 1 & 2: All Tests Passed (2.6ms)\n✔ Strategy Normalization (4 models)\n✔ Zero Vendor Leakage verified\n✔ Dev Server SSE delivery ok\n✔ Code Diff Preview verified\n✔ Human Attention Banner verified",
-              stderr: "",
-              exitCode: 0
-            }
-          };
-        } else if (actionType === "cmd_stderr") {
-          rawSample = {
-            step_index: 21,
-            source: "MODEL",
-            type: "PLANNER_RESPONSE",
-            status: "ERROR",
-            tool_calls: [{
-              id: "call_stderr_1",
-              call: { name: "run_command", args: { CommandLine: "node --invalid-flag" } }
-            }],
-            output: {
-              stdout: "",
-              stderr: "node: bad option: --invalid-flag\nProcess exited with status code 9",
-              exitCode: 9
-            }
-          };
-        } else if (actionType === "telemetry") {
-          rawSample = {
-            step_index: 26,
-            source: "MODEL",
-            type: "PLANNER_RESPONSE",
-            status: "DONE",
-            thinking: "Synthesizing next response with high token velocity.",
-            telemetry: {
-              contextTokens: 68000,
-              contextWindowLimit: 200000,
-              promptTokens: 52000,
-              reasoningTokens: 9000,
-              completionTokens: 7000,
-              tokensPerSecond: 168
-            }
-          };
-        } else if (actionType === "waiting") {
-          rawSample = { step_index: 16, source: "MODEL", status: "WAITING_USER", thinking: "Awaiting confirmation from developer on strategy schema." };
-        } else if (actionType === "error") {
-          rawSample = { step_index: 22, source: "MODEL", status: "ERROR", thinking: "Execution failed due to unhandled exception." };
-        } else {
-          rawSample = { step_index: 17, source: "USER_INPUT", content: "Proceed with verification", status: "DONE" };
-        }
-      } else if (currentStrategyKey === "claude") {
-        if (actionType === "edit_diff") {
-          rawSample = {
-            type: "tool_use",
-            id: "toolu_diff_claude",
-            name: "FileEditTool",
-            input: {
-              path: "skills/html-report/scripts/agent-tracker.mjs",
-              old_string: "export class AgentTelemetryStrategy",
-              new_string: "// Core Strategy\nexport class AgentTelemetryStrategy"
-            }
-          };
-        } else if (actionType === "tool" || actionType === "cmd_stdout") {
-          rawSample = {
-            type: "tool_use",
-            id: "toolu_01A9B",
-            name: "Bash",
-            input: { command: "node --test tests/agent-tracker.test.mjs" },
-            output: actionType === "cmd_stdout" ? {
-              stdout: "Claude Code test suite passed: 5/5 passing",
-              stderr: "",
-              exitCode: 0
-            } : null
-          };
-        } else if (actionType === "cmd_stderr") {
-          rawSample = {
-            type: "tool_use",
-            id: "toolu_err_1",
-            name: "Bash",
-            input: { command: "npm test --bad-arg" },
-            output: { stdout: "", stderr: "npm ERR! Unrecognized flag: --bad-arg", exitCode: 1 }
-          };
-        } else if (actionType === "waiting") {
-          rawSample = { type: "ask_user", question: "Confirm running test suites?" };
-        } else if (actionType === "error") {
-          rawSample = { error: { message: "Claude process timeout" } };
-        } else {
-          rawSample = {
-            type: "content_block_start",
-            content_block: { type: "thinking" },
-            delta: { thinking: "Claude reasoning: validating telemetry strategy abstraction pattern." }
-          };
-        }
-      } else if (currentStrategyKey === "codex") {
-        if (actionType === "edit_diff") {
-          rawSample = {
-            delta: {
-              tool_calls: [{
-                id: "call_diff_codex",
-                function: {
-                  name: "apply_patch",
-                  arguments: JSON.stringify({
-                    file: "skills/html-report/scripts/agent-tracker.mjs",
-                    old_code: "return sanitizeCanonicalEvent(event);",
-                    new_code: "const sanitized = sanitizeCanonicalEvent(event);\nreturn sanitized;"
-                  })
-                }
-              }]
-            }
-          };
-        } else if (actionType === "tool" || actionType === "cmd_stdout") {
-          rawSample = {
-            delta: {
-              tool_calls: [{
-                id: "call_codex_7",
-                function: { name: "apply_patch", arguments: '{"file": "serve-report.mjs", "lines": 42}' }
-              }]
-            },
-            output: actionType === "cmd_stdout" ? {
-              stdout: "Applied patch to serve-report.mjs (42 lines changed)",
-              stderr: "",
-              exitCode: 0
-            } : null
-          };
-        } else if (actionType === "cmd_stderr") {
-          rawSample = {
-            error: { message: "Patch rejection: chunk 2 failed" },
-            output: { stdout: "", stderr: "patch: **** rejecting hunk #2", exitCode: 1 }
-          };
-        } else if (actionType === "waiting") {
-          rawSample = { status: "requires_action", reason: "Tool call requires user approval" };
-        } else if (actionType === "error") {
-          rawSample = { error: { message: "Codex completion error" } };
-        } else {
-          rawSample = { reasoning_content: "Codex Swarm: Synthesizing next step for client runtime.", finish_reason: null };
-        }
-      } else {
-        rawSample = {
-          state: (actionType === "tool" || actionType === "cmd_stdout" || actionType === "edit_diff") ? "running_tool" : (actionType === "cmd_stderr" || actionType === "error") ? "error" : actionType === "waiting" ? "waiting_user" : "thinking",
-          tool: (actionType === "tool" || actionType === "cmd_stdout" || actionType === "cmd_stderr" || actionType === "edit_diff") ? {
-            name: actionType === "edit_diff" ? "edit_file" : "curl",
-            target: actionType === "edit_diff" ? "skills/html-report/scripts/agent-tracker.mjs" : "https://api.github.com",
-            diff: actionType === "edit_diff" ? {
-              filePath: "skills/html-report/scripts/agent-tracker.mjs",
-              target: "old_code()",
-              replacement: "new_code()",
-              isNewFile: false
-            } : null
-          } : null,
-          output: actionType === "cmd_stdout" ? { stdout: "HTTP 200 OK\nContent-Type: application/json", stderr: "", exitCode: 0 } : actionType === "cmd_stderr" ? { stdout: "", stderr: "curl: (7) Failed to connect", exitCode: 7 } : null,
-          thought: "Generic webhook received event from remote pipeline."
-        };
-      }
-
-      // Ingest via Facade
-      const result = facade.ingest(rawSample);
-
-      // Update Inspector displays
-      const rawEl = document.getElementById("raw-payload-display");
-      const normEl = document.getElementById("normalized-payload-display");
-      const latEl = document.getElementById("norm-latency");
-      const badgeEl = document.getElementById("raw-vendor-badge");
-
-      if (rawEl) rawEl.textContent = JSON.stringify(result.raw, null, 2);
-      if (normEl) normEl.textContent = JSON.stringify(result.normalized, null, 2);
-      if (latEl) latEl.textContent = result.elapsed + "ms";
-      if (badgeEl) badgeEl.textContent = facade.currentStrategy.displayName;
-
-      // Update Left-Hand Feature UI in Real-Time
-      const n = result.normalized;
-      const stateBadge = document.getElementById("live-state-badge");
-      const stateText = document.getElementById("live-state-text");
-      const provName = document.getElementById("active-provider-name");
-      const toolName = document.getElementById("live-tool-name");
-      const toolTarget = document.getElementById("live-tool-target");
-      const toolCat = document.getElementById("live-tool-category");
-      const toolBar = document.getElementById("live-tool-progress-bar");
-      const thoughtBubble = document.getElementById("live-thought-bubble");
-      const attnBanner = document.getElementById("human-attention-banner");
-
-      if (provName) provName.textContent = n.providerName;
-      if (thoughtBubble) thoughtBubble.textContent = n.thought;
-
-      actionStartedAt = Date.now();
-
-      // Human Attention Banner updates
-      if (attnBanner) {
-        if (n.state === "waiting_user") {
-          attnBanner.style.display = "flex";
-          attnBanner.className = "p-3.5 bg-amber-500/15 border-2 border-amber-500 rounded-lg flex items-center justify-between flex-wrap gap-2 animate-pulse text-xs font-mono text-amber-900 dark:text-amber-200 shadow-sm";
-          attnBanner.innerHTML = `
-            <div class="flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-amber-500 animate-ping shrink-0"></span>
-              <span class="font-bold">⚠️ AGENT WAITING ON HUMAN ATTENTION:</span>
-              <span>Action confirmation or decision required</span>
-            </div>
-            <button type="button" onclick="fireStrategyAction('step')" class="btn btn-2xs btn-warning font-bold">Acknowledge</button>
-          `;
-          playNotificationChime();
-        } else if (n.state === "error") {
-          attnBanner.style.display = "flex";
-          attnBanner.className = "p-3.5 bg-error/15 border-2 border-error rounded-lg flex items-center justify-between flex-wrap gap-2 animate-bounce text-xs font-mono text-error shadow-sm";
-          attnBanner.innerHTML = `
-            <div class="flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-error animate-ping shrink-0"></span>
-              <span class="font-bold">🚨 CRITICAL AGENT ERROR:</span>
-              <span>Execution halted — manual inspection needed</span>
-            </div>
-            <button type="button" onclick="fireStrategyAction('idle')" class="btn btn-2xs btn-error text-white font-bold">Reset</button>
-          `;
-          playNotificationChime();
-        } else {
-          attnBanner.style.display = "none";
-        }
-      }
-
-      // Update Context Telemetry Widget in Core Observer (Task 3.3)
-      const tel = n.telemetry || (rawSample.telemetry ? {
-        contextTokens: rawSample.telemetry.contextTokens || 45000,
-        contextWindowLimit: rawSample.telemetry.contextWindowLimit || 200000,
-        saturationPct: Number(((rawSample.telemetry.contextTokens / (rawSample.telemetry.contextWindowLimit || 200000)) * 100).toFixed(1)),
-        tokensPerSecond: rawSample.telemetry.tokensPerSecond || 135
-      } : null);
-
-      if (tel) {
-        const rad = document.getElementById("telemetry-radial");
-        const satBadge = document.getElementById("telemetry-sat-badge");
-        const tokCount = document.getElementById("telemetry-tokens-count");
-        const velCount = document.getElementById("telemetry-vel-count");
-        const progBar = document.getElementById("telemetry-progress-bar");
-
-        if (rad) {
-          rad.style.setProperty("--value", tel.saturationPct);
-          rad.textContent = tel.saturationPct + "%";
-          rad.className = `radial-progress ${tel.saturationPct > 80 ? 'text-error' : (tel.saturationPct > 50 ? 'text-warning' : 'text-primary')} font-bold text-2xs shrink-0`;
-        }
-        if (satBadge) {
-          satBadge.textContent = `${tel.saturationPct}% / ${Math.round(tel.contextWindowLimit / 1000)}k`;
-          satBadge.className = `badge badge-xs ${tel.saturationPct > 80 ? 'badge-error' : (tel.saturationPct > 50 ? 'badge-warning' : 'badge-primary')} font-mono font-bold`;
-        }
-        if (tokCount) tokCount.textContent = tel.contextTokens.toLocaleString();
-        if (velCount) velCount.textContent = tel.tokensPerSecond;
-        if (progBar) progBar.style.width = tel.saturationPct + "%";
-      }
-
-      if (n.state === "running_tool" && n.activeTool) {
-        stateBadge.className = "badge bg-blue-600 text-white gap-1.5 py-3 px-3 text-xs font-mono font-bold transition-all shadow-xs";
-        stateText.textContent = "EXECUTING TOOL";
-        toolName.textContent = n.activeTool.name;
-        toolTarget.textContent = n.activeTool.target;
-        toolCat.textContent = n.activeTool.category || "action";
-        if (toolBar) toolBar.style.width = "75%";
-        pushRecentFeed(n.activeTool.name, n.activeTool.target, "ok");
-      } else if (n.state === "waiting_user") {
-        stateBadge.className = "badge bg-amber-500 text-black gap-1.5 py-3 px-3 text-xs font-mono font-bold animate-pulse transition-all shadow-xs";
-        stateText.textContent = "WAITING ON USER";
-        toolName.textContent = "user_prompt";
-        toolTarget.textContent = "Awaiting developer feedback or decision...";
-        toolCat.textContent = "interactive";
-        if (toolBar) toolBar.style.width = "100%";
-      } else if (n.state === "error") {
-        stateBadge.className = "badge bg-rose-600 text-white gap-1.5 py-3 px-3 text-xs font-mono font-bold animate-bounce transition-all shadow-xs";
-        stateText.textContent = "ERROR";
-        toolName.textContent = "failed_step";
-        toolTarget.textContent = "Execution halted due to exception.";
-        toolCat.textContent = "error";
-        if (toolBar) toolBar.style.width = "100%";
-        pushRecentFeed("command", "Execution failed", "failed");
-      } else if (n.state === "idle") {
-        stateBadge.className = "badge bg-emerald-600 text-white gap-1.5 py-3 px-3 text-xs font-mono font-bold transition-all shadow-xs";
-        stateText.textContent = "IDLE";
-        toolName.textContent = "none";
-        toolTarget.textContent = "Standing by for user instructions.";
-        toolCat.textContent = "idle";
-        if (toolBar) toolBar.style.width = "0%";
-      } else {
-        stateBadge.className = "badge bg-purple-600 text-white gap-1.5 py-3 px-3 text-xs font-mono font-bold transition-all shadow-xs";
-        stateText.textContent = "THINKING";
-        toolName.textContent = "synthesizing";
-        toolTarget.textContent = "Evaluating reasoning tokens...";
-        toolCat.textContent = "reasoning";
-        if (toolBar) toolBar.style.width = "25%";
-      }
-
-      // Update Code Diff Preview Widget
-      const diffContainer = document.getElementById("code-diff-preview");
-      const diffFilePath = document.getElementById("diff-filepath");
-      const diffTag = document.getElementById("diff-tag");
-      const diffTargetCode = document.getElementById("diff-target-code");
-      const diffReplCode = document.getElementById("diff-replacement-code");
-
-      if (diffContainer) {
-        if (n.activeTool?.diff) {
-          diffContainer.style.display = "block";
-          const d = n.activeTool.diff;
-          if (diffFilePath) diffFilePath.textContent = d.filePath;
-          if (diffTag) diffTag.textContent = d.isNewFile ? "+ NEW FILE" : "⚡ EDIT SNIPPET";
-          if (diffTargetCode) diffTargetCode.textContent = d.target;
-          if (diffReplCode) diffReplCode.textContent = d.replacement;
-        } else if (n.activeTool?.category === "bash") {
-          diffContainer.style.display = "none";
-        }
-      }
-
-      // Update Terminal Drawer
-      const drawer = document.getElementById("terminal-output-drawer");
-      const drawerTitle = document.getElementById("terminal-drawer-title");
-      const drawerExit = document.getElementById("terminal-drawer-exit");
-      const cmdDisplay = document.getElementById("terminal-cmd-display");
-      const stdoutContainer = document.getElementById("terminal-stdout-container");
-
-      if (drawer && (n.activeTool?.category === "bash" || n.activeTool?.category === "terminal" || n.activeTool?.output)) {
-        drawer.style.display = "block";
-        const out = n.activeTool?.output;
-        const cmd = n.activeTool?.target || "command";
-        const exitCode = out?.exitCode ?? (n.state === "error" ? 1 : 0);
-        if (drawerTitle) drawerTitle.textContent = "Terminal: $ " + cmd.slice(0, 45);
-        if (cmdDisplay) cmdDisplay.textContent = cmd;
-        if (drawerExit) {
-          drawerExit.className = `badge badge-xs ${exitCode === 0 ? 'badge-success' : 'badge-error'} font-mono`;
-          drawerExit.textContent = exitCode === 0 ? "✔ exit 0" : `❌ exit ${exitCode}`;
-        }
-        if (stdoutContainer) {
-          const stdout = out?.stdout || (exitCode === 0 ? "Process completed successfully with status 0." : "");
-          const stderr = out?.stderr || (exitCode !== 0 ? "Error encountered during command execution." : "");
-          let lines = "";
-          if (stdout) {
-            lines += stdout.split("\n").filter(l => l.length > 0).map(l => `<pre data-prefix=">" class="text-success-content/90 font-mono"><code>${escapeHtml(l)}</code></pre>`).join("\n");
-          }
-          if (stderr) {
-            lines += stderr.split("\n").filter(l => l.length > 0).map(l => `<pre data-prefix="!" class="text-error font-bold font-mono"><code>${escapeHtml(l)}</code></pre>`).join("\n");
-          }
-          stdoutContainer.innerHTML = lines || `<pre data-prefix=">" class="text-neutral-content/60"><code>[no output]</code></pre>`;
-        }
-      }
-
-      // Update Swarm Hierarchy in Core Observer (Task 3.1)
-      const swarmContainer = document.getElementById("agent-swarm-hierarchy");
-      const swarmCountBadge = document.getElementById("swarm-count-badge");
-      const swarmLanes = document.getElementById("swarm-lanes-container");
-      const activeSubs = (n.subagents && n.subagents.length > 0) ? n.subagents : (rawSample.subagents || []);
-
-      if (swarmContainer) {
-        if (activeSubs.length > 0 || n.activeTool?.name === "invoke_subagent") {
-          swarmContainer.style.display = "block";
-          if (swarmCountBadge) swarmCountBadge.textContent = (activeSubs.length || 1) + " Subagents";
-          if (swarmLanes) {
-            const listToRender = activeSubs.length > 0 ? activeSubs : [{
-              id: "sub-auto-1",
-              typeName: n.activeTool?.args?.TypeName || "research",
-              role: n.activeTool?.args?.Role || "Subagent Worker",
-              state: "running_tool",
-              activeTool: { name: "starting", target: n.activeTool?.args?.Prompt || "delegated task" },
-              startedAt: Date.now(),
-              durationMs: 0
-            }];
-
-            swarmLanes.innerHTML = `
-              <div class="p-2.5 bg-primary/10 rounded border border-primary/30 flex items-center justify-between flex-wrap gap-2 text-2xs">
-                <div class="flex items-center gap-2">
-                  <span class="badge badge-primary badge-xs font-bold">👑 Orchestrator</span>
-                  <span class="font-bold text-base-content">${escapeHtml(n.providerName)}</span>
-                </div>
-                <span class="badge badge-xs badge-primary font-mono font-bold">${n.state.toUpperCase()}</span>
-              </div>
-              <div class="space-y-2 pl-2 border-l-2 border-primary/30">
-                ${listToRender.map(sub => `
-                  <div class="p-2.5 bg-base-100 rounded-lg border border-base-300 space-y-1.5 shadow-xs">
-                    <div class="flex items-center justify-between flex-wrap gap-1">
-                      <div class="flex items-center gap-1.5 font-bold text-primary">
-                        <i data-lucide="bot" class="w-3.5 h-3.5 text-primary"></i>
-                        <span>${escapeHtml(sub.typeName)}</span>
-                        <span class="text-3xs text-base-content/60 font-mono">(${escapeHtml(sub.role)})</span>
-                      </div>
-                      <span class="badge badge-xs ${sub.state === 'idle' ? 'badge-success' : 'badge-primary'} font-mono font-bold">${sub.state.toUpperCase()}</span>
-                    </div>
-                    <div class="text-3xs font-mono text-base-content/80 truncate">
-                      Tool: <code>${escapeHtml(sub.activeTool?.name || 'none')}</code> ${escapeHtml(sub.activeTool?.target ? '(' + sub.activeTool.target + ')' : '')}
-                    </div>
-                    <div class="flex items-center justify-between text-3xs font-mono text-base-content/60 pt-1 border-t border-base-200">
-                      <span>Elapsed: <strong>${((sub.durationMs || 1200) / 1000).toFixed(1)}s</strong></span>
-                      <span class="text-success">✔ Active Swarm Lane</span>
-                    </div>
-                  </div>
-                `).join("")}
-              </div>
-            `;
-          }
-        }
-      }
-
-      if (window.lucide) lucide.createIcons();
-    }
-    window.fireStrategyAction = fireStrategyAction;
-
-    let actionStartedAt = Date.now();
-    let stopwatchTimer = null;
-
-    function startLiveStopwatch() {
-      if (stopwatchTimer) clearInterval(stopwatchTimer);
-      stopwatchTimer = setInterval(() => {
-        const el = document.getElementById("live-stopwatch");
-        if (el) {
-          const sec = ((Date.now() - actionStartedAt) / 1000).toFixed(1);
-          el.textContent = sec + "s";
-        }
-      }, 100);
-    }
-
-    function pushRecentFeed(name, target, status = "ok") {
-      const feed = document.getElementById("live-recent-feed");
-      if (!feed) return;
-      const countLabel = document.getElementById("recent-count-label");
-      const duration = Math.floor(Math.random() * 50 + 12);
-      const isOk = status === "ok";
-
-      const el = document.createElement("div");
-      el.className = "flex items-center justify-between p-2 bg-base-200/50 rounded border border-base-200 text-xs font-mono animate-fade-in";
-      el.innerHTML = `
-        <div class="flex items-center gap-2 min-w-0">
-          <span class="badge badge-xs ${isOk ? 'badge-success' : 'badge-error'} font-bold">${isOk ? '✔ ok' : '❌ failed'}</span>
-          <span class="font-bold text-primary truncate">${escapeHtml(name)}</span>
-          <span class="text-3xs text-base-content/60 truncate">${escapeHtml(target)}</span>
-        </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <span class="badge badge-xs badge-ghost font-mono">${duration}ms</span>
-        </div>
-      `;
-      feed.insertBefore(el, feed.firstChild);
-      if (feed.children.length > 8) feed.removeChild(feed.lastChild);
-      if (countLabel) countLabel.textContent = feed.children.length + " actions";
-    }
-
-    // Connect to Dev Server SSE stream for live Datastar morphing
-    function initDevServerSSE() {
-      const dot = document.getElementById("left-sse-dot");
-      const label = document.getElementById("left-sse-label");
-
-      try {
-        const es = new EventSource("/__datastar_stream__");
-        es.addEventListener("open", () => {
-          if (dot) dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-success animate-ping";
-          if (label) label.textContent = "CONNECTED (LIVE SSE)";
-        });
-
-        es.addEventListener("error", () => {
-          if (dot) dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-warning";
-          if (label) label.textContent = "RECONNECTING";
-        });
-
-        es.addEventListener("datastar-fragment", (evt) => {
-          if (!evt.data) return;
-          const lines = evt.data.split("\n");
-          let selector = "";
-          const fragmentLines = [];
-          for (const line of lines) {
-            if (line.startsWith("selector ")) selector = line.slice(9).trim();
-            else if (line.startsWith("fragment ")) fragmentLines.push(line.slice(9));
-          }
-          if (selector && fragmentLines.length > 0) {
-            const targetEl = document.querySelector(selector);
-            if (targetEl) {
-              const wrapper = document.createElement("div");
-              wrapper.innerHTML = fragmentLines.join("\n");
-              if (wrapper.firstElementChild) {
-                targetEl.replaceWith(wrapper.firstElementChild);
-                if (window.lucide) lucide.createIcons();
-              }
-            }
-          }
-        });
-      } catch (err) {
-        console.warn("SSE connection error:", err);
-      }
-    }
-
-    // Initialize on load
-    window.addEventListener("DOMContentLoaded", () => {
-      selectStrategy("agy");
-      startLiveStopwatch();
-      initDevServerSSE();
     });
-  </script>
-</div>
+
+    let markdownText = "";
+    try {
+      const res = await fetch("/" + docName + "?raw=true");
+      if (res.ok) {
+        markdownText = await res.text();
+      } else {
+        markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\\nFile not found.";
+      }
+    } catch (_) {
+      markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\\nFile loaded from offline cache.";
+    }
+
+    window._currentMarkdownRaw = markdownText;
+
+    const converter = getShowdownConverter();
+    if (converter && bodyEl) {
+      bodyEl.innerHTML = converter.makeHtml(markdownText);
+    } else if (bodyEl) {
+      bodyEl.textContent = markdownText;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function copyMarkdownToClipboard() {
+    const text = window._currentMarkdownRaw || "";
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById("copy-markdown-btn");
+        if (btn) {
+          btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!';
+          if (window.lucide) window.lucide.createIcons();
+          setTimeout(() => {
+            btn.innerHTML = '<i data-lucide="copy" class="w-3 h-3"></i> Copy';
+            if (window.lucide) window.lucide.createIcons();
+          }, 2000);
+        }
+      });
+    }
+  }
+
+  function copyAgentPrompt() {
+    const promptEl = document.getElementById("agent-prompt-text");
+    if (!promptEl) return;
+    const text = promptEl.value;
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        const btnLabel = document.getElementById("copy-prompt-label");
+        const btnIcon = document.getElementById("copy-prompt-icon");
+        if (btnLabel) btnLabel.textContent = "Copied to Clipboard!";
+        if (btnIcon) btnIcon.setAttribute("data-lucide", "check");
+        if (window.lucide) window.lucide.createIcons();
+
+        setTimeout(() => {
+          if (btnLabel) btnLabel.textContent = "Copy Implementation Prompt";
+          if (btnIcon) btnIcon.setAttribute("data-lucide", "copy");
+          if (window.lucide) window.lucide.createIcons();
+        }, 2500);
+      });
+    }
+  }
+
+  // ==========================================
+  // REAL-TIME LIVE UPDATE SHOWCASE SIMULATOR
+  // ==========================================
+  let _liveChartInstance = null;
+  let _liveSimulationTimer = null;
+  let _liveIsRunning = true;
+  let _btcBase = 68420;
+  let _weatherBase = 18.4;
+  let _githubBase = 82540;
+
+  function initLiveShowcaseChart() {
+    const canvas = document.getElementById("liveShowcaseChart");
+    if (!canvas || !window.Chart) return;
+    const ctx = canvas.getContext("2d");
+
+    const initialLabels = [new Date().toLocaleTimeString()];
+    const initialData = [_btcBase];
+
+    _liveChartInstance = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: initialLabels,
+        datasets: [{
+          label: "Bitcoin / USD Live Ticks (@crypto)",
+          data: initialData,
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59, 130, 246, 0.08)",
+          borderWidth: 2.5,
+          tension: 0.3,
+          fill: true,
+          pointRadius: 3,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: { color: "rgba(150, 150, 150, 0.1)" } }
+        }
+      }
+    });
+
+    startLiveSimulation();
+  }
+
+  function performLiveTick() {
+    const btcDrift = (Math.random() - 0.48) * 85;
+    _btcBase = Math.max(50000, Math.round(_btcBase + btcDrift));
+
+    const tempDrift = (Math.random() - 0.5) * 0.4;
+    _weatherBase = parseFloat((_weatherBase + tempDrift).toFixed(1));
+
+    if (Math.random() > 0.6) _githubBase += 1;
+
+    const nowStr = new Date().toLocaleTimeString();
+
+    // 1. Update BTC Card with flash
+    const btcValEl = document.getElementById("crypto-price-val");
+    const btcBadge = document.getElementById("crypto-delta-badge");
+    if (btcValEl) {
+      btcValEl.textContent = "$" + _btcBase.toLocaleString();
+      btcValEl.classList.remove("text-success", "text-error");
+      btcValEl.classList.add(btcDrift >= 0 ? "text-success" : "text-error");
+      setTimeout(() => { btcValEl.classList.remove("text-success", "text-error"); }, 600);
+    }
+    if (btcBadge) {
+      const pct = ((btcDrift / _btcBase) * 100).toFixed(2);
+      btcBadge.textContent = (btcDrift >= 0 ? "+" : "") + pct + "%";
+      btcBadge.className = "badge badge-xs font-mono font-bold " + (btcDrift >= 0 ? "badge-success" : "badge-error");
+    }
+
+    // 2. Update Weather Card
+    const tempEl = document.getElementById("weather-temp-val");
+    if (tempEl) tempEl.textContent = _weatherBase + " °C";
+
+    // 3. Update GitHub Stars Card
+    const starsEl = document.getElementById("github-stars-val");
+    if (starsEl) starsEl.textContent = _githubBase.toLocaleString();
+
+    // 4. Update Chart.js Ring Buffer
+    if (_liveChartInstance) {
+      _liveChartInstance.data.labels.push(nowStr);
+      _liveChartInstance.data.datasets[0].data.push(_btcBase);
+      if (_liveChartInstance.data.labels.length > 20) {
+        _liveChartInstance.data.labels.shift();
+        _liveChartInstance.data.datasets[0].data.shift();
+      }
+      _liveChartInstance.update("none");
+    }
+  }
+
+  function startLiveSimulation() {
+    if (_liveSimulationTimer) clearInterval(_liveSimulationTimer);
+    _liveSimulationTimer = setInterval(performLiveTick, 2000);
+    _liveIsRunning = true;
+    updateSimulationControlsUI();
+  }
+
+  function pauseLiveSimulation() {
+    if (_liveSimulationTimer) clearInterval(_liveSimulationTimer);
+    _liveSimulationTimer = null;
+    _liveIsRunning = false;
+    updateSimulationControlsUI();
+  }
+
+  function toggleLiveFeedSimulation() {
+    if (_liveIsRunning) pauseLiveSimulation();
+    else startLiveSimulation();
+  }
+
+  function triggerManualTick() {
+    performLiveTick();
+  }
+
+  function updateSimulationControlsUI() {
+    const btnText = document.getElementById("live-btn-text");
+    if (btnText) btnText.textContent = _liveIsRunning ? "Pause Live Stream" : "Resume Stream";
+  }
+
+  // Boot chart when document is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initLiveShowcaseChart);
+  } else {
+    setTimeout(initLiveShowcaseChart, 150);
+  }
+</script>
   </main>
 
   <!-- Minimal Centered Footer -->
@@ -3551,6 +2341,326 @@ function syncDatastarTheme(themeName) {
   } catch (_) {}
 }
 
+// =============================================================================
+// Declarative Public Feeds & Signal Bus
+// =============================================================================
+
+let _activeFeedPollers = [];
+
+/**
+ * Parses and returns the Nickname Registry from <script id="feed-registry">.
+ */
+function getFeedRegistry(root) {
+  const doc = (root && typeof root.querySelector === "function")
+    ? root
+    : (root && root.ownerDocument ? root.ownerDocument : (typeof document !== "undefined" ? document : null));
+  if (!doc) return {};
+  const script = doc.querySelector("script#feed-registry[type='application/json'], script#feed-registry");
+  if (!script || !script.textContent) return {};
+  try {
+    return JSON.parse(script.textContent);
+  } catch (err) {
+    console.warn("[html-report] Failed to parse #feed-registry JSON:", err);
+    return {};
+  }
+}
+
+/**
+ * Resolves a raw feed reference (either @nickname or direct URL).
+ */
+function resolveFeedUrl(rawFeed, registry = {}) {
+  if (!rawFeed || typeof rawFeed !== "string") {
+    return { url: null, error: "Empty feed declaration", nickname: null };
+  }
+  const trimmed = rawFeed.trim();
+  if (trimmed.startsWith("@")) {
+    const nickname = trimmed.slice(1);
+    const resolved = registry[nickname];
+    if (!resolved) {
+      const msg = `Unknown feed nickname: @${nickname}`;
+      console.warn(`[html-report] ${msg}`);
+      return { url: null, error: msg, nickname };
+    }
+    return { url: resolved, nickname, error: null };
+  }
+  return { url: trimmed, nickname: null, error: null };
+}
+
+/**
+ * Extracts specified top-level or dot-notated nested fields from JSON payload.
+ */
+function extractFeedFields(payload, fieldsAttr, prefix = "") {
+  const result = {};
+  if (payload === null || payload === undefined) {
+    return result;
+  }
+  if (typeof payload !== "object") {
+    const key = prefix ? `${prefix}val` : "val";
+    result[key] = payload;
+    return result;
+  }
+
+  if (fieldsAttr && typeof fieldsAttr === "string" && fieldsAttr.trim()) {
+    const fields = fieldsAttr.split(",").map((s) => s.trim()).filter(Boolean);
+    for (const field of fields) {
+      const parts = field.split(".");
+      let current = payload;
+      let found = true;
+      for (const p of parts) {
+        if (current !== null && typeof current === "object" && p in current) {
+          current = current[p];
+        } else {
+          found = false;
+          break;
+        }
+      }
+      if (found) {
+        const keyName = prefix + field.replace(/\./g, "_");
+        result[keyName] = current;
+      }
+    }
+  } else {
+    // Default: extract all top-level keys
+    for (const [k, v] of Object.entries(payload)) {
+      const keyName = prefix + k.replace(/\./g, "_");
+      result[keyName] = v;
+    }
+  }
+  return result;
+}
+
+/**
+ * Dispatches Datastar signal updates to the document and runtime window.
+ */
+function mergeFeedSignals(signalsObj) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  if (!signalsObj || Object.keys(signalsObj).length === 0) return;
+
+  try {
+    const evt = new CustomEvent("datastar-merge-signals", {
+      bubbles: true,
+      detail: signalsObj
+    });
+    document.dispatchEvent(evt);
+  } catch (_) {}
+
+  if (window.datastar) {
+    if (typeof window.datastar.mergeSignals === "function") {
+      try { window.datastar.mergeSignals(signalsObj); } catch (_) {}
+    } else if (window.datastar.signals && typeof window.datastar.signals === "object") {
+      try { Object.assign(window.datastar.signals, signalsObj); } catch (_) {}
+    }
+  }
+
+  try {
+    const signalHolders = document.querySelectorAll("[data-signals]");
+    signalHolders.forEach((el) => {
+      if (el._dsSignals && typeof el._dsSignals === "object") {
+        Object.assign(el._dsSignals, signalsObj);
+      }
+    });
+  } catch (_) {}
+}
+
+/**
+ * Updates Chart.js canvases tagged with [data-feed-chart].
+ */
+function updateFeedCharts(signals, timestamp = Date.now()) {
+  if (typeof document === "undefined" || !signals || typeof signals !== "object") return;
+  const chartCanvases = document.querySelectorAll("canvas[data-feed-chart]");
+  chartCanvases.forEach((canvas) => {
+    const signalKey = canvas.getAttribute("data-feed-chart");
+    if (!signalKey || signals[signalKey] === undefined) return;
+    const rawVal = signals[signalKey];
+    const numVal = Number(rawVal);
+    if (isNaN(numVal)) return;
+
+    const bufferMax = parseInt(canvas.getAttribute("data-feed-buffer") || "20", 10) || 20;
+
+    // Resolve chart instance
+    let chart = null;
+    if (typeof window !== "undefined") {
+      if (window.Chart && typeof window.Chart.getChart === "function") {
+        chart = window.Chart.getChart(canvas);
+      }
+      if (!chart && canvas._chart) chart = canvas._chart;
+      if (!chart && canvas.chart) chart = canvas.chart;
+      if (!chart && window.reportCharts && Array.isArray(window.reportCharts)) {
+        chart = window.reportCharts.find((c) => c && (c.canvas === canvas || c === canvas._chart));
+      }
+    }
+
+    if (chart && chart.data && chart.data.datasets && chart.data.datasets[0]) {
+      const d = new Date(timestamp);
+      const timeLabel = d.toTimeString().split(" ")[0]; // HH:MM:SS
+      if (!chart.data.labels) chart.data.labels = [];
+      chart.data.labels.push(timeLabel);
+      if (!chart.data.datasets[0].data) chart.data.datasets[0].data = [];
+      chart.data.datasets[0].data.push(numVal);
+
+      while (chart.data.labels.length > bufferMax) {
+        chart.data.labels.shift();
+      }
+      while (chart.data.datasets[0].data.length > bufferMax) {
+        chart.data.datasets[0].data.shift();
+      }
+
+      if (typeof chart.update === "function") {
+        chart.update("none");
+      }
+    }
+  });
+}
+
+/**
+ * Stops all active polling intervals and aborts in-flight network requests.
+ */
+function cleanupPublicFeeds() {
+  if (_activeFeedPollers && _activeFeedPollers.length > 0) {
+    for (const poller of _activeFeedPollers) {
+      if (poller.timerId) {
+        clearInterval(poller.timerId);
+      }
+      if (poller.abortController) {
+        try { poller.abortController.abort(); } catch (_) {}
+      }
+    }
+    _activeFeedPollers = [];
+  }
+}
+
+/**
+ * Discovers and initializes all declarative public feed bindings.
+ */
+function initPublicFeeds(rootElement) {
+  if (typeof document === "undefined") return [];
+  const root = rootElement || document;
+
+  cleanupPublicFeeds();
+
+  const feedElements = Array.from(root.querySelectorAll("[data-public-feed]"));
+  if (feedElements.length === 0) return [];
+
+  const registry = getFeedRegistry(root);
+  const isOfflineOrPdf = (typeof window !== "undefined" && (window.__PLAYWRIGHT_PDF_MODE__ || (typeof navigator !== "undefined" && navigator.onLine === false)));
+
+  // 1. Process fallback data if present
+  for (const el of feedElements) {
+    const fallbackStr = el.getAttribute("data-feed-fallback");
+    if (fallbackStr) {
+      try {
+        const fallbackData = JSON.parse(fallbackStr);
+        const fields = el.getAttribute("data-feed-fields");
+        const prefix = el.getAttribute("data-feed-prefix") || "";
+        const signals = extractFeedFields(fallbackData, fields, prefix);
+        mergeFeedSignals(signals);
+        updateFeedCharts(signals, Date.now());
+      } catch (e) {
+        console.warn("[html-report] Invalid data-feed-fallback JSON:", e);
+      }
+    }
+  }
+
+  if (isOfflineOrPdf) {
+    return feedElements;
+  }
+
+  // 2. Group by resolved URL & interval for request deduplication
+  const groups = new Map();
+
+  for (const el of feedElements) {
+    const rawFeed = el.getAttribute("data-public-feed");
+    const { url, nickname, error } = resolveFeedUrl(rawFeed, registry);
+
+    if (error) {
+      mergeFeedSignals({ feed_error: error });
+      continue;
+    }
+
+    const intervalAttr = el.getAttribute("data-feed-interval");
+    const parsedInterval = intervalAttr ? parseInt(intervalAttr, 10) : 60000;
+    const minGuard = (typeof window !== "undefined" && window.__FEED_MIN_INTERVAL__ !== undefined) ? window.__FEED_MIN_INTERVAL__ : 10000;
+    const interval = Math.max(minGuard, isNaN(parsedInterval) ? 60000 : parsedInterval);
+
+    const groupKey = `${url}::${interval}`;
+    if (!groups.has(groupKey)) {
+      groups.set(groupKey, {
+        url,
+        interval,
+        subscribers: []
+      });
+    }
+
+    groups.get(groupKey).subscribers.push({
+      el,
+      nickname,
+      url,
+      fields: el.getAttribute("data-feed-fields"),
+      prefix: el.getAttribute("data-feed-prefix") || ""
+    });
+  }
+
+  // 3. Initiate single fetch and periodic poller for each unique group
+  for (const [groupKey, group] of groups.entries()) {
+    const abortController = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const pollerRecord = {
+      groupKey,
+      url: group.url,
+      interval: group.interval,
+      abortController,
+      timerId: null,
+      subscribers: group.subscribers
+    };
+
+    const executeFetch = async () => {
+      if (pollerRecord.abortController && pollerRecord.abortController.signal.aborted) return;
+      try {
+        const fetchOptions = pollerRecord.abortController ? { signal: pollerRecord.abortController.signal } : {};
+        const response = await fetch(group.url, fetchOptions);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        const timestamp = Date.now();
+        const combinedSignals = {};
+
+        for (const sub of group.subscribers) {
+          const signals = extractFeedFields(data, sub.fields, sub.prefix);
+          Object.assign(combinedSignals, signals);
+        }
+
+        mergeFeedSignals(combinedSignals);
+        updateFeedCharts(combinedSignals, timestamp);
+
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("feed:tick", {
+            detail: {
+              feedId: group.subscribers[0].nickname ? `@${group.subscribers[0].nickname}` : group.url,
+              url: group.url,
+              data,
+              signals: combinedSignals,
+              timestamp
+            }
+          }));
+        }
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        console.warn(`[html-report] Feed fetch failed for ${group.url}:`, err);
+        mergeFeedSignals({ feed_error: err.message || "Fetch failed" });
+      }
+    };
+
+    // Immediate initial fetch
+    executeFetch();
+
+    // Schedule interval
+    pollerRecord.timerId = setInterval(executeFetch, group.interval);
+    _activeFeedPollers.push(pollerRecord);
+  }
+
+  return feedElements;
+}
+
 // Global browser window bindings
 if (typeof window !== "undefined") {
   window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
@@ -3590,6 +2700,13 @@ if (typeof window !== "undefined") {
   window.initDatastarObserver = initDatastarObserver;
   window.syncDatastarTheme = syncDatastarTheme;
   window.autoLinkMarkdownFiles = autoLinkMarkdownFiles;
+  window.reinitReportContent = reinitReportContent;
+  window.initPublicFeeds = initPublicFeeds;
+  window.cleanupPublicFeeds = cleanupPublicFeeds;
+  window.resolveFeedUrl = resolveFeedUrl;
+  window.getFeedRegistry = getFeedRegistry;
+  window.extractFeedFields = extractFeedFields;
+  window.updateFeedCharts = updateFeedCharts;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
@@ -3606,13 +2723,35 @@ if (typeof window !== "undefined") {
     try { initImpress(); } catch (_) {}
     try { initDatastarObserver(); } catch (_) {}
     try { autoLinkMarkdownFiles(); } catch (_) {}
+    try { initPublicFeeds(); } catch (_) {}
 
     const palette = resolveDaisyUIThemePalette();
     try { await renderMermaidWithTheme(palette); } catch (_) {}
     try { checkInsufficientHorizontalSpace(); } catch (_) {}
     window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.addEventListener("beforeunload", () => {
+      try { cleanupPublicFeeds(); } catch (_) {}
+    });
     window.__REPORT_READY__ = true;
   });
+}
+
+/**
+ * Re-runs content-level hydration after <main> was hot-swapped in place by the
+ * live-reload dev server (no full page reload, so theme + scroll are preserved).
+ * Only touches content hooks; navbar/theme/download wiring stays as-is.
+ */
+async function reinitReportContent() {
+  if (typeof document === "undefined") return;
+  try { cleanupPublicFeeds(); } catch (_) {}
+  try { rehydrateLucideIcons(); } catch (_) {}
+  try { initTOC(); } catch (_) {}
+  try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
+  try { initDayjs(); } catch (_) {}
+  try { autoLinkMarkdownFiles(); } catch (_) {}
+  try { await renderMermaidWithTheme(resolveDaisyUIThemePalette()); } catch (_) {}
+  try { checkInsufficientHorizontalSpace(); } catch (_) {}
+  try { initPublicFeeds(); } catch (_) {}
 }
 
 // Node.js CommonJS exports for unit testing
@@ -3654,7 +2793,16 @@ if (typeof module !== "undefined" && module.exports) {
     rehydrateLucideIcons,
     initDatastarObserver,
     syncDatastarTheme,
-    autoLinkMarkdownFiles
+    autoLinkMarkdownFiles,
+    reinitReportContent,
+    initPublicFeeds,
+    cleanupPublicFeeds,
+    resolveFeedUrl,
+    getFeedRegistry,
+    extractFeedFields,
+    updateFeedCharts,
+    mergeFeedSignals,
+    _getActiveFeedPollers: () => _activeFeedPollers
   };
 }
 

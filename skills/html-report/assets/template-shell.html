@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<script>
-  // --- Early theme injection (pre‑paint) ---
-  // Prefer stored theme; fall back to the default "light".
-  const stored = localStorage.getItem('daisyui-theme') || 'light';
-  document.documentElement.dataset.theme = stored;
-</script>
 <html lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
+  <!-- Pre-paint theme restore: apply the saved theme before any CSS renders (prevents light-theme flash on reload) -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("html_report_active_theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch (_) {}
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />

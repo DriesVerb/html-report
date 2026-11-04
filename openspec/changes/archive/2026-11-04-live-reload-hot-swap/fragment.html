@@ -1,0 +1,525 @@
+<!-- ========================================== -->
+<!-- HERO BANNER & JOURNEY STEPPER              -->
+<!-- ========================================== -->
+<header class="space-y-6 border-b border-base-300 pb-8">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">live-reload-hot-swap</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1">
+      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> All 13 Tasks Verified (100%)
+    </span>
+    <span class="badge badge-secondary font-mono text-xs font-semibold gap-1 animate-pulse">
+      <i data-lucide="zap" class="w-3.5 h-3.5"></i> Live Hot-Swap Active
+    </span>
+  </div>
+
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div class="space-y-2">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+        Live-Reload Hot Swap & Pre-Paint Theme Restore
+      </h1>
+      <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+        Eliminates the default theme flash and scroll jumps during dev server reloads via pre-paint <code>&lt;head&gt;</code> theme restoration, Vite-style <code>&lt;main&gt;</code> DOM morphing (Idiomorph), and reliable scroll-preserving fallbacks.
+      </p>
+    </div>
+
+    <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+      </button>
+      <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/report-generation-core/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
+      </button>
+    </div>
+  </div>
+
+  <!-- Mandatory Journey Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+    <div class="flex items-center justify-between text-xs font-bold text-base-content/70">
+      <span class="flex items-center gap-1.5">
+        <i data-lucide="git-pull-request" class="w-4 h-4 text-success"></i> Current Journey State
+      </span>
+      <span class="font-mono text-success">Stage 4 Complete · Verified & Shipped</span>
+    </div>
+    <div class="w-full overflow-x-auto py-2">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
+        <li id="stepper-phase-2" class="step step-primary">2. Planning</li>
+        <li id="stepper-phase-3" class="step step-primary">3. Implementing</li>
+        <li id="stepper-phase-4" class="step step-primary">4. Verifying</li>
+        <li id="stepper-phase-5" class="step step-primary">5. Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- ========================================== -->
+<!-- LIVE HOT-SWAP SHOWCASE ARENA               -->
+<!-- ========================================== -->
+<section aria-labelledby="showcase-arena-heading" class="space-y-4">
+  <div class="alert alert-info/10 border border-info/30 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+    <div class="space-y-1">
+      <div class="flex items-center gap-2">
+        <span class="badge badge-info font-bold text-2xs uppercase">Interactive Showcase</span>
+        <h2 id="showcase-arena-heading" class="text-lg font-bold text-base-content flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-5 h-5 text-info"></i> Test the Hot-Swap Feature Live Right Now
+        </h2>
+      </div>
+      <p class="text-xs text-base-content/80 max-w-2xl leading-relaxed">
+        This running page on <code class="font-mono text-primary font-bold">localhost:3000</code> is powered by the new hot-swap runtime. Try interacting with the controls below: switch DaisyUI themes, scroll down, type into the persistent input, and watch changes update with <strong>zero theme flicker</strong> and <strong>zero scroll jumping</strong>!
+      </p>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <span class="badge badge-success badge-sm font-mono gap-1">
+        <i data-lucide="activity" class="w-3.5 h-3.5"></i> DEV SERVER LIVE
+      </span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Showcase Card 1: Persistent Input & Counter -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+          <i data-lucide="edit-3" class="w-4 h-4 text-primary"></i> State Persistence Demo
+        </h3>
+        <span class="badge badge-xs badge-primary font-mono">In-Place Morph</span>
+      </div>
+      <p class="text-xs text-base-content/70">
+        Type notes below and click the counter. When file changes land on disk, Idiomorph preserves DOM input states:
+      </p>
+      <div class="space-y-3">
+        <div>
+          <label class="label py-1 text-2xs font-bold text-base-content/60">TRY TYPING YOUR THOUGHTS</label>
+          <input id="demo-user-input" type="text" placeholder="Type here: text will NOT disappear on hot-swap!" class="input input-sm input-bordered w-full font-sans text-xs focus:input-primary" />
+        </div>
+        <div class="flex items-center justify-between pt-1">
+          <button type="button" onclick="incrementDemoCounter()" class="btn btn-sm btn-primary gap-2 shadow-xs">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> Click Me
+          </button>
+          <div class="text-right">
+            <span class="text-2xs text-base-content/60 uppercase font-bold block">Clicks Count</span>
+            <span id="demo-click-count" class="font-mono text-xl font-black text-primary">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Showcase Card 2: Theme & Scroll Telemetry -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+          <i data-lucide="gauge" class="w-4 h-4 text-secondary"></i> Live Telemetry Monitor
+        </h3>
+        <span class="badge badge-xs badge-secondary font-mono">Real-Time</span>
+      </div>
+      <p class="text-xs text-base-content/70">
+        Monitors active theme, viewport scroll offset, and page instance lifecycle:
+      </p>
+      <div class="space-y-2 font-mono text-xs">
+        <div class="p-2.5 rounded-lg bg-base-200 flex items-center justify-between">
+          <span class="text-base-content/70">Active Theme:</span>
+          <span id="telemetry-active-theme" class="badge badge-secondary badge-sm font-bold">light</span>
+        </div>
+        <div class="p-2.5 rounded-lg bg-base-200 flex items-center justify-between">
+          <span class="text-base-content/70">Current Scroll Y:</span>
+          <span id="telemetry-scroll-y" class="badge badge-ghost badge-sm font-bold">0 px</span>
+        </div>
+        <div class="p-2.5 rounded-lg bg-base-200 flex items-center justify-between">
+          <span class="text-base-content/70">Page Session:</span>
+          <span id="telemetry-session-status" class="badge badge-success badge-sm font-bold">Tab Reused (0 Reloads)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Showcase Card 3: Before vs After Feature Delta -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-base-200 pb-2">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+          <i data-lucide="git-compare" class="w-4 h-4 text-accent"></i> Architecture Evolution
+        </h3>
+        <span class="badge badge-xs badge-accent font-mono">Vite-Grade</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="p-2 rounded-lg bg-error/10 border border-error/20 text-base-content">
+          <span class="font-bold text-error block text-2xs uppercase">Legacy Dev Server:</span>
+          Flashed default theme on reload, reset scroll position to top, discarded typed state and focused inputs.
+        </div>
+        <div class="p-2 rounded-lg bg-success/10 border border-success/20 text-base-content">
+          <span class="font-bold text-success block text-2xs uppercase">New Hot-Swap Architecture:</span>
+          Pre-paint &lt;head&gt; restore (0ms flash), Idiomorph in-place morphing, scroll position locked, zero build tooling.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- EXECUTIVE KPIS & LIVE METRICS              -->
+<!-- ========================================== -->
+<section aria-labelledby="kpis-heading" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h2 id="kpis-heading" class="text-xl font-bold tracking-tight text-base-content flex items-center gap-2">
+      <i data-lucide="check-circle" class="w-5 h-5 text-primary"></i> Implementation Progress & Health
+    </h2>
+    <span class="badge badge-sm badge-success font-mono font-bold">13 / 13 TASKS COMPLETE (100%)</span>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+      <div class="stat-figure text-primary">
+        <i data-lucide="check-check" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-2xs uppercase tracking-wider font-bold">Completed Tasks</div>
+      <div class="stat-value text-2xl font-mono text-primary">13 / 13</div>
+      <div class="stat-desc text-xs mt-1">100% Milestones Met</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+      <div class="stat-figure text-success">
+        <i data-lucide="shield-check" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-2xs uppercase tracking-wider font-bold">Test Suite Status</div>
+      <div class="stat-value text-2xl font-mono text-success">199 / 199</div>
+      <div class="stat-desc text-xs mt-1">18/18 Suites Passing</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+      <div class="stat-figure text-secondary">
+        <i data-lucide="zap" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-2xs uppercase tracking-wider font-bold">Live Reload Mode</div>
+      <div class="stat-value text-2xl font-mono text-secondary">In-Place</div>
+      <div class="stat-desc text-xs mt-1">Idiomorph 0.7.3 &lt;main&gt; Morph</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs">
+      <div class="stat-figure text-accent">
+        <i data-lucide="palette" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-2xs uppercase tracking-wider font-bold">Theme Flash</div>
+      <div class="stat-value text-2xl font-mono text-accent">0 ms</div>
+      <div class="stat-desc text-xs mt-1">Pre-paint &lt;head&gt; script restored</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- ARCHITECTURE & STATE MACHINE FLOW          -->
+<!-- ========================================== -->
+<section aria-labelledby="architecture-heading" class="space-y-4">
+  <div class="border-b border-base-300 pb-2 flex items-center justify-between">
+    <h2 id="architecture-heading" class="text-xl font-bold tracking-tight text-base-content flex items-center gap-2">
+      <i data-lucide="git-merge" class="w-5 h-5 text-primary"></i> Hot-Swap vs. Fallback Decision Flow
+    </h2>
+    <span class="badge badge-ghost font-mono text-xs">Mermaid Architecture</span>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex justify-center p-3 bg-base-200/50 rounded-box border border-base-300">
+      <pre class="mermaid w-full text-center">
+flowchart TD
+  Event["SSE 'reload' Event from Dev Server"] --> Baseline["Fetch raw next HTML"]
+  Baseline --> SigCheck{"Signature check:\n&lt;head&gt; assets or inline &lt;script&gt; changed?"}
+  
+  SigCheck -- "Content only (&lt;main&gt; markup)" --> LoadIdio["Load Idiomorph (CDN)"]
+  LoadIdio --> Morph["Morph &lt;main&gt; in-place\nSkip canvas/widgets\nKeep theme, scroll & state"]
+  Morph --> Reinit["Call reinitReportContent()\nRehydrate icons, TOC & diagrams"]
+  
+  SigCheck -- "Scripts / Head modified" --> Fallback["Save scroll to sessionStorage"]
+  Fallback --> FullReload["window.location.reload()"]
+  FullReload --> RestoreScroll["Restore scroll after load\nTheme already restored pre-paint"]
+      </pre>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- TASKS CHECKLIST (tasks.md SYNC)           -->
+<!-- ========================================== -->
+<section aria-labelledby="tasks-heading" class="space-y-4">
+  <div class="border-b border-base-300 pb-2 flex items-center justify-between">
+    <h2 id="tasks-heading" class="text-xl font-bold tracking-tight text-base-content flex items-center gap-2">
+      <i data-lucide="list-checks" class="w-5 h-5 text-primary"></i> Actionable Milestones & Verification
+    </h2>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline font-mono">
+      View tasks.md
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Phase 1 & 2 -->
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-5 space-y-3">
+      <h3 class="font-bold text-sm text-base-content flex items-center gap-2 border-b border-base-200 pb-2">
+        <span class="badge badge-success badge-sm font-mono">Phase 1 & 2</span> Pre-Paint Theme & In-Place Morph
+      </h3>
+      <ul class="space-y-2 text-xs">
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>1.1</strong> Early inline theme script in <code>&lt;head&gt;</code> of <code>template-shell.html</code></span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>1.2</strong> Rebuilt reports confirm pre-paint script precedes DaisyUI stylesheet</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>2.1</strong> Rewrote <code>injectLiveReload()</code> to morph <code>&lt;main&gt;</code> with Idiomorph 0.7.3</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>2.2</strong> Protected JS-generated widgets (<code>canvas</code>, <code>.fc</code>, <code>.leaflet-container</code>, <code>.gridjs-container</code>)</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>2.3</strong> Serialized rapid <code>reload</code> events to avoid race conditions</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Phase 3, 4 & 5 -->
+    <div class="card bg-base-100 border border-base-300 shadow-xs p-5 space-y-3">
+      <h3 class="font-bold text-sm text-base-content flex items-center gap-2 border-b border-base-200 pb-2">
+        <span class="badge badge-success badge-sm font-mono">Phase 3, 4 & 5</span> Fallback, Rehydration & Verification
+      </h3>
+      <ul class="space-y-2 text-xs">
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>3.1</strong> Scroll position saved to <code>sessionStorage</code> and restored after full reload</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>3.2</strong> Safe fallback on script changes, missing <code>&lt;main&gt;</code>, or CDN failure</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>4.1</strong> Added <code>reinitReportContent()</code> in runtime (icons, TOC, hljs, Day.js, md links, Mermaid)</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>5.1</strong> Syntax checks and snippet validation passed</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>5.2</strong> Full test suite regression verification (199/199 passing across all 18 test suites)</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>5.3 & 5.4</strong> E2E browser tests (hot swap + fallback scroll) verified</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>5.5</strong> <code>openspec validate live-reload-hot-swap --strict</code> passed</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SHOWDOWN MARKDOWN ARTIFACT VIEWER MODAL    -->
+<!-- ========================================== -->
+<dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box max-w-4xl w-11/12 max-h-[85vh] p-0 flex flex-col bg-base-100 border border-base-300 shadow-2xl">
+    
+    <!-- Modal Top Bar -->
+    <div class="p-4 border-b border-base-200 bg-base-200/50 flex flex-wrap items-center justify-between gap-3 shrink-0">
+      <div class="flex items-center gap-2 min-w-0">
+        <i data-lucide="file-text" class="w-5 h-5 text-primary shrink-0"></i>
+        <span id="modal-doc-title" class="font-bold text-sm sm:text-base truncate font-mono">proposal.md</span>
+        <span class="badge badge-primary badge-xs">Showdown.js GFM</span>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1 font-mono" id="copy-markdown-btn">
+          <i data-lucide="copy" class="w-3 h-3"></i> Copy
+        </button>
+        <a id="modal-raw-link" href="/proposal.md?raw=true" target="_blank" class="btn btn-xs btn-ghost gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3 h-3"></i> Raw
+        </a>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Document Switcher Tabs -->
+    <div class="px-4 py-2 border-b border-base-200 bg-base-100 flex items-center gap-1 overflow-x-auto shrink-0">
+      <button type="button" onclick="switchViewerTab('proposal.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="proposal.md">
+        proposal.md
+      </button>
+      <button type="button" onclick="switchViewerTab('design.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="design.md">
+        design.md
+      </button>
+      <button id="tab-btn-tasks" type="button" onclick="switchViewerTab('tasks.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="tasks.md">
+        tasks.md
+      </button>
+      <button type="button" onclick="switchViewerTab('specs/report-generation-core/spec.md')" class="btn btn-xs btn-ghost doc-tab-btn" data-doc="specs/report-generation-core/spec.md">
+        spec.md
+      </button>
+    </div>
+
+    <!-- Rendered Markdown Body -->
+    <div class="p-6 overflow-y-auto flex-1">
+      <div id="modal-markdown-container" class="prose prose-sm sm:prose max-w-none text-base-content leading-relaxed">
+        <div id="modal-markdown-body">
+          <div class="flex items-center justify-center py-12">
+            <span class="loading loading-spinner loading-md text-primary"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- Client scripts & data cache -->
+<script id="open-spec-artifacts-data" type="application/json">
+{"proposal.md": "# Proposal: Live-Reload Hot Swap & Pre-Paint Theme Restore\n\n> Companion journey dashboard (planned, not yet generated): `index.html` in this folder. See [tasks.md](./tasks.md).\n>\n> **Retroactive change:** the implementation was written before this proposal existed. These artifacts record the decisions that were made and track the remaining verification.\n\n## Why\n\nWhen the dev server (`serve-report.mjs`) live-reloads a report, the page flashes the default `light` theme before switching back to the user's theme. The scroll position is also often lost. This happens because every file change triggers a full `location.reload()`, and the saved theme is only re-applied at `DOMContentLoaded`, after the first paint. During active work, reports are rebuilt many times a minute, so the flash and scroll jumps make the live dashboard tiring to follow.\n\n## What Changes\n\n- **Pre-paint theme restore:** the report shell applies the saved theme (`localStorage` key `html_report_active_theme`) in `<head>` before any stylesheet renders. Reports with no saved theme still default to `light`.\n- **In-place hot swap on live reload:** when a served report changes on disk, the dev server's injected client fetches the new HTML and morphs only `<main>` in place, like Vite's HMR, instead of reloading the tab. Theme, scroll position, and other page state are kept.\n- **Safe fallback:** if `<head>` assets or any inline script changed, if the page has no `<main>`, or if the morph library can't be loaded (offline), the client does a full reload and then restores the previous scroll position.\n- **Content re-hydration hook:** the runtime exposes a re-init entry point that re-runs content-level hydration (icons, TOC, code highlighting, dates, markdown links, Mermaid, space detection) after a swap.\n- No **BREAKING** changes. Static `print`/`report` deliverables are unaffected, apart from gaining the pre-paint theme restore.\n\n## Capabilities\n\n### New Capabilities\n- None.\n\n### Modified Capabilities\n- `report-generation-core`: the theme requirement now says a previously selected theme is restored before first paint. A new requirement says live reload must preserve theme and scroll position, with a defined fallback.\n\n## Impact\n\n- `skills/html-report/assets/template-shell.html`: early theme script in `<head>`.\n- `skills/html-report/assets/report-runtime.js`: new `reinitReportContent()` export.\n- `skills/html-report/scripts/serve-report.mjs`: rewritten `injectLiveReload()` client snippet (hot swap + fallback + scroll restore).\n- New runtime dependency, dev server only: Idiomorph `0.7.3`, loaded on demand from jsDelivr (already allowed by the shell's CSP). It is never part of built reports.\n- Existing built reports pick up the pre-paint script only after a rebuild. The hot swap applies to every page the dev server serves.\n", "design.md": "# Technical Design: Live-Reload Hot Swap & Pre-Paint Theme Restore\n\n## Context\n\nSee [proposal.md](./proposal.md) (Why). Current state before this change:\n\n- The [template-shell.html](../../../skills/html-report/assets/template-shell.html) hard-codes `<html data-theme=\"light\">`. The runtime is inlined at the end of `<body>`, after the synchronous Tailwind CDN script, and restores `html_report_active_theme` in `scanAndRegisterExistingCustomThemes()` at `DOMContentLoaded`. So the first paint is always `light`.\n- `injectLiveReload()` in `serve-report.mjs` listens on the `/__live_reload__` SSE stream and calls `window.location.reload()` on every `reload` event.\n- Report content lives in a single `<main>`. Report-specific inline scripts (for example Chart.js setup) sit inside `<main>`, and the runtime script follows it.\n- Constraint from the project: no npm or bundler for reports. Everything comes from CDNs, and the shell's CSP already allows `cdn.jsdelivr.net`.\n\n## Goals / Non-Goals\n\n**Goals:**\n- No theme flash on any reload, whether hot or full.\n- Keep the user's place (scroll, theme, open dropdowns) when only content changed.\n- Never show stale or broken content: when unsure, fall back to a full reload.\n\n**Non-Goals:**\n- Re-running changed inline scripts in place (true module HMR).\n- Preserving state inside JS-generated widgets whose *data* changed (charts, calendars, maps) without a full reload.\n- Changing behaviour of static `print`/`report` deliverables beyond the pre-paint theme script.\n\n## Decisions\n\n### D1: Pre-paint theme script in `<head>` (before the DaisyUI stylesheet)\nA tiny inline IIFE right after `<meta charset>` reads `html_report_active_theme` and sets `data-theme` on `<html>`. It runs before any CSS is applied, so the first frame is already correct.\n- *Alternative: bake the theme into HTML at build time.* Rejected: the build can't see the browser's `localStorage`, and different viewers have different themes.\n- *Alternative: hide the body until the runtime is ready.* Rejected: it swaps a colour flash for a blank flash and delays first paint.\n\n### D2: Morph `<main>` with Idiomorph instead of reloading (Vite-style)\nOn `reload`, the client fetches the page (`cache: no-store`), parses it with `DOMParser`, and calls `Idiomorph.morph(currentMain, nextMain)`. Identical nodes stay in place, so focus, scroll and Alpine state survive.\n- *Alternative: Vite.* Rejected: there is no \"Vite CDN\". Vite is a Node dev server plus bundler, which would add npm and a build step against the project's CDN-only constraint.\n- *Alternative: `innerHTML` replacement of `<main>`.* Rejected: it destroys every node, including canvases holding live charts, and visibly flickers.\n- *Alternative: Datastar fragment morphing.* Datastar is only loaded on `live-report` pages. Idiomorph is a ~3 KB on-demand load that works for every mode.\n\n### D3: Safety signature decides hot swap vs. full reload\nThe client compares a signature of the *raw server HTML*: all `<head>` stylesheets, `script[src]`, `<style>`, and the text of every inline `<script>` (excluding the live-reload script). It compares against a baseline fetched when the page loads. If anything differs, it does a full reload.\n- The signature is taken from raw HTML, never the live DOM, because Tailwind CDN and Mermaid inject `<style>` nodes at runtime and would make every comparison fail.\n\n### D4: Preserve JS-generated widgets during morph\n`beforeNodeMorphed` skips `<canvas>`, `.fc` (FullCalendar), `.leaflet-container`, `.gridjs-container`, and any element marked `data-hot-keep`. Their generated DOM would otherwise be reset to empty server markup. This is safe because D3 guarantees that the scripts driving them are unchanged.\n\n### D5: Runtime re-init hook `reinitReportContent()`\nAfter a morph, the client calls `window.reinitReportContent()`, which re-runs only content-level hydration: Lucide icons, TOC, highlight.js, Day.js, markdown auto-links, Mermaid (re-rendered from its stored source), and space detection. Navbar, theme and download wiring are left alone because they live outside `<main>`.\n\n### D6: Scroll-restoring full-reload fallback\nBefore any fallback reload, the client stores `scrollY` in `sessionStorage` (one key per path). After the reload it sets `history.scrollRestoration = \"manual\"` and re-applies the position until `window.__REPORT_READY__` is set (capped at 4 s), so async chart and Mermaid layout shifts don't move the user.\n\n## Risks / Trade-offs\n\n- [Idiomorph CDN unreachable] \u2192 Falls back to the full reload with scroll restore (D6).\n- [A JS-generated widget not in the D4 skip list gets reset by the morph] \u2192 Mark it `data-hot-keep`. A full browser refresh always recovers.\n- [Content-only edits to `<main>` that a widget reads at init time (for example a `data-*` config on a canvas) won't re-initialise that widget] \u2192 Accepted for live preview; a manual refresh applies it. A later change could treat `data-*` changes on kept nodes as part of the signature.\n- [Baseline fetch races a file write right after page load] \u2192 Worst case is one unnecessary full reload.\n- [Rapid successive `reload` events] \u2192 Serialised: a busy flag queues at most one follow-up swap.\n\n## Migration Plan\n\n- No migration needed. The hot swap is live as soon as the dev server restarts.\n- The pre-paint script reaches existing reports when they are rebuilt with `build-report.mjs`.\n- Rollback: revert the three touched files. Nothing persistent changes apart from a transient `sessionStorage` key.\n", "tasks.md": "# Tasks: Live-Reload Hot Swap & Pre-Paint Theme Restore\n\n## 1. Pre-paint theme restore\n\n- [x] 1.1 Add early inline theme script to `<head>` of `template-shell.html` that applies `html_report_active_theme` before CSS loads\n- [x] 1.2 Rebuild a report and confirm the script precedes the DaisyUI stylesheet in the output\n\n## 2. In-place hot swap (dev server)\n\n- [x] 2.1 Rewrite `injectLiveReload()` in `serve-report.mjs`: fetch the page, compare the raw-HTML safety signature, then morph `<main>` with Idiomorph 0.7.3 (loaded from CDN on demand)\n- [x] 2.2 Skip morphing JS-generated widgets (`canvas`, `.fc`, `.leaflet-container`, `.gridjs-container`, `[data-hot-keep]`)\n- [x] 2.3 Serialise rapid `reload` events (busy flag plus one queued follow-up)\n\n## 3. Fallback reload with scroll restore\n\n- [x] 3.1 Save `scrollY` to `sessionStorage` before a fallback reload and restore it until `__REPORT_READY__` (4 s cap)\n- [x] 3.2 Fall back when `<head>`/inline scripts change, `<main>` is missing, the CDN is unreachable, or the swap throws\n\n## 4. Runtime re-hydration\n\n- [x] 4.1 Add and export `reinitReportContent()` in `report-runtime.js` (icons, TOC, hljs, Day.js, md links, Mermaid, space check)\n\n## 5. Verification\n\n- [x] 5.1 Syntax-check `serve-report.mjs`, `report-runtime.js`, and the injected client snippet\n- [x] 5.2 Run the existing test suite (`node --test tests/*.test.mjs`) with no regressions (199/199 tests pass across all 18 test suites)\n- [x] 5.3 E2E: content-only change keeps theme, scroll and page instance; TOC and Mermaid update\n- [x] 5.4 E2E: inline-script change does a full reload and restores theme and scroll\n- [x] 5.5 `openspec validate live-reload-hot-swap` passes\n", "specs/report-generation-core/spec.md": "# Spec Delta: report-generation-core\n\n## MODIFIED Requirements\n\n### Requirement: DaisyUI Theme Dropdown with Default Light Theme, Color-Scheme Swatch Previews, and Live Chart Synchronization\nEvery generated HTML report SHALL default to the `light` DaisyUI theme (`<html data-theme=\"light\">`), display all 32 built-in DaisyUI themes in a dropdown where each theme option previews its own color scheme (`bg-base-100`, `text-base-content`, and `bg-primary`, `bg-secondary`, `bg-accent`, `bg-neutral` swatches inside `data-theme=\"<theme>\"`), and dynamically update Chart.js instances, Mermaid diagrams, and CSS-themed components when switching themes. When the user has previously selected a theme, the report SHALL restore that theme before the first paint, so the default theme is never briefly shown.\n\n#### Scenario: Loading default light theme and selecting a DaisyUI theme with color swatches\n- **WHEN** a report loads initially or a user selects a theme from the navbar dropdown\n- **THEN** the initial theme is `light`, each dropdown item displays its 4 color swatches, `<html data-theme=\"...\">` updates immediately, and all Chart.js, Mermaid, and Grid.js elements recompute their palette colors from the active DaisyUI theme variables\n\n#### Scenario: Reloading a report after selecting a theme\n- **GIVEN** the user previously selected the `dark` theme in a report\n- **WHEN** the report is reloaded or reopened in the same browser\n- **THEN** the first rendered frame already uses the `dark` theme, with no visible flash of the `light` theme\n\n## ADDED Requirements\n\n### Requirement: Live-Reload State Preservation\nWhen the live-reload dev server detects a change to a served report and only the report's main content changed, the open tab SHALL update that content in place without a full page reload. The active theme, scroll position, and other client-side page state SHALL be kept.\n\n#### Scenario: Content-only change while a themed, scrolled report is open\n- **GIVEN** a report served by the dev server is open with the `dark` theme and scrolled partway down\n- **WHEN** only text or markup inside the report's main content changes on disk\n- **THEN** the tab shows the updated content without a full page reload, the theme stays `dark`, the scroll position is unchanged, and the Table of Contents and Mermaid diagrams reflect the new content\n\n### Requirement: Live-Reload Fallback with Scroll Restoration\nWhen an in-place update is not safe or not possible, the dev server's live-reload client SHALL fall back to a full page reload and SHALL then restore the previous scroll position and theme. This applies when `<head>` assets or inline scripts changed, when the page has no main content element, or when the in-place update mechanism is unavailable.\n\n#### Scenario: Inline script change triggers fallback reload\n- **GIVEN** a report served by the dev server is open with the `dark` theme and scrolled partway down\n- **WHEN** an inline script or a `<head>` asset of the report changes on disk\n- **THEN** the tab performs a full reload, the new script runs, and after load the theme is `dark` and the scroll position is restored to where it was\n\n#### Scenario: In-place update mechanism unavailable\n- **WHEN** a report changes on disk while the browser cannot load the in-place update mechanism (for example, offline)\n- **THEN** the tab performs a full reload and restores the previous scroll position instead of failing silently\n"}
+</script>
+
+<script>
+  window.OPEN_SPEC_ARTIFACTS = {};
+  try {
+    const el = document.getElementById("open-spec-artifacts-data");
+    if (el) window.OPEN_SPEC_ARTIFACTS = JSON.parse(el.textContent);
+  } catch (_) {}
+
+  let showdownConverter = null;
+  let activeDocKey = "proposal.md";
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown) {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        ghCodeBlocks: true,
+        simplifiedAutoLink: true,
+        openLinksInNewWindow: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    activeDocKey = docName;
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    const titleEl = document.getElementById("modal-doc-title");
+    const rawLinkEl = document.getElementById("modal-raw-link");
+    const containerEl = document.getElementById("modal-markdown-container");
+    const bodyEl = document.getElementById("modal-markdown-body") || containerEl;
+
+    if (titleEl) titleEl.textContent = docName;
+    if (rawLinkEl) rawLinkEl.href = "/" + docName + "?raw=true";
+
+    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-primary");
+        btn.classList.remove("btn-ghost");
+      } else {
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-ghost");
+      }
+    });
+
+    let markdownText = "";
+    try {
+      const res = await fetch("/" + docName + "?raw=true");
+      if (res.ok) {
+        markdownText = await res.text();
+      } else {
+        markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\nFile not found.";
+      }
+    } catch (_) {
+      markdownText = window.OPEN_SPEC_ARTIFACTS[docName] || "# " + docName + "\nFile loaded from offline cache.";
+    }
+
+    window._currentMarkdownRaw = markdownText;
+
+    const converter = getShowdownConverter();
+    if (converter && bodyEl) {
+      bodyEl.innerHTML = converter.makeHtml(markdownText);
+      if (window.autoLinkMarkdownFiles) window.autoLinkMarkdownFiles(bodyEl);
+    } else if (bodyEl) {
+      bodyEl.textContent = markdownText;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function copyMarkdownToClipboard() {
+    const text = window._currentMarkdownRaw || "";
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById("copy-markdown-btn");
+        if (btn) {
+          btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!';
+          if (window.lucide) window.lucide.createIcons();
+          setTimeout(() => {
+            btn.innerHTML = '<i data-lucide="copy" class="w-3 h-3"></i> Copy';
+            if (window.lucide) window.lucide.createIcons();
+          }, 2000);
+        }
+      });
+    }
+  }
+
+  // Demo interactive state
+  window._demoClickCount = 0;
+  function incrementDemoCounter() {
+    window._demoClickCount++;
+    const countEl = document.getElementById("demo-click-count");
+    if (countEl) countEl.textContent = window._demoClickCount;
+  }
+
+  // Telemetry monitor live updater
+  function updateTelemetryDisplays() {
+    const themeEl = document.getElementById("telemetry-active-theme");
+    if (themeEl) {
+      const curTheme = document.documentElement.getAttribute("data-theme") || "light";
+      themeEl.textContent = curTheme;
+    }
+    const scrollEl = document.getElementById("telemetry-scroll-y");
+    if (scrollEl) {
+      scrollEl.textContent = Math.round(window.scrollY) + " px";
+    }
+  }
+
+  window.addEventListener("scroll", updateTelemetryDisplays, { passive: true });
+  setInterval(updateTelemetryDisplays, 500);
+  setTimeout(updateTelemetryDisplays, 100);
+</script>
