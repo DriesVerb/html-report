@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-report-mode="report" lang="en" data-theme="light" class="scroll-smooth">
+<html data-report-mode="live-report" lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <!-- Pre-paint theme restore: apply the saved theme before any CSS renders (prevents light-theme flash on reload) -->
@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Native OpenSpec BDD-as-TDD Verification Harness</title>
+  <title>Modular Documentation & Minimal DaisyUI Showcase Redesign</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -31,11 +31,26 @@
   </style>
 
   <!-- Optional Addon CDNs & Styles -->
-    <!-- Addon: Showdown -->
-  <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
+    <!-- Addon: Datastar -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
+
+  <!-- Addon: Chart.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
 
   <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
+
+  <!-- Addon: KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Showdown -->
+  <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
 
   <style>
     :root {
@@ -228,7 +243,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Native OpenSpec BDD-as-TDD Verification Harness
+          Modular Documentation & Minimal DaisyUI Showcase Redesign
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -327,25 +342,23 @@
 <header class="space-y-6 border-b border-base-300 pb-8">
   <div class="flex items-center gap-2 flex-wrap">
     <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
-    <span class="badge badge-outline font-mono text-xs">native-openspec-bdd</span>
-    <span class="badge badge-success font-mono text-xs font-semibold gap-1">
-      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Phase 5: Feature Complete &amp; Verified
-    </span>
-    <span class="badge badge-success font-mono text-xs font-semibold gap-1 animate-pulse">
-      <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Zero External Frameworks
+    <span class="badge badge-outline font-mono text-xs">docs-and-showcase-redesign</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Phase 5: Feature Complete &amp; Verified</span>
+    <span class="badge badge-secondary font-mono text-xs font-semibold gap-1">
+      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> DaisyUI Minimalist North Star
     </span>
     <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
-      <i data-lucide="repeat" class="w-3.5 h-3.5"></i> Double-Loop BDD-as-TDD
+      <i data-lucide="folder-tree" class="w-3.5 h-3.5"></i> Modular docs/ Structure
     </span>
   </div>
 
   <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
     <div class="space-y-2">
       <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
-        Native OpenSpec BDD-as-TDD Verification Harness
+        Modular Documentation &amp; Minimal DaisyUI Showcase Redesign
       </h1>
       <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
-        Establish a zero-framework BDD test harness directly on native <code>node:test</code> and <code>node:assert/strict</code> that transforms OpenSpec <code>spec.md</code> files into executable test gates. Runs side-by-side with our existing 18+ test suites with zero external dependencies and zero regressions.
+        Transforming <code>html-report</code> into a modern, aesthetic open-source project following north stars like <code>daisyui.com</code> and <code>shadcn/ui</code>. Moves deep reference into a dedicated <code>docs/</code> hierarchy, condenses the root <code>README.md</code> to standard-readme elegance, and redesigns GitHub Pages (<code>index.html</code>) from a vertical 3,800-line "visual bomb" into an interactive tabbed capability explorer.
       </p>
     </div>
 
@@ -360,7 +373,7 @@
       <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
         <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
       </button>
-      <button type="button" onclick="openMarkdownViewer('specs/native-openspec-bdd/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+      <button type="button" onclick="openMarkdownViewer('specs/modular-documentation-and-showcase/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
         <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
       </button>
     </div>
@@ -387,185 +400,273 @@
 </header>
 
 <!-- ========================================== -->
-<!-- 1. COPYABLE PROMPT CARD (PRIMARY GOAL)     -->
+<!-- LIVE JOURNEY METRICS                       -->
 <!-- ========================================== -->
-<section id="copyable-prompt" class="space-y-4">
-  <div class="flex items-center justify-between flex-wrap gap-2">
+<section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
+    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
+      <span>Total Tasks</span>
+      <i data-lucide="list-todo" class="w-4 h-4 text-primary"></i>
+    </div>
+    <div id="stat-total-tasks" class="text-3xl font-black text-primary mt-2">16</div>
+    <div class="text-xs text-base-content/60 mt-1">4 Distinct Phases</div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
+    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
+      <span>Completed</span>
+      <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
+    </div>
+    <div id="stat-completed-tasks" class="text-3xl font-black text-success mt-2">16</div>
+    <div id="stat-completion-pct" class="text-xs text-success font-semibold mt-1">100% Complete</div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
+    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
+      <span>In Progress</span>
+      <i data-lucide="loader" class="w-4 h-4 text-warning animate-spin"></i>
+    </div>
+    <div id="stat-in-progress-tasks" class="text-3xl font-black text-warning mt-2">0</div>
+    <div class="text-xs text-base-content/60 mt-1">All Phases Delivered</div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
+    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
+      <span>Remaining</span>
+      <i data-lucide="clock" class="w-4 h-4 text-info"></i>
+    </div>
+    <div id="stat-remaining-tasks" class="text-3xl font-black text-info mt-2">0</div>
+    <div class="text-xs text-base-content/60 mt-1">0 Pending</div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- ARCHITECTURAL BRAINSTORM & DESIGN          -->
+<!-- ========================================== -->
+<section class="space-y-6">
+  <div class="flex items-center justify-between">
     <div>
-      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
-        <i data-lucide="copy" class="w-6 h-6 text-primary"></i>
-        Copyable BDD-as-TDD Verification Prompt
+      <h2 id="architectural-evolution" class="text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+        <i data-lucide="git-merge" class="w-6 h-6 text-primary"></i> Architectural Evolution: From Monolithic Dump to Clean Hub
       </h2>
-      <p class="text-xs sm:text-sm text-base-content/70">
-        Copy this prompt directly into any agent session (Antigravity, Claude Code, Codex) to execute features under the BDD-as-TDD workflow.
+      <p class="text-sm text-base-content/70">
+        Separating onboarding from deep architecture using modern progressive disclosure principles.
       </p>
     </div>
-
-    <button id="copy-prompt-btn" type="button" onclick="copyBddPrompt()" class="btn btn-primary gap-2 shadow-sm hover:scale-105 active:scale-95 transition-all">
-      <i id="copy-btn-icon" data-lucide="clipboard-copy" class="w-4 h-4"></i>
-      <span id="copy-btn-text">Copy Prompt to Clipboard</span>
-    </button>
   </div>
 
-  <div class="card bg-base-200/60 border border-base-300 shadow-md overflow-hidden">
-    <div class="bg-base-300/80 px-4 py-2.5 flex items-center justify-between border-b border-base-300 text-xs font-mono">
-      <span class="flex items-center gap-2 text-base-content/80">
-        <i data-lucide="terminal" class="w-4 h-4 text-accent"></i>
-        reusable-bdd-tdd-prompt.md
+  <!-- Comparison Card -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-error/30 p-5 shadow-sm space-y-3">
+      <div class="flex items-center gap-2 text-error font-bold text-sm uppercase">
+        <i data-lucide="alert-triangle" class="w-4 h-4"></i> Before: The Monolithic "Visual Bomb"
+      </div>
+      <ul class="text-xs space-y-2 text-base-content/80">
+        <li class="flex items-start gap-2">
+          <i data-lucide="x" class="w-4 h-4 text-error shrink-0 mt-0.5"></i>
+          <span><strong>README.md Dump (370 lines)</strong>: Badges wall, giant ASCII diagrams, full FSM Mermaid diagrams, 17-CDN version matrix, and raw JSON remediation snippets all in one place.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="x" class="w-4 h-4 text-error shrink-0 mt-0.5"></i>
+          <span><strong>GitHub Pages Overload (3,766 lines)</strong>: Endless vertical scrolling stacking 15 different libraries, maps, canvas charts, and calendars simultaneously with no visual breathing room.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="x" class="w-4 h-4 text-error shrink-0 mt-0.5"></i>
+          <span><strong>Cognitive Friction</strong>: High bounce rate; developers and agent authors cannot locate quickstart instructions in seconds.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card bg-base-100 border border-success/30 p-5 shadow-sm space-y-3">
+      <div class="flex items-center gap-2 text-success font-bold text-sm uppercase">
+        <i data-lucide="check-circle" class="w-4 h-4"></i> After: DaisyUI Minimalist North Star
+      </div>
+      <ul class="text-xs space-y-2 text-base-content/80">
+        <li class="flex items-start gap-2">
+          <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>Standard Minimalist README (<150 lines)</strong>: Punchy elevator pitch, 4 essential badges, 1-click prompt install card, 2-step quickstart, and clean links to <code>docs/</code>.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>Interactive Tabbed Explorer</strong>: Compact DaisyUI tabs (Data, Architecture, Tables, Telemetry, Math) providing interactive live previews without vertical clutter.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>Integrated Showdown Hub</strong>: 1-click in-browser markdown preview for all <code>docs/*.md</code> guides without losing context or page reloads.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Mermaid Architecture Flow -->
+  <div class="card bg-base-100 border border-base-300 p-5 shadow-sm space-y-3">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-bold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
+        <i data-lucide="network" class="w-4 h-4 text-primary"></i> Documentation &amp; Showcase Information Architecture
       </span>
-      <span class="badge badge-sm badge-success">Verified &amp; Ready</span>
+      <span class="badge badge-sm badge-outline font-mono">Mermaid Flow</span>
     </div>
-    <div class="p-4 sm:p-6 bg-base-100">
-      <pre id="prompt-content" class="text-xs sm:text-sm font-mono whitespace-pre-wrap leading-relaxed text-base-content/90 overflow-x-auto select-all">We are implementing the feature `&lt;feature-name&gt;` using OpenSpec and our zero-framework BDD-as-TDD workflow.
+    <div class="overflow-x-auto py-2">
+      <pre class="mermaid text-center">
+graph TD
+    ROOT["Root README.md\n(Minimalist North Star &lt;150 lines)"]
+    GH_PAGES["GitHub Pages index.html\n(DaisyUI Minimal Landing Page)"]
+    
+    ROOT -->|Elevator Pitch &amp; 1-Click Install| QUICKSTART["Agent Prompt &amp; CLI Quickstart"]
+    ROOT -->|Hub Links| DOCS_DIR["Modular docs/ Directory"]
+    
+    GH_PAGES -->|Hero &amp; Value Props| HERO["Modern DaisyUI Hero &amp; Value Cards"]
+    GH_PAGES -->|Interactive Preview| TABBED["Tabbed Capability Explorer\n(Chart.js, Mermaid, Grid.js, Datastar)"]
+    GH_PAGES -->|1-Click Modal Viewer| DOCS_DIR
+    
+    DOCS_DIR --> D1["docs/getting-started.md"]
+    DOCS_DIR --> D2["docs/architecture-fsm.md"]
+    DOCS_DIR --> D3["docs/cdn-stack.md"]
+    DOCS_DIR --> D4["docs/custom-themes.md"]
+    DOCS_DIR --> D5["docs/live-telemetry.md"]
+    DOCS_DIR --> D6["docs/testing-and-verification.md"]
+    DOCS_DIR --> D7["docs/api-and-cli-reference.md"]
 
-Follow these strict constraints:
-1. Zero External Frameworks:
-   - Do not install Cucumber or third-party test runners.
-   - Use our native Node.js test harness: `node:test`, `node:assert/strict`, `tests/harness/bdd.mjs`, and `tests/harness/openspec-bdd.mjs`.
+    classDef primary fill:#2563eb,stroke:#1d4ed8,stroke-width:2px,color:#fff;
+    classDef secondary fill:#0d9488,stroke:#0f766e,stroke-width:2px,color:#fff;
+    classDef accent fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#000;
+    classDef neutral fill:#374151,stroke:#1f2937,stroke-width:2px,color:#fff;
 
-2. Double-Loop BDD-as-TDD Workflow:
-   - Step 1 (Outer Loop - Red Scenario Gate):
-     Read the scenarios in `openspec/specs/&lt;feature-name&gt;/spec.md` (or the change delta spec) and create `tests/&lt;feature-name&gt;.bdd.test.mjs`.
-     Bind the Given-When-Then scenarios using `bindOpenSpec()`. Run `node --test tests/&lt;feature-name&gt;.bdd.test.mjs` to verify scenarios show as `todo` or failing.
-   - Step 2 (Inner Loop - Unit TDD):
-     Write focused unit tests in `tests/&lt;feature-name&gt;.test.mjs` for low-level algorithms, edge cases, and helper functions. Implement minimal code to turn them green.
-   - Step 3 (Outer Loop - Green Scenario Gate):
-     Implement the scenario steps in `tests/&lt;feature-name&gt;.bdd.test.mjs` until all BDD acceptance scenarios pass.
-
-3. Repository Verification Gate:
-   - Execute the complete test suite: `node --test tests/*.test.mjs`.
-   - Ensure zero regressions against all existing test suites.
-   - Update `tasks.md` checklist and the companion `index.html` to reflect live journey progress.
-   - Ensure `http://localhost:3000` reflects the updated journey dashboard.</pre>
+    class ROOT,GH_PAGES primary;
+    class DOCS_DIR secondary;
+    class TABBED,QUICKSTART,HERO accent;
+    class D1,D2,D3,D4,D5,D6,D7 neutral;
+      </pre>
     </div>
   </div>
 </section>
 
 <!-- ========================================== -->
-<!-- 2. ARCHITECTURAL WORKFLOW (MERMAID)        -->
+<!-- CONNECTED TASK CHECKLIST                   -->
 <!-- ========================================== -->
-<section id="architecture" class="space-y-4">
-  <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
-    <i data-lucide="git-merge" class="w-6 h-6 text-secondary"></i>
-    Double-Loop BDD-as-TDD Architecture
-  </h2>
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
-      <h3 class="text-base font-bold flex items-center gap-2">
-        <i data-lucide="refresh-cw" class="w-4 h-4 text-primary"></i> Execution Cycle
-      </h3>
-      <div class="mermaid text-xs">
-flowchart TD
-    subgraph Outer ["Outer Loop: BDD Acceptance Gate"]
-        S1["1. Author spec.md with Scenarios"] --> S2["2. Bind scenarios in .bdd.test.mjs"]
-        S2 --> S3{"Scenarios Passing?"}
-        S3 -->|No / TODO| Inner
-        S3 -->|Yes| S4["4. Gate Passed · Update tasks.md"]
-    end
-
-    subgraph Inner ["Inner Loop: Unit TDD"]
-        U1["Write unit test in .test.mjs"] --> U2["Implement minimal code"]
-        U2 --> U3["Verify edge cases & refactor"]
-    end
-
-    Inner --> S3
-      </div>
-    </div>
-
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
-      <h3 class="text-base font-bold flex items-center gap-2">
-        <i data-lucide="layers" class="w-4 h-4 text-secondary"></i> Test Suite Coexistence
-      </h3>
-      <div class="mermaid text-xs">
-flowchart TD
-    Runner["node --test tests/*.test.mjs"]
-    Runner --> SuiteA["Existing Unit Tests (18+ files)"]
-    Runner --> SuiteB["Native BDD Suites (*.bdd.test.mjs)"]
-    
-    SuiteA -->|Pure JS| ResA["Fast low-level regression checks (<1s)"]
-    SuiteB -->|OpenSpec Binder| ResB["Feature requirement contract checks"]
-    
-    ResA --> Total["Unified TAP / Spec Output · Zero Conflicts"]
-    ResB --> Total
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========================================== -->
-<!-- 3. IMPLEMENTATION PLAN & TASK BREAKDOWN    -->
-<!-- ========================================== -->
-<section id="implementation-plan" class="space-y-4">
+<section class="space-y-6">
   <div class="flex items-center justify-between">
-    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
-      <i data-lucide="list-checks" class="w-6 h-6 text-accent"></i>
-      Implementation Plan &amp; Tasks
-    </h2>
-    <span class="badge badge-success text-xs font-mono">4 of 4 Phases Complete (100%)</span>
+    <div>
+      <h2 id="task-checklist" class="text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+        <i data-lucide="check-square" class="w-6 h-6 text-primary"></i> Implementation Task Progress
+      </h2>
+      <p class="text-sm text-base-content/70">
+        Connected directly with <a href="tasks.md" onclick="openMarkdownViewer('tasks.md'); return false;" class="link link-primary font-mono text-xs">tasks.md</a>.
+      </p>
+    </div>
+    <span class="badge badge-outline font-mono text-xs">4 Phases</span>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <!-- Phase 1 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
       <div class="flex items-center justify-between">
-        <span class="badge badge-success font-mono text-xs">Phase 1 Complete</span>
-        <span class="text-xs text-base-content/70">Scaffolding</span>
+        <span class="font-bold text-sm text-primary flex items-center gap-1.5">
+          <i data-lucide="folder" class="w-4 h-4"></i> Phase 1: Modular docs/ Hierarchy
+        </span>
+        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
       </div>
-      <h3 class="font-bold text-base text-base-content">Zero-Framework BDD Micro-DSL</h3>
-      <p class="text-xs text-base-content/80">
-        Created <code>tests/harness/bdd.mjs</code> providing <code>Feature</code>, <code>Scenario</code>, <code>Given</code>, <code>When</code>, <code>Then</code>, <code>And</code>, and <code>executeScenario</code> without external npm packages.
-      </p>
-      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
-        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 1.1 Implement BDD DSL primitives over node:test</div>
-        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 1.2 Verify execution and step error contextualization</div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.1 <code>docs/getting-started.md</code> (install &amp; prompt)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.2 <code>docs/architecture-fsm.md</code> (10-state FSM)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.3 <code>docs/cdn-stack.md</code> (17-library catalog &amp; SRI)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.4 <code>docs/custom-themes.md</code> (OKLCH engine &amp; studio)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.5 <code>docs/live-telemetry.md</code> (Datastar &amp; SSE tailing)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.6 <code>docs/testing-and-verification.md</code> (BDD &amp; Playwright)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.7 <code>docs/api-and-cli-reference.md</code> (CLI options &amp; API)</span>
+        </div>
       </div>
     </div>
 
     <!-- Phase 2 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
       <div class="flex items-center justify-between">
-        <span class="badge badge-success font-mono text-xs">Phase 2 Complete</span>
-        <span class="text-xs text-base-content/70">Specification</span>
+        <span class="font-bold text-sm text-secondary flex items-center gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4"></i> Phase 2: Minimal Standard README
+        </span>
+        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
       </div>
-      <h3 class="font-bold text-base text-base-content">OpenSpec Markdown Scenario Discovery</h3>
-      <p class="text-xs text-base-content/80">
-        Created <code>tests/harness/openspec-bdd.mjs</code> to parse <code>spec.md</code> directly and auto-register unbound scenarios as <code>test.todo()</code>.
-      </p>
-      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
-        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 2.1 Implement regex scenario extraction from spec.md</div>
-        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 2.2 Auto-bind test functions and flag gaps as test.todo</div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>2.1 Rewrite <code>README.md</code> to modern minimal standard</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>2.2 Verify all documentation &amp; demo links</span>
+        </div>
       </div>
     </div>
 
     <!-- Phase 3 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
       <div class="flex items-center justify-between">
-        <span class="badge badge-success font-mono text-xs">Phase 3 Complete</span>
-        <span class="text-xs text-base-content/70">Verification</span>
+        <span class="font-bold text-sm text-accent flex items-center gap-1.5">
+          <i data-lucide="layout" class="w-4 h-4"></i> Phase 3: Minimalist Showcase (index.html)
+        </span>
+        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
       </div>
-      <h3 class="font-bold text-base text-base-content">Pilot Verification &amp; Coexistence</h3>
-      <p class="text-xs text-base-content/80">
-        Created <code>tests/agent-tracker.bdd.test.mjs</code> and <code>tests/native-openspec-bdd.bdd.test.mjs</code> binding all scenarios with 100% pass rate.
-      </p>
-      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
-        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 3.1 Create agent-tracker BDD pilot suite</div>
-        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 3.2 Run node --test tests/*.test.mjs with zero regressions</div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>3.1 DaisyUI landing page layout &amp; hero banner</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>3.2 Interactive tabbed Capability Explorer</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>3.3 Documentation Hub with Showdown modal viewer</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>3.4 Theme switcher reactivity across widgets</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>3.5 Run <code>tests/browser-runtime-integrity.test.mjs</code></span>
+        </div>
       </div>
     </div>
 
     <!-- Phase 4 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
       <div class="flex items-center justify-between">
-        <span class="badge badge-success font-mono text-xs">Phase 4 Complete</span>
-        <span class="text-xs text-base-content/70">Delivery</span>
+        <span class="font-bold text-sm text-info flex items-center gap-1.5">
+          <i data-lucide="server" class="w-4 h-4"></i> Phase 4: Companion &amp; Live Dev Server
+        </span>
+        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
       </div>
-      <h3 class="font-bold text-base text-base-content">Companion Dashboard &amp; Live Server Sync</h3>
-      <p class="text-xs text-base-content/80">
-        Updated companion <code>index.html</code>, synced live to <code>localhost:3000</code>, verified Showdown markdown viewer modal and Playwright test suite.
-      </p>
-      <div class="text-xs font-mono bg-base-200 p-2.5 rounded border border-base-300 space-y-1">
-        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 4.1 Sync index.html with live journey progress</div>
-        <div class="text-success flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> 4.2 Validate Showdown modal & Playwright checks</div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>4.1 Generate companion <code>index.html</code> report</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>4.2 Sync with <code>implementation-progress.html</code> on :3000</span>
+        </div>
       </div>
     </div>
   </div>
@@ -601,7 +702,7 @@ flowchart TD
       <button class="btn btn-xs btn-primary doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="openMarkdownViewer('proposal.md')">proposal.md</button>
       <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="design.md" onclick="openMarkdownViewer('design.md')">design.md</button>
       <button id="tab-btn-tasks" class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="openMarkdownViewer('tasks.md')">tasks.md</button>
-      <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="specs/native-openspec-bdd/spec.md" onclick="openMarkdownViewer('specs/native-openspec-bdd/spec.md')">spec.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="specs/modular-documentation-and-showcase/spec.md" onclick="openMarkdownViewer('specs/modular-documentation-and-showcase/spec.md')">spec.md</button>
     </div>
 
     <!-- Rendered Markdown Body -->
@@ -627,10 +728,10 @@ flowchart TD
 <!-- ========================================== -->
 <script id="open-spec-artifacts-data" type="application/json">
 {
-  "proposal.md": "# Proposal: Native OpenSpec BDD-as-TDD Verification Harness\n\n## Why\nOpenSpec specifications in this repository already declare behavior and acceptance criteria in Gherkin-style **Given-When-Then** scenarios. However, executing and verifying these scenarios currently requires developers or agents to manually translate them into arbitrary test assertions without a unified behavioral DSL or automated spec drift detection.\n\nThird-party BDD frameworks like Cucumber impose heavy npm dependency trees, complex step registries, regex matching overhead, and fractured state passing—violating the project's zero-root-dependency, lightweight ESM philosophy.\n\nWe need a **zero-framework, native BDD-as-TDD test harness** that:\n1. Runs directly on Node.js built-ins (`node:test`, `node:assert/strict`) alongside our existing 18+ test suites without rewriting anything.\n2. Uses OpenSpec `spec.md` directly as the executable feature specification.\n3. Enables **Double-Loop BDD-as-TDD**: outer BDD scenario gate (Red &rarr; Green) paired with inner unit test cycles.\n4. Auto-detects unimplemented scenarios in `spec.md` as `test.todo()`, ensuring complete testability and quality gates.\n\n## What Changes\n- **Zero-Framework BDD DSL (`tests/harness/bdd.mjs`)**: Lightweight, pure ESM wrapper over `node:test` providing `Feature`, `Scenario`, `Given`, `When`, `Then`, and `And` with step execution tracking and failure isolation.\n- **OpenSpec Spec-to-BDD Binder (`tests/harness/openspec-bdd.mjs`)**: Parses `spec.md` markdown files directly, auto-binding scenarios to test functions and registering unbound scenarios as `test.todo()`.\n- **Pilot BDD Suite (`tests/agent-tracker.bdd.test.mjs`)**: Direct BDD verification of `openspec/specs/agent-tracker/spec.md` scenarios, proving side-by-side coexistence with existing unit tests.\n- **Interactive Companion Plan & Copyable Prompt Dashboard (`index.html`)**: Interactive dashboard visualizing the plan, stage stepper (`Planning` &rarr; `Verifying` &rarr; `Shipped`), and a dedicated 1-click copy card containing the BDD-as-TDD prompt.",
-  "design.md": "# Design: Native OpenSpec BDD-as-TDD Verification Harness\n\n## Context\nSee [proposal.md](proposal.md) for background and motivation.\n\nThe repository's test architecture relies on native Node.js ESM test runners (`node:test`, `node:assert/strict`) for rapid execution (<2s across all 18+ suites) and avoids adding npm packages to the repository root. At the same time, OpenSpec specifications are authored in Markdown with explicit `#### Scenario:` headings containing `GIVEN`, `WHEN`, and `THEN` steps.\n\nThis design establishes a minimal, zero-dependency BDD harness that transforms OpenSpec markdown files into executable test suites, enabling a structured **Double-Loop BDD-as-TDD** workflow.\n\n## Decisions\n\n### 1. Native ESM Primitives over Cucumber CLI\n- Build `tests/harness/bdd.mjs` as a direct wrapper around `node:test`'s `describe` and `it` with `AsyncLocalStorage`.\n- Keeps the root workspace 100% dependency-free, boots in milliseconds, runs in any environment with standard Node.js >= 18.\n\n### 2. Direct OpenSpec `spec.md` Parsing for Scenario Binding\n- In `tests/harness/openspec-bdd.mjs`, parse Markdown headers matching `/^####\\s+Scenario:\\s*(.+)$/gm` directly from the feature's `spec.md`.\n- Eliminates the 'Two Masters' problem. Developers and AI agents only edit the OpenSpec `spec.md`.\n\n### 3. Graceful Todo Drift Detection\n- If a scenario in `spec.md` is not present in the test binder, automatically invoke `test.todo(scenarioName)`.\n- Enables true BDD-as-TDD without crashing CI suites.",
-  "tasks.md": "# Tasks: Native OpenSpec BDD-as-TDD Verification Harness\n\n## 1. Zero-Framework BDD Micro-DSL\n- [x] 1.1 Implement `tests/harness/bdd.mjs` providing `Feature`, `Scenario`, `Given`, `When`, `Then`, `And` wrapping `node:test` with step execution tracking and failure contextualization\n- [x] 1.2 Verify `tests/harness/bdd.mjs` executes sequential and async steps correctly using a self-test\n\n## 2. OpenSpec Markdown Scenario Discovery & Binder\n- [x] 2.1 Implement `tests/harness/openspec-bdd.mjs` with regex-based scenario parsing (`#### Scenario: <title>`) from any `spec.md` file\n- [x] 2.2 Implement auto-binding logic that invokes test functions for bound scenarios and registers unbound scenarios as `test.todo()`, and verify with unit tests\n\n## 3. Pilot BDD Verification & Mixed-Suite Coexistence\n- [x] 3.1 Create `tests/agent-tracker.bdd.test.mjs` binding scenarios from `openspec/specs/agent-tracker/spec.md` using the native BDD harness\n- [x] 3.2 Run full test suite (`node --test tests/*.test.mjs`) to verify zero regressions across all 18+ existing test suites and flawless coexistence\n\n## 4. Companion HTML Report & Copyable BDD-TDD Prompt Dashboard\n- [x] 4.1 Generate `openspec/changes/native-openspec-bdd/index.html` presenting the architecture, interactive Mermaid workflows, direct backlinks to markdown artifacts, and a prominent 1-click copyable BDD-as-TDD prompt card\n- [x] 4.2 Sync `index.html` with `implementation-progress.html` and verify live reload on `http://localhost:3000`",
-  "specs/native-openspec-bdd/spec.md": "# Spec Delta: Native OpenSpec BDD-as-TDD Verification Harness\n\n## Purpose\nProvides a zero-framework, native Node.js BDD domain-specific language and OpenSpec markdown scenario binder that enables Double-Loop BDD-as-TDD verification running side-by-side with existing unit tests.\n\n## ADDED Requirements\n\n### Requirement: Zero-Framework BDD Domain-Specific Language\nThe test harness SHALL provide native ESM BDD primitives (`Feature`, `Scenario`, `Given`, `When`, `Then`, `And`) implemented directly on top of Node.js `node:test` and `node:assert/strict` without third-party frameworks.\n\n#### Scenario: Executing a structured BDD scenario\n- **GIVEN** a test suite importing `Feature` and `Scenario` from the BDD harness\n- **WHEN** a scenario executes sequential `Given`, `When`, and `Then` step functions\n- **THEN** the harness MUST run the scenario under native `node:test`, verify assertions, and preserve step execution order.\n\n#### Scenario: Step assertion failure diagnostics\n- **GIVEN** a scenario with a failing assertion inside a `Then` step\n- **WHEN** the assertion throws an error\n- **THEN** the harness MUST fail the test with actionable step context identifying the failed step name.\n\n---\n\n### Requirement: OpenSpec Markdown Scenario Discovery & Binding\nThe test harness SHALL provide an OpenSpec scenario loader that parses any OpenSpec `spec.md` markdown file, discovers declared `#### Scenario:` titles, and binds them to executable test implementations.\n\n#### Scenario: Executing bound OpenSpec scenarios\n- **GIVEN** an OpenSpec `spec.md` containing defined scenarios\n- **WHEN** a test file binds matching scenario titles using `bindOpenSpec()`\n- **THEN** the harness MUST execute each bound scenario as a distinct test case under `node:test`.\n\n#### Scenario: Auto-registering unbound scenarios as pending todos\n- **GIVEN** an OpenSpec `spec.md` with declared scenarios that have not yet been implemented in the test file\n- **WHEN** `bindOpenSpec()` loads the specification\n- **THEN** the harness MUST register each unimplemented scenario as `test.todo()`, visibly signaling pending tasks without failing the overall suite.\n\n---\n\n### Requirement: Double-Loop Coexistence with Standard Test Suites\nThe BDD harness SHALL execute seamlessly alongside all existing `node:test` suites when invoked with standard wildcards (`node --test tests/*.test.mjs`) without polluting global scope or breaking unit test runners.\n\n#### Scenario: Running mixed unit and BDD suites simultaneously\n- **GIVEN** a test directory containing both traditional unit test files and `.bdd.test.mjs` files\n- **WHEN** `node --test tests/*.test.mjs` is executed\n- **THEN** the test runner MUST execute all suites in a single pass, outputting standard TAP or spec reports with zero runner collisions."
+  "proposal.md": "# Proposal: Modular Documentation Architecture & Minimal DaisyUI Showcase Redesign\n\n## Why\n\nThe current `README.md` and GitHub Pages showcase (`https://driesverb.github.io/html-report/`) suffer from extreme information overload. `README.md` is an uncurated 370-line dump of ASCII diagrams, massive 17-CDN version tables, and internal harness state machine code blocks. Simultaneously, `index.html` (3,766 lines) acts as a monolithic \"visual bomb\" that forces visitors to scroll through dozens of disparate charts, maps, calendars, and LaTeX equations all at once.\n\nTo establish `html-report` as a top-tier, publication-grade tool for the agent ecosystem, we need a clean, scannable presentation inspired by modern open-source north stars like `daisyui.com`, `tailwindcss.com`, and `shadcn/ui`. We must separate quick onboarding from deep architectural reference by introducing a dedicated `docs/` directory, condensing the root `README.md` into an elegant, scannable guide, and transforming GitHub Pages into an aesthetic, interactive, tabbed showcase landing page with zero visual chaos.\n\n## What Changes\n\n- **Create Dedicated Modular Documentation (`docs/`)**:\n  - `docs/getting-started.md`: Installation via 1-click agent prompt, universal symlinks, and CLI.\n  - `docs/architecture-fsm.md`: Deep dive on the 10-state deterministic FSM harness, <1ms pre-flight auto-fixes, and small-model remediation directives.\n  - `docs/cdn-stack.md`: Complete 17-library catalog, version matrices, SRI hashes, loading guards, and offline bundling.\n  - `docs/custom-themes.md`: Custom DaisyUI OKLCH engine, theme inheritance (`extends`), and collapsible studio banner.\n  - `docs/live-telemetry.md`: Real-time SSE streaming with Datastar.js, transcript tailing (`agy`, `claude-code`, `codex`), and hypermedia morphing.\n  - `docs/testing-and-verification.md`: Zero-framework native BDD harness, Playwright 5-breakpoint verification, and horizontal scrollbar detection.\n  - `docs/api-and-cli-reference.md`: Comprehensive CLI flags (`build-report.mjs`, `harness.mjs`, `serve-report.mjs`) and programmatic API usage.\n\n- **Overhaul `README.md` to Minimalist North-Star Standards**:\n  - Crisp hero banner with punchy elevator pitch.\n  - Minimalist badge strip (only 4 essential badges: License, LLM-Agnostic, 17 CDNs, Tests Passing).\n  - Frictionless 1-click agent prompt copy box & 1-line CLI install.\n  - Punchy \"Why `html-report`?\" comparison and concise ASCII pipeline diagram.\n  - 2-step Quickstart guide (Write Fragment -> Run Harness -> Done).\n  - Clean Documentation Hub index with direct links to all `docs/*.md` guides.\n  - Live showcase link with clear call to action.\n\n- **Redesign GitHub Pages Showcase (`index.html`) to DaisyUI North-Star Minimalist Aesthetic**:\n  - Replaces the 3,766-line vertical visual dump with a sleek, clean, modern landing page.\n  - **Hero Section**: Modern title, subheader, 1-click prompt install card with copy button, and \"Get Started\" / \"Explore Capabilities\" buttons.\n  - **Value Proposition Grid**: Clean, spacious DaisyUI cards highlighting speed (<100ms), 32 themes, 17 non-blocking CDNs, cryptographic security, and Playwright verification.\n  - **Interactive Capability Explorer**: Clean, modern tabbed interface (Data Visualizations, Architecture Flows, Interactive Tables, Live Telemetry, Formatted Math & Code) that lets visitors interactively test each CDN library without visual chaos.\n  - **Documentation Hub**: Grid of cards linking directly to the markdown docs in `docs/` with 1-click Showdown modal preview or direct view.\n  - **Dedicated Demo Links**: Direct buttons to standalone deep-dive reports and live dashboards.\n  - Full adherence to 16/17 CDN parity and zero console errors (`tests/browser-runtime-integrity.test.mjs` verification).\n\n- **Update Feature Companion & Dev Server**:\n  - Create companion `openspec/changes/docs-and-showcase-redesign/index.html` with Journey Stepper, live task progress, and Showdown backlinks.\n  - Sync with `implementation-progress.html` on `http://localhost:3000`.\n\n## Capabilities\n\n### New Capabilities\n- `modular-documentation-and-showcase`: Modular root-level `docs/` architecture, minimalist standard `README.md`, and aesthetic DaisyUI tabbed landing page showcase at repo root (`index.html`).\n\n### Modified Capabilities\n- None.\n\n## Impact\n\n- `README.md`: Drastically shortened, scannable, and modern.\n- `docs/`: 7 new structured deep-dive markdown guides.\n- `index.html`: Complete redesign to a clean landing page with tabbed capability explorer.\n- Tests: `tests/browser-runtime-integrity.test.mjs` continues to pass with 0 console errors and full CDN global verification.\n",
+  "design.md": "# Design: Modular Documentation Architecture & Minimal DaisyUI Showcase Redesign\n\n## Context\n\nSee [proposal.md](proposal.md) for the motivation. Currently, `README.md` attempts to be an installation guide, architecture specification, benchmark dashboard, and API manual simultaneously. At the same time, `index.html` (hosted on GitHub Pages) renders thousands of lines of stacked charts, diagrams, tables, and formula blocks sequentially, overwhelming first-time visitors.\n\nThis design introduces a modular documentation architecture in `docs/`, condenses `README.md` into an open-source standard landing document, and redesigns `index.html` into a DaisyUI-powered interactive landing page with a tabbed capability explorer.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Create a dedicated, well-structured `docs/` directory containing 7 modular guides for onboarding, FSM architecture, CDN catalog, custom themes, real-time telemetry, verification, and CLI reference.\n- Restructure `README.md` into a scannable, modern document adhering to open-source best practices (daisyUI, Astro, Shadcn).\n- Redesign `index.html` into an aesthetic, minimalist landing page featuring a hero banner, 1-click install card, key value proposition cards, an interactive tabbed capability explorer, and a documentation hub with Showdown modal viewer integration.\n- Preserve 100% test compatibility: `tests/browser-runtime-integrity.test.mjs` must load `index.html` with zero console/page errors and verify all 16 CDN globals.\n\n**Non-Goals:**\n- Altering the underlying CLI tools (`build-report.mjs`, `harness.mjs`, `serve-report.mjs`) or core runtime behavior.\n- Replacing the 17-library CDN stack or dropping any supported capability.\n\n## Decisions\n\n### 1. Dedicated `docs/` Directory Structure\n- **Decision**: Move in-depth technical details from `README.md` into dedicated markdown files in `docs/`:\n  - `docs/getting-started.md`\n  - `docs/architecture-fsm.md`\n  - `docs/cdn-stack.md`\n  - `docs/custom-themes.md`\n  - `docs/live-telemetry.md`\n  - `docs/testing-and-verification.md`\n  - `docs/api-and-cli-reference.md`\n- **Rationale**: Keeps `README.md` under 150 lines, focused on value proposition, quick install, and rapid onboarding. Developers and agents can navigate directly to specific topic guides as needed.\n\n### 2. Tabbed Interactive Capability Explorer for GitHub Pages (`index.html`)\n- **Decision**: Replace the vertical 3,800-line stack with a modern DaisyUI tabbed component explorer:\n  - Tab 1: **Data & Visualizations** (Chart.js multi-dataset canvas with theme sync)\n  - Tab 2: **Architecture & Flows** (Mermaid sequence and flow diagrams)\n  - Tab 3: **Interactive Tables** (Grid.js sortable, searchable table)\n  - Tab 4: **Live LLM Telemetry** (Datastar streaming simulation drawer)\n  - Tab 5: **Rich Math & Code** (KaTeX LaTeX equations + Highlight.js code formatting)\n- **Rationale**: Gives visitors immediate, interactive proof of all capabilities in a compact, viewport-friendly layout without \"visual bomb\" cognitive overload.\n\n### 3. Integrated Showdown Markdown Viewer for Documentation Cards\n- **Decision**: In `index.html`, render a Documentation Hub grid where each card links to a `docs/*.md` file. Clicking a card opens the document in the built-in Showdown markdown modal viewer (`window.openMarkdownViewer('docs/...')`) with tabbed source preview and print capability.\n- **Rationale**: Allows visitors on GitHub Pages to read comprehensive documentation without navigating away or dealing with raw GitHub markdown rendering.\n\n### 4. Preservation of 16-CDN Global Parity & Browser Runtime Integrity\n- **Decision**: Keep all 16 CDN library imports and sample initializers in `index.html`, mounting them inside the interactive tab panels.\n- **Rationale**: Ensures `tests/browser-runtime-integrity.test.mjs` passes identically while demonstrating that all 17 libraries co-exist cleanly without conflicts.\n\n## Risks / Trade-offs\n\n- **[Risk] Lazy initialization in tabs could cause hidden canvas or map rendering sizing bugs.**  \n  → *Mitigation*: Ensure Chart.js and Leaflet invalidate/resize upon tab switch using Alpine.js or native tab change listeners (`chart.resize()`, `map.invalidateSize()`).\n- **[Risk] Broken relative links between `README.md`, `docs/`, and GitHub Pages.**  \n  → *Mitigation*: Use standard relative paths (`docs/getting-started.md`) that work seamlessly on both GitHub's web interface and local clones.\n",
+  "tasks.md": "# Tasks: Modular Documentation Architecture & Minimal DaisyUI Showcase Redesign\n\n## 1. Dedicated Modular Documentation Architecture (`docs/`)\n\n- [x] 1.1 Create `docs/getting-started.md` covering agent prompt install, CLI setup, and quick verification\n- [x] 1.2 Create `docs/architecture-fsm.md` covering 10-state deterministic FSM, mechanical auto-fixes, and small-model JSON remediation\n- [x] 1.3 Create `docs/cdn-stack.md` detailing the 17-library power stack, SRI hashes, loading guards, and offline bundling\n- [x] 1.4 Create `docs/custom-themes.md` covering OKLCH engine, theme inheritance (`extends`), and collapsible studio banner\n- [x] 1.5 Create `docs/live-telemetry.md` covering Datastar.js SSE streaming, agent transcript tailing, and morphing\n- [x] 1.6 Create `docs/testing-and-verification.md` covering native BDD micro-framework, Playwright 5-breakpoint verification, and horizontal overflow detection\n- [x] 1.7 Create `docs/api-and-cli-reference.md` documenting CLI flags, options, and programmatic usage\n\n## 2. Minimalist Standard README (`README.md`)\n\n- [x] 2.1 Rewrite `README.md` adhering to open-source north stars (DaisyUI, Astro, Shadcn) with hero banner, 4 essential badges, 1-click prompt install, 2-step quickstart, and Documentation Hub linking to `docs/`\n- [x] 2.2 Verify all markdown links in `README.md` to `docs/*.md` resolve properly\n\n## 3. DaisyUI Minimalist Landing Page Showcase (`index.html`)\n\n- [ ] 3.1 Design modern DaisyUI landing page layout with hero, copyable prompt card, value prop cards, and clean visual hierarchy\n- [ ] 3.2 Implement interactive tabbed Capability Explorer (Data & Visualizations, Architecture Flows, Interactive Tables, Live Telemetry, Formatted Math & Code)\n- [ ] 3.3 Implement Documentation Hub card grid wired to Showdown markdown viewer modal (`window.openMarkdownViewer`)\n- [ ] 3.4 Wire theme switching to preserve real-time OKLCH re-theming across Chart.js, Mermaid, and Grid.js\n- [ ] 3.5 Run `tests/browser-runtime-integrity.test.mjs` to verify zero console/page errors and full 16-CDN global presence\n\n## 4. OpenSpec Companion & Live Dev Server (`localhost:3000`)\n\n- [ ] 4.1 Generate companion `index.html` report presenting brainstorm, architecture flows, live journey stepper, and Showdown backlinks\n- [ ] 4.2 Sync with `implementation-progress.html` and verify live reload on `http://localhost:3000`\n",
+  "specs/modular-documentation-and-showcase/spec.md": "# Spec Delta: modular-documentation-and-showcase\n\n## Purpose\n\nEstablishes a modular documentation architecture in the `docs/` directory, an ultra-scannable minimalist README following open-source north-star standards, and an aesthetic, tabbed DaisyUI landing page showcase for GitHub Pages (`index.html`) that replaces monolithic content dumping with interactive progressive disclosure.\n\n## ADDED Requirements\n\n### Requirement: Modular Root Documentation Directory\nThe repository SHALL maintain a dedicated `docs/` directory containing focused, topic-specific markdown guides for onboarding, architecture, styling, and verification.\n\n#### Scenario: Inspecting modular docs directory\n- **WHEN** a developer or agent inspects the `docs/` directory\n- **THEN** guides for `getting-started.md`, `architecture-fsm.md`, `cdn-stack.md`, `custom-themes.md`, `live-telemetry.md`, `testing-and-verification.md`, and `api-and-cli-reference.md` SHALL be present and linked\n\n### Requirement: Minimal Scannable Standard README\nThe root `README.md` SHALL present an elevator pitch, minimal essential badges, 1-click agent prompt and CLI installation instructions, a 2-step quickstart example, and a clean documentation index linking to `docs/`.\n\n#### Scenario: Inspecting root README layout and documentation links\n- **WHEN** a user reads `README.md`\n- **THEN** it provides copyable install commands, links to live demo and `docs/`, and avoids embedding full state machine code or exhaustive CDN version tables\n\n### Requirement: Minimalist Aesthetic Landing Page Showcase\nThe GitHub Pages entrypoint (`index.html`) SHALL provide a DaisyUI-powered minimal landing page featuring a hero section, value proposition cards, an interactive tabbed capability explorer, and a documentation hub linking to all guides.\n\n#### Scenario: Loading GitHub Pages index.html showcase\n- **WHEN** a visitor loads `index.html` in a web browser\n- **THEN** the page renders with zero console errors, displays hero and capability cards, and provides full 16-CDN runtime integrity\n\n#### Scenario: Switching capability explorer tabs\n- **WHEN** a visitor clicks capability tabs (such as Data & Visualizations, Architecture Flows, Interactive Tables, Live Telemetry, or Formatted Math & Code)\n- **THEN** the active tab displays the selected interactive component preview without requiring full-page scrolling\n\n#### Scenario: Previewing documentation via Showdown viewer\n- **WHEN** a visitor clicks any documentation link in the landing page documentation hub\n- **THEN** the runtime activates the interactive Showdown markdown modal to display the formatted guide directly in the browser\n"
 }
 </script>
 
@@ -690,11 +791,6 @@ flowchart TD
   async function renderMarkdownDoc(docName) {
     const titleEl = document.getElementById("markdown-modal-title");
     const hiddenTitleEl = document.getElementById("modal-doc-title");
-    const bodyEls = [
-      document.getElementById("modal-markdown-container"),
-      document.getElementById("modal-markdown-body"),
-      document.getElementById("markdown-modal-body")
-    ];
 
     if (titleEl) titleEl.textContent = docName;
     if (hiddenTitleEl) hiddenTitleEl.textContent = docName;
@@ -750,31 +846,6 @@ flowchart TD
           if (window.lucide) window.lucide.createIcons();
         }, 2000);
       }
-    });
-  }
-
-  function copyBddPrompt() {
-    const text = document.getElementById("prompt-content").innerText;
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById("copy-prompt-btn");
-      const btnText = document.getElementById("copy-btn-text");
-      const btnIcon = document.getElementById("copy-btn-icon");
-
-      btn.classList.remove("btn-primary");
-      btn.classList.add("btn-success");
-      btnText.textContent = "Copied to Clipboard!";
-      if (btnIcon) btnIcon.setAttribute("data-lucide", "check");
-      if (window.lucide) window.lucide.createIcons();
-
-      setTimeout(() => {
-        btn.classList.remove("btn-success");
-        btn.classList.add("btn-primary");
-        btnText.textContent = "Copy Prompt to Clipboard";
-        if (btnIcon) btnIcon.setAttribute("data-lucide", "clipboard-copy");
-        if (window.lucide) window.lucide.createIcons();
-      }, 2500);
-    }).catch(err => {
-      alert("Failed to copy: " + err);
     });
   }
 </script>

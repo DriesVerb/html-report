@@ -1,0 +1,513 @@
+<!-- ========================================== -->
+<!-- HERO BANNER & JOURNEY STEPPER              -->
+<!-- ========================================== -->
+<header class="space-y-6 border-b border-base-300 pb-8">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">docs-and-showcase-redesign</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Phase 5: Feature Complete &amp; Verified</span>
+    <span class="badge badge-secondary font-mono text-xs font-semibold gap-1">
+      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> DaisyUI Minimalist North Star
+    </span>
+    <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
+      <i data-lucide="folder-tree" class="w-3.5 h-3.5"></i> Modular docs/ Structure
+    </span>
+  </div>
+
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div class="space-y-2">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+        Modular Documentation &amp; Minimal DaisyUI Showcase Redesign
+      </h1>
+      <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+        Transforming <code>html-report</code> into a modern, aesthetic open-source project following north stars like <code>daisyui.com</code> and <code>shadcn/ui</code>. Moves deep reference into a dedicated <code>docs/</code> hierarchy, condenses the root <code>README.md</code> to standard-readme elegance, and redesigns GitHub Pages (<code>index.html</code>) from a vertical 3,800-line "visual bomb" into an interactive tabbed capability explorer.
+      </p>
+    </div>
+
+    <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+      </button>
+      <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/modular-documentation-and-showcase/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
+      </button>
+    </div>
+  </div>
+
+  <!-- Mandatory Journey Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+    <div class="flex items-center justify-between text-xs font-bold text-base-content/70">
+      <span class="flex items-center gap-1.5">
+        <i data-lucide="git-pull-request" class="w-4 h-4 text-primary"></i> Current Journey State
+      </span>
+      <span class="font-mono text-success">Stage 5 Active · Verified &amp; Shipped</span>
+    </div>
+    <div class="w-full overflow-x-auto py-2">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
+        <li id="stepper-phase-2" class="step step-primary">2. Planning</li>
+        <li id="stepper-phase-3" class="step step-primary">3. Implementing</li>
+        <li id="stepper-phase-4" class="step step-primary">4. Verifying</li>
+        <li id="stepper-phase-5" class="step step-primary">5. Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- ========================================== -->
+<!-- LIVE JOURNEY METRICS                       -->
+<!-- ========================================== -->
+<section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
+    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
+      <span>Total Tasks</span>
+      <i data-lucide="list-todo" class="w-4 h-4 text-primary"></i>
+    </div>
+    <div id="stat-total-tasks" class="text-3xl font-black text-primary mt-2">16</div>
+    <div class="text-xs text-base-content/60 mt-1">4 Distinct Phases</div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
+    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
+      <span>Completed</span>
+      <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
+    </div>
+    <div id="stat-completed-tasks" class="text-3xl font-black text-success mt-2">16</div>
+    <div id="stat-completion-pct" class="text-xs text-success font-semibold mt-1">100% Complete</div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
+    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
+      <span>In Progress</span>
+      <i data-lucide="loader" class="w-4 h-4 text-warning animate-spin"></i>
+    </div>
+    <div id="stat-in-progress-tasks" class="text-3xl font-black text-warning mt-2">0</div>
+    <div class="text-xs text-base-content/60 mt-1">All Phases Delivered</div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
+    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
+      <span>Remaining</span>
+      <i data-lucide="clock" class="w-4 h-4 text-info"></i>
+    </div>
+    <div id="stat-remaining-tasks" class="text-3xl font-black text-info mt-2">0</div>
+    <div class="text-xs text-base-content/60 mt-1">0 Pending</div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- ARCHITECTURAL BRAINSTORM & DESIGN          -->
+<!-- ========================================== -->
+<section class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 id="architectural-evolution" class="text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+        <i data-lucide="git-merge" class="w-6 h-6 text-primary"></i> Architectural Evolution: From Monolithic Dump to Clean Hub
+      </h2>
+      <p class="text-sm text-base-content/70">
+        Separating onboarding from deep architecture using modern progressive disclosure principles.
+      </p>
+    </div>
+  </div>
+
+  <!-- Comparison Card -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-error/30 p-5 shadow-sm space-y-3">
+      <div class="flex items-center gap-2 text-error font-bold text-sm uppercase">
+        <i data-lucide="alert-triangle" class="w-4 h-4"></i> Before: The Monolithic "Visual Bomb"
+      </div>
+      <ul class="text-xs space-y-2 text-base-content/80">
+        <li class="flex items-start gap-2">
+          <i data-lucide="x" class="w-4 h-4 text-error shrink-0 mt-0.5"></i>
+          <span><strong>README.md Dump (370 lines)</strong>: Badges wall, giant ASCII diagrams, full FSM Mermaid diagrams, 17-CDN version matrix, and raw JSON remediation snippets all in one place.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="x" class="w-4 h-4 text-error shrink-0 mt-0.5"></i>
+          <span><strong>GitHub Pages Overload (3,766 lines)</strong>: Endless vertical scrolling stacking 15 different libraries, maps, canvas charts, and calendars simultaneously with no visual breathing room.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="x" class="w-4 h-4 text-error shrink-0 mt-0.5"></i>
+          <span><strong>Cognitive Friction</strong>: High bounce rate; developers and agent authors cannot locate quickstart instructions in seconds.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card bg-base-100 border border-success/30 p-5 shadow-sm space-y-3">
+      <div class="flex items-center gap-2 text-success font-bold text-sm uppercase">
+        <i data-lucide="check-circle" class="w-4 h-4"></i> After: DaisyUI Minimalist North Star
+      </div>
+      <ul class="text-xs space-y-2 text-base-content/80">
+        <li class="flex items-start gap-2">
+          <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>Standard Minimalist README (<150 lines)</strong>: Punchy elevator pitch, 4 essential badges, 1-click prompt install card, 2-step quickstart, and clean links to <code>docs/</code>.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>Interactive Tabbed Explorer</strong>: Compact DaisyUI tabs (Data, Architecture, Tables, Telemetry, Math) providing interactive live previews without vertical clutter.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+          <span><strong>Integrated Showdown Hub</strong>: 1-click in-browser markdown preview for all <code>docs/*.md</code> guides without losing context or page reloads.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Mermaid Architecture Flow -->
+  <div class="card bg-base-100 border border-base-300 p-5 shadow-sm space-y-3">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-bold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
+        <i data-lucide="network" class="w-4 h-4 text-primary"></i> Documentation &amp; Showcase Information Architecture
+      </span>
+      <span class="badge badge-sm badge-outline font-mono">Mermaid Flow</span>
+    </div>
+    <div class="overflow-x-auto py-2">
+      <pre class="mermaid text-center">
+graph TD
+    ROOT["Root README.md\n(Minimalist North Star &lt;150 lines)"]
+    GH_PAGES["GitHub Pages index.html\n(DaisyUI Minimal Landing Page)"]
+    
+    ROOT -->|Elevator Pitch &amp; 1-Click Install| QUICKSTART["Agent Prompt &amp; CLI Quickstart"]
+    ROOT -->|Hub Links| DOCS_DIR["Modular docs/ Directory"]
+    
+    GH_PAGES -->|Hero &amp; Value Props| HERO["Modern DaisyUI Hero &amp; Value Cards"]
+    GH_PAGES -->|Interactive Preview| TABBED["Tabbed Capability Explorer\n(Chart.js, Mermaid, Grid.js, Datastar)"]
+    GH_PAGES -->|1-Click Modal Viewer| DOCS_DIR
+    
+    DOCS_DIR --> D1["docs/getting-started.md"]
+    DOCS_DIR --> D2["docs/architecture-fsm.md"]
+    DOCS_DIR --> D3["docs/cdn-stack.md"]
+    DOCS_DIR --> D4["docs/custom-themes.md"]
+    DOCS_DIR --> D5["docs/live-telemetry.md"]
+    DOCS_DIR --> D6["docs/testing-and-verification.md"]
+    DOCS_DIR --> D7["docs/api-and-cli-reference.md"]
+
+    classDef primary fill:#2563eb,stroke:#1d4ed8,stroke-width:2px,color:#fff;
+    classDef secondary fill:#0d9488,stroke:#0f766e,stroke-width:2px,color:#fff;
+    classDef accent fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#000;
+    classDef neutral fill:#374151,stroke:#1f2937,stroke-width:2px,color:#fff;
+
+    class ROOT,GH_PAGES primary;
+    class DOCS_DIR secondary;
+    class TABBED,QUICKSTART,HERO accent;
+    class D1,D2,D3,D4,D5,D6,D7 neutral;
+      </pre>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- CONNECTED TASK CHECKLIST                   -->
+<!-- ========================================== -->
+<section class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 id="task-checklist" class="text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+        <i data-lucide="check-square" class="w-6 h-6 text-primary"></i> Implementation Task Progress
+      </h2>
+      <p class="text-sm text-base-content/70">
+        Connected directly with <a href="tasks.md" onclick="openMarkdownViewer('tasks.md'); return false;" class="link link-primary font-mono text-xs">tasks.md</a>.
+      </p>
+    </div>
+    <span class="badge badge-outline font-mono text-xs">4 Phases</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Phase 1 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="font-bold text-sm text-primary flex items-center gap-1.5">
+          <i data-lucide="folder" class="w-4 h-4"></i> Phase 1: Modular docs/ Hierarchy
+        </span>
+        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.1 <code>docs/getting-started.md</code> (install &amp; prompt)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.2 <code>docs/architecture-fsm.md</code> (10-state FSM)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.3 <code>docs/cdn-stack.md</code> (17-library catalog &amp; SRI)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.4 <code>docs/custom-themes.md</code> (OKLCH engine &amp; studio)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.5 <code>docs/live-telemetry.md</code> (Datastar &amp; SSE tailing)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.6 <code>docs/testing-and-verification.md</code> (BDD &amp; Playwright)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>1.7 <code>docs/api-and-cli-reference.md</code> (CLI options &amp; API)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="font-bold text-sm text-secondary flex items-center gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4"></i> Phase 2: Minimal Standard README
+        </span>
+        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>2.1 Rewrite <code>README.md</code> to modern minimal standard</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>2.2 Verify all documentation &amp; demo links</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="font-bold text-sm text-accent flex items-center gap-1.5">
+          <i data-lucide="layout" class="w-4 h-4"></i> Phase 3: Minimalist Showcase (index.html)
+        </span>
+        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>3.1 DaisyUI landing page layout &amp; hero banner</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>3.2 Interactive tabbed Capability Explorer</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>3.3 Documentation Hub with Showdown modal viewer</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>3.4 Theme switcher reactivity across widgets</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>3.5 Run <code>tests/browser-runtime-integrity.test.mjs</code></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="font-bold text-sm text-info flex items-center gap-1.5">
+          <i data-lucide="server" class="w-4 h-4"></i> Phase 4: Companion &amp; Live Dev Server
+        </span>
+        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>4.1 Generate companion <code>index.html</code> report</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
+          <span>4.2 Sync with <code>implementation-progress.html</code> on :3000</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SHOWDOWN IN-BROWSER ARTIFACT VIEWER MODAL  -->
+<!-- ========================================== -->
+<dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box w-11/12 max-w-4xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl rounded-2xl">
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50 shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="p-2 rounded-lg bg-primary/10 text-primary">
+          <i data-lucide="file-code" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 id="markdown-modal-title" class="font-bold text-base text-base-content font-mono">proposal.md</h3>
+          <span id="modal-doc-title" class="hidden">proposal.md</span>
+          <p class="text-2xs opacity-60">OpenSpec Planning Artifact · Formatted Markdown</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="copy-markdown-btn" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1 font-mono">
+          <i data-lucide="copy" class="w-3 h-3"></i> Copy
+        </button>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-circle btn-ghost">✕</button>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Sub-Tabs -->
+    <div class="flex items-center gap-1 px-6 py-2 border-b border-base-300 bg-base-100 text-xs overflow-x-auto shrink-0">
+      <button class="btn btn-xs btn-primary doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="openMarkdownViewer('proposal.md')">proposal.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="design.md" onclick="openMarkdownViewer('design.md')">design.md</button>
+      <button id="tab-btn-tasks" class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="openMarkdownViewer('tasks.md')">tasks.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="specs/modular-documentation-and-showcase/spec.md" onclick="openMarkdownViewer('specs/modular-documentation-and-showcase/spec.md')">spec.md</button>
+    </div>
+
+    <!-- Rendered Markdown Body -->
+    <div class="p-6 overflow-y-auto flex-1">
+      <div id="modal-markdown-container" class="prose prose-sm max-w-none text-base-content/90 font-sans leading-relaxed">
+        <div id="modal-markdown-body">
+          <div id="markdown-modal-body">
+            <div class="flex items-center justify-center p-12">
+              <span class="loading loading-spinner loading-md text-primary"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- ========================================== -->
+<!-- OFFLINE ARTIFACT DATA & LIVE SCRIPTS       -->
+<!-- ========================================== -->
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Modular Documentation Architecture & Minimal DaisyUI Showcase Redesign\n\n## Why\n\nThe current `README.md` and GitHub Pages showcase (`https://driesverb.github.io/html-report/`) suffer from extreme information overload. `README.md` is an uncurated 370-line dump of ASCII diagrams, massive 17-CDN version tables, and internal harness state machine code blocks. Simultaneously, `index.html` (3,766 lines) acts as a monolithic \"visual bomb\" that forces visitors to scroll through dozens of disparate charts, maps, calendars, and LaTeX equations all at once.\n\nTo establish `html-report` as a top-tier, publication-grade tool for the agent ecosystem, we need a clean, scannable presentation inspired by modern open-source north stars like `daisyui.com`, `tailwindcss.com`, and `shadcn/ui`. We must separate quick onboarding from deep architectural reference by introducing a dedicated `docs/` directory, condensing the root `README.md` into an elegant, scannable guide, and transforming GitHub Pages into an aesthetic, interactive, tabbed showcase landing page with zero visual chaos.\n\n## What Changes\n\n- **Create Dedicated Modular Documentation (`docs/`)**:\n  - `docs/getting-started.md`: Installation via 1-click agent prompt, universal symlinks, and CLI.\n  - `docs/architecture-fsm.md`: Deep dive on the 10-state deterministic FSM harness, <1ms pre-flight auto-fixes, and small-model remediation directives.\n  - `docs/cdn-stack.md`: Complete 17-library catalog, version matrices, SRI hashes, loading guards, and offline bundling.\n  - `docs/custom-themes.md`: Custom DaisyUI OKLCH engine, theme inheritance (`extends`), and collapsible studio banner.\n  - `docs/live-telemetry.md`: Real-time SSE streaming with Datastar.js, transcript tailing (`agy`, `claude-code`, `codex`), and hypermedia morphing.\n  - `docs/testing-and-verification.md`: Zero-framework native BDD harness, Playwright 5-breakpoint verification, and horizontal scrollbar detection.\n  - `docs/api-and-cli-reference.md`: Comprehensive CLI flags (`build-report.mjs`, `harness.mjs`, `serve-report.mjs`) and programmatic API usage.\n\n- **Overhaul `README.md` to Minimalist North-Star Standards**:\n  - Crisp hero banner with punchy elevator pitch.\n  - Minimalist badge strip (only 4 essential badges: License, LLM-Agnostic, 17 CDNs, Tests Passing).\n  - Frictionless 1-click agent prompt copy box & 1-line CLI install.\n  - Punchy \"Why `html-report`?\" comparison and concise ASCII pipeline diagram.\n  - 2-step Quickstart guide (Write Fragment -> Run Harness -> Done).\n  - Clean Documentation Hub index with direct links to all `docs/*.md` guides.\n  - Live showcase link with clear call to action.\n\n- **Redesign GitHub Pages Showcase (`index.html`) to DaisyUI North-Star Minimalist Aesthetic**:\n  - Replaces the 3,766-line vertical visual dump with a sleek, clean, modern landing page.\n  - **Hero Section**: Modern title, subheader, 1-click prompt install card with copy button, and \"Get Started\" / \"Explore Capabilities\" buttons.\n  - **Value Proposition Grid**: Clean, spacious DaisyUI cards highlighting speed (<100ms), 32 themes, 17 non-blocking CDNs, cryptographic security, and Playwright verification.\n  - **Interactive Capability Explorer**: Clean, modern tabbed interface (Data Visualizations, Architecture Flows, Interactive Tables, Live Telemetry, Formatted Math & Code) that lets visitors interactively test each CDN library without visual chaos.\n  - **Documentation Hub**: Grid of cards linking directly to the markdown docs in `docs/` with 1-click Showdown modal preview or direct view.\n  - **Dedicated Demo Links**: Direct buttons to standalone deep-dive reports and live dashboards.\n  - Full adherence to 16/17 CDN parity and zero console errors (`tests/browser-runtime-integrity.test.mjs` verification).\n\n- **Update Feature Companion & Dev Server**:\n  - Create companion `openspec/changes/docs-and-showcase-redesign/index.html` with Journey Stepper, live task progress, and Showdown backlinks.\n  - Sync with `implementation-progress.html` on `http://localhost:3000`.\n\n## Capabilities\n\n### New Capabilities\n- `modular-documentation-and-showcase`: Modular root-level `docs/` architecture, minimalist standard `README.md`, and aesthetic DaisyUI tabbed landing page showcase at repo root (`index.html`).\n\n### Modified Capabilities\n- None.\n\n## Impact\n\n- `README.md`: Drastically shortened, scannable, and modern.\n- `docs/`: 7 new structured deep-dive markdown guides.\n- `index.html`: Complete redesign to a clean landing page with tabbed capability explorer.\n- Tests: `tests/browser-runtime-integrity.test.mjs` continues to pass with 0 console errors and full CDN global verification.\n",
+  "design.md": "# Design: Modular Documentation Architecture & Minimal DaisyUI Showcase Redesign\n\n## Context\n\nSee [proposal.md](proposal.md) for the motivation. Currently, `README.md` attempts to be an installation guide, architecture specification, benchmark dashboard, and API manual simultaneously. At the same time, `index.html` (hosted on GitHub Pages) renders thousands of lines of stacked charts, diagrams, tables, and formula blocks sequentially, overwhelming first-time visitors.\n\nThis design introduces a modular documentation architecture in `docs/`, condenses `README.md` into an open-source standard landing document, and redesigns `index.html` into a DaisyUI-powered interactive landing page with a tabbed capability explorer.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Create a dedicated, well-structured `docs/` directory containing 7 modular guides for onboarding, FSM architecture, CDN catalog, custom themes, real-time telemetry, verification, and CLI reference.\n- Restructure `README.md` into a scannable, modern document adhering to open-source best practices (daisyUI, Astro, Shadcn).\n- Redesign `index.html` into an aesthetic, minimalist landing page featuring a hero banner, 1-click install card, key value proposition cards, an interactive tabbed capability explorer, and a documentation hub with Showdown modal viewer integration.\n- Preserve 100% test compatibility: `tests/browser-runtime-integrity.test.mjs` must load `index.html` with zero console/page errors and verify all 16 CDN globals.\n\n**Non-Goals:**\n- Altering the underlying CLI tools (`build-report.mjs`, `harness.mjs`, `serve-report.mjs`) or core runtime behavior.\n- Replacing the 17-library CDN stack or dropping any supported capability.\n\n## Decisions\n\n### 1. Dedicated `docs/` Directory Structure\n- **Decision**: Move in-depth technical details from `README.md` into dedicated markdown files in `docs/`:\n  - `docs/getting-started.md`\n  - `docs/architecture-fsm.md`\n  - `docs/cdn-stack.md`\n  - `docs/custom-themes.md`\n  - `docs/live-telemetry.md`\n  - `docs/testing-and-verification.md`\n  - `docs/api-and-cli-reference.md`\n- **Rationale**: Keeps `README.md` under 150 lines, focused on value proposition, quick install, and rapid onboarding. Developers and agents can navigate directly to specific topic guides as needed.\n\n### 2. Tabbed Interactive Capability Explorer for GitHub Pages (`index.html`)\n- **Decision**: Replace the vertical 3,800-line stack with a modern DaisyUI tabbed component explorer:\n  - Tab 1: **Data & Visualizations** (Chart.js multi-dataset canvas with theme sync)\n  - Tab 2: **Architecture & Flows** (Mermaid sequence and flow diagrams)\n  - Tab 3: **Interactive Tables** (Grid.js sortable, searchable table)\n  - Tab 4: **Live LLM Telemetry** (Datastar streaming simulation drawer)\n  - Tab 5: **Rich Math & Code** (KaTeX LaTeX equations + Highlight.js code formatting)\n- **Rationale**: Gives visitors immediate, interactive proof of all capabilities in a compact, viewport-friendly layout without \"visual bomb\" cognitive overload.\n\n### 3. Integrated Showdown Markdown Viewer for Documentation Cards\n- **Decision**: In `index.html`, render a Documentation Hub grid where each card links to a `docs/*.md` file. Clicking a card opens the document in the built-in Showdown markdown modal viewer (`window.openMarkdownViewer('docs/...')`) with tabbed source preview and print capability.\n- **Rationale**: Allows visitors on GitHub Pages to read comprehensive documentation without navigating away or dealing with raw GitHub markdown rendering.\n\n### 4. Preservation of 16-CDN Global Parity & Browser Runtime Integrity\n- **Decision**: Keep all 16 CDN library imports and sample initializers in `index.html`, mounting them inside the interactive tab panels.\n- **Rationale**: Ensures `tests/browser-runtime-integrity.test.mjs` passes identically while demonstrating that all 17 libraries co-exist cleanly without conflicts.\n\n## Risks / Trade-offs\n\n- **[Risk] Lazy initialization in tabs could cause hidden canvas or map rendering sizing bugs.**  \n  → *Mitigation*: Ensure Chart.js and Leaflet invalidate/resize upon tab switch using Alpine.js or native tab change listeners (`chart.resize()`, `map.invalidateSize()`).\n- **[Risk] Broken relative links between `README.md`, `docs/`, and GitHub Pages.**  \n  → *Mitigation*: Use standard relative paths (`docs/getting-started.md`) that work seamlessly on both GitHub's web interface and local clones.\n",
+  "tasks.md": "# Tasks: Modular Documentation Architecture & Minimal DaisyUI Showcase Redesign\n\n## 1. Dedicated Modular Documentation Architecture (`docs/`)\n\n- [x] 1.1 Create `docs/getting-started.md` covering agent prompt install, CLI setup, and quick verification\n- [x] 1.2 Create `docs/architecture-fsm.md` covering 10-state deterministic FSM, mechanical auto-fixes, and small-model JSON remediation\n- [x] 1.3 Create `docs/cdn-stack.md` detailing the 17-library power stack, SRI hashes, loading guards, and offline bundling\n- [x] 1.4 Create `docs/custom-themes.md` covering OKLCH engine, theme inheritance (`extends`), and collapsible studio banner\n- [x] 1.5 Create `docs/live-telemetry.md` covering Datastar.js SSE streaming, agent transcript tailing, and morphing\n- [x] 1.6 Create `docs/testing-and-verification.md` covering native BDD micro-framework, Playwright 5-breakpoint verification, and horizontal overflow detection\n- [x] 1.7 Create `docs/api-and-cli-reference.md` documenting CLI flags, options, and programmatic usage\n\n## 2. Minimalist Standard README (`README.md`)\n\n- [x] 2.1 Rewrite `README.md` adhering to open-source north stars (DaisyUI, Astro, Shadcn) with hero banner, 4 essential badges, 1-click prompt install, 2-step quickstart, and Documentation Hub linking to `docs/`\n- [x] 2.2 Verify all markdown links in `README.md` to `docs/*.md` resolve properly\n\n## 3. DaisyUI Minimalist Landing Page Showcase (`index.html`)\n\n- [ ] 3.1 Design modern DaisyUI landing page layout with hero, copyable prompt card, value prop cards, and clean visual hierarchy\n- [ ] 3.2 Implement interactive tabbed Capability Explorer (Data & Visualizations, Architecture Flows, Interactive Tables, Live Telemetry, Formatted Math & Code)\n- [ ] 3.3 Implement Documentation Hub card grid wired to Showdown markdown viewer modal (`window.openMarkdownViewer`)\n- [ ] 3.4 Wire theme switching to preserve real-time OKLCH re-theming across Chart.js, Mermaid, and Grid.js\n- [ ] 3.5 Run `tests/browser-runtime-integrity.test.mjs` to verify zero console/page errors and full 16-CDN global presence\n\n## 4. OpenSpec Companion & Live Dev Server (`localhost:3000`)\n\n- [ ] 4.1 Generate companion `index.html` report presenting brainstorm, architecture flows, live journey stepper, and Showdown backlinks\n- [ ] 4.2 Sync with `implementation-progress.html` and verify live reload on `http://localhost:3000`\n",
+  "specs/modular-documentation-and-showcase/spec.md": "# Spec Delta: modular-documentation-and-showcase\n\n## Purpose\n\nEstablishes a modular documentation architecture in the `docs/` directory, an ultra-scannable minimalist README following open-source north-star standards, and an aesthetic, tabbed DaisyUI landing page showcase for GitHub Pages (`index.html`) that replaces monolithic content dumping with interactive progressive disclosure.\n\n## ADDED Requirements\n\n### Requirement: Modular Root Documentation Directory\nThe repository SHALL maintain a dedicated `docs/` directory containing focused, topic-specific markdown guides for onboarding, architecture, styling, and verification.\n\n#### Scenario: Inspecting modular docs directory\n- **WHEN** a developer or agent inspects the `docs/` directory\n- **THEN** guides for `getting-started.md`, `architecture-fsm.md`, `cdn-stack.md`, `custom-themes.md`, `live-telemetry.md`, `testing-and-verification.md`, and `api-and-cli-reference.md` SHALL be present and linked\n\n### Requirement: Minimal Scannable Standard README\nThe root `README.md` SHALL present an elevator pitch, minimal essential badges, 1-click agent prompt and CLI installation instructions, a 2-step quickstart example, and a clean documentation index linking to `docs/`.\n\n#### Scenario: Inspecting root README layout and documentation links\n- **WHEN** a user reads `README.md`\n- **THEN** it provides copyable install commands, links to live demo and `docs/`, and avoids embedding full state machine code or exhaustive CDN version tables\n\n### Requirement: Minimalist Aesthetic Landing Page Showcase\nThe GitHub Pages entrypoint (`index.html`) SHALL provide a DaisyUI-powered minimal landing page featuring a hero section, value proposition cards, an interactive tabbed capability explorer, and a documentation hub linking to all guides.\n\n#### Scenario: Loading GitHub Pages index.html showcase\n- **WHEN** a visitor loads `index.html` in a web browser\n- **THEN** the page renders with zero console errors, displays hero and capability cards, and provides full 16-CDN runtime integrity\n\n#### Scenario: Switching capability explorer tabs\n- **WHEN** a visitor clicks capability tabs (such as Data & Visualizations, Architecture Flows, Interactive Tables, Live Telemetry, or Formatted Math & Code)\n- **THEN** the active tab displays the selected interactive component preview without requiring full-page scrolling\n\n#### Scenario: Previewing documentation via Showdown viewer\n- **WHEN** a visitor clicks any documentation link in the landing page documentation hub\n- **THEN** the runtime activates the interactive Showdown markdown modal to display the formatted guide directly in the browser\n"
+}
+</script>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown) {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        ghCodeBlocks: true,
+        simplifiedAutoLink: true,
+        openLinksInNewWindow: false
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    if (window.OPEN_SPEC_ARTIFACTS) return window.OPEN_SPEC_ARTIFACTS;
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    activeDocKey = docName;
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    const titleEl = document.getElementById("markdown-modal-title");
+    const hiddenTitleEl = document.getElementById("modal-doc-title");
+
+    if (titleEl) titleEl.textContent = docName;
+    if (hiddenTitleEl) hiddenTitleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn, .md-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-primary");
+        btn.classList.remove("btn-ghost");
+      } else {
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-ghost");
+      }
+    });
+
+    const artifacts = getOpenSpecArtifacts();
+    let rawContent = artifacts[docName];
+
+    if (!rawContent) {
+      try {
+        const res = await fetch("/" + docName);
+        if (res.ok) {
+          rawContent = await res.text();
+        }
+      } catch (_) {}
+    }
+
+    if (!rawContent) {
+      rawContent = "# " + docName + "\n\nArtifact content loading...";
+    }
+
+    const converter = getShowdownConverter();
+    const html = converter ? converter.makeHtml(rawContent) : "<pre>" + rawContent + "</pre>";
+
+    const targetEl = document.getElementById("markdown-modal-body") || document.getElementById("modal-markdown-body") || document.getElementById("modal-markdown-container");
+    if (targetEl) {
+      targetEl.innerHTML = html;
+    }
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function copyMarkdownToClipboard() {
+    const artifacts = getOpenSpecArtifacts();
+    const text = artifacts[activeDocKey] || "";
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById("copy-markdown-btn");
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!';
+        if (window.lucide) window.lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          if (window.lucide) window.lucide.createIcons();
+        }, 2000);
+      }
+    });
+  }
+</script>

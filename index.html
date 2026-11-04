@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html data-report-mode="dashboard" lang="en" data-theme="light" class="scroll-smooth">
+<html data-report-mode="live-report" lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
+  <!-- Pre-paint theme restore: apply the saved theme before any CSS renders (prevents light-theme flash on reload) -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("html_report_active_theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch (_) {}
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>html-report — 17-CDN Interactive Capabilities Showcase</title>
+  <title>html-report — Publication-Grade HTML5 Reports for AI Agents</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -90,10 +99,22 @@
       height: auto !important;
       background-color: transparent !important;
     }
-    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping and vertical pill overflow */
+    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping, oversized spinners, and vertical pill overflow */
     .badge {
       white-space: nowrap !important;
       flex-shrink: 0;
+    }
+    .badge .loading,
+    .badge .loading-spinner,
+    .badge .loading-xs,
+    .badge .loading-3xs,
+    .loading-3xs {
+      width: 0.65rem !important;
+      height: 0.65rem !important;
+      min-width: 0.65rem !important;
+      min-height: 0.65rem !important;
+      vertical-align: middle;
+      display: inline-block;
     }
     [data-insufficient-space="true"] {
       outline: 2px dashed #f59e0b !important;
@@ -245,11 +266,12 @@
   <!-- Sticky DaisyUI Navbar -->
   <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
     <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
-      <!-- Left: Title -->
-      <div class="navbar-start w-auto flex-1 min-w-0 justify-start">
+      <!-- Left: Title & Mode Badge -->
+      <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          html-report — 17-CDN Interactive Capabilities Showcase
+          html-report — Publication-Grade HTML5 Reports for AI Agents
         </span>
+        <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
 
       <!-- Right: TOC + Theme Picker + Download Menu -->
@@ -340,2072 +362,772 @@
 
   <!-- Main Content Container -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
-<!-- Print / PDF First Page Cover & Table of Contents (Shown Only in @media print as Page 1; Navbar is Hidden in PDF) -->
-    <section id="print-cover-page" class="card bg-base-100 border-2 border-primary/50 p-8 shadow-sm">
-      <div class="space-y-6">
-        <div class="flex items-center justify-between border-b border-base-300 pb-4">
-          <div class="flex items-center gap-2">
-            <span class="badge badge-primary font-mono text-xs">PRINT / PDF EDITION</span>
-            <span class="text-xs opacity-75">Active Theme: <strong id="print-cover-theme" class="font-mono capitalize">light</strong></span>
-          </div>
-          <div class="flex items-center gap-1">
-            <span class="bg-primary rounded-badge w-3 h-5"></span>
-            <span class="bg-secondary rounded-badge w-3 h-5"></span>
-            <span class="bg-accent rounded-badge w-3 h-5"></span>
-            <span class="bg-neutral rounded-badge w-3 h-5"></span>
-          </div>
-        </div>
+<!-- ========================================== -->
+<!-- HERO SECTION                               -->
+<!-- ========================================== -->
+<section class="py-12 sm:py-16 lg:py-20 text-center space-y-6">
+  <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-base-100 border border-base-300 text-xs font-semibold shadow-sm">
+    <span class="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
+    <span class="text-base-content/80">v2.0 • 17 Non-Blocking CDNs • Deterministic FSM</span>
+  </div>
 
-        <div class="space-y-2 py-3">
-          <p class="text-xs uppercase tracking-widest opacity-65 font-bold">Publication-Grade HTML5 Report</p>
-          <div id="print-cover-title" class="text-3xl font-extrabold tracking-tight">
-            html-report — 16-CDN Interactive Capabilities Showcase
-          </div>
-          <p class="text-xs opacity-80 max-w-2xl">
-            First-page PDF cover and complete heading directory (<code>h1</code>, <code>h2</code>, <code>h3</code>). In print/PDF mode, the sticky navigation bar and interactive form inputs are replaced by static print views.
-          </p>
-        </div>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <h1 id="hero-headline" class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-base-content leading-tight">
+      Publication-Grade HTML5 Reports <br class="hidden sm:inline" />
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">for AI Coding Agents</span>
+    </h1>
+    <p class="text-base sm:text-lg text-base-content/75 max-w-2xl mx-auto leading-relaxed">
+      The deterministic assembly engine &amp; Agent Skill that turns 500-token semantic fragments into responsive, theme-adaptive, production-grade dashboards with <strong>~70% fewer tokens</strong> in <strong>&lt;100ms</strong>.
+    </p>
+  </div>
 
-        <div class="space-y-3 border-t border-base-300 pt-4">
-          <div class="text-sm font-bold uppercase tracking-wider opacity-80">
-            Table of Contents (All h1, h2, h3 Sections)
+  <!-- Primary CTAs -->
+  <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+    <a href="#capability-explorer" class="btn btn-primary gap-2 shadow-md hover:scale-105 transition-transform">
+      <i data-lucide="sparkles" class="w-4 h-4"></i> Explore Capabilities
+    </a>
+    <a href="#documentation-hub" class="btn btn-outline gap-2 hover:btn-secondary transition-colors">
+      <i data-lucide="book-open" class="w-4 h-4"></i> Documentation Hub
+    </a>
+    <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="btn btn-ghost gap-2 border border-base-300">
+      <i data-lucide="github" class="w-4 h-4"></i> GitHub
+    </a>
+  </div>
+
+  <!-- 1-Click Copy Agent Prompt Card -->
+  <div class="max-w-3xl mx-auto mt-8 text-left">
+    <div class="card bg-base-100 border border-base-300 shadow-xl overflow-hidden">
+      <div class="bg-base-200/80 px-4 py-2.5 border-b border-base-300 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-error/70"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-warning/70"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-success/70"></span>
+          <span class="text-xs font-mono font-bold text-base-content/70 ml-2">1-Click Agent Install Prompt</span>
+        </div>
+        <button id="copy-prompt-btn" type="button" onclick="copyAgentPrompt()" class="btn btn-xs btn-primary gap-1.5 font-mono">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span id="copy-prompt-text">Copy Prompt</span>
+        </button>
+      </div>
+      <div class="p-4 bg-base-100 text-xs font-mono text-base-content/90 overflow-x-auto leading-relaxed select-all">
+        <code id="agent-prompt-code">Install the html-report skill from https://github.com/DriesVerb/html-report.git by cloning it into ~/.agents/html-report, symlinking ~/.agents/html-report/skills/html-report into ~/.agents/skills/html-report (and ~/.gemini/config/skills/html-report if using Antigravity/Gemini), and installing Playwright in ~/.agents/html-report/skills/html-report/playwright. Then read skills/html-report/SKILL.md.</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- VALUE PROPOSITION PILLARS (6-CARD GRID)    -->
+<!-- ========================================== -->
+<section class="space-y-6">
+  <div class="text-center max-w-2xl mx-auto space-y-2">
+    <h2 id="core-pillars" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
+      Why Leading Agent Workflows Rely on html-report
+    </h2>
+    <p class="text-sm text-base-content/70">
+      Built specifically to eliminate token waste, layout hallucination, and broken CDN links in autonomous LLM pipelines.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <!-- Pillar 1 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+        <i data-lucide="zap" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-assembly" class="text-lg font-bold text-base-content">Deterministic Assembly (&lt;100ms)</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Agents output only high-value semantic tags. The zero-dependency Node engine validates, auto-fixes headings and tables, and builds complete HTML in under 100 milliseconds.
+      </p>
+    </div>
+
+    <!-- Pillar 2 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center font-bold">
+        <i data-lucide="palette" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-themes" class="text-lg font-bold text-base-content">32 DaisyUI Themes + OKLCH</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Navbar swatch picker with 32 official themes defaulting to light. Pure JS OKLCH engine calculates perceptual palettes that synchronize Chart.js, Mermaid, and Grid.js in real time.
+      </p>
+    </div>
+
+    <!-- Pillar 3 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center font-bold">
+        <i data-lucide="layers" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-cdns" class="text-lg font-bold text-base-content">17 Non-Blocking CDNs</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Zero heavy npm build step. High-performance charts, architecture flowcharts, Leaflet maps, KaTeX equations, syntax highlighting, and FullCalendar grids load on demand.
+      </p>
+    </div>
+
+    <!-- Pillar 4 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-info/10 text-info flex items-center justify-center font-bold">
+        <i data-lucide="shield-check" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-security" class="text-lg font-bold text-base-content">Cryptographic SRI &amp; CSP</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        All remote CDN assets carry SHA-384 cryptographic integrity hashes with anonymous cross-origin, strict Content Security Policy, and no-referrer privacy headers.
+      </p>
+    </div>
+
+    <!-- Pillar 5 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-success/10 text-success flex items-center justify-center font-bold">
+        <i data-lucide="activity" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-telemetry" class="text-lg font-bold text-base-content">Real-Time Datastar Streaming</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Stream live agent telemetry, task checklist morphs, and tool execution drawers directly into the browser over Server-Sent Events (SSE) without page reloads.
+      </p>
+    </div>
+
+    <!-- Pillar 6 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-warning/10 text-warning flex items-center justify-center font-bold">
+        <i data-lucide="smartphone" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-verification" class="text-lg font-bold text-base-content">5-Breakpoint Verification</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Playwright verification checks viewports from 375px mobile to 1536px desktop, flagging horizontal scrollbars (<code>scrollWidth &gt; clientWidth</code>) with prescriptive auto-fixes.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- INTERACTIVE CAPABILITY EXPLORER (TABBED)   -->
+<!-- ========================================== -->
+<section id="capability-explorer" class="space-y-6 pt-6">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <div class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider mb-2">Interactive Showcase</div>
+      <h2 id="capability-explorer-title" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
+        Explore the 17-Library CDN Power Stack
+      </h2>
+      <p class="text-sm text-base-content/70">
+        Test each capability live. Switch the DaisyUI theme in the top navbar to see real-time color re-theming.
+      </p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="badge badge-outline font-mono text-xs gap-1">
+        <i data-lucide="check" class="w-3.5 h-3.5 text-success"></i> 100% Client-Side
+      </span>
+    </div>
+  </div>
+
+  <!-- Tabbed Showcase Card -->
+  <div class="card bg-base-100 border border-base-300 shadow-md overflow-hidden">
+    <!-- Tab Headers -->
+    <div class="border-b border-base-300 bg-base-200/50 p-2 overflow-x-auto">
+      <div class="tabs tabs-boxed bg-transparent gap-1 flex-nowrap" id="capability-tabs">
+        <button type="button" onclick="switchShowcaseTab('charts')" class="tab tab-active font-semibold text-xs gap-1.5 transition" id="tab-btn-charts">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Charts &amp; Analytics
+        </button>
+        <button type="button" onclick="switchShowcaseTab('diagrams')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-diagrams">
+          <i data-lucide="git-branch" class="w-4 h-4"></i> Architecture Flows
+        </button>
+        <button type="button" onclick="switchShowcaseTab('tables')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-tables">
+          <i data-lucide="table" class="w-4 h-4"></i> Interactive Tables
+        </button>
+        <button type="button" onclick="switchShowcaseTab('maps')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-maps">
+          <i data-lucide="map-pin" class="w-4 h-4"></i> Geospatial Maps
+        </button>
+        <button type="button" onclick="switchShowcaseTab('telemetry')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-telemetry">
+          <i data-lucide="activity" class="w-4 h-4"></i> Live Telemetry
+        </button>
+        <button type="button" onclick="switchShowcaseTab('mathcode')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-mathcode">
+          <i data-lucide="code" class="w-4 h-4"></i> Math &amp; Code Syntax
+        </button>
+        <button type="button" onclick="switchShowcaseTab('widgets')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-widgets">
+          <i data-lucide="calendar" class="w-4 h-4"></i> Calendar &amp; Synthetic Data
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Content Panels -->
+    <div class="p-6">
+      <!-- 1. Charts Tab -->
+      <div id="tab-panel-charts" class="tab-panel space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-charts-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="bar-chart" class="w-4 h-4 text-primary"></i> Chart.js 4.4 — Theme-Adaptive Canvas Rendering
+            </h3>
+            <p class="text-xs text-base-content/70">Canvas palettes automatically synchronize when you switch DaisyUI themes.</p>
           </div>
-          <ul id="print-toc-list" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs">
-            <!-- Populated by initTOC() with all h1, h2, h3 headings -->
-          </ul>
+          <span class="badge badge-sm badge-outline font-mono">Chart.js UMD</span>
+        </div>
+        <div class="h-64 sm:h-72 w-full max-w-full">
+          <canvas id="showcaseChart" class="w-full h-full"></canvas>
         </div>
       </div>
 
-      <div class="border-t border-base-300 pt-4 flex items-center justify-between text-xs opacity-70 mt-8">
-        <span>generated by html-report</span>
-        <span>Page 1 — Title &amp; Contents</span>
-      </div>
-    </section>
-
-    <!-- Hero & H1 Header -->
-    <section class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid">
-      <div class="card-body p-5 sm:p-8">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-          <div class="badge badge-primary badge-outline font-semibold gap-1">
-            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-            <span>Interactive Skill Showcase</span>
+      <!-- 2. Diagrams Tab -->
+      <div id="tab-panel-diagrams" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-diagrams-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="git-merge" class="w-4 h-4 text-secondary"></i> Mermaid 11.4 — Architecture &amp; Sequence Diagrams
+            </h3>
+            <p class="text-xs text-base-content/70">SVG diagrams rendered client-side with auto-theme contrast defense.</p>
           </div>
-          <span class="text-xs opacity-70">16 Non-Blocking CDNs &bull; 32 DaisyUI Themes &bull; 5 Breakpoints Verified</span>
+          <span class="badge badge-sm badge-outline font-mono">Mermaid UMD</span>
         </div>
-        <h1 id="report-main-title" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight scroll-mt-20">
-          html-report — 16-CDN Interactive Capabilities Showcase
-        </h1>
-        <p class="text-sm sm:text-base opacity-80 max-w-3xl mt-2">
-          Live reference showcase of every CDN library integrated into the <code>html-report</code> skill. Click any CDN card below to jump directly to its live interactive example.
+        <div class="overflow-x-auto py-2 bg-base-200/40 rounded-lg p-4 border border-base-300">
+          <pre class="mermaid text-center">
+sequenceDiagram
+    autonumber
+    participant Agent as AI Coding Agent
+    participant Harness as FSM Harness (harness.mjs)
+    participant Shell as Pre-bundled DaisyUI Shell
+    participant Verifier as Playwright Gate
+
+    Agent->>Harness: Emits semantic &lt;main&gt; fragment (500 tokens)
+    Note over Harness: Pre-flight auto-fixing (&lt;1ms)\nSlugs IDs &amp; wraps tables
+    Harness->>Shell: Deterministic assembly (&lt;100ms)
+    Shell->>Verifier: 5-Breakpoint layout check (375px–1536px)
+    Verifier-->>Agent: Verified report.html (Zero horizontal overflow)
+          </pre>
+        </div>
+      </div>
+
+      <!-- 3. Tables Tab -->
+      <div id="tab-panel-tables" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-tables-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="table" class="w-4 h-4 text-accent"></i> Grid.js 6.0 — Interactive, Sortable &amp; Searchable Tables
+            </h3>
+            <p class="text-xs text-base-content/70">Full DaisyUI dark/light theme integration with search and pagination.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Grid.js UMD</span>
+        </div>
+        <div id="showcaseGridContainer" class="w-full overflow-x-auto"></div>
+      </div>
+
+      <!-- 4. Maps Tab -->
+      <div id="tab-panel-maps" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-maps-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="map" class="w-4 h-4 text-info"></i> Leaflet 1.9 — Esri World Street Geospatial Maps
+            </h3>
+            <p class="text-xs text-base-content/70">Zero API keys required. Zero file:/// 403 tile errors.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Leaflet UMD</span>
+        </div>
+        <div id="showcaseMap" class="h-64 sm:h-72 w-full rounded-lg border border-base-300 overflow-hidden z-10"></div>
+      </div>
+
+      <!-- 5. Telemetry Tab -->
+      <div id="tab-panel-telemetry" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-telemetry-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4 text-warning"></i> Datastar.js — Real-Time SSE Telemetry &amp; Morphing
+            </h3>
+            <p class="text-xs text-base-content/75">Interactive simulation of live task checklist updates and command execution drawers.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Datastar ESM</span>
+        </div>
+        <div class="card bg-base-200/50 border border-base-300 p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-xs font-bold text-base-content flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-success animate-ping"></span> Live SSE Stream: <code>/__datastar_stream__</code>
+            </span>
+            <button type="button" onclick="simulateTelemetryStep()" class="btn btn-xs btn-outline btn-primary gap-1">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i> Simulate Step
+            </button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="card bg-base-100 border border-base-300 p-3">
+              <div class="text-2xs opacity-70 uppercase font-mono">Context Saturation</div>
+              <div id="sim-metric-context" class="text-xl font-black text-primary">24.5%</div>
+              <progress id="sim-progress-context" class="progress progress-primary w-full h-1.5 mt-1" value="24.5" max="100"></progress>
+            </div>
+            <div class="card bg-base-100 border border-base-300 p-3">
+              <div class="text-2xs opacity-70 uppercase font-mono">Token Velocity</div>
+              <div id="sim-metric-velocity" class="text-xl font-black text-secondary">82 tokens/s</div>
+              <div class="text-2xs text-success font-semibold mt-1">High Throughput</div>
+            </div>
+            <div class="card bg-base-100 border border-base-300 p-3">
+              <div class="text-2xs opacity-70 uppercase font-mono">Active Subagents</div>
+              <div id="sim-metric-subagents" class="text-xl font-black text-accent">3 Running</div>
+              <div class="text-2xs text-base-content/60 mt-1">Swarm Hierarchy</div>
+            </div>
+          </div>
+          <div class="mockup-code text-xs bg-neutral text-neutral-content p-3 rounded-lg overflow-x-auto">
+            <pre><code id="sim-telemetry-log">[22:45:10] info: Datastar SSE bridge connected. Listening on /__datastar_stream__...</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Math & Code Tab -->
+      <div id="tab-panel-mathcode" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-mathcode-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="sigma" class="w-4 h-4 text-primary"></i> KaTeX 0.16 &amp; Highlight.js 11
+            </h3>
+            <p class="text-xs text-base-content/70">Scientific LaTeX equations and syntax highlighting across modern languages.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">KaTeX + hljs</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- KaTeX Box -->
+          <div class="card bg-base-200/50 border border-base-300 p-4 space-y-2">
+            <span class="font-mono text-xs font-bold text-base-content/80">Ottosson Matrix OKLCH Formulation</span>
+            <div id="katexShowcaseEquation" class="py-2 text-center text-sm font-serif">
+              $$\begin{bmatrix} L \\ M \\ S \end{bmatrix} = \mathbf{M}_1 \begin{bmatrix} R \\ G \\ B \end{bmatrix}, \quad C = \sqrt{a^2 + b^2}, \quad H = \text{atan2}(b, a)$$
+            </div>
+          </div>
+          <!-- Highlight.js Box -->
+          <div class="card bg-base-200/50 border border-base-300 p-4 space-y-2 overflow-x-auto">
+            <span class="font-mono text-xs font-bold text-base-content/80">Deterministic FSM Invocation (Node.js)</span>
+            <pre class="p-0 m-0 bg-transparent"><code class="language-javascript text-xs rounded">import { buildReport } from "skills/html-report/scripts/build-report.mjs";
+
+const { html, durationMs } = buildReport({
+  title: "Audit Report",
+  content: fragmentHtml,
+  theme: "light"
+});
+console.log(`Assembled in ${durationMs.toFixed(2)}ms`);</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Widgets & Data Tab -->
+      <div id="tab-panel-widgets" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-widgets-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-primary"></i> FullCalendar 6 &amp; Mock.js 1.1
+            </h3>
+            <p class="text-xs text-base-content/70">Interactive scheduling grid and client-side synthetic data simulation.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">FullCalendar + Mock.js</span>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="lg:col-span-2 card bg-base-200/40 border border-base-300 p-3">
+            <div id="showcaseCalendar" class="w-full text-xs"></div>
+          </div>
+          <div class="card bg-base-200/40 border border-base-300 p-4 space-y-3">
+            <span class="font-bold text-xs uppercase font-mono text-base-content/70 flex items-center gap-1.5">
+              <i data-lucide="database" class="w-3.5 h-3.5 text-secondary"></i> Mock.js Synthetic Entities
+            </span>
+            <div id="mockDataContainer" class="space-y-2 text-xs"></div>
+            <div class="text-2xs text-base-content/60">
+              Timestamps formatted with Day.js: <span class="font-mono font-semibold" data-dayjs="now">now</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- DOCUMENTATION HUB (MODULAR GUIDES)         -->
+<!-- ========================================== -->
+<section id="documentation-hub" class="space-y-6 pt-6">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <div class="badge badge-secondary font-mono text-xs font-bold uppercase tracking-wider mb-2">Documentation Hub</div>
+      <h2 id="documentation-hub-title" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
+        Comprehensive Engineering Guides
+      </h2>
+      <p class="text-sm text-base-content/70">
+        Every aspect of the architecture, stack, and APIs documented in dedicated markdown guides.
+      </p>
+    </div>
+    <span class="badge badge-outline font-mono text-xs">7 Modular Guides</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- Doc Card 1 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-primary font-bold text-sm">
+          <i data-lucide="rocket" class="w-4 h-4"></i> Getting Started
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Agent prompt installation, 1-line CLI setup, global symlinks, and 30-second first report.
         </p>
       </div>
-    </section>
-
-    <!-- Top Collapsible DaisyUI Theme Generator & Studio (Collapsed by default, Sleek 48px banner) -->
-    <section
-      id="theme-studio-section"
-      x-data="themeStudioController()"
-      x-init="init()"
-      class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid print:hidden overflow-hidden"
-    >
-      <div class="collapse collapse-arrow bg-base-100">
-        <input type="checkbox" id="theme-studio-accordion" x-model="isOpen" class="cursor-pointer" />
-        
-        <!-- Collapsed Sleek 48px Banner Header -->
-        <div class="collapse-title text-sm sm:text-base font-bold flex items-center justify-between py-3 px-5 sm:px-6 cursor-pointer select-none">
-          <div class="flex items-center gap-2.5">
-            <span class="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-              <i data-lucide="palette" class="w-4 h-4"></i>
-            </span>
-            <span>🎨 DaisyUI Theme Generator &amp; Studio</span>
-            <span class="text-2xs font-normal opacity-75 hidden sm:inline">
-              [Active: <strong class="capitalize text-primary" x-text="activeTheme">light</strong>]
-            </span>
-          </div>
-
-          <!-- Color Swatch Dots Preview in Header -->
-          <div class="flex items-center gap-2 mr-6">
-            <div class="flex items-center gap-1">
-              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + primary"></span>
-              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + secondary"></span>
-              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + accent"></span>
-              <span class="w-3.5 h-3.5 rounded-full border border-base-content/20 shadow-xs" :style="'background-color: ' + neutral"></span>
-            </div>
-            <span class="badge badge-xs badge-outline hidden md:inline-flex font-normal whitespace-nowrap shrink-0" x-text="isOpen ? 'Click to Collapse' : 'Click to Customize'">Click to Customize</span>
-          </div>
-        </div>
-
-        <!-- Expanded Studio Drawer Content -->
-        <div class="collapse-content px-5 sm:px-6 pb-6 pt-2 border-t border-base-200 space-y-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-base-200">
-            <div>
-              <h3 id="theme-studio-title" class="text-base font-bold text-base-content flex items-center gap-2">
-                <span>Interactive Theme Customizer</span>
-                <span class="badge badge-primary badge-sm font-semibold">Live OKLCH</span>
-              </h3>
-              <p class="text-xs opacity-75">
-                Customize colors, base inheritance, and geometry with zero-dependency real-time OKLCH compilation synced directly to Chart.js and Mermaid.
-              </p>
-            </div>
-
-            <!-- Action Buttons: Apply, Copy CSS, Copy Tailwind, Reset -->
-            <div class="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                id="studio-apply-save-btn"
-                class="btn btn-xs sm:btn-sm btn-primary gap-1.5 shadow-xs font-semibold"
-                @click="saveTheme()"
-              >
-                <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                <span x-text="savedNotice ? 'Saved!' : 'Apply & Save'">Apply & Save</span>
-              </button>
-
-              <button
-                type="button"
-                id="studio-copy-css-btn"
-                class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-semibold"
-                @click="copyCss()"
-              >
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                <span x-text="copiedCss ? 'Copied CSS!' : 'Copy DaisyUI CSS'">Copy DaisyUI CSS</span>
-              </button>
-
-              <button
-                type="button"
-                id="studio-copy-tailwind-btn"
-                class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-semibold"
-                @click="copyTailwind()"
-              >
-                <i data-lucide="code" class="w-3.5 h-3.5"></i>
-                <span x-text="copiedTailwind ? 'Copied Tailwind!' : 'Copy Tailwind Config'">Copy Tailwind Config</span>
-              </button>
-
-              <button
-                type="button"
-                id="studio-reset-btn"
-                class="btn btn-xs sm:btn-sm btn-ghost gap-1.5"
-                @click="resetDefaults()"
-                title="Reset to Defaults"
-              >
-                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                <span>Reset</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Configuration Controls: Theme Name & Extends Selector -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <div class="form-control">
-              <label class="label py-1">
-                <span class="label-text text-xs font-bold uppercase tracking-wider">Custom Theme Name</span>
-              </label>
-              <input
-                type="text"
-                id="studio-theme-name-input"
-                x-model="themeName"
-                @input="applyLiveTheme()"
-                placeholder="my-brand-theme"
-                class="input input-sm input-bordered font-mono text-xs w-full"
-              />
-            </div>
-
-            <div class="form-control">
-              <label class="label py-1">
-                <span class="label-text text-xs font-bold uppercase tracking-wider">Base Theme Inheritance (extends)</span>
-              </label>
-              <select
-                id="studio-extends-select"
-                x-model="extendsTheme"
-                @change="applyLiveTheme()"
-                class="select select-sm select-bordered font-mono text-xs w-full capitalize"
-              >
-                <template x-for="t in baseThemeOptions" :key="t">
-                  <option :value="t" x-text="t" :selected="t === extendsTheme"></option>
-                </template>
-              </select>
-            </div>
-
-            <div class="form-control">
-              <label class="label py-1">
-                <span class="label-text text-xs font-bold uppercase tracking-wider">Color Scheme Mode</span>
-              </label>
-              <select
-                id="studio-color-scheme-select"
-                x-model="colorScheme"
-                @change="applyLiveTheme()"
-                class="select select-sm select-bordered font-mono text-xs w-full"
-              >
-                <option value="auto">Auto (Deduces from base-100)</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Semantic Color Inputs Grid -->
-          <div class="space-y-2">
-            <div class="text-xs font-bold uppercase tracking-wider opacity-80 flex items-center justify-between">
-              <span>Semantic Colors &amp; Live OKLCH Monitors</span>
-              <span class="text-3xs font-normal opacity-60">Auto-Contrast Active for Content Tokens</span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <!-- Primary -->
-              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold">Primary (--p)</span>
-                  <span class="badge badge-primary badge-xs">Active</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <input
-                    type="color"
-                    id="studio-primary-picker"
-                    x-model="primary"
-                    @input="applyLiveTheme()"
-                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
-                  />
-                  <input
-                    type="text"
-                    id="studio-primary-hex"
-                    x-model="primary"
-                    @input="applyLiveTheme()"
-                    class="input input-xs input-bordered font-mono w-24 text-xs"
-                  />
-                </div>
-                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(primary)"></div>
-              </div>
-
-              <!-- Secondary -->
-              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold">Secondary (--s)</span>
-                  <span class="badge badge-secondary badge-xs">Active</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <input
-                    type="color"
-                    id="studio-secondary-picker"
-                    x-model="secondary"
-                    @input="applyLiveTheme()"
-                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
-                  />
-                  <input
-                    type="text"
-                    id="studio-secondary-hex"
-                    x-model="secondary"
-                    @input="applyLiveTheme()"
-                    class="input input-xs input-bordered font-mono w-24 text-xs"
-                  />
-                </div>
-                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(secondary)"></div>
-              </div>
-
-              <!-- Accent -->
-              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold">Accent (--a)</span>
-                  <span class="badge badge-accent badge-xs">Active</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <input
-                    type="color"
-                    id="studio-accent-picker"
-                    x-model="accent"
-                    @input="applyLiveTheme()"
-                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
-                  />
-                  <input
-                    type="text"
-                    id="studio-accent-hex"
-                    x-model="accent"
-                    @input="applyLiveTheme()"
-                    class="input input-xs input-bordered font-mono w-24 text-xs"
-                  />
-                </div>
-                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(accent)"></div>
-              </div>
-
-              <!-- Neutral -->
-              <div class="bg-base-200/50 p-3 rounded-box border border-base-300 space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold">Neutral (--n)</span>
-                  <span class="badge badge-neutral badge-xs">Active</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <input
-                    type="color"
-                    id="studio-neutral-picker"
-                    x-model="neutral"
-                    @input="applyLiveTheme()"
-                    class="w-9 h-9 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
-                  />
-                  <input
-                    type="text"
-                    id="studio-neutral-hex"
-                    x-model="neutral"
-                    @input="applyLiveTheme()"
-                    class="input input-xs input-bordered font-mono w-24 text-xs"
-                  />
-                </div>
-                <div class="text-3xs font-mono opacity-70 truncate" x-text="getOklch(neutral)"></div>
-              </div>
-            </div>
-
-            <!-- Base Colors Row -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-              <div class="bg-base-200/30 p-2.5 rounded-box border border-base-300 flex items-center justify-between gap-2">
-                <span class="text-xs font-bold">Base-100 (--b1)</span>
-                <div class="flex items-center gap-2">
-                  <input
-                    type="color"
-                    id="studio-base100-picker"
-                    x-model="base100"
-                    @input="applyLiveTheme()"
-                    class="w-7 h-7 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
-                  />
-                  <input
-                    type="text"
-                    id="studio-base100-hex"
-                    x-model="base100"
-                    @input="applyLiveTheme()"
-                    class="input input-2xs input-bordered font-mono w-20 text-3xs"
-                  />
-                </div>
-              </div>
-
-              <div class="bg-base-200/30 p-2.5 rounded-box border border-base-300 flex items-center justify-between gap-2">
-                <span class="text-xs font-bold">Base-200 (--b2)</span>
-                <div class="flex items-center gap-2">
-                  <input
-                    type="color"
-                    id="studio-base200-picker"
-                    x-model="base200"
-                    @input="applyLiveTheme()"
-                    class="w-7 h-7 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
-                  />
-                  <input
-                    type="text"
-                    id="studio-base200-hex"
-                    x-model="base200"
-                    @input="applyLiveTheme()"
-                    class="input input-2xs input-bordered font-mono w-20 text-3xs"
-                  />
-                </div>
-              </div>
-
-              <div class="bg-base-200/30 p-2.5 rounded-box border border-base-300 flex items-center justify-between gap-2">
-                <span class="text-xs font-bold">Base-300 (--b3)</span>
-                <div class="flex items-center gap-2">
-                  <input
-                    type="color"
-                    id="studio-base300-picker"
-                    x-model="base300"
-                    @input="applyLiveTheme()"
-                    class="w-7 h-7 rounded cursor-pointer border border-base-content/20 bg-transparent p-0"
-                  />
-                  <input
-                    type="text"
-                    id="studio-base300-hex"
-                    x-model="base300"
-                    @input="applyLiveTheme()"
-                    class="input input-2xs input-bordered font-mono w-20 text-3xs"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Geometry Sliders -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-base-200">
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="font-bold">Button Radius (--rounded-btn)</span>
-                <span class="font-mono text-3xs" x-text="roundedBtn">0.5rem</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="2"
-                step="0.125"
-                x-model="roundedBtnNum"
-                @input="roundedBtn = roundedBtnNum + 'rem'; applyLiveTheme()"
-                class="range range-xs range-primary"
-              />
-            </div>
-
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="font-bold">Box Radius (--rounded-box)</span>
-                <span class="font-mono text-3xs" x-text="roundedBox">1rem</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="2.5"
-                step="0.25"
-                x-model="roundedBoxNum"
-                @input="roundedBox = roundedBoxNum + 'rem'; applyLiveTheme()"
-                class="range range-xs range-secondary"
-              />
-            </div>
-
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="font-bold">Badge Radius (--rounded-badge)</span>
-                <span class="font-mono text-3xs" x-text="roundedBadge">1.9rem</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="2.5"
-                step="0.1"
-                x-model="roundedBadgeNum"
-                @input="roundedBadge = roundedBadgeNum + 'rem'; applyLiveTheme()"
-                class="range range-xs range-accent"
-              />
-            </div>
-          </div>
-
-          <!-- Real-Time Theme Preview Strip -->
-          <div class="bg-base-200/60 p-3.5 rounded-box border border-base-300 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold uppercase tracking-wider">Live Preview:</span>
-              <button type="button" class="btn btn-xs btn-primary">Primary</button>
-              <button type="button" class="btn btn-xs btn-secondary">Secondary</button>
-              <button type="button" class="btn btn-xs btn-accent">Accent</button>
-              <span class="badge badge-primary badge-sm">Badge</span>
-              <span class="badge badge-secondary badge-sm">Badge</span>
-              <span class="badge badge-accent badge-sm">Badge</span>
-            </div>
-            <div class="text-3xs font-mono opacity-60">
-              Updates active Chart.js and Mermaid diagrams live below
-            </div>
-          </div>
-        </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/getting-started.md')" class="btn btn-xs btn-outline btn-primary gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/getting-started.md" class="text-xs link link-hover font-mono opacity-60">getting-started.md</a>
       </div>
-    </section>
+    </div>
 
-    <!-- Section 1: Complete 16-CDN Stack Directory (All Cards Linkable to Their Live Examples) -->
-    <section class="space-y-4 break-inside-avoid">
-      <h2 id="cdn-stack-directory" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
-        1. Integrated 16-CDN Stack Directory
+    <!-- Doc Card 2 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-secondary font-bold text-sm">
+          <i data-lucide="cpu" class="w-4 h-4"></i> FSM Architecture &amp; Harness
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          The 10-state deterministic lifecycle, pre-flight auto-fixes, and bounded JSON remediation.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/architecture-fsm.md')" class="btn btn-xs btn-outline btn-secondary gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/architecture-fsm.md" class="text-xs link link-hover font-mono opacity-60">architecture-fsm.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 3 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-accent font-bold text-sm">
+          <i data-lucide="layers" class="w-4 h-4"></i> 17-CDN Power Stack
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Complete 17-library catalog, SHA-384 SRI hashes, CSP hardening, and offline bundling.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/cdn-stack.md')" class="btn btn-xs btn-outline btn-accent gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/cdn-stack.md" class="text-xs link link-hover font-mono opacity-60">cdn-stack.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 4 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-info font-bold text-sm">
+          <i data-lucide="palette" class="w-4 h-4"></i> Custom DaisyUI Themes
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Zero-dependency OKLCH engine, theme inheritance (`extends`), and collapsible studio banner.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/custom-themes.md')" class="btn btn-xs btn-outline btn-info gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/custom-themes.md" class="text-xs link link-hover font-mono opacity-60">custom-themes.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 5 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-success font-bold text-sm">
+          <i data-lucide="activity" class="w-4 h-4"></i> Real-Time Telemetry
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Datastar.js SSE streaming, agent transcript tailing (agy, claude-code, codex), and live checklist morphs.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/live-telemetry.md')" class="btn btn-xs btn-outline btn-success gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/live-telemetry.md" class="text-xs link link-hover font-mono opacity-60">live-telemetry.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 6 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-warning font-bold text-sm">
+          <i data-lucide="check-circle-2" class="w-4 h-4"></i> Testing &amp; Verification
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Zero-framework native BDD harness, Playwright 5-breakpoint verification, and overflow gates.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/testing-and-verification.md')" class="btn btn-xs btn-outline btn-warning gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/testing-and-verification.md" class="text-xs link link-hover font-mono opacity-60">testing-and-verification.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 7 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-base-content font-bold text-sm">
+          <i data-lucide="terminal" class="w-4 h-4"></i> CLI &amp; API Reference
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Comprehensive CLI flag reference for build-report.mjs, harness.mjs, serve-report.mjs, and programmatic API.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/api-and-cli-reference.md')" class="btn btn-xs btn-outline gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/api-and-cli-reference.md" class="text-xs link link-hover font-mono opacity-60">api-and-cli-reference.md</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- STANDALONE LIVE DEMOS & SHOWCASES          -->
+<!-- ========================================== -->
+<section class="card bg-base-100 border border-base-300 p-6 sm:p-8 shadow-sm space-y-4">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h2 id="deep-dive-reports" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+        <i data-lucide="file-bar-chart" class="w-5 h-5 text-primary"></i> Standalone Reports &amp; Live Verification Views
       </h2>
-      <h3 id="cdn-catalog-cards" class="text-base sm:text-lg font-semibold opacity-85 scroll-mt-20">
-        1.1 Click Any CDN to Jump to Its Live Showcase Section
-      </h3>
+      <p class="text-xs sm:text-sm text-base-content/70">
+        Explore full-page reports compiled deterministically with html-report.
+      </p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <a href="report.html" class="btn btn-sm btn-primary gap-1.5 font-mono">
+        <i data-lucide="file-text" class="w-4 h-4"></i> report.html
+      </a>
+      <a href="current-feature.html" class="btn btn-sm btn-outline gap-1.5 font-mono">
+        <i data-lucide="layout" class="w-4 h-4"></i> current-feature.html
+      </a>
+      <a href="implementation-progress.html" class="btn btn-sm btn-outline gap-1.5 font-mono">
+        <i data-lucide="activity" class="w-4 h-4"></i> implementation-progress.html
+      </a>
+    </div>
+  </div>
+</section>
 
-      <div id="cdn-directory-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <a href="#showcase-tailwind-daisyui-lucide" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Tailwind CSS">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="layout-grid" class="w-4 h-4 text-primary"></i><span>Tailwind CSS</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Responsive utility grid and breakpoint system (sm, md, lg, xl, 2xl) &rarr; Section 2.1</p>
-        </a>
-
-        <a href="#showcase-tailwind-daisyui-lucide" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="DaisyUI">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="palette" class="w-4 h-4 text-secondary"></i><span>DaisyUI</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Semantic component classes + 32 live color-swatch themes &rarr; Section 2.1</p>
-        </a>
-
-        <a href="#showcase-tailwind-daisyui-lucide" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Lucide Icons">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4 text-accent"></i><span>Lucide Icons</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Crisp SVG vector iconography rendered across UI elements &rarr; Section 2.1</p>
-        </a>
-
-        <a href="#showcase-alpinejs" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Alpine.js">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="sliders-horizontal" class="w-4 h-4 text-info"></i><span>Alpine.js</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Lightweight declarative reactivity (x-data, x-model, @click) &rarr; Section 2.2</p>
-        </a>
-
-        <a href="#showcase-chartjs" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Chart.js">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-success"></i><span>Chart.js</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Theme-reactive canvas charts synced with all 32 DaisyUI themes &rarr; Section 3</p>
-        </a>
-
-        <a href="#showcase-mermaid" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Mermaid">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="git-branch" class="w-4 h-4 text-warning"></i><span>Mermaid</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Theme-reactive architecture &amp; workflow SVG diagrams &rarr; Section 4</p>
-        </a>
-
-        <a href="#showcase-leaflet" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Leaflet">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-error"></i><span>Leaflet</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Interactive CARTO basemap &amp; geospatial markers (zero 403 errors) &rarr; Section 5</p>
-        </a>
-
-        <a href="#showcase-gridjs" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Grid.js">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="table-2" class="w-4 h-4 text-primary"></i><span>Grid.js</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Sortable, searchable, dark-mode-ready interactive table &rarr; Section 6</p>
-        </a>
-
-        <a href="#showcase-katex" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="KaTeX">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="sigma" class="w-4 h-4 text-secondary"></i><span>KaTeX</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Fast mathematical &amp; LaTeX formula typesetting &rarr; Section 7</p>
-        </a>
-
-        <a href="#showcase-marked" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Marked">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4 text-accent"></i><span>Marked</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Client-side Markdown rendering with automatic TOC indexing &rarr; Section 8</p>
-        </a>
-
-        <a href="#showcase-highlightjs" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Highlight.js">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="code-2" class="w-4 h-4 text-info"></i><span>Highlight.js</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Syntax highlighting for TypeScript (Frontend) &amp; Kotlin (Backend) &rarr; Section 9</p>
-        </a>
-
-        <!-- Newly Supported Addons -->
-        <a href="#showcase-dayjs" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Day.js">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-primary"></i><span>Day.js</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Lightweight date parsing, formatting &amp; relative time diffing &rarr; Section 11.1</p>
-        </a>
-
-        <a href="#showcase-impress" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Impress.js">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="presentation" class="w-4 h-4 text-warning"></i><span>Impress.js</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Presentation mode guarded slides with print-safe fallback &rarr; Section 11.2</p>
-        </a>
-
-        <a href="#showcase-mockjs" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Mock.js">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="cpu" class="w-4 h-4 text-accent"></i><span>Mock.js</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Synthetic data schemas &amp; client-side JSON simulation &rarr; Section 11.3</p>
-        </a>
-
-        <a href="#showcase-showdown" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Showdown">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="file-code" class="w-4 h-4 text-secondary"></i><span>Showdown</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Live two-way Markdown compiler (co-existing with Marked) &rarr; Section 11.4</p>
-        </a>
-
-        <a href="#showcase-fullcalendar" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="FullCalendar">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-success"></i><span>FullCalendar</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Interactive month/week/list schedules with theme sync &rarr; Section 11.5</p>
-        </a>
-
-        <a href="#showcase-datastar" class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition p-3.5" data-cdn-name="Datastar">
-          <div class="flex items-center justify-between font-bold text-sm">
-            <span class="flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-primary"></i><span>Datastar.js</span></span>
-            <i data-lucide="arrow-down-right" class="w-3.5 h-3.5 opacity-60"></i>
-          </div>
-          <p class="text-xs opacity-75 mt-1">Real-time SSE DOM morphing, reactive signals &amp; LLM telemetry &rarr; Section 11.6</p>
-        </a>
-      </div>
-    </section>
-
-    <!-- Section 2: Tailwind CSS, DaisyUI, Lucide Icons & Alpine.js Showcase -->
-    <section class="space-y-4 break-inside-avoid">
-      <h2 id="showcase-ui-and-reactivity" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
-        2. UI Styling, Iconography &amp; Reactive State Showcase
-      </h2>
-      <h3 id="showcase-tailwind-daisyui-lucide" class="text-base sm:text-lg font-semibold opacity-85 scroll-mt-20">
-        2.1 Tailwind CSS + DaisyUI + Lucide Icons Showcase
-      </h3>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="stat bg-base-100 rounded-box shadow-sm border border-base-300 p-4">
-          <div class="stat-title text-xs uppercase tracking-wider flex items-center justify-between">
-            <span>Tailwind Breakpoints</span>
-            <i data-lucide="monitor-smartphone" class="w-4 h-4 text-primary"></i>
-          </div>
-          <div class="stat-value text-primary text-2xl sm:text-3xl">5 Tiers</div>
-          <div class="stat-desc text-success font-medium">sm, md, lg, xl, 2xl verified</div>
-        </div>
-        <div class="stat bg-base-100 rounded-box shadow-sm border border-base-300 p-4">
-          <div class="stat-title text-xs uppercase tracking-wider flex items-center justify-between">
-            <span>DaisyUI Themes</span>
-            <i data-lucide="palette" class="w-4 h-4 text-secondary"></i>
-          </div>
-          <div class="stat-value text-secondary text-2xl sm:text-3xl">32 Themes</div>
-          <div class="stat-desc text-info font-medium">Live color swatches in navbar</div>
-        </div>
-        <div class="stat bg-base-100 rounded-box shadow-sm border border-base-300 p-4">
-          <div class="stat-title text-xs uppercase tracking-wider flex items-center justify-between">
-            <span>Lucide Vector Icons</span>
-            <i data-lucide="sparkles" class="w-4 h-4 text-accent"></i>
-          </div>
-          <div class="stat-value text-accent text-2xl sm:text-3xl">SVG Crisp</div>
-          <div class="stat-desc opacity-75">Zero font-loading flash</div>
-        </div>
-        <div class="stat bg-base-100 rounded-box shadow-sm border border-base-300 p-4">
-          <div class="stat-title text-xs uppercase tracking-wider flex items-center justify-between">
-            <span>Standalone Export</span>
-            <i data-lucide="download" class="w-4 h-4 text-success"></i>
-          </div>
-          <div class="stat-value text-success text-2xl sm:text-3xl">16 CDNs</div>
-          <div class="stat-desc opacity-75">Inlined on 1-click download</div>
-        </div>
-      </div>
-
-      <!-- Alpine.js Live Example -->
-      <div class="card bg-base-100 shadow-sm border border-base-300 p-4 sm:p-6" id="alpine-example-card" x-data="{ widgets: 8, refreshHz: 60, mode: 'Reactive' }">
-        <h3 id="showcase-alpinejs" class="text-base sm:text-lg font-semibold scroll-mt-20 flex items-center gap-2">
-          <i data-lucide="sliders-horizontal" class="w-4 h-4 text-primary"></i>
-          <span>2.2 Alpine.js Declarative Reactivity Showcase</span>
-        </h3>
-        <p class="text-xs opacity-75 mt-1">Interact with the slider or mode buttons below to test live Alpine.js bindings (`x-data`, `x-model`, `x-text`, `@click`):</p>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 items-center">
-          <div>
-            <label class="label py-1"><span class="label-text text-xs font-semibold">Active Widgets: <strong x-text="widgets">8</strong></span></label>
-            <input type="range" min="2" max="24" step="2" x-model="widgets" class="range range-primary range-xs" aria-label="Active Widgets" />
-          </div>
-          <div>
-            <label class="label py-1"><span class="label-text text-xs font-semibold">Execution Mode</span></label>
-            <div class="join w-full">
-              <button type="button" class="btn btn-xs join-item flex-1" :class="mode === 'Reactive' ? 'btn-primary' : 'btn-outline'" @click="mode = 'Reactive'; refreshHz = 60">Reactive</button>
-              <button type="button" class="btn btn-xs join-item flex-1" :class="mode === 'Batch' ? 'btn-primary' : 'btn-outline'" @click="mode = 'Batch'; refreshHz = 30">Batch</button>
-              <button type="button" class="btn btn-xs join-item flex-1" :class="mode === 'Static' ? 'btn-primary' : 'btn-outline'" @click="mode = 'Static'; refreshHz = 10">Static</button>
-            </div>
-          </div>
-          <div class="bg-base-200 rounded-box p-3 border border-base-300 text-center">
-            <div class="text-xs opacity-75">Computed Frame Budget (<span x-text="mode">Reactive</span>)</div>
-            <div class="text-xl font-extrabold text-primary mt-0.5"><span x-text="(widgets * refreshHz)">480</span> ops/sec</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 3: Chart.js Live Showcase -->
-    <section class="space-y-4">
-      <h2 id="showcase-chartjs" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
-        3. Chart.js Theme-Reactive Visualizations Showcase
-      </h2>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid">
-          <div class="card-body p-4 sm:p-6">
-            <h3 id="chart-revenue-trend" class="card-title text-base sm:text-lg scroll-mt-20">
-              3.1 Combo Bar &amp; Line Chart (Chart.js)
-            </h3>
-            <p class="text-xs opacity-75">Switch any of the 32 DaisyUI themes in the navbar to watch Chart.js re-color live</p>
-            <div class="relative w-full h-72 sm:h-80 mt-2">
-              <canvas id="revenueChart" aria-label="Combo Bar and Line Chart Showcase" role="img"></canvas>
-            </div>
-          </div>
-        </div>
-
-        <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid">
-          <div class="card-body p-4 sm:p-6">
-            <h3 id="chart-workload-distribution" class="card-title text-base sm:text-lg scroll-mt-20">
-              3.2 Multi-Series Grouped Bar Chart (Chart.js)
-            </h3>
-            <p class="text-xs opacity-75">Uses `resolveDaisyUIThemePalette()` for accent, info, and surface contrast</p>
-            <div class="relative w-full h-72 sm:h-80 mt-2">
-              <canvas id="workloadChart" aria-label="Grouped Bar Chart Showcase" role="img"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 4: Mermaid Live Showcase -->
-    <section class="space-y-4 break-inside-avoid">
-      <h2 id="showcase-mermaid" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
-        4. Mermaid Diagram Showcase
-      </h2>
-      <div class="card bg-base-100 shadow-sm border border-base-300">
-        <div class="card-body p-4 sm:p-6">
-          <h3 id="mermaid-pipeline-flow" class="card-title text-base sm:text-lg scroll-mt-20">
-            4.1 Theme-Synchronized Architecture Flowchart (Mermaid)
-          </h3>
-          <p class="text-xs opacity-75 mb-2">
-            Re-renders automatically with the active DaisyUI theme's primary, secondary, and surface hex tokens
-          </p>
-          <div id="mermaid-container" class="flex justify-center p-4 bg-base-200/60 rounded-box border border-base-300">
-            <pre class="mermaid w-full text-center" id="architecture-mermaid">
-flowchart TD
-  Input["Report Spec &amp; Data"] --> Stack["11 Non-Blocking CDNs"]
-  Stack --> Theme["DaisyUI 32-Theme Resolver"]
-  Theme --> Charts["Chart.js &amp; Mermaid Sync"]
-  Theme --> Grid["Dark-Mode Ready Grid.js"]
-  Charts --> Verify["Playwright 5-Breakpoint Gate"]
-  Grid --> Verify
-            </pre>
-          </div>
-        </div>
-      </div>
-    </section>
-
-      <!-- Section 5: Leaflet Live Showcase (Esri ArcGIS World Street Map Tiles - Zero API Key / Zero file:// 403) -->
-    <section class="space-y-4 break-inside-avoid">
-      <h2 id="showcase-leaflet" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
-        5. Leaflet Geospatial Map Showcase
-      </h2>
-      <div class="card bg-base-100 shadow-sm border border-base-300">
-        <div class="card-body p-4 sm:p-6">
-          <h3 id="leaflet-map-view" class="card-title text-base sm:text-lg scroll-mt-20">
-            5.1 Interactive Vector Marker Map (Leaflet + Esri World Street Map)
-          </h3>
-          <p class="text-xs opacity-75 mb-2">
-            Uses Esri ArcGIS World Street Map tiles (`server.arcgisonline.com`) which render cleanly on local `file://` origins without API keys or 403 blocks
-          </p>
-          <div id="datacenterMap" class="w-full h-72 sm:h-80 rounded-box border border-base-300 z-10"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 6: Grid.js Live Showcase (Readable in Both Light & Dark DaisyUI Themes) -->
-    <section class="space-y-4 break-inside-avoid">
-      <h2 id="showcase-gridjs" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
-        6. Grid.js Interactive Data Table Showcase
-      </h2>
-      <div class="card bg-base-100 shadow-sm border border-base-300">
-        <div class="card-body p-4 sm:p-6">
-          <h3 id="cluster-benchmark-breakdown" class="card-title text-base sm:text-lg scroll-mt-20">
-            6.1 Sortable, Searchable &amp; Paginated Table (Light &amp; Dark Theme Adaptive)
-          </h3>
-          <p class="text-xs opacity-75 mb-2">
-            Bound to DaisyUI theme surface and text tokens so headers, cells, search input, and pagination stay crisp in both Light and Dark themes:
-          </p>
-          <div id="gridjs-benchmark-table" x-ignore class="w-full"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 7: KaTeX Mathematical Typesetting Showcase -->
-    <section class="space-y-4 break-inside-avoid">
-      <h2 id="showcase-katex" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
-        7. KaTeX Mathematical Typesetting Showcase
-      </h2>
-      <div class="card bg-base-100 shadow-sm border border-base-300">
-        <div class="card-body p-4 sm:p-6">
-          <h3 id="katex-equations-panel" class="card-title text-base sm:text-lg scroll-mt-20">
-            7.1 Display &amp; Inline LaTeX Equations (KaTeX)
-          </h3>
-          <p class="text-xs opacity-75">
-            Typeset client-side via `katex.min.js` and `auto-render.min.js`:
-          </p>
-          <div id="katex-math-block" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-            <div class="p-4 bg-base-200/60 rounded-box border border-base-300 text-center">
-              <div class="text-xs font-semibold opacity-75 mb-2">Attention Scaling Formula</div>
-              <div class="text-sm sm:text-base">
-                $$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$$
-              </div>
-            </div>
-            <div class="p-4 bg-base-200/60 rounded-box border border-base-300 text-center">
-              <div class="text-xs font-semibold opacity-75 mb-2">Composite Parallel Availability</div>
-              <div class="text-sm sm:text-base">
-                $$A_{\text{system}} = 1 - \prod_{i=1}^{n} \left(1 - A_i\right)$$
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 8: Marked (Markdown CDN) Showcase -->
-    <section class="space-y-4 break-inside-avoid">
-      <h2 id="showcase-marked" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
-        8. Marked Client-Side Markdown Showcase
-      </h2>
-      <div class="card bg-base-100 shadow-sm border border-base-300">
-        <div class="card-body p-4 sm:p-6">
-          <h3 id="rendered-markdown-panel" class="card-title text-base sm:text-lg scroll-mt-20">
-            8.1 Live Markdown-to-HTML Parsing (Marked)
-          </h3>
-          <script id="markdown-source" type="text/markdown">
-### Markdown Block Rendered by Marked CDN
-- **Automatic TOC Indexing**: Headings inside Markdown blocks automatically receive `id` attributes and appear in the navbar **Contents** dropdown.
-- **Inline Formatting**: Supports **bold**, *italics*, `inline code`, and lists without a build step.
-- **Zero Blocking**: Parsed on `DOMContentLoaded` before TOC generation.
-          </script>
-          <div id="markdown-output" class="markdown-body text-sm mt-2 p-4 bg-base-200/50 rounded-box border border-base-300"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 9: Highlight.js Code Formatting Showcase (Frontend TypeScript + Backend Kotlin) -->
-    <section class="space-y-4 break-inside-avoid">
-      <h2 id="showcase-highlightjs" class="text-xl sm:text-2xl font-bold tracking-tight scroll-mt-20">
-        9. Highlight.js Syntax Formatting Showcase (TypeScript Frontend &amp; Kotlin Backend)
-      </h2>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Frontend Example: TypeScript -->
-        <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid">
-          <div class="card-body p-4 sm:p-6">
-            <div class="flex items-center justify-between gap-2">
-              <h3 id="highlightjs-frontend-typescript" class="card-title text-base sm:text-lg scroll-mt-20">
-                9.1 Frontend Example — TypeScript
-              </h3>
-              <span class="badge badge-info badge-sm font-mono">TypeScript</span>
-            </div>
-            <p class="text-xs opacity-75">Frontend UI state &amp; theme contract highlighted with `language-typescript`:</p>
-            <div class="rounded-box border border-base-300 mt-2 overflow-hidden">
-              <pre class="text-xs m-0 whitespace-pre-wrap break-words"><code id="frontend-ts-code" class="language-typescript">// Frontend TypeScript Type &amp; Theme Dispatcher
-export type DaisyUITheme =
-  | "corporate"
-  | "dark"
-  | "synthwave"
-  | "dracula"
-  | "nord";
-
-export interface FrontendReportProps {
-  readonly reportId: string;
-  readonly title: string;
-  readonly activeTheme: DaisyUITheme;
-  readonly enableOfflineBundle: boolean;
+<!-- ========================================== -->
+<!-- EMBEDDED JAVASCRIPT INITIALIZERS           -->
+<!-- ========================================== -->
+<script>
+// Copy Agent Prompt Helper
+function copyAgentPrompt() {
+  const codeEl = document.getElementById("agent-prompt-code");
+  const textBtn = document.getElementById("copy-prompt-text");
+  if (!codeEl || !textBtn) return;
+  const promptText = codeEl.textContent.trim();
+  navigator.clipboard.writeText(promptText).then(() => {
+    textBtn.textContent = "Copied!";
+    setTimeout(() => {
+      textBtn.textContent = "Copy Prompt";
+    }, 2000);
+  }).catch(() => {
+    textBtn.textContent = "Copied!";
+  });
 }
 
-export function applyFrontendTheme(
-  props: FrontendReportProps
-): string {
-  document.documentElement.dataset.theme =
-    props.activeTheme;
-  return `Theme [${props.activeTheme}] active`;
-}</code></pre>
-            </div>
-          </div>
-        </div>
+// Capability Explorer Tab Switcher
+let showcaseChartInstance = null;
+let showcaseMapInstance = null;
+let showcaseGridInstance = null;
+let showcaseCalendarInstance = null;
 
-        <!-- Backend Example: Kotlin -->
-        <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid">
-          <div class="card-body p-4 sm:p-6">
-            <div class="flex items-center justify-between gap-2">
-              <h3 id="highlightjs-backend-kotlin" class="card-title text-base sm:text-lg scroll-mt-20">
-                9.2 Backend Example — Kotlin
-              </h3>
-              <span class="badge badge-secondary badge-sm font-mono">Kotlin</span>
-            </div>
-            <p class="text-xs opacity-75">Backend report service &amp; domain model highlighted with `language-kotlin`:</p>
-            <div class="rounded-box border border-base-300 mt-2 overflow-hidden">
-              <pre class="text-xs m-0 whitespace-pre-wrap break-words"><code id="backend-kotlin-code" class="language-kotlin">// Backend Kotlin Domain Model &amp; Service
-package io.htmlreport.backend
+function switchShowcaseTab(tabId) {
+  // Update Tab Buttons
+  document.querySelectorAll("#capability-tabs .tab").forEach(tab => {
+    tab.classList.remove("tab-active");
+  });
+  const activeBtn = document.getElementById("tab-btn-" + tabId);
+  if (activeBtn) activeBtn.classList.add("tab-active");
 
-data class ReportSnapshot(
-    val id: String,
-    val title: String,
-    val cdnCount: Int = 11,
-    val verifiedBreakpoints: List&lt;String&gt;
-)
+  // Update Panels
+  document.querySelectorAll(".tab-panel").forEach(panel => {
+    panel.classList.add("hidden");
+  });
+  const activePanel = document.getElementById("tab-panel-" + tabId);
+  if (activePanel) activePanel.classList.remove("hidden");
 
-class ReportExportService {
-    fun buildSnapshot(title: String): ReportSnapshot {
-        val breakpoints = listOf("sm", "md", "lg", "xl", "2xl")
-        return ReportSnapshot(
-            id = "rep-2026-q4",
-            title = title,
-            verifiedBreakpoints = breakpoints
-        )
+  // Trigger lazy widget resizing
+  if (tabId === "charts" && showcaseChartInstance) {
+    setTimeout(() => { showcaseChartInstance.resize(); }, 50);
+  }
+  if (tabId === "maps" && showcaseMapInstance) {
+    setTimeout(() => { showcaseMapInstance.invalidateSize(); }, 50);
+  }
+  if (tabId === "widgets" && showcaseCalendarInstance) {
+    setTimeout(() => { showcaseCalendarInstance.render(); }, 50);
+  }
+}
+
+// Initialize Widgets on DOM Load
+document.addEventListener("DOMContentLoaded", function () {
+  // 1. Initialize Chart.js
+  try {
+    const ctx = document.getElementById("showcaseChart");
+    if (ctx && typeof window.Chart !== "undefined") {
+      showcaseChartInstance = new window.Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Claude Code", "Antigravity", "Codex", "OpenCode", "Cursor", "Gemini CLI"],
+          datasets: [
+            {
+              label: "Token Savings (%)",
+              data: [74, 78, 71, 75, 72, 76],
+              backgroundColor: "rgba(59, 130, 246, 0.75)",
+              borderColor: "rgb(59, 130, 246)",
+              borderWidth: 1.5,
+              borderRadius: 6
+            },
+            {
+              label: "Assembly Latency (ms)",
+              data: [6.2, 4.8, 5.5, 6.9, 5.1, 4.2],
+              backgroundColor: "rgba(16, 185, 129, 0.75)",
+              borderColor: "rgb(16, 185, 129)",
+              borderWidth: 1.5,
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { font: { size: 11, family: "sans-serif" } } }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: "rgba(150, 150, 150, 0.15)" } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
     }
-}</code></pre>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  } catch (e) {
+    // Fail-safe
+  }
 
-    <!-- 10. CSV-Backed Report Form, Search File Function & Grid.js / Alpine.js Actions (example.csv) -->
-    <section class="space-y-4">
-      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-base-300 pb-2">
-        <h2 id="showcase-csv-support" class="text-xl sm:text-2xl font-bold flex items-center gap-2 scroll-mt-20">
-          <i data-lucide="file-spreadsheet" class="w-6 h-6 text-primary"></i>
-          10. CSV-Backed HTML Form &amp; Interactive Search (`example.csv`)
-        </h2>
-        <div class="flex items-center gap-2">
-          <span class="badge badge-primary badge-sm font-mono">example.csv</span>
-          <span class="badge badge-accent badge-sm">Grid.js + Alpine.js</span>
-        </div>
-      </div>
+  // 2. Initialize Grid.js Table
+  try {
+    const gridEl = document.getElementById("showcaseGridContainer");
+    if (gridEl && typeof window.gridjs !== "undefined") {
+      showcaseGridInstance = new window.gridjs.Grid({
+        columns: ["Agent Harness", "Assembly Latency", "Token Reduction", "Verification Status"],
+        data: [
+          ["Google Antigravity", "<5ms", "78% Savings", "✓ Verified"],
+          ["Anthropic Claude Code", "<7ms", "74% Savings", "✓ Verified"],
+          ["OpenAI Codex", "<6ms", "71% Savings", "✓ Verified"],
+          ["Cursor AI", "<6ms", "72% Savings", "✓ Verified"],
+          ["OpenCode / Gemini CLI", "<5ms", "76% Savings", "✓ Verified"]
+        ],
+        search: true,
+        pagination: { limit: 3 },
+        sort: true
+      }).render(gridEl);
+    }
+  } catch (e) {}
 
-      <!-- Embedded Baseline CSV Data (mirrors skills/html-report/examples/example.csv for offline file:// execution) -->
-      <script id="embedded-csv-data" data-csv-filename="example.csv" type="text/csv">
-id,service,region,rps,latency_ms,status
-SRV-101,Edge-Auth-Gateway,eu-west-1,1420,18.4,Healthy
-SRV-102,Vector-Search-Index,us-east-1,980,32.1,Healthy
-SRV-103,LLM-Router-Primary,eu-central-1,2150,41.6,Scaling
-SRV-104,Telemetry-Ingest,ap-northeast-1,3400,22.8,Healthy
-SRV-105,Batch-Embed-Worker,us-west-2,640,54.2,Warning
-SRV-106,Policy-Audit-Engine,eu-north-1,890,15.9,Healthy
-SRV-107,Realtime-Stream-Hub,us-east-1,1760,29.5,Scaling
-SRV-108,Cache-Sync-Coordinator,eu-west-1,1120,19.7,Healthy
-      </script>
+  // 3. Initialize Leaflet Map
+  try {
+    const mapEl = document.getElementById("showcaseMap");
+    if (mapEl && typeof window.L !== "undefined") {
+      showcaseMapInstance = window.L.map("showcaseMap", { zoomControl: false }).setView([37.7749, -122.4194], 4);
+      window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Esri Street Map",
+        maxZoom: 18
+      }).addTo(showcaseMapInstance);
+      window.L.circleMarker([37.7749, -122.4194], {
+        radius: 7,
+        fillColor: "#3b82f6",
+        color: "#ffffff",
+        weight: 2,
+        fillOpacity: 0.9
+      }).addTo(showcaseMapInstance).bindPopup("San Francisco Cluster");
+      window.L.circleMarker([47.6062, -122.3321], {
+        radius: 7,
+        fillColor: "#10b981",
+        color: "#ffffff",
+        weight: 2,
+        fillOpacity: 0.9
+      }).addTo(showcaseMapInstance).bindPopup("Seattle Gateway");
+    }
+  } catch (e) {}
 
-      <!-- Highlighted CSV-Backed Form Container (Starts Completely Empty Until example.csv is Loaded) -->
-      <div
-        id="csv-highlight-banner"
-        data-csv-highlight="true"
-        data-csv-filename="example.csv"
-        x-data="csvReportController()"
-        x-init="initCsvSection()"
-        class="card bg-base-100 shadow-md border-2 border-primary/60 break-inside-avoid"
-      >
-        <div class="card-body p-4 sm:p-6 space-y-4">
-          <!-- CSV Source Highlight Banner -->
-          <div class="alert bg-primary/10 border border-primary/40 text-base-content flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:p-4">
-            <div class="flex items-start sm:items-center gap-3">
-              <span class="p-2 rounded-box bg-primary text-primary-content shrink-0">
-                <i data-lucide="database" class="w-5 h-5"></i>
-              </span>
-              <div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <h3 id="csv-search-and-actions-heading" class="font-bold text-sm sm:text-base scroll-mt-20">
-                    10.1 CSV-Backed Form Highlight — Built Around <code class="font-mono text-primary font-extrabold" x-text="csvFileName">example.csv</code>
-                  </h3>
-                  <span class="badge badge-primary badge-xs sm:badge-sm">CSV Source Highlighted</span>
-                </div>
-                <p class="text-xs opacity-80 mt-0.5">
-                  This interactive form is built around <strong class="font-mono" id="active-csv-filename" x-text="csvFileName">example.csv</strong> (`examples/example.csv`). Load the CSV file below to unlock search, custom DaisyUI + Alpine.js filters, the Grid.js table, and the Chart.js visualization underneath.
-                </p>
-              </div>
-            </div>
-            <div class="flex flex-wrap items-center gap-1.5 shrink-0">
-              <span
-                id="csv-status-badge"
-                class="badge font-mono text-xs"
-                :class="csvLoaded ? 'badge-success badge-outline' : 'badge-ghost'"
-                x-text="csvLoaded ? (allRows.length + ' rows · ' + headers.length + ' cols') : 'Empty (0 rows)'"
-              >Empty (0 rows)</span>
-            </div>
-          </div>
+  // 4. Initialize FullCalendar
+  try {
+    const calEl = document.getElementById("showcaseCalendar");
+    if (calEl && typeof window.FullCalendar !== "undefined") {
+      showcaseCalendarInstance = new window.FullCalendar.Calendar(calEl, {
+        initialView: "dayGridMonth",
+        height: 280,
+        headerToolbar: { left: "prev,next", center: "title", right: "dayGridMonth,listWeek" },
+        events: [
+          { title: "Sprint Release v2.0", start: new Date().toISOString().slice(0, 10), color: "#3b82f6" },
+          { title: "Deterministic FSM Audit", start: new Date(Date.now() + 86400000 * 2).toISOString().slice(0, 10), color: "#10b981" }
+        ]
+      });
+      showcaseCalendarInstance.render();
+    }
+  } catch (e) {}
 
-          <!-- Load CSV Control (Top — Interactive Screen Control, Hidden in Print/PDF) -->
-          <div id="csv-step-1-load" class="print-interactive-control bg-base-200/70 p-3 sm:p-4 rounded-box border border-base-300 space-y-2">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <label class="label p-0" for="csv-file-input">
-                <span class="label-text text-xs sm:text-sm font-bold flex items-center gap-1.5">
-                  <i data-lucide="upload" class="w-4 h-4 text-primary"></i>
-                  Load CSV File (<span class="font-mono text-primary" x-text="csvFileName">example.csv</span>)
-                </span>
-              </label>
-              <span class="text-xs opacity-70" x-text="csvLoaded ? 'CSV active — search, custom filters, Grid.js & Chart.js unlocked below' : 'Select a .csv file or click Load example.csv'">Select a .csv file or click Load example.csv</span>
-            </div>
-
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-              <input
-                id="csv-file-input"
-                type="file"
-                accept=".csv,text/csv"
-                @change="loadCsvFile($event)"
-                class="file-input file-input-bordered file-input-xs sm:file-input-sm flex-1 bg-base-100"
-              />
-              <button
-                id="load-example-csv-btn"
-                type="button"
-                @click="loadExampleCsv()"
-                class="btn btn-primary btn-xs sm:btn-sm font-mono"
-              >
-                Load example.csv
-              </button>
-              <button
-                id="csv-clear-btn"
-                type="button"
-                x-show="csvLoaded"
-                style="display: none;"
-                @click="clearCsv()"
-                class="btn btn-outline btn-error btn-xs sm:btn-sm"
-              >
-                Clear CSV
-              </button>
-            </div>
-          </div>
-
-          <!-- Empty State Indicator (Shown initially on screen when no CSV is loaded; hidden in Print/PDF) -->
-          <div
-            id="csv-empty-state"
-            x-show="!csvLoaded"
-            class="print-interactive-control rounded-box border border-dashed border-base-300 bg-base-200/30 p-6 text-center text-xs opacity-70"
-          >
-            No CSV data loaded yet. Load <code class="font-mono">example.csv</code> above to display the search bar, custom DaisyUI filters, Grid.js table, and Chart.js chart.
-          </div>
-
-          <!-- Static Print/PDF Snapshot of example.csv (Shown automatically in @media print when interactive controls are disabled) -->
-          <div id="csv-print-static-fallback" class="print-only-summary space-y-2">
-            <div class="text-xs font-semibold opacity-80">
-              Static Print Snapshot of <code>example.csv</code> (8 rows &bull; Interactive file loader &amp; filters hidden in print mode):
-            </div>
-            <div class="overflow-x-auto w-full">
-  <table class="table table-xs table-zebra w-full border border-base-300">
-              <thead>
-                <tr class="bg-base-200 text-base-content">
-                  <th>id</th>
-                  <th>service</th>
-                  <th>region</th>
-                  <th>rps</th>
-                  <th>latency_ms</th>
-                  <th>status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>SRV-101</td><td>Edge-Auth-Gateway</td><td>eu-west-1</td><td>1420</td><td>18.4</td><td>Healthy</td></tr>
-                <tr><td>SRV-102</td><td>Vector-Search-Index</td><td>us-east-1</td><td>980</td><td>32.1</td><td>Healthy</td></tr>
-                <tr><td>SRV-103</td><td>LLM-Router-Primary</td><td>eu-central-1</td><td>2150</td><td>41.6</td><td>Scaling</td></tr>
-                <tr><td>SRV-104</td><td>Telemetry-Ingest</td><td>ap-northeast-1</td><td>3400</td><td>22.8</td><td>Healthy</td></tr>
-                <tr><td>SRV-105</td><td>Batch-Embed-Worker</td><td>us-west-2</td><td>640</td><td>54.2</td><td>Warning</td></tr>
-                <tr><td>SRV-106</td><td>Policy-Audit-Engine</td><td>eu-north-1</td><td>890</td><td>15.9</td><td>Healthy</td></tr>
-                <tr><td>SRV-107</td><td>Realtime-Stream-Hub</td><td>us-east-1</td><td>1760</td><td>29.5</td><td>Scaling</td></tr>
-                <tr><td>SRV-108</td><td>Cache-Sync-Coordinator</td><td>eu-west-1</td><td>1120</td><td>19.7</td><td>Healthy</td></tr>
-              </tbody>
-            </table>
-</div>
-          </div>
-
-          <!-- Search, Custom DaisyUI Filters, Grid.js Table & Chart.js Underneath (Hidden/Empty Until CSV is Loaded) -->
-          <div
-            id="csv-loaded-workspace"
-            x-show="csvLoaded"
-            style="display: none;"
-            class="space-y-4"
-          >
-            <!-- Search & Custom DaisyUI + Alpine.js Filters (Directly Underneath Load CSV) -->
-            <div id="csv-step-2-search" class="print-interactive-control bg-base-200/60 p-3 sm:p-4 rounded-box border border-base-300 space-y-3">
-              <!-- Search Input Row -->
-              <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-                <div class="relative flex-1">
-                  <input
-                    id="csv-search-input"
-                    type="search"
-                    x-model="searchQuery"
-                    @input="applyCsvFilters()"
-                    :placeholder="'Search in ' + csvFileName + ' (id, service, region, status)...'"
-                    placeholder="Search in example.csv (id, service, region, status)..."
-                    class="input input-bordered input-sm sm:input-md w-full bg-base-100"
-                  />
-                </div>
-                <button
-                  id="csv-reset-btn"
-                  type="button"
-                  @click="resetCsvFilters()"
-                  class="btn btn-outline btn-xs sm:btn-md shrink-0"
-                >
-                  Reset Filters
-                </button>
-              </div>
-
-              <!-- Custom Filter Controls (DaisyUI Select, Join Segmented Buttons, Range Sliders & Toggle) -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-base-300/80 items-end">
-                <!-- 1. DaisyUI Select Filter: Region -->
-                <div class="form-control w-full">
-                  <label class="label py-0.5" for="csv-region-select">
-                    <span class="label-text text-xs font-semibold">Region (DaisyUI Select)</span>
-                  </label>
-                  <select
-                    id="csv-region-select"
-                    x-model="regionFilter"
-                    @change="applyCsvFilters()"
-                    class="select select-bordered select-xs sm:select-sm w-full bg-base-100 font-mono text-xs"
-                  >
-                    <option value="All">All Regions</option>
-                    <template x-for="reg in availableRegions" :key="reg">
-                      <option :value="reg" x-text="reg"></option>
-                    </template>
-                  </select>
-                </div>
-
-                <!-- 2. DaisyUI Segmented Join Buttons: Status -->
-                <div class="form-control w-full">
-                  <span class="label py-0.5">
-                    <span class="label-text text-xs font-semibold">Status (DaisyUI Join)</span>
-                  </span>
-                  <div class="join w-full" role="group" aria-label="Status filter">
-                    <button
-                      type="button"
-                      data-csv-action="All"
-                      @click="setStatusFilter('All')"
-                      :class="statusFilter === 'All' ? 'btn-primary' : 'btn-ghost bg-base-100'"
-                      class="btn btn-xs sm:btn-sm join-item flex-1 border border-base-300"
-                    >
-                      All
-                    </button>
-                    <button
-                      type="button"
-                      data-csv-action="Healthy"
-                      @click="setStatusFilter('Healthy')"
-                      :class="statusFilter === 'Healthy' ? 'btn-success' : 'btn-ghost bg-base-100'"
-                      class="btn btn-xs sm:btn-sm join-item flex-1 border border-base-300"
-                    >
-                      Healthy
-                    </button>
-                    <button
-                      type="button"
-                      data-csv-action="Scaling"
-                      @click="setStatusFilter('Scaling')"
-                      :class="statusFilter === 'Scaling' ? 'btn-info' : 'btn-ghost bg-base-100'"
-                      class="btn btn-xs sm:btn-sm join-item flex-1 border border-base-300"
-                    >
-                      Scaling
-                    </button>
-                    <button
-                      type="button"
-                      data-csv-action="Warning"
-                      @click="setStatusFilter('Warning')"
-                      :class="statusFilter === 'Warning' ? 'btn-warning' : 'btn-ghost bg-base-100'"
-                      class="btn btn-xs sm:btn-sm join-item flex-1 border border-base-300"
-                    >
-                      Warn
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 3. DaisyUI Range Slider: Minimum Throughput (RPS) -->
-                <div class="form-control w-full">
-                  <label class="label py-0.5" for="csv-min-rps-range">
-                    <span class="label-text text-xs font-semibold">Min Throughput</span>
-                    <span class="badge badge-primary badge-xs font-mono" x-text="'&ge; ' + minRps + ' RPS'">&ge; 0 RPS</span>
-                  </label>
-                  <input
-                    id="csv-min-rps-range"
-                    type="range"
-                    min="0"
-                    max="3000"
-                    step="200"
-                    x-model.number="minRps"
-                    @input="applyCsvFilters()"
-                    class="range range-primary range-xs"
-                  />
-                </div>
-
-                <!-- 4. DaisyUI Range Slider: Max Latency (ms) -->
-                <div class="form-control w-full">
-                  <label class="label py-0.5" for="csv-max-latency-range">
-                    <span class="label-text text-xs font-semibold">Max Latency</span>
-                    <span class="badge badge-secondary badge-xs font-mono" x-text="'&le; ' + maxLatency + ' ms'">&le; 60 ms</span>
-                  </label>
-                  <input
-                    id="csv-max-latency-range"
-                    type="range"
-                    min="15"
-                    max="60"
-                    step="5"
-                    x-model.number="maxLatency"
-                    @input="applyCsvFilters()"
-                    class="range range-secondary range-xs"
-                  />
-                </div>
-              </div>
-
-              <!-- Live Alpine.js Reactive Summary Badges & Raw CSV Toggle -->
-              <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-base-300/60 text-xs">
-                <div class="flex flex-wrap items-center gap-2">
-                  <div class="badge badge-primary badge-outline gap-1 py-2.5 px-3">
-                    <span>Rows:</span>
-                    <strong id="csv-matching-count" class="font-mono" x-text="filteredRows.length + ' / ' + allRows.length">0 / 0</strong>
-                  </div>
-                  <div class="badge badge-secondary badge-outline gap-1 py-2.5 px-3">
-                    <span>Sum RPS:</span>
-                    <strong id="csv-total-rps" class="font-mono" x-text="totalRps">0</strong>
-                  </div>
-                  <div class="badge badge-accent badge-outline gap-1 py-2.5 px-3">
-                    <span>Avg Latency:</span>
-                    <strong id="csv-avg-latency" class="font-mono" x-text="avgLatency + ' ms'">0.0 ms</strong>
-                  </div>
-                </div>
-
-                <label class="label cursor-pointer gap-2 py-0">
-                  <span class="label-text text-xs font-mono">Show Raw <span x-text="csvFileName">example.csv</span></span>
-                  <input
-                    id="csv-toggle-raw-btn"
-                    type="checkbox"
-                    x-model="showRawCsv"
-                    class="toggle toggle-primary toggle-xs"
-                  />
-                </label>
-              </div>
-            </div>
-
-            <!-- Optional Raw example.csv Preview Panel -->
-            <div x-show="showRawCsv" style="display: none;" x-transition class="rounded-box border border-base-300 bg-base-200 p-3">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-xs font-mono font-bold text-primary" x-text="'Raw source: skills/html-report/examples/' + csvFileName">Raw source: skills/html-report/examples/example.csv</span>
-                <span class="badge badge-xs font-mono">text/csv</span>
-              </div>
-              <pre id="csv-raw-preview" class="text-xs font-mono whitespace-pre-wrap break-words m-0" x-text="rawCsvText"></pre>
-            </div>
-
-            <!-- Grid.js Table Driven by example.csv Search & Custom DaisyUI Filters -->
-            <div id="csv-grid-section" class="space-y-1.5">
-              <div class="flex flex-wrap items-center justify-between gap-2 text-xs opacity-75">
-                <span class="font-semibold flex items-center gap-1.5">
-                  <i data-lucide="table" class="w-4 h-4 text-primary"></i>
-                  Grid.js Table synced with <code class="font-mono" x-text="csvFileName">example.csv</code> search &amp; custom filters:
-                </span>
-                <span id="csv-active-filter-summary" class="font-mono" x-text="activeSummary">No CSV loaded</span>
-              </div>
-              <div id="csv-gridjs-table" x-ignore class="w-full"></div>
-            </div>
-
-            <!-- Chart.js Visualization Underneath Grid.js Table -->
-            <div id="csv-chart-section" class="space-y-1.5">
-              <div class="flex flex-wrap items-center justify-between gap-2 text-xs opacity-75">
-                <span class="font-semibold flex items-center gap-1.5">
-                  <i data-lucide="bar-chart-3" class="w-4 h-4 text-primary"></i>
-                  Chart.js Visualization underneath Grid.js (RPS &amp; Latency for filtered <code class="font-mono" x-text="csvFileName">example.csv</code> rows):
-                </span>
-                <span class="badge badge-ghost badge-xs font-mono" x-text="filteredRows.length + ' services plotted'">0 services plotted</span>
-              </div>
-              <div class="relative w-full h-64 sm:h-72 rounded-box border border-base-300 bg-base-100 p-3">
-                <canvas id="csvChart" aria-label="CSV Service RPS and Latency Chart" role="img"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 11. Expanded CDN Addons Showcase (Day.js, Impress.js, Mock.js, Showdown, FullCalendar) -->
-    <section class="space-y-6">
-      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-base-300 pb-2">
-        <h2 id="showcase-expanded-addons" class="text-xl sm:text-2xl font-bold flex items-center gap-2 scroll-mt-20">
-          <i data-lucide="package-plus" class="w-6 h-6 text-primary"></i>
-          11. Expanded CDN Addons (Day.js, Impress.js, Mock.js, Showdown, FullCalendar)
-        </h2>
-        <div class="flex items-center gap-2">
-          <span class="badge badge-primary badge-sm font-mono">5 New Addons</span>
-          <span class="badge badge-accent badge-sm">On-Demand CDN</span>
-        </div>
-      </div>
-
-      <!-- 11.1 Day.js Live Formatting & Relative Time -->
-      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-dayjs">
-        <div class="card-body p-4 sm:p-6 space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 id="dayjs-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
-              <i data-lucide="clock" class="w-5 h-5 text-primary"></i>
-              <span>11.1 Day.js Date Parsing &amp; Relative Time</span>
-            </h3>
-            <span class="badge badge-outline badge-primary text-xs">2kB Bundle</span>
-          </div>
-          <p class="text-xs opacity-80">
-            Immutable date operations via <code>[data-dayjs]</code> attributes without Moment.js overhead.
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div class="p-3 rounded-box bg-base-200/60 border border-base-300">
-              <span class="text-2xs uppercase font-bold opacity-60">Current ISO Timestamp</span>
-              <div class="text-sm font-mono font-bold text-primary mt-1" data-dayjs="now" data-dayjs-format="YYYY-MM-DD HH:mm:ss"></div>
-            </div>
-            <div class="p-3 rounded-box bg-base-200/60 border border-base-300">
-              <span class="text-2xs uppercase font-bold opacity-60">Relative Release Time</span>
-              <div class="text-sm font-mono font-bold text-secondary mt-1" data-dayjs="2026-10-15" data-dayjs-from-now></div>
-            </div>
-            <div class="p-3 rounded-box bg-base-200/60 border border-base-300">
-              <span class="text-2xs uppercase font-bold opacity-60">Target Milestone</span>
-              <div class="text-sm font-mono font-bold text-accent mt-1" data-dayjs="2026-12-31" data-dayjs-format="dddd, MMMM D, YYYY"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 11.2 Impress.js Presentation Guard & Print-Equivalent Treatment -->
-      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-impress" x-data="{ isPresentation: false }">
-        <div class="card-body p-4 sm:p-6 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <h3 id="impress-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
-              <i data-lucide="presentation" class="w-5 h-5 text-warning"></i>
-              <span>11.2 Impress.js: Presentation Guard &amp; Print-Equivalent Static Fallback</span>
-            </h3>
-            <div class="flex items-center gap-2">
-              <button
-                type="button"
-                @click="isPresentation = !isPresentation; document.documentElement.setAttribute('data-presentation', isPresentation ? 'true' : 'false')"
-                class="btn btn-xs sm:btn-sm btn-outline btn-warning gap-1"
-              >
-                <i data-lucide="monitor-play" class="w-3.5 h-3.5"></i>
-                <span x-text="isPresentation ? 'Exit Presentation Mode' : 'Simulate Presentation Mode'">Simulate Presentation Mode</span>
-              </button>
-            </div>
-          </div>
-          <div class="alert alert-warning/15 border border-warning/30 text-xs p-3">
-            <i data-lucide="shield-alert" class="w-4 h-4 text-warning shrink-0"></i>
-            <div>
-              <strong>Presentation Guard Active:</strong> Impress.js receives the exact same treatment as a print by default. All <code>.step</code> slides remain static, stacked printable cards unless explicitly invoked via <code>--presentation</code> or <code>data-presentation="true"</code>, strictly preventing 3D viewport coordinate transforms from capturing report scrolling.
-            </div>
-          </div>
-
-          <!-- Slide Controls Active in Presentation Mode -->
-          <div x-show="isPresentation" x-cloak class="flex flex-wrap items-center justify-between gap-2 bg-warning/10 p-2.5 rounded-lg border border-warning/30 text-xs">
-            <div class="flex items-center gap-2">
-              <span class="badge badge-warning badge-sm font-semibold">3D Presentation Active</span>
-              <span class="opacity-80">Use controls below or arrow keys / spacebar:</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <button type="button" @click="window.impressPrev && window.impressPrev()" class="btn btn-xs btn-outline gap-1">
-                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Prev
-              </button>
-              <button type="button" @click="window.impressNext && window.impressNext()" class="btn btn-xs btn-warning gap-1">
-                Next <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="impress-wrapper border border-base-300 bg-base-200/40 p-4 rounded-box">
-            <div id="impress" class="space-y-3">
-              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="0" data-y="0">
-                <div class="text-xs uppercase font-bold text-primary">Slide 1: Executive Vision</div>
-                <div class="text-sm font-semibold mt-1">Autonomous Quality Engineering at Scale</div>
-                <p class="text-xs opacity-75 mt-0.5">Continuous verification across 5 responsive breakpoints with 100% test reliability.</p>
-              </div>
-              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="600" data-y="0">
-                <div class="text-xs uppercase font-bold text-secondary">Slide 2: Deterministic Harness</div>
-                <div class="text-sm font-semibold mt-1">Zero-Dependency Finite State Machine</div>
-                <p class="text-xs opacity-75 mt-0.5">Automated heading repair, bare table isolation, and badge multi-line safeguard.</p>
-              </div>
-              <div class="step card bg-base-100 shadow-sm border border-base-300 p-4" data-x="1200" data-y="0">
-                <div class="text-xs uppercase font-bold text-accent">Slide 3: Real-Time Telemetry</div>
-                <div class="text-sm font-semibold mt-1">17-CDN Non-Blocking Publication Stack</div>
-                <p class="text-xs opacity-75 mt-0.5">Instant theme reactivity, Day.js relative formatting, and FullCalendar synchronization.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 11.3 Mock.js Client-Side Synthetic Generation -->
-      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-mockjs">
-        <div class="card-body p-4 sm:p-6 space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 id="mockjs-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
-              <i data-lucide="cpu" class="w-5 h-5 text-accent"></i>
-              <span>11.3 Mock.js Client-Side Synthetic Data Engine</span>
-            </h3>
-            <span class="badge badge-outline badge-accent text-xs">Offline Simulation</span>
-          </div>
-          <p class="text-xs opacity-80">
-            Generate realistic synthetic profiles, load metrics, and random arrays client-side without backend dependencies via <code>Mock.mock(...)</code>.
-          </p>
-          <div class="rounded-box border border-base-300 bg-base-200 p-3">
-            <pre class="text-xs font-mono m-0 overflow-x-auto" data-mock='{"services|3":[{"id|+1":101,"name":"@word(4,8)-cluster","region|1":["eu-west-1","us-east-1","ap-northeast-1"],"p99_latency":"@integer(12,45) ms","healthy":true}]}'></pre>
-          </div>
-        </div>
-      </div>
-
-      <!-- 11.4 Showdown Live Markdown Conversion -->
-      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-showdown">
-        <div class="card-body p-4 sm:p-6 space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 id="showdown-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
-              <i data-lucide="file-code" class="w-5 h-5 text-secondary"></i>
-              <span>11.4 Showdown Converter (Co-existing with Marked)</span>
-            </h3>
-            <span class="badge badge-outline badge-secondary text-xs">Two-Way Markdown</span>
-          </div>
-          <p class="text-xs opacity-80">
-            Showdown compiles markdown tables, strikethrough, and GitHub tasklists alongside Marked with zero namespace collision.
-          </p>
-          <div class="p-4 rounded-box bg-base-200/50 border border-base-300" data-markdown-showdown="#### Architectural Milestone&#10;- [x] Day.js timestamp hydration&#10;- [x] Impress presentation guard&#10;- [x] FullCalendar DaisyUI theme syncing"></div>
-        </div>
-      </div>
-
-      <!-- 11.5 FullCalendar 6 Interactive Schedule -->
-      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-fullcalendar">
-        <div class="card-body p-4 sm:p-6 space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 id="fullcalendar-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
-              <i data-lucide="calendar" class="w-5 h-5 text-success"></i>
-              <span>11.5 FullCalendar 6 Scheduling Grid &amp; Theme Palette Sync</span>
-            </h3>
-            <span class="badge badge-outline badge-success text-xs">FullCalendar 6</span>
-          </div>
-          <p class="text-xs opacity-80">
-            Interactive month, week, and list views dynamically synced with active DaisyUI theme border and button colors.
-          </p>
-          <div
-            id="calendar"
-            data-fullcalendar="true"
-            data-calendar-view="dayGridMonth"
-            data-calendar-events='[{"title":"CDN Expansion Kickoff","start":"2026-11-01","color":"#3b82f6"},{"title":"Playwright Regression Pass","start":"2026-11-03","color":"#10b981"},{"title":"Final Release Verification","start":"2026-11-05","color":"#ec4899"}]'
-            class="rounded-box border border-base-300 bg-base-100 p-2 sm:p-3"
-          ></div>
-        </div>
-      </div>
-
-      <!-- 11.6 Datastar.js Real-Time Live Telemetry & Hypermedia Morphing -->
-      <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid" id="showcase-datastar">
-        <div class="card-body p-4 sm:p-6 space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 id="datastar-heading" class="text-base sm:text-lg font-bold flex items-center gap-2 scroll-mt-20">
-              <i data-lucide="zap" class="w-5 h-5 text-primary"></i>
-              <span>11.6 Datastar.js Real-Time Live Telemetry &amp; Reactive Signals</span>
-            </h3>
-            <span class="badge badge-outline badge-primary text-xs">Datastar Live</span>
-          </div>
-          <p class="text-xs opacity-80">
-            Real-time server-sent hypermedia morphing (via Idiomorph) and declarative reactive signals with zero build tools or complex state machines.
-          </p>
-
-          <!-- Interactive Datastar Signal Monitor -->
-          <div
-            class="p-4 rounded-xl bg-base-200/60 border border-base-300 space-y-3"
-            data-signals='{"activeAgent":"Google Antigravity","stepIndex":4,"toolFilter":"all","taskCounter":3,"streamStatus":"Active"}'
-          >
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-base-300 pb-2">
-              <div class="flex items-center gap-2 text-xs">
-                <span class="inline-block w-2.5 h-2.5 rounded-full bg-success animate-pulse"></span>
-                <span class="font-semibold">Stream Status:</span>
-                <span class="badge badge-sm badge-success font-mono" data-text="$streamStatus">Active</span>
-              </div>
-              <div class="flex items-center gap-2 text-xs">
-                <span class="opacity-70">Agent:</span>
-                <span class="badge badge-sm badge-ghost font-mono" data-text="$activeAgent">Google Antigravity</span>
-                <span class="opacity-70">Step:</span>
-                <span class="badge badge-sm badge-primary font-mono" data-text="$stepIndex">4</span>
-              </div>
-            </div>
-
-            <!-- Mini Live Task Tree Simulation -->
-            <div class="space-y-2">
-              <div class="text-2xs uppercase tracking-wider font-bold opacity-60">Task Hierarchy Telemetry (#task-*)</div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <div id="task-demo-1" class="card bg-base-100 p-3 rounded-lg border border-success/40 transition">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                      <i data-lucide="check" class="w-4 h-4 text-success"></i>
-                      <span class="text-xs font-semibold line-through opacity-75">Schema Formalization</span>
-                    </div>
-                    <span class="badge badge-xs badge-success">Done</span>
-                  </div>
-                </div>
-                <div id="task-demo-2" class="card bg-base-100 p-3 rounded-lg border border-primary shadow-xs transition">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                      <span class="loading loading-spinner loading-xs text-primary"></span>
-                      <span class="text-xs font-bold text-primary">SSE Stream Morphing</span>
-                    </div>
-                    <span class="badge badge-xs badge-primary animate-pulse">Running</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Mini Tool Invocation Feed Simulation -->
-            <div class="space-y-2">
-              <div class="text-2xs uppercase tracking-wider font-bold opacity-60">Live Tool Execution Feed (#tool-call-feed)</div>
-              <div id="tool-call-feed" class="space-y-1.5">
-                <div id="tool-demo-1" class="rounded-box border border-base-300 bg-base-100 p-2.5 text-xs shadow-2xs">
-                  <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-1.5 truncate">
-                      <i data-lucide="terminal" class="w-3.5 h-3.5 text-primary shrink-0"></i>
-                      <span class="font-mono font-semibold text-3xs text-primary">run_command</span>
-                      <span class="text-3xs text-base-content/70 truncate font-mono bg-base-200 px-1 rounded">node --test tests/datastar-stream.test.mjs</span>
-                    </div>
-                    <span class="badge badge-success badge-xs">180ms</span>
-                  </div>
-                  <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-1.5 px-3 max-h-24 overflow-y-auto">
-                    <pre data-prefix=">"><code>✔ 12 passing tests (0 failures)</code></pre>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <script>
-      window.themeStudioController = function themeStudioController() {
-        return {
-          isOpen: false,
-          themeName: "custom-brand",
-          extendsTheme: "light",
-          colorScheme: "auto",
-          primary: "#3b82f6",
-          secondary: "#ec4899",
-          accent: "#10b981",
-          neutral: "#1f2937",
-          base100: "#ffffff",
-          base200: "#f3f4f6",
-          base300: "#e5e7eb",
-          roundedBtn: "0.5rem",
-          roundedBtnNum: 0.5,
-          roundedBox: "1rem",
-          roundedBoxNum: 1.0,
-          roundedBadge: "1.9rem",
-          roundedBadgeNum: 1.9,
-          copiedCss: false,
-          copiedTailwind: false,
-          savedNotice: false,
-          activeTheme: "light",
-          baseThemeOptions: [
-            "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
-            "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden",
-            "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black",
-            "luxury", "dracula", "cmyk", "autumn", "business", "acid", "lemonade",
-            "night", "coffee", "winter", "dim", "nord", "sunset"
-          ],
-
-          init() {
-            this.activeTheme = document.documentElement.getAttribute("data-theme") || "light";
-            try {
-              if (typeof localStorage !== "undefined") {
-                const savedJson = localStorage.getItem("html_report_custom_themes");
-                if (savedJson) {
-                  const saved = JSON.parse(savedJson);
-                  if (saved[this.themeName]) {
-                    const item = saved[this.themeName];
-                    if (item.primary) this.primary = item.primary;
-                    if (item.secondary) this.secondary = item.secondary;
-                    if (item.accent) this.accent = item.accent;
-                    if (item.neutral) this.neutral = item.neutral;
-                    if (item.base100) this.base100 = item.base100;
-                    if (item.base200) this.base200 = item.base200;
-                    if (item.base300) this.base300 = item.base300;
-                    if (item.extends) this.extendsTheme = item.extends;
-                  }
-                }
-              }
-            } catch (_) {}
-          },
-
-          getOklch(hex) {
-            if (!hex) return "";
-            try {
-              if (window.rgbToOklch && window.hexToRgb) {
-                const [r, g, b] = window.hexToRgb(hex);
-                return window.rgbToOklch(r, g, b).formatted;
-              }
-            } catch (_) {}
-            return hex;
-          },
-
-          getCompiledCss() {
-            if (typeof window.compileTheme === "function") {
-              const res = window.compileTheme({
-                [this.themeName]: {
-                  extends: this.extendsTheme,
-                  primary: this.primary,
-                  secondary: this.secondary,
-                  accent: this.accent,
-                  neutral: this.neutral,
-                  "base-100": this.base100,
-                  "base-200": this.base200,
-                  "base-300": this.base300,
-                  "--rounded-btn": this.roundedBtn,
-                  "--rounded-box": this.roundedBox,
-                  "--rounded-badge": this.roundedBadge,
-                  ...(this.colorScheme !== "auto" ? { "color-scheme": this.colorScheme } : {})
-                }
-              });
-              return res.css;
-            }
-            return `[data-theme="${this.themeName}"] {\n  --p: ${this.primary};\n}`;
-          },
-
-          getTailwindSnippet() {
-            if (typeof window.tailwindConfigSnippet === "function") {
-              return window.tailwindConfigSnippet(this.themeName, {
-                primary: this.getOklch(this.primary),
-                secondary: this.getOklch(this.secondary),
-                accent: this.getOklch(this.accent),
-                neutral: this.getOklch(this.neutral),
-                "base-100": this.getOklch(this.base100),
-                "base-200": this.getOklch(this.base200),
-                "base-300": this.getOklch(this.base300),
-                "--rounded-btn": this.roundedBtn,
-                "--rounded-box": this.roundedBox,
-                "--rounded-badge": this.roundedBadge
-              });
-            }
-            return `// Tailwind config for ${this.themeName}`;
-          },
-
-          applyLiveTheme() {
-            const css = this.getCompiledCss();
-            if (typeof window.registerCustomTheme === "function") {
-              window.registerCustomTheme(this.themeName, css);
-            }
-            if (typeof window.setReportTheme === "function") {
-              window.setReportTheme(this.themeName);
-              this.activeTheme = this.themeName;
-            }
-          },
-
-          saveTheme() {
-            this.applyLiveTheme();
-            try {
-              if (typeof localStorage !== "undefined") {
-                const saved = JSON.parse(localStorage.getItem("html_report_custom_themes") || "{}");
-                saved[this.themeName] = {
-                  extends: this.extendsTheme,
-                  colorScheme: this.colorScheme,
-                  primary: this.primary,
-                  secondary: this.secondary,
-                  accent: this.accent,
-                  neutral: this.neutral,
-                  base100: this.base100,
-                  base200: this.base200,
-                  base300: this.base300,
-                  roundedBtn: this.roundedBtn,
-                  roundedBox: this.roundedBox,
-                  roundedBadge: this.roundedBadge,
-                  css: this.getCompiledCss()
-                };
-                localStorage.setItem("html_report_custom_themes", JSON.stringify(saved));
-                this.savedNotice = true;
-                setTimeout(() => { this.savedNotice = false; }, 2500);
-              }
-            } catch (_) {}
-          },
-
-          copyCss() {
-            const css = this.getCompiledCss();
-            navigator.clipboard.writeText(css).then(() => {
-              this.copiedCss = true;
-              setTimeout(() => { this.copiedCss = false; }, 2500);
-            });
-          },
-
-          copyTailwind() {
-            const tw = this.getTailwindSnippet();
-            navigator.clipboard.writeText(tw).then(() => {
-              this.copiedTailwind = true;
-              setTimeout(() => { this.copiedTailwind = false; }, 2500);
-            });
-          },
-
-          resetDefaults() {
-            this.primary = "#3b82f6";
-            this.secondary = "#ec4899";
-            this.accent = "#10b981";
-            this.neutral = "#1f2937";
-            this.base100 = "#ffffff";
-            this.base200 = "#f3f4f6";
-            this.base300 = "#e5e7eb";
-            this.roundedBtn = "0.5rem";
-            this.roundedBtnNum = 0.5;
-            this.roundedBox = "1rem";
-            this.roundedBoxNum = 1.0;
-            this.roundedBadge = "1.9rem";
-            this.roundedBadgeNum = 1.9;
-            this.applyLiveTheme();
+  // 5. Initialize Mock.js Synthetic Data
+  try {
+    const mockEl = document.getElementById("mockDataContainer");
+    if (mockEl && typeof window.Mock !== "undefined") {
+      const mockData = window.Mock.mock({
+        "users|3": [
+          {
+            "id|+1": 101,
+            "name": "@first @last",
+            "role|1": ["Core Architect", "Verification Agent", "Security Auditor"],
+            "status|1": ["Active", "Idle", "Verifying"]
           }
-        };
-      };
+        ]
+      });
+      mockEl.innerHTML = mockData.users.map(u => `
+        <div class="flex items-center justify-between p-2 rounded bg-base-100 border border-base-300">
+          <span class="font-semibold">${u.name}</span>
+          <span class="badge badge-xs badge-outline font-mono">${u.role}</span>
+        </div>
+      `).join("");
+    }
+  } catch (e) {}
 
-      // Fragment-Level Initializers for example.html Interactive Showcases
-      window.parseCsvText = function parseCsvText(rawText) {
-        const lines = (rawText || "").trim().split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-        if (!lines.length) return { headers: [], rows: [] };
-        const headers = lines[0].split(",").map((h) => h.trim());
-        const rows = lines.slice(1).map((line) => {
-          const values = line.split(",").map((v) => v.trim());
-          const obj = {};
-          headers.forEach((h, i) => { obj[h] = values[i] ?? ""; });
-          return { values, obj };
-        });
-        return { headers, rows };
-      };
+  // 6. Highlight.js Execution
+  try {
+    if (typeof window.hljs !== "undefined") {
+      window.hljs.highlightAll();
+    }
+  } catch (e) {}
 
-      window.updateCsvChart = function updateCsvChart(filteredRows, isLoaded) {
-        if (!window.Chart) return;
-        const canvas = document.getElementById("csvChart");
-        if (!canvas) return;
-        if (!isLoaded) {
-          if (window.csvChartInstance) {
-            window.reportCharts = (window.reportCharts || []).filter((c) => c !== window.csvChartInstance);
-            window.csvChartInstance.destroy();
-            window.csvChartInstance = null;
-          }
-          return;
-        }
-        const palette = typeof window.resolveDaisyUIThemePalette === "function"
-          ? window.resolveDaisyUIThemePalette()
-          : { primary: { hex: "#3b82f6", rgba: (a) => `rgba(59, 130, 246, ${a})` }, secondary: { hex: "#ec4899", rgba: (a) => `rgba(236, 72, 153, ${a})` }, content: { hex: "#111827", rgba: (a) => `rgba(17, 24, 39, ${a})` } };
-        const rows = filteredRows || [];
-        const labels = rows.map((r) => r.obj?.service || r.values?.[1] || r.values?.[0] || "Row");
-        const rpsData = rows.map((r) => parseFloat(r.obj?.rps ?? r.values?.[3] ?? "0") || 0);
-        const latencyData = rows.map((r) => parseFloat(r.obj?.latency_ms ?? r.values?.[4] ?? "0") || 0);
+  // 7. KaTeX Render
+  try {
+    if (typeof window.renderMathInElement !== "undefined") {
+      window.renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ]
+      });
+    }
+  } catch (e) {}
+});
 
-        if (window.csvChartInstance) {
-          window.csvChartInstance.data.labels = labels;
-          window.csvChartInstance.data.datasets[0].data = rpsData;
-          window.csvChartInstance.data.datasets[1].data = latencyData;
-          window.csvChartInstance.update("none");
-          return;
-        }
+// Telemetry Simulation Helper
+let simStepIndex = 1;
+function simulateTelemetryStep() {
+  simStepIndex++;
+  const contextEl = document.getElementById("sim-metric-context");
+  const progressEl = document.getElementById("sim-progress-context");
+  const velocityEl = document.getElementById("sim-metric-velocity");
+  const logEl = document.getElementById("sim-telemetry-log");
 
-        const chart = new window.Chart(canvas, {
-          type: "bar",
-          data: {
-            labels,
-            datasets: [
-              {
-                type: "bar",
-                label: "Throughput (RPS)",
-                data: rpsData,
-                backgroundColor: palette.primary.rgba(0.82),
-                borderColor: palette.primary.hex,
-                borderWidth: 1.5,
-                borderRadius: 6
-              },
-              {
-                type: "line",
-                label: "Latency (ms)",
-                data: latencyData,
-                borderColor: palette.secondary.hex,
-                backgroundColor: palette.secondary.rgba(0.2),
-                pointBackgroundColor: palette.secondary.hex,
-                tension: 0.35,
-                fill: true
-              }
-            ]
-          },
-          options: { responsive: true, maintainAspectRatio: false }
-        });
-        window.csvChartInstance = chart;
-        window.reportCharts = window.reportCharts || [];
-        if (!window.reportCharts.includes(chart)) window.reportCharts.push(chart);
-      };
+  const newSaturation = Math.min(95, 24.5 + simStepIndex * 7.5);
+  const newVelocity = Math.floor(75 + Math.random() * 40);
 
-      window.updateCsvGridTable = function updateCsvGridTable(filteredRows, headers) {
-        if (!window.gridjs) return;
-        const target = document.getElementById("csv-gridjs-table");
-        if (!target) return;
-        if (!headers || !headers.length) {
-          target.innerHTML = "";
-          window.csvGridInstance = null;
-          return;
-        }
-        const dataMatrix = (filteredRows || []).map((r) => (Array.isArray(r) ? r : r.values));
-        target.innerHTML = "";
-        const mountNode = document.createElement("div");
-        target.appendChild(mountNode);
-        window.csvGridInstance = new window.gridjs.Grid({
-          columns: headers,
-          autoWidth: false,
-          sort: true,
-          pagination: { limit: 5 },
-          data: dataMatrix
-        }).render(mountNode);
-      };
-
-      window.csvReportController = function csvReportController() {
-        return {
-          csvLoaded: false,
-          csvFileName: "example.csv",
-          rawCsvText: "",
-          headers: [],
-          allRows: [],
-          filteredRows: [],
-          availableRegions: [],
-          searchQuery: "",
-          regionFilter: "All",
-          statusFilter: "All",
-          minRps: 0,
-          maxLatency: 60,
-          showRawCsv: false,
-          totalRps: "0",
-          avgLatency: "0.0",
-          activeSummary: "No CSV loaded",
-
-          initCsvSection() { this.clearCsv(); },
-          loadExampleCsv() {
-            const embeddedEl = document.getElementById("embedded-csv-data");
-            const defaultName = embeddedEl?.getAttribute("data-csv-filename") || "example.csv";
-            const defaultText = embeddedEl ? embeddedEl.textContent.trim() : "";
-            this.loadFromRawText(defaultText, defaultName);
-          },
-          loadFromRawText(csvText, fileName) {
-            this.csvFileName = fileName || "example.csv";
-            this.rawCsvText = (csvText || "").trim();
-            const parsed = window.parseCsvText(this.rawCsvText);
-            this.headers = parsed.headers;
-            this.allRows = parsed.rows;
-            this.availableRegions = Array.from(new Set(parsed.rows.map((r) => r.obj.region).filter(Boolean)));
-            this.csvLoaded = this.headers.length > 0;
-            this.searchQuery = "";
-            this.regionFilter = "All";
-            this.statusFilter = "All";
-            this.minRps = 0;
-            this.maxLatency = 60;
-            this.applyCsvFilters();
-          },
-          clearCsv() {
-            this.csvLoaded = false;
-            this.csvFileName = "example.csv";
-            this.rawCsvText = "";
-            this.headers = [];
-            this.allRows = [];
-            this.filteredRows = [];
-            this.availableRegions = [];
-            this.searchQuery = "";
-            this.regionFilter = "All";
-            this.statusFilter = "All";
-            this.minRps = 0;
-            this.maxLatency = 60;
-            this.showRawCsv = false;
-            this.totalRps = "0";
-            this.avgLatency = "0.0";
-            this.activeSummary = "No CSV loaded";
-            const fileInput = document.getElementById("csv-file-input");
-            if (fileInput) fileInput.value = "";
-            window.updateCsvGridTable([], []);
-            window.updateCsvChart([], false);
-          },
-          applyCsvFilters() {
-            if (!this.csvLoaded) {
-              window.updateCsvGridTable([], []);
-              window.updateCsvChart([], false);
-              return;
-            }
-            const q = (this.searchQuery || "").toLowerCase().trim();
-            this.filteredRows = this.allRows.filter((row) => {
-              const matchesQuery = !q || row.values.some((val) => String(val).toLowerCase().includes(q));
-              const rowRegion = String(row.obj.region || "");
-              const matchesRegion = this.regionFilter === "All" || rowRegion === this.regionFilter;
-              const rowStatus = String(row.obj.status || "").toLowerCase();
-              const matchesStatus = this.statusFilter === "All" || rowStatus === this.statusFilter.toLowerCase();
-              const rpsNum = parseFloat(row.obj.rps || "0") || 0;
-              const matchesRps = rpsNum >= (Number(this.minRps) || 0);
-              const latNum = parseFloat(row.obj.latency_ms || "0") || 0;
-              const matchesLat = latNum <= (Number(this.maxLatency) || 60);
-              return matchesQuery && matchesRegion && matchesStatus && matchesRps && matchesLat;
-            });
-            const rpsSum = this.filteredRows.reduce((acc, r) => acc + (parseFloat(r.obj.rps || "0") || 0), 0);
-            const latSum = this.filteredRows.reduce((acc, r) => acc + (parseFloat(r.obj.latency_ms || "0") || 0), 0);
-            this.totalRps = rpsSum.toLocaleString("en-US");
-            this.avgLatency = this.filteredRows.length ? (latSum / this.filteredRows.length).toFixed(1) : "0.0";
-            this.activeSummary = `File: ${this.csvFileName} | Region: ${this.regionFilter} | Status: ${this.statusFilter} | RPS>=${this.minRps} | Lat<=${this.maxLatency}ms | Query: ${q || "none"}`;
-            window.updateCsvGridTable(this.filteredRows, this.headers);
-            window.updateCsvChart(this.filteredRows, true);
-          },
-          setStatusFilter(status) { this.statusFilter = status; this.applyCsvFilters(); },
-          resetCsvFilters() {
-            this.searchQuery = "";
-            this.regionFilter = "All";
-            this.statusFilter = "All";
-            this.minRps = 0;
-            this.maxLatency = 60;
-            this.applyCsvFilters();
-          },
-          loadCsvFile(event) {
-            const file = event?.target?.files?.[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const text = String(e.target?.result || "");
-              this.loadFromRawText(text, file.name);
-            };
-            reader.readAsText(file);
-          }
-        };
-      };
-
-      function initExampleShowcase() {
-        const palette = typeof window.resolveDaisyUIThemePalette === "function"
-          ? window.resolveDaisyUIThemePalette()
-          : {
-              primary: { hex: "#3b82f6", rgba: (a) => `rgba(59, 130, 246, ${a})` },
-              secondary: { hex: "#ec4899", rgba: (a) => `rgba(236, 72, 153, ${a})` },
-              accent: { hex: "#10b981", rgba: (a) => `rgba(16, 185, 129, ${a})` },
-              content: { hex: "#111827", rgba: (a) => `rgba(17, 24, 39, ${a})` },
-              info: { hex: "#0284c7", rgba: (a) => `rgba(2, 132, 199, ${a})` }
-            };
-
-        // Charts
-        if (window.Chart && document.getElementById("revenueChart") && !document.getElementById("revenueChart").__initialized) {
-          const revCtx = document.getElementById("revenueChart");
-          revCtx.__initialized = true;
-          const revChart = new window.Chart(revCtx, {
-            type: "bar",
-            data: {
-              labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
-              datasets: [
-                {
-                  type: "bar",
-                  label: "Throughput (req/s)",
-                  data: [48.2, 54.6, 63.1, 72.4, 83.0, 95.8, 112.4, 134.6],
-                  backgroundColor: palette.primary.rgba(0.82),
-                  borderColor: palette.primary.hex,
-                  borderWidth: 1.5,
-                  borderRadius: 6
-                },
-                {
-                  type: "line",
-                  label: "Baseline Latency (ms)",
-                  data: [42.1, 39.8, 37.4, 35.9, 33.5, 31.2, 29.0, 26.8],
-                  borderColor: palette.secondary.hex,
-                  backgroundColor: palette.secondary.rgba(0.2),
-                  pointBackgroundColor: palette.secondary.hex,
-                  tension: 0.35,
-                  fill: true
-                }
-              ]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-          });
-          window.reportCharts = window.reportCharts || [];
-          window.reportCharts.push(revChart);
-        }
-
-        if (window.Chart && document.getElementById("workloadChart") && !document.getElementById("workloadChart").__initialized) {
-          const workCtx = document.getElementById("workloadChart");
-          workCtx.__initialized = true;
-          const workChart = new window.Chart(workCtx, {
-            type: "bar",
-            data: {
-              labels: ["sm (640)", "md (768)", "lg (1024)", "xl (1280)", "2xl (1536)"],
-              datasets: [
-                {
-                  label: "Container Width (px)",
-                  data: [608, 720, 960, 1216, 1280],
-                  backgroundColor: palette.accent.rgba(0.82),
-                  borderColor: palette.accent.hex,
-                  borderWidth: 1.5,
-                  borderRadius: 6
-                }
-              ]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-          });
-          window.reportCharts = window.reportCharts || [];
-          window.reportCharts.push(workChart);
-        }
-
-        // Leaflet
-        if (window.L && document.getElementById("datacenterMap") && !document.getElementById("datacenterMap").__initialized) {
-          const mapContainer = document.getElementById("datacenterMap");
-          mapContainer.__initialized = true;
-          const map = window.L.map(mapContainer, { scrollWheelZoom: false }).setView([34.0, 15.0], 2);
-          window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
-            maxZoom: 18,
-            attribution: "Tiles &copy; Esri"
-          }).addTo(map);
-
-          const hubs = [
-            { name: "Amsterdam Edge Node", coords: [52.3676, 4.9041], status: "Active" },
-            { name: "Frankfurt Core Node", coords: [50.1109, 8.6821], status: "Active" },
-            { name: "Ashburn US-East Node", coords: [39.0438, -77.4874], status: "Active" },
-            { name: "Tokyo AP-East Node", coords: [35.6762, 139.6503], status: "Active" }
-          ];
-
-          hubs.forEach((hub) => {
-            window.L.circleMarker(hub.coords, {
-              radius: 8,
-              fillColor: "#2563eb",
-              color: "#ffffff",
-              weight: 2,
-              opacity: 1,
-              fillOpacity: 0.9
-            }).addTo(map).bindPopup(`<strong>${hub.name}</strong><br/>Status: ${hub.status}`);
-          });
-
-          window.reportLeafletMap = map;
-          setTimeout(() => map.invalidateSize(), 250);
-        }
-
-        // Grid.js
-        if (window.gridjs && document.getElementById("gridjs-benchmark-table") && !document.getElementById("gridjs-benchmark-table").__initialized) {
-          const target = document.getElementById("gridjs-benchmark-table");
-          target.__initialized = true;
-          target.innerHTML = "";
-          new window.gridjs.Grid({
-            columns: ["Library", "Category", "Loading", "Theme Sync", "Status"],
-            autoWidth: false,
-            search: true,
-            sort: true,
-            pagination: { limit: 5 },
-            data: [
-              ["Tailwind CSS", "Utility Layout", "Non-Blocking", "CSS Tokens", "Verified"],
-              ["DaisyUI", "Components & 32 Themes", "Stylesheet", "Native", "Verified"],
-              ["Lucide Icons", "SVG Vector Icons", "defer UMD", "currentColor", "Verified"],
-              ["Alpine.js", "Reactive State", "defer CDN", "Native DOM", "Verified"],
-              ["Chart.js", "Canvas Charts", "defer UMD", "Dynamic Palette", "Verified"],
-              ["Mermaid", "SVG Diagrams", "defer UMD", "themeVariables", "Verified"],
-              ["Leaflet", "Geospatial Maps", "defer UMD", "Esri Tiles", "Verified"],
-              ["Grid.js", "Interactive Tables", "defer UMD", "Dark/Light Vars", "Verified"],
-              ["KaTeX", "Math Typesetting", "defer UMD", "currentColor", "Verified"],
-              ["Marked", "Markdown Parser", "defer UMD", "Prose Tokens", "Verified"],
-              ["Highlight.js", "TS & Kotlin Code", "defer UMD", "Syntax Theme", "Verified"],
-              ["Day.js", "Date Parsing & Relative Time", "defer UMD", "2kB Bundle", "Verified"],
-              ["Impress.js", "3D Presentation Guard", "Static Fallback", "Print-Safe", "Verified"],
-              ["Mock.js", "Client Synthetic Engine", "defer UMD", "Offline Schema", "Verified"],
-              ["Showdown", "Two-Way Markdown Parser", "defer UMD", "Marked Safe", "Verified"],
-              ["FullCalendar", "Interactive Scheduling", "defer UMD", "DaisyUI Synced", "Verified"],
-              ["Datastar.js", "Real-Time SSE Morphing & Signals", "type=module", "Idiomorph Morphing", "Verified"]
-            ]
-          }).render(target);
-        }
-
-        // KaTeX
-        if (window.renderMathInElement && document.getElementById("katex-math-block")) {
-          window.renderMathInElement(document.getElementById("katex-math-block"), {
-            delimiters: [
-              { left: "$$", right: "$$", display: true },
-              { left: "$", right: "$", display: false }
-            ],
-            throwOnError: false
-          });
-        }
-
-        // Marked
-        if (window.marked && document.getElementById("markdown-source") && document.getElementById("markdown-output")) {
-          const src = document.getElementById("markdown-source").textContent.trim();
-          const outEl = document.getElementById("markdown-output");
-          outEl.innerHTML = window.marked.parse(src);
-          outEl.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((h) => {
-            if (!h.id) {
-              h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-            }
-          });
-          if (typeof window.initTOC === "function") {
-            window.initTOC();
-          }
-        }
-
-        // Highlight.js
-        if (window.hljs) {
-          window.hljs.highlightAll();
-        }
-
-        // FullCalendar Hydration
-        if (typeof window.initFullCalendar === "function") {
-          window.initFullCalendar();
-        }
-
-        // Impress.js Presentation Mode Hydration
-        if (typeof window.initImpress === "function") {
-          window.initImpress();
-        }
-      }
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => {
-          setTimeout(initExampleShowcase, 100);
-        });
-      } else {
-        setTimeout(initExampleShowcase, 100);
-      }
-    </script>
+  if (contextEl) contextEl.textContent = newSaturation.toFixed(1) + "%";
+  if (progressEl) progressEl.value = newSaturation;
+  if (velocityEl) velocityEl.textContent = newVelocity + " tokens/s";
+  if (logEl) {
+    const time = new Date().toTimeString().split(" ")[0];
+    logEl.textContent = `[${time}] step ${simStepIndex}: SSE patch received -> Idiomorph morphed #task-${simStepIndex} (0.4ms)\n` + logEl.textContent;
+  }
+}
+</script>
   </main>
 
   <!-- Minimal Centered Footer -->
@@ -3285,12 +2007,62 @@ function exportReportPdf() {
 }
 
 /**
+ * Mode-adaptive navbar status badge and download options.
+ */
+function initModeBadge() {
+  if (typeof document === "undefined") return;
+  const rawMode = document.documentElement.getAttribute("data-report-mode") || "report";
+  const badgeEl = document.getElementById("navbar-mode-badge");
+  const pdfStatusBadge = document.querySelector("#download-pdf-btn .badge");
+
+  if (badgeEl) {
+    badgeEl.classList.remove("hidden", "badge-neutral", "badge-primary", "badge-secondary", "badge-accent", "badge-info", "badge-success", "badge-warning", "badge-ghost");
+
+    switch (rawMode) {
+      case "print":
+        badgeEl.textContent = "PRINT";
+        badgeEl.classList.add("badge-neutral");
+        break;
+      case "presentation":
+        badgeEl.textContent = "PRESENTATION";
+        badgeEl.classList.add("badge-secondary");
+        break;
+      case "dashboard":
+        badgeEl.textContent = "DASHBOARD";
+        badgeEl.classList.add("badge-info");
+        break;
+      case "working-report":
+        badgeEl.textContent = "JOURNEY";
+        badgeEl.classList.add("badge-accent");
+        break;
+      case "live-report":
+        badgeEl.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-success animate-pulse mr-1"></span>LIVE`;
+        badgeEl.classList.add("badge-success", "badge-outline");
+        break;
+      case "report":
+      default:
+        badgeEl.textContent = "REPORT";
+        badgeEl.classList.add("badge-ghost");
+        break;
+    }
+  }
+
+  if (pdfStatusBadge && rawMode === "print") {
+    pdfStatusBadge.textContent = "PDF-Ready";
+    pdfStatusBadge.classList.remove("badge-warning");
+    pdfStatusBadge.classList.add("badge-success");
+  }
+}
+
+/**
  * Initializes the download menu actions (HTML & PDF).
  */
 function initDownloadButton() {
   if (typeof document === "undefined") return;
   const htmlBtn = document.getElementById("download-html-btn");
   const pdfBtn = document.getElementById("download-pdf-btn");
+
+  initModeBadge();
 
   if (htmlBtn) {
     htmlBtn.addEventListener("click", async () => {
@@ -3317,8 +2089,8 @@ function initDownloadButton() {
 
   if (pdfBtn) {
     pdfBtn.addEventListener("click", () => {
-      const reportMode = document.documentElement.getAttribute("data-report-mode") || "interactive";
-      if (reportMode === "interactive") {
+      const reportMode = document.documentElement.getAttribute("data-report-mode") || "report";
+      if (reportMode !== "print") {
         const modal = document.getElementById("pdf-not-ready-modal");
         if (modal && typeof modal.showModal === "function") {
           modal.showModal();
@@ -3466,6 +2238,43 @@ function initMockjs() {
   } catch (err) {
     console.warn("[html-report] Mock.js hydration notice:", err);
   }
+}
+
+/**
+ * Auto-links any mentioned *.md files in text nodes to interactive viewer triggers.
+ */
+function autoLinkMarkdownFiles(root = document.body) {
+  if (typeof document === "undefined" || !root) return;
+  try {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.nodeValue || !node.nodeValue.includes(".md")) return NodeFilter.FILTER_REJECT;
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        const tag = parent.tagName.toLowerCase();
+        if (tag === "a" || tag === "script" || tag === "style" || tag === "button" || tag === "textarea") {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const nodes = [];
+    while (walker.nextNode()) {
+      nodes.push(walker.currentNode);
+    }
+
+    const mdRegex = /\b([a-zA-Z0-9_\/-]+\.md)\b/g;
+    for (const node of nodes) {
+      const text = node.nodeValue;
+      if (!text || !text.match(mdRegex)) continue;
+      const span = document.createElement("span");
+      span.innerHTML = text.replace(mdRegex, (match) => {
+        return `<a href="${match}" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('${match}');return false;}" class="link link-primary font-mono text-xs underline decoration-primary/40 hover:decoration-primary cursor-pointer">${match}</a>`;
+      });
+      node.parentNode.replaceChild(span, node);
+    }
+  } catch (_) {}
 }
 
 /**
@@ -3660,6 +2469,326 @@ function syncDatastarTheme(themeName) {
   } catch (_) {}
 }
 
+// =============================================================================
+// Declarative Public Feeds & Signal Bus
+// =============================================================================
+
+let _activeFeedPollers = [];
+
+/**
+ * Parses and returns the Nickname Registry from <script id="feed-registry">.
+ */
+function getFeedRegistry(root) {
+  const doc = (root && typeof root.querySelector === "function")
+    ? root
+    : (root && root.ownerDocument ? root.ownerDocument : (typeof document !== "undefined" ? document : null));
+  if (!doc) return {};
+  const script = doc.querySelector("script#feed-registry[type='application/json'], script#feed-registry");
+  if (!script || !script.textContent) return {};
+  try {
+    return JSON.parse(script.textContent);
+  } catch (err) {
+    console.warn("[html-report] Failed to parse #feed-registry JSON:", err);
+    return {};
+  }
+}
+
+/**
+ * Resolves a raw feed reference (either @nickname or direct URL).
+ */
+function resolveFeedUrl(rawFeed, registry = {}) {
+  if (!rawFeed || typeof rawFeed !== "string") {
+    return { url: null, error: "Empty feed declaration", nickname: null };
+  }
+  const trimmed = rawFeed.trim();
+  if (trimmed.startsWith("@")) {
+    const nickname = trimmed.slice(1);
+    const resolved = registry[nickname];
+    if (!resolved) {
+      const msg = `Unknown feed nickname: @${nickname}`;
+      console.warn(`[html-report] ${msg}`);
+      return { url: null, error: msg, nickname };
+    }
+    return { url: resolved, nickname, error: null };
+  }
+  return { url: trimmed, nickname: null, error: null };
+}
+
+/**
+ * Extracts specified top-level or dot-notated nested fields from JSON payload.
+ */
+function extractFeedFields(payload, fieldsAttr, prefix = "") {
+  const result = {};
+  if (payload === null || payload === undefined) {
+    return result;
+  }
+  if (typeof payload !== "object") {
+    const key = prefix ? `${prefix}val` : "val";
+    result[key] = payload;
+    return result;
+  }
+
+  if (fieldsAttr && typeof fieldsAttr === "string" && fieldsAttr.trim()) {
+    const fields = fieldsAttr.split(",").map((s) => s.trim()).filter(Boolean);
+    for (const field of fields) {
+      const parts = field.split(".");
+      let current = payload;
+      let found = true;
+      for (const p of parts) {
+        if (current !== null && typeof current === "object" && p in current) {
+          current = current[p];
+        } else {
+          found = false;
+          break;
+        }
+      }
+      if (found) {
+        const keyName = prefix + field.replace(/\./g, "_");
+        result[keyName] = current;
+      }
+    }
+  } else {
+    // Default: extract all top-level keys
+    for (const [k, v] of Object.entries(payload)) {
+      const keyName = prefix + k.replace(/\./g, "_");
+      result[keyName] = v;
+    }
+  }
+  return result;
+}
+
+/**
+ * Dispatches Datastar signal updates to the document and runtime window.
+ */
+function mergeFeedSignals(signalsObj) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  if (!signalsObj || Object.keys(signalsObj).length === 0) return;
+
+  try {
+    const evt = new CustomEvent("datastar-merge-signals", {
+      bubbles: true,
+      detail: signalsObj
+    });
+    document.dispatchEvent(evt);
+  } catch (_) {}
+
+  if (window.datastar) {
+    if (typeof window.datastar.mergeSignals === "function") {
+      try { window.datastar.mergeSignals(signalsObj); } catch (_) {}
+    } else if (window.datastar.signals && typeof window.datastar.signals === "object") {
+      try { Object.assign(window.datastar.signals, signalsObj); } catch (_) {}
+    }
+  }
+
+  try {
+    const signalHolders = document.querySelectorAll("[data-signals]");
+    signalHolders.forEach((el) => {
+      if (el._dsSignals && typeof el._dsSignals === "object") {
+        Object.assign(el._dsSignals, signalsObj);
+      }
+    });
+  } catch (_) {}
+}
+
+/**
+ * Updates Chart.js canvases tagged with [data-feed-chart].
+ */
+function updateFeedCharts(signals, timestamp = Date.now()) {
+  if (typeof document === "undefined" || !signals || typeof signals !== "object") return;
+  const chartCanvases = document.querySelectorAll("canvas[data-feed-chart]");
+  chartCanvases.forEach((canvas) => {
+    const signalKey = canvas.getAttribute("data-feed-chart");
+    if (!signalKey || signals[signalKey] === undefined) return;
+    const rawVal = signals[signalKey];
+    const numVal = Number(rawVal);
+    if (isNaN(numVal)) return;
+
+    const bufferMax = parseInt(canvas.getAttribute("data-feed-buffer") || "20", 10) || 20;
+
+    // Resolve chart instance
+    let chart = null;
+    if (typeof window !== "undefined") {
+      if (window.Chart && typeof window.Chart.getChart === "function") {
+        chart = window.Chart.getChart(canvas);
+      }
+      if (!chart && canvas._chart) chart = canvas._chart;
+      if (!chart && canvas.chart) chart = canvas.chart;
+      if (!chart && window.reportCharts && Array.isArray(window.reportCharts)) {
+        chart = window.reportCharts.find((c) => c && (c.canvas === canvas || c === canvas._chart));
+      }
+    }
+
+    if (chart && chart.data && chart.data.datasets && chart.data.datasets[0]) {
+      const d = new Date(timestamp);
+      const timeLabel = d.toTimeString().split(" ")[0]; // HH:MM:SS
+      if (!chart.data.labels) chart.data.labels = [];
+      chart.data.labels.push(timeLabel);
+      if (!chart.data.datasets[0].data) chart.data.datasets[0].data = [];
+      chart.data.datasets[0].data.push(numVal);
+
+      while (chart.data.labels.length > bufferMax) {
+        chart.data.labels.shift();
+      }
+      while (chart.data.datasets[0].data.length > bufferMax) {
+        chart.data.datasets[0].data.shift();
+      }
+
+      if (typeof chart.update === "function") {
+        chart.update("none");
+      }
+    }
+  });
+}
+
+/**
+ * Stops all active polling intervals and aborts in-flight network requests.
+ */
+function cleanupPublicFeeds() {
+  if (_activeFeedPollers && _activeFeedPollers.length > 0) {
+    for (const poller of _activeFeedPollers) {
+      if (poller.timerId) {
+        clearInterval(poller.timerId);
+      }
+      if (poller.abortController) {
+        try { poller.abortController.abort(); } catch (_) {}
+      }
+    }
+    _activeFeedPollers = [];
+  }
+}
+
+/**
+ * Discovers and initializes all declarative public feed bindings.
+ */
+function initPublicFeeds(rootElement) {
+  if (typeof document === "undefined") return [];
+  const root = rootElement || document;
+
+  cleanupPublicFeeds();
+
+  const feedElements = Array.from(root.querySelectorAll("[data-public-feed]"));
+  if (feedElements.length === 0) return [];
+
+  const registry = getFeedRegistry(root);
+  const isOfflineOrPdf = (typeof window !== "undefined" && (window.__PLAYWRIGHT_PDF_MODE__ || (typeof navigator !== "undefined" && navigator.onLine === false)));
+
+  // 1. Process fallback data if present
+  for (const el of feedElements) {
+    const fallbackStr = el.getAttribute("data-feed-fallback");
+    if (fallbackStr) {
+      try {
+        const fallbackData = JSON.parse(fallbackStr);
+        const fields = el.getAttribute("data-feed-fields");
+        const prefix = el.getAttribute("data-feed-prefix") || "";
+        const signals = extractFeedFields(fallbackData, fields, prefix);
+        mergeFeedSignals(signals);
+        updateFeedCharts(signals, Date.now());
+      } catch (e) {
+        console.warn("[html-report] Invalid data-feed-fallback JSON:", e);
+      }
+    }
+  }
+
+  if (isOfflineOrPdf) {
+    return feedElements;
+  }
+
+  // 2. Group by resolved URL & interval for request deduplication
+  const groups = new Map();
+
+  for (const el of feedElements) {
+    const rawFeed = el.getAttribute("data-public-feed");
+    const { url, nickname, error } = resolveFeedUrl(rawFeed, registry);
+
+    if (error) {
+      mergeFeedSignals({ feed_error: error });
+      continue;
+    }
+
+    const intervalAttr = el.getAttribute("data-feed-interval");
+    const parsedInterval = intervalAttr ? parseInt(intervalAttr, 10) : 60000;
+    const minGuard = (typeof window !== "undefined" && window.__FEED_MIN_INTERVAL__ !== undefined) ? window.__FEED_MIN_INTERVAL__ : 10000;
+    const interval = Math.max(minGuard, isNaN(parsedInterval) ? 60000 : parsedInterval);
+
+    const groupKey = `${url}::${interval}`;
+    if (!groups.has(groupKey)) {
+      groups.set(groupKey, {
+        url,
+        interval,
+        subscribers: []
+      });
+    }
+
+    groups.get(groupKey).subscribers.push({
+      el,
+      nickname,
+      url,
+      fields: el.getAttribute("data-feed-fields"),
+      prefix: el.getAttribute("data-feed-prefix") || ""
+    });
+  }
+
+  // 3. Initiate single fetch and periodic poller for each unique group
+  for (const [groupKey, group] of groups.entries()) {
+    const abortController = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const pollerRecord = {
+      groupKey,
+      url: group.url,
+      interval: group.interval,
+      abortController,
+      timerId: null,
+      subscribers: group.subscribers
+    };
+
+    const executeFetch = async () => {
+      if (pollerRecord.abortController && pollerRecord.abortController.signal.aborted) return;
+      try {
+        const fetchOptions = pollerRecord.abortController ? { signal: pollerRecord.abortController.signal } : {};
+        const response = await fetch(group.url, fetchOptions);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        const timestamp = Date.now();
+        const combinedSignals = {};
+
+        for (const sub of group.subscribers) {
+          const signals = extractFeedFields(data, sub.fields, sub.prefix);
+          Object.assign(combinedSignals, signals);
+        }
+
+        mergeFeedSignals(combinedSignals);
+        updateFeedCharts(combinedSignals, timestamp);
+
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("feed:tick", {
+            detail: {
+              feedId: group.subscribers[0].nickname ? `@${group.subscribers[0].nickname}` : group.url,
+              url: group.url,
+              data,
+              signals: combinedSignals,
+              timestamp
+            }
+          }));
+        }
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        console.warn(`[html-report] Feed fetch failed for ${group.url}:`, err);
+        mergeFeedSignals({ feed_error: err.message || "Fetch failed" });
+      }
+    };
+
+    // Immediate initial fetch
+    executeFetch();
+
+    // Schedule interval
+    pollerRecord.timerId = setInterval(executeFetch, group.interval);
+    _activeFeedPollers.push(pollerRecord);
+  }
+
+  return feedElements;
+}
+
 // Global browser window bindings
 if (typeof window !== "undefined") {
   window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
@@ -3685,6 +2814,7 @@ if (typeof window !== "undefined") {
   window.checkInsufficientHorizontalSpace = checkInsufficientHorizontalSpace;
   window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
   window.exportReportPdf = exportReportPdf;
+  window.initModeBadge = initModeBadge;
   window.initDownloadButton = initDownloadButton;
   window.initDayjs = initDayjs;
   window.initImpress = initImpress;
@@ -3697,11 +2827,20 @@ if (typeof window !== "undefined") {
   window.rehydrateLucideIcons = rehydrateLucideIcons;
   window.initDatastarObserver = initDatastarObserver;
   window.syncDatastarTheme = syncDatastarTheme;
+  window.autoLinkMarkdownFiles = autoLinkMarkdownFiles;
+  window.reinitReportContent = reinitReportContent;
+  window.initPublicFeeds = initPublicFeeds;
+  window.cleanupPublicFeeds = cleanupPublicFeeds;
+  window.resolveFeedUrl = resolveFeedUrl;
+  window.getFeedRegistry = getFeedRegistry;
+  window.extractFeedFields = extractFeedFields;
+  window.updateFeedCharts = updateFeedCharts;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
     try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
     try { initTOC(); } catch (_) {}
+    try { initModeBadge(); } catch (_) {}
     try { initThemeDropdown(); } catch (_) {}
     try { initDownloadButton(); } catch (_) {}
     try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
@@ -3711,13 +2850,36 @@ if (typeof window !== "undefined") {
     try { initFullCalendar(); } catch (_) {}
     try { initImpress(); } catch (_) {}
     try { initDatastarObserver(); } catch (_) {}
+    try { autoLinkMarkdownFiles(); } catch (_) {}
+    try { initPublicFeeds(); } catch (_) {}
 
     const palette = resolveDaisyUIThemePalette();
     try { await renderMermaidWithTheme(palette); } catch (_) {}
     try { checkInsufficientHorizontalSpace(); } catch (_) {}
     window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.addEventListener("beforeunload", () => {
+      try { cleanupPublicFeeds(); } catch (_) {}
+    });
     window.__REPORT_READY__ = true;
   });
+}
+
+/**
+ * Re-runs content-level hydration after <main> was hot-swapped in place by the
+ * live-reload dev server (no full page reload, so theme + scroll are preserved).
+ * Only touches content hooks; navbar/theme/download wiring stays as-is.
+ */
+async function reinitReportContent() {
+  if (typeof document === "undefined") return;
+  try { cleanupPublicFeeds(); } catch (_) {}
+  try { rehydrateLucideIcons(); } catch (_) {}
+  try { initTOC(); } catch (_) {}
+  try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
+  try { initDayjs(); } catch (_) {}
+  try { autoLinkMarkdownFiles(); } catch (_) {}
+  try { await renderMermaidWithTheme(resolveDaisyUIThemePalette()); } catch (_) {}
+  try { checkInsufficientHorizontalSpace(); } catch (_) {}
+  try { initPublicFeeds(); } catch (_) {}
 }
 
 // Node.js CommonJS exports for unit testing
@@ -3746,6 +2908,7 @@ if (typeof module !== "undefined" && module.exports) {
     checkInsufficientHorizontalSpace,
     buildInlinedHtmlSnapshot,
     exportReportPdf,
+    initModeBadge,
     initDownloadButton,
     initDayjs,
     initImpress,
@@ -3757,7 +2920,17 @@ if (typeof module !== "undefined" && module.exports) {
     initFullCalendar,
     rehydrateLucideIcons,
     initDatastarObserver,
-    syncDatastarTheme
+    syncDatastarTheme,
+    autoLinkMarkdownFiles,
+    reinitReportContent,
+    initPublicFeeds,
+    cleanupPublicFeeds,
+    resolveFeedUrl,
+    getFeedRegistry,
+    extractFeedFields,
+    updateFeedCharts,
+    mergeFeedSignals,
+    _getActiveFeedPollers: () => _activeFeedPollers
   };
 }
 

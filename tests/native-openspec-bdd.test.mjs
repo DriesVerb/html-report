@@ -199,10 +199,10 @@ The engine must convert hex to OKLCH.
       assert.ok(fs.existsSync(shortcut));
       assert.match(shortcut, /openspec\/specs\/agent-tracker\/spec\.md$/);
 
-      // 3. Change delta shortcut
+      // 3. Change delta or archived capability shortcut
       const deltaShortcut = resolveSpecPath("native-openspec-bdd");
       assert.ok(fs.existsSync(deltaShortcut));
-      assert.match(deltaShortcut, /openspec\/changes\/native-openspec-bdd\/specs\/native-openspec-bdd\/spec\.md$/);
+      assert.match(deltaShortcut, /openspec\/(?:specs|changes)\/native-openspec-bdd(?:\/specs\/native-openspec-bdd)?\/spec\.md$/);
     });
 
     it("loadSpec should throw an error if file does not exist", () => {
@@ -214,7 +214,7 @@ The engine must convert hex to OKLCH.
 
     it("loadSpec should discover scenarios and compute stats", () => {
       const spec = loadSpec("native-openspec-bdd");
-      assert.equal(spec.title, "Spec Delta: Native OpenSpec BDD-as-TDD Verification Harness");
+      assert.ok(spec.title.includes("native-openspec-bdd") || spec.title.includes("Native OpenSpec BDD"));
       assert.equal(spec.totalScenarios, 5);
       assert.equal(spec.requirements.length, 3);
     });

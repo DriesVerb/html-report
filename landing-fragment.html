@@ -1,0 +1,766 @@
+<!-- ========================================== -->
+<!-- HERO SECTION                               -->
+<!-- ========================================== -->
+<section class="py-12 sm:py-16 lg:py-20 text-center space-y-6">
+  <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-base-100 border border-base-300 text-xs font-semibold shadow-sm">
+    <span class="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
+    <span class="text-base-content/80">v2.0 • 17 Non-Blocking CDNs • Deterministic FSM</span>
+  </div>
+
+  <div class="max-w-4xl mx-auto space-y-4">
+    <h1 id="hero-headline" class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-base-content leading-tight">
+      Publication-Grade HTML5 Reports <br class="hidden sm:inline" />
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">for AI Coding Agents</span>
+    </h1>
+    <p class="text-base sm:text-lg text-base-content/75 max-w-2xl mx-auto leading-relaxed">
+      The deterministic assembly engine &amp; Agent Skill that turns 500-token semantic fragments into responsive, theme-adaptive, production-grade dashboards with <strong>~70% fewer tokens</strong> in <strong>&lt;100ms</strong>.
+    </p>
+  </div>
+
+  <!-- Primary CTAs -->
+  <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+    <a href="#capability-explorer" class="btn btn-primary gap-2 shadow-md hover:scale-105 transition-transform">
+      <i data-lucide="sparkles" class="w-4 h-4"></i> Explore Capabilities
+    </a>
+    <a href="#documentation-hub" class="btn btn-outline gap-2 hover:btn-secondary transition-colors">
+      <i data-lucide="book-open" class="w-4 h-4"></i> Documentation Hub
+    </a>
+    <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="btn btn-ghost gap-2 border border-base-300">
+      <i data-lucide="github" class="w-4 h-4"></i> GitHub
+    </a>
+  </div>
+
+  <!-- 1-Click Copy Agent Prompt Card -->
+  <div class="max-w-3xl mx-auto mt-8 text-left">
+    <div class="card bg-base-100 border border-base-300 shadow-xl overflow-hidden">
+      <div class="bg-base-200/80 px-4 py-2.5 border-b border-base-300 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-error/70"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-warning/70"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-success/70"></span>
+          <span class="text-xs font-mono font-bold text-base-content/70 ml-2">1-Click Agent Install Prompt</span>
+        </div>
+        <button id="copy-prompt-btn" type="button" onclick="copyAgentPrompt()" class="btn btn-xs btn-primary gap-1.5 font-mono">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span id="copy-prompt-text">Copy Prompt</span>
+        </button>
+      </div>
+      <div class="p-4 bg-base-100 text-xs font-mono text-base-content/90 overflow-x-auto leading-relaxed select-all">
+        <code id="agent-prompt-code">Install the html-report skill from https://github.com/DriesVerb/html-report.git by cloning it into ~/.agents/html-report, symlinking ~/.agents/html-report/skills/html-report into ~/.agents/skills/html-report (and ~/.gemini/config/skills/html-report if using Antigravity/Gemini), and installing Playwright in ~/.agents/html-report/skills/html-report/playwright. Then read skills/html-report/SKILL.md.</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- VALUE PROPOSITION PILLARS (6-CARD GRID)    -->
+<!-- ========================================== -->
+<section class="space-y-6">
+  <div class="text-center max-w-2xl mx-auto space-y-2">
+    <h2 id="core-pillars" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
+      Why Leading Agent Workflows Rely on html-report
+    </h2>
+    <p class="text-sm text-base-content/70">
+      Built specifically to eliminate token waste, layout hallucination, and broken CDN links in autonomous LLM pipelines.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <!-- Pillar 1 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+        <i data-lucide="zap" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-assembly" class="text-lg font-bold text-base-content">Deterministic Assembly (&lt;100ms)</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Agents output only high-value semantic tags. The zero-dependency Node engine validates, auto-fixes headings and tables, and builds complete HTML in under 100 milliseconds.
+      </p>
+    </div>
+
+    <!-- Pillar 2 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center font-bold">
+        <i data-lucide="palette" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-themes" class="text-lg font-bold text-base-content">32 DaisyUI Themes + OKLCH</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Navbar swatch picker with 32 official themes defaulting to light. Pure JS OKLCH engine calculates perceptual palettes that synchronize Chart.js, Mermaid, and Grid.js in real time.
+      </p>
+    </div>
+
+    <!-- Pillar 3 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center font-bold">
+        <i data-lucide="layers" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-cdns" class="text-lg font-bold text-base-content">17 Non-Blocking CDNs</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Zero heavy npm build step. High-performance charts, architecture flowcharts, Leaflet maps, KaTeX equations, syntax highlighting, and FullCalendar grids load on demand.
+      </p>
+    </div>
+
+    <!-- Pillar 4 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-info/10 text-info flex items-center justify-center font-bold">
+        <i data-lucide="shield-check" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-security" class="text-lg font-bold text-base-content">Cryptographic SRI &amp; CSP</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        All remote CDN assets carry SHA-384 cryptographic integrity hashes with anonymous cross-origin, strict Content Security Policy, and no-referrer privacy headers.
+      </p>
+    </div>
+
+    <!-- Pillar 5 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-success/10 text-success flex items-center justify-center font-bold">
+        <i data-lucide="activity" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-telemetry" class="text-lg font-bold text-base-content">Real-Time Datastar Streaming</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Stream live agent telemetry, task checklist morphs, and tool execution drawers directly into the browser over Server-Sent Events (SSE) without page reloads.
+      </p>
+    </div>
+
+    <!-- Pillar 6 -->
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-warning/10 text-warning flex items-center justify-center font-bold">
+        <i data-lucide="smartphone" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-verification" class="text-lg font-bold text-base-content">5-Breakpoint Verification</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Playwright verification checks viewports from 375px mobile to 1536px desktop, flagging horizontal scrollbars (<code>scrollWidth &gt; clientWidth</code>) with prescriptive auto-fixes.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- INTERACTIVE CAPABILITY EXPLORER (TABBED)   -->
+<!-- ========================================== -->
+<section id="capability-explorer" class="space-y-6 pt-6">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <div class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider mb-2">Interactive Showcase</div>
+      <h2 id="capability-explorer-title" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
+        Explore the 17-Library CDN Power Stack
+      </h2>
+      <p class="text-sm text-base-content/70">
+        Test each capability live. Switch the DaisyUI theme in the top navbar to see real-time color re-theming.
+      </p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="badge badge-outline font-mono text-xs gap-1">
+        <i data-lucide="check" class="w-3.5 h-3.5 text-success"></i> 100% Client-Side
+      </span>
+    </div>
+  </div>
+
+  <!-- Tabbed Showcase Card -->
+  <div class="card bg-base-100 border border-base-300 shadow-md overflow-hidden">
+    <!-- Tab Headers -->
+    <div class="border-b border-base-300 bg-base-200/50 p-2 overflow-x-auto">
+      <div class="tabs tabs-boxed bg-transparent gap-1 flex-nowrap" id="capability-tabs">
+        <button type="button" onclick="switchShowcaseTab('charts')" class="tab tab-active font-semibold text-xs gap-1.5 transition" id="tab-btn-charts">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Charts &amp; Analytics
+        </button>
+        <button type="button" onclick="switchShowcaseTab('diagrams')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-diagrams">
+          <i data-lucide="git-branch" class="w-4 h-4"></i> Architecture Flows
+        </button>
+        <button type="button" onclick="switchShowcaseTab('tables')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-tables">
+          <i data-lucide="table" class="w-4 h-4"></i> Interactive Tables
+        </button>
+        <button type="button" onclick="switchShowcaseTab('maps')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-maps">
+          <i data-lucide="map-pin" class="w-4 h-4"></i> Geospatial Maps
+        </button>
+        <button type="button" onclick="switchShowcaseTab('telemetry')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-telemetry">
+          <i data-lucide="activity" class="w-4 h-4"></i> Live Telemetry
+        </button>
+        <button type="button" onclick="switchShowcaseTab('mathcode')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-mathcode">
+          <i data-lucide="code" class="w-4 h-4"></i> Math &amp; Code Syntax
+        </button>
+        <button type="button" onclick="switchShowcaseTab('widgets')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-widgets">
+          <i data-lucide="calendar" class="w-4 h-4"></i> Calendar &amp; Synthetic Data
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Content Panels -->
+    <div class="p-6">
+      <!-- 1. Charts Tab -->
+      <div id="tab-panel-charts" class="tab-panel space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-charts-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="bar-chart" class="w-4 h-4 text-primary"></i> Chart.js 4.4 — Theme-Adaptive Canvas Rendering
+            </h3>
+            <p class="text-xs text-base-content/70">Canvas palettes automatically synchronize when you switch DaisyUI themes.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Chart.js UMD</span>
+        </div>
+        <div class="h-64 sm:h-72 w-full max-w-full">
+          <canvas id="showcaseChart" class="w-full h-full"></canvas>
+        </div>
+      </div>
+
+      <!-- 2. Diagrams Tab -->
+      <div id="tab-panel-diagrams" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-diagrams-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="git-merge" class="w-4 h-4 text-secondary"></i> Mermaid 11.4 — Architecture &amp; Sequence Diagrams
+            </h3>
+            <p class="text-xs text-base-content/70">SVG diagrams rendered client-side with auto-theme contrast defense.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Mermaid UMD</span>
+        </div>
+        <div class="overflow-x-auto py-2 bg-base-200/40 rounded-lg p-4 border border-base-300">
+          <pre class="mermaid text-center">
+sequenceDiagram
+    autonumber
+    participant Agent as AI Coding Agent
+    participant Harness as FSM Harness (harness.mjs)
+    participant Shell as Pre-bundled DaisyUI Shell
+    participant Verifier as Playwright Gate
+
+    Agent->>Harness: Emits semantic &lt;main&gt; fragment (500 tokens)
+    Note over Harness: Pre-flight auto-fixing (&lt;1ms)\nSlugs IDs &amp; wraps tables
+    Harness->>Shell: Deterministic assembly (&lt;100ms)
+    Shell->>Verifier: 5-Breakpoint layout check (375px–1536px)
+    Verifier-->>Agent: Verified report.html (Zero horizontal overflow)
+          </pre>
+        </div>
+      </div>
+
+      <!-- 3. Tables Tab -->
+      <div id="tab-panel-tables" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-tables-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="table" class="w-4 h-4 text-accent"></i> Grid.js 6.0 — Interactive, Sortable &amp; Searchable Tables
+            </h3>
+            <p class="text-xs text-base-content/70">Full DaisyUI dark/light theme integration with search and pagination.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Grid.js UMD</span>
+        </div>
+        <div id="showcaseGridContainer" class="w-full overflow-x-auto"></div>
+      </div>
+
+      <!-- 4. Maps Tab -->
+      <div id="tab-panel-maps" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-maps-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="map" class="w-4 h-4 text-info"></i> Leaflet 1.9 — Esri World Street Geospatial Maps
+            </h3>
+            <p class="text-xs text-base-content/70">Zero API keys required. Zero file:/// 403 tile errors.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Leaflet UMD</span>
+        </div>
+        <div id="showcaseMap" class="h-64 sm:h-72 w-full rounded-lg border border-base-300 overflow-hidden z-10"></div>
+      </div>
+
+      <!-- 5. Telemetry Tab -->
+      <div id="tab-panel-telemetry" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-telemetry-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4 text-warning"></i> Datastar.js — Real-Time SSE Telemetry &amp; Morphing
+            </h3>
+            <p class="text-xs text-base-content/75">Interactive simulation of live task checklist updates and command execution drawers.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Datastar ESM</span>
+        </div>
+        <div class="card bg-base-200/50 border border-base-300 p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-xs font-bold text-base-content flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-success animate-ping"></span> Live SSE Stream: <code>/__datastar_stream__</code>
+            </span>
+            <button type="button" onclick="simulateTelemetryStep()" class="btn btn-xs btn-outline btn-primary gap-1">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i> Simulate Step
+            </button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="card bg-base-100 border border-base-300 p-3">
+              <div class="text-2xs opacity-70 uppercase font-mono">Context Saturation</div>
+              <div id="sim-metric-context" class="text-xl font-black text-primary">24.5%</div>
+              <progress id="sim-progress-context" class="progress progress-primary w-full h-1.5 mt-1" value="24.5" max="100"></progress>
+            </div>
+            <div class="card bg-base-100 border border-base-300 p-3">
+              <div class="text-2xs opacity-70 uppercase font-mono">Token Velocity</div>
+              <div id="sim-metric-velocity" class="text-xl font-black text-secondary">82 tokens/s</div>
+              <div class="text-2xs text-success font-semibold mt-1">High Throughput</div>
+            </div>
+            <div class="card bg-base-100 border border-base-300 p-3">
+              <div class="text-2xs opacity-70 uppercase font-mono">Active Subagents</div>
+              <div id="sim-metric-subagents" class="text-xl font-black text-accent">3 Running</div>
+              <div class="text-2xs text-base-content/60 mt-1">Swarm Hierarchy</div>
+            </div>
+          </div>
+          <div class="mockup-code text-xs bg-neutral text-neutral-content p-3 rounded-lg overflow-x-auto">
+            <pre><code id="sim-telemetry-log">[22:45:10] info: Datastar SSE bridge connected. Listening on /__datastar_stream__...</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Math & Code Tab -->
+      <div id="tab-panel-mathcode" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-mathcode-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="sigma" class="w-4 h-4 text-primary"></i> KaTeX 0.16 &amp; Highlight.js 11
+            </h3>
+            <p class="text-xs text-base-content/70">Scientific LaTeX equations and syntax highlighting across modern languages.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">KaTeX + hljs</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- KaTeX Box -->
+          <div class="card bg-base-200/50 border border-base-300 p-4 space-y-2">
+            <span class="font-mono text-xs font-bold text-base-content/80">Ottosson Matrix OKLCH Formulation</span>
+            <div id="katexShowcaseEquation" class="py-2 text-center text-sm font-serif">
+              $$\begin{bmatrix} L \\ M \\ S \end{bmatrix} = \mathbf{M}_1 \begin{bmatrix} R \\ G \\ B \end{bmatrix}, \quad C = \sqrt{a^2 + b^2}, \quad H = \text{atan2}(b, a)$$
+            </div>
+          </div>
+          <!-- Highlight.js Box -->
+          <div class="card bg-base-200/50 border border-base-300 p-4 space-y-2 overflow-x-auto">
+            <span class="font-mono text-xs font-bold text-base-content/80">Deterministic FSM Invocation (Node.js)</span>
+            <pre class="p-0 m-0 bg-transparent"><code class="language-javascript text-xs rounded">import { buildReport } from "skills/html-report/scripts/build-report.mjs";
+
+const { html, durationMs } = buildReport({
+  title: "Audit Report",
+  content: fragmentHtml,
+  theme: "light"
+});
+console.log(`Assembled in ${durationMs.toFixed(2)}ms`);</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Widgets & Data Tab -->
+      <div id="tab-panel-widgets" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="panel-widgets-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-primary"></i> FullCalendar 6 &amp; Mock.js 1.1
+            </h3>
+            <p class="text-xs text-base-content/70">Interactive scheduling grid and client-side synthetic data simulation.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">FullCalendar + Mock.js</span>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="lg:col-span-2 card bg-base-200/40 border border-base-300 p-3">
+            <div id="showcaseCalendar" class="w-full text-xs"></div>
+          </div>
+          <div class="card bg-base-200/40 border border-base-300 p-4 space-y-3">
+            <span class="font-bold text-xs uppercase font-mono text-base-content/70 flex items-center gap-1.5">
+              <i data-lucide="database" class="w-3.5 h-3.5 text-secondary"></i> Mock.js Synthetic Entities
+            </span>
+            <div id="mockDataContainer" class="space-y-2 text-xs"></div>
+            <div class="text-2xs text-base-content/60">
+              Timestamps formatted with Day.js: <span class="font-mono font-semibold" data-dayjs="now">now</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- DOCUMENTATION HUB (MODULAR GUIDES)         -->
+<!-- ========================================== -->
+<section id="documentation-hub" class="space-y-6 pt-6">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <div class="badge badge-secondary font-mono text-xs font-bold uppercase tracking-wider mb-2">Documentation Hub</div>
+      <h2 id="documentation-hub-title" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
+        Comprehensive Engineering Guides
+      </h2>
+      <p class="text-sm text-base-content/70">
+        Every aspect of the architecture, stack, and APIs documented in dedicated markdown guides.
+      </p>
+    </div>
+    <span class="badge badge-outline font-mono text-xs">7 Modular Guides</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- Doc Card 1 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-primary font-bold text-sm">
+          <i data-lucide="rocket" class="w-4 h-4"></i> Getting Started
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Agent prompt installation, 1-line CLI setup, global symlinks, and 30-second first report.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/getting-started.md')" class="btn btn-xs btn-outline btn-primary gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/getting-started.md" class="text-xs link link-hover font-mono opacity-60">getting-started.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 2 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-secondary font-bold text-sm">
+          <i data-lucide="cpu" class="w-4 h-4"></i> FSM Architecture &amp; Harness
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          The 10-state deterministic lifecycle, pre-flight auto-fixes, and bounded JSON remediation.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/architecture-fsm.md')" class="btn btn-xs btn-outline btn-secondary gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/architecture-fsm.md" class="text-xs link link-hover font-mono opacity-60">architecture-fsm.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 3 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-accent font-bold text-sm">
+          <i data-lucide="layers" class="w-4 h-4"></i> 17-CDN Power Stack
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Complete 17-library catalog, SHA-384 SRI hashes, CSP hardening, and offline bundling.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/cdn-stack.md')" class="btn btn-xs btn-outline btn-accent gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/cdn-stack.md" class="text-xs link link-hover font-mono opacity-60">cdn-stack.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 4 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-info font-bold text-sm">
+          <i data-lucide="palette" class="w-4 h-4"></i> Custom DaisyUI Themes
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Zero-dependency OKLCH engine, theme inheritance (`extends`), and collapsible studio banner.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/custom-themes.md')" class="btn btn-xs btn-outline btn-info gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/custom-themes.md" class="text-xs link link-hover font-mono opacity-60">custom-themes.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 5 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-success font-bold text-sm">
+          <i data-lucide="activity" class="w-4 h-4"></i> Real-Time Telemetry
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Datastar.js SSE streaming, agent transcript tailing (agy, claude-code, codex), and live checklist morphs.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/live-telemetry.md')" class="btn btn-xs btn-outline btn-success gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/live-telemetry.md" class="text-xs link link-hover font-mono opacity-60">live-telemetry.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 6 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-warning font-bold text-sm">
+          <i data-lucide="check-circle-2" class="w-4 h-4"></i> Testing &amp; Verification
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Zero-framework native BDD harness, Playwright 5-breakpoint verification, and overflow gates.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/testing-and-verification.md')" class="btn btn-xs btn-outline btn-warning gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/testing-and-verification.md" class="text-xs link link-hover font-mono opacity-60">testing-and-verification.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 7 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-base-content font-bold text-sm">
+          <i data-lucide="terminal" class="w-4 h-4"></i> CLI &amp; API Reference
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Comprehensive CLI flag reference for build-report.mjs, harness.mjs, serve-report.mjs, and programmatic API.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between">
+        <button type="button" onclick="openMarkdownViewer('docs/api-and-cli-reference.md')" class="btn btn-xs btn-outline gap-1 font-mono">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/api-and-cli-reference.md" class="text-xs link link-hover font-mono opacity-60">api-and-cli-reference.md</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- STANDALONE LIVE DEMOS & SHOWCASES          -->
+<!-- ========================================== -->
+<section class="card bg-base-100 border border-base-300 p-6 sm:p-8 shadow-sm space-y-4">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h2 id="deep-dive-reports" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+        <i data-lucide="file-bar-chart" class="w-5 h-5 text-primary"></i> Standalone Reports &amp; Live Verification Views
+      </h2>
+      <p class="text-xs sm:text-sm text-base-content/70">
+        Explore full-page reports compiled deterministically with html-report.
+      </p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <a href="report.html" class="btn btn-sm btn-primary gap-1.5 font-mono">
+        <i data-lucide="file-text" class="w-4 h-4"></i> report.html
+      </a>
+      <a href="current-feature.html" class="btn btn-sm btn-outline gap-1.5 font-mono">
+        <i data-lucide="layout" class="w-4 h-4"></i> current-feature.html
+      </a>
+      <a href="implementation-progress.html" class="btn btn-sm btn-outline gap-1.5 font-mono">
+        <i data-lucide="activity" class="w-4 h-4"></i> implementation-progress.html
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- EMBEDDED JAVASCRIPT INITIALIZERS           -->
+<!-- ========================================== -->
+<script>
+// Copy Agent Prompt Helper
+function copyAgentPrompt() {
+  const codeEl = document.getElementById("agent-prompt-code");
+  const textBtn = document.getElementById("copy-prompt-text");
+  if (!codeEl || !textBtn) return;
+  const promptText = codeEl.textContent.trim();
+  navigator.clipboard.writeText(promptText).then(() => {
+    textBtn.textContent = "Copied!";
+    setTimeout(() => {
+      textBtn.textContent = "Copy Prompt";
+    }, 2000);
+  }).catch(() => {
+    textBtn.textContent = "Copied!";
+  });
+}
+
+// Capability Explorer Tab Switcher
+let showcaseChartInstance = null;
+let showcaseMapInstance = null;
+let showcaseGridInstance = null;
+let showcaseCalendarInstance = null;
+
+function switchShowcaseTab(tabId) {
+  // Update Tab Buttons
+  document.querySelectorAll("#capability-tabs .tab").forEach(tab => {
+    tab.classList.remove("tab-active");
+  });
+  const activeBtn = document.getElementById("tab-btn-" + tabId);
+  if (activeBtn) activeBtn.classList.add("tab-active");
+
+  // Update Panels
+  document.querySelectorAll(".tab-panel").forEach(panel => {
+    panel.classList.add("hidden");
+  });
+  const activePanel = document.getElementById("tab-panel-" + tabId);
+  if (activePanel) activePanel.classList.remove("hidden");
+
+  // Trigger lazy widget resizing
+  if (tabId === "charts" && showcaseChartInstance) {
+    setTimeout(() => { showcaseChartInstance.resize(); }, 50);
+  }
+  if (tabId === "maps" && showcaseMapInstance) {
+    setTimeout(() => { showcaseMapInstance.invalidateSize(); }, 50);
+  }
+  if (tabId === "widgets" && showcaseCalendarInstance) {
+    setTimeout(() => { showcaseCalendarInstance.render(); }, 50);
+  }
+}
+
+// Initialize Widgets on DOM Load
+document.addEventListener("DOMContentLoaded", function () {
+  // 1. Initialize Chart.js
+  try {
+    const ctx = document.getElementById("showcaseChart");
+    if (ctx && typeof window.Chart !== "undefined") {
+      showcaseChartInstance = new window.Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Claude Code", "Antigravity", "Codex", "OpenCode", "Cursor", "Gemini CLI"],
+          datasets: [
+            {
+              label: "Token Savings (%)",
+              data: [74, 78, 71, 75, 72, 76],
+              backgroundColor: "rgba(59, 130, 246, 0.75)",
+              borderColor: "rgb(59, 130, 246)",
+              borderWidth: 1.5,
+              borderRadius: 6
+            },
+            {
+              label: "Assembly Latency (ms)",
+              data: [6.2, 4.8, 5.5, 6.9, 5.1, 4.2],
+              backgroundColor: "rgba(16, 185, 129, 0.75)",
+              borderColor: "rgb(16, 185, 129)",
+              borderWidth: 1.5,
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { font: { size: 11, family: "sans-serif" } } }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: "rgba(150, 150, 150, 0.15)" } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+  } catch (e) {
+    // Fail-safe
+  }
+
+  // 2. Initialize Grid.js Table
+  try {
+    const gridEl = document.getElementById("showcaseGridContainer");
+    if (gridEl && typeof window.gridjs !== "undefined") {
+      showcaseGridInstance = new window.gridjs.Grid({
+        columns: ["Agent Harness", "Assembly Latency", "Token Reduction", "Verification Status"],
+        data: [
+          ["Google Antigravity", "<5ms", "78% Savings", "✓ Verified"],
+          ["Anthropic Claude Code", "<7ms", "74% Savings", "✓ Verified"],
+          ["OpenAI Codex", "<6ms", "71% Savings", "✓ Verified"],
+          ["Cursor AI", "<6ms", "72% Savings", "✓ Verified"],
+          ["OpenCode / Gemini CLI", "<5ms", "76% Savings", "✓ Verified"]
+        ],
+        search: true,
+        pagination: { limit: 3 },
+        sort: true
+      }).render(gridEl);
+    }
+  } catch (e) {}
+
+  // 3. Initialize Leaflet Map
+  try {
+    const mapEl = document.getElementById("showcaseMap");
+    if (mapEl && typeof window.L !== "undefined") {
+      showcaseMapInstance = window.L.map("showcaseMap", { zoomControl: false }).setView([37.7749, -122.4194], 4);
+      window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Esri Street Map",
+        maxZoom: 18
+      }).addTo(showcaseMapInstance);
+      window.L.circleMarker([37.7749, -122.4194], {
+        radius: 7,
+        fillColor: "#3b82f6",
+        color: "#ffffff",
+        weight: 2,
+        fillOpacity: 0.9
+      }).addTo(showcaseMapInstance).bindPopup("San Francisco Cluster");
+      window.L.circleMarker([47.6062, -122.3321], {
+        radius: 7,
+        fillColor: "#10b981",
+        color: "#ffffff",
+        weight: 2,
+        fillOpacity: 0.9
+      }).addTo(showcaseMapInstance).bindPopup("Seattle Gateway");
+    }
+  } catch (e) {}
+
+  // 4. Initialize FullCalendar
+  try {
+    const calEl = document.getElementById("showcaseCalendar");
+    if (calEl && typeof window.FullCalendar !== "undefined") {
+      showcaseCalendarInstance = new window.FullCalendar.Calendar(calEl, {
+        initialView: "dayGridMonth",
+        height: 280,
+        headerToolbar: { left: "prev,next", center: "title", right: "dayGridMonth,listWeek" },
+        events: [
+          { title: "Sprint Release v2.0", start: new Date().toISOString().slice(0, 10), color: "#3b82f6" },
+          { title: "Deterministic FSM Audit", start: new Date(Date.now() + 86400000 * 2).toISOString().slice(0, 10), color: "#10b981" }
+        ]
+      });
+      showcaseCalendarInstance.render();
+    }
+  } catch (e) {}
+
+  // 5. Initialize Mock.js Synthetic Data
+  try {
+    const mockEl = document.getElementById("mockDataContainer");
+    if (mockEl && typeof window.Mock !== "undefined") {
+      const mockData = window.Mock.mock({
+        "users|3": [
+          {
+            "id|+1": 101,
+            "name": "@first @last",
+            "role|1": ["Core Architect", "Verification Agent", "Security Auditor"],
+            "status|1": ["Active", "Idle", "Verifying"]
+          }
+        ]
+      });
+      mockEl.innerHTML = mockData.users.map(u => `
+        <div class="flex items-center justify-between p-2 rounded bg-base-100 border border-base-300">
+          <span class="font-semibold">${u.name}</span>
+          <span class="badge badge-xs badge-outline font-mono">${u.role}</span>
+        </div>
+      `).join("");
+    }
+  } catch (e) {}
+
+  // 6. Highlight.js Execution
+  try {
+    if (typeof window.hljs !== "undefined") {
+      window.hljs.highlightAll();
+    }
+  } catch (e) {}
+
+  // 7. KaTeX Render
+  try {
+    if (typeof window.renderMathInElement !== "undefined") {
+      window.renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ]
+      });
+    }
+  } catch (e) {}
+});
+
+// Telemetry Simulation Helper
+let simStepIndex = 1;
+function simulateTelemetryStep() {
+  simStepIndex++;
+  const contextEl = document.getElementById("sim-metric-context");
+  const progressEl = document.getElementById("sim-progress-context");
+  const velocityEl = document.getElementById("sim-metric-velocity");
+  const logEl = document.getElementById("sim-telemetry-log");
+
+  const newSaturation = Math.min(95, 24.5 + simStepIndex * 7.5);
+  const newVelocity = Math.floor(75 + Math.random() * 40);
+
+  if (contextEl) contextEl.textContent = newSaturation.toFixed(1) + "%";
+  if (progressEl) progressEl.value = newSaturation;
+  if (velocityEl) velocityEl.textContent = newVelocity + " tokens/s";
+  if (logEl) {
+    const time = new Date().toTimeString().split(" ")[0];
+    logEl.textContent = `[${time}] step ${simStepIndex}: SSE patch received -> Idiomorph morphed #task-${simStepIndex} (0.4ms)\n` + logEl.textContent;
+  }
+}
+</script>

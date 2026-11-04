@@ -94,6 +94,21 @@ export function resolveSpecPath(specPath) {
     }
   }
 
+  // Also check active change directories: openspec/changes/*/specs/<specPath>/spec.md
+  const changesDir = path.resolve(process.cwd(), "openspec/changes");
+  if (fs.existsSync(changesDir)) {
+    try {
+      const activeChanges = fs.readdirSync(changesDir);
+      for (const change of activeChanges) {
+        if (change === "archive") continue;
+        const candidate = path.join(changesDir, change, "specs", specPath, "spec.md");
+        if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+          return candidate;
+        }
+      }
+    } catch (_) {}
+  }
+
   // Fallback to first resolved path for clear error diagnostics
   return candidates[0];
 }

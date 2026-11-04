@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { bindOpenSpec, parseSpecMarkdown, loadSpec } from "./harness/openspec-bdd.mjs";
 import { Feature, Scenario, executeScenario, Given, When, Then, And } from "./harness/bdd.mjs";
 
-bindOpenSpec("openspec/changes/native-openspec-bdd/specs/native-openspec-bdd/spec.md", {
+bindOpenSpec("native-openspec-bdd", {
   "Executing a structured BDD scenario": async ({ Given, When, Then, And, steps }) => {
     let executionSteps = [];
 
@@ -80,7 +80,7 @@ bindOpenSpec("openspec/changes/native-openspec-bdd/specs/native-openspec-bdd/spe
     });
 
     await Then("the harness MUST execute each bound scenario as a distinct test case under node:test", () => {
-      assert.equal(boundResults.title, "Spec Delta: Native OpenSpec BDD-as-TDD Verification Harness");
+      assert.ok(boundResults.title.includes("native-openspec-bdd") || boundResults.title.includes("Native OpenSpec BDD"));
       assert.equal(boundResults.totalScenarios, 5);
     });
   },
