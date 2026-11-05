@@ -1,0 +1,573 @@
+<!-- ========================================== -->
+<!-- HERO BANNER & JOURNEY STEPPER              -->
+<!-- ========================================== -->
+<header class="space-y-6 border-b border-base-300 pb-8">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">semantic-versioning-and-migration-guide</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1">
+      <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Phase 5: Verified &amp; Complete
+    </span>
+    <span class="badge badge-secondary font-mono text-xs font-semibold gap-1">
+      <i data-lucide="tag" class="w-3.5 h-3.5"></i> SemVer 2.0.0
+    </span>
+    <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
+      <i data-lucide="bot" class="w-3.5 h-3.5"></i> AI Migration Assistant
+    </span>
+    <span class="badge badge-info font-mono text-xs font-semibold gap-1">
+      <i data-lucide="package" class="w-3.5 h-3.5"></i> NPM Library Distribution
+    </span>
+  </div>
+
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div class="space-y-2">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+        Semantic Versioning &amp; AI Migration Guide
+      </h1>
+      <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+        <code class="font-mono text-primary font-bold">html-report</code> is now fully packaged for library consumption with strict SemVer 2.0.0 stability contracts, runtime deprecation interceptors, dynamic report footer attribution, README visibility, and turnkey copy-paste AI migration prompts for breaking-change upgrades.
+      </p>
+    </div>
+
+    <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+      </button>
+      <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/semantic-versioning/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="layers" class="w-4 h-4 text-info"></i> spec.md
+      </button>
+    </div>
+  </div>
+
+  <!-- Mandatory Journey Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+    <div class="flex items-center justify-between text-xs font-bold text-base-content/70">
+      <span class="flex items-center gap-1.5">
+        <i data-lucide="git-pull-request" class="w-4 h-4 text-primary"></i> Current Journey State
+      </span>
+      <span class="font-mono text-success">Stage 5 Active · Verified &amp; Implementation Complete</span>
+    </div>
+    <div class="w-full overflow-x-auto py-2">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
+        <li id="stepper-phase-2" class="step step-primary">2. Planning</li>
+        <li id="stepper-phase-3" class="step step-primary">3. Implementing</li>
+        <li id="stepper-phase-4" class="step step-primary">4. Verifying</li>
+        <li id="stepper-phase-5" class="step step-primary">5. Shipped / Complete</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- ========================================== -->
+<!-- 1. LIVE PROGRESS METRICS & STATS           -->
+<!-- ========================================== -->
+<section id="progress-metrics" class="space-y-4">
+  <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+    <i data-lucide="activity" class="w-6 h-6 text-primary"></i>
+    Journey Progress &amp; Metrics
+  </h2>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-primary">
+        <i data-lucide="list-todo" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Total Milestones</div>
+      <div id="stat-total-tasks" class="stat-value text-2xl font-black text-primary">15</div>
+      <div class="stat-desc text-xs text-base-content/60">Across 5 structured phases</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-success">
+        <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Completed</div>
+      <div id="stat-completed-tasks" class="stat-value text-2xl font-black text-success">15</div>
+      <div class="stat-desc text-xs text-base-content/60">100% milestones complete</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-success">
+        <i data-lucide="check" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">In Progress</div>
+      <div id="stat-in-progress-tasks" class="stat-value text-2xl font-black text-success">0</div>
+      <div class="stat-desc text-xs text-base-content/60">0 remaining milestones</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-secondary">
+        <i data-lucide="shield-check" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Test Suite Status</div>
+      <div class="stat-value text-2xl font-black text-secondary">301 / 301</div>
+      <div class="stat-desc text-xs text-base-content/60">100% tests passing across 115 suites</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 2. ARCHITECTURAL BRAINSTORM & DESIGN       -->
+<!-- ========================================== -->
+<section id="architectural-brainstorm" class="space-y-6">
+  <div class="space-y-2">
+    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+      <i data-lucide="lightbulb" class="w-6 h-6 text-warning"></i>
+      Architectural Foundations: SemVer &amp; AI Migration Guidance
+    </h2>
+    <p class="text-sm text-base-content/70">
+      Key conceptual pillars enabling downstream libraries to consume <code class="font-mono">html-report</code> with confidence, automated deprecation warnings, and AI-assisted upgrades.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Card 1: NPM & Library Packaging -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center gap-2 text-primary font-bold text-base">
+        <i data-lucide="package" class="w-5 h-5"></i>
+        <span>1. Package &amp; Subpath Exports</span>
+      </div>
+      <p class="text-xs text-base-content/80 leading-relaxed">
+        Root <code class="font-mono">package.json</code> declaring <code class="font-mono font-bold">html-report@1.0.0</code> with ESM subpaths (<code class="font-mono">./build</code>, <code class="font-mono">./harness</code>, <code class="font-mono">./serve</code>, <code class="font-mono">./pwa</code>, <code class="font-mono">./theme</code>, <code class="font-mono">./compatibility</code>) and dual bin aliases for CLI invocations.
+      </p>
+      <div class="badge badge-success badge-xs font-mono">Implemented &amp; Verified</div>
+    </div>
+
+    <!-- Card 2: Deprecation Interceptor -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center gap-2 text-secondary font-bold text-base">
+        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+        <span>2. Deprecation Interceptor</span>
+      </div>
+      <p class="text-xs text-base-content/80 leading-relaxed">
+        Centralized compatibility layer (<code class="font-mono">compatibility.mjs</code>) catches legacy flags and API calls, logs high-visibility warnings with target replacements, and provides a CLI audit command (<code class="font-mono">--check-compatibility</code>).
+      </p>
+      <div class="badge badge-success badge-xs font-mono">Graceful Grace Periods</div>
+    </div>
+
+    <!-- Card 3: AI Migration Assistant Prompt -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center gap-2 text-accent font-bold text-base">
+        <i data-lucide="sparkles" class="w-5 h-5"></i>
+        <span>3. AI Migration Prompts</span>
+      </div>
+      <p class="text-xs text-base-content/80 leading-relaxed">
+        Every breaking release provides a copy-paste <code class="font-mono">&lt;AI_MIGRATION_PROMPT&gt;</code> that downstream library authors can give to Antigravity, Claude Code, Cursor, or Codex to scan their code and execute automated refactoring codemods.
+      </p>
+      <div class="badge badge-success badge-xs font-mono">Turnkey Agent Upgrade</div>
+    </div>
+  </div>
+
+  <!-- Mermaid Architecture Flow -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <h3 class="text-base font-bold flex items-center gap-2">
+        <i data-lucide="workflow" class="w-5 h-5 text-primary"></i>
+        Consumer Integration &amp; Breaking Change Interception Flow
+      </h3>
+      <span class="badge badge-sm badge-ghost font-mono">Architecture Flowchart</span>
+    </div>
+
+    <pre class="mermaid text-center">
+flowchart TD
+    Consumer["Downstream Consumer / Library"] --> Invocations{"Invocation Type"}
+    Invocations -->|CLI Execution| CLI["harness.mjs / build-report.mjs"]
+    Invocations -->|JS Import| API["Programmatic ESM Exports"]
+
+    CLI --> Interceptor["compatibility.mjs Interceptor"]
+    API --> Interceptor
+
+    Interceptor -->|Valid v1.0.0 Contract| Pipeline["<100ms Deterministic Assembly"]
+    Interceptor -->|Deprecated Flag / Option| Warn["Emit Warning Banner + Migration Link"]
+    Warn --> Pipeline
+
+    Interceptor -->|Breaking Change / Major Bump| BreakFail["Throw Structured Remediation Alert"]
+    BreakFail --> Guide["Direct to docs/migrations/ & MIGRATION.md"]
+    Guide --> AIPrompt["Copy Turnkey &lt;AI_MIGRATION_PROMPT&gt;"]
+    AIPrompt --> AgentRefactor["AI Agent Automates Refactor & Tests"]
+    AgentRefactor --> Success["Upgraded Consumer Build Passes"]
+    Pipeline --> Success
+    </pre>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 3. PUBLIC API CONTRACT & FOOTER ATTRIBUTION-->
+<!-- ========================================== -->
+<section id="public-api-contract" class="space-y-4">
+  <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+    <i data-lucide="file-check" class="w-6 h-6 text-primary"></i>
+    Public API Contract &amp; SemVer Attribution
+  </h2>
+
+  <div class="overflow-x-auto border border-base-300 rounded-box bg-base-100 shadow-sm">
+    <table class="table table-sm">
+      <thead>
+        <tr class="bg-base-200 text-xs font-bold uppercase tracking-wider">
+          <th>Surface Area</th>
+          <th>What is Governed (Public API)</th>
+          <th>Minor Bump (Backward Compatible)</th>
+          <th>Major Bump (Breaking Change)</th>
+        </tr>
+      </thead>
+      <tbody class="text-xs">
+        <tr>
+          <td class="font-bold text-primary">CLI Interfaces</td>
+          <td><code class="font-mono">harness.mjs</code>, <code class="font-mono">build-report.mjs</code>, <code class="font-mono">serve-report.mjs</code>, <code class="font-mono">generate-pwa.mjs</code></td>
+          <td>New optional flags (e.g. <code class="font-mono">--pwa</code>, <code class="font-mono">--theme</code>)</td>
+          <td>Removing or renaming existing flags, changing exit codes</td>
+        </tr>
+        <tr>
+          <td class="font-bold text-secondary">Programmatic JS API</td>
+          <td><code class="font-mono">buildReport()</code>, <code class="font-mono">buildPwa()</code>, <code class="font-mono">compileTheme()</code>, <code class="font-mono">serveReport()</code></td>
+          <td>New options fields with backward-compatible defaults</td>
+          <td>Removing exported functions, altering return shapes or param order</td>
+        </tr>
+        <tr>
+          <td class="font-bold text-accent">Template Shell Slots</td>
+          <td><code class="font-mono">&lt;!-- {{TITLE}} --&gt;</code>, <code class="font-mono">&lt;!-- {{CONTENT}} --&gt;</code>, <code class="font-mono">&lt;!-- {{VERSION}} --&gt;</code></td>
+          <td>Adding optional template slots with fallback defaults</td>
+          <td>Removing or altering required slot token strings</td>
+        </tr>
+        <tr>
+          <td class="font-bold text-info">Report Footer</td>
+          <td>Dynamic SemVer badge &amp; version number: <code class="font-mono">v1.0.0 (SemVer 2.0.0)</code></td>
+          <td>Updating patch / minor version number string</td>
+          <td>Removing or altering attribution contract</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 4. TURNKEY AI MIGRATION PROMPT DEMO        -->
+<!-- ========================================== -->
+<section id="ai-migration-prompt-showcase" class="space-y-4">
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="bot" class="w-6 h-6 text-accent"></i>
+        Turnkey AI Migration Prompt Pattern
+      </h2>
+      <p class="text-xs sm:text-sm text-base-content/70">
+        When breaking changes occur, downstream library authors can copy this standardized prompt into any AI agent to automatically refactor their code.
+      </p>
+    </div>
+    <button type="button" onclick="copyMigrationPrompt()" class="btn btn-sm btn-accent gap-2">
+      <i data-lucide="copy" class="w-4 h-4"></i>
+      <span id="copy-prompt-btn-text">Copy Migration Prompt</span>
+    </button>
+  </div>
+
+  <div class="card bg-base-300 text-base-content p-4 rounded-box font-mono text-xs overflow-x-auto shadow-inner border border-base-content/20">
+    <div class="flex items-center justify-between pb-2 mb-2 border-b border-base-content/10">
+      <span class="text-accent font-bold">&lt;AI_MIGRATION_PROMPT&gt; (Standardized Specification)</span>
+      <span class="badge badge-xs badge-neutral">Agent-Agnostic</span>
+    </div>
+    <pre id="migration-prompt-template" class="whitespace-pre leading-relaxed text-xs">
+&lt;AI_MIGRATION_PROMPT&gt;
+You are an expert AI refactoring assistant upgrading this codebase's `html-report` integration.
+A breaking change was released. Follow these exact instructions to upgrade the project:
+
+1. TARGET VERSIONS:
+   - Upgrading `html-report` from v1.x to v2.x.
+   - Read the official migration guide at docs/migrations/v1-to-v2.md.
+
+2. MECHANICAL CODEMODS:
+   - Search for deprecated CLI flag invocations:
+     Replace `--old-flag &lt;value&gt;` with `--new-flag &lt;value&gt;`.
+   - Search for JS import statements:
+     Replace `import { oldFn } from "html-report"` with `import { newFn } from "html-report/build"`.
+   - Update any configuration files:
+     Verify `package.json` dependency points to `^2.0.0`.
+
+3. VERIFICATION:
+   - Run the project's build and test suites: `npm test` or `node --test`.
+   - Ensure all reports compile with zero deprecation warnings.
+&lt;/AI_MIGRATION_PROMPT&gt;
+    </pre>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 5. TASK BREAKDOWN & IMPLEMENTATION TRACKER -->
+<!-- ========================================== -->
+<section id="task-checklist" class="space-y-4">
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="check-square" class="w-6 h-6 text-primary"></i>
+        Implementation Tasks &amp; Milestones (15 / 15 Complete)
+      </h2>
+      <p class="text-xs sm:text-sm text-base-content/70">
+        Connected task checklist corresponding directly to <a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono">tasks.md</a>.
+      </p>
+    </div>
+    <span class="badge badge-success font-mono text-xs">All 5 Phases Complete</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Phase 1 -->
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+          <span class="badge badge-sm badge-success">1</span>
+          Phase 1: Package Foundation &amp; SemVer
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">Complete</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">1.1 Create root <code>package.json</code> declaring <code>version: 1.0.0</code> and ESM exports</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">1.2 Implement <code>--version</code> / <code>-v</code> flag reading dynamic version from package</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">1.3 Verify subpath exports and module resolution via Node.js import checks</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">1.4 Update <code>template-shell.html</code> &amp; <code>build-report.mjs</code> to render SemVer in footer</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+          <span class="badge badge-sm badge-success">2</span>
+          Phase 2: Compatibility &amp; Deprecation Interceptor
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">Complete</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">2.1 Implement <code>compatibility.mjs</code> with deprecation catalog &amp; warning emitter</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">2.2 Wire deprecation interceptors into <code>build-report.mjs</code> and <code>harness.mjs</code></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">2.3 Add CLI compatibility audit flag (<code>--check-compatibility</code>)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+          <span class="badge badge-sm badge-success">3</span>
+          Phase 3: AI Migration Prompts &amp; Docs
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">Complete</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">3.1 Establish <code>docs/semantic-versioning.md</code> with public API contract</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">3.2 Create <code>MIGRATION.md</code> &amp; <code>docs/migrations/v1-to-v2.md</code> with prompt</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">3.3 Update <code>README.md</code> with SemVer badge &amp; section, and <code>SKILL.md</code></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 & 5 -->
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+          <span class="badge badge-sm badge-success">4 &amp; 5</span>
+          Phases 4 &amp; 5: Verification &amp; Sync
+        </h3>
+        <span class="badge badge-xs badge-success font-mono">Complete</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">4.1 Unit tests in <code>tests/semver.test.mjs</code> for exports and version flags</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">4.2 BDD tests in <code>tests/semver.bdd.test.mjs</code> bound to spec scenarios</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">4.3 100% test pass rate across all 301 suites</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">5.1 Rebuild companion dashboard and mirror to <code>localhost:3000</code></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER             -->
+<!-- ========================================== -->
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <div class="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300 shrink-0">
+      <div class="flex items-center gap-2 flex-wrap">
+        <i data-lucide="file-code" class="w-5 h-5 text-primary"></i>
+        <span id="markdown-modal-title" class="font-bold text-sm font-mono text-base-content">proposal.md</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="join">
+          <button class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
+          <button class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
+          <button class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
+          <button class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="specs/semantic-versioning/spec.md" onclick="switchViewerTab('specs/semantic-versioning/spec.md')">spec.md</button>
+        </div>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost" aria-label="Close modal">✕</button>
+      </div>
+    </div>
+
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none flex-1 text-base-content bg-base-100">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- Embedded OpenSpec Artifact Data for Instant Zero-Network Modal Rendering -->
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Semantic Versioning & Migration Assistance for Downstream Consumers\n\n> Companion Dashboard: [index.html](file:///home/eta/projects/html-report/openspec/changes/semantic-versioning-and-migration-guide/index.html) | Servable at `http://localhost:3000`\n\n## Why\n\nAs `html-report` is increasingly adopted as a dependency within external libraries, toolchains, and AI agent frameworks, downstream consumers require predictable stability guarantees. Without formal Semantic Versioning (SemVer 2.0.0), any change to CLI arguments, programmatic exports, template token contracts, or runtime data structures risks breaking consumer integrations. Furthermore, when breaking changes (`MAJOR` version bumps) inevitably occur, human developers and AI coding agents need immediate, automated assistance—including structured deprecation errors, CLI diagnostic checks, and turnkey, copy-paste AI migration prompts to upgrade downstream codebases with zero friction.\n\n## What Changes\n\n- **Root NPM Package & Library Distribution (`package.json`)**: Establish formal package configuration declaring the canonical version (`1.0.0`), dual bin entries (`html-report`, `html-report-serve`), subpath exports (`./build`, `./harness`, `./serve`, `./pwa`, `./theme`), and Node.js engine compatibility.\n- **Formal Public API Contract & SemVer 2.0.0 Policy**: Explicitly define what constitutes the public surface across CLI commands, programmatic JS exports, template shell slot contracts, Datastar SSE protocols, and `SKILL.md` triggers. Define strict criteria for `PATCH` (fixes/docs), `MINOR` (backward-compatible features), and `MAJOR` (breaking changes).\n- **Graceful Deprecation & Breaking Change Detection Interceptors**: Add runtime guards in `build-report.mjs`, `harness.mjs`, `serve-report.mjs`, and `pwa-builder.mjs` that catch deprecated or retired flags/options and emit structured, actionable migration notices rather than obscure runtime errors.\n- **AI Agent Migration Prompt Standard & Versioned Migration Guides**: Create a dedicated `docs/migrations/` hub with comprehensive migration guides for breaking changes. Each guide provides both human-readable instructions and a standardized, turnkey `<AI_MIGRATION_PROMPT>` that downstream library authors can paste directly into Antigravity, Claude Code, Cursor, or Codex to execute automated codemods.\n- **CLI Migration & Compatibility Diagnostic Tool**: Implement a diagnostic command (`node skills/html-report/scripts/harness.mjs check-compatibility` or programmatic helper) to audit consumer fragments, configs, and scripts for deprecated parameters and breaking API usages.\n",
+  "design.md": "# Design Document: Semantic Versioning Architecture & AI Migration Assistant\n\n> Companion Dashboard: [index.html](file:///home/eta/projects/html-report/openspec/changes/semantic-versioning-and-migration-guide/index.html) | Servable at `http://localhost:3000`\n\n## Context\n\n`html-report` is an LLM-agnostic agent skill and deterministic report compilation harness. As developers integrate `html-report` into downstream repositories, custom CLI toolchains, and multi-agent systems, the library requires formal packaging, SemVer stability guarantees, and an automated breaking change migration workflow.\n\nCurrently, the repository lacks a root `package.json`. While CLI scripts work reliably via direct file execution, consumers importing the library need standard Node.js package resolution, version querying, and deprecation protection.\n\n## Technical Decisions\n\n1. **Root `package.json` with Subpath ESM Exports**: Declares `1.0.0`, subpath exports, and bin aliases for direct npm consumption.\n2. **Centralized Compatibility Interceptor (`compatibility.mjs`)**: Intercepts deprecated CLI arguments and API options, emits structured warnings, and links to migration guides.\n3. **AI Migration Prompt Standard (`<AI_MIGRATION_PROMPT>`)**: Standardizes turnkey prompts inside `docs/migrations/` to enable instantaneous AI agent upgrades.\n",
+  "tasks.md": "# Tasks: Semantic Versioning & Migration Assistance\n\n> Companion Dashboard: [index.html](file:///home/eta/projects/html-report/openspec/changes/semantic-versioning-and-migration-guide/index.html) | Servable at `http://localhost:3000`\n\n## Phase 1: Package Foundation & SemVer 2.0.0 Declaration\n- [x] 1.1 Create root `package.json` declaring `name: \"html-report\"`, `version: \"1.0.0\"`, ESM exports, and bin aliases\n- [x] 1.2 Implement `--version` / `-v` flag in `harness.mjs` and `build-report.mjs` reading dynamic version from `package.json`\n- [x] 1.3 Verify `package.json` subpath exports and module resolution via Node.js import checks\n- [x] 1.4 Update `template-shell.html` and `build-report.mjs` to dynamically render SemVer version in report footer\n\n## Phase 2: Centralized Compatibility & Deprecation Interceptor\n- [x] 2.1 Implement `skills/html-report/scripts/compatibility.mjs` with deprecation catalog and warning emitter\n- [x] 2.2 Wire deprecation interceptors into `build-report.mjs`, `harness.mjs`, and `serve-report.mjs`\n- [x] 2.3 Add CLI compatibility audit flag (`--check-compatibility`) to scan consumer configs and scripts\n\n## Phase 3: AI Migration Prompt Standard & Documentation Hub\n- [x] 3.1 Establish `docs/semantic-versioning.md` outlining public API boundaries and SemVer policy\n- [x] 3.2 Create `MIGRATION.md` and reference guide `docs/migrations/v1-to-v2.md` with turnkey `<AI_MIGRATION_PROMPT>`\n- [x] 3.3 Update `README.md` with SemVer 2.0.0 badge and versioning section, and update `SKILL.md`\n\n## Phase 4: Automated Verification & Test Suites\n- [x] 4.1 Create `tests/semver.test.mjs` unit tests for `package.json` exports, version flags, and compatibility scanner\n- [x] 4.2 Create `tests/semver.bdd.test.mjs` BDD tests validating scenarios in `specs/semantic-versioning/spec.md`\n- [x] 4.3 Run full test suite with `node --test tests/*.test.mjs` ensuring 100% pass rate\n\n## Phase 5: Companion Dashboard & Live Dev Server Sync\n- [x] 5.1 Build companion `openspec/changes/semantic-versioning-and-migration-guide/index.html` with interactive journey stepper\n- [x] 5.2 Mirror to `implementation-progress.html` and verify live dev server at `http://localhost:3000`\n",
+  "specs/semantic-versioning/spec.md": "# semantic-versioning Specification\n\n## Purpose\nDefines the Semantic Versioning (SemVer 2.0.0) standard, public API surface boundary, root NPM/Node.js library distribution, deprecation lifecycle policies, runtime breaking change detection interceptors, and copy-paste AI migration prompts for downstream library consumers.\n"
+}
+</script>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    activeDocKey = docName;
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    const titleEl = document.getElementById("markdown-modal-title");
+    if (titleEl) titleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn, .md-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-primary");
+        btn.classList.remove("btn-ghost");
+      } else {
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-ghost");
+      }
+    });
+
+    const artifacts = getOpenSpecArtifacts();
+    let rawContent = artifacts[docName];
+
+    if (!rawContent) {
+      try {
+        const res = await fetch("/" + docName);
+        if (res.ok) rawContent = await res.text();
+      } catch (_) {}
+    }
+
+    if (!rawContent) {
+      rawContent = "# " + docName + "\n\nContent could not be loaded.";
+    }
+
+    const converter = getShowdownConverter();
+    const html = converter ? converter.makeHtml(rawContent) : "<pre>" + rawContent + "</pre>";
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (bodyEl) bodyEl.innerHTML = html;
+  }
+
+  function copyMigrationPrompt() {
+    const el = document.getElementById("migration-prompt-template");
+    if (!el) return;
+    const text = el.textContent.trim();
+    navigator.clipboard.writeText(text).then(() => {
+      const btnText = document.getElementById("copy-prompt-btn-text");
+      if (btnText) {
+        const original = btnText.textContent;
+        btnText.textContent = "Copied Prompt!";
+        setTimeout(() => { btnText.textContent = original; }, 2000);
+      }
+    });
+  }
+
+  window.openMarkdownViewer = openMarkdownViewer;
+  window.closeMarkdownViewer = closeMarkdownViewer;
+  window.switchViewerTab = switchViewerTab;
+  window.copyMigrationPrompt = copyMigrationPrompt;
+</script>

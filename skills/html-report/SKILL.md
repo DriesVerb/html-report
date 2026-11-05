@@ -1,18 +1,16 @@
 ---
 name: html-report
 description: >-
-  Generates publication-grade, interactive, and print-ready HTML5 reports with a
-  non-blocking 17-library CDN stack (Tailwind CSS, DaisyUI with all 32 themes
-  defaulting to 'light', Lucide Icons, Alpine.js, Chart.js, Mermaid, Leaflet
-  maps, Grid.js tables, KaTeX math, Marked markdown, Highlight.js code
-  formatting, Day.js dates, Impress.js presentations, Mock.js data, Showdown
-  markdown, FullCalendar schedules, and Datastar.js live hypermedia streaming), a sticky DaisyUI navbar (left-aligned
-  report title, right-aligned Table of Contents dropdown mapping h1/h2/h3 IDs,
-  DaisyUI color-swatch theme dropdown synced to charts/diagrams, and icon-only
-  Download dropdown for HTML or PDF), @media print rules with a Page 1 Cover +
-  H1/H2/H3 TOC, horizontal-scrollbar insufficient-space detection, and Playwright
-  multi-breakpoint & 5-theme PDF verification. Use when the user asks to create,
-  design, or export an HTML report, dashboard report, or PDF-backed HTML summary.
+  Generates publication-grade, interactive, print-ready, and instant Progressive
+  Web App (PWA) HTML5 reports with a non-blocking 17-library CDN stack (Tailwind
+  CSS, DaisyUI with all 32 themes defaulting to 'light', Lucide Icons, Alpine.js,
+  Chart.js, Mermaid, Leaflet maps, Grid.js tables, KaTeX math, Marked markdown,
+  Highlight.js code formatting, Day.js dates, Impress.js presentations, Mock.js data,
+  Showdown markdown, FullCalendar schedules, and Datastar.js live hypermedia streaming),
+  automated W3C Web App Manifest generation, dual-strategy offline Service Worker,
+  dynamic DaisyUI theme-color sync, and native install prompt affordances. Use when
+  the user asks to create, design, or export an HTML report, dashboard, or turn any
+  report into an instant PWA ("I want to create a pwa").
 ---
 
 # HTML Report Generation Skill (`html-report`)
@@ -64,6 +62,28 @@ Before writing any HTML report, read the relevant reference guides in this skill
    - Deep architectural breakdown of OpenAI streaming tool calls (`delta.tool_calls`), argument accumulation, non-streaming function calls, and Assistants API v2 (`requires_action`).
    - Human-in-the-loop (HITL) approval gates, clarification question patterns (`ask_user`), model snapshot extraction (`model`, `x-request-id`), and reasoning token telemetry (`reasoning_content`, `reasoning_tokens` for o1/o3).
    - Turn and session termination signals (`finish_reason`, run state lifecycle), official streaming hooks (`openai.beta.threads.runs.stream`), Swarm agent handoffs, Webhooks, and direct official documentation links.
+9. **[Instant Progressive Web App (PWA) Guide (`instant-pwa-guide.md`)](./references/instant-pwa-guide.md)** *(Required when asked "I want to create a PWA" or building installable/offline reports)*:
+   - Zero-dependency automated W3C Web App Manifest generation (`manifest.webmanifest`), multi-resolution scalable icons (SVG), and standalone app display modes.
+   - Dual-caching Service Worker (`sw.js`): Cache-First for static CDN libraries with 0ms local delivery; Network-First with Cache-Fallback for navigation documents.
+   - Dynamic DaisyUI theme synchronization updating `<meta name="theme-color">` across all 32 themes.
+   - Native install affordances (`beforeinstallprompt` & `#pwa-install-btn`) and live offline network health monitoring (`#pwa-offline-badge`).
+   - Retroactive conversion of existing reports via `generate-pwa.mjs`.
+10. **[Semantic Versioning & Library Integration Guide](../../docs/semantic-versioning.md)**:
+   - Adheres strictly to SemVer 2.0.0 (`MAJOR.MINOR.PATCH`).
+   - Programmatic ESM exports (`html-report/build`, `html-report/harness`, `html-report/serve`, `html-report/pwa`, `html-report/theme`, `html-report/compatibility`).
+   - CLI version inspection (`--version`, `-v`) and pre-flight compatibility scanner (`--check-compatibility`).
+   - Deprecation lifecycle and turnkey `<AI_MIGRATION_PROMPT>` blocks inside [`MIGRATION.md`](../../MIGRATION.md) for automated agent refactoring when breaking changes occur.
+11. **[Universal Two-Way Agent Bridge & Co-Pilot Architecture (`two-way-agent-bridge.md`)](./references/two-way-agent-bridge.md)**:
+   - Zero-API-key bidirectional AI co-pilot bridging browser reports to the local `agy` CLI session.
+   - Dual-mode responses: **Datastar SSE hypermedia morphing** (`event: datastar-merge-fragments`) and structured JSON.
+   - Built-in personas (`analyst`, `debugger`, `strategist`, `executive`, `sarcastic`, `oak`, `hype`) and custom system prompts.
+   - Global client helper `window.HTMLReportAgent` (`ask()`, `isAvailable()`) with resilient offline fallback.
+   - Automatic dev directory fallback routing (`/dev/` and `/experiments/`).
+12. **[Agent Persona Blueprint & Extensibility Guide (`persona-blueprint.md`)](./references/persona-blueprint.md)**:
+   - Full specification for defining, styling, and registering specialized AI co-pilot personas.
+   - Four registration paths: `personas.json` workspace auto-loading, `POST /api/agent/persona` REST API, inline `personaConfig` in Datastar `@post`, and `HTMLReportAgent.registerPersona(...)`.
+   - Custom DaisyUI badge colors (`badge-error`, `badge-warning`, `badge-accent`) and Lucide icons rendered automatically into Datastar SSE hypermedia fragments.
+   - Ready-to-use persona blueprint library (SRE / Incident Commander, Security Auditor, Code Architecture Reviewer, etc.).
 
 ---
 
@@ -293,6 +313,37 @@ Reports support real-time hypermedia streaming and reactive signals via **Datast
    Standardized `TaskTelemetrySchema`, `AgyTelemetryAdapter` (Google Antigravity transcripts), and `CodexTelemetryAdapter` (OpenAI reasoning & tool chunks) stream agent Chain-of-Thought, live task checklist cards (`#task-${id}`), and tool invocation cards (`#tool-call-feed`) in real time.
 4. **Post-Morph Icon Rehydration**:
    `report-runtime.js` automatically observes DOM morphs with a `MutationObserver` and rehydrates `<i data-lucide="...">` tags into SVG icons.
+
+### Instant Progressive Web App (PWA) Creation (`--pwa` & `generate-pwa.mjs`)
+
+When asked *"I want to create a pwa"*, *"turn this report into a pwa"*, or to produce an installable, offline-first report application:
+
+1. **Option A: Build New PWA Deliverable (`--pwa`)**:
+   Pass `--pwa` during report assembly. The builder emits `manifest.webmanifest`, `sw.js`, and `icon.svg` alongside `report.html`:
+   ```bash
+   node skills/html-report/scripts/build-report.mjs \
+     --content report-fragment.html \
+     --title "Executive PWA Report" \
+     --pwa \
+     --output report.html
+   ```
+
+2. **Option B: Retrofit ANY Existing Report Instantly (`generate-pwa.mjs`)**:
+   Convert any previously generated report into a fully installable PWA without modifying original code:
+   ```bash
+   node skills/html-report/scripts/generate-pwa.mjs ./existing-report.html \
+     --title "Field Ops Report" \
+     --short-name "FieldOps" \
+     --theme-color "#10b981" \
+     --emoji "🛡️"
+   ```
+
+3. **Core PWA Features Automatically Provided**:
+   - **W3C Web App Manifest**: `display: "standalone"`, multi-resolution maskable SVG/PNG icons, categories, shortcuts.
+   - **Dual-Caching Service Worker (`sw.js`)**: Cache-First for static CDN libraries with 0ms local delivery; Network-First with Cache-Fallback for HTML navigation.
+   - **Native Install Prompt**: Reveals `#pwa-install-btn` in navbar and download menu upon `beforeinstallprompt` event.
+   - **Dynamic Theme-Color Sync**: Reactively updates `<meta name="theme-color">` whenever any of the 32 DaisyUI themes is selected.
+   - **Offline Network Detection**: Displays `#pwa-offline-badge` when offline.
 
 ### Step 3: Auto-Open & Single-Tab Live-Reload Dev Server
 Launch the local live-reload server to view and iterate on the report:

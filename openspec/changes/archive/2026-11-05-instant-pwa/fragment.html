@@ -1,0 +1,655 @@
+<!-- ========================================== -->
+<!-- HERO BANNER & JOURNEY STEPPER              -->
+<!-- ========================================== -->
+<header class="space-y-6 border-b border-base-300 pb-8">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">instant-pwa</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1">
+      <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Phase 5: Shipped &amp; Verified
+    </span>
+    <span class="badge badge-info font-mono text-xs font-semibold gap-1">
+      <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Instant PWA Engine
+    </span>
+    <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
+      <i data-lucide="wifi-off" class="w-3.5 h-3.5"></i> Offline-First Caching
+    </span>
+  </div>
+
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div class="space-y-2">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+        Instant Progressive Web App (PWA) Engine
+      </h1>
+      <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+        Turn any HTML report into an installable, publication-grade Progressive Web App instantly. Includes automated W3C Web App Manifest generation, dual-strategy offline Service Worker, multi-resolution app icons, dynamic DaisyUI theme-color synchronization, native install prompt affordances, and zero-dependency conversion tooling.
+      </p>
+    </div>
+
+    <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+      </button>
+      <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/instant-pwa/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
+      </button>
+    </div>
+  </div>
+
+  <!-- Mandatory Journey Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+    <div class="flex items-center justify-between text-xs font-bold text-base-content/70">
+      <span class="flex items-center gap-1.5">
+        <i data-lucide="git-pull-request" class="w-4 h-4 text-primary"></i> Current Journey State
+      </span>
+      <span class="font-mono text-success">Stage 5 Active · Shipped &amp; Verified</span>
+    </div>
+    <div class="w-full overflow-x-auto py-2">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
+        <li id="stepper-phase-2" class="step step-primary">2. Planning</li>
+        <li id="stepper-phase-3" class="step step-primary">3. Implementing</li>
+        <li id="stepper-phase-4" class="step step-primary">4. Verifying</li>
+        <li id="stepper-phase-5" class="step step-primary">5. Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- ========================================== -->
+<!-- 1. LIVE PROGRESS METRICS & STATS           -->
+<!-- ========================================== -->
+<section id="progress-metrics" class="space-y-4">
+  <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+    <i data-lucide="activity" class="w-6 h-6 text-primary"></i>
+    Live Implementation Metrics
+  </h2>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-primary">
+        <i data-lucide="list-todo" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Total Milestones</div>
+      <div id="stat-total-tasks" class="stat-value text-2xl font-black text-primary">17</div>
+      <div class="stat-desc text-xs text-base-content/60">Across 6 structured phases</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-success">
+        <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Completed</div>
+      <div id="stat-completed-tasks" class="stat-value text-2xl font-black text-success">17</div>
+      <div class="stat-desc text-xs text-base-content/60">All 17 milestones complete</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-success">
+        <i data-lucide="check" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">In Progress</div>
+      <div id="stat-in-progress-tasks" class="stat-value text-2xl font-black text-success">0</div>
+      <div class="stat-desc text-xs text-base-content/60">0 remaining milestones</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-secondary">
+        <i data-lucide="gauge" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Overall Progress</div>
+      <div id="stat-progress-pct" class="stat-value text-2xl font-black text-secondary">100%</div>
+      <div class="stat-desc text-xs text-base-content/60">100% test &amp; spec pass rate</div>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="w-full bg-base-300 rounded-full h-3 overflow-hidden shadow-inner">
+    <div id="progress-bar-fill" class="bg-gradient-to-r from-primary to-accent h-3 rounded-full transition-all duration-500" style="width: 100%"></div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 2. COPYABLE USER & AGENT PROMPT CARD       -->
+<!-- ========================================== -->
+<section id="pwa-prompt-card" class="space-y-4">
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="terminal" class="w-6 h-6 text-primary"></i>
+        Instant PWA Request Trigger
+      </h2>
+      <p class="text-xs sm:text-sm text-base-content/70">
+        When asked <em>"I want to create a PWA"</em>, use these canonical commands to turn any report into an instant PWA.
+      </p>
+    </div>
+
+    <button id="copy-pwa-cmd-btn" type="button" onclick="copyPwaCommand()" class="btn btn-primary btn-sm gap-2 shadow-sm hover:scale-105 active:scale-95 transition-all">
+      <i id="copy-cmd-icon" data-lucide="copy" class="w-4 h-4"></i>
+      <span id="copy-cmd-text">Copy CLI Command</span>
+    </button>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 shadow-md overflow-hidden">
+    <div class="bg-base-200/80 px-4 py-2.5 flex items-center justify-between border-b border-base-300 text-xs font-mono">
+      <span class="flex items-center gap-2 text-base-content/80 font-semibold">
+        <i data-lucide="code" class="w-4 h-4 text-accent"></i>
+        Instant PWA Workflows
+      </span>
+      <span class="badge badge-sm badge-success font-mono">Ready to Execute</span>
+    </div>
+    <div class="p-4 sm:p-6 space-y-4 bg-base-100">
+      <div class="space-y-2">
+        <div class="text-xs font-bold uppercase tracking-wider text-primary">1. Generate New PWA Report from Fragment</div>
+        <pre class="bg-base-200 p-3 rounded-lg text-xs font-mono text-base-content overflow-x-auto select-all">node skills/html-report/scripts/build-report.mjs \
+  --content report-fragment.html \
+  --title "Executive Analytics Dashboard" \
+  --pwa \
+  --output report.html</pre>
+      </div>
+
+      <div class="space-y-2">
+        <div class="text-xs font-bold uppercase tracking-wider text-secondary">2. Transform ANY Existing Report into an Instant PWA</div>
+        <pre id="pwa-existing-cmd" class="bg-base-200 p-3 rounded-lg text-xs font-mono text-base-content overflow-x-auto select-all">node skills/html-report/scripts/generate-pwa.mjs \
+  ./existing-report.html \
+  --title "Field Inspection Report"</pre>
+      </div>
+
+      <div class="space-y-2">
+        <div class="text-xs font-bold uppercase tracking-wider text-accent">3. Standalone Verification &amp; Dev Serving</div>
+        <pre class="bg-base-200 p-3 rounded-lg text-xs font-mono text-base-content overflow-x-auto select-all">node skills/html-report/scripts/serve-report.mjs \
+  report.html \
+  --port 3000</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 3. ARCHITECTURE & TECHNICAL FLOWS          -->
+<!-- ========================================== -->
+<section id="architecture-flows" class="space-y-6">
+  <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+    <i data-lucide="cpu" class="w-6 h-6 text-primary"></i>
+    PWA System Architecture &amp; Caching Engine
+  </h2>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Architecture Diagram Card -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
+          <i data-lucide="git-merge" class="w-4 h-4 text-primary"></i>
+          PWA Assembly Pipeline
+        </h3>
+        <span class="badge badge-sm badge-outline font-mono">End-to-End</span>
+      </div>
+      <div class="mermaid bg-base-200/50 p-2 rounded border border-base-300/50 text-xs overflow-x-auto">
+flowchart TD
+    Frag["Semantic Content Fragment"] --> Builder["build-report.mjs --pwa"]
+    Builder --> PwaEngine["pwa-builder.mjs"]
+    PwaEngine --> Manifest["manifest.webmanifest<br/>(W3C Specification)"]
+    PwaEngine --> SW["sw.js<br/>(Dual Caching Engine)"]
+    PwaEngine --> Icons["icon.svg &amp; raster icons"]
+    Builder --> Shell["template-shell.html"]
+    Shell --> Report["Fully Installable report.html"]
+    Report --> Browser["Browser Desktop &amp; Mobile"]
+    Browser --> Install["Install Prompt (beforeinstallprompt)"]
+    Browser --> Offline["Offline Mode (navigator.onLine)"]
+      </div>
+    </div>
+
+    <!-- Caching Sequence Diagram Card -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-sm flex items-center gap-2 text-base-content">
+          <i data-lucide="database" class="w-4 h-4 text-accent"></i>
+          Dual Caching Engine Lifecycle
+        </h3>
+        <span class="badge badge-sm badge-outline font-mono">Offline-First</span>
+      </div>
+      <div class="mermaid bg-base-200/50 p-2 rounded border border-base-300/50 text-xs overflow-x-auto">
+sequenceDiagram
+    participant Browser
+    participant SW as Service Worker
+    participant Cache as CacheStorage
+    participant Net as Remote CDN / Server
+
+    Note over SW: INSTALL: Cache Core Assets
+    Browser->>SW: Fetch CDN Script (Tailwind/DaisyUI)
+    SW->>Cache: Cache-First Match
+    alt Cached
+        Cache-->>Browser: Fast 0ms Local Delivery
+    else Miss
+        SW->>Net: Fetch CDN
+        Net-->>SW: Response
+        SW->>Cache: Store Cache
+        SW-->>Browser: Return Response
+    end
+
+    Browser->>SW: Navigation (HTML Document)
+    SW->>Net: Network-First (Fresh Data)
+    alt Network OK
+        Net-->>SW: Fresh HTML
+        SW->>Cache: Update Offline Copy
+        SW-->>Browser: Render Fresh
+    else Offline
+        SW->>Cache: Offline Fallback
+        Cache-->>Browser: Render Cached Document
+    end
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 4. CORE CAPABILITIES BREAKDOWN             -->
+<!-- ========================================== -->
+<section id="capabilities-breakdown" class="space-y-4">
+  <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+    <i data-lucide="sparkles" class="w-6 h-6 text-primary"></i>
+    PWA Engine Capabilities
+  </h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Card 1 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+        <i data-lucide="file-json" class="w-5 h-5"></i>
+      </div>
+      <h3 class="font-bold text-base text-base-content">Automated Web App Manifest</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Outputs compliant W3C <code>manifest.webmanifest</code> with standalone display mode, multi-resolution icon map, categories, app shortcuts, and start URL scopes.
+      </p>
+      <div class="badge badge-outline badge-xs font-mono">manifest.webmanifest</div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center font-bold">
+        <i data-lucide="shield-check" class="w-5 h-5"></i>
+      </div>
+      <h3 class="font-bold text-base text-base-content">Zero-Dependency Service Worker</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Pure ESM <code>sw.js</code> caching engine implementing Cache-First for static CDNs and Network-First for HTML navigation with instant offline fallback.
+      </p>
+      <div class="badge badge-outline badge-xs font-mono">sw.js (Vanilla ESM)</div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center font-bold">
+        <i data-lucide="palette" class="w-5 h-5"></i>
+      </div>
+      <h3 class="font-bold text-base text-base-content">Dynamic DaisyUI Theme-Color Sync</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Seamlessly synchronizes <code>&lt;meta name="theme-color"&gt;</code> with any of DaisyUI's 32 themes, adapting desktop window borders and mobile status bars on the fly.
+      </p>
+      <div class="badge badge-outline badge-xs font-mono">32 Themes Synced</div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="w-10 h-10 rounded-xl bg-info/10 text-info flex items-center justify-center font-bold">
+        <i data-lucide="download-cloud" class="w-5 h-5"></i>
+      </div>
+      <h3 class="font-bold text-base text-base-content">Native Install Prompt Affordance</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Intercepts <code>beforeinstallprompt</code> and lights up an <strong>Install App</strong> button in the DaisyUI navbar and Download dropdown menu for 1-click installation.
+      </p>
+      <div class="badge badge-outline badge-xs font-mono">beforeinstallprompt</div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="w-10 h-10 rounded-xl bg-warning/10 text-warning flex items-center justify-center font-bold">
+        <i data-lucide="wifi-off" class="w-5 h-5"></i>
+      </div>
+      <h3 class="font-bold text-base text-base-content">Live Offline Status Detection</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Listens to <code>window.online</code> / <code>offline</code> events, displaying an elegant warning pill when the device loses connection, reassuring the user the report is cached.
+      </p>
+      <div class="badge badge-outline badge-xs font-mono">navigator.onLine</div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="w-10 h-10 rounded-xl bg-success/10 text-success flex items-center justify-center font-bold">
+        <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+      </div>
+      <h3 class="font-bold text-base text-base-content">Universal Report Converter CLI</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        <code>generate-pwa.mjs</code> converts any existing standalone HTML report into an installable PWA retroactively without regenerating the original document.
+      </p>
+      <div class="badge badge-outline badge-xs font-mono">generate-pwa.mjs</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 5. CONNECTED TASK CHECKLIST                -->
+<!-- ========================================== -->
+<section id="tasks-checklist" class="space-y-4">
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="check-square" class="w-6 h-6 text-primary"></i>
+        Task Tracking (`tasks.md`)
+      </h2>
+      <p class="text-xs sm:text-sm text-base-content/70">
+        Living milestone checklist synchronizing our journey phases.
+      </p>
+    </div>
+
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline gap-1 font-mono">
+      <i data-lucide="external-link" class="w-3.5 h-3.5"></i> View raw tasks.md
+    </button>
+  </div>
+
+  <div class="space-y-4">
+    <!-- Phase 1 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between text-xs font-bold">
+        <span class="flex items-center gap-2 text-primary font-mono">
+          <i data-lucide="check-circle" class="w-4 h-4 text-success"></i> Phase 1: Planning &amp; OpenSpec Foundation
+        </span>
+        <span class="badge badge-sm badge-success">Completed</span>
+      </div>
+      <div class="space-y-1.5 pl-6 text-xs text-base-content/80">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">1.1 Create OpenSpec change directory, proposal, design, and delta spec</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">1.2 Design PWA architecture (manifest, service worker caching, theme sync, install prompt)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">1.3 Generate companion index.html journey dashboard and sync to implementation-progress.html</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between text-xs font-bold">
+        <span class="flex items-center gap-2 text-primary font-mono">
+          <i data-lucide="check-circle" class="w-4 h-4 text-success"></i> Phase 2: Core PWA Engine &amp; Standalone Converter Tool
+        </span>
+        <span class="badge badge-sm badge-success">Completed</span>
+      </div>
+      <div class="space-y-1.5 pl-6 text-xs text-base-content/80">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">2.1 Implement <code>skills/html-report/scripts/pwa-builder.mjs</code> (manifest, service worker, icons, HTML injector)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">2.2 Implement <code>skills/html-report/scripts/generate-pwa.mjs</code> CLI to transform any existing HTML report into a PWA</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">2.3 Verify asset outputs (valid JSON manifest, valid service worker syntax, scalable SVG icons)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between text-xs font-bold">
+        <span class="flex items-center gap-2 text-primary font-mono">
+          <i data-lucide="check-circle" class="w-4 h-4 text-success"></i> Phase 3: Integration into Pipeline, Shell &amp; Runtime
+        </span>
+        <span class="badge badge-sm badge-success">Completed</span>
+      </div>
+      <div class="space-y-1.5 pl-6 text-xs text-base-content/80">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">3.1 Update <code>skills/html-report/scripts/build-report.mjs</code> with <code>--pwa</code> flag and <code>pwa</code> canonical mode</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">3.2 Update <code>skills/html-report/scripts/harness.mjs</code> with <code>--pwa</code> flag and server orchestration policy</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">3.3 Update <code>skills/html-report/scripts/serve-report.mjs</code> with <code>.webmanifest</code> MIME type and <code>sw.js</code> headers</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">3.4 Update <code>skills/html-report/assets/template-shell.html</code> with install button, offline badge, and meta slots</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">3.5 Update <code>skills/html-report/assets/report-runtime.js</code> with SW registration, theme-color sync, and <code>beforeinstallprompt</code></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between text-xs font-bold">
+        <span class="flex items-center gap-2 text-primary font-mono">
+          <i data-lucide="check-circle" class="w-4 h-4 text-success"></i> Phase 4: Verification &amp; Automated Test Suites
+        </span>
+        <span class="badge badge-sm badge-success">Completed</span>
+      </div>
+      <div class="space-y-1.5 pl-6 text-xs text-base-content/80">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">4.1 Write comprehensive unit tests in <code>tests/pwa.test.mjs</code></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">4.2 Write native BDD tests in <code>tests/pwa.bdd.test.mjs</code> bound to <code>specs/instant-pwa/spec.md</code></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">4.3 Run full test suite with <code>node --test tests/*.test.mjs</code> ensuring 100% pass rate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between text-xs font-bold">
+        <span class="flex items-center gap-2 text-primary font-mono">
+          <i data-lucide="check-circle" class="w-4 h-4 text-success"></i> Phase 5: Skill Documentation &amp; Reference Guide
+        </span>
+        <span class="badge badge-sm badge-success">Completed</span>
+      </div>
+      <div class="space-y-1.5 pl-6 text-xs text-base-content/80">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">5.1 Create <code>skills/html-report/references/instant-pwa-guide.md</code></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">5.2 Update <code>skills/html-report/SKILL.md</code> with explicit PWA triggers ("I want to create a pwa") and instructions</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">5.3 Update root documentation in <code>docs/</code> and <code>README.md</code></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 6 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center justify-between text-xs font-bold">
+        <span class="flex items-center gap-2 text-primary font-mono">
+          <i data-lucide="check-circle" class="w-4 h-4 text-success"></i> Phase 6: Companion Dashboard Finalization &amp; Archival Readiness
+        </span>
+        <span class="badge badge-sm badge-success">Completed</span>
+      </div>
+      <div class="space-y-1.5 pl-6 text-xs text-base-content/80">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">6.1 Update <code>tasks.md</code> and feature <code>fragment.html</code> to reflect complete implementation</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">6.2 Rebuild <code>openspec/changes/instant-pwa/index.html</code> and mirror to <code>implementation-progress.html</code></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success" />
+          <span class="line-through opacity-70">6.3 Verify live dev server at <code>http://localhost:3000</code></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER             -->
+<!-- ========================================== -->
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <!-- Header with document tabs & close button -->
+    <div class="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300 shrink-0">
+      <div class="flex items-center gap-2 flex-wrap">
+        <i data-lucide="file-code" class="w-5 h-5 text-primary"></i>
+        <span id="markdown-modal-title" class="font-bold text-sm font-mono text-base-content">proposal.md</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="join">
+          <button class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
+          <button class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
+          <button class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
+          <button class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="specs/instant-pwa/spec.md" onclick="switchViewerTab('specs/instant-pwa/spec.md')">spec.md</button>
+        </div>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost" aria-label="Close modal">✕</button>
+      </div>
+    </div>
+
+    <!-- Scrollable Markdown Content rendered via Showdown -->
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none flex-1 text-base-content bg-base-100">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- Embedded OpenSpec Artifact Data for Instant Zero-Network Modal Rendering -->
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Instant Progressive Web App (PWA) Generation for HTML Reports\n\n> Visual Plan & Companion Dashboard: [index.html](file:///home/eta/projects/html-report/openspec/changes/instant-pwa/index.html) | Servable at `http://localhost:3000`\n\n## Why\n\nReports generated by `html-report` are already publication-grade, responsive, and rich with data visualizations, dashboards, and interactive widgets. However, users frequently need these reports on the go—on tablets, mobile devices, and field workstations—often in environments with intermittent, air-gapped, or zero internet connectivity.\n\nCurrently, saving a report as a standalone web app requires manually crafting a Web App Manifest (`manifest.webmanifest`), configuring multi-size icons, authoring a custom Service Worker (`sw.js`) with appropriate cache strategies, wiring `beforeinstallprompt` browser hooks, and maintaining offline fallback states.\n\nWhen a user or developer asks:\n> *\"I want to create a PWA from this report\"*\n\nThe `html-report` skill / html-helper should natively and instantly fulfill that request with **zero friction, zero external dependencies, and complete offline capability**.\n\n## What Changes\n\n1. **Instant PWA Generation Engine (`skills/html-report/scripts/pwa-builder.mjs`)**:\n   - Zero-dependency generator for W3C Web App Manifests (`manifest.webmanifest`), Service Worker runtime (`sw.js`), and responsive SVG / PNG app icons.\n   - Dual caching strategy: Stale-While-Revalidate / Network-First for HTML navigation; aggressive Cache-First for static CDN scripts, DaisyUI stylesheets, and visual assets.\n\n2. **Any-Report Converter CLI (`skills/html-report/scripts/generate-pwa.mjs`)**:\n   - Dedicated standalone CLI tool that takes *any* existing HTML report file (`node skills/html-report/scripts/generate-pwa.mjs ./my-report.html`) and instantly produces an installable PWA with companion manifest, service worker, and icons.\n\n3. **Deterministic CLI Flag & Mode Integration (`--pwa` & `--mode pwa`)**:\n   - Integrated into `build-report.mjs` and `harness.mjs`.\n   - Added canonical mode `\"pwa\"` and flag `--pwa` with automatic asset emission and `<head>` link/meta tag injection.\n\n4. **In-Report PWA Runtime & Install Affordances**:\n   - Dynamic **Install App** button in the DaisyUI navbar (utilizing native `beforeinstallprompt`) and in the Download dropdown.\n   - Live **Offline Status Badge** in the header reflecting `navigator.onLine` state.\n   - Reactive **Theme-Color Synchronization**: dynamically updates `<meta name="theme-color">` to match whichever of the 32 DaisyUI themes the user selects.\n\n5. **PWA-Aware Dev Server Serving (`serve-report.mjs`)**:\n   - First-class support for `.webmanifest` (`application/manifest+json`) and `sw.js` with `Service-Worker-Allowed: /` headers.\n\n6. **Agent Skill Capability & Documentation**:\n   - Updated `SKILL.md` to explicitly guide agents when asked *\"I want to create a PWA\"*.\n   - Dedicated comprehensive reference guide: `references/instant-pwa-guide.md`.\n",
+  "design.md": "# Design Document: Instant Progressive Web App (PWA) Architecture\n\n> Visual Plan & Companion Dashboard: [index.html](file:///home/eta/projects/html-report/openspec/changes/instant-pwa/index.html) | Servable at `http://localhost:3000`\n\n## Context & Problem Statement\n\nUsers of `html-report` generate reports containing complex dashboards, telemetry logs, architectural diagrams, and data tables. In many operational workflows (field inspections, on-call debugging, presentations, travel), reports must be installable as standalone desktop or mobile apps with instant launch times and complete offline access.\n\nStandard web pages lack installability, home-screen badges, offline service workers, and OS-level window chrome. Creating a PWA conventionally requires configuring multiple files:\n1. `manifest.webmanifest` (JSON specification with theme colors, icons, scopes, categories)\n2. `sw.js` (Service Worker handling fetch interception, cache quotas, lifecycle)\n3. App icons (192x192, 512x512, maskable safe-zone, SVG vectors)\n4. Client runtime hooks (`beforeinstallprompt`, theme synchronization, network health alerts)\n5. Web server MIME type configurations (`application/manifest+json`)\n\nOur goal is to make this **entirely instant and automated**: a single command or question turns any report into a production-grade PWA.\n",
+  "tasks.md": "# Tasks: Instant Progressive Web App (PWA) Generation\n\n> Companion Dashboard: [index.html](file:///home/eta/projects/html-report/openspec/changes/instant-pwa/index.html) | Servable at `http://localhost:3000`\n> Backlinks: [proposal.md](file:///home/eta/projects/html-report/openspec/changes/instant-pwa/proposal.md) | [design.md](file:///home/eta/projects/html-report/openspec/changes/instant-pwa/design.md) | [specs/instant-pwa/spec.md](file:///home/eta/projects/html-report/openspec/changes/instant-pwa/specs/instant-pwa/spec.md)\n\n## Phase 1: Planning & OpenSpec Foundation\n- [x] 1.1 Create OpenSpec change directory, proposal, design, and delta spec\n- [x] 1.2 Design PWA architecture (manifest, service worker caching, theme sync, install prompt)\n- [x] 1.3 Generate companion `index.html` journey dashboard and sync to `implementation-progress.html`\n\n## Phase 2: Core PWA Engine & Standalone Converter Tool\n- [x] 2.1 Implement `skills/html-report/scripts/pwa-builder.mjs` (manifest, service worker, icons, HTML injector)\n- [x] 2.2 Implement `skills/html-report/scripts/generate-pwa.mjs` CLI to transform any existing HTML report into a PWA\n- [x] 2.3 Verify asset outputs (valid JSON manifest, valid service worker syntax, scalable SVG icons)\n\n## Phase 3: Integration into Pipeline, Shell & Runtime\n- [x] 3.1 Update `skills/html-report/scripts/build-report.mjs` with `--pwa` flag and `pwa` canonical mode\n- [x] 3.2 Update `skills/html-report/scripts/harness.mjs` with `--pwa` flag and server orchestration policy\n- [x] 3.3 Update `skills/html-report/scripts/serve-report.mjs` with `.webmanifest` MIME type and `sw.js` headers\n- [x] 3.4 Update `skills/html-report/assets/template-shell.html` with install button, offline badge, and meta slots\n- [x] 3.5 Update `skills/html-report/assets/report-runtime.js` with SW registration, theme-color sync, and `beforeinstallprompt`\n\n## Phase 4: Verification & Automated Test Suites\n- [x] 4.1 Write comprehensive unit tests in `tests/pwa.test.mjs`\n- [x] 4.2 Write native BDD tests in `tests/pwa.bdd.test.mjs` bound to `specs/instant-pwa/spec.md`\n- [x] 4.3 Run full test suite with `node --test tests/*.test.mjs` ensuring 100% pass rate\n\n## Phase 5: Skill Documentation & Reference Guide\n- [x] 5.1 Create `skills/html-report/references/instant-pwa-guide.md`\n- [x] 5.2 Update `skills/html-report/SKILL.md` with explicit PWA triggers (\"I want to create a pwa\") and instructions\n- [x] 5.3 Update root documentation in `docs/` and `README.md`\n\n## Phase 6: Companion Dashboard Finalization & Archival Readiness\n- [x] 6.1 Update `tasks.md` and feature `fragment.html` to reflect complete implementation\n- [x] 6.2 Rebuild `openspec/changes/instant-pwa/index.html` and mirror to `implementation-progress.html`\n- [x] 6.3 Verify live dev server at `http://localhost:3000`\n",
+  "specs/instant-pwa/spec.md": "# instant-pwa Specification\n\n## Purpose\nEnables instant, zero-friction Progressive Web App (PWA) generation for any HTML report created with `html-report`, including W3C Web App Manifest generation, Service Worker offline caching, multi-resolution app icons, theme-color synchronization, install prompt affordances, and existing-report conversion.\n"
+}
+</script>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    activeDocKey = docName;
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    const titleEl = document.getElementById("markdown-modal-title");
+    if (titleEl) titleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn, .md-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-primary");
+        btn.classList.remove("btn-ghost");
+      } else {
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-ghost");
+      }
+    });
+
+    const artifacts = getOpenSpecArtifacts();
+    let rawContent = artifacts[docName];
+
+    if (!rawContent) {
+      try {
+        const res = await fetch("/" + docName);
+        if (res.ok) rawContent = await res.text();
+      } catch (_) {}
+    }
+
+    if (!rawContent) {
+      rawContent = "# " + docName + "\n\nContent could not be loaded.";
+    }
+
+    const converter = getShowdownConverter();
+    const html = converter ? converter.makeHtml(rawContent) : "<pre>" + rawContent + "</pre>";
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (bodyEl) bodyEl.innerHTML = html;
+  }
+
+  function copyPwaCommand() {
+    const cmd = "node skills/html-report/scripts/generate-pwa.mjs ./existing-report.html --title \"Field Inspection Report\"";
+    navigator.clipboard.writeText(cmd).then(() => {
+      const btnText = document.getElementById("copy-cmd-text");
+      if (btnText) {
+        const original = btnText.textContent;
+        btnText.textContent = "Copied to Clipboard!";
+        setTimeout(() => { btnText.textContent = original; }, 2000);
+      }
+    });
+  }
+
+  window.openMarkdownViewer = openMarkdownViewer;
+  window.closeMarkdownViewer = closeMarkdownViewer;
+  window.switchViewerTab = switchViewerTab;
+  window.copyPwaCommand = copyPwaCommand;
+</script>

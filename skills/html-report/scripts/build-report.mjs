@@ -4,6 +4,18 @@ import path from "node:path";
 import child_process from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { compileTheme, compileThemeFile } from "./theme-compiler.mjs";
+import {
+  buildPwaHeadTags,
+  generatePwaAssets,
+  DEFAULT_PWA_CONFIG,
+  deriveShortName
+} from "./pwa-builder.mjs";
+import {
+  getPackageVersion,
+  formatVersionString,
+  checkDeprecatedCliArgs,
+  checkDeprecatedApiOptions
+} from "./compatibility.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -276,7 +288,8 @@ export function generateFaviconTag(emoticon = "📊") {
  * Parses CLI arguments.
  */
 export function parseArgs(argv) {
-  const args = argv.slice(2);
+  const { normalized: rawArgs } = checkDeprecatedCliArgs(argv.slice(2));
+  const args = rawArgs;
   const options = {
     title: "HTML Report",
     content: null,
@@ -292,6 +305,14 @@ export function parseArgs(argv) {
     feeds: {},
     freezeFeeds: false,
     feedInterval: null,
+    pwa: false,
+    pwaName: null,
+    pwaShortName: null,
+    pwaThemeColor: null,
+    pwaBgColor: null,
+    pwaIcon: null,
+    noPwaAssets: false,
+    version: false,
     help: false
   };
 
@@ -300,6 +321,8 @@ export function parseArgs(argv) {
 
     if (arg === "--help" || arg === "-h") {
       options.help = true;
+    } else if (arg === "--version" || arg === "-v") {
+      options.version = true;
     } else if ((arg === "--title" || arg === "-t") && args[i + 1]) {
       options.title = args[++i];
     } else if ((arg === "--content" || arg === "-c") && args[i + 1]) {
@@ -341,6 +364,25 @@ export function parseArgs(argv) {
       if (!options.addons.includes("datastar")) {
         options.addons.push("datastar");
       }
+    } else if (arg === "--pwa") {
+      options.pwa = true;
+    } else if (arg === "--pwa-name" && args[i + 1]) {
+      options.pwaName = args[++i];
+      options.pwa = true;
+    } else if (arg === "--pwa-short-name" && args[i + 1]) {
+      options.pwaShortName = args[++i];
+      options.pwa = true;
+    } else if (arg === "--pwa-theme-color" && args[i + 1]) {
+      options.pwaThemeColor = args[++i];
+      options.pwa = true;
+    } else if (arg === "--pwa-bg-color" && args[i + 1]) {
+      options.pwaBgColor = args[++i];
+      options.pwa = true;
+    } else if (arg === "--pwa-icon" && args[i + 1]) {
+      options.pwaIcon = args[++i];
+      options.pwa = true;
+    } else if (arg === "--no-pwa-assets") {
+      options.noPwaAssets = true;
     } else if (arg === "--theme" && args[i + 1]) {
       options.theme = args[++i];
     } else if ((arg === "--custom-theme" || arg === "-ct") && args[i + 1]) {
@@ -404,6 +446,12 @@ export function buildReport({
   printable = false,
   presentation = false,
   live = false,
+  pwa = false,
+  pwaName = null,
+  pwaShortName = null,
+  pwaThemeColor = null,
+  pwaBgColor = null,
+  pwaIcon = null,
   addons = [],
   favicon = "📊",
   theme = null,
@@ -509,6 +557,7 @@ export function buildReport({
   const isPrintable = Boolean(printable || resolvedMode === "print");
   const isPresentation = Boolean(presentation || resolvedMode === "presentation");
   const isLive = Boolean(live || hasPublicFeed || resolvedMode === "live-report");
+  const isPwa = Boolean(pwa);
 
   const shellTemplate = fs.readFileSync(templateShellPath, "utf-8");
   const runtimeScript = fs.readFileSync(runtimeScriptPath, "utf-8");
@@ -559,6 +608,15 @@ export function buildReport({
   }
   if (isPrintable) {
     headExtraParts.push(PRINT_MEDIA_CSS);
+  }
+  if (isPwa) {
+    const effectiveThemeColor = pwaThemeColor || DEFAULT_PWA_CONFIG.themeColor;
+    headExtraParts.push(buildPwaHeadTags({
+      manifestHref: "manifest.webmanifest",
+      themeColor: effectiveThemeColor,
+      iconHref: "icon.svg",
+      title: pwaName || title
+    }));
   }
   const headExtras = headExtraParts.join("\n\n");
 
@@ -625,12 +683,23 @@ export function buildReport({
   html = html.replace(/<!-- {{RUNTIME_SCRIPT}} -->/g, () => inlinedRuntime);
   html = html.replace(/<!-- {{CUSTOM_THEMES}} -->/g, () => compiledCustomCss ? `\n${compiledCustomCss}\n  ` : "");
 
+  const version = getPackageVersion();
+  html = html.replace(/<!-- {{VERSION}} -->/g, () => version);
+
   return {
     html,
     activeAddons: activeAddonKeys,
     mode: resolvedMode,
     theme: resolvedTheme || "light",
-    hasCustomTheme: Boolean(compiledCustomCss)
+    hasCustomTheme: Boolean(compiledCustomCss),
+    isPwa,
+    pwaConfig: isPwa ? {
+      title: pwaName || title,
+      shortName: pwaShortName || deriveShortName(pwaName || title),
+      themeColor: pwaThemeColor || DEFAULT_PWA_CONFIG.themeColor,
+      backgroundColor: pwaBgColor || DEFAULT_PWA_CONFIG.backgroundColor,
+      emoji: pwaIcon || favicon
+    } : null
   };
 }
 
@@ -645,12 +714,19 @@ Options:
   -c, --content <file>      Path to semantic <main> HTML fragment file (required)
   -t, --title <string>      Report title (default: "HTML Report")
   -o, --output <file>       Destination HTML file (default: "./report.html")
-  -m, --mode <name>         Report mode: print, report, presentation, dashboard, working-report, live-report (default: "report")
+  -m, --mode <name>         Report mode: print, report, presentation, dashboard, working-report, live-report, pwa (default: "report")
   -p, --print, --printable  Enable printable/PDF mode (@media print rules, static mode)
       --presentation        Enable interactive presentation mode for Impress.js
       --dashboard           Enable interactive dashboard mode
       --working-report      Enable working journey companion mode
   -l, --live, --live-report Enable real-time Datastar live dashboard mode
+      --pwa                 Enable Progressive Web App mode (manifest, sw.js, and icons)
+      --pwa-name <name>     Custom PWA app name
+      --pwa-short-name <nm> Custom PWA short name for homescreen
+      --pwa-theme-color <c> Custom PWA window/status-bar theme color (default: #2563eb)
+      --pwa-bg-color <c>    Custom PWA splash screen background color (default: #ffffff)
+      --pwa-icon <emoji>    Custom PWA icon emoji glyph (default: favicon or 📊)
+      --no-pwa-assets       Skip writing companion PWA files to disk
       --theme <name>        DaisyUI theme name (default: "light")
       --custom-theme <path> Path to custom theme definition (.json or .css)
       --favicon <emoji>     Favicon emoticon (default: "📊")
@@ -670,6 +746,7 @@ Options:
       --feed <name>=<url>   Inject feed nickname mapping into #feed-registry
       --freeze-feeds        Fetch and bake snapshot payloads into data-feed-fallback
       --feed-interval <ms>  Override polling interval for public feeds
+  -v, --version             Display semantic version
   -h, --help                Show this help message
 `);
 }
@@ -682,6 +759,11 @@ const isDirectCli = process.argv[1] && (
 
 if (isDirectCli) {
   const options = parseArgs(process.argv);
+
+  if (options.version) {
+    console.log(formatVersionString());
+    process.exit(0);
+  }
 
   if (options.help) {
     showHelp();
@@ -709,13 +791,19 @@ if (isDirectCli) {
       : options.customTheme)
     : null;
 
-  const { html, activeAddons, mode } = buildReport({
+  const { html, activeAddons, mode, isPwa, pwaConfig } = buildReport({
     title: options.title,
     content: rawContent,
     mode: options.mode,
     printable: options.printable,
     presentation: options.presentation,
     live: options.live,
+    pwa: options.pwa,
+    pwaName: options.pwaName,
+    pwaShortName: options.pwaShortName,
+    pwaThemeColor: options.pwaThemeColor,
+    pwaBgColor: options.pwaBgColor,
+    pwaIcon: options.pwaIcon,
     theme: options.theme,
     customTheme: customThemePath,
     addons: options.addons,
@@ -726,12 +814,29 @@ if (isDirectCli) {
   });
 
   const outputPath = path.resolve(process.cwd(), options.output);
-  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  const outputDir = path.dirname(outputPath);
+  fs.mkdirSync(outputDir, { recursive: true });
   fs.writeFileSync(outputPath, html, "utf-8");
+
+  if (isPwa && !options.noPwaAssets) {
+    generatePwaAssets({
+      outputDir,
+      reportFileName: path.basename(outputPath),
+      title: pwaConfig.title,
+      shortName: pwaConfig.shortName,
+      themeColor: pwaConfig.themeColor,
+      backgroundColor: pwaConfig.backgroundColor,
+      emoji: pwaConfig.emoji,
+      writeFiles: true
+    });
+  }
 
   const elapsedMs = Math.round((performance.now() - startTime) * 100) / 100;
   console.log(`[html-report] Report assembled in ${elapsedMs}ms:`);
   console.log(`  Output:        ${outputPath}`);
   console.log(`  Mode:          ${mode}`);
+  if (isPwa) {
+    console.log(`  PWA Assets:    manifest.webmanifest, sw.js, icon.svg in ${outputDir}`);
+  }
   console.log(`  Active Addons: ${activeAddons.length > 0 ? activeAddons.join(", ") : "Core 4 only"}`);
 }

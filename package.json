@@ -1,0 +1,54 @@
+{
+  "name": "html-report",
+  "version": "1.0.0",
+  "description": "Publication-grade, interactive, and print-ready HTML5 reports for AI coding agents.",
+  "type": "module",
+  "main": "./skills/html-report/scripts/harness.mjs",
+  "bin": {
+    "html-report": "./skills/html-report/scripts/harness.mjs",
+    "html-report-build": "./skills/html-report/scripts/build-report.mjs",
+    "html-report-serve": "./skills/html-report/scripts/serve-report.mjs",
+    "html-report-pwa": "./skills/html-report/scripts/generate-pwa.mjs"
+  },
+  "exports": {
+    ".": "./skills/html-report/scripts/harness.mjs",
+    "./build": "./skills/html-report/scripts/build-report.mjs",
+    "./harness": "./skills/html-report/scripts/harness.mjs",
+    "./serve": "./skills/html-report/scripts/serve-report.mjs",
+    "./pwa": "./skills/html-report/scripts/pwa-builder.mjs",
+    "./generate-pwa": "./skills/html-report/scripts/generate-pwa.mjs",
+    "./theme": "./skills/html-report/scripts/theme-compiler.mjs",
+    "./compatibility": "./skills/html-report/scripts/compatibility.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build": "node ./skills/html-report/scripts/build-report.mjs",
+    "serve": "node ./skills/html-report/scripts/serve-report.mjs"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "html-report",
+    "ai-agent",
+    "semver",
+    "antigravity",
+    "claude-code",
+    "reporting",
+    "dashboard",
+    "daisyui",
+    "tailwind",
+    "pwa"
+  ],
+  "author": "Dries Verb",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DriesVerb/html-report.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DriesVerb/html-report/issues"
+  },
+  "homepage": "https://driesverb.github.io/html-report/"
+}

@@ -1,0 +1,1239 @@
+<!-- ========================================== -->
+<!-- HERO BANNER & JOURNEY STEPPER              -->
+<!-- ========================================== -->
+<header class="space-y-6 border-b border-base-300 pb-8">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">reactive-agent-data-copilot</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1">
+      <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Phase 4: Implementation Complete &amp; Verified
+    </span>
+    <span class="badge badge-secondary font-mono text-xs font-semibold gap-1">
+      <i data-lucide="radio" class="w-3.5 h-3.5"></i> Datastar SSE Hypermedia
+    </span>
+    <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
+      <i data-lucide="eye" class="w-3.5 h-3.5"></i> Multimodal (Vision + API + Ticker)
+    </span>
+    <span class="badge badge-info font-mono text-xs font-semibold gap-1">
+      <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Model-Agnostic Co-Pilot
+    </span>
+  </div>
+
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div class="space-y-2">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+        Reactive Agent Data &amp; Multimodal Co-Pilot
+      </h1>
+      <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+        Live, bidirectional coupling between heterogeneous report feeds (visual images like Pokémon sprites, weather API streams, financial charts) and autonomous AI agent feedback loops rendered via Datastar.js hypermedia SSE.
+      </p>
+    </div>
+
+    <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+      </button>
+      <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/reactive-data-copilot/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="layers" class="w-4 h-4 text-info"></i> spec.md
+      </button>
+    </div>
+  </div>
+
+  <!-- Mandatory Journey Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+    <div class="flex items-center justify-between text-xs font-bold text-base-content/70">
+      <span class="flex items-center gap-1.5">
+        <i data-lucide="git-pull-request" class="w-4 h-4 text-primary"></i> Current Journey State
+      </span>
+      <span class="font-mono text-success">Stage 4 Active · Implementation Complete &amp; Verified</span>
+    </div>
+    <div class="w-full overflow-x-auto py-2">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li id="stepper-phase-1" class="step step-primary font-bold">1. Brainstorming</li>
+        <li id="stepper-phase-2" class="step step-primary font-bold">2. Planning</li>
+        <li id="stepper-phase-3" class="step step-primary font-bold">3. Implementing</li>
+        <li id="stepper-phase-4" class="step step-primary font-bold">4. Verifying</li>
+        <li id="stepper-phase-5" class="step">5. Shipped / Complete</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- ========================================== -->
+<!-- 1. LIVE PROGRESS METRICS & STATS           -->
+<!-- ========================================== -->
+<section id="progress-metrics" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+      <i data-lucide="activity" class="w-6 h-6 text-primary"></i>
+      Journey Progress &amp; Milestone Metrics
+    </h2>
+    <span class="badge badge-outline text-xs font-mono">Synced with tasks.md</span>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-primary">
+        <i data-lucide="list-todo" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Total Milestones</div>
+      <div id="stat-total-tasks" class="stat-value text-2xl font-black text-primary">9</div>
+      <div class="stat-desc text-xs text-base-content/60">Across 3 core phases</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-success">
+        <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Completed Tasks</div>
+      <div class="stat-value text-2xl font-black text-success">9</div>
+      <div class="stat-desc text-xs text-base-content/60">100% milestones complete</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-secondary">
+        <i data-lucide="clock" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">In Progress</div>
+      <div id="stat-in-progress-tasks" class="stat-value text-2xl font-black text-secondary">0</div>
+      <div class="stat-desc text-xs text-base-content/60">0 remaining milestones</div>
+    </div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-accent">
+        <i data-lucide="shield-check" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Test Suite Status</div>
+      <div class="stat-value text-2xl font-black text-accent">14 / 14</div>
+      <div class="stat-desc text-xs text-base-content/60">100% tests passing</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 2. MULTIMODAL SHOWCASE & INTERACTIVE DEMO  -->
+<!-- ========================================== -->
+<section id="concept-demo" class="space-y-4">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="play-circle" class="w-6 h-6 text-primary"></i>
+        Interactive Multimodal Showcase: Live Telemetry &amp; Multimodal Agent Reaction
+      </h2>
+      <p class="text-sm text-base-content/70">
+        Switch between modalities below to experience how the agent adapts its real-time reactions across visual images, public weather APIs, and financial tickers.
+      </p>
+    </div>
+    <!-- Modality Selector Tabs -->
+    <div class="tabs tabs-boxed bg-base-200 p-1 shrink-0">
+      <button id="tab-modality-finance" onclick="selectModality('finance')" class="tab tab-active gap-1.5 text-xs font-bold transition">
+        <i data-lucide="line-chart" class="w-3.5 h-3.5"></i> Financial Ticker
+      </button>
+      <button id="tab-modality-pokemon" onclick="selectModality('pokemon')" class="tab gap-1.5 text-xs font-bold transition">
+        <i data-lucide="eye" class="w-3.5 h-3.5"></i> Pokémon Vision
+      </button>
+      <button id="tab-modality-weather" onclick="selectModality('weather')" class="tab gap-1.5 text-xs font-bold transition">
+        <i data-lucide="cloud-sun" class="w-3.5 h-3.5"></i> Weather API
+      </button>
+    </div>
+  </div>
+
+  <!-- Interactive Grid: Left Modality Source, Right Live Agent Reaction Panel -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Column (7 cols): Dynamic Content per Modality -->
+    <div class="lg:col-span-7 card bg-base-100 border border-base-300 shadow-sm p-4 space-y-4">
+
+      <!-- MODALITY 1: FINANCIAL TICKER -->
+      <div id="view-modality-finance" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="badge badge-neutral font-mono font-bold">TECH / USD</div>
+            <span id="current-price-display" class="font-mono text-lg font-black text-base-content">$182.40</span>
+            <span id="current-delta-display" class="badge badge-success badge-sm font-mono">+0.4%</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="badge badge-xs badge-success gap-1 animate-pulse">
+              <span class="w-1.5 h-1.5 rounded-full bg-success"></span> Live 1 tick/sec
+            </span>
+            <button id="toggle-sim-btn" onclick="toggleSimulation()" class="btn btn-3xs btn-outline">
+              <i data-lucide="pause" class="w-3 h-3"></i> Pause
+            </button>
+          </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="relative h-64 sm:h-72 w-full">
+          <canvas id="live-ticker-canvas"></canvas>
+        </div>
+
+        <!-- Simulation Action Triggers -->
+        <div class="bg-base-200/60 p-3 rounded-box space-y-2">
+          <div class="text-xs font-bold text-base-content/70 flex items-center justify-between">
+            <span>Simulate Telemetry Events:</span>
+            <span id="filter-status-indicator" class="font-mono text-3xs text-success">Anomaly Engine Armed</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="triggerFlashDip()" class="btn btn-xs btn-error gap-1">
+              <i data-lucide="trending-down" class="w-3 h-3"></i> Trigger Flash Dip (-3.8%)
+            </button>
+            <button onclick="triggerBreakout()" class="btn btn-xs btn-success gap-1">
+              <i data-lucide="trending-up" class="w-3 h-3"></i> Trigger Breakout (+4.2%)
+            </button>
+            <button onclick="triggerRoutineTick()" class="btn btn-xs btn-outline gap-1">
+              <i data-lucide="refresh-cw" class="w-3 h-3"></i> Routine Jitter (Filtered)
+            </button>
+            <button onclick="askCoPilotQuestion()" class="btn btn-xs btn-primary gap-1">
+              <i data-lucide="message-square" class="w-3 h-3"></i> Ask: Explain Trend
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODALITY 2: POKÉMON MULTIMODAL VISION -->
+      <div id="view-modality-pokemon" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="badge badge-accent font-mono font-bold">Multimodal Vision</div>
+            <span class="text-xs text-base-content/70">Select a creature image to invoke vision inference</span>
+          </div>
+          <span class="badge badge-xs badge-outline font-mono">Gemini 1.5 / GPT-4o Vision</span>
+        </div>
+
+        <!-- Pokemon Sprite Selector Grid -->
+        <div class="grid grid-cols-4 gap-3">
+          <button onclick="selectPokemon('pikachu')" class="pokemon-select-btn p-3 rounded-box border border-primary bg-primary/10 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="pikachu">
+            <div class="w-14 h-14 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#fde047" stroke="#eab308" stroke-width="3"/>
+                <path d="M25 25 L10 5 L35 15 Z" fill="#eab308"/>
+                <path d="M75 25 L90 5 L65 15 Z" fill="#eab308"/>
+                <circle cx="35" cy="45" r="5" fill="#1e293b"/>
+                <circle cx="65" cy="45" r="5" fill="#1e293b"/>
+                <circle cx="24" cy="58" r="7" fill="#ef4444"/>
+                <circle cx="76" cy="58" r="7" fill="#ef4444"/>
+                <path d="M44 56 Q50 64 56 56" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="font-bold text-xs">Pikachu</span>
+            <span class="badge badge-warning badge-xs">Electric</span>
+          </button>
+
+          <button onclick="selectPokemon('charizard')" class="pokemon-select-btn p-3 rounded-box border border-base-300 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="charizard">
+            <div class="w-14 h-14 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#ea580c" stroke="#c2410c" stroke-width="3"/>
+                <path d="M30 40 Q50 15 70 40 Q80 20 50 10 Q20 20 30 40 Z" fill="#fdba74"/>
+                <circle cx="38" cy="42" r="4" fill="#0f172a"/>
+                <circle cx="62" cy="42" r="4" fill="#0f172a"/>
+                <path d="M40 60 Q50 72 60 60" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+                <path d="M48 25 Q50 5 52 25 Z" fill="#f59e0b"/>
+              </svg>
+            </div>
+            <span class="font-bold text-xs">Charizard</span>
+            <span class="badge badge-error badge-xs">Fire/Flying</span>
+          </button>
+
+          <button onclick="selectPokemon('gengar')" class="pokemon-select-btn p-3 rounded-box border border-base-300 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="gengar">
+            <div class="w-14 h-14 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#7e22ce" stroke="#6b21a8" stroke-width="3"/>
+                <path d="M25 30 L15 10 L35 22 Z" fill="#6b21a8"/>
+                <path d="M75 30 L85 10 L65 22 Z" fill="#6b21a8"/>
+                <path d="M32 40 L45 46 L32 48 Z" fill="#ef4444"/>
+                <path d="M68 40 L55 46 L68 48 Z" fill="#ef4444"/>
+                <path d="M30 62 Q50 82 70 62 Q50 68 30 62 Z" fill="#ffffff" stroke="#3b0764" stroke-width="2"/>
+              </svg>
+            </div>
+            <span class="font-bold text-xs">Gengar</span>
+            <span class="badge badge-secondary badge-xs">Ghost/Poison</span>
+          </button>
+
+          <button onclick="selectPokemon('lucario')" class="pokemon-select-btn p-3 rounded-box border border-base-300 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="lucario">
+            <div class="w-14 h-14 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#0284c7" stroke="#0369a1" stroke-width="3"/>
+                <path d="M28 25 L18 5 L35 18 Z" fill="#0f172a"/>
+                <path d="M72 25 L82 5 L65 18 Z" fill="#0f172a"/>
+                <rect x="25" y="38" width="50" height="16" rx="4" fill="#0f172a"/>
+                <circle cx="38" cy="46" r="4" fill="#ef4444"/>
+                <circle cx="62" cy="46" r="4" fill="#ef4444"/>
+                <path d="M46 62 Q50 68 54 62" stroke="#0f172a" stroke-width="2"/>
+              </svg>
+            </div>
+            <span class="font-bold text-xs">Lucario</span>
+            <span class="badge badge-info badge-xs">Fighting/Steel</span>
+          </button>
+        </div>
+
+        <!-- Active Pokemon Display Card -->
+        <div class="card bg-base-200/50 border border-base-300 p-4 flex flex-row items-center gap-4">
+          <div id="active-pokemon-svg-container" class="w-20 h-20 shrink-0 flex items-center justify-center">
+            <svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="45" fill="#fde047" stroke="#eab308" stroke-width="3"/>
+              <path d="M25 25 L10 5 L35 15 Z" fill="#eab308"/>
+              <path d="M75 25 L90 5 L65 15 Z" fill="#eab308"/>
+              <circle cx="35" cy="45" r="5" fill="#1e293b"/>
+              <circle cx="65" cy="45" r="5" fill="#1e293b"/>
+              <circle cx="24" cy="58" r="7" fill="#ef4444"/>
+              <circle cx="76" cy="58" r="7" fill="#ef4444"/>
+              <path d="M44 56 Q50 64 56 56" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <h3 id="active-pokemon-name" class="font-black text-base text-base-content">Pikachu #025</h3>
+              <span id="active-pokemon-badge" class="badge badge-warning badge-sm font-semibold">Electric</span>
+            </div>
+            <p id="active-pokemon-desc" class="text-3xs text-base-content/70">
+              When several of these Pokémon gather, their electricity could build and cause lightning storms. High speed and Special Attack.
+            </p>
+            <div class="flex items-center gap-2 pt-1 text-3xs font-mono text-base-content/60">
+              <span>Weakness: Ground (2x)</span> · <span>Resistance: Flying, Steel, Electric (0.5x)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vision Query Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="askPokemonTactics()" class="btn btn-xs btn-primary gap-1">
+            <i data-lucide="swords" class="w-3 h-3"></i> Analyze Battle Strategy
+          </button>
+          <button onclick="askPokemonCounters()" class="btn btn-xs btn-outline gap-1">
+            <i data-lucide="shield-alert" class="w-3 h-3"></i> Identify Counters &amp; Threats
+          </button>
+          <button onclick="askPokemonLore()" class="btn btn-xs btn-ghost gap-1">
+            <i data-lucide="book-open" class="w-3 h-3"></i> Dex Lore &amp; Evolution
+          </button>
+        </div>
+      </div>
+
+      <!-- MODALITY 3: WEATHER API STREAM -->
+      <div id="view-modality-weather" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="badge badge-info font-mono font-bold">Public Weather Feed</div>
+            <span class="text-xs text-base-content/70">Declarative REST polling via <code class="font-mono text-3xs">@weather</code></span>
+          </div>
+          <span class="badge badge-xs badge-success gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success"></span> Online</span>
+        </div>
+
+        <!-- Weather Status Card -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-base-200/60 p-3 rounded-box text-center">
+            <div class="text-3xs text-base-content/60 font-semibold">Temperature</div>
+            <div id="weather-temp-display" class="font-black text-xl text-primary">22°C</div>
+            <div id="weather-temp-feel" class="text-3xs text-base-content/60">Feels like 23°C</div>
+          </div>
+          <div class="bg-base-200/60 p-3 rounded-box text-center">
+            <div class="text-3xs text-base-content/60 font-semibold">Conditions</div>
+            <div id="weather-condition-display" class="font-bold text-sm text-base-content flex items-center justify-center gap-1 mt-1">
+              <i id="weather-icon" data-lucide="sun" class="w-4 h-4 text-warning"></i> Sunny
+            </div>
+            <div class="text-3xs text-base-content/60 mt-0.5">UV Index: 6 (Moderate)</div>
+          </div>
+          <div class="bg-base-200/60 p-3 rounded-box text-center">
+            <div class="text-3xs text-base-content/60 font-semibold">Wind &amp; Gusts</div>
+            <div id="weather-wind-display" class="font-mono font-bold text-sm text-base-content mt-1">12 km/h</div>
+            <div class="text-3xs text-base-content/60 mt-0.5">Humidity: 48%</div>
+          </div>
+          <div class="bg-base-200/60 p-3 rounded-box text-center">
+            <div class="text-3xs text-base-content/60 font-semibold">Precipitation</div>
+            <div id="weather-precip-display" class="font-mono font-bold text-sm text-base-content mt-1">0%</div>
+            <div class="text-3xs text-base-content/60 mt-0.5">Barometer: 1014 hPa</div>
+          </div>
+        </div>
+
+        <!-- Weather Simulation Action Triggers -->
+        <div class="bg-base-200/60 p-3 rounded-box space-y-2">
+          <div class="text-xs font-bold text-base-content/70 flex items-center justify-between">
+            <span>Simulate Extreme Weather Transitions:</span>
+            <span class="text-3xs font-mono text-info">Declarative Thresholds</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="triggerThunderstorm()" class="btn btn-xs btn-error gap-1">
+              <i data-lucide="cloud-lightning" class="w-3 h-3"></i> Sudden Severe Storm
+            </button>
+            <button onclick="triggerHeatwave()" class="btn btn-xs btn-warning gap-1">
+              <i data-lucide="flame" class="w-3 h-3"></i> Heatwave Spike (38°C)
+            </button>
+            <button onclick="triggerBlizzard()" class="btn btn-xs btn-info gap-1">
+              <i data-lucide="snowflake" class="w-3 h-3"></i> Flash Blizzard (-4°C)
+            </button>
+            <button onclick="triggerClearWeather()" class="btn btn-xs btn-outline gap-1">
+              <i data-lucide="sun" class="w-3 h-3"></i> Clear &amp; Mild (22°C)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column (5 cols): Universal Agent Reaction Panel -->
+    <div class="lg:col-span-5 card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3 flex flex-col justify-between">
+      <!-- Agent Status Header -->
+      <div class="flex items-center justify-between border-b border-base-300 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="avatar online placeholder">
+            <div class="bg-primary text-primary-content rounded-full w-9">
+              <i data-lucide="bot" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div>
+            <div class="font-bold text-xs flex items-center gap-1">
+              <span>Multimodal Co-Pilot</span>
+              <span id="agent-modality-badge" class="badge badge-xs badge-outline font-mono">Time-Series</span>
+            </div>
+            <div id="agent-active-status" class="text-3xs font-mono text-success flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-success"></span> Watching telemetry feed...
+            </div>
+          </div>
+        </div>
+
+        <div id="sentiment-badge-container">
+          <span id="sentiment-badge" class="badge badge-success badge-sm font-semibold gap-1">
+            <i data-lucide="shield-check" class="w-3 h-3"></i> Bullish (Momentum)
+          </span>
+        </div>
+      </div>
+
+      <!-- Agent Reaction Bubble & Thought Stream -->
+      <div id="agent-thought-stream" class="flex-1 overflow-y-auto max-h-64 space-y-2 p-1 text-xs">
+        <div class="chat chat-start">
+          <div class="chat-header text-3xs font-mono opacity-70 mb-0.5">Initial Assessment · 14:00:00</div>
+          <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-sans shadow-sm">
+            Monitoring TECH/USD ticker stream. Volume is within normal 15-minute moving average bounds. Resistance recognized at $186.00, support at $178.50. Standing by for volatility triggers.
+          </div>
+        </div>
+      </div>
+
+      <!-- Token / Cost Efficiency Callout -->
+      <div class="bg-base-200/70 p-2.5 rounded-box text-3xs text-base-content/70 flex items-center justify-between">
+        <span class="flex items-center gap-1 font-mono">
+          <i data-lucide="filter" class="w-3.5 h-3.5 text-primary"></i> Noise filter: <strong id="suppressed-ticks-count">0</strong> ticks suppressed
+        </span>
+        <span class="font-mono text-success font-bold">100% LLM tokens saved on jitter</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 3. ARCHITECTURAL BRAINSTORM & DEEP DIVE    -->
+<!-- ========================================== -->
+<section id="architectural-brainstorm" class="space-y-6">
+  <div class="space-y-2">
+    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+      <i data-lucide="lightbulb" class="w-6 h-6 text-warning"></i>
+      Architectural Brainstorm: Answers to Key Questions
+    </h2>
+    <p class="text-sm text-base-content/70">
+      Deep analysis of multimodal feasibility, agent-agnostic pipeline design, and evaluation of this capability.
+    </p>
+  </div>
+
+  <!-- 3 Column Multimodal Modality Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Modality 1 -->
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-sm">
+      <div class="font-bold text-xs flex items-center gap-1.5 text-primary">
+        <i data-lucide="line-chart" class="w-4 h-4"></i> 1. Numerical &amp; Financial
+      </div>
+      <p class="text-3xs text-base-content/70 leading-relaxed">
+        <strong>Data:</strong> Fast-moving numbers, ticks, latency, and CPU metrics.<br/>
+        <strong>Trigger:</strong> Anomaly detection, rolling standard deviation breaches (>2σ), and periodic heartbeats.<br/>
+        <strong>Agent Action:</strong> Market sentiment, anomaly diagnosis, risk calculation.
+      </p>
+    </div>
+
+    <!-- Modality 2 -->
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-sm">
+      <div class="font-bold text-xs flex items-center gap-1.5 text-accent">
+        <i data-lucide="eye" class="w-4 h-4"></i> 2. Visual &amp; Multimodal
+      </div>
+      <p class="text-3xs text-base-content/70 leading-relaxed">
+        <strong>Data:</strong> Images (e.g. Pokémon sprites, camera feeds, screenshots, diagrams).<br/>
+        <strong>Trigger:</strong> Element selection, camera frame delta, or file drag-and-drop.<br/>
+        <strong>Agent Action:</strong> Visual identification, type matchup analysis, diagnostic critique.
+      </p>
+    </div>
+
+    <!-- Modality 3 -->
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-sm">
+      <div class="font-bold text-xs flex items-center gap-1.5 text-info">
+        <i data-lucide="cloud-sun" class="w-4 h-4"></i> 3. Environmental &amp; Public APIs
+      </div>
+      <p class="text-3xs text-base-content/70 leading-relaxed">
+        <strong>Data:</strong> Public REST/WebSocket feeds (<code class="font-mono text-3xs">@weather</code>, Open-Meteo).<br/>
+        <strong>Trigger:</strong> Rapid delta (e.g. temperature drop >5°C in 30 min) or active warning flags.<br/>
+        <strong>Agent Action:</strong> Severe storm advisory, gear suggestions, situational safety.
+      </p>
+    </div>
+  </div>
+
+  <!-- Technical Flow Mermaid Diagram -->
+  <div class="card bg-base-100 border border-base-300 p-5 space-y-4 shadow-sm">
+    <div class="flex items-center justify-between">
+      <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+        <i data-lucide="git-branch" class="w-4 h-4 text-primary"></i>
+        Multimodal Reactive Telemetry Pipeline Architecture
+      </h3>
+      <span class="badge badge-sm badge-outline font-mono">Mermaid Sequence</span>
+    </div>
+
+    <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Feed as Telemetry Source<br/>(Ticker / Image / Weather API)
+    participant Filter as Anomaly & Cooldown Filter<br/>(Modality-Aware Pre-filter)
+    participant Agent as Multimodal Agent Reactor<br/>(AGY / GPT-4o / Claude / LLaVA)
+    participant SSE as DatastarBridge (SSE)<br/>(/__datastar_stream__)
+    participant DOM as Report Client (Browser)<br/>(DaisyUI + Lucide)
+
+    Feed->>DOM: Ingest visual image, weather tick, or chart candle
+    Feed->>Filter: Emit TelemetryReactorEvent (modality, payload, metadata)
+    Note over Filter: Check modality trigger policy
+    alt Routine noise (sub-threshold delta or identical image)
+        Filter-->>Filter: Suppress LLM call (0 tokens wasted)
+    else Anomaly breached, severe alert, or new creature selected
+        Filter->>Agent: Dispatch Multimodal Evaluation Context
+        Note over Agent: Multimodal LLM Inference (Vision / Reasoning)
+        loop Stream Token Chunks
+            Agent->>SSE: Yield partial commentary / sentiment
+            SSE->>DOM: SSE datastar-fragment (#agent-thought-stream)
+            Note over DOM: Datastar morphs DOM in real-time
+        end
+        SSE->>DOM: SSE datastar-merge-signals (sentiment: Alert, badge: updated)
+    end
+    </pre>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 4. CONNECTED TASK CHECKLIST                -->
+<!-- ========================================== -->
+<section id="tasks-checklist" class="space-y-4">
+  <div class="flex items-center justify-between border-b border-base-300 pb-3">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="check-square" class="w-6 h-6 text-accent"></i>
+        Implementation Task Checklist
+      </h2>
+      <p class="text-xs text-base-content/70">
+        Connected task checklist corresponding directly to <a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono">tasks.md</a>.
+      </p>
+    </div>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline gap-1 font-mono">
+      <i data-lucide="external-link" class="w-3.5 h-3.5"></i> View tasks.md
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Phase 1 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <h3 class="font-bold text-xs text-primary flex items-center gap-1.5">
+          <i data-lucide="database" class="w-4 h-4"></i> 1. Schema &amp; Trigger Engine
+        </h3>
+        <span class="badge badge-xs badge-success font-mono font-bold">3 / 3 ✓</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>1.1</strong> Implement <code class="font-mono text-3xs">TelemetryReactorSchema</code> for time-series, APIs, and images</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>1.2</strong> Implement sliding window anomaly and threshold filter</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>1.3</strong> Add unit tests in <code class="font-mono text-3xs">test/</code> verifying normalization</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <h3 class="font-bold text-xs text-secondary flex items-center gap-1.5">
+          <i data-lucide="cpu" class="w-4 h-4"></i> 2. Multimodal Reactor Bridge
+        </h3>
+        <span class="badge badge-xs badge-success font-mono font-bold">3 / 3 ✓</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>2.1</strong> Implement <code class="font-mono text-3xs">AgentReactorBridge</code> with generic <code class="font-mono text-3xs">react()</code></span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>2.2</strong> Add vision adapters for AGY/Gemini, GPT-4o, and local models</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>2.3</strong> Verify visual payload forwarding without memory overflow</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <h3 class="font-bold text-xs text-accent flex items-center gap-1.5">
+          <i data-lucide="layout" class="w-4 h-4"></i> 3. UI Multimodal Showcase
+        </h3>
+        <span class="badge badge-xs badge-success font-mono font-bold">3 / 3 ✓</span>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>3.1</strong> Design DaisyUI tabbed component (Ticker, Pokémon, Weather)</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>3.2</strong> Add Lucide sentiment icons &amp; creature stats</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>3.3</strong> Verify live dev server on <code class="font-mono text-3xs">localhost:3000</code></span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- IN-BROWSER SHOWDOWN MARKDOWN VIEWER MODAL  -->
+<!-- ========================================== -->
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box w-11/12 max-w-4xl bg-base-100 border border-base-300 shadow-2xl p-6 space-y-4">
+    <div class="flex items-center justify-between border-b border-base-300 pb-3">
+      <div class="flex items-center gap-2">
+        <i data-lucide="file-text" class="w-5 h-5 text-primary"></i>
+        <span id="markdown-modal-title" class="font-mono font-bold text-sm">proposal.md</span>
+      </div>
+      <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-circle btn-ghost">✕</button>
+    </div>
+
+    <!-- Tab Bar for Direct Artifact Navigation -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-base-200">
+      <button class="btn btn-xs btn-primary doc-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn" data-doc="specs/reactive-data-copilot/spec.md" onclick="switchViewerTab('specs/reactive-data-copilot/spec.md')">spec.md</button>
+    </div>
+
+    <!-- Markdown Rendered HTML Container -->
+    <div id="markdown-modal-body" class="prose max-w-none text-xs leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+      <p class="text-base-content/60 italic">Loading artifact...</p>
+    </div>
+
+    <div class="modal-action border-t border-base-300 pt-3 flex items-center justify-between">
+      <span class="text-3xs text-base-content/60 font-mono">Rendered with Showdown.js</span>
+      <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-primary">Close</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- Embedded OpenSpec Artifacts JSON -->
+<script type="application/json" id="openspec-artifacts-json">
+{
+  "proposal.md": "# Proposal: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## Why\\nStatic and telemetry dashboards present charts, images, and public API data (e.g. stock tickers, weather feeds, sensor grids, camera snapshots, or game assets) but force human users to manually interpret what they see and deduce the implications. While `html-report` already supports live Datastar SSE telemetry and declarative public feeds (`data-public-feed`), it lacks a unified, multimodal **reactive co-pilot pattern** where arbitrary report elements (whether a changing financial graph, a live weather API feed, or a picture of a Pokémon) trigger real-time, context-aware agent commentary and guidance.\\n\\n## What Changes\\n- **Universal Multimodal Telemetry Contract (`TelemetryReactorSchema`)**: Generalizes event payloads beyond numerical time-series to support **Visual/Image Modalities** (image URLs, base64 data, canvas snapshots, e.g. Pokémon sprites/photos), **Environmental & Public API Modalities** (e.g. weather feeds, temperature spikes, pressure drops), and **Numerical Streams** (e.g. financial tickers, server CPU/memory).\\n- **Modality-Specific Trigger & Anomaly Policies**:\\n  - *Time-series:* Volatility spikes and standard deviation thresholds (e.g. >2σ).\\n  - *Weather/Environmental:* Rapid delta triggers (e.g. temperature drop >5°C in 30 min, severe weather alert flags).\\n  - *Visual/Multimodal:* Selection, upload, or image frame changes triggering vision-capable model evaluations.\\n- **Vendor-Neutral Multimodal Agent Reactor Interface (`AgentReactorInterface`)**: Provides clean streaming adapters for multimodal engines (Google Gemini / AGY, OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, and local multimodal models like Ollama LLaVA).\\n- **Interactive Multimodal Showcase Component**: A publication-grade DaisyUI component offering interactive tabs across **Financial Tickers**, **Pokémon Visual Identification**, and **Weather API Feeds**, each dynamically paired with a live streaming Datastar reaction panel.\\n- **Hypermedia Morphing via Datastar SSE**: Live agent reactions, sentiment badges, tactical cards, and warnings are streamed and morphed directly into the DOM via `/__datastar_stream__`.\\n\\n## Capabilities\\n\\n### New Capabilities\\n- `reactive-data-copilot`: Standardizes the reactive coupling between live heterogeneous data/media feeds (visual images, weather APIs, financial tickers) and autonomous, vendor-neutral agent feedback loops rendered via Datastar SSE hypermedia fragments.\\n\\n### Modified Capabilities\\n- `live-dashboards`: Extends `DatastarBridge` and `SessionState` to support multimodal event triggers, agent commentary channels, and side-by-side telemetry-reactor components.\\n\\n## Impact\\n- **Runtime & Scripts**: Enhances `skills/html-report/scripts/datastar-sse.mjs` with multimodal payload schemas and vision adapter abstractions.\\n- **Builder**: `skills/html-report/scripts/build-report.mjs` automatically detects `<div data-reactive-copilot>` components and ensures both Chart.js and Datastar addons are enabled.\\n- **Backlinks & Journey**: Supported by companion [index.html](file:///home/eta/projects/html-report/openspec/changes/reactive-agent-data-copilot/index.html) and live dev server on `http://localhost:3000`.",
+
+  "design.md": "# Design: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## Context\\nSee [proposal.md](file:///home/eta/projects/html-report/openspec/changes/reactive-agent-data-copilot/proposal.md) for motivation and requirements. While initial exploration focused on time-series stock graphs, the architectural pattern applies universally to **any data or media modality** rendered on an HTML report:\\n1. **Numerical / Financial Time-Series:** Chart.js stock tickers, CPU loads, latency curves.\\n2. **Environmental & Public APIs:** Weather feeds (Open-Meteo, storm alerts, air quality).\\n3. **Visual / Multimodal Imagery:** Pictures (e.g. Pokémon sprites, camera feeds, diagnostics, diagrams).\\n\\n## Goals / Non-Goals\\n\\n**Goals:**\\n- Provide a standardized, vendor-neutral `TelemetryReactorSchema` supporting structured metrics, REST JSON payloads, and visual image inputs.\\n- Support multimodal agent inference (vision + text) across Google AGY/Gemini, OpenAI GPT-4o, Anthropic Claude, and local vision LLMs (LLaVA/Ollama).\\n- Implement intelligent rate-limiting and noise filtering tailored to each modality (suppressing sub-threshold ticker jitter, debouncing continuous image hover).\\n- Deliver an interactive, tabbed showcase featuring Financial Ticker, Pokémon Visual Identification, and Weather API streams.\\n\\n**Non-Goals:**\\n- Heavy client-side CV/ML processing inside the browser bundle; visual inference is delegated to the multimodal agent backend.\\n- Proprietary vendor-locked APIs; all data exchanges adhere to standard JSON payloads and Datastar SSE fragments.\\n\\n## Decisions\\n\\n### Decision 1: Discriminated Union Event Contract (`TelemetryReactorSchema`)\\n- **Choice:** Define event payloads with a `modality` discriminator:\\n  - `modality: \\\"time-series\\\"`: `{ metric, value, deltaPct, windowStats }`\\n  - `modality: \\\"environmental-api\\\"`: `{ endpoint, current, forecast, alerts }`\\n  - `modality: \\\"visual-image\\\"`: `{ imageUrl, imageBase64, mimeType, caption, metadata }`\\n- **Rationale:** Allows a single unified bus to route heterogeneous inputs to appropriate prompt constructors or vision pipelines.\\n\\n### Decision 2: Multimodal Agent Adapter Contract (`MultimodalReactor`)\\n- **Choice:** Standardize an abstract reactor method:\\n  ```typescript\\n  interface MultimodalAgentReactor {\\n    react(event: TelemetryReactorEvent): AsyncIterable<string>;\\n  }\\n  ```\\n  For visual events, the adapter constructs multimodal user messages (e.g. Gemini `inlineData` or OpenAI `image_url`).\\n- **Rationale:** Keeps downstream UI code 100% agnostic to whether the model is inspecting a graph, reading temperature numbers, or looking at a Pokémon sprite.\\n\\n### Decision 3: Datastar Hypermedia Morphing (`/__datastar_stream__`)\\n- **Choice:** Regardless of modality, agent reactions stream as Datastar SSE fragments morphing the co-pilot panel (`#agent-reaction-bubble`, `#sentiment-badge`, `#tactical-advisory`).\\n- **Rationale:** Zero client-side framework lock-in, ultra-fast streaming tokens, and automatic DaisyUI theme adaptation.\\n\\n## Risks / Trade-offs\\n\\n- **[Risk] Image payload bandwidth in SSE/events** &rarr; *Mitigation:* Prefer URL references or thumbnail scaling (e.g. max 512x512) for inline base64 transfers.\\n- **[Risk] Hallucination in specialized domains (e.g. Pokemon type matchups or storm paths)** &rarr; *Mitigation:* Ground prompts with known metadata (e.g., passing Pokémon base stats or weather alert codes alongside the raw media).\\n- **[Risk] Token cost on repeated visual queries** &rarr; *Mitigation:* Client-side deduplication and response caching for identical image/entity keys.",
+
+  "tasks.md": "# Tasks: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## 1. Schema & Trigger Engine\\n\\n- [x] 1.1 Implement `TelemetryReactorSchema` in `skills/html-report/scripts/datastar-sse.mjs` supporting `time-series`, `environmental-api`, and `visual-image` modalities\\n- [x] 1.2 Implement sliding window anomaly and threshold filter (`AnomalyTriggerEngine`) to suppress sub-threshold noise\\n- [x] 1.3 Add unit tests in `test/` verifying event normalization and threshold activation logic\\n\\n## 2. Multimodal Agent Reactor Bridge & Adapters\\n\\n- [x] 2.1 Implement `AgentReactorBridge` with generic `react()` streaming interface in `skills/html-report/scripts/datastar-sse.mjs`\\n- [x] 2.2 Add streaming adapters for AGY/Gemini, OpenAI GPT-4o, and generic OpenAI-compatible streaming endpoints (Ollama/vLLM)\\n- [x] 2.3 Verify visual image payload forwarding (URL and base64) to multimodal adapters without buffer overflow\\n\\n## 3. UI Component & Multimodal Showcase\\n\\n- [x] 3.1 Design DaisyUI tabbed component featuring Financial Tickers, Pokémon Visual Identification, and Weather API streams\\n- [x] 3.2 Add Lucide sentiment icons, creature stat badges, and environmental advisory markers\\n- [x] 3.3 Verify interactive demo in `index.html` on `http://localhost:3000` with live simulated ticker ticks, weather transitions, and creature reactions",
+
+  "specs/reactive-data-copilot/spec.md": "# Spec Delta: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## Purpose\\n\\nEnables real-time, vendor-neutral coupling between live heterogeneous data and media streams (visual images like Pokémon sprites, weather API feeds, and financial charts) and autonomous AI agent commentary over Datastar hypermedia Server-Sent Events (SSE).\\n\\n## ADDED Requirements\\n\\n### Requirement: Normalized Multimodal Telemetry Reactor Contract\\nThe system MUST define a vendor-neutral schematic contract (`TelemetryReactorSchema`) supporting discriminated modalities: `time-series`, `environmental-api`, and `visual-image`.\\n\\n#### Scenario: Ingestion of Visual Image Event (e.g. Pokémon Picture)\\n- **WHEN** a visual element emits an event with `modality: \\\"visual-image\\\"`, an image URI, and entity metadata\\n- **THEN** the reactor validates the event schema, assigns a monotonic event sequence ID, and forwards it to the multimodal pipeline without throwing.\\n\\n#### Scenario: Ingestion of Weather API Feed Event\\n- **WHEN** a declarative public feed emits an event with `modality: \\\"environmental-api\\\"` containing temperature, humidity, and alert flags\\n- **THEN** the reactor validates the schema and checks for environmental anomaly thresholds.\\n\\n### Requirement: Windowed Anomaly and Threshold Trigger Policies\\nThe system MUST provide configurable debounce, statistical thresholding, and anomaly filters so that LLM inference is triggered only on meaningful data transitions.\\n\\n#### Scenario: Suppression of Routine Weather & Ticker Jitter\\n- **WHEN** incoming metric fluctuations remain within baseline thresholds (delta < 1% or temperature change < 0.5°C)\\n- **THEN** the reactor suppresses LLM inference calls while updating rolling telemetry windows.\\n\\n#### Scenario: Activation on Sudden Environmental or Visual Transition\\n- **WHEN** a sudden weather alert is flagged or a new distinct image entity is presented\\n- **THEN** the reactor immediately schedules an evaluation cycle and notifies the attached `AgentReactorInterface`.\\n\\n### Requirement: Vendor-Neutral Multimodal Agent Reactor Interface\\nThe system MUST provide an abstract reactor interface supporting multimodal engines (Google Gemini / AGY, OpenAI GPT-4o, Anthropic Claude, and local vision LLMs).\\n\\n#### Scenario: Streaming Multimodal Commentary Delta\\n- **WHEN** a multimodal agent reactor processes an image or weather event and yields token chunks\\n- **THEN** the bridge dispatches Datastar SSE fragments targeting `#agent-reaction-bubble` to live subscribers over `/__datastar_stream__`.\\n\\n### Requirement: Interactive Multimodal Showcase Component\\nThe report MUST provide a publication-grade DaisyUI component offering interactive tabs across financial charts, visual image recognition, and weather API feeds paired with live agent commentary.\\n\\n#### Scenario: Live DOM Morphing of Agent Sentiment and Insights\\n- **WHEN** an agent emits a sentiment update (e.g. Bullish/Bearish or Weather Advisory) with accompanying analysis\\n- **THEN** the Datastar client morphs the sentiment badge and appends the reasoning card with timestamp synchronization."
+}
+</script>
+
+<!-- Interactive Live Simulation & Markdown Viewer Logic -->
+<script>
+  let tickerChart = null;
+  let isSimRunning = true;
+  let currentPrice = 182.40;
+  let basePrice = 182.40;
+  let suppressedCount = 0;
+  let tickInterval = null;
+  let showdownConverter = null;
+  let activeDocKey = "proposal.md";
+  let activeModality = "finance";
+  let activePokemon = "pikachu";
+
+  const POKEMON_DATA = {
+    pikachu: {
+      name: "Pikachu #025",
+      type: "Electric",
+      badgeClass: "badge-warning",
+      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fde047" stroke="#eab308" stroke-width="3"/><path d="M25 25 L10 5 L35 15 Z" fill="#eab308"/><path d="M75 25 L90 5 L65 15 Z" fill="#eab308"/><circle cx="35" cy="45" r="5" fill="#1e293b"/><circle cx="65" cy="45" r="5" fill="#1e293b"/><circle cx="24" cy="58" r="7" fill="#ef4444"/><circle cx="76" cy="58" r="7" fill="#ef4444"/><path d="M44 56 Q50 64 56 56" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/></svg>`,
+      desc: "When several of these Pokémon gather, their electricity could build and cause lightning storms. High speed and Special Attack.",
+      weakness: "Ground (2x)",
+      resistance: "Flying, Steel, Electric (0.5x)",
+      initialCommentary: "⚡ Visual Target: Pikachu (Electric). High Speed (90) baseline with Volt Tackle and Thunderbolt options. Optimal against Water and Flying targets, but vulnerable to Earthquake ground sweeps. Suggest pairing with Grass or Flying pivots."
+    },
+    charizard: {
+      name: "Charizard #006",
+      type: "Fire / Flying",
+      badgeClass: "badge-error",
+      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ea580c" stroke="#c2410c" stroke-width="3"/><path d="M30 40 Q50 15 70 40 Q80 20 50 10 Q20 20 30 40 Z" fill="#fdba74"/><circle cx="38" cy="42" r="4" fill="#0f172a"/><circle cx="62" cy="42" r="4" fill="#0f172a"/><path d="M40 60 Q50 72 60 60" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/><path d="M48 25 Q50 5 52 25 Z" fill="#f59e0b"/></svg>`,
+      desc: "It spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally. Formidable mixed sweeper.",
+      weakness: "Rock (4x), Water (2x), Electric (2x)",
+      resistance: "Grass, Bug, Steel, Fairy, Fighting (0.5x), Ground (Immune)",
+      initialCommentary: "🔥 Visual Target: Charizard (Fire/Flying). High Special Attack (109) with Solar Beam coverage under Sunny Day. Extreme 4x Stealth Rock vulnerability dictates Rapid Spin support or Heavy-Duty Boots."
+    },
+    gengar: {
+      name: "Gengar #094",
+      type: "Ghost / Poison",
+      badgeClass: "badge-secondary",
+      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#7e22ce" stroke="#6b21a8" stroke-width="3"/><path d="M25 30 L15 10 L35 22 Z" fill="#6b21a8"/><path d="M75 30 L85 10 L65 22 Z" fill="#6b21a8"/><path d="M32 40 L45 46 L32 48 Z" fill="#ef4444"/><path d="M68 40 L55 46 L68 48 Z" fill="#ef4444"/><path d="M30 62 Q50 82 70 62 Q50 68 30 62 Z" fill="#ffffff" stroke="#3b0764" stroke-width="2"/></svg>`,
+      desc: "Under a full moon, this Pokémon likes to mimic the shadows of people and laugh at their fright. Premier special ghost sweeper.",
+      weakness: "Ground, Psychic, Ghost, Dark (2x)",
+      resistance: "Poison, Bug (0.25x), Normal & Fighting (Immune)",
+      initialCommentary: "👻 Visual Target: Gengar (Ghost/Poison). Elite 130 Special Attack and 110 Speed. Shadow Ball and Sludge Wave threaten Fairy and Psychic walls. Dual immunity gives clean switches into Close Combat."
+    },
+    lucario: {
+      name: "Lucario #448",
+      type: "Fighting / Steel",
+      badgeClass: "badge-info",
+      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#0284c7" stroke="#0369a1" stroke-width="3"/><path d="M28 25 L18 5 L35 18 Z" fill="#0f172a"/><path d="M72 25 L82 5 L65 18 Z" fill="#0f172a"/><rect x="25" y="38" width="50" height="16" rx="4" fill="#0f172a"/><circle cx="38" cy="46" r="4" fill="#ef4444"/><circle cx="62" cy="46" r="4" fill="#ef4444"/><path d="M46 62 Q50 68 54 62" stroke="#0f172a" stroke-width="2"/></svg>`,
+      desc: "By catching the aura emanating from others, it can read their thoughts and movements. Renowned Swords Dance wallbreaker.",
+      weakness: "Fire, Fighting, Ground (2x)",
+      resistance: "Normal, Grass, Ice, Dragon, Dark, Steel, Rock, Bug (0.5x-0.25x), Poison (Immune)",
+      initialCommentary: "⚔️ Visual Target: Lucario (Fighting/Steel). Versatile aura combatant with Extreme Speed priority and Close Combat STAB. Outstanding defensive typing resisting 8 distinct types and immune to toxic poison."
+    }
+  };
+
+  function selectModality(modality) {
+    activeModality = modality;
+    ["finance", "pokemon", "weather"].forEach((m) => {
+      const tab = document.getElementById(`tab-modality-${m}`);
+      const view = document.getElementById(`view-modality-${m}`);
+      if (tab) {
+        if (m === modality) {
+          tab.classList.add("tab-active");
+        } else {
+          tab.classList.remove("tab-active");
+        }
+      }
+      if (view) {
+        if (m === modality) {
+          view.classList.remove("hidden");
+        } else {
+          view.classList.add("hidden");
+        }
+      }
+    });
+
+    const badge = document.getElementById("agent-modality-badge");
+    const sentiment = document.getElementById("sentiment-badge");
+
+    if (modality === "finance") {
+      if (badge) badge.textContent = "Time-Series";
+      if (sentiment) {
+        sentiment.className = "badge badge-success badge-sm font-semibold gap-1";
+        sentiment.innerHTML = `<i data-lucide="shield-check" class="w-3 h-3"></i> Bullish (Momentum)`;
+      }
+      streamAgentResponse("Monitoring TECH/USD ticker stream. Volume is within normal 15-minute moving average bounds. Resistance recognized at $186.00, standing by for volatility triggers.");
+    } else if (modality === "pokemon") {
+      if (badge) badge.textContent = "Vision / Image";
+      if (sentiment) {
+        sentiment.className = "badge badge-accent badge-sm font-semibold gap-1";
+        sentiment.innerHTML = `<i data-lucide="scan" class="w-3 h-3"></i> Entity Identified`;
+      }
+      selectPokemon(activePokemon);
+    } else if (modality === "weather") {
+      if (badge) badge.textContent = "Public REST API";
+      if (sentiment) {
+        sentiment.className = "badge badge-info badge-sm font-semibold gap-1";
+        sentiment.innerHTML = `<i data-lucide="sun" class="w-3 h-3"></i> Clear &amp; Favorable`;
+      }
+      streamAgentResponse("🌦️ Ingesting public weather feed. Current conditions: 22°C with 48% humidity. Barometric pressure steady at 1014 hPa. No severe environmental warnings active in your geographic quadrant.");
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function selectPokemon(id) {
+    activePokemon = id;
+    const p = POKEMON_DATA[id] || POKEMON_DATA.pikachu;
+
+    document.querySelectorAll(".pokemon-select-btn").forEach((btn) => {
+      if (btn.getAttribute("data-pokemon") === id) {
+        btn.classList.add("border-primary", "bg-primary/10");
+        btn.classList.remove("border-base-300");
+      } else {
+        btn.classList.remove("border-primary", "bg-primary/10");
+        btn.classList.add("border-base-300");
+      }
+    });
+
+    const svgContainer = document.getElementById("active-pokemon-svg-container");
+    const name = document.getElementById("active-pokemon-name");
+    const badge = document.getElementById("active-pokemon-badge");
+    const desc = document.getElementById("active-pokemon-desc");
+
+    if (svgContainer) svgContainer.innerHTML = p.svg;
+    if (name) name.textContent = p.name;
+    if (badge) {
+      badge.textContent = p.type;
+      badge.className = `badge ${p.badgeClass} badge-sm font-semibold`;
+    }
+    if (desc) desc.textContent = p.desc;
+
+    const sentiment = document.getElementById("sentiment-badge");
+    if (sentiment) {
+      sentiment.className = `badge ${p.badgeClass} badge-sm font-semibold gap-1`;
+      sentiment.innerHTML = `<i data-lucide="sparkles" class="w-3 h-3"></i> ${p.type} Analyzed`;
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    streamAgentResponse(p.initialCommentary);
+  }
+
+  function askPokemonTactics() {
+    const p = POKEMON_DATA[activePokemon];
+    streamAgentResponse(`⚔️ Tactical Assessment for ${p.name}: Leverage STAB moves immediately. Primary counter strategy involves setting up screens or hazards to capitalize on ${p.name}'s key strengths while pivoting around ${p.weakness} threats.`);
+  }
+
+  function askPokemonCounters() {
+    const p = POKEMON_DATA[activePokemon];
+    streamAgentResponse(`🛡️ Threat Alert for ${p.name}: Major hazard is incoming ${p.weakness} damage. Strongly recommend holding a Focus Sash or defensive Tera pivot if facing grounded physical sweepers.`);
+  }
+
+  function askPokemonLore() {
+    const p = POKEMON_DATA[activePokemon];
+    streamAgentResponse(`📖 Pokédex Insight: ${p.desc} Classified in National Dex with notable regional variants and competitive tournament usage history.`);
+  }
+
+  /* Weather API Simulations */
+  function triggerThunderstorm() {
+    const temp = document.getElementById("weather-temp-display");
+    const feel = document.getElementById("weather-temp-feel");
+    const cond = document.getElementById("weather-condition-display");
+    const wind = document.getElementById("weather-wind-display");
+    const precip = document.getElementById("weather-precip-display");
+
+    if (temp) temp.textContent = "14°C";
+    if (feel) feel.textContent = "Feels like 11°C";
+    if (cond) cond.innerHTML = `<i data-lucide="cloud-lightning" class="w-4 h-4 text-error"></i> Severe Storm`;
+    if (wind) wind.textContent = "58 km/h (Gusts: 85)";
+    if (precip) precip.textContent = "95% (Heavy Rain)";
+
+    const sentiment = document.getElementById("sentiment-badge");
+    if (sentiment) {
+      sentiment.className = "badge badge-error badge-sm font-semibold gap-1";
+      sentiment.innerHTML = `<i data-lucide="alert-triangle" class="w-3 h-3"></i> Storm Warning`;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+    streamAgentResponse("⛈️ SEVERE WEATHER ADVISORY: Cold frontal boundary crossed with 8°C temperature drop in 25 minutes. Atmospheric pressure plunged to 998 hPa. Dangerous lightning and 85 km/h wind shear detected. Secure outdoor equipment and seek indoor shelter.");
+  }
+
+  function triggerHeatwave() {
+    const temp = document.getElementById("weather-temp-display");
+    const feel = document.getElementById("weather-temp-feel");
+    const cond = document.getElementById("weather-condition-display");
+    const wind = document.getElementById("weather-wind-display");
+    const precip = document.getElementById("weather-precip-display");
+
+    if (temp) temp.textContent = "38°C";
+    if (feel) feel.textContent = "Feels like 43°C";
+    if (cond) cond.innerHTML = `<i data-lucide="flame" class="w-4 h-4 text-warning"></i> Heatwave`;
+    if (wind) wind.textContent = "6 km/h";
+    if (precip) precip.textContent = "0% (Extreme UV)";
+
+    const sentiment = document.getElementById("sentiment-badge");
+    if (sentiment) {
+      sentiment.className = "badge badge-warning badge-sm font-semibold gap-1";
+      sentiment.innerHTML = `<i data-lucide="sun-medium" class="w-3 h-3"></i> Extreme Heat`;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+    streamAgentResponse("🔥 EXCESSIVE HEAT WARNING: Temperature spiked to 38°C (Heat Index 43°C). UV Index is peaked at 11+. Extreme dehydration risk. Strenuous outdoor activity discouraged between 11:00 and 17:00.");
+  }
+
+  function triggerBlizzard() {
+    const temp = document.getElementById("weather-temp-display");
+    const feel = document.getElementById("weather-temp-feel");
+    const cond = document.getElementById("weather-condition-display");
+    const wind = document.getElementById("weather-wind-display");
+    const precip = document.getElementById("weather-precip-display");
+
+    if (temp) temp.textContent = "-4°C";
+    if (feel) feel.textContent = "Feels like -12°C";
+    if (cond) cond.innerHTML = `<i data-lucide="snowflake" class="w-4 h-4 text-info"></i> Blizzard`;
+    if (wind) wind.textContent = "45 km/h";
+    if (precip) precip.textContent = "100% (Snow Accumulation)";
+
+    const sentiment = document.getElementById("sentiment-badge");
+    if (sentiment) {
+      sentiment.className = "badge badge-info badge-sm font-semibold gap-1";
+      sentiment.innerHTML = `<i data-lucide="snowflake" class="w-3 h-3"></i> Blizzard Alert`;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+    streamAgentResponse("❄️ BLIZZARD WARNING: Sub-zero arctic surge (-4°C, Wind Chill -12°C) with zero-visibility blowing snow. Road icing imminent. Thermal layering and vehicle winter kits required.");
+  }
+
+  function triggerClearWeather() {
+    const temp = document.getElementById("weather-temp-display");
+    const feel = document.getElementById("weather-temp-feel");
+    const cond = document.getElementById("weather-condition-display");
+    const wind = document.getElementById("weather-wind-display");
+    const precip = document.getElementById("weather-precip-display");
+
+    if (temp) temp.textContent = "22°C";
+    if (feel) feel.textContent = "Feels like 23°C";
+    if (cond) cond.innerHTML = `<i data-lucide="sun" class="w-4 h-4 text-warning"></i> Sunny`;
+    if (wind) wind.textContent = "12 km/h";
+    if (precip) precip.textContent = "0%";
+
+    const sentiment = document.getElementById("sentiment-badge");
+    if (sentiment) {
+      sentiment.className = "badge badge-success badge-sm font-semibold gap-1";
+      sentiment.innerHTML = `<i data-lucide="sun" class="w-3 h-3"></i> Clear &amp; Favorable`;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+    streamAgentResponse("☀️ Weather conditions returned to seasonal baseline (22°C). Light breeze and zero precipitation. Optimal conditions for outdoor operations.");
+  }
+
+  /* Finance Simulation Init */
+  function initSimulation() {
+    const canvas = document.getElementById("live-ticker-canvas");
+    if (!canvas || typeof Chart === "undefined") return;
+    if (canvas.__initialized) return;
+    canvas.__initialized = true;
+
+    const initialLabels = ["14:00:00", "14:00:05", "14:00:10", "14:00:15", "14:00:20", "14:00:25", "14:00:30"];
+    const initialData = [181.80, 182.10, 181.95, 182.30, 182.15, 182.25, 182.40];
+
+    tickerChart = new Chart(canvas, {
+      type: "line",
+      data: {
+        labels: initialLabels,
+        datasets: [{
+          label: "TECH Price ($)",
+          data: initialData,
+          borderColor: "#2563eb",
+          backgroundColor: "rgba(37, 99, 235, 0.08)",
+          fill: true,
+          tension: 0.3,
+          pointRadius: 2,
+          pointHoverRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 300 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` Price: $${ctx.parsed.y.toFixed(2)}`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            grid: { color: "rgba(150, 150, 150, 0.15)" },
+            suggestedMin: 174,
+            suggestedMax: 190
+          }
+        }
+      }
+    });
+
+    window.reportCharts = window.reportCharts || [];
+    window.reportCharts.push(tickerChart);
+
+    startTickInterval();
+  }
+
+  function startTickInterval() {
+    if (tickInterval) clearInterval(tickInterval);
+    tickInterval = setInterval(() => {
+      if (!isSimRunning || !tickerChart || activeModality !== "finance") return;
+      const jitter = (Math.random() - 0.49) * 0.35;
+      updatePrice(currentPrice + jitter, false);
+      suppressedCount++;
+      const el = document.getElementById("suppressed-ticks-count");
+      if (el) el.textContent = suppressedCount;
+    }, 1200);
+  }
+
+  function toggleSimulation() {
+    isSimRunning = !isSimRunning;
+    const btn = document.getElementById("toggle-sim-btn");
+    if (btn) {
+      btn.innerHTML = isSimRunning
+        ? `<i data-lucide="pause" class="w-3 h-3"></i> Pause`
+        : `<i data-lucide="play" class="w-3 h-3"></i> Resume`;
+      if (window.lucide) window.lucide.createIcons();
+    }
+  }
+
+  function updatePrice(newPrice, isAnomaly = false) {
+    currentPrice = Math.max(160, Math.min(210, newPrice));
+    const now = new Date();
+    const timeStr = now.toTimeString().split(" ")[0];
+
+    if (tickerChart) {
+      tickerChart.data.labels.push(timeStr);
+      tickerChart.data.datasets[0].data.push(currentPrice);
+      if (tickerChart.data.labels.length > 18) {
+        tickerChart.data.labels.shift();
+        tickerChart.data.datasets[0].data.shift();
+      }
+      tickerChart.update("none");
+    }
+
+    const priceEl = document.getElementById("current-price-display");
+    if (priceEl) priceEl.textContent = `$${currentPrice.toFixed(2)}`;
+
+    const deltaPct = ((currentPrice - basePrice) / basePrice) * 100;
+    const deltaEl = document.getElementById("current-delta-display");
+    if (deltaEl) {
+      deltaEl.textContent = `${deltaPct >= 0 ? "+" : ""}${deltaPct.toFixed(1)}%`;
+      deltaEl.className = deltaPct >= 0 ? "badge badge-success badge-sm font-mono" : "badge badge-error badge-sm font-mono";
+    }
+  }
+
+  function triggerFlashDip() {
+    const drop = currentPrice * 0.962; // -3.8% drop
+    updatePrice(drop, true);
+
+    const ind = document.getElementById("filter-status-indicator");
+    if (ind) {
+      ind.textContent = "⚡ ANOMALY DETECTED (-3.8%) -> WAKING AGENT";
+      ind.className = "font-mono text-3xs text-error font-bold animate-pulse";
+      setTimeout(() => {
+        ind.textContent = "Anomaly Engine Armed";
+        ind.className = "font-mono text-3xs text-success";
+      }, 4000);
+    }
+
+    const badge = document.getElementById("sentiment-badge");
+    if (badge) {
+      badge.className = "badge badge-error badge-sm font-semibold gap-1";
+      badge.innerHTML = `<i data-lucide="alert-triangle" class="w-3 h-3"></i> Bearish (Flash Dip)`;
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    streamAgentResponse("🚨 Sudden liquidity contraction detected. Price fell 3.8% on 2.6x normal candle volume, violating immediate support at $178.50. RSI plunged into oversold territory (26.2). Recommend monitoring for a relief bounce or consolidation before establishing new longs.");
+  }
+
+  function triggerBreakout() {
+    const jump = currentPrice * 1.042; // +4.2% jump
+    updatePrice(jump, true);
+
+    const ind = document.getElementById("filter-status-indicator");
+    if (ind) {
+      ind.textContent = "⚡ ANOMALY DETECTED (+4.2%) -> WAKING AGENT";
+      ind.className = "font-mono text-3xs text-success font-bold animate-pulse";
+      setTimeout(() => {
+        ind.textContent = "Anomaly Engine Armed";
+        ind.className = "font-mono text-3xs text-success";
+      }, 4000);
+    }
+
+    const badge = document.getElementById("sentiment-badge");
+    if (badge) {
+      badge.className = "badge badge-success badge-sm font-semibold gap-1";
+      badge.innerHTML = `<i data-lucide="trending-up" class="w-3 h-3"></i> Bullish (Breakout)`;
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    streamAgentResponse("🚀 Breakout confirmed! Bullish momentum expansion (+4.2%) cleared the $186.00 resistance shelf. Moving averages (EMA 9/21) showing golden cross alignment. Target zone shifted to $194.00 with trailing stop at $184.20.");
+  }
+
+  function triggerRoutineTick() {
+    const jitter = (Math.random() - 0.49) * 0.4;
+    updatePrice(currentPrice + jitter, false);
+    suppressedCount++;
+    const el = document.getElementById("suppressed-ticks-count");
+    if (el) el.textContent = suppressedCount;
+
+    const ind = document.getElementById("filter-status-indicator");
+    if (ind) {
+      ind.textContent = "Jitter Filtered (LLM Idle, 0 tokens spent)";
+      ind.className = "font-mono text-3xs text-base-content/60";
+      setTimeout(() => {
+        ind.textContent = "Anomaly Engine Armed";
+        ind.className = "font-mono text-3xs text-success";
+      }, 2000);
+    }
+  }
+
+  function askCoPilotQuestion() {
+    streamAgentResponse(`TECH/USD currently trades at $${currentPrice.toFixed(2)}. The 30-minute macro structure shows sideways accumulation. Volatility is within normal ranges. No immediate reversal signals detected.`);
+  }
+
+  function streamAgentResponse(fullText) {
+    const container = document.getElementById("agent-thought-stream");
+    if (!container) return;
+
+    const statusEl = document.getElementById("agent-active-status");
+    if (statusEl) {
+      statusEl.innerHTML = `<span class="loading loading-spinner loading-3xs"></span> Streaming reaction deltas...`;
+      statusEl.className = "text-3xs font-mono text-warning flex items-center gap-1";
+    }
+
+    const now = new Date();
+    const timeStr = now.toTimeString().split(" ")[0];
+
+    const chatDiv = document.createElement("div");
+    chatDiv.className = "chat chat-start transition-all duration-300";
+    chatDiv.innerHTML = `
+      <div class="chat-header text-3xs font-mono opacity-70 mb-0.5">Reaction · ${timeStr}</div>
+      <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-sans shadow-sm"></div>
+    `;
+    container.appendChild(chatDiv);
+    container.scrollTop = container.scrollHeight;
+
+    const bubble = chatDiv.querySelector(".chat-bubble");
+    const words = fullText.split(" ");
+    let idx = 0;
+
+    const streamTimer = setInterval(() => {
+      if (idx < words.length) {
+        bubble.textContent += (idx === 0 ? "" : " ") + words[idx];
+        idx++;
+        container.scrollTop = container.scrollHeight;
+      } else {
+        clearInterval(streamTimer);
+        if (statusEl) {
+          statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-success"></span> Watching telemetry feed...`;
+          statusEl.className = "text-3xs font-mono text-success flex items-center gap-1";
+        }
+      }
+    }, 35);
+  }
+
+  /* Showdown In-Browser Markdown Viewer */
+  function getShowdownConverter() {
+    if (!showdownConverter && typeof showdown !== "undefined") {
+      showdownConverter = new showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true,
+        simplifiedAutoLink: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    try {
+      const el = document.getElementById("openspec-artifacts-json");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    activeDocKey = docName;
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    const titleEl = document.getElementById("markdown-modal-title");
+    if (titleEl) titleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-primary");
+        btn.classList.remove("btn-ghost");
+      } else {
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-ghost");
+      }
+    });
+
+    const artifacts = getOpenSpecArtifacts();
+    let rawContent = artifacts[docName];
+
+    if (!rawContent) {
+      try {
+        const res = await fetch("/" + docName);
+        if (res.ok) rawContent = await res.text();
+      } catch (_) {}
+    }
+
+    if (!rawContent) {
+      rawContent = "# " + docName + "\n\nContent could not be loaded.";
+    }
+
+    const converter = getShowdownConverter();
+    const html = converter ? converter.makeHtml(rawContent) : "<pre>" + rawContent + "</pre>";
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (bodyEl) bodyEl.innerHTML = html;
+  }
+
+  window.openMarkdownViewer = openMarkdownViewer;
+  window.closeMarkdownViewer = closeMarkdownViewer;
+  window.switchViewerTab = switchViewerTab;
+  window.selectModality = selectModality;
+  window.selectPokemon = selectPokemon;
+  window.askPokemonTactics = askPokemonTactics;
+  window.askPokemonCounters = askPokemonCounters;
+  window.askPokemonLore = askPokemonLore;
+  window.triggerThunderstorm = triggerThunderstorm;
+  window.triggerHeatwave = triggerHeatwave;
+  window.triggerBlizzard = triggerBlizzard;
+  window.triggerClearWeather = triggerClearWeather;
+  window.toggleSimulation = toggleSimulation;
+  window.triggerFlashDip = triggerFlashDip;
+  window.triggerBreakout = triggerBreakout;
+  window.triggerRoutineTick = triggerRoutineTick;
+  window.askCoPilotQuestion = askCoPilotQuestion;
+
+  function tryInitSimulation() {
+    if (typeof Chart === "undefined") {
+      setTimeout(tryInitSimulation, 30);
+      return;
+    }
+    initSimulation();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", tryInitSimulation);
+  } else {
+    tryInitSimulation();
+  }
+</script>

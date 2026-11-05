@@ -718,6 +718,9 @@ async function setReportTheme(themeName) {
 
   // Dynamic Datastar reactive $theme signal sync
   syncDatastarTheme(themeName);
+
+  // Dynamic PWA meta theme-color sync
+  syncPwaThemeColor(palette);
 }
 
 /**
@@ -900,6 +903,10 @@ function initModeBadge() {
         badgeEl.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-success animate-pulse mr-1"></span>LIVE`;
         badgeEl.classList.add("badge-success", "badge-outline");
         break;
+      case "pwa":
+        badgeEl.textContent = "PWA";
+        badgeEl.classList.add("badge-accent");
+        break;
       case "report":
       default:
         badgeEl.textContent = "REPORT";
@@ -913,6 +920,126 @@ function initModeBadge() {
     pdfStatusBadge.classList.remove("badge-warning");
     pdfStatusBadge.classList.add("badge-success");
   }
+}
+
+let deferredPwaInstallPrompt = null;
+
+/**
+ * Synchronizes <meta name="theme-color"> with the active DaisyUI theme palette.
+ */
+function syncPwaThemeColor(palette = null) {
+  if (typeof document === "undefined") return;
+  const meta = (typeof document.getElementById === "function" && document.getElementById("pwa-theme-color")) ||
+               (typeof document.querySelector === "function" ? document.querySelector('meta[name="theme-color"]') : null);
+  if (!meta) return;
+  const pal = palette || (typeof resolveDaisyUIThemePalette === "function" ? resolveDaisyUIThemePalette() : {});
+  const hex = pal?.primary?.hex || pal?.base100?.hex || "#2563eb";
+  if (typeof meta.setAttribute === "function") {
+    meta.setAttribute("content", hex);
+  }
+}
+
+/**
+ * Initializes Progressive Web App (PWA) client runtime:
+ * - Service worker registration
+ * - Native beforeinstallprompt interception and navbar install button wiring
+ * - Online / Offline network health indicator
+ * - Dynamic theme-color sync
+ */
+function initPwa() {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  const manifestLink = typeof document.querySelector === "function" ? document.querySelector('link[rel="manifest"]') : null;
+  if (!manifestLink) {
+    return; // Not a PWA-enabled report, skip Service Worker registration & install wiring
+  }
+
+  // 1. Service Worker Registration
+  if ("serviceWorker" in navigator) {
+    const isHttp = location.protocol === "http:" || location.protocol === "https:";
+    if (isHttp && !window.__PWA_SW_REGISTERED__) {
+      window.__PWA_SW_REGISTERED__ = true;
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js")
+          .then((reg) => {
+            window.__PWA_REGISTRATION__ = reg;
+            reg.addEventListener("updatefound", () => {
+              const newWorker = reg.installing;
+              if (newWorker) {
+                newWorker.addEventListener("statechange", () => {
+                  if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                    console.log("[html-report PWA] New version available. Refresh to update.");
+                  }
+                });
+              }
+            });
+          })
+          .catch((err) => {
+            // Local dev or sandbox
+          });
+      });
+    }
+  }
+
+  // 2. Native PWA Install Prompt Interception
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPwaInstallPrompt = e;
+    const installBtn = document.getElementById("pwa-install-btn");
+    if (installBtn) installBtn.classList.remove("hidden");
+    const menuItem = document.getElementById("pwa-install-menu-item");
+    if (menuItem) menuItem.classList.remove("hidden");
+  });
+
+  const triggerInstall = async () => {
+    if (!deferredPwaInstallPrompt) {
+      alert("To install this report as an app, use your browser menu ('Install' or 'Add to Home Screen').");
+      return;
+    }
+    deferredPwaInstallPrompt.prompt();
+    const choice = await deferredPwaInstallPrompt.userChoice;
+    if (choice && choice.outcome === "accepted") {
+      const installBtn = document.getElementById("pwa-install-btn");
+      if (installBtn) installBtn.classList.add("hidden");
+    }
+    deferredPwaInstallPrompt = null;
+  };
+
+  window.triggerPwaInstall = triggerInstall;
+
+  const pwaBtn = document.getElementById("pwa-install-btn");
+  if (pwaBtn) pwaBtn.addEventListener("click", triggerInstall);
+
+  const pwaDropdownBtn = document.getElementById("pwa-install-dropdown-btn");
+  if (pwaDropdownBtn) pwaDropdownBtn.addEventListener("click", triggerInstall);
+
+  window.addEventListener("appinstalled", () => {
+    const installBtn = document.getElementById("pwa-install-btn");
+    if (installBtn) installBtn.classList.add("hidden");
+    const statusBadge = document.getElementById("pwa-install-status-badge");
+    if (statusBadge) {
+      statusBadge.textContent = "Installed";
+      statusBadge.className = "badge badge-success badge-xs font-mono";
+    }
+    deferredPwaInstallPrompt = null;
+  });
+
+  // 3. Online / Offline Status Detection
+  function updateNetworkStatus() {
+    const offlineBadge = document.getElementById("pwa-offline-badge");
+    if (!offlineBadge) return;
+    if (navigator.onLine === false) {
+      offlineBadge.classList.remove("hidden");
+    } else {
+      offlineBadge.classList.add("hidden");
+    }
+  }
+  window.addEventListener("online", updateNetworkStatus);
+  window.addEventListener("offline", updateNetworkStatus);
+  updateNetworkStatus();
+
+  // 4. Initial Theme-Color Sync
+  setTimeout(() => syncPwaThemeColor(), 100);
 }
 
 /**
@@ -1696,6 +1823,8 @@ if (typeof window !== "undefined") {
   window.getFeedRegistry = getFeedRegistry;
   window.extractFeedFields = extractFeedFields;
   window.updateFeedCharts = updateFeedCharts;
+  window.syncPwaThemeColor = syncPwaThemeColor;
+  window.initPwa = initPwa;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
@@ -1704,6 +1833,7 @@ if (typeof window !== "undefined") {
     try { initModeBadge(); } catch (_) {}
     try { initThemeDropdown(); } catch (_) {}
     try { initDownloadButton(); } catch (_) {}
+    try { initPwa(); } catch (_) {}
     try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
     try { initDayjs(); } catch (_) {}
     try { initShowdown(); } catch (_) {}
@@ -1741,6 +1871,86 @@ async function reinitReportContent() {
   try { await renderMermaidWithTheme(resolveDaisyUIThemePalette()); } catch (_) {}
   try { checkInsufficientHorizontalSpace(); } catch (_) {}
   try { initPublicFeeds(); } catch (_) {}
+}
+
+/**
+ * Universal Two-Way Agent Bridge Client
+ * Provides programmatic co-pilot inference and action execution from reports.
+ */
+const HTMLReportAgent = {
+  isAvailable: async function() {
+    try {
+      const res = await fetch("/__agent_status__", { method: "GET" });
+      if (res.ok) {
+        const data = await res.json();
+        return data && data.ok === true;
+      }
+    } catch (_) {}
+    return false;
+  },
+
+  registerPersona: async function(persona) {
+    if (!persona || !persona.id) return { ok: false, error: "Invalid persona object" };
+    try {
+      const res = await fetch("/api/agent/persona", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(persona)
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (_) {}
+    return { ok: true, registered: persona.id, localOnly: true, persona };
+  },
+
+  getPersonas: async function() {
+    try {
+      const res = await fetch("/api/agent/personas", { method: "GET" });
+      if (res.ok) {
+        const data = await res.json();
+        return data.personas || [];
+      }
+    } catch (_) {}
+    return [
+      { id: "analyst", name: "Telemetry Analyst", badgeColor: "badge-primary", icon: "trending-up" },
+      { id: "debugger", name: "Systems Debugger", badgeColor: "badge-error", icon: "bug" },
+      { id: "strategist", name: "Competitive Strategist", badgeColor: "badge-secondary", icon: "target" },
+      { id: "executive", name: "Executive Advisor", badgeColor: "badge-neutral", icon: "briefcase" },
+      { id: "sarcastic", name: "Sarcastic Critic", badgeColor: "badge-warning", icon: "flame" },
+      { id: "oak", name: "Professor Oak", badgeColor: "badge-accent", icon: "book-open" },
+      { id: "hype", name: "Esports Shoutcaster", badgeColor: "badge-info", icon: "zap" }
+    ];
+  },
+
+  ask: async function(options) {
+    const payload = typeof options === "string" ? { prompt: options } : (options || {});
+    const endpoint = payload.endpoint || "/__agent_action__";
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (err) {
+      return {
+        ok: false,
+        fallback: true,
+        error: err.message,
+        result: payload.fallbackText || "Agent bridge offline. Using local deterministic fallback.",
+        agent: "Local Autonomous Fallback",
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+};
+
+if (typeof window !== "undefined") {
+  window.HTMLReportAgent = HTMLReportAgent;
+  window.HTMLReport = window.HTMLReport || {};
+  window.HTMLReport.agent = HTMLReportAgent;
 }
 
 // Node.js CommonJS exports for unit testing
@@ -1791,6 +2001,9 @@ if (typeof module !== "undefined" && module.exports) {
     extractFeedFields,
     updateFeedCharts,
     mergeFeedSignals,
+    syncPwaThemeColor,
+    initPwa,
+    HTMLReportAgent,
     _getActiveFeedPollers: () => _activeFeedPollers
   };
 }

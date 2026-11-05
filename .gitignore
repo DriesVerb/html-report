@@ -4,3 +4,4 @@ skills/html-report/examples/*.pdf
 .DS_Store
 .caller-requests/
 
+tmp-pwa-bdd/

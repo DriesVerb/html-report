@@ -13,8 +13,8 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Modular Documentation & Minimal DaisyUI Showcase Redesign</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
+  <title>Reactive Agent Data & Multimodal Co-Pilot - Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -31,26 +31,17 @@
   </style>
 
   <!-- Optional Addon CDNs & Styles -->
-    <!-- Addon: Datastar -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
-
-  <!-- Addon: Chart.js -->
+    <!-- Addon: Chart.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
 
   <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
 
-  <!-- Addon: KaTeX -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-
-  <!-- Addon: Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
-
   <!-- Addon: Showdown -->
   <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Datastar -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
 
   <style>
     :root {
@@ -243,7 +234,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Modular Documentation & Minimal DaisyUI Showcase Redesign
+          Reactive Agent Data & Multimodal Co-Pilot - Journey & Plan
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -308,8 +299,31 @@
                 <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
               </button>
             </li>
+            <li id="pwa-install-menu-item" class="hidden">
+              <button id="pwa-install-dropdown-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                <div class="flex items-center gap-2.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  <span>Install as App (PWA)</span>
+                </div>
+                <span id="pwa-install-status-badge" class="badge badge-accent badge-xs font-mono">Installable</span>
+              </button>
+            </li>
           </ul>
         </div>
+
+        <!-- 4. PWA Install & Offline Indicators -->
+        <button id="pwa-install-btn" type="button" class="btn btn-xs sm:btn-sm btn-outline btn-accent hidden gap-1.5 shrink-0" aria-label="Install Report as App" title="Install as Desktop/Mobile App">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v6m0 0l-3-3m3 3l3-3M12 4v4" />
+          </svg>
+          <span class="hidden md:inline">Install App</span>
+        </button>
+        <span id="pwa-offline-badge" class="badge badge-warning badge-sm hidden gap-1 font-mono text-3xs shrink-0" title="Report is operating offline from local Service Worker cache">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-warning-content animate-pulse"></span>
+          <span>Offline</span>
+        </span>
       </div>
     </nav>
   </header>
@@ -342,23 +356,28 @@
 <header class="space-y-6 border-b border-base-300 pb-8">
   <div class="flex items-center gap-2 flex-wrap">
     <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
-    <span class="badge badge-outline font-mono text-xs">docs-and-showcase-redesign</span>
-    <span class="badge badge-success font-mono text-xs font-semibold gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Phase 5: Feature Complete &amp; Verified</span>
+    <span class="badge badge-outline font-mono text-xs">reactive-agent-data-copilot</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1">
+      <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Phase 4: Implementation Complete &amp; Verified
+    </span>
     <span class="badge badge-secondary font-mono text-xs font-semibold gap-1">
-      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> DaisyUI Minimalist North Star
+      <i data-lucide="radio" class="w-3.5 h-3.5"></i> Datastar SSE Hypermedia
     </span>
     <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
-      <i data-lucide="folder-tree" class="w-3.5 h-3.5"></i> Modular docs/ Structure
+      <i data-lucide="eye" class="w-3.5 h-3.5"></i> Multimodal (Vision + API + Ticker)
+    </span>
+    <span class="badge badge-info font-mono text-xs font-semibold gap-1">
+      <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Model-Agnostic Co-Pilot
     </span>
   </div>
 
   <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
     <div class="space-y-2">
       <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
-        Modular Documentation &amp; Minimal DaisyUI Showcase Redesign
+        Reactive Agent Data &amp; Multimodal Co-Pilot
       </h1>
       <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
-        Transforming <code>html-report</code> into a modern, aesthetic open-source project following north stars like <code>daisyui.com</code> and <code>shadcn/ui</code>. Moves deep reference into a dedicated <code>docs/</code> hierarchy, condenses the root <code>README.md</code> to standard-readme elegance, and redesigns GitHub Pages (<code>index.html</code>) from a vertical 3,800-line "visual bomb" into an interactive tabbed capability explorer.
+        Live, bidirectional coupling between heterogeneous report feeds (visual images like Pokémon sprites, weather API streams, financial charts) and autonomous AI agent feedback loops rendered via Datastar.js hypermedia SSE.
       </p>
     </div>
 
@@ -373,8 +392,8 @@
       <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
         <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
       </button>
-      <button type="button" onclick="openMarkdownViewer('specs/modular-documentation-and-showcase/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
-        <i data-lucide="layers" class="w-4 h-4 text-info"></i> specs/
+      <button type="button" onclick="openMarkdownViewer('specs/reactive-data-copilot/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="layers" class="w-4 h-4 text-info"></i> spec.md
       </button>
     </div>
   </div>
@@ -385,337 +404,592 @@
       <span class="flex items-center gap-1.5">
         <i data-lucide="git-pull-request" class="w-4 h-4 text-primary"></i> Current Journey State
       </span>
-      <span class="font-mono text-success">Stage 5 Active · Verified &amp; Shipped</span>
+      <span class="font-mono text-success">Stage 4 Active · Implementation Complete &amp; Verified</span>
     </div>
     <div class="w-full overflow-x-auto py-2">
       <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
-        <li id="stepper-phase-1" class="step step-primary">1. Brainstorming</li>
-        <li id="stepper-phase-2" class="step step-primary">2. Planning</li>
-        <li id="stepper-phase-3" class="step step-primary">3. Implementing</li>
-        <li id="stepper-phase-4" class="step step-primary">4. Verifying</li>
-        <li id="stepper-phase-5" class="step step-primary">5. Shipped / Archived</li>
+        <li id="stepper-phase-1" class="step step-primary font-bold">1. Brainstorming</li>
+        <li id="stepper-phase-2" class="step step-primary font-bold">2. Planning</li>
+        <li id="stepper-phase-3" class="step step-primary font-bold">3. Implementing</li>
+        <li id="stepper-phase-4" class="step step-primary font-bold">4. Verifying</li>
+        <li id="stepper-phase-5" class="step">5. Shipped / Complete</li>
       </ul>
     </div>
   </div>
 </header>
 
 <!-- ========================================== -->
-<!-- LIVE JOURNEY METRICS                       -->
+<!-- 1. LIVE PROGRESS METRICS & STATS           -->
 <!-- ========================================== -->
-<section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
-    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
-      <span>Total Tasks</span>
-      <i data-lucide="list-todo" class="w-4 h-4 text-primary"></i>
-    </div>
-    <div id="stat-total-tasks" class="text-3xl font-black text-primary mt-2">16</div>
-    <div class="text-xs text-base-content/60 mt-1">4 Distinct Phases</div>
+<section id="progress-metrics" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+      <i data-lucide="activity" class="w-6 h-6 text-primary"></i>
+      Journey Progress &amp; Milestone Metrics
+    </h2>
+    <span class="badge badge-outline text-xs font-mono">Synced with tasks.md</span>
   </div>
 
-  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
-    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
-      <span>Completed</span>
-      <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-primary">
+        <i data-lucide="list-todo" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Total Milestones</div>
+      <div id="stat-total-tasks" class="stat-value text-2xl font-black text-primary">9</div>
+      <div class="stat-desc text-xs text-base-content/60">Across 3 core phases</div>
     </div>
-    <div id="stat-completed-tasks" class="text-3xl font-black text-success mt-2">16</div>
-    <div id="stat-completion-pct" class="text-xs text-success font-semibold mt-1">100% Complete</div>
-  </div>
 
-  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
-    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
-      <span>In Progress</span>
-      <i data-lucide="loader" class="w-4 h-4 text-warning animate-spin"></i>
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-success">
+        <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Completed Tasks</div>
+      <div class="stat-value text-2xl font-black text-success">9</div>
+      <div class="stat-desc text-xs text-base-content/60">100% milestones complete</div>
     </div>
-    <div id="stat-in-progress-tasks" class="text-3xl font-black text-warning mt-2">0</div>
-    <div class="text-xs text-base-content/60 mt-1">All Phases Delivered</div>
-  </div>
 
-  <div class="card bg-base-100 border border-base-300 p-4 shadow-sm flex flex-col justify-between">
-    <div class="flex items-center justify-between text-xs font-bold opacity-70 uppercase tracking-wider">
-      <span>Remaining</span>
-      <i data-lucide="clock" class="w-4 h-4 text-info"></i>
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-secondary">
+        <i data-lucide="clock" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">In Progress</div>
+      <div id="stat-in-progress-tasks" class="stat-value text-2xl font-black text-secondary">0</div>
+      <div class="stat-desc text-xs text-base-content/60">0 remaining milestones</div>
     </div>
-    <div id="stat-remaining-tasks" class="text-3xl font-black text-info mt-2">0</div>
-    <div class="text-xs text-base-content/60 mt-1">0 Pending</div>
+
+    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
+      <div class="stat-figure text-accent">
+        <i data-lucide="shield-check" class="w-8 h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold">Test Suite Status</div>
+      <div class="stat-value text-2xl font-black text-accent">14 / 14</div>
+      <div class="stat-desc text-xs text-base-content/60">100% tests passing</div>
+    </div>
   </div>
 </section>
 
 <!-- ========================================== -->
-<!-- ARCHITECTURAL BRAINSTORM & DESIGN          -->
+<!-- 2. MULTIMODAL SHOWCASE & INTERACTIVE DEMO  -->
 <!-- ========================================== -->
-<section class="space-y-6">
-  <div class="flex items-center justify-between">
+<section id="concept-demo" class="space-y-4">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
     <div>
-      <h2 id="architectural-evolution" class="text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
-        <i data-lucide="git-merge" class="w-6 h-6 text-primary"></i> Architectural Evolution: From Monolithic Dump to Clean Hub
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="play-circle" class="w-6 h-6 text-primary"></i>
+        Interactive Multimodal Showcase: Live Telemetry &amp; Multimodal Agent Reaction
       </h2>
       <p class="text-sm text-base-content/70">
-        Separating onboarding from deep architecture using modern progressive disclosure principles.
+        Switch between modalities below to experience how the agent adapts its real-time reactions across visual images, public weather APIs, and financial tickers.
+      </p>
+    </div>
+    <!-- Modality Selector Tabs -->
+    <div class="tabs tabs-boxed bg-base-200 p-1 shrink-0">
+      <button id="tab-modality-finance" onclick="selectModality('finance')" class="tab tab-active gap-1.5 text-xs font-bold transition">
+        <i data-lucide="line-chart" class="w-3.5 h-3.5"></i> Financial Ticker
+      </button>
+      <button id="tab-modality-pokemon" onclick="selectModality('pokemon')" class="tab gap-1.5 text-xs font-bold transition">
+        <i data-lucide="eye" class="w-3.5 h-3.5"></i> Pokémon Vision
+      </button>
+      <button id="tab-modality-weather" onclick="selectModality('weather')" class="tab gap-1.5 text-xs font-bold transition">
+        <i data-lucide="cloud-sun" class="w-3.5 h-3.5"></i> Weather API
+      </button>
+    </div>
+  </div>
+
+  <!-- Interactive Grid: Left Modality Source, Right Live Agent Reaction Panel -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Column (7 cols): Dynamic Content per Modality -->
+    <div class="lg:col-span-7 card bg-base-100 border border-base-300 shadow-sm p-4 space-y-4">
+
+      <!-- MODALITY 1: FINANCIAL TICKER -->
+      <div id="view-modality-finance" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="badge badge-neutral font-mono font-bold">TECH / USD</div>
+            <span id="current-price-display" class="font-mono text-lg font-black text-base-content">$182.40</span>
+            <span id="current-delta-display" class="badge badge-success badge-sm font-mono">+0.4%</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="badge badge-xs badge-success gap-1 animate-pulse">
+              <span class="w-1.5 h-1.5 rounded-full bg-success"></span> Live 1 tick/sec
+            </span>
+            <button id="toggle-sim-btn" onclick="toggleSimulation()" class="btn btn-3xs btn-outline">
+              <i data-lucide="pause" class="w-3 h-3"></i> Pause
+            </button>
+          </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="relative h-64 sm:h-72 w-full">
+          <canvas id="live-ticker-canvas"></canvas>
+        </div>
+
+        <!-- Simulation Action Triggers -->
+        <div class="bg-base-200/60 p-3 rounded-box space-y-2">
+          <div class="text-xs font-bold text-base-content/70 flex items-center justify-between">
+            <span>Simulate Telemetry Events:</span>
+            <span id="filter-status-indicator" class="font-mono text-3xs text-success">Anomaly Engine Armed</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="triggerFlashDip()" class="btn btn-xs btn-error gap-1">
+              <i data-lucide="trending-down" class="w-3 h-3"></i> Trigger Flash Dip (-3.8%)
+            </button>
+            <button onclick="triggerBreakout()" class="btn btn-xs btn-success gap-1">
+              <i data-lucide="trending-up" class="w-3 h-3"></i> Trigger Breakout (+4.2%)
+            </button>
+            <button onclick="triggerRoutineTick()" class="btn btn-xs btn-outline gap-1">
+              <i data-lucide="refresh-cw" class="w-3 h-3"></i> Routine Jitter (Filtered)
+            </button>
+            <button onclick="askCoPilotQuestion()" class="btn btn-xs btn-primary gap-1">
+              <i data-lucide="message-square" class="w-3 h-3"></i> Ask: Explain Trend
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODALITY 2: POKÉMON MULTIMODAL VISION -->
+      <div id="view-modality-pokemon" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="badge badge-accent font-mono font-bold">Multimodal Vision</div>
+            <span class="text-xs text-base-content/70">Select a creature image to invoke vision inference</span>
+          </div>
+          <span class="badge badge-xs badge-outline font-mono">Gemini 1.5 / GPT-4o Vision</span>
+        </div>
+
+        <!-- Pokemon Sprite Selector Grid -->
+        <div class="grid grid-cols-4 gap-3">
+          <button onclick="selectPokemon('pikachu')" class="pokemon-select-btn p-3 rounded-box border border-primary bg-primary/10 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="pikachu">
+            <div class="w-14 h-14 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#fde047" stroke="#eab308" stroke-width="3"/>
+                <path d="M25 25 L10 5 L35 15 Z" fill="#eab308"/>
+                <path d="M75 25 L90 5 L65 15 Z" fill="#eab308"/>
+                <circle cx="35" cy="45" r="5" fill="#1e293b"/>
+                <circle cx="65" cy="45" r="5" fill="#1e293b"/>
+                <circle cx="24" cy="58" r="7" fill="#ef4444"/>
+                <circle cx="76" cy="58" r="7" fill="#ef4444"/>
+                <path d="M44 56 Q50 64 56 56" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="font-bold text-xs">Pikachu</span>
+            <span class="badge badge-warning badge-xs">Electric</span>
+          </button>
+
+          <button onclick="selectPokemon('charizard')" class="pokemon-select-btn p-3 rounded-box border border-base-300 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="charizard">
+            <div class="w-14 h-14 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#ea580c" stroke="#c2410c" stroke-width="3"/>
+                <path d="M30 40 Q50 15 70 40 Q80 20 50 10 Q20 20 30 40 Z" fill="#fdba74"/>
+                <circle cx="38" cy="42" r="4" fill="#0f172a"/>
+                <circle cx="62" cy="42" r="4" fill="#0f172a"/>
+                <path d="M40 60 Q50 72 60 60" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+                <path d="M48 25 Q50 5 52 25 Z" fill="#f59e0b"/>
+              </svg>
+            </div>
+            <span class="font-bold text-xs">Charizard</span>
+            <span class="badge badge-error badge-xs">Fire/Flying</span>
+          </button>
+
+          <button onclick="selectPokemon('gengar')" class="pokemon-select-btn p-3 rounded-box border border-base-300 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="gengar">
+            <div class="w-14 h-14 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#7e22ce" stroke="#6b21a8" stroke-width="3"/>
+                <path d="M25 30 L15 10 L35 22 Z" fill="#6b21a8"/>
+                <path d="M75 30 L85 10 L65 22 Z" fill="#6b21a8"/>
+                <path d="M32 40 L45 46 L32 48 Z" fill="#ef4444"/>
+                <path d="M68 40 L55 46 L68 48 Z" fill="#ef4444"/>
+                <path d="M30 62 Q50 82 70 62 Q50 68 30 62 Z" fill="#ffffff" stroke="#3b0764" stroke-width="2"/>
+              </svg>
+            </div>
+            <span class="font-bold text-xs">Gengar</span>
+            <span class="badge badge-secondary badge-xs">Ghost/Poison</span>
+          </button>
+
+          <button onclick="selectPokemon('lucario')" class="pokemon-select-btn p-3 rounded-box border border-base-300 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="lucario">
+            <div class="w-14 h-14 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#0284c7" stroke="#0369a1" stroke-width="3"/>
+                <path d="M28 25 L18 5 L35 18 Z" fill="#0f172a"/>
+                <path d="M72 25 L82 5 L65 18 Z" fill="#0f172a"/>
+                <rect x="25" y="38" width="50" height="16" rx="4" fill="#0f172a"/>
+                <circle cx="38" cy="46" r="4" fill="#ef4444"/>
+                <circle cx="62" cy="46" r="4" fill="#ef4444"/>
+                <path d="M46 62 Q50 68 54 62" stroke="#0f172a" stroke-width="2"/>
+              </svg>
+            </div>
+            <span class="font-bold text-xs">Lucario</span>
+            <span class="badge badge-info badge-xs">Fighting/Steel</span>
+          </button>
+        </div>
+
+        <!-- Active Pokemon Display Card -->
+        <div class="card bg-base-200/50 border border-base-300 p-4 flex flex-row items-center gap-4">
+          <div id="active-pokemon-svg-container" class="w-20 h-20 shrink-0 flex items-center justify-center">
+            <svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="45" fill="#fde047" stroke="#eab308" stroke-width="3"/>
+              <path d="M25 25 L10 5 L35 15 Z" fill="#eab308"/>
+              <path d="M75 25 L90 5 L65 15 Z" fill="#eab308"/>
+              <circle cx="35" cy="45" r="5" fill="#1e293b"/>
+              <circle cx="65" cy="45" r="5" fill="#1e293b"/>
+              <circle cx="24" cy="58" r="7" fill="#ef4444"/>
+              <circle cx="76" cy="58" r="7" fill="#ef4444"/>
+              <path d="M44 56 Q50 64 56 56" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <h3 id="active-pokemon-name" class="font-black text-base text-base-content">Pikachu #025</h3>
+              <span id="active-pokemon-badge" class="badge badge-warning badge-sm font-semibold">Electric</span>
+            </div>
+            <p id="active-pokemon-desc" class="text-3xs text-base-content/70">
+              When several of these Pokémon gather, their electricity could build and cause lightning storms. High speed and Special Attack.
+            </p>
+            <div class="flex items-center gap-2 pt-1 text-3xs font-mono text-base-content/60">
+              <span>Weakness: Ground (2x)</span> · <span>Resistance: Flying, Steel, Electric (0.5x)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vision Query Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="askPokemonTactics()" class="btn btn-xs btn-primary gap-1">
+            <i data-lucide="swords" class="w-3 h-3"></i> Analyze Battle Strategy
+          </button>
+          <button onclick="askPokemonCounters()" class="btn btn-xs btn-outline gap-1">
+            <i data-lucide="shield-alert" class="w-3 h-3"></i> Identify Counters &amp; Threats
+          </button>
+          <button onclick="askPokemonLore()" class="btn btn-xs btn-ghost gap-1">
+            <i data-lucide="book-open" class="w-3 h-3"></i> Dex Lore &amp; Evolution
+          </button>
+        </div>
+      </div>
+
+      <!-- MODALITY 3: WEATHER API STREAM -->
+      <div id="view-modality-weather" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="badge badge-info font-mono font-bold">Public Weather Feed</div>
+            <span class="text-xs text-base-content/70">Declarative REST polling via <code class="font-mono text-3xs">@weather</code></span>
+          </div>
+          <span class="badge badge-xs badge-success gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success"></span> Online</span>
+        </div>
+
+        <!-- Weather Status Card -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-base-200/60 p-3 rounded-box text-center">
+            <div class="text-3xs text-base-content/60 font-semibold">Temperature</div>
+            <div id="weather-temp-display" class="font-black text-xl text-primary">22°C</div>
+            <div id="weather-temp-feel" class="text-3xs text-base-content/60">Feels like 23°C</div>
+          </div>
+          <div class="bg-base-200/60 p-3 rounded-box text-center">
+            <div class="text-3xs text-base-content/60 font-semibold">Conditions</div>
+            <div id="weather-condition-display" class="font-bold text-sm text-base-content flex items-center justify-center gap-1 mt-1">
+              <i id="weather-icon" data-lucide="sun" class="w-4 h-4 text-warning"></i> Sunny
+            </div>
+            <div class="text-3xs text-base-content/60 mt-0.5">UV Index: 6 (Moderate)</div>
+          </div>
+          <div class="bg-base-200/60 p-3 rounded-box text-center">
+            <div class="text-3xs text-base-content/60 font-semibold">Wind &amp; Gusts</div>
+            <div id="weather-wind-display" class="font-mono font-bold text-sm text-base-content mt-1">12 km/h</div>
+            <div class="text-3xs text-base-content/60 mt-0.5">Humidity: 48%</div>
+          </div>
+          <div class="bg-base-200/60 p-3 rounded-box text-center">
+            <div class="text-3xs text-base-content/60 font-semibold">Precipitation</div>
+            <div id="weather-precip-display" class="font-mono font-bold text-sm text-base-content mt-1">0%</div>
+            <div class="text-3xs text-base-content/60 mt-0.5">Barometer: 1014 hPa</div>
+          </div>
+        </div>
+
+        <!-- Weather Simulation Action Triggers -->
+        <div class="bg-base-200/60 p-3 rounded-box space-y-2">
+          <div class="text-xs font-bold text-base-content/70 flex items-center justify-between">
+            <span>Simulate Extreme Weather Transitions:</span>
+            <span class="text-3xs font-mono text-info">Declarative Thresholds</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="triggerThunderstorm()" class="btn btn-xs btn-error gap-1">
+              <i data-lucide="cloud-lightning" class="w-3 h-3"></i> Sudden Severe Storm
+            </button>
+            <button onclick="triggerHeatwave()" class="btn btn-xs btn-warning gap-1">
+              <i data-lucide="flame" class="w-3 h-3"></i> Heatwave Spike (38°C)
+            </button>
+            <button onclick="triggerBlizzard()" class="btn btn-xs btn-info gap-1">
+              <i data-lucide="snowflake" class="w-3 h-3"></i> Flash Blizzard (-4°C)
+            </button>
+            <button onclick="triggerClearWeather()" class="btn btn-xs btn-outline gap-1">
+              <i data-lucide="sun" class="w-3 h-3"></i> Clear &amp; Mild (22°C)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column (5 cols): Universal Agent Reaction Panel -->
+    <div class="lg:col-span-5 card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3 flex flex-col justify-between">
+      <!-- Agent Status Header -->
+      <div class="flex items-center justify-between border-b border-base-300 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="avatar online placeholder">
+            <div class="bg-primary text-primary-content rounded-full w-9">
+              <i data-lucide="bot" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div>
+            <div class="font-bold text-xs flex items-center gap-1">
+              <span>Multimodal Co-Pilot</span>
+              <span id="agent-modality-badge" class="badge badge-xs badge-outline font-mono">Time-Series</span>
+            </div>
+            <div id="agent-active-status" class="text-3xs font-mono text-success flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-success"></span> Watching telemetry feed...
+            </div>
+          </div>
+        </div>
+
+        <div id="sentiment-badge-container">
+          <span id="sentiment-badge" class="badge badge-success badge-sm font-semibold gap-1">
+            <i data-lucide="shield-check" class="w-3 h-3"></i> Bullish (Momentum)
+          </span>
+        </div>
+      </div>
+
+      <!-- Agent Reaction Bubble & Thought Stream -->
+      <div id="agent-thought-stream" class="flex-1 overflow-y-auto max-h-64 space-y-2 p-1 text-xs">
+        <div class="chat chat-start">
+          <div class="chat-header text-3xs font-mono opacity-70 mb-0.5">Initial Assessment · 14:00:00</div>
+          <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-sans shadow-sm">
+            Monitoring TECH/USD ticker stream. Volume is within normal 15-minute moving average bounds. Resistance recognized at $186.00, support at $178.50. Standing by for volatility triggers.
+          </div>
+        </div>
+      </div>
+
+      <!-- Token / Cost Efficiency Callout -->
+      <div class="bg-base-200/70 p-2.5 rounded-box text-3xs text-base-content/70 flex items-center justify-between">
+        <span class="flex items-center gap-1 font-mono">
+          <i data-lucide="filter" class="w-3.5 h-3.5 text-primary"></i> Noise filter: <strong id="suppressed-ticks-count">0</strong> ticks suppressed
+        </span>
+        <span class="font-mono text-success font-bold">100% LLM tokens saved on jitter</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 3. ARCHITECTURAL BRAINSTORM & DEEP DIVE    -->
+<!-- ========================================== -->
+<section id="architectural-brainstorm" class="space-y-6">
+  <div class="space-y-2">
+    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+      <i data-lucide="lightbulb" class="w-6 h-6 text-warning"></i>
+      Architectural Brainstorm: Answers to Key Questions
+    </h2>
+    <p class="text-sm text-base-content/70">
+      Deep analysis of multimodal feasibility, agent-agnostic pipeline design, and evaluation of this capability.
+    </p>
+  </div>
+
+  <!-- 3 Column Multimodal Modality Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Modality 1 -->
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-sm">
+      <div class="font-bold text-xs flex items-center gap-1.5 text-primary">
+        <i data-lucide="line-chart" class="w-4 h-4"></i> 1. Numerical &amp; Financial
+      </div>
+      <p class="text-3xs text-base-content/70 leading-relaxed">
+        <strong>Data:</strong> Fast-moving numbers, ticks, latency, and CPU metrics.<br/>
+        <strong>Trigger:</strong> Anomaly detection, rolling standard deviation breaches (>2σ), and periodic heartbeats.<br/>
+        <strong>Agent Action:</strong> Market sentiment, anomaly diagnosis, risk calculation.
+      </p>
+    </div>
+
+    <!-- Modality 2 -->
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-sm">
+      <div class="font-bold text-xs flex items-center gap-1.5 text-accent">
+        <i data-lucide="eye" class="w-4 h-4"></i> 2. Visual &amp; Multimodal
+      </div>
+      <p class="text-3xs text-base-content/70 leading-relaxed">
+        <strong>Data:</strong> Images (e.g. Pokémon sprites, camera feeds, screenshots, diagrams).<br/>
+        <strong>Trigger:</strong> Element selection, camera frame delta, or file drag-and-drop.<br/>
+        <strong>Agent Action:</strong> Visual identification, type matchup analysis, diagnostic critique.
+      </p>
+    </div>
+
+    <!-- Modality 3 -->
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-sm">
+      <div class="font-bold text-xs flex items-center gap-1.5 text-info">
+        <i data-lucide="cloud-sun" class="w-4 h-4"></i> 3. Environmental &amp; Public APIs
+      </div>
+      <p class="text-3xs text-base-content/70 leading-relaxed">
+        <strong>Data:</strong> Public REST/WebSocket feeds (<code class="font-mono text-3xs">@weather</code>, Open-Meteo).<br/>
+        <strong>Trigger:</strong> Rapid delta (e.g. temperature drop >5°C in 30 min) or active warning flags.<br/>
+        <strong>Agent Action:</strong> Severe storm advisory, gear suggestions, situational safety.
       </p>
     </div>
   </div>
 
-  <!-- Comparison Card -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div class="card bg-base-100 border border-error/30 p-5 shadow-sm space-y-3">
-      <div class="flex items-center gap-2 text-error font-bold text-sm uppercase">
-        <i data-lucide="alert-triangle" class="w-4 h-4"></i> Before: The Monolithic "Visual Bomb"
-      </div>
-      <ul class="text-xs space-y-2 text-base-content/80">
-        <li class="flex items-start gap-2">
-          <i data-lucide="x" class="w-4 h-4 text-error shrink-0 mt-0.5"></i>
-          <span><strong>README.md Dump (370 lines)</strong>: Badges wall, giant ASCII diagrams, full FSM Mermaid diagrams, 17-CDN version matrix, and raw JSON remediation snippets all in one place.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i data-lucide="x" class="w-4 h-4 text-error shrink-0 mt-0.5"></i>
-          <span><strong>GitHub Pages Overload (3,766 lines)</strong>: Endless vertical scrolling stacking 15 different libraries, maps, canvas charts, and calendars simultaneously with no visual breathing room.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i data-lucide="x" class="w-4 h-4 text-error shrink-0 mt-0.5"></i>
-          <span><strong>Cognitive Friction</strong>: High bounce rate; developers and agent authors cannot locate quickstart instructions in seconds.</span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="card bg-base-100 border border-success/30 p-5 shadow-sm space-y-3">
-      <div class="flex items-center gap-2 text-success font-bold text-sm uppercase">
-        <i data-lucide="check-circle" class="w-4 h-4"></i> After: DaisyUI Minimalist North Star
-      </div>
-      <ul class="text-xs space-y-2 text-base-content/80">
-        <li class="flex items-start gap-2">
-          <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
-          <span><strong>Standard Minimalist README (<150 lines)</strong>: Punchy elevator pitch, 4 essential badges, 1-click prompt install card, 2-step quickstart, and clean links to <code>docs/</code>.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
-          <span><strong>Interactive Tabbed Explorer</strong>: Compact DaisyUI tabs (Data, Architecture, Tables, Telemetry, Math) providing interactive live previews without vertical clutter.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i data-lucide="check" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
-          <span><strong>Integrated Showdown Hub</strong>: 1-click in-browser markdown preview for all <code>docs/*.md</code> guides without losing context or page reloads.</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Mermaid Architecture Flow -->
-  <div class="card bg-base-100 border border-base-300 p-5 shadow-sm space-y-3">
+  <!-- Technical Flow Mermaid Diagram -->
+  <div class="card bg-base-100 border border-base-300 p-5 space-y-4 shadow-sm">
     <div class="flex items-center justify-between">
-      <span class="text-xs font-bold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
-        <i data-lucide="network" class="w-4 h-4 text-primary"></i> Documentation &amp; Showcase Information Architecture
-      </span>
-      <span class="badge badge-sm badge-outline font-mono">Mermaid Flow</span>
+      <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+        <i data-lucide="git-branch" class="w-4 h-4 text-primary"></i>
+        Multimodal Reactive Telemetry Pipeline Architecture
+      </h3>
+      <span class="badge badge-sm badge-outline font-mono">Mermaid Sequence</span>
     </div>
-    <div class="overflow-x-auto py-2">
-      <pre class="mermaid text-center">
-graph TD
-    ROOT["Root README.md\n(Minimalist North Star &lt;150 lines)"]
-    GH_PAGES["GitHub Pages index.html\n(DaisyUI Minimal Landing Page)"]
-    
-    ROOT -->|Elevator Pitch &amp; 1-Click Install| QUICKSTART["Agent Prompt &amp; CLI Quickstart"]
-    ROOT -->|Hub Links| DOCS_DIR["Modular docs/ Directory"]
-    
-    GH_PAGES -->|Hero &amp; Value Props| HERO["Modern DaisyUI Hero &amp; Value Cards"]
-    GH_PAGES -->|Interactive Preview| TABBED["Tabbed Capability Explorer\n(Chart.js, Mermaid, Grid.js, Datastar)"]
-    GH_PAGES -->|1-Click Modal Viewer| DOCS_DIR
-    
-    DOCS_DIR --> D1["docs/getting-started.md"]
-    DOCS_DIR --> D2["docs/architecture-fsm.md"]
-    DOCS_DIR --> D3["docs/cdn-stack.md"]
-    DOCS_DIR --> D4["docs/custom-themes.md"]
-    DOCS_DIR --> D5["docs/live-telemetry.md"]
-    DOCS_DIR --> D6["docs/testing-and-verification.md"]
-    DOCS_DIR --> D7["docs/api-and-cli-reference.md"]
 
-    classDef primary fill:#2563eb,stroke:#1d4ed8,stroke-width:2px,color:#fff;
-    classDef secondary fill:#0d9488,stroke:#0f766e,stroke-width:2px,color:#fff;
-    classDef accent fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#000;
-    classDef neutral fill:#374151,stroke:#1f2937,stroke-width:2px,color:#fff;
+    <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Feed as Telemetry Source<br/>(Ticker / Image / Weather API)
+    participant Filter as Anomaly & Cooldown Filter<br/>(Modality-Aware Pre-filter)
+    participant Agent as Multimodal Agent Reactor<br/>(AGY / GPT-4o / Claude / LLaVA)
+    participant SSE as DatastarBridge (SSE)<br/>(/__datastar_stream__)
+    participant DOM as Report Client (Browser)<br/>(DaisyUI + Lucide)
 
-    class ROOT,GH_PAGES primary;
-    class DOCS_DIR secondary;
-    class TABBED,QUICKSTART,HERO accent;
-    class D1,D2,D3,D4,D5,D6,D7 neutral;
-      </pre>
-    </div>
+    Feed->>DOM: Ingest visual image, weather tick, or chart candle
+    Feed->>Filter: Emit TelemetryReactorEvent (modality, payload, metadata)
+    Note over Filter: Check modality trigger policy
+    alt Routine noise (sub-threshold delta or identical image)
+        Filter-->>Filter: Suppress LLM call (0 tokens wasted)
+    else Anomaly breached, severe alert, or new creature selected
+        Filter->>Agent: Dispatch Multimodal Evaluation Context
+        Note over Agent: Multimodal LLM Inference (Vision / Reasoning)
+        loop Stream Token Chunks
+            Agent->>SSE: Yield partial commentary / sentiment
+            SSE->>DOM: SSE datastar-fragment (#agent-thought-stream)
+            Note over DOM: Datastar morphs DOM in real-time
+        end
+        SSE->>DOM: SSE datastar-merge-signals (sentiment: Alert, badge: updated)
+    end
+    </pre>
   </div>
 </section>
 
 <!-- ========================================== -->
-<!-- CONNECTED TASK CHECKLIST                   -->
+<!-- 4. CONNECTED TASK CHECKLIST                -->
 <!-- ========================================== -->
-<section class="space-y-6">
-  <div class="flex items-center justify-between">
+<section id="tasks-checklist" class="space-y-4">
+  <div class="flex items-center justify-between border-b border-base-300 pb-3">
     <div>
-      <h2 id="task-checklist" class="text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
-        <i data-lucide="check-square" class="w-6 h-6 text-primary"></i> Implementation Task Progress
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
+        <i data-lucide="check-square" class="w-6 h-6 text-accent"></i>
+        Implementation Task Checklist
       </h2>
-      <p class="text-sm text-base-content/70">
-        Connected directly with <a href="tasks.md" onclick="openMarkdownViewer('tasks.md'); return false;" class="link link-primary font-mono text-xs">tasks.md</a>.
+      <p class="text-xs text-base-content/70">
+        Connected task checklist corresponding directly to <a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono">tasks.md</a>.
       </p>
     </div>
-    <span class="badge badge-outline font-mono text-xs">4 Phases</span>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline gap-1 font-mono">
+      <i data-lucide="external-link" class="w-3.5 h-3.5"></i> View tasks.md
+    </button>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <!-- Phase 1 -->
     <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between">
-        <span class="font-bold text-sm text-primary flex items-center gap-1.5">
-          <i data-lucide="folder" class="w-4 h-4"></i> Phase 1: Modular docs/ Hierarchy
-        </span>
-        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <h3 class="font-bold text-xs text-primary flex items-center gap-1.5">
+          <i data-lucide="database" class="w-4 h-4"></i> 1. Schema &amp; Trigger Engine
+        </h3>
+        <span class="badge badge-xs badge-success font-mono font-bold">3 / 3 ✓</span>
       </div>
       <div class="space-y-2 text-xs">
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>1.1 <code>docs/getting-started.md</code> (install &amp; prompt)</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>1.2 <code>docs/architecture-fsm.md</code> (10-state FSM)</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>1.3 <code>docs/cdn-stack.md</code> (17-library catalog &amp; SRI)</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>1.4 <code>docs/custom-themes.md</code> (OKLCH engine &amp; studio)</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>1.5 <code>docs/live-telemetry.md</code> (Datastar &amp; SSE tailing)</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>1.6 <code>docs/testing-and-verification.md</code> (BDD &amp; Playwright)</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>1.7 <code>docs/api-and-cli-reference.md</code> (CLI options &amp; API)</span>
-        </div>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>1.1</strong> Implement <code class="font-mono text-3xs">TelemetryReactorSchema</code> for time-series, APIs, and images</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>1.2</strong> Implement sliding window anomaly and threshold filter</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>1.3</strong> Add unit tests in <code class="font-mono text-3xs">test/</code> verifying normalization</span>
+        </label>
       </div>
     </div>
 
     <!-- Phase 2 -->
     <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between">
-        <span class="font-bold text-sm text-secondary flex items-center gap-1.5">
-          <i data-lucide="file-text" class="w-4 h-4"></i> Phase 2: Minimal Standard README
-        </span>
-        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <h3 class="font-bold text-xs text-secondary flex items-center gap-1.5">
+          <i data-lucide="cpu" class="w-4 h-4"></i> 2. Multimodal Reactor Bridge
+        </h3>
+        <span class="badge badge-xs badge-success font-mono font-bold">3 / 3 ✓</span>
       </div>
       <div class="space-y-2 text-xs">
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>2.1 Rewrite <code>README.md</code> to modern minimal standard</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>2.2 Verify all documentation &amp; demo links</span>
-        </div>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>2.1</strong> Implement <code class="font-mono text-3xs">AgentReactorBridge</code> with generic <code class="font-mono text-3xs">react()</code></span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>2.2</strong> Add vision adapters for AGY/Gemini, GPT-4o, and local models</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>2.3</strong> Verify visual payload forwarding without memory overflow</span>
+        </label>
       </div>
     </div>
 
     <!-- Phase 3 -->
     <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between">
-        <span class="font-bold text-sm text-accent flex items-center gap-1.5">
-          <i data-lucide="layout" class="w-4 h-4"></i> Phase 3: Minimalist Showcase (index.html)
-        </span>
-        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <h3 class="font-bold text-xs text-accent flex items-center gap-1.5">
+          <i data-lucide="layout" class="w-4 h-4"></i> 3. UI Multimodal Showcase
+        </h3>
+        <span class="badge badge-xs badge-success font-mono font-bold">3 / 3 ✓</span>
       </div>
       <div class="space-y-2 text-xs">
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>3.1 DaisyUI landing page layout &amp; hero banner</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>3.2 Interactive tabbed Capability Explorer</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>3.3 Documentation Hub with Showdown modal viewer</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>3.4 Theme switcher reactivity across widgets</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>3.5 Run <code>tests/browser-runtime-integrity.test.mjs</code></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Phase 4 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between">
-        <span class="font-bold text-sm text-info flex items-center gap-1.5">
-          <i data-lucide="server" class="w-4 h-4"></i> Phase 4: Companion &amp; Live Dev Server
-        </span>
-        <span class="badge badge-success badge-sm font-mono">Phase Complete</span>
-      </div>
-      <div class="space-y-2 text-xs">
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>4.1 Generate companion <code>index.html</code> report</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-success" checked disabled />
-          <span>4.2 Sync with <code>implementation-progress.html</code> on :3000</span>
-        </div>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>3.1</strong> Design DaisyUI tabbed component (Ticker, Pokémon, Weather)</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>3.2</strong> Add Lucide sentiment icons &amp; creature stats</span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
+          <span class="line-through opacity-70"><strong>3.3</strong> Verify live dev server on <code class="font-mono text-3xs">localhost:3000</code></span>
+        </label>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ========================================== -->
-<!-- SHOWDOWN IN-BROWSER ARTIFACT VIEWER MODAL  -->
+<!-- IN-BROWSER SHOWDOWN MARKDOWN VIEWER MODAL  -->
 <!-- ========================================== -->
-<dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box w-11/12 max-w-4xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl rounded-2xl">
-    <!-- Modal Header -->
-    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50 shrink-0">
-      <div class="flex items-center gap-3">
-        <div class="p-2 rounded-lg bg-primary/10 text-primary">
-          <i data-lucide="file-code" class="w-5 h-5"></i>
-        </div>
-        <div>
-          <h3 id="markdown-modal-title" class="font-bold text-base text-base-content font-mono">proposal.md</h3>
-          <span id="modal-doc-title" class="hidden">proposal.md</span>
-          <p class="text-2xs opacity-60">OpenSpec Planning Artifact · Formatted Markdown</p>
-        </div>
-      </div>
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box w-11/12 max-w-4xl bg-base-100 border border-base-300 shadow-2xl p-6 space-y-4">
+    <div class="flex items-center justify-between border-b border-base-300 pb-3">
       <div class="flex items-center gap-2">
-        <button id="copy-markdown-btn" onclick="copyMarkdownToClipboard()" class="btn btn-xs btn-outline gap-1 font-mono">
-          <i data-lucide="copy" class="w-3 h-3"></i> Copy
-        </button>
-        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-circle btn-ghost">✕</button>
+        <i data-lucide="file-text" class="w-5 h-5 text-primary"></i>
+        <span id="markdown-modal-title" class="font-mono font-bold text-sm">proposal.md</span>
       </div>
+      <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-circle btn-ghost">✕</button>
     </div>
 
-    <!-- Quick Navigation Sub-Tabs -->
-    <div class="flex items-center gap-1 px-6 py-2 border-b border-base-300 bg-base-100 text-xs overflow-x-auto shrink-0">
-      <button class="btn btn-xs btn-primary doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="openMarkdownViewer('proposal.md')">proposal.md</button>
-      <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="design.md" onclick="openMarkdownViewer('design.md')">design.md</button>
-      <button id="tab-btn-tasks" class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="openMarkdownViewer('tasks.md')">tasks.md</button>
-      <button class="btn btn-xs btn-ghost doc-tab-btn md-tab-btn" data-doc="specs/modular-documentation-and-showcase/spec.md" onclick="openMarkdownViewer('specs/modular-documentation-and-showcase/spec.md')">spec.md</button>
+    <!-- Tab Bar for Direct Artifact Navigation -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-base-200">
+      <button class="btn btn-xs btn-primary doc-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
+      <button class="btn btn-xs btn-ghost doc-tab-btn" data-doc="specs/reactive-data-copilot/spec.md" onclick="switchViewerTab('specs/reactive-data-copilot/spec.md')">spec.md</button>
     </div>
 
-    <!-- Rendered Markdown Body -->
-    <div class="p-6 overflow-y-auto flex-1">
-      <div id="modal-markdown-container" class="prose prose-sm max-w-none text-base-content/90 font-sans leading-relaxed">
-        <div id="modal-markdown-body">
-          <div id="markdown-modal-body">
-            <div class="flex items-center justify-center p-12">
-              <span class="loading loading-spinner loading-md text-primary"></span>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- Markdown Rendered HTML Container -->
+    <div id="markdown-modal-body" class="prose max-w-none text-xs leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+      <p class="text-base-content/60 italic">Loading artifact...</p>
+    </div>
+
+    <div class="modal-action border-t border-base-300 pt-3 flex items-center justify-between">
+      <span class="text-3xs text-base-content/60 font-mono">Rendered with Showdown.js</span>
+      <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-primary">Close</button>
     </div>
   </div>
   <form method="dialog" class="modal-backdrop">
@@ -723,40 +997,501 @@ graph TD
   </form>
 </dialog>
 
-<!-- ========================================== -->
-<!-- OFFLINE ARTIFACT DATA & LIVE SCRIPTS       -->
-<!-- ========================================== -->
-<script id="open-spec-artifacts-data" type="application/json">
+<!-- Embedded OpenSpec Artifacts JSON -->
+<script type="application/json" id="openspec-artifacts-json">
 {
-  "proposal.md": "# Proposal: Modular Documentation Architecture & Minimal DaisyUI Showcase Redesign\n\n## Why\n\nThe current `README.md` and GitHub Pages showcase (`https://driesverb.github.io/html-report/`) suffer from extreme information overload. `README.md` is an uncurated 370-line dump of ASCII diagrams, massive 17-CDN version tables, and internal harness state machine code blocks. Simultaneously, `index.html` (3,766 lines) acts as a monolithic \"visual bomb\" that forces visitors to scroll through dozens of disparate charts, maps, calendars, and LaTeX equations all at once.\n\nTo establish `html-report` as a top-tier, publication-grade tool for the agent ecosystem, we need a clean, scannable presentation inspired by modern open-source north stars like `daisyui.com`, `tailwindcss.com`, and `shadcn/ui`. We must separate quick onboarding from deep architectural reference by introducing a dedicated `docs/` directory, condensing the root `README.md` into an elegant, scannable guide, and transforming GitHub Pages into an aesthetic, interactive, tabbed showcase landing page with zero visual chaos.\n\n## What Changes\n\n- **Create Dedicated Modular Documentation (`docs/`)**:\n  - `docs/getting-started.md`: Installation via 1-click agent prompt, universal symlinks, and CLI.\n  - `docs/architecture-fsm.md`: Deep dive on the 10-state deterministic FSM harness, <1ms pre-flight auto-fixes, and small-model remediation directives.\n  - `docs/cdn-stack.md`: Complete 17-library catalog, version matrices, SRI hashes, loading guards, and offline bundling.\n  - `docs/custom-themes.md`: Custom DaisyUI OKLCH engine, theme inheritance (`extends`), and collapsible studio banner.\n  - `docs/live-telemetry.md`: Real-time SSE streaming with Datastar.js, transcript tailing (`agy`, `claude-code`, `codex`), and hypermedia morphing.\n  - `docs/testing-and-verification.md`: Zero-framework native BDD harness, Playwright 5-breakpoint verification, and horizontal scrollbar detection.\n  - `docs/api-and-cli-reference.md`: Comprehensive CLI flags (`build-report.mjs`, `harness.mjs`, `serve-report.mjs`) and programmatic API usage.\n\n- **Overhaul `README.md` to Minimalist North-Star Standards**:\n  - Crisp hero banner with punchy elevator pitch.\n  - Minimalist badge strip (only 4 essential badges: License, LLM-Agnostic, 17 CDNs, Tests Passing).\n  - Frictionless 1-click agent prompt copy box & 1-line CLI install.\n  - Punchy \"Why `html-report`?\" comparison and concise ASCII pipeline diagram.\n  - 2-step Quickstart guide (Write Fragment -> Run Harness -> Done).\n  - Clean Documentation Hub index with direct links to all `docs/*.md` guides.\n  - Live showcase link with clear call to action.\n\n- **Redesign GitHub Pages Showcase (`index.html`) to DaisyUI North-Star Minimalist Aesthetic**:\n  - Replaces the 3,766-line vertical visual dump with a sleek, clean, modern landing page.\n  - **Hero Section**: Modern title, subheader, 1-click prompt install card with copy button, and \"Get Started\" / \"Explore Capabilities\" buttons.\n  - **Value Proposition Grid**: Clean, spacious DaisyUI cards highlighting speed (<100ms), 32 themes, 17 non-blocking CDNs, cryptographic security, and Playwright verification.\n  - **Interactive Capability Explorer**: Clean, modern tabbed interface (Data Visualizations, Architecture Flows, Interactive Tables, Live Telemetry, Formatted Math & Code) that lets visitors interactively test each CDN library without visual chaos.\n  - **Documentation Hub**: Grid of cards linking directly to the markdown docs in `docs/` with 1-click Showdown modal preview or direct view.\n  - **Dedicated Demo Links**: Direct buttons to standalone deep-dive reports and live dashboards.\n  - Full adherence to 16/17 CDN parity and zero console errors (`tests/browser-runtime-integrity.test.mjs` verification).\n\n- **Update Feature Companion & Dev Server**:\n  - Create companion `openspec/changes/docs-and-showcase-redesign/index.html` with Journey Stepper, live task progress, and Showdown backlinks.\n  - Sync with `implementation-progress.html` on `http://localhost:3000`.\n\n## Capabilities\n\n### New Capabilities\n- `modular-documentation-and-showcase`: Modular root-level `docs/` architecture, minimalist standard `README.md`, and aesthetic DaisyUI tabbed landing page showcase at repo root (`index.html`).\n\n### Modified Capabilities\n- None.\n\n## Impact\n\n- `README.md`: Drastically shortened, scannable, and modern.\n- `docs/`: 7 new structured deep-dive markdown guides.\n- `index.html`: Complete redesign to a clean landing page with tabbed capability explorer.\n- Tests: `tests/browser-runtime-integrity.test.mjs` continues to pass with 0 console errors and full CDN global verification.\n",
-  "design.md": "# Design: Modular Documentation Architecture & Minimal DaisyUI Showcase Redesign\n\n## Context\n\nSee [proposal.md](proposal.md) for the motivation. Currently, `README.md` attempts to be an installation guide, architecture specification, benchmark dashboard, and API manual simultaneously. At the same time, `index.html` (hosted on GitHub Pages) renders thousands of lines of stacked charts, diagrams, tables, and formula blocks sequentially, overwhelming first-time visitors.\n\nThis design introduces a modular documentation architecture in `docs/`, condenses `README.md` into an open-source standard landing document, and redesigns `index.html` into a DaisyUI-powered interactive landing page with a tabbed capability explorer.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Create a dedicated, well-structured `docs/` directory containing 7 modular guides for onboarding, FSM architecture, CDN catalog, custom themes, real-time telemetry, verification, and CLI reference.\n- Restructure `README.md` into a scannable, modern document adhering to open-source best practices (daisyUI, Astro, Shadcn).\n- Redesign `index.html` into an aesthetic, minimalist landing page featuring a hero banner, 1-click install card, key value proposition cards, an interactive tabbed capability explorer, and a documentation hub with Showdown modal viewer integration.\n- Preserve 100% test compatibility: `tests/browser-runtime-integrity.test.mjs` must load `index.html` with zero console/page errors and verify all 16 CDN globals.\n\n**Non-Goals:**\n- Altering the underlying CLI tools (`build-report.mjs`, `harness.mjs`, `serve-report.mjs`) or core runtime behavior.\n- Replacing the 17-library CDN stack or dropping any supported capability.\n\n## Decisions\n\n### 1. Dedicated `docs/` Directory Structure\n- **Decision**: Move in-depth technical details from `README.md` into dedicated markdown files in `docs/`:\n  - `docs/getting-started.md`\n  - `docs/architecture-fsm.md`\n  - `docs/cdn-stack.md`\n  - `docs/custom-themes.md`\n  - `docs/live-telemetry.md`\n  - `docs/testing-and-verification.md`\n  - `docs/api-and-cli-reference.md`\n- **Rationale**: Keeps `README.md` under 150 lines, focused on value proposition, quick install, and rapid onboarding. Developers and agents can navigate directly to specific topic guides as needed.\n\n### 2. Tabbed Interactive Capability Explorer for GitHub Pages (`index.html`)\n- **Decision**: Replace the vertical 3,800-line stack with a modern DaisyUI tabbed component explorer:\n  - Tab 1: **Data & Visualizations** (Chart.js multi-dataset canvas with theme sync)\n  - Tab 2: **Architecture & Flows** (Mermaid sequence and flow diagrams)\n  - Tab 3: **Interactive Tables** (Grid.js sortable, searchable table)\n  - Tab 4: **Live LLM Telemetry** (Datastar streaming simulation drawer)\n  - Tab 5: **Rich Math & Code** (KaTeX LaTeX equations + Highlight.js code formatting)\n- **Rationale**: Gives visitors immediate, interactive proof of all capabilities in a compact, viewport-friendly layout without \"visual bomb\" cognitive overload.\n\n### 3. Integrated Showdown Markdown Viewer for Documentation Cards\n- **Decision**: In `index.html`, render a Documentation Hub grid where each card links to a `docs/*.md` file. Clicking a card opens the document in the built-in Showdown markdown modal viewer (`window.openMarkdownViewer('docs/...')`) with tabbed source preview and print capability.\n- **Rationale**: Allows visitors on GitHub Pages to read comprehensive documentation without navigating away or dealing with raw GitHub markdown rendering.\n\n### 4. Preservation of 16-CDN Global Parity & Browser Runtime Integrity\n- **Decision**: Keep all 16 CDN library imports and sample initializers in `index.html`, mounting them inside the interactive tab panels.\n- **Rationale**: Ensures `tests/browser-runtime-integrity.test.mjs` passes identically while demonstrating that all 17 libraries co-exist cleanly without conflicts.\n\n## Risks / Trade-offs\n\n- **[Risk] Lazy initialization in tabs could cause hidden canvas or map rendering sizing bugs.**  \n  → *Mitigation*: Ensure Chart.js and Leaflet invalidate/resize upon tab switch using Alpine.js or native tab change listeners (`chart.resize()`, `map.invalidateSize()`).\n- **[Risk] Broken relative links between `README.md`, `docs/`, and GitHub Pages.**  \n  → *Mitigation*: Use standard relative paths (`docs/getting-started.md`) that work seamlessly on both GitHub's web interface and local clones.\n",
-  "tasks.md": "# Tasks: Modular Documentation Architecture & Minimal DaisyUI Showcase Redesign\n\n## 1. Dedicated Modular Documentation Architecture (`docs/`)\n\n- [x] 1.1 Create `docs/getting-started.md` covering agent prompt install, CLI setup, and quick verification\n- [x] 1.2 Create `docs/architecture-fsm.md` covering 10-state deterministic FSM, mechanical auto-fixes, and small-model JSON remediation\n- [x] 1.3 Create `docs/cdn-stack.md` detailing the 17-library power stack, SRI hashes, loading guards, and offline bundling\n- [x] 1.4 Create `docs/custom-themes.md` covering OKLCH engine, theme inheritance (`extends`), and collapsible studio banner\n- [x] 1.5 Create `docs/live-telemetry.md` covering Datastar.js SSE streaming, agent transcript tailing, and morphing\n- [x] 1.6 Create `docs/testing-and-verification.md` covering native BDD micro-framework, Playwright 5-breakpoint verification, and horizontal overflow detection\n- [x] 1.7 Create `docs/api-and-cli-reference.md` documenting CLI flags, options, and programmatic usage\n\n## 2. Minimalist Standard README (`README.md`)\n\n- [x] 2.1 Rewrite `README.md` adhering to open-source north stars (DaisyUI, Astro, Shadcn) with hero banner, 4 essential badges, 1-click prompt install, 2-step quickstart, and Documentation Hub linking to `docs/`\n- [x] 2.2 Verify all markdown links in `README.md` to `docs/*.md` resolve properly\n\n## 3. DaisyUI Minimalist Landing Page Showcase (`index.html`)\n\n- [ ] 3.1 Design modern DaisyUI landing page layout with hero, copyable prompt card, value prop cards, and clean visual hierarchy\n- [ ] 3.2 Implement interactive tabbed Capability Explorer (Data & Visualizations, Architecture Flows, Interactive Tables, Live Telemetry, Formatted Math & Code)\n- [ ] 3.3 Implement Documentation Hub card grid wired to Showdown markdown viewer modal (`window.openMarkdownViewer`)\n- [ ] 3.4 Wire theme switching to preserve real-time OKLCH re-theming across Chart.js, Mermaid, and Grid.js\n- [ ] 3.5 Run `tests/browser-runtime-integrity.test.mjs` to verify zero console/page errors and full 16-CDN global presence\n\n## 4. OpenSpec Companion & Live Dev Server (`localhost:3000`)\n\n- [ ] 4.1 Generate companion `index.html` report presenting brainstorm, architecture flows, live journey stepper, and Showdown backlinks\n- [ ] 4.2 Sync with `implementation-progress.html` and verify live reload on `http://localhost:3000`\n",
-  "specs/modular-documentation-and-showcase/spec.md": "# Spec Delta: modular-documentation-and-showcase\n\n## Purpose\n\nEstablishes a modular documentation architecture in the `docs/` directory, an ultra-scannable minimalist README following open-source north-star standards, and an aesthetic, tabbed DaisyUI landing page showcase for GitHub Pages (`index.html`) that replaces monolithic content dumping with interactive progressive disclosure.\n\n## ADDED Requirements\n\n### Requirement: Modular Root Documentation Directory\nThe repository SHALL maintain a dedicated `docs/` directory containing focused, topic-specific markdown guides for onboarding, architecture, styling, and verification.\n\n#### Scenario: Inspecting modular docs directory\n- **WHEN** a developer or agent inspects the `docs/` directory\n- **THEN** guides for `getting-started.md`, `architecture-fsm.md`, `cdn-stack.md`, `custom-themes.md`, `live-telemetry.md`, `testing-and-verification.md`, and `api-and-cli-reference.md` SHALL be present and linked\n\n### Requirement: Minimal Scannable Standard README\nThe root `README.md` SHALL present an elevator pitch, minimal essential badges, 1-click agent prompt and CLI installation instructions, a 2-step quickstart example, and a clean documentation index linking to `docs/`.\n\n#### Scenario: Inspecting root README layout and documentation links\n- **WHEN** a user reads `README.md`\n- **THEN** it provides copyable install commands, links to live demo and `docs/`, and avoids embedding full state machine code or exhaustive CDN version tables\n\n### Requirement: Minimalist Aesthetic Landing Page Showcase\nThe GitHub Pages entrypoint (`index.html`) SHALL provide a DaisyUI-powered minimal landing page featuring a hero section, value proposition cards, an interactive tabbed capability explorer, and a documentation hub linking to all guides.\n\n#### Scenario: Loading GitHub Pages index.html showcase\n- **WHEN** a visitor loads `index.html` in a web browser\n- **THEN** the page renders with zero console errors, displays hero and capability cards, and provides full 16-CDN runtime integrity\n\n#### Scenario: Switching capability explorer tabs\n- **WHEN** a visitor clicks capability tabs (such as Data & Visualizations, Architecture Flows, Interactive Tables, Live Telemetry, or Formatted Math & Code)\n- **THEN** the active tab displays the selected interactive component preview without requiring full-page scrolling\n\n#### Scenario: Previewing documentation via Showdown viewer\n- **WHEN** a visitor clicks any documentation link in the landing page documentation hub\n- **THEN** the runtime activates the interactive Showdown markdown modal to display the formatted guide directly in the browser\n"
+  "proposal.md": "# Proposal: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## Why\\nStatic and telemetry dashboards present charts, images, and public API data (e.g. stock tickers, weather feeds, sensor grids, camera snapshots, or game assets) but force human users to manually interpret what they see and deduce the implications. While `html-report` already supports live Datastar SSE telemetry and declarative public feeds (`data-public-feed`), it lacks a unified, multimodal **reactive co-pilot pattern** where arbitrary report elements (whether a changing financial graph, a live weather API feed, or a picture of a Pokémon) trigger real-time, context-aware agent commentary and guidance.\\n\\n## What Changes\\n- **Universal Multimodal Telemetry Contract (`TelemetryReactorSchema`)**: Generalizes event payloads beyond numerical time-series to support **Visual/Image Modalities** (image URLs, base64 data, canvas snapshots, e.g. Pokémon sprites/photos), **Environmental & Public API Modalities** (e.g. weather feeds, temperature spikes, pressure drops), and **Numerical Streams** (e.g. financial tickers, server CPU/memory).\\n- **Modality-Specific Trigger & Anomaly Policies**:\\n  - *Time-series:* Volatility spikes and standard deviation thresholds (e.g. >2σ).\\n  - *Weather/Environmental:* Rapid delta triggers (e.g. temperature drop >5°C in 30 min, severe weather alert flags).\\n  - *Visual/Multimodal:* Selection, upload, or image frame changes triggering vision-capable model evaluations.\\n- **Vendor-Neutral Multimodal Agent Reactor Interface (`AgentReactorInterface`)**: Provides clean streaming adapters for multimodal engines (Google Gemini / AGY, OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, and local multimodal models like Ollama LLaVA).\\n- **Interactive Multimodal Showcase Component**: A publication-grade DaisyUI component offering interactive tabs across **Financial Tickers**, **Pokémon Visual Identification**, and **Weather API Feeds**, each dynamically paired with a live streaming Datastar reaction panel.\\n- **Hypermedia Morphing via Datastar SSE**: Live agent reactions, sentiment badges, tactical cards, and warnings are streamed and morphed directly into the DOM via `/__datastar_stream__`.\\n\\n## Capabilities\\n\\n### New Capabilities\\n- `reactive-data-copilot`: Standardizes the reactive coupling between live heterogeneous data/media feeds (visual images, weather APIs, financial tickers) and autonomous, vendor-neutral agent feedback loops rendered via Datastar SSE hypermedia fragments.\\n\\n### Modified Capabilities\\n- `live-dashboards`: Extends `DatastarBridge` and `SessionState` to support multimodal event triggers, agent commentary channels, and side-by-side telemetry-reactor components.\\n\\n## Impact\\n- **Runtime & Scripts**: Enhances `skills/html-report/scripts/datastar-sse.mjs` with multimodal payload schemas and vision adapter abstractions.\\n- **Builder**: `skills/html-report/scripts/build-report.mjs` automatically detects `<div data-reactive-copilot>` components and ensures both Chart.js and Datastar addons are enabled.\\n- **Backlinks & Journey**: Supported by companion [index.html](file:///home/eta/projects/html-report/openspec/changes/reactive-agent-data-copilot/index.html) and live dev server on `http://localhost:3000`.",
+
+  "design.md": "# Design: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## Context\\nSee [proposal.md](file:///home/eta/projects/html-report/openspec/changes/reactive-agent-data-copilot/proposal.md) for motivation and requirements. While initial exploration focused on time-series stock graphs, the architectural pattern applies universally to **any data or media modality** rendered on an HTML report:\\n1. **Numerical / Financial Time-Series:** Chart.js stock tickers, CPU loads, latency curves.\\n2. **Environmental & Public APIs:** Weather feeds (Open-Meteo, storm alerts, air quality).\\n3. **Visual / Multimodal Imagery:** Pictures (e.g. Pokémon sprites, camera feeds, diagnostics, diagrams).\\n\\n## Goals / Non-Goals\\n\\n**Goals:**\\n- Provide a standardized, vendor-neutral `TelemetryReactorSchema` supporting structured metrics, REST JSON payloads, and visual image inputs.\\n- Support multimodal agent inference (vision + text) across Google AGY/Gemini, OpenAI GPT-4o, Anthropic Claude, and local vision LLMs (LLaVA/Ollama).\\n- Implement intelligent rate-limiting and noise filtering tailored to each modality (suppressing sub-threshold ticker jitter, debouncing continuous image hover).\\n- Deliver an interactive, tabbed showcase featuring Financial Ticker, Pokémon Visual Identification, and Weather API streams.\\n\\n**Non-Goals:**\\n- Heavy client-side CV/ML processing inside the browser bundle; visual inference is delegated to the multimodal agent backend.\\n- Proprietary vendor-locked APIs; all data exchanges adhere to standard JSON payloads and Datastar SSE fragments.\\n\\n## Decisions\\n\\n### Decision 1: Discriminated Union Event Contract (`TelemetryReactorSchema`)\\n- **Choice:** Define event payloads with a `modality` discriminator:\\n  - `modality: \\\"time-series\\\"`: `{ metric, value, deltaPct, windowStats }`\\n  - `modality: \\\"environmental-api\\\"`: `{ endpoint, current, forecast, alerts }`\\n  - `modality: \\\"visual-image\\\"`: `{ imageUrl, imageBase64, mimeType, caption, metadata }`\\n- **Rationale:** Allows a single unified bus to route heterogeneous inputs to appropriate prompt constructors or vision pipelines.\\n\\n### Decision 2: Multimodal Agent Adapter Contract (`MultimodalReactor`)\\n- **Choice:** Standardize an abstract reactor method:\\n  ```typescript\\n  interface MultimodalAgentReactor {\\n    react(event: TelemetryReactorEvent): AsyncIterable<string>;\\n  }\\n  ```\\n  For visual events, the adapter constructs multimodal user messages (e.g. Gemini `inlineData` or OpenAI `image_url`).\\n- **Rationale:** Keeps downstream UI code 100% agnostic to whether the model is inspecting a graph, reading temperature numbers, or looking at a Pokémon sprite.\\n\\n### Decision 3: Datastar Hypermedia Morphing (`/__datastar_stream__`)\\n- **Choice:** Regardless of modality, agent reactions stream as Datastar SSE fragments morphing the co-pilot panel (`#agent-reaction-bubble`, `#sentiment-badge`, `#tactical-advisory`).\\n- **Rationale:** Zero client-side framework lock-in, ultra-fast streaming tokens, and automatic DaisyUI theme adaptation.\\n\\n## Risks / Trade-offs\\n\\n- **[Risk] Image payload bandwidth in SSE/events** &rarr; *Mitigation:* Prefer URL references or thumbnail scaling (e.g. max 512x512) for inline base64 transfers.\\n- **[Risk] Hallucination in specialized domains (e.g. Pokemon type matchups or storm paths)** &rarr; *Mitigation:* Ground prompts with known metadata (e.g., passing Pokémon base stats or weather alert codes alongside the raw media).\\n- **[Risk] Token cost on repeated visual queries** &rarr; *Mitigation:* Client-side deduplication and response caching for identical image/entity keys.",
+
+  "tasks.md": "# Tasks: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## 1. Schema & Trigger Engine\\n\\n- [x] 1.1 Implement `TelemetryReactorSchema` in `skills/html-report/scripts/datastar-sse.mjs` supporting `time-series`, `environmental-api`, and `visual-image` modalities\\n- [x] 1.2 Implement sliding window anomaly and threshold filter (`AnomalyTriggerEngine`) to suppress sub-threshold noise\\n- [x] 1.3 Add unit tests in `test/` verifying event normalization and threshold activation logic\\n\\n## 2. Multimodal Agent Reactor Bridge & Adapters\\n\\n- [x] 2.1 Implement `AgentReactorBridge` with generic `react()` streaming interface in `skills/html-report/scripts/datastar-sse.mjs`\\n- [x] 2.2 Add streaming adapters for AGY/Gemini, OpenAI GPT-4o, and generic OpenAI-compatible streaming endpoints (Ollama/vLLM)\\n- [x] 2.3 Verify visual image payload forwarding (URL and base64) to multimodal adapters without buffer overflow\\n\\n## 3. UI Component & Multimodal Showcase\\n\\n- [x] 3.1 Design DaisyUI tabbed component featuring Financial Tickers, Pokémon Visual Identification, and Weather API streams\\n- [x] 3.2 Add Lucide sentiment icons, creature stat badges, and environmental advisory markers\\n- [x] 3.3 Verify interactive demo in `index.html` on `http://localhost:3000` with live simulated ticker ticks, weather transitions, and creature reactions",
+
+  "specs/reactive-data-copilot/spec.md": "# Spec Delta: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## Purpose\\n\\nEnables real-time, vendor-neutral coupling between live heterogeneous data and media streams (visual images like Pokémon sprites, weather API feeds, and financial charts) and autonomous AI agent commentary over Datastar hypermedia Server-Sent Events (SSE).\\n\\n## ADDED Requirements\\n\\n### Requirement: Normalized Multimodal Telemetry Reactor Contract\\nThe system MUST define a vendor-neutral schematic contract (`TelemetryReactorSchema`) supporting discriminated modalities: `time-series`, `environmental-api`, and `visual-image`.\\n\\n#### Scenario: Ingestion of Visual Image Event (e.g. Pokémon Picture)\\n- **WHEN** a visual element emits an event with `modality: \\\"visual-image\\\"`, an image URI, and entity metadata\\n- **THEN** the reactor validates the event schema, assigns a monotonic event sequence ID, and forwards it to the multimodal pipeline without throwing.\\n\\n#### Scenario: Ingestion of Weather API Feed Event\\n- **WHEN** a declarative public feed emits an event with `modality: \\\"environmental-api\\\"` containing temperature, humidity, and alert flags\\n- **THEN** the reactor validates the schema and checks for environmental anomaly thresholds.\\n\\n### Requirement: Windowed Anomaly and Threshold Trigger Policies\\nThe system MUST provide configurable debounce, statistical thresholding, and anomaly filters so that LLM inference is triggered only on meaningful data transitions.\\n\\n#### Scenario: Suppression of Routine Weather & Ticker Jitter\\n- **WHEN** incoming metric fluctuations remain within baseline thresholds (delta < 1% or temperature change < 0.5°C)\\n- **THEN** the reactor suppresses LLM inference calls while updating rolling telemetry windows.\\n\\n#### Scenario: Activation on Sudden Environmental or Visual Transition\\n- **WHEN** a sudden weather alert is flagged or a new distinct image entity is presented\\n- **THEN** the reactor immediately schedules an evaluation cycle and notifies the attached `AgentReactorInterface`.\\n\\n### Requirement: Vendor-Neutral Multimodal Agent Reactor Interface\\nThe system MUST provide an abstract reactor interface supporting multimodal engines (Google Gemini / AGY, OpenAI GPT-4o, Anthropic Claude, and local vision LLMs).\\n\\n#### Scenario: Streaming Multimodal Commentary Delta\\n- **WHEN** a multimodal agent reactor processes an image or weather event and yields token chunks\\n- **THEN** the bridge dispatches Datastar SSE fragments targeting `#agent-reaction-bubble` to live subscribers over `/__datastar_stream__`.\\n\\n### Requirement: Interactive Multimodal Showcase Component\\nThe report MUST provide a publication-grade DaisyUI component offering interactive tabs across financial charts, visual image recognition, and weather API feeds paired with live agent commentary.\\n\\n#### Scenario: Live DOM Morphing of Agent Sentiment and Insights\\n- **WHEN** an agent emits a sentiment update (e.g. Bullish/Bearish or Weather Advisory) with accompanying analysis\\n- **THEN** the Datastar client morphs the sentiment badge and appends the reasoning card with timestamp synchronization."
 }
 </script>
 
+<!-- Interactive Live Simulation & Markdown Viewer Logic -->
 <script>
-  let activeDocKey = "proposal.md";
+  let tickerChart = null;
+  let isSimRunning = true;
+  let currentPrice = 182.40;
+  let basePrice = 182.40;
+  let suppressedCount = 0;
+  let tickInterval = null;
   let showdownConverter = null;
+  let activeDocKey = "proposal.md";
+  let activeModality = "finance";
+  let activePokemon = "pikachu";
 
+  const POKEMON_DATA = {
+    pikachu: {
+      name: "Pikachu #025",
+      type: "Electric",
+      badgeClass: "badge-warning",
+      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fde047" stroke="#eab308" stroke-width="3"/><path d="M25 25 L10 5 L35 15 Z" fill="#eab308"/><path d="M75 25 L90 5 L65 15 Z" fill="#eab308"/><circle cx="35" cy="45" r="5" fill="#1e293b"/><circle cx="65" cy="45" r="5" fill="#1e293b"/><circle cx="24" cy="58" r="7" fill="#ef4444"/><circle cx="76" cy="58" r="7" fill="#ef4444"/><path d="M44 56 Q50 64 56 56" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/></svg>`,
+      desc: "When several of these Pokémon gather, their electricity could build and cause lightning storms. High speed and Special Attack.",
+      weakness: "Ground (2x)",
+      resistance: "Flying, Steel, Electric (0.5x)",
+      initialCommentary: "⚡ Visual Target: Pikachu (Electric). High Speed (90) baseline with Volt Tackle and Thunderbolt options. Optimal against Water and Flying targets, but vulnerable to Earthquake ground sweeps. Suggest pairing with Grass or Flying pivots."
+    },
+    charizard: {
+      name: "Charizard #006",
+      type: "Fire / Flying",
+      badgeClass: "badge-error",
+      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ea580c" stroke="#c2410c" stroke-width="3"/><path d="M30 40 Q50 15 70 40 Q80 20 50 10 Q20 20 30 40 Z" fill="#fdba74"/><circle cx="38" cy="42" r="4" fill="#0f172a"/><circle cx="62" cy="42" r="4" fill="#0f172a"/><path d="M40 60 Q50 72 60 60" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/><path d="M48 25 Q50 5 52 25 Z" fill="#f59e0b"/></svg>`,
+      desc: "It spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally. Formidable mixed sweeper.",
+      weakness: "Rock (4x), Water (2x), Electric (2x)",
+      resistance: "Grass, Bug, Steel, Fairy, Fighting (0.5x), Ground (Immune)",
+      initialCommentary: "🔥 Visual Target: Charizard (Fire/Flying). High Special Attack (109) with Solar Beam coverage under Sunny Day. Extreme 4x Stealth Rock vulnerability dictates Rapid Spin support or Heavy-Duty Boots."
+    },
+    gengar: {
+      name: "Gengar #094",
+      type: "Ghost / Poison",
+      badgeClass: "badge-secondary",
+      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#7e22ce" stroke="#6b21a8" stroke-width="3"/><path d="M25 30 L15 10 L35 22 Z" fill="#6b21a8"/><path d="M75 30 L85 10 L65 22 Z" fill="#6b21a8"/><path d="M32 40 L45 46 L32 48 Z" fill="#ef4444"/><path d="M68 40 L55 46 L68 48 Z" fill="#ef4444"/><path d="M30 62 Q50 82 70 62 Q50 68 30 62 Z" fill="#ffffff" stroke="#3b0764" stroke-width="2"/></svg>`,
+      desc: "Under a full moon, this Pokémon likes to mimic the shadows of people and laugh at their fright. Premier special ghost sweeper.",
+      weakness: "Ground, Psychic, Ghost, Dark (2x)",
+      resistance: "Poison, Bug (0.25x), Normal & Fighting (Immune)",
+      initialCommentary: "👻 Visual Target: Gengar (Ghost/Poison). Elite 130 Special Attack and 110 Speed. Shadow Ball and Sludge Wave threaten Fairy and Psychic walls. Dual immunity gives clean switches into Close Combat."
+    },
+    lucario: {
+      name: "Lucario #448",
+      type: "Fighting / Steel",
+      badgeClass: "badge-info",
+      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#0284c7" stroke="#0369a1" stroke-width="3"/><path d="M28 25 L18 5 L35 18 Z" fill="#0f172a"/><path d="M72 25 L82 5 L65 18 Z" fill="#0f172a"/><rect x="25" y="38" width="50" height="16" rx="4" fill="#0f172a"/><circle cx="38" cy="46" r="4" fill="#ef4444"/><circle cx="62" cy="46" r="4" fill="#ef4444"/><path d="M46 62 Q50 68 54 62" stroke="#0f172a" stroke-width="2"/></svg>`,
+      desc: "By catching the aura emanating from others, it can read their thoughts and movements. Renowned Swords Dance wallbreaker.",
+      weakness: "Fire, Fighting, Ground (2x)",
+      resistance: "Normal, Grass, Ice, Dragon, Dark, Steel, Rock, Bug (0.5x-0.25x), Poison (Immune)",
+      initialCommentary: "⚔️ Visual Target: Lucario (Fighting/Steel). Versatile aura combatant with Extreme Speed priority and Close Combat STAB. Outstanding defensive typing resisting 8 distinct types and immune to toxic poison."
+    }
+  };
+
+  function selectModality(modality) {
+    activeModality = modality;
+    ["finance", "pokemon", "weather"].forEach((m) => {
+      const tab = document.getElementById(`tab-modality-${m}`);
+      const view = document.getElementById(`view-modality-${m}`);
+      if (tab) {
+        if (m === modality) {
+          tab.classList.add("tab-active");
+        } else {
+          tab.classList.remove("tab-active");
+        }
+      }
+      if (view) {
+        if (m === modality) {
+          view.classList.remove("hidden");
+        } else {
+          view.classList.add("hidden");
+        }
+      }
+    });
+
+    const badge = document.getElementById("agent-modality-badge");
+    const sentiment = document.getElementById("sentiment-badge");
+
+    if (modality === "finance") {
+      if (badge) badge.textContent = "Time-Series";
+      if (sentiment) {
+        sentiment.className = "badge badge-success badge-sm font-semibold gap-1";
+        sentiment.innerHTML = `<i data-lucide="shield-check" class="w-3 h-3"></i> Bullish (Momentum)`;
+      }
+      streamAgentResponse("Monitoring TECH/USD ticker stream. Volume is within normal 15-minute moving average bounds. Resistance recognized at $186.00, standing by for volatility triggers.");
+    } else if (modality === "pokemon") {
+      if (badge) badge.textContent = "Vision / Image";
+      if (sentiment) {
+        sentiment.className = "badge badge-accent badge-sm font-semibold gap-1";
+        sentiment.innerHTML = `<i data-lucide="scan" class="w-3 h-3"></i> Entity Identified`;
+      }
+      selectPokemon(activePokemon);
+    } else if (modality === "weather") {
+      if (badge) badge.textContent = "Public REST API";
+      if (sentiment) {
+        sentiment.className = "badge badge-info badge-sm font-semibold gap-1";
+        sentiment.innerHTML = `<i data-lucide="sun" class="w-3 h-3"></i> Clear &amp; Favorable`;
+      }
+      streamAgentResponse("🌦️ Ingesting public weather feed. Current conditions: 22°C with 48% humidity. Barometric pressure steady at 1014 hPa. No severe environmental warnings active in your geographic quadrant.");
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function selectPokemon(id) {
+    activePokemon = id;
+    const p = POKEMON_DATA[id] || POKEMON_DATA.pikachu;
+
+    document.querySelectorAll(".pokemon-select-btn").forEach((btn) => {
+      if (btn.getAttribute("data-pokemon") === id) {
+        btn.classList.add("border-primary", "bg-primary/10");
+        btn.classList.remove("border-base-300");
+      } else {
+        btn.classList.remove("border-primary", "bg-primary/10");
+        btn.classList.add("border-base-300");
+      }
+    });
+
+    const svgContainer = document.getElementById("active-pokemon-svg-container");
+    const name = document.getElementById("active-pokemon-name");
+    const badge = document.getElementById("active-pokemon-badge");
+    const desc = document.getElementById("active-pokemon-desc");
+
+    if (svgContainer) svgContainer.innerHTML = p.svg;
+    if (name) name.textContent = p.name;
+    if (badge) {
+      badge.textContent = p.type;
+      badge.className = `badge ${p.badgeClass} badge-sm font-semibold`;
+    }
+    if (desc) desc.textContent = p.desc;
+
+    const sentiment = document.getElementById("sentiment-badge");
+    if (sentiment) {
+      sentiment.className = `badge ${p.badgeClass} badge-sm font-semibold gap-1`;
+      sentiment.innerHTML = `<i data-lucide="sparkles" class="w-3 h-3"></i> ${p.type} Analyzed`;
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    streamAgentResponse(p.initialCommentary);
+  }
+
+  function askPokemonTactics() {
+    const p = POKEMON_DATA[activePokemon];
+    streamAgentResponse(`⚔️ Tactical Assessment for ${p.name}: Leverage STAB moves immediately. Primary counter strategy involves setting up screens or hazards to capitalize on ${p.name}'s key strengths while pivoting around ${p.weakness} threats.`);
+  }
+
+  function askPokemonCounters() {
+    const p = POKEMON_DATA[activePokemon];
+    streamAgentResponse(`🛡️ Threat Alert for ${p.name}: Major hazard is incoming ${p.weakness} damage. Strongly recommend holding a Focus Sash or defensive Tera pivot if facing grounded physical sweepers.`);
+  }
+
+  function askPokemonLore() {
+    const p = POKEMON_DATA[activePokemon];
+    streamAgentResponse(`📖 Pokédex Insight: ${p.desc} Classified in National Dex with notable regional variants and competitive tournament usage history.`);
+  }
+
+  /* Weather API Simulations */
+  function triggerThunderstorm() {
+    const temp = document.getElementById("weather-temp-display");
+    const feel = document.getElementById("weather-temp-feel");
+    const cond = document.getElementById("weather-condition-display");
+    const wind = document.getElementById("weather-wind-display");
+    const precip = document.getElementById("weather-precip-display");
+
+    if (temp) temp.textContent = "14°C";
+    if (feel) feel.textContent = "Feels like 11°C";
+    if (cond) cond.innerHTML = `<i data-lucide="cloud-lightning" class="w-4 h-4 text-error"></i> Severe Storm`;
+    if (wind) wind.textContent = "58 km/h (Gusts: 85)";
+    if (precip) precip.textContent = "95% (Heavy Rain)";
+
+    const sentiment = document.getElementById("sentiment-badge");
+    if (sentiment) {
+      sentiment.className = "badge badge-error badge-sm font-semibold gap-1";
+      sentiment.innerHTML = `<i data-lucide="alert-triangle" class="w-3 h-3"></i> Storm Warning`;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+    streamAgentResponse("⛈️ SEVERE WEATHER ADVISORY: Cold frontal boundary crossed with 8°C temperature drop in 25 minutes. Atmospheric pressure plunged to 998 hPa. Dangerous lightning and 85 km/h wind shear detected. Secure outdoor equipment and seek indoor shelter.");
+  }
+
+  function triggerHeatwave() {
+    const temp = document.getElementById("weather-temp-display");
+    const feel = document.getElementById("weather-temp-feel");
+    const cond = document.getElementById("weather-condition-display");
+    const wind = document.getElementById("weather-wind-display");
+    const precip = document.getElementById("weather-precip-display");
+
+    if (temp) temp.textContent = "38°C";
+    if (feel) feel.textContent = "Feels like 43°C";
+    if (cond) cond.innerHTML = `<i data-lucide="flame" class="w-4 h-4 text-warning"></i> Heatwave`;
+    if (wind) wind.textContent = "6 km/h";
+    if (precip) precip.textContent = "0% (Extreme UV)";
+
+    const sentiment = document.getElementById("sentiment-badge");
+    if (sentiment) {
+      sentiment.className = "badge badge-warning badge-sm font-semibold gap-1";
+      sentiment.innerHTML = `<i data-lucide="sun-medium" class="w-3 h-3"></i> Extreme Heat`;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+    streamAgentResponse("🔥 EXCESSIVE HEAT WARNING: Temperature spiked to 38°C (Heat Index 43°C). UV Index is peaked at 11+. Extreme dehydration risk. Strenuous outdoor activity discouraged between 11:00 and 17:00.");
+  }
+
+  function triggerBlizzard() {
+    const temp = document.getElementById("weather-temp-display");
+    const feel = document.getElementById("weather-temp-feel");
+    const cond = document.getElementById("weather-condition-display");
+    const wind = document.getElementById("weather-wind-display");
+    const precip = document.getElementById("weather-precip-display");
+
+    if (temp) temp.textContent = "-4°C";
+    if (feel) feel.textContent = "Feels like -12°C";
+    if (cond) cond.innerHTML = `<i data-lucide="snowflake" class="w-4 h-4 text-info"></i> Blizzard`;
+    if (wind) wind.textContent = "45 km/h";
+    if (precip) precip.textContent = "100% (Snow Accumulation)";
+
+    const sentiment = document.getElementById("sentiment-badge");
+    if (sentiment) {
+      sentiment.className = "badge badge-info badge-sm font-semibold gap-1";
+      sentiment.innerHTML = `<i data-lucide="snowflake" class="w-3 h-3"></i> Blizzard Alert`;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+    streamAgentResponse("❄️ BLIZZARD WARNING: Sub-zero arctic surge (-4°C, Wind Chill -12°C) with zero-visibility blowing snow. Road icing imminent. Thermal layering and vehicle winter kits required.");
+  }
+
+  function triggerClearWeather() {
+    const temp = document.getElementById("weather-temp-display");
+    const feel = document.getElementById("weather-temp-feel");
+    const cond = document.getElementById("weather-condition-display");
+    const wind = document.getElementById("weather-wind-display");
+    const precip = document.getElementById("weather-precip-display");
+
+    if (temp) temp.textContent = "22°C";
+    if (feel) feel.textContent = "Feels like 23°C";
+    if (cond) cond.innerHTML = `<i data-lucide="sun" class="w-4 h-4 text-warning"></i> Sunny`;
+    if (wind) wind.textContent = "12 km/h";
+    if (precip) precip.textContent = "0%";
+
+    const sentiment = document.getElementById("sentiment-badge");
+    if (sentiment) {
+      sentiment.className = "badge badge-success badge-sm font-semibold gap-1";
+      sentiment.innerHTML = `<i data-lucide="sun" class="w-3 h-3"></i> Clear &amp; Favorable`;
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+    streamAgentResponse("☀️ Weather conditions returned to seasonal baseline (22°C). Light breeze and zero precipitation. Optimal conditions for outdoor operations.");
+  }
+
+  /* Finance Simulation Init */
+  function initSimulation() {
+    const canvas = document.getElementById("live-ticker-canvas");
+    if (!canvas || typeof Chart === "undefined") return;
+    if (canvas.__initialized) return;
+    canvas.__initialized = true;
+
+    const initialLabels = ["14:00:00", "14:00:05", "14:00:10", "14:00:15", "14:00:20", "14:00:25", "14:00:30"];
+    const initialData = [181.80, 182.10, 181.95, 182.30, 182.15, 182.25, 182.40];
+
+    tickerChart = new Chart(canvas, {
+      type: "line",
+      data: {
+        labels: initialLabels,
+        datasets: [{
+          label: "TECH Price ($)",
+          data: initialData,
+          borderColor: "#2563eb",
+          backgroundColor: "rgba(37, 99, 235, 0.08)",
+          fill: true,
+          tension: 0.3,
+          pointRadius: 2,
+          pointHoverRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 300 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` Price: $${ctx.parsed.y.toFixed(2)}`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            grid: { color: "rgba(150, 150, 150, 0.15)" },
+            suggestedMin: 174,
+            suggestedMax: 190
+          }
+        }
+      }
+    });
+
+    window.reportCharts = window.reportCharts || [];
+    window.reportCharts.push(tickerChart);
+
+    startTickInterval();
+  }
+
+  function startTickInterval() {
+    if (tickInterval) clearInterval(tickInterval);
+    tickInterval = setInterval(() => {
+      if (!isSimRunning || !tickerChart || activeModality !== "finance") return;
+      const jitter = (Math.random() - 0.49) * 0.35;
+      updatePrice(currentPrice + jitter, false);
+      suppressedCount++;
+      const el = document.getElementById("suppressed-ticks-count");
+      if (el) el.textContent = suppressedCount;
+    }, 1200);
+  }
+
+  function toggleSimulation() {
+    isSimRunning = !isSimRunning;
+    const btn = document.getElementById("toggle-sim-btn");
+    if (btn) {
+      btn.innerHTML = isSimRunning
+        ? `<i data-lucide="pause" class="w-3 h-3"></i> Pause`
+        : `<i data-lucide="play" class="w-3 h-3"></i> Resume`;
+      if (window.lucide) window.lucide.createIcons();
+    }
+  }
+
+  function updatePrice(newPrice, isAnomaly = false) {
+    currentPrice = Math.max(160, Math.min(210, newPrice));
+    const now = new Date();
+    const timeStr = now.toTimeString().split(" ")[0];
+
+    if (tickerChart) {
+      tickerChart.data.labels.push(timeStr);
+      tickerChart.data.datasets[0].data.push(currentPrice);
+      if (tickerChart.data.labels.length > 18) {
+        tickerChart.data.labels.shift();
+        tickerChart.data.datasets[0].data.shift();
+      }
+      tickerChart.update("none");
+    }
+
+    const priceEl = document.getElementById("current-price-display");
+    if (priceEl) priceEl.textContent = `$${currentPrice.toFixed(2)}`;
+
+    const deltaPct = ((currentPrice - basePrice) / basePrice) * 100;
+    const deltaEl = document.getElementById("current-delta-display");
+    if (deltaEl) {
+      deltaEl.textContent = `${deltaPct >= 0 ? "+" : ""}${deltaPct.toFixed(1)}%`;
+      deltaEl.className = deltaPct >= 0 ? "badge badge-success badge-sm font-mono" : "badge badge-error badge-sm font-mono";
+    }
+  }
+
+  function triggerFlashDip() {
+    const drop = currentPrice * 0.962; // -3.8% drop
+    updatePrice(drop, true);
+
+    const ind = document.getElementById("filter-status-indicator");
+    if (ind) {
+      ind.textContent = "⚡ ANOMALY DETECTED (-3.8%) -> WAKING AGENT";
+      ind.className = "font-mono text-3xs text-error font-bold animate-pulse";
+      setTimeout(() => {
+        ind.textContent = "Anomaly Engine Armed";
+        ind.className = "font-mono text-3xs text-success";
+      }, 4000);
+    }
+
+    const badge = document.getElementById("sentiment-badge");
+    if (badge) {
+      badge.className = "badge badge-error badge-sm font-semibold gap-1";
+      badge.innerHTML = `<i data-lucide="alert-triangle" class="w-3 h-3"></i> Bearish (Flash Dip)`;
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    streamAgentResponse("🚨 Sudden liquidity contraction detected. Price fell 3.8% on 2.6x normal candle volume, violating immediate support at $178.50. RSI plunged into oversold territory (26.2). Recommend monitoring for a relief bounce or consolidation before establishing new longs.");
+  }
+
+  function triggerBreakout() {
+    const jump = currentPrice * 1.042; // +4.2% jump
+    updatePrice(jump, true);
+
+    const ind = document.getElementById("filter-status-indicator");
+    if (ind) {
+      ind.textContent = "⚡ ANOMALY DETECTED (+4.2%) -> WAKING AGENT";
+      ind.className = "font-mono text-3xs text-success font-bold animate-pulse";
+      setTimeout(() => {
+        ind.textContent = "Anomaly Engine Armed";
+        ind.className = "font-mono text-3xs text-success";
+      }, 4000);
+    }
+
+    const badge = document.getElementById("sentiment-badge");
+    if (badge) {
+      badge.className = "badge badge-success badge-sm font-semibold gap-1";
+      badge.innerHTML = `<i data-lucide="trending-up" class="w-3 h-3"></i> Bullish (Breakout)`;
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    streamAgentResponse("🚀 Breakout confirmed! Bullish momentum expansion (+4.2%) cleared the $186.00 resistance shelf. Moving averages (EMA 9/21) showing golden cross alignment. Target zone shifted to $194.00 with trailing stop at $184.20.");
+  }
+
+  function triggerRoutineTick() {
+    const jitter = (Math.random() - 0.49) * 0.4;
+    updatePrice(currentPrice + jitter, false);
+    suppressedCount++;
+    const el = document.getElementById("suppressed-ticks-count");
+    if (el) el.textContent = suppressedCount;
+
+    const ind = document.getElementById("filter-status-indicator");
+    if (ind) {
+      ind.textContent = "Jitter Filtered (LLM Idle, 0 tokens spent)";
+      ind.className = "font-mono text-3xs text-base-content/60";
+      setTimeout(() => {
+        ind.textContent = "Anomaly Engine Armed";
+        ind.className = "font-mono text-3xs text-success";
+      }, 2000);
+    }
+  }
+
+  function askCoPilotQuestion() {
+    streamAgentResponse(`TECH/USD currently trades at $${currentPrice.toFixed(2)}. The 30-minute macro structure shows sideways accumulation. Volatility is within normal ranges. No immediate reversal signals detected.`);
+  }
+
+  function streamAgentResponse(fullText) {
+    const container = document.getElementById("agent-thought-stream");
+    if (!container) return;
+
+    const statusEl = document.getElementById("agent-active-status");
+    if (statusEl) {
+      statusEl.innerHTML = `<span class="loading loading-spinner loading-3xs"></span> Streaming reaction deltas...`;
+      statusEl.className = "text-3xs font-mono text-warning flex items-center gap-1";
+    }
+
+    const now = new Date();
+    const timeStr = now.toTimeString().split(" ")[0];
+
+    const chatDiv = document.createElement("div");
+    chatDiv.className = "chat chat-start transition-all duration-300";
+    chatDiv.innerHTML = `
+      <div class="chat-header text-3xs font-mono opacity-70 mb-0.5">Reaction · ${timeStr}</div>
+      <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-sans shadow-sm"></div>
+    `;
+    container.appendChild(chatDiv);
+    container.scrollTop = container.scrollHeight;
+
+    const bubble = chatDiv.querySelector(".chat-bubble");
+    const words = fullText.split(" ");
+    let idx = 0;
+
+    const streamTimer = setInterval(() => {
+      if (idx < words.length) {
+        bubble.textContent += (idx === 0 ? "" : " ") + words[idx];
+        idx++;
+        container.scrollTop = container.scrollHeight;
+      } else {
+        clearInterval(streamTimer);
+        if (statusEl) {
+          statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-success"></span> Watching telemetry feed...`;
+          statusEl.className = "text-3xs font-mono text-success flex items-center gap-1";
+        }
+      }
+    }, 35);
+  }
+
+  /* Showdown In-Browser Markdown Viewer */
   function getShowdownConverter() {
-    if (!showdownConverter && window.showdown) {
-      showdownConverter = new window.showdown.Converter({
+    if (!showdownConverter && typeof showdown !== "undefined") {
+      showdownConverter = new showdown.Converter({
         tables: true,
         tasklists: true,
         strikethrough: true,
-        ghCodeBlocks: true,
-        simplifiedAutoLink: true,
-        openLinksInNewWindow: false
+        emoji: true,
+        simplifiedAutoLink: true
       });
     }
     return showdownConverter;
   }
 
   function getOpenSpecArtifacts() {
-    if (window.OPEN_SPEC_ARTIFACTS) return window.OPEN_SPEC_ARTIFACTS;
     try {
-      const el = document.getElementById("open-spec-artifacts-data");
+      const el = document.getElementById("openspec-artifacts-json");
       if (el) return JSON.parse(el.textContent);
     } catch (_) {}
     return {};
@@ -790,12 +1525,9 @@ graph TD
 
   async function renderMarkdownDoc(docName) {
     const titleEl = document.getElementById("markdown-modal-title");
-    const hiddenTitleEl = document.getElementById("modal-doc-title");
-
     if (titleEl) titleEl.textContent = docName;
-    if (hiddenTitleEl) hiddenTitleEl.textContent = docName;
 
-    document.querySelectorAll(".doc-tab-btn, .md-tab-btn").forEach((btn) => {
+    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
       if (btn.getAttribute("data-doc") === docName) {
         btn.classList.add("btn-primary");
         btn.classList.remove("btn-ghost");
@@ -811,49 +1543,60 @@ graph TD
     if (!rawContent) {
       try {
         const res = await fetch("/" + docName);
-        if (res.ok) {
-          rawContent = await res.text();
-        }
+        if (res.ok) rawContent = await res.text();
       } catch (_) {}
     }
 
     if (!rawContent) {
-      rawContent = "# " + docName + "\n\nArtifact content loading...";
+      rawContent = "# " + docName + "\n\nContent could not be loaded.";
     }
 
     const converter = getShowdownConverter();
     const html = converter ? converter.makeHtml(rawContent) : "<pre>" + rawContent + "</pre>";
-
-    const targetEl = document.getElementById("markdown-modal-body") || document.getElementById("modal-markdown-body") || document.getElementById("modal-markdown-container");
-    if (targetEl) {
-      targetEl.innerHTML = html;
-    }
-    if (window.lucide) window.lucide.createIcons();
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (bodyEl) bodyEl.innerHTML = html;
   }
 
-  function copyMarkdownToClipboard() {
-    const artifacts = getOpenSpecArtifacts();
-    const text = artifacts[activeDocKey] || "";
-    if (!text) return;
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById("copy-markdown-btn");
-      if (btn) {
-        const orig = btn.innerHTML;
-        btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied!';
-        if (window.lucide) window.lucide.createIcons();
-        setTimeout(() => {
-          btn.innerHTML = orig;
-          if (window.lucide) window.lucide.createIcons();
-        }, 2000);
-      }
-    });
+  window.openMarkdownViewer = openMarkdownViewer;
+  window.closeMarkdownViewer = closeMarkdownViewer;
+  window.switchViewerTab = switchViewerTab;
+  window.selectModality = selectModality;
+  window.selectPokemon = selectPokemon;
+  window.askPokemonTactics = askPokemonTactics;
+  window.askPokemonCounters = askPokemonCounters;
+  window.askPokemonLore = askPokemonLore;
+  window.triggerThunderstorm = triggerThunderstorm;
+  window.triggerHeatwave = triggerHeatwave;
+  window.triggerBlizzard = triggerBlizzard;
+  window.triggerClearWeather = triggerClearWeather;
+  window.toggleSimulation = toggleSimulation;
+  window.triggerFlashDip = triggerFlashDip;
+  window.triggerBreakout = triggerBreakout;
+  window.triggerRoutineTick = triggerRoutineTick;
+  window.askCoPilotQuestion = askCoPilotQuestion;
+
+  function tryInitSimulation() {
+    if (typeof Chart === "undefined") {
+      setTimeout(tryInitSimulation, 30);
+      return;
+    }
+    initSimulation();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", tryInitSimulation);
+  } else {
+    tryInitSimulation();
   }
 </script>
   </main>
 
-  <!-- Minimal Centered Footer -->
+  <!-- Minimal Centered Footer with Semantic Versioning -->
   <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
-    generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a>
+    <div class="flex items-center justify-center gap-1.5 flex-wrap">
+      <span>generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a></span>
+      <span class="badge badge-ghost badge-xs font-mono font-semibold" title="Semantic Versioning v1.0.0">v1.0.0</span>
+    </div>
   </footer>
 
   <!-- Runtime Scripts -->
@@ -1578,6 +2321,9 @@ async function setReportTheme(themeName) {
 
   // Dynamic Datastar reactive $theme signal sync
   syncDatastarTheme(themeName);
+
+  // Dynamic PWA meta theme-color sync
+  syncPwaThemeColor(palette);
 }
 
 /**
@@ -1760,6 +2506,10 @@ function initModeBadge() {
         badgeEl.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-success animate-pulse mr-1"></span>LIVE`;
         badgeEl.classList.add("badge-success", "badge-outline");
         break;
+      case "pwa":
+        badgeEl.textContent = "PWA";
+        badgeEl.classList.add("badge-accent");
+        break;
       case "report":
       default:
         badgeEl.textContent = "REPORT";
@@ -1773,6 +2523,126 @@ function initModeBadge() {
     pdfStatusBadge.classList.remove("badge-warning");
     pdfStatusBadge.classList.add("badge-success");
   }
+}
+
+let deferredPwaInstallPrompt = null;
+
+/**
+ * Synchronizes <meta name="theme-color"> with the active DaisyUI theme palette.
+ */
+function syncPwaThemeColor(palette = null) {
+  if (typeof document === "undefined") return;
+  const meta = (typeof document.getElementById === "function" && document.getElementById("pwa-theme-color")) ||
+               (typeof document.querySelector === "function" ? document.querySelector('meta[name="theme-color"]') : null);
+  if (!meta) return;
+  const pal = palette || (typeof resolveDaisyUIThemePalette === "function" ? resolveDaisyUIThemePalette() : {});
+  const hex = pal?.primary?.hex || pal?.base100?.hex || "#2563eb";
+  if (typeof meta.setAttribute === "function") {
+    meta.setAttribute("content", hex);
+  }
+}
+
+/**
+ * Initializes Progressive Web App (PWA) client runtime:
+ * - Service worker registration
+ * - Native beforeinstallprompt interception and navbar install button wiring
+ * - Online / Offline network health indicator
+ * - Dynamic theme-color sync
+ */
+function initPwa() {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  const manifestLink = typeof document.querySelector === "function" ? document.querySelector('link[rel="manifest"]') : null;
+  if (!manifestLink) {
+    return; // Not a PWA-enabled report, skip Service Worker registration & install wiring
+  }
+
+  // 1. Service Worker Registration
+  if ("serviceWorker" in navigator) {
+    const isHttp = location.protocol === "http:" || location.protocol === "https:";
+    if (isHttp && !window.__PWA_SW_REGISTERED__) {
+      window.__PWA_SW_REGISTERED__ = true;
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js")
+          .then((reg) => {
+            window.__PWA_REGISTRATION__ = reg;
+            reg.addEventListener("updatefound", () => {
+              const newWorker = reg.installing;
+              if (newWorker) {
+                newWorker.addEventListener("statechange", () => {
+                  if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                    console.log("[html-report PWA] New version available. Refresh to update.");
+                  }
+                });
+              }
+            });
+          })
+          .catch((err) => {
+            // Local dev or sandbox
+          });
+      });
+    }
+  }
+
+  // 2. Native PWA Install Prompt Interception
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPwaInstallPrompt = e;
+    const installBtn = document.getElementById("pwa-install-btn");
+    if (installBtn) installBtn.classList.remove("hidden");
+    const menuItem = document.getElementById("pwa-install-menu-item");
+    if (menuItem) menuItem.classList.remove("hidden");
+  });
+
+  const triggerInstall = async () => {
+    if (!deferredPwaInstallPrompt) {
+      alert("To install this report as an app, use your browser menu ('Install' or 'Add to Home Screen').");
+      return;
+    }
+    deferredPwaInstallPrompt.prompt();
+    const choice = await deferredPwaInstallPrompt.userChoice;
+    if (choice && choice.outcome === "accepted") {
+      const installBtn = document.getElementById("pwa-install-btn");
+      if (installBtn) installBtn.classList.add("hidden");
+    }
+    deferredPwaInstallPrompt = null;
+  };
+
+  window.triggerPwaInstall = triggerInstall;
+
+  const pwaBtn = document.getElementById("pwa-install-btn");
+  if (pwaBtn) pwaBtn.addEventListener("click", triggerInstall);
+
+  const pwaDropdownBtn = document.getElementById("pwa-install-dropdown-btn");
+  if (pwaDropdownBtn) pwaDropdownBtn.addEventListener("click", triggerInstall);
+
+  window.addEventListener("appinstalled", () => {
+    const installBtn = document.getElementById("pwa-install-btn");
+    if (installBtn) installBtn.classList.add("hidden");
+    const statusBadge = document.getElementById("pwa-install-status-badge");
+    if (statusBadge) {
+      statusBadge.textContent = "Installed";
+      statusBadge.className = "badge badge-success badge-xs font-mono";
+    }
+    deferredPwaInstallPrompt = null;
+  });
+
+  // 3. Online / Offline Status Detection
+  function updateNetworkStatus() {
+    const offlineBadge = document.getElementById("pwa-offline-badge");
+    if (!offlineBadge) return;
+    if (navigator.onLine === false) {
+      offlineBadge.classList.remove("hidden");
+    } else {
+      offlineBadge.classList.add("hidden");
+    }
+  }
+  window.addEventListener("online", updateNetworkStatus);
+  window.addEventListener("offline", updateNetworkStatus);
+  updateNetworkStatus();
+
+  // 4. Initial Theme-Color Sync
+  setTimeout(() => syncPwaThemeColor(), 100);
 }
 
 /**
@@ -2556,6 +3426,8 @@ if (typeof window !== "undefined") {
   window.getFeedRegistry = getFeedRegistry;
   window.extractFeedFields = extractFeedFields;
   window.updateFeedCharts = updateFeedCharts;
+  window.syncPwaThemeColor = syncPwaThemeColor;
+  window.initPwa = initPwa;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
@@ -2564,6 +3436,7 @@ if (typeof window !== "undefined") {
     try { initModeBadge(); } catch (_) {}
     try { initThemeDropdown(); } catch (_) {}
     try { initDownloadButton(); } catch (_) {}
+    try { initPwa(); } catch (_) {}
     try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
     try { initDayjs(); } catch (_) {}
     try { initShowdown(); } catch (_) {}
@@ -2601,6 +3474,86 @@ async function reinitReportContent() {
   try { await renderMermaidWithTheme(resolveDaisyUIThemePalette()); } catch (_) {}
   try { checkInsufficientHorizontalSpace(); } catch (_) {}
   try { initPublicFeeds(); } catch (_) {}
+}
+
+/**
+ * Universal Two-Way Agent Bridge Client
+ * Provides programmatic co-pilot inference and action execution from reports.
+ */
+const HTMLReportAgent = {
+  isAvailable: async function() {
+    try {
+      const res = await fetch("/__agent_status__", { method: "GET" });
+      if (res.ok) {
+        const data = await res.json();
+        return data && data.ok === true;
+      }
+    } catch (_) {}
+    return false;
+  },
+
+  registerPersona: async function(persona) {
+    if (!persona || !persona.id) return { ok: false, error: "Invalid persona object" };
+    try {
+      const res = await fetch("/api/agent/persona", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(persona)
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (_) {}
+    return { ok: true, registered: persona.id, localOnly: true, persona };
+  },
+
+  getPersonas: async function() {
+    try {
+      const res = await fetch("/api/agent/personas", { method: "GET" });
+      if (res.ok) {
+        const data = await res.json();
+        return data.personas || [];
+      }
+    } catch (_) {}
+    return [
+      { id: "analyst", name: "Telemetry Analyst", badgeColor: "badge-primary", icon: "trending-up" },
+      { id: "debugger", name: "Systems Debugger", badgeColor: "badge-error", icon: "bug" },
+      { id: "strategist", name: "Competitive Strategist", badgeColor: "badge-secondary", icon: "target" },
+      { id: "executive", name: "Executive Advisor", badgeColor: "badge-neutral", icon: "briefcase" },
+      { id: "sarcastic", name: "Sarcastic Critic", badgeColor: "badge-warning", icon: "flame" },
+      { id: "oak", name: "Professor Oak", badgeColor: "badge-accent", icon: "book-open" },
+      { id: "hype", name: "Esports Shoutcaster", badgeColor: "badge-info", icon: "zap" }
+    ];
+  },
+
+  ask: async function(options) {
+    const payload = typeof options === "string" ? { prompt: options } : (options || {});
+    const endpoint = payload.endpoint || "/__agent_action__";
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (err) {
+      return {
+        ok: false,
+        fallback: true,
+        error: err.message,
+        result: payload.fallbackText || "Agent bridge offline. Using local deterministic fallback.",
+        agent: "Local Autonomous Fallback",
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+};
+
+if (typeof window !== "undefined") {
+  window.HTMLReportAgent = HTMLReportAgent;
+  window.HTMLReport = window.HTMLReport || {};
+  window.HTMLReport.agent = HTMLReportAgent;
 }
 
 // Node.js CommonJS exports for unit testing
@@ -2651,6 +3604,9 @@ if (typeof module !== "undefined" && module.exports) {
     extractFeedFields,
     updateFeedCharts,
     mergeFeedSignals,
+    syncPwaThemeColor,
+    initPwa,
+    HTMLReportAgent,
     _getActiveFeedPollers: () => _activeFeedPollers
   };
 }

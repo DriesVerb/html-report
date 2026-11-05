@@ -10,10 +10,12 @@ Generate theme-adaptive dashboards with **~70% fewer tokens** and **<100ms compi
 <br/>
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success.svg?logo=github&style=flat-square)](https://driesverb.github.io/html-report/)
+[![SemVer: 2.0.0](https://img.shields.io/badge/SemVer-2.0.0-blue.svg?logo=semver&style=flat-square)](docs/semantic-versioning.md)
+[![Version: v1.0.0](https://img.shields.io/badge/Version-v1.0.0-orange.svg?style=flat-square)](package.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Agent Skill: LLM-Agnostic](https://img.shields.io/badge/Agent%20Skill-LLM--Agnostic-blueviolet.svg?style=flat-square)](https://agentskills.io)
 [![CDN Stack: 17 Libraries](https://img.shields.io/badge/CDN%20Stack-17%20Libraries-3b82f6.svg?style=flat-square)](docs/cdn-stack.md)
-[![Verified: 249 Tests Passing](https://img.shields.io/badge/Verified-249%20Tests%20Passing-2ea44f.svg?style=flat-square)](docs/testing-and-verification.md)
+[![Verified: 276 Tests Passing](https://img.shields.io/badge/Verified-276%20Tests%20Passing-2ea44f.svg?style=flat-square)](docs/testing-and-verification.md)
 
 </div>
 
@@ -113,6 +115,7 @@ Refreshes your existing browser tab instantly whenever you recompile (zero dupli
 
 ## ✨ Key Features
 
+- 📱 **Instant Progressive Web Apps (PWA)**: Turn any report into an installable desktop/mobile app with offline Service Worker caching, dynamic DaisyUI theme-color sync, and native install prompt affordances (`--pwa` or `generate-pwa.mjs`).
 - ⚡ **<100ms Deterministic Compilation**: Stitches semantic fragments into a pre-bundled publication shell.
 - 🎨 **32 DaisyUI Themes + Custom OKLCH**: Sticky navbar theme switcher synced live with Chart.js, Mermaid, and Grid.js via Ottosson matrix math.
 - 📦 **17-Library Non-Blocking CDN Stack**: Chart.js, Mermaid, Leaflet maps, Grid.js tables, KaTeX math, Marked, Highlight.js, FullCalendar, and more.
@@ -135,12 +138,29 @@ Explore in-depth guides in the [`docs/`](docs/) directory:
 | [📡 **Live Telemetry**](docs/live-telemetry.md) | Datastar.js SSE hypermedia streaming and agent transcript tailing |
 | [🧪 **Testing & Verification**](docs/testing-and-verification.md) | Native BDD micro-framework, Playwright checks, and overflow detection |
 | [📖 **API & CLI Reference**](docs/api-and-cli-reference.md) | Command-line flags, options, and programmatic Node.js API |
+| [🏷️ **Semantic Versioning**](docs/semantic-versioning.md) | SemVer 2.0.0 policy, public API boundaries, and stability contract |
+| [🔄 **Migration Hub**](MIGRATION.md) | Breaking change guides, compatibility checker, and AI refactoring prompts |
+
+---
+
+## 🏷️ Semantic Versioning & Downstream Integration
+
+`html-report` adheres strictly to **[Semantic Versioning 2.0.0](docs/semantic-versioning.md)** (`MAJOR.MINOR.PATCH`).
+When including `html-report` in other libraries, CLI toolchains, or AI agent harnesses, you are protected by formal stability contracts:
+
+- **Public API Stability**: Guaranteed stability across CLI flags, programmatic ESM exports (`html-report/build`, `html-report/harness`, `html-report/serve`, `html-report/pwa`, `html-report/theme`), and template slot contracts.
+- **Breaking Change AI Migration Prompts**: Every breaking release includes a turnkey `<AI_MIGRATION_PROMPT>` inside [`MIGRATION.md`](MIGRATION.md) and [`docs/migrations/`](docs/migrations/) so coding agents can upgrade downstream consumer code in one prompt.
+- **Pre-Flight Compatibility Scanner**:
+  ```bash
+  node skills/html-report/scripts/harness.mjs --check-compatibility
+  ```
+- **Report Footer Versioning**: Every generated report displays its exact SemVer version number in the footer (`v1.0.0`).
 
 ---
 
 ## 🧪 Verification
 
-Run the full suite of 244 unit, integration, and BDD tests in ~2 seconds:
+Run the full suite of 276+ unit, integration, and BDD tests in ~2 seconds:
 
 ```bash
 node --test tests/*.test.mjs

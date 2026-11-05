@@ -2,7 +2,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
-import { exec } from "node:child_process";
+import { exec, execFile } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { DatastarBridge, escapeHtml } from "./datastar-sse.mjs";
 
@@ -21,8 +21,144 @@ const MIME_TYPES = {
   ".csv": "text/csv; charset=utf-8",
   ".ico": "image/x-icon",
   ".txt": "text/plain; charset=utf-8",
-  ".md": "text/markdown; charset=utf-8"
+  ".md": "text/markdown; charset=utf-8",
+  ".webmanifest": "application/manifest+json"
 };
+
+/**
+ * PersonaRegistry
+ * Extensible registry and schema manager for AI co-pilot personas.
+ */
+class PersonaRegistry {
+  constructor() {
+    this.personas = new Map();
+    this._initDefaults();
+  }
+
+  _initDefaults() {
+    const defaults = [
+      {
+        id: "analyst",
+        name: "Telemetry Analyst",
+        description: "Provides concise, high-signal, actionable insights based on telemetry and metrics.",
+        badgeColor: "badge-primary",
+        icon: "trending-up",
+        systemPrompt: "You are an elite telemetry and systems data analyst. Provide concise, high-signal, actionable insights based on the provided data and context."
+      },
+      {
+        id: "debugger",
+        name: "Systems Debugger",
+        description: "Isolates root causes, potential regressions, and concrete remediation steps.",
+        badgeColor: "badge-error",
+        icon: "bug",
+        systemPrompt: "You are an expert systems engineer and debugger. Identify root causes, potential regressions, and concrete remediation steps."
+      },
+      {
+        id: "strategist",
+        name: "Competitive Strategist",
+        description: "Dissects competitive viability, systemic strengths, and critical weaknesses.",
+        badgeColor: "badge-secondary",
+        icon: "target",
+        systemPrompt: "You are an elite competitive strategist. Dissect the viability, systemic strengths, and critical weaknesses."
+      },
+      {
+        id: "executive",
+        name: "Executive Advisor",
+        description: "Provides high-impact bullet points summarizing key takeaways and business impact.",
+        badgeColor: "badge-neutral",
+        icon: "briefcase",
+        systemPrompt: "You are a concise executive advisor. Provide two high-impact bullet points summarizing key takeaways and business impact."
+      },
+      {
+        id: "sarcastic",
+        name: "Sarcastic Critic",
+        description: "Delivers devastating, hilarious roasts targeting flaws and architectural absurdities.",
+        badgeColor: "badge-warning",
+        icon: "flame",
+        systemPrompt: "You are a ruthlessly sarcastic critic. Deliver a single devastating, hilarious one-liner roast targeting flaws, weaknesses, and biological/architectural absurdities."
+      },
+      {
+        id: "oak",
+        name: "Professor Oak",
+        description: "Exasperated field researcher lamenting 30 years of biological confusion.",
+        badgeColor: "badge-accent",
+        icon: "book-open",
+        systemPrompt: "You are an exasperated Professor Oak. Deliver a single hilarious one-liner lamenting 30 years of field research."
+      },
+      {
+        id: "hype",
+        name: "Esports Shoutcaster",
+        description: "High-octane excitement screaming about stats and momentum.",
+        badgeColor: "badge-info",
+        icon: "zap",
+        systemPrompt: "You are an over-the-top, high-octane esports shoutcaster screaming about stats and momentum."
+      }
+    ];
+
+    for (const p of defaults) {
+      this.personas.set(p.id, p);
+    }
+  }
+
+  register(persona) {
+    if (!persona || typeof persona !== "object") throw new Error("Persona must be an object");
+    const id = String(persona.id || "").trim().toLowerCase();
+    if (!id) throw new Error("Persona requires a non-empty 'id' string");
+    if (!persona.systemPrompt) throw new Error("Persona requires a non-empty 'systemPrompt'");
+
+    const normalized = {
+      id,
+      name: persona.name || (id.charAt(0).toUpperCase() + id.slice(1)),
+      description: persona.description || "",
+      systemPrompt: persona.systemPrompt,
+      badgeColor: persona.badgeColor || "badge-primary",
+      icon: persona.icon || "bot",
+      formatting: persona.formatting || "",
+      defaultModel: persona.defaultModel || "Gemini 3.8 Flash (Low)",
+      defaultTarget: persona.defaultTarget || "#agent-reaction-bubble"
+    };
+
+    this.personas.set(id, normalized);
+    return normalized;
+  }
+
+  get(id) {
+    if (!id) return this.personas.get("analyst");
+    const cleanId = String(id).trim().toLowerCase();
+    return this.personas.get(cleanId) || this.personas.get("analyst");
+  }
+
+  has(id) {
+    if (!id) return false;
+    return this.personas.has(String(id).trim().toLowerCase());
+  }
+
+  list() {
+    return Array.from(this.personas.values());
+  }
+
+  loadFromDisk(rootDir) {
+    const candidates = [
+      path.join(rootDir, "personas.json"),
+      path.join(rootDir, ".html-report", "personas.json")
+    ];
+    for (const p of candidates) {
+      if (fs.existsSync(p)) {
+        try {
+          const raw = fs.readFileSync(p, "utf-8");
+          const parsed = JSON.parse(raw);
+          const list = Array.isArray(parsed) ? parsed : Object.values(parsed);
+          for (const item of list) {
+            this.register(item);
+          }
+          console.log(`[html-report] Loaded ${list.length} custom persona(s) from ${path.basename(p)}`);
+        } catch (e) {
+          console.warn(`[html-report] Failed to load personas from ${p}:`, e.message);
+        }
+      }
+    }
+  }
+}
 
 function findActiveChangeDir(startDir) {
   let curr = startDir;
@@ -262,6 +398,9 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
   const datastarClients = new Set();
   let serverPort = initialPort;
 
+  const personaRegistry = new PersonaRegistry();
+  personaRegistry.loadFromDisk(rootDir);
+
   const server = http.createServer((req, res) => {
     const parsedUrl = new URL(req.url, `http://localhost:${serverPort}`);
     let pathname = decodeURIComponent(parsedUrl.pathname);
@@ -349,7 +488,220 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
       return;
     }
 
-    // 1b. SSE Live-Reload Endpoint
+    // 1b-1. Persona Discovery & Registration Endpoints
+    if (pathname === "/api/agent/personas" || pathname === "/__agent_personas__") {
+      res.writeHead(200, {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache, no-store"
+      });
+      res.end(JSON.stringify({
+        ok: true,
+        count: personaRegistry.list().length,
+        personas: personaRegistry.list()
+      }));
+      return;
+    }
+
+    if (pathname === "/api/agent/persona" || pathname === "/__agent_persona__") {
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type"
+        });
+        res.end();
+        return;
+      }
+      if (req.method === "POST") {
+        let body = "";
+        req.on("data", (chunk) => { body += chunk; });
+        req.on("end", () => {
+          try {
+            const payload = JSON.parse(body);
+            const registered = personaRegistry.register(payload);
+            res.writeHead(200, {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*"
+            });
+            res.end(JSON.stringify({
+              ok: true,
+              registered: registered.id,
+              total: personaRegistry.list().length,
+              persona: registered
+            }));
+          } catch (err) {
+            res.writeHead(400, {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*"
+            });
+            res.end(JSON.stringify({ ok: false, error: err.message }));
+          }
+        });
+        return;
+      }
+    }
+
+    // 1b-2. Universal Two-Way Agent Bridge & Co-Pilot (Zero-API-Key with agy CLI)
+    if (
+      pathname === "/__agent_action__" ||
+      pathname === "/api/agent" ||
+      pathname === "/api/agent-query" ||
+      pathname === "/api/agent-roast" ||
+      pathname === "/__agent_roast__" ||
+      pathname === "/__agent_status__" ||
+      pathname === "/api/agent/status"
+    ) {
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, X-Report-Agent, datastar-request"
+        });
+        res.end();
+        return;
+      }
+
+      if (req.method === "GET") {
+        res.writeHead(200, {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "no-cache, no-store"
+        });
+        res.end(JSON.stringify({
+          ok: true,
+          bridge: "Google Antigravity agy CLI Bridge",
+          defaultModel: "Gemini 3.8 Flash (Low)",
+          personas: personaRegistry.list().map((p) => p.id),
+          actions: ["query", "analyze", "summarize", "roast", "action"],
+          version: "1.0.0"
+        }));
+        return;
+      }
+
+      if (req.method === "POST") {
+        let body = "";
+        req.on("data", (chunk) => { body += chunk; });
+        req.on("end", () => {
+          let payload = {};
+          try { payload = JSON.parse(body); } catch (_) {}
+
+          // Dynamic on-the-fly persona registration if personaConfig is provided
+          if (payload.personaConfig || payload.personaDefinition) {
+            try {
+              personaRegistry.register(payload.personaConfig || payload.personaDefinition);
+            } catch (e) {
+              console.warn("[html-report] Inline persona registration warning:", e.message);
+            }
+          }
+
+          const isDatastarRequest =
+            payload.format === "datastar" ||
+            req.headers["datastar-request"] === "true" ||
+            (req.headers.accept || "").includes("text/event-stream");
+
+          const action = payload.action || (pathname.includes("roast") ? "roast" : "query");
+          const personaKey = payload.persona || (action === "roast" ? "sarcastic" : "analyst");
+          const activePersona = personaRegistry.get(personaKey);
+          const targetSelector = payload.targetSelector || activePersona.defaultTarget || "#agent-reaction-bubble";
+          const model = payload.model || activePersona.defaultModel || "Gemini 3.8 Flash (Low)";
+
+          const personaPrompt = payload.systemPrompt || activePersona.systemPrompt;
+          const formattingPrompt = activePersona.formatting ? `\nFormatting Instructions: ${activePersona.formatting}` : "";
+
+          let prompt = "";
+          // Backward compatibility for Pokémon roast testing
+          if (payload.name || payload.types || payload.stats) {
+            const pokemonName = payload.name || "Target Entity";
+            const typesStr = Array.isArray(payload.types) ? payload.types.join("/") : (payload.types || "Standard");
+            const statsStr = payload.stats
+              ? (typeof payload.stats === "object"
+                ? Object.entries(payload.stats).map(([k, v]) => `${k}: ${v}`).join(", ")
+                : String(payload.stats))
+              : "";
+            prompt = `${personaPrompt}${formattingPrompt}
+Target: ${pokemonName} (${typesStr})
+Stats: ${statsStr}
+CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include introductory text, quotation marks, or markdown wrappers.`;
+          } else if (payload.prompt) {
+            let contextStr = "";
+            if (payload.context) {
+              contextStr = `\nContext / Telemetry:\n${typeof payload.context === "object" ? JSON.stringify(payload.context, null, 2) : String(payload.context)}`;
+            }
+            prompt = `${personaPrompt}${formattingPrompt}\n${payload.prompt}${contextStr}\nCRITICAL INSTRUCTION: Deliver a concise, direct, high-signal response. Avoid unnecessary disclaimers.`;
+          } else {
+            prompt = `${personaPrompt}${formattingPrompt}\nPlease provide an assessment of current dashboard state and metrics.`;
+          }
+
+          const agyArgs = ["--model", model, "-p", prompt];
+          execFile("agy", agyArgs, { timeout: 20000 }, (err, stdout, stderr) => {
+            const isError = Boolean(err);
+            let responseText = "";
+
+            if (isError) {
+              console.warn(`[html-report] agy CLI call failed: ${err.message}`);
+              responseText = payload.fallbackText || `[Local Fallback] Telemetry evaluated for action '${action}'. Agent CLI temporarily offline or timed out.`;
+            } else {
+              responseText = stdout.trim().replace(/^["']|["']$/g, "");
+            }
+
+            if (isDatastarRequest) {
+              res.writeHead(200, {
+                "Content-Type": "text/event-stream",
+                "Cache-Control": "no-cache",
+                Connection: "keep-alive",
+                "Access-Control-Allow-Origin": "*"
+              });
+
+              const badgeColor = isError ? "badge-warning" : (activePersona.badgeColor || "badge-primary");
+              const badgeLabel = isError ? "LOCAL FALLBACK" : "LIVE AI CO-PILOT";
+              const fragment = `
+                <div id="${targetSelector.replace(/^#/, "")}" class="p-4 rounded-xl border border-base-300 bg-base-100 shadow-md space-y-2 transition-all">
+                  <div class="flex items-center justify-between gap-2 flex-wrap">
+                    <span class="badge ${badgeColor} badge-sm font-bold gap-1 text-[11px] shadow-sm">
+                      <span class="inline-block w-2 h-2 rounded-full ${isError ? 'bg-warning' : 'bg-success'} animate-pulse mr-1"></span>
+                      ${badgeLabel} &bull; ${escapeHtml(activePersona.name.toUpperCase())}
+                    </span>
+                    <span class="text-xs text-base-content/60 font-mono">${new Date().toLocaleTimeString()}</span>
+                  </div>
+                  <p class="text-sm text-base-content leading-relaxed">${escapeHtml(responseText)}</p>
+                  <div class="text-[11px] text-base-content/50 font-mono pt-1 border-t border-base-200 flex items-center justify-between">
+                    <span>Engine: ${isError ? 'Local Heuristic Engine' : `Google Antigravity (${model} via agy CLI)`}</span>
+                    <span class="font-mono text-[10px] text-base-content/40">${escapeHtml(activePersona.id)}</span>
+                  </div>
+                </div>
+              `.trim();
+
+              res.write(`event: datastar-merge-fragments\ndata: fragments ${fragment.replace(/\n/g, " ")}\n\n`);
+              res.end();
+              return;
+            }
+
+            res.writeHead(200, {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*"
+            });
+            res.end(JSON.stringify({
+              ok: !isError,
+              action,
+              persona: activePersona.id,
+              personaName: activePersona.name,
+              badgeColor: activePersona.badgeColor,
+              icon: activePersona.icon,
+              result: responseText,
+              oneliner: responseText,
+              agent: isError ? "Local Heuristic Engine (Fallback)" : `Google Antigravity (${model} via agy CLI)`,
+              isLiveAI: !isError,
+              fallback: isError,
+              timestamp: new Date().toISOString()
+            }));
+          });
+        });
+        return;
+      }
+    }
+
+    // 1c. SSE Live-Reload Endpoint
     if (pathname === "/__live_reload__") {
       res.writeHead(200, {
         "Content-Type": "text/event-stream",
@@ -408,6 +760,17 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
     // 3. Serve static relative files (e.g. CSVs, PDFs, images, Markdown artifacts)
     const sanitizedRelPath = pathname.replace(/^\/+/, "");
     let diskPath = path.resolve(rootDir, sanitizedRelPath);
+
+    // Fallback to dev/ or experiments/ directories if not found at root
+    if (!fs.existsSync(diskPath) || fs.statSync(diskPath).isDirectory()) {
+      const devCandidate = path.join(rootDir, "dev", sanitizedRelPath);
+      const expCandidate = path.join(rootDir, "experiments", sanitizedRelPath);
+      if (fs.existsSync(devCandidate) && fs.statSync(devCandidate).isFile()) {
+        diskPath = devCandidate;
+      } else if (fs.existsSync(expCandidate) && fs.statSync(expCandidate).isFile()) {
+        diskPath = expCandidate;
+      }
+    }
 
     // Artifact Fallback Resolution for OpenSpec Markdown files
     if (!fs.existsSync(diskPath) || fs.statSync(diskPath).isDirectory()) {
@@ -520,10 +883,14 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
       }
 
       const mime = MIME_TYPES[ext] || "application/octet-stream";
-      res.writeHead(200, {
+      const headers = {
         "Content-Type": mime,
         "Cache-Control": "no-cache"
-      });
+      };
+      if (path.basename(diskPath) === "sw.js" || diskPath.endsWith("-sw.js")) {
+        headers["Service-Worker-Allowed"] = "/";
+      }
+      res.writeHead(200, headers);
       fs.createReadStream(diskPath).pipe(res);
       return;
     }
@@ -558,8 +925,10 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
   } catch (_) {}
 
   const currentFeaturePath = path.resolve(rootDir, "current-feature.html");
-  if (fs.existsSync(currentFeaturePath)) {
-    try { mtimes.set(currentFeaturePath, fs.statSync(currentFeaturePath).mtimeMs); } catch (_) {}
+  const devCurrentFeaturePath = path.resolve(rootDir, "dev", "current-feature.html");
+  const activeFeaturePath = fs.existsSync(currentFeaturePath) ? currentFeaturePath : (fs.existsSync(devCurrentFeaturePath) ? devCurrentFeaturePath : null);
+  if (activeFeaturePath) {
+    try { mtimes.set(activeFeaturePath, fs.statSync(activeFeaturePath).mtimeMs); } catch (_) {}
   }
 
   const watchers = [];
@@ -604,8 +973,8 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
 
   // Watch current-feature.html specifically
   try {
-    if (fs.existsSync(currentFeaturePath)) {
-      const featureWatcher = fs.watch(currentFeaturePath, () => broadcastReload(currentFeaturePath));
+    if (activeFeaturePath) {
+      const featureWatcher = fs.watch(activeFeaturePath, () => broadcastReload(activeFeaturePath));
       watchers.push(featureWatcher);
     }
   } catch (_) {}
@@ -681,7 +1050,9 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
   });
 }
 
-export { startServer, parseArgs, injectLiveReload, detectReportMode, MIME_TYPES };
+const serveReport = startServer;
+
+export { startServer, serveReport, parseArgs, injectLiveReload, detectReportMode, PersonaRegistry, MIME_TYPES };
 
 const isMainModule = process.argv[1] && (
   process.argv[1].endsWith("serve-report.mjs") ||

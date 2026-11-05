@@ -27,6 +27,12 @@ import {
   MODE_ALIASES,
   normalizeMode
 } from "./build-report.mjs";
+import {
+  getPackageVersion,
+  formatVersionString,
+  checkDeprecatedCliArgs,
+  checkCompatibility
+} from "./compatibility.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,7 +45,8 @@ export const MODE_SERVER_POLICIES = Object.freeze({
   presentation: { requiresServer: false, defaultAction: "open_static" },
   dashboard: { requiresServer: true, defaultAction: "serve" },
   "working-report": { requiresServer: true, defaultAction: "serve" },
-  "live-report": { requiresServer: true, defaultAction: "serve" }
+  "live-report": { requiresServer: true, defaultAction: "serve" },
+  pwa: { requiresServer: true, defaultAction: "serve" }
 });
 
 export async function isPortActive(port, host = "localhost") {
@@ -625,6 +632,7 @@ export async function runLifecycle({
   port = 3000,
   caller = null,
   pdf = null,
+  pwa = false,
   attempt = 1,
   maxAttempts = 3,
   json = false,
@@ -887,18 +895,36 @@ export async function runLifecycle({
     const activeAddons = mergedConfig ? mergedConfig.required_cdns : [];
     const isPrintable = printable || resolvedMode === "print" || (mergedConfig && mergedConfig.reportMode === "print");
 
+    const isPwa = Boolean(pwa);
+
     const buildRes = buildReport({
       title,
       content: raw,
       mode: resolvedMode,
       printable: isPrintable,
+      pwa: isPwa,
       theme: activeTheme,
       addons: activeAddons
     });
     assembledHtml = typeof buildRes === "string" ? buildRes : buildRes.html;
 
-    fs.mkdirSync(path.dirname(resolvedOutput), { recursive: true });
+    const outDir = path.dirname(resolvedOutput);
+    fs.mkdirSync(outDir, { recursive: true });
     fs.writeFileSync(resolvedOutput, assembledHtml, "utf-8");
+
+    if (buildRes.isPwa && buildRes.pwaConfig) {
+      const { generatePwaAssets } = await import("./pwa-builder.mjs");
+      generatePwaAssets({
+        outputDir: outDir,
+        reportFileName: path.basename(resolvedOutput),
+        title: buildRes.pwaConfig.title,
+        shortName: buildRes.pwaConfig.shortName,
+        themeColor: buildRes.pwaConfig.themeColor,
+        backgroundColor: buildRes.pwaConfig.backgroundColor,
+        emoji: buildRes.pwaConfig.emoji,
+        writeFiles: true
+      });
+    }
   } catch (assembleErr) {
     const isTerminal = attempt >= maxAttempts;
     const targetState = isTerminal ? STATES.FAILED : STATES.REMEDIATING;
@@ -1074,12 +1100,13 @@ OPTIONS:
   --title, -t <title>       Report title (default: "HTML Report")
   --theme <name>            DaisyUI theme override (e.g. "light", "cupcake", "synthwave")
   --run-id <runId>          Run ID for multi-attempt correlation in vault
-  --mode, -m <name>         Report mode: print, report, presentation, dashboard, working-report, live-report
+  --mode, -m <name>         Report mode: print, report, presentation, dashboard, working-report, live-report, pwa
   --print, -p, --printable  Enable printable styles (@media print, static mode)
   --presentation            Enable interactive presentation mode
   --dashboard               Enable interactive dashboard mode
   --working-report          Enable working journey companion mode
   --live-report, -l         Enable real-time live streaming mode
+  --pwa                     Enable Progressive Web App mode (manifest, sw.js, and icons)
   --serve                   Force start/check dev server
   --no-serve                Disable dev server regardless of mode policy
   --port <number>           Target dev server port (default: 3000)
@@ -1091,6 +1118,8 @@ OPTIONS:
   --caller <id>             Caller identifier for profile-aware overrides and vault tracking
   --pdf [file.pdf]          Generate on-demand PDF export during verification
   --json                    Output machine-readable JSON diagnostics
+  --check-compatibility    Scan project directory for deprecated flags and APIs
+  --version, -v             Display semantic version
   --help, -h                Show this help screen
 `.trim();
 }
@@ -1099,6 +1128,8 @@ OPTIONS:
  * CLI Argument parser
  */
 export function parseArgs(argv = process.argv.slice(2)) {
+  const { normalized: rawArgs } = checkDeprecatedCliArgs(argv);
+  argv = rawArgs;
   const args = {
     command: "",
     file: "",
@@ -1118,6 +1149,9 @@ export function parseArgs(argv = process.argv.slice(2)) {
     caller: null,
     pdf: null,
     json: false,
+    pwa: false,
+    checkCompatibility: false,
+    version: false,
     help: false
   };
 
@@ -1126,6 +1160,10 @@ export function parseArgs(argv = process.argv.slice(2)) {
     const arg = argv[i];
     if (arg === "--help" || arg === "-h") {
       args.help = true;
+    } else if (arg === "--version" || arg === "-v") {
+      args.version = true;
+    } else if (arg === "--check-compatibility" || arg === "--compat") {
+      args.checkCompatibility = true;
     } else if (arg === "--json") {
       args.json = true;
     } else if (arg === "--no-auto-fix") {
@@ -1145,6 +1183,9 @@ export function parseArgs(argv = process.argv.slice(2)) {
       args.mode = "working-report";
     } else if (arg === "--live" || arg === "--live-report" || arg === "-l") {
       args.mode = "live-report";
+    } else if (arg === "--pwa") {
+      args.mode = "pwa";
+      args.pwa = true;
     } else if (arg === "--serve") {
       args.serve = true;
     } else if (arg === "--no-serve") {
@@ -1179,8 +1220,8 @@ export function parseArgs(argv = process.argv.slice(2)) {
   }
 
   if (positional.length > 0) {
-    if (["run", "lint", "fix"].includes(positional[0])) {
-      args.command = positional[0];
+    if (["run", "lint", "fix", "compat", "check-compatibility"].includes(positional[0])) {
+      args.command = positional[0] === "check-compatibility" ? "compat" : positional[0];
       args.file = positional[1] || "";
     } else {
       args.command = "run";
@@ -1196,6 +1237,29 @@ export function parseArgs(argv = process.argv.slice(2)) {
  */
 export async function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
+
+  if (args.version) {
+    console.log(formatVersionString());
+    process.exit(0);
+  }
+
+  if (args.checkCompatibility || args.command === "compat") {
+    const targetDir = args.file ? path.resolve(process.cwd(), args.file) : process.cwd();
+    console.log(`\n🔍 Auditing codebase compatibility for html-report in: ${targetDir}`);
+    const report = checkCompatibility(targetDir);
+    console.log(`   Scanned ${report.scannedFilesCount} files.`);
+    if (report.findings.length === 0) {
+      console.log(`\x1b[32m✔ 100% Compatible with html-report v${report.currentVersion} (SemVer ${report.semverSpec})\x1b[0m\n`);
+      process.exit(0);
+    } else {
+      console.log(`\x1b[33m⚠️ Found ${report.findings.length} compatibility issue(s):\x1b[0m`);
+      for (const f of report.findings) {
+        console.log(`   - [${f.type}] ${f.file}:${f.line} -> '${f.match}' (Replace with: '${f.replacement}')`);
+      }
+      console.log(`\n📖 Refer to MIGRATION.md or run an AI Refactor Prompt.\n`);
+      process.exit(0);
+    }
+  }
 
   if (args.help || (!args.command && !args.file)) {
     console.log(getHelpText());
@@ -1268,6 +1332,7 @@ export async function main(argv = process.argv.slice(2)) {
       port: args.port,
       caller: args.caller,
       pdf: args.pdf,
+      pwa: args.pwa,
       attempt: args.attempt,
       maxAttempts: args.maxAttempts,
       json: args.json

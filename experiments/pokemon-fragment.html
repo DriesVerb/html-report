@@ -1,0 +1,1543 @@
+<main class="min-h-screen p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8">
+
+  <!-- =========================================================================
+       HERO BANNER & LIVE CONTROL BAR
+       ========================================================================= -->
+  <section class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden relative">
+    <!-- Subtle Pokéball Background Graphic Watermark -->
+    <div class="absolute -right-16 -top-16 opacity-5 pointer-events-none select-none text-base-content text-[260px] font-black">
+      ⚡
+    </div>
+
+    <div class="card-body p-5 sm:p-7 relative z-10 space-y-5">
+      <!-- Title & Badges Bar -->
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+        <div class="min-w-0 flex-1 break-words">
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="badge badge-success gap-1 text-xs font-bold text-success-content shrink-0 animate-pulse">
+              <span class="inline-block w-2 h-2 rounded-full bg-success-content"></span>
+              LIVE REPORT (15s CADENCE)
+            </span>
+            <span class="badge badge-primary badge-outline text-xs font-bold shrink-0">
+              PWA READY &bull; STANDALONE
+            </span>
+            <span class="badge badge-neutral text-xs font-mono shrink-0" id="live-api-status">
+              API: pokeapi.co &bull; OK
+            </span>
+          </div>
+          <h1 id="pokedex-live-header" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-base-content">
+            PokéLive Telemetry &amp; Agent Commentary
+          </h1>
+          <p class="text-xs sm:text-sm text-base-content/70 mt-1 max-w-3xl">
+            Autonomous 15-second PokéAPI stream delivering real-time biometrics, competitive stat analysis, and instantaneous, razor-sharp agent one-liners.
+          </p>
+        </div>
+
+        <!-- Controls: Countdown & Quick Actions -->
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+          <!-- Countdown Timer Widget -->
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-base-200/80 border border-base-300">
+            <i data-lucide="timer" class="w-4 h-4 text-primary animate-spin" style="animation-duration: 4s;"></i>
+            <div class="text-xs font-semibold text-base-content/80">
+              Next Scan: <span id="countdown-timer" class="font-mono text-primary font-bold text-sm">15</span>s
+            </div>
+          </div>
+
+          <!-- Instant Force Poll Button -->
+          <button id="btn-force-encounter" class="btn btn-primary btn-sm gap-1.5 font-bold shadow-sm">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+            <span>Encounter Now</span>
+          </button>
+
+          <!-- Pause / Resume Toggle -->
+          <button id="btn-toggle-pause" class="btn btn-outline btn-sm gap-1" title="Pause / Resume 15s scan">
+            <i data-lucide="pause" id="icon-pause-btn" class="w-4 h-4"></i>
+            <span id="text-pause-btn">Pause</span>
+          </button>
+
+          <!-- Audio Sound FX Toggle -->
+          <button id="btn-toggle-sound" class="btn btn-ghost btn-circle btn-sm" title="Toggle 8-bit sound effects">
+            <i data-lucide="volume-x" id="icon-sound" class="w-4 h-4 text-base-content/60"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Stream Configuration Bar -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-base-200 text-xs">
+        <!-- Agent Persona Selector -->
+        <div class="flex items-center justify-between p-2 rounded-lg bg-base-200/40">
+          <span class="font-medium text-base-content/70 flex items-center gap-1.5">
+            <i data-lucide="bot" class="w-3.5 h-3.5 text-primary"></i>
+            Agent Persona:
+          </span>
+          <select id="select-agent-persona" class="select select-bordered select-xs font-semibold">
+            <option value="sarcastic" selected>Sarcastic Critic 🎭</option>
+            <option value="strategist">Competitive Analyst 🧠</option>
+            <option value="oak">Prof. Oak (Exasperated) 🎓</option>
+            <option value="hype">Esports Caster 🎙️</option>
+          </select>
+        </div>
+
+        <!-- Generation Filter -->
+        <div class="flex items-center justify-between p-2 rounded-lg bg-base-200/40">
+          <span class="font-medium text-base-content/70 flex items-center gap-1.5">
+            <i data-lucide="globe" class="w-3.5 h-3.5 text-secondary"></i>
+            Generation:
+          </span>
+          <select id="select-generation" class="select select-bordered select-xs font-semibold">
+            <option value="all" selected>All Gens (1-9 &bull; 1025)</option>
+            <option value="gen1">Gen 1 Kanto (1-151)</option>
+            <option value="gen2">Gen 2 Johto (152-251)</option>
+            <option value="gen3">Gen 3 Hoenn (252-386)</option>
+            <option value="gen4">Gen 4 Sinnoh (387-493)</option>
+          </select>
+        </div>
+
+        <!-- Polling Cadence Info -->
+        <div class="flex items-center justify-between p-2 rounded-lg bg-base-200/40">
+          <span class="font-medium text-base-content/70 flex items-center gap-1.5">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-accent"></i>
+            Poll Interval:
+          </span>
+          <span class="font-mono font-bold text-accent">15.00 seconds</span>
+        </div>
+
+        <!-- Offline & PWA Cache Status -->
+        <div class="flex items-center justify-between p-2 rounded-lg bg-base-200/40">
+          <span class="font-medium text-base-content/70 flex items-center gap-1.5">
+            <i data-lucide="hard-drive" class="w-3.5 h-3.5 text-success"></i>
+            Cache Strategy:
+          </span>
+          <span class="badge badge-xs badge-success text-[10px] font-bold">Network-First + Fallback</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       SUMMARY STATS COUNTERS
+       ========================================================================= -->
+  <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+    <!-- Stat 1: Total Session Encounters -->
+    <div class="stat bg-base-100 shadow-md border border-base-200 rounded-box p-3 sm:p-4">
+      <div class="stat-figure text-primary">
+        <i data-lucide="radar" class="w-6 h-6 sm:w-8 sm:h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold text-base-content/70">Session Encounters</div>
+      <div id="stat-encounter-count" class="stat-value text-primary text-xl sm:text-2xl font-black">1</div>
+      <div class="stat-desc text-[11px] text-base-content/60">Auto-logging every 15s</div>
+    </div>
+
+    <!-- Stat 2: Active Pokémon ID -->
+    <div class="stat bg-base-100 shadow-md border border-base-200 rounded-box p-3 sm:p-4">
+      <div class="stat-figure text-secondary">
+        <i data-lucide="hash" class="w-6 h-6 sm:w-8 sm:h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold text-base-content/70">National Dex ID</div>
+      <div id="stat-pokedex-id" class="stat-value text-secondary text-xl sm:text-2xl font-black font-mono">#0025</div>
+      <div id="stat-pokedex-gen" class="stat-desc text-[11px] text-base-content/60">Generation 1 (Kanto)</div>
+    </div>
+
+    <!-- Stat 3: Base Stat Total (BST) -->
+    <div class="stat bg-base-100 shadow-md border border-base-200 rounded-box p-3 sm:p-4">
+      <div class="stat-figure text-accent">
+        <i data-lucide="activity" class="w-6 h-6 sm:w-8 sm:h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold text-base-content/70">Base Stat Total (BST)</div>
+      <div id="stat-bst-total" class="stat-value text-accent text-xl sm:text-2xl font-black font-mono">320</div>
+      <div id="stat-bst-tier" class="stat-desc text-[11px] text-base-content/60">Tier: Untiered / LC</div>
+    </div>
+
+    <!-- Stat 4: Agent Wit Rating -->
+    <div class="stat bg-base-100 shadow-md border border-base-200 rounded-box p-3 sm:p-4">
+      <div class="stat-figure text-warning">
+        <i data-lucide="sparkles" class="w-6 h-6 sm:w-8 sm:h-8"></i>
+      </div>
+      <div class="stat-title text-xs font-semibold text-base-content/70">Agent Roast Precision</div>
+      <div class="stat-value text-warning text-xl sm:text-2xl font-black font-mono">99.8%</div>
+      <div class="stat-desc text-[11px] text-base-content/60">Zero filter &bull; Meta calibrated</div>
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       MAIN LIVE SPOTLIGHT: POKÉMON DOSSIER & THE AGENT'S ONE-LINER
+       ========================================================================= -->
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- LEFT COLUMN: POKÉMON VISUAL & BIOMETRIC CARD (5 cols) -->
+    <div class="lg:col-span-5 space-y-6">
+      <div class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden">
+        <!-- Pokémon Artwork Display Canvas -->
+        <div id="pokemon-card-banner" class="relative p-6 sm:p-8 flex flex-col items-center justify-center transition-colors duration-500 bg-gradient-to-b from-amber-500/10 via-base-100 to-base-100">
+          <!-- Type Watermark Pill -->
+          <div class="absolute top-4 left-4">
+            <span id="badge-pokemon-id" class="badge badge-neutral font-mono font-bold text-xs shadow-sm">
+              #0025
+            </span>
+          </div>
+
+          <div class="absolute top-4 right-4 flex items-center gap-1.5" id="container-pokemon-types">
+            <span class="badge badge-warning text-xs font-black tracking-wide text-warning-content shadow-sm">ELECTRIC</span>
+          </div>
+
+          <!-- Official Artwork Sprite -->
+          <div class="relative w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center my-2">
+            <!-- Pulsing Radial Aura -->
+            <div id="pokemon-aura" class="absolute inset-0 rounded-full bg-amber-400/20 blur-2xl transition-all duration-700 animate-pulse"></div>
+            <img
+              id="img-pokemon-sprite"
+              src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
+              alt="Pikachu"
+              class="relative z-10 w-full h-full object-contain filter drop-shadow-xl transition-transform duration-300 hover:scale-105"
+              loading="eager"
+            />
+          </div>
+
+          <!-- Pokémon Name & Classification -->
+          <div class="text-center mt-2 z-10">
+            <h2 id="pokemon-name" class="text-2xl sm:text-3xl font-black capitalize tracking-tight text-base-content">
+              Pikachu
+            </h2>
+            <div id="pokemon-species-sub" class="text-xs text-base-content/70 font-medium mt-0.5">
+              The Mouse Pokémon &bull; Gen 1
+            </div>
+          </div>
+        </div>
+
+        <!-- Biometrics & Abilities Strip -->
+        <div class="grid grid-cols-3 divide-x divide-base-200 border-y border-base-200 bg-base-200/30 text-center py-2.5 px-2">
+          <div>
+            <div class="text-[10px] uppercase font-bold text-base-content/60 tracking-wider">Height</div>
+            <div id="bio-height" class="text-xs sm:text-sm font-bold font-mono text-base-content">0.4 m</div>
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-bold text-base-content/60 tracking-wider">Weight</div>
+            <div id="bio-weight" class="text-xs sm:text-sm font-bold font-mono text-base-content">6.0 kg</div>
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-bold text-base-content/60 tracking-wider">Abilities</div>
+            <div id="bio-abilities" class="text-xs sm:text-sm font-bold capitalize text-primary truncate px-1">Static, Lightning Rod</div>
+          </div>
+        </div>
+
+        <!-- Base Stats Breakdown & Radar Chart -->
+        <div class="card-body p-4 sm:p-5 space-y-4">
+          <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+            <div class="min-w-0 flex-1 break-words">
+              <h3 id="heading-stat-breakdown" class="text-sm font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-1.5">
+                <i data-lucide="bar-chart-2" class="w-4 h-4 text-primary"></i>
+                Base Stats Radar &bull; Biometric Profile
+              </h3>
+            </div>
+            <span class="badge badge-sm badge-ghost font-mono text-xs shrink-0">Scale 0-255</span>
+          </div>
+
+          <!-- Responsive Fixed-Height Chart Container -->
+          <div class="relative w-full h-64 sm:h-72">
+            <canvas id="chart-pokemon-radar" class="w-full h-full"></canvas>
+            <!-- Zero-JS / Offline Scorecard Fallback -->
+            <div id="radar-fallback-scorecard" class="hidden absolute inset-0 flex flex-col justify-center items-center p-4 bg-base-100 text-center space-y-2">
+              <span class="badge badge-warning">Chart.js Initializing...</span>
+              <p class="text-xs text-base-content/70">Radar visualization calibrating to theme palette</p>
+            </div>
+          </div>
+
+          <!-- Individual Stat Bars List -->
+          <div class="space-y-2 pt-2 border-t border-base-200 text-xs">
+            <!-- HP -->
+            <div class="flex items-center justify-between gap-2">
+              <span class="w-16 font-bold text-base-content/70">HP</span>
+              <div class="flex-1 progress bg-base-200 h-2 rounded-full overflow-hidden">
+                <div id="bar-hp" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 14%;"></div>
+              </div>
+              <span id="val-hp" class="w-10 text-right font-mono font-bold">35</span>
+            </div>
+            <!-- Attack -->
+            <div class="flex items-center justify-between gap-2">
+              <span class="w-16 font-bold text-base-content/70">Attack</span>
+              <div class="flex-1 progress bg-base-200 h-2 rounded-full overflow-hidden">
+                <div id="bar-attack" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 22%;"></div>
+              </div>
+              <span id="val-attack" class="w-10 text-right font-mono font-bold">55</span>
+            </div>
+            <!-- Defense -->
+            <div class="flex items-center justify-between gap-2">
+              <span class="w-16 font-bold text-base-content/70">Defense</span>
+              <div class="flex-1 progress bg-base-200 h-2 rounded-full overflow-hidden">
+                <div id="bar-defense" class="bg-rose-500 h-full rounded-full transition-all duration-500" style="width: 16%;"></div>
+              </div>
+              <span id="val-defense" class="w-10 text-right font-mono font-bold">40</span>
+            </div>
+            <!-- Sp. Atk -->
+            <div class="flex items-center justify-between gap-2">
+              <span class="w-16 font-bold text-base-content/70">Sp. Atk</span>
+              <div class="flex-1 progress bg-base-200 h-2 rounded-full overflow-hidden">
+                <div id="bar-spatk" class="bg-cyan-500 h-full rounded-full transition-all duration-500" style="width: 20%;"></div>
+              </div>
+              <span id="val-spatk" class="w-10 text-right font-mono font-bold">50</span>
+            </div>
+            <!-- Sp. Def -->
+            <div class="flex items-center justify-between gap-2">
+              <span class="w-16 font-bold text-base-content/70">Sp. Def</span>
+              <div class="flex-1 progress bg-base-200 h-2 rounded-full overflow-hidden">
+                <div id="bar-spdef" class="bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: 20%;"></div>
+              </div>
+              <span id="val-spdef" class="w-10 text-right font-mono font-bold">50</span>
+            </div>
+            <!-- Speed -->
+            <div class="flex items-center justify-between gap-2">
+              <span class="w-16 font-bold text-base-content/70">Speed</span>
+              <div class="flex-1 progress bg-base-200 h-2 rounded-full overflow-hidden">
+                <div id="bar-speed" class="bg-purple-500 h-full rounded-full transition-all duration-500" style="width: 35%;"></div>
+              </div>
+              <span id="val-speed" class="w-10 text-right font-mono font-bold">90</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- RIGHT COLUMN: THE AGENT'S ONE-LINER & REASONING STUDIO (7 cols) -->
+    <div class="lg:col-span-7 space-y-6">
+
+      <!-- THE AGENT ONE-LINER HERO CARD -->
+      <div class="card bg-base-100 shadow-xl border-2 border-primary/30 relative overflow-hidden">
+        <!-- Glowing accent top bar -->
+        <div class="h-1.5 w-full bg-gradient-to-r from-primary via-secondary to-accent"></div>
+
+        <div class="card-body p-5 sm:p-7 space-y-5">
+          <!-- Card Header: Agent Identity & Status -->
+          <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+            <div class="min-w-0 flex-1 break-words flex items-center gap-3">
+              <div class="avatar placeholder">
+                <div class="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center font-black shadow">
+                  <i data-lucide="bot" class="w-6 h-6"></i>
+                </div>
+              </div>
+              <div>
+                <h3 id="heading-agent-identity" class="text-base sm:text-lg font-black text-base-content flex items-center gap-2">
+                  <span id="agent-display-name">Agent Oak AI</span>
+                  <span class="badge badge-xs badge-primary font-mono text-[10px]">v2.6 LIVE</span>
+                </h3>
+                <div class="text-xs text-base-content/60 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-success inline-block"></span>
+                  <span id="agent-status-label">Autonomous Punchline Synthesizer Active</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 shrink-0">
+              <span id="badge-oneliner-category" class="badge badge-warning badge-sm font-bold gap-1 text-[11px] shadow-sm">
+                ⚡ TRUTH NUKE
+              </span>
+              <button id="btn-reroll-oneliner" class="btn btn-ghost btn-circle btn-sm" title="Re-roll Agent Punchline">
+                <i data-lucide="refresh-cw" class="w-4 h-4 text-base-content/70"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- THE CALLOUT BOX CONTAINING THE FITTING ONE-LINER -->
+          <div class="relative p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-base-200/90 to-base-200/40 border border-base-300 shadow-inner">
+            <!-- Giant Decorative Quote Mark -->
+            <div class="absolute -top-3 left-4 text-5xl sm:text-6xl text-primary/20 font-serif select-none pointer-events-none">
+              &ldquo;
+            </div>
+
+            <!-- The One-Liner Text Content -->
+            <div class="relative z-10 pl-2 sm:pl-3">
+              <p id="agent-oneliner-text" class="text-lg sm:text-xl lg:text-2xl font-extrabold leading-snug tracking-tight text-base-content italic">
+                50,000 volts of corporate mascot electricity, yet still gets flattened by an unboosted Earthquake.
+              </p>
+            </div>
+
+            <!-- Footer Meta within Quote Box -->
+            <div class="mt-4 pt-3 border-t border-base-300/60 flex flex-wrap justify-between items-center text-xs text-base-content/60 gap-2">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-warning"></i>
+                <span>Generated at: <span id="oneliner-timestamp" class="font-mono">Just now</span></span>
+              </div>
+              <div class="flex items-center gap-1.5 font-medium">
+                <span>Target:</span>
+                <span id="oneliner-target" class="font-bold text-base-content capitalize">Pikachu (#0025)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agent Battle Appraisal & Reality Check -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="p-3 rounded-xl bg-base-200/50 border border-base-200 space-y-1">
+              <div class="text-[10px] font-bold uppercase text-base-content/60 tracking-wider">Competitive Reality</div>
+              <div id="agent-appraisal-meta" class="text-xs font-bold text-error flex items-center gap-1">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+                Hostage to Ground Types
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-base-200/50 border border-base-200 space-y-1">
+              <div class="text-[10px] font-bold uppercase text-base-content/60 tracking-wider">Synergy Rating</div>
+              <div id="agent-appraisal-synergy" class="text-xs font-bold text-warning flex items-center gap-1">
+                <i data-lucide="flame" class="w-3.5 h-3.5"></i>
+                B+ Tier &bull; Pure Brand Power
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-base-200/50 border border-base-200 space-y-1">
+              <div class="text-[10px] font-bold uppercase text-base-content/60 tracking-wider">Recommended Career</div>
+              <div id="agent-appraisal-career" class="text-xs font-bold text-primary truncate flex items-center gap-1">
+                <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
+                Tokyo Storefront Greeter
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENT CHAIN-OF-THOUGHT & REASONING TRACE -->
+      <div class="card bg-base-100 shadow-md border border-base-200">
+        <div class="card-body p-4 sm:p-5 space-y-3">
+          <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+            <div class="min-w-0 flex-1 break-words">
+              <h3 id="heading-agent-reasoning" class="text-sm font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-1.5">
+                <i data-lucide="cpu" class="w-4 h-4 text-secondary"></i>
+                Agent Chain-of-Thought Telemetry Trace
+              </h3>
+            </div>
+            <span class="badge badge-xs badge-outline font-mono text-[10px] shrink-0">Inference: 18ms</span>
+          </div>
+
+          <div class="space-y-2 text-xs" id="trace-step-container">
+            <!-- Step 1: Telemetry Ingest -->
+            <div class="flex items-start gap-2.5 p-2.5 rounded-lg bg-base-200/40 border border-base-200">
+              <span class="badge badge-xs badge-info font-mono shrink-0 mt-0.5">01</span>
+              <div class="space-y-0.5">
+                <span class="font-bold text-base-content">Biometric Ingestion:</span>
+                <p id="trace-step-1" class="text-base-content/70">
+                  Scanned species: Pikachu. Type: Electric. BST: 320. Noted extreme bias toward Speed (90) vs dismal HP (35).
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 2: Meta Analysis -->
+            <div class="flex items-start gap-2.5 p-2.5 rounded-lg bg-base-200/40 border border-base-200">
+              <span class="badge badge-xs badge-warning font-mono shrink-0 mt-0.5">02</span>
+              <div class="space-y-0.5">
+                <span class="font-bold text-base-content">Metagame &amp; Lore Analysis:</span>
+                <p id="trace-step-2" class="text-base-content/70">
+                  Cross-referenced 27 years of anime plot armor against Smogon competitive reality. Identified discrepancy between Ash's Pikachu and standard wild Pikachu.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 3: Comedic Formulation -->
+            <div class="flex items-start gap-2.5 p-2.5 rounded-lg bg-base-200/40 border border-base-200">
+              <span class="badge badge-xs badge-success font-mono shrink-0 mt-0.5">03</span>
+              <div class="space-y-0.5">
+                <span class="font-bold text-base-content">Punchline Synthesis:</span>
+                <p id="trace-step-3" class="text-base-content/70">
+                  Formulated high-contrast juxtaposition: global merchandising supremacy vs utter defenselessness against Ground-type moves.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       ENCOUNTER HISTORY LOG & SESSION TELEMETRY FEED
+       ========================================================================= -->
+  <section class="card bg-base-100 shadow-xl border border-base-200">
+    <div class="card-body p-4 sm:p-6 space-y-4">
+      <!-- Section Header -->
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+        <div class="min-w-0 flex-1 break-words">
+          <div class="flex items-center gap-2">
+            <h2 id="heading-session-history" class="text-lg sm:text-xl font-bold tracking-tight text-base-content flex items-center gap-2">
+              <i data-lucide="history" class="w-5 h-5 text-primary"></i>
+              Live Encounter History &bull; Session Pokédex Feed
+            </h2>
+            <span id="badge-history-count" class="badge badge-primary badge-sm font-bold">1 Recorded</span>
+          </div>
+          <p class="text-xs text-base-content/70 mt-0.5">
+            Real-time chronological archive of all Pokémon encountered during this session with corresponding Agent one-liners.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="btn-export-history" class="btn btn-outline btn-xs gap-1">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            Export JSON
+          </button>
+          <button id="btn-clear-history" class="btn btn-ghost btn-xs text-error gap-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            Clear Feed
+          </button>
+        </div>
+      </div>
+
+      <!-- Responsive History Table -->
+      <div class="overflow-x-auto border border-base-200 rounded-xl">
+        <table class="table table-xs sm:table-sm table-zebra table-fixed w-full">
+          <thead class="bg-base-200/70 text-base-content/80 font-bold">
+            <tr>
+              <th class="w-12">Time</th>
+              <th class="w-12">Dex</th>
+              <th class="w-28 sm:w-32">Pokémon</th>
+              <th class="w-12 hidden lg:table-cell">BST</th>
+              <th>The Agent's Fitting One-Liner</th>
+              <th class="w-28 text-right hidden md:table-cell">Verdict</th>
+            </tr>
+          </thead>
+          <tbody id="table-history-body" class="divide-y divide-base-200 font-medium">
+            <!-- Initial Row: Pikachu -->
+            <tr class="hover">
+              <td class="font-mono text-base-content/60 text-[11px]">00:00</td>
+              <td class="font-mono font-bold text-primary text-[11px]">#0025</td>
+              <td>
+                <div class="flex items-center gap-1.5 truncate">
+                  <div class="avatar shrink-0">
+                    <div class="mask mask-squircle w-5 h-5 bg-base-300">
+                      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png" alt="Pikachu" />
+                    </div>
+                  </div>
+                  <div class="truncate">
+                    <div class="font-bold capitalize truncate text-xs">Pikachu</div>
+                    <div class="badge badge-warning badge-xs text-[8px] font-black">ELEC</div>
+                  </div>
+                </div>
+              </td>
+              <td class="font-mono font-bold hidden lg:table-cell text-[11px]">320</td>
+              <td class="italic text-base-content/80 break-words leading-tight text-xs">
+                &ldquo;50,000 volts of corporate mascot electricity, yet still gets flattened by an unboosted Earthquake.&rdquo;
+              </td>
+              <td class="text-right hidden md:table-cell">
+                <span class="badge badge-xs badge-warning font-bold text-[10px] truncate max-w-[90px]">TRUTH NUKE</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       LIVE TYPE DISTRIBUTION & PWA ARCHITECTURE INTEL
+       ========================================================================= -->
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- TYPE FREQUENCY CHART (5 cols) -->
+    <div class="lg:col-span-5 card bg-base-100 shadow-md border border-base-200">
+      <div class="card-body p-4 sm:p-5 space-y-4">
+        <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+          <div class="min-w-0 flex-1 break-words">
+            <h3 id="heading-type-distribution" class="text-sm font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-1.5">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-accent"></i>
+              Session Type Frequency
+            </h3>
+          </div>
+          <span class="badge badge-ghost badge-xs font-mono text-[10px] shrink-0">Live Updates</span>
+        </div>
+
+        <div class="relative w-full h-56 sm:h-64">
+          <canvas id="chart-type-distribution" class="w-full h-full"></canvas>
+        </div>
+
+        <div class="text-[11px] text-base-content/60 text-center">
+          Chart dynamically redraws on theme change and new Pokémon encounters.
+        </div>
+      </div>
+    </div>
+
+    <!-- PWA READY & OFFLINE ARCHITECTURE INFO (7 cols) -->
+    <div class="lg:col-span-7 card bg-base-100 shadow-md border border-base-200">
+      <div class="card-body p-4 sm:p-5 space-y-4">
+        <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center gap-3 w-full">
+          <div class="min-w-0 flex-1 break-words">
+            <h3 id="heading-pwa-readiness" class="text-sm font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4 text-success"></i>
+              PWA Ready Architecture &bull; Offline Resilience
+            </h3>
+          </div>
+          <span class="badge badge-success badge-sm font-bold text-success-content shrink-0">W3C Compliant</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <!-- Item 1: Manifest -->
+          <div class="p-3 rounded-xl bg-base-200/50 border border-base-200 space-y-1">
+            <div class="font-bold flex items-center gap-1.5 text-base-content">
+              <i data-lucide="file-code" class="w-4 h-4 text-primary"></i>
+              manifest.webmanifest
+            </div>
+            <p class="text-base-content/70">
+              Configured with <code class="bg-base-300 px-1 py-0.5 rounded">display: standalone</code>, multi-resolution scalable icons (SVG), and responsive orientation.
+            </p>
+          </div>
+
+          <!-- Item 2: Service Worker -->
+          <div class="p-3 rounded-xl bg-base-200/50 border border-base-200 space-y-1">
+            <div class="font-bold flex items-center gap-1.5 text-base-content">
+              <i data-lucide="layers" class="w-4 h-4 text-secondary"></i>
+              Dual-Caching sw.js
+            </div>
+            <p class="text-base-content/70">
+              Cache-First policy for 17-CDN scripts (0ms delivery); Network-First with Cache-Fallback for live document navigation.
+            </p>
+          </div>
+
+          <!-- Item 3: Theme-Color Sync -->
+          <div class="p-3 rounded-xl bg-base-200/50 border border-base-200 space-y-1">
+            <div class="font-bold flex items-center gap-1.5 text-base-content">
+              <i data-lucide="palette" class="w-4 h-4 text-accent"></i>
+              Dynamic Theme-Color Sync
+            </div>
+            <p class="text-base-content/70">
+              Dynamically synchronizes <code class="bg-base-300 px-1 py-0.5 rounded">&lt;meta name="theme-color"&gt;</code> whenever switching across DaisyUI's 32 themes.
+            </p>
+          </div>
+
+          <!-- Item 4: Offline Fallback -->
+          <div class="p-3 rounded-xl bg-base-200/50 border border-base-200 space-y-1">
+            <div class="font-bold flex items-center gap-1.5 text-base-content">
+              <i data-lucide="wifi-off" class="w-4 h-4 text-warning"></i>
+              Zero-Connection Graceful Mode
+            </div>
+            <p class="text-base-content/70">
+              When disconnected, an internal reserve of iconic Pokémon biometrics and agent one-liners ensures seamless 15s operation.
+            </p>
+          </div>
+        </div>
+
+        <!-- Install Banner Affordance -->
+        <div class="p-3 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2">
+            <i data-lucide="smartphone" class="w-5 h-5 text-primary shrink-0"></i>
+            <div>
+              <span class="font-bold text-base-content">Install as Standalone Desktop/Mobile App:</span>
+              <span class="text-base-content/70">Click the install button in the top navbar or download menu.</span>
+            </div>
+          </div>
+          <button id="btn-pwa-inline-install" class="btn btn-primary btn-xs font-bold shrink-0">
+            Install App
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       INLINE ENGINE SCRIPT: POKÉAPI 15S POLLER & AGENT WIT SYNTHESIS
+       ========================================================================= -->
+  <script>
+    (function () {
+      "use strict";
+
+      // -----------------------------------------------------------------------
+      // 1. OFFLINE FALLBACK RESERVE (Iconic Pokémon with full biometrics & one-liners)
+      // -----------------------------------------------------------------------
+      const POKEMON_RESERVE = [
+        {
+          id: 25,
+          name: "pikachu",
+          types: ["electric"],
+          height: 4,
+          weight: 60,
+          abilities: ["static", "lightning-rod"],
+          stats: { hp: 35, attack: 55, defense: 40, spatk: 50, spdef: 50, speed: 90 },
+          sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
+          roasts: {
+            sarcastic: "50,000 volts of corporate mascot electricity, yet still gets flattened by an unboosted Earthquake.",
+            strategist: "Untiered without Light Ball. Strictly a merchandising flagship held hostage by priority ground moves.",
+            oak: "After 27 years of research, I still cannot explain why this creature refuses to enter a Pokéball yet obeys a 10-year-old.",
+            hype: "LADIES AND GENTLEMEN! THE ELECTRIC MOUSE IS CHARGING UP A THUNDERBOLT TO OBLITERATE THE COMPETITION!"
+          },
+          category: "⚡ TRUTH NUKE",
+          appraisal: { meta: "Hostage to Ground Types", synergy: "B+ Tier &bull; Brand Power", career: "Tokyo Storefront Greeter" }
+        },
+        {
+          id: 6,
+          name: "charizard",
+          types: ["fire", "flying"],
+          height: 17,
+          weight: 905,
+          abilities: ["blaze", "solar-power"],
+          stats: { hp: 78, attack: 84, defense: 78, spatk: 109, spdef: 85, speed: 100 },
+          sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png",
+          roasts: {
+            sarcastic: "Has wings, breathes fire, gets 3 Mega Evolutions and a Gigantamax, yet Game Freak still refused to make it a Dragon out of sheer generational spite.",
+            strategist: "Takes 50% damage from Stealth Rock upon switching in. Basically allergic to sharp gravel.",
+            oak: "A majestic creature! Though raising one usually results in third-degree burns and severe property devaluation.",
+            hype: "THE FLAME POKÉMON HAS ENTERED THE STADIUM! BLAST BURN IS READY TO MELT FACES!"
+          },
+          category: "🔥 ROAST OF THE CENTURY",
+          appraisal: { meta: "Stealth Rock Trauma", synergy: "S Tier &bull; Fan Favorite", career: "Controlled Forest Fire Marshall" }
+        },
+        {
+          id: 143,
+          name: "snorlax",
+          types: ["normal"],
+          height: 21,
+          weight: 4600,
+          abilities: ["immunity", "thick-fat"],
+          stats: { hp: 160, attack: 110, defense: 65, spatk: 65, spdef: 110, speed: 30 },
+          sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png",
+          roasts: {
+            sarcastic: "Blocks an entire intercity highway, refuses to move without custom flute music, and calls it self-care. Truly the original quiet-quitter.",
+            strategist: "Immense physical sponge with Curse. Unfortunately, Close Combat turns it into an oversized beanbag chair.",
+            oak: "Consumes 900 pounds of food daily. My laboratory grocery budget has never recovered.",
+            hype: "THE TITAN OF REPOSE IS UNBOTHERED! YOU CANNOT MOVE THIS MOUNTAIN OF BLUBBER!"
+          },
+          category: "💤 EXISTENTIAL SHADOW",
+          appraisal: { meta: "Fighting Type Panic", synergy: "A Tier &bull; Wall God", career: "Mattress Firm Quality Inspector" }
+        },
+        {
+          id: 94,
+          name: "gengar",
+          types: ["ghost", "poison"],
+          height: 15,
+          weight: 405,
+          abilities: ["cursed-body"],
+          stats: { hp: 60, attack: 65, defense: 60, spatk: 130, spdef: 75, speed: 110 },
+          sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png",
+          roasts: {
+            sarcastic: "Smiles like a Cheshire cat because it knows your normal-type moves literally phase right through its existential dread.",
+            strategist: "130 Special Attack and 110 Speed make it a terrifying cleaner, provided nobody sneezes on its 60/60 defenses.",
+            oak: "It hides in your shadow and absorbs your room temperature. A terrible roommate overall.",
+            hype: "SHADOW BALL INCOMING! GENGAR IS TELEPORTING ACROSS THE ARENA IN PURE GHOSTLY FURY!"
+          },
+          category: "👻 SPECTRAL SMACKDOWN",
+          appraisal: { meta: "Glass Cannon Terror", synergy: "S- Tier &bull; Fast Cleaner", career: "Haunted House Lead Director" }
+        },
+        {
+          id: 150,
+          name: "mewtwo",
+          types: ["psychic"],
+          height: 20,
+          weight: 1220,
+          abilities: ["pressure", "unnerve"],
+          stats: { hp: 106, attack: 110, defense: 90, spatk: 154, spdef: 90, speed: 130 },
+          sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png",
+          roasts: {
+            sarcastic: "Synthesized in a test tube by scientists with god complexes, only to spend its entire retirement reflecting on the ethics of existence in a damp cave.",
+            strategist: "Psystrike dismantles special walls with physical calculation. A weapon of mass destruction banned from polite society.",
+            oak: "The ethical boundaries we crossed were catastrophic... but goodness, look at that Special Attack stat!",
+            hype: "THE ULTIMATE CREATION! PSYCHIC ENERGY IS WARPING THE VERY FABRIC OF REALITY!"
+          },
+          category: "🧠 METAPHYSICAL CRUSH",
+          appraisal: { meta: "Uber Tier Destroyer", synergy: "S+ Tier &bull; Pure Apex", career: "Philosophical Cave Hermit" }
+        },
+        {
+          id: 129,
+          name: "magikarp",
+          types: ["water"],
+          height: 9,
+          weight: 100,
+          abilities: ["swift-swim", "rattled"],
+          stats: { hp: 20, attack: 10, defense: 55, spatk: 15, spdef: 20, speed: 80 },
+          sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/129.png",
+          roasts: {
+            sarcastic: "Splash: The only move in Pokémon history that deals exactly 0 physical damage and 100% emotional trauma to its trainer.",
+            strategist: "Unviable in any tier known to mankind. Exists purely as an exercise in delayed gratification until Level 20.",
+            oak: "I once watched a Magikarp jump over a mountain, only to be immediately intercepted by a Pidgeot. A tragedy in three acts.",
+            hype: "SPLASH! SPLASH! IT FLAPS AROUND WITH ZERO REGARD FOR ITS OWN DIGNITY!"
+          },
+          category: "🐟 TRAGIC REALITY CHECK",
+          appraisal: { meta: "Zero Threat Detected", synergy: "F Tier &bull; Pure Hope", career: "Subsidized Sushi Mascot" }
+        },
+        {
+          id: 130,
+          name: "gyarados",
+          types: ["water", "flying"],
+          height: 65,
+          weight: 2350,
+          abilities: ["intimidate", "moxie"],
+          stats: { hp: 95, attack: 125, defense: 79, spatk: 60, spdef: 100, speed: 81 },
+          sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/130.png",
+          roasts: {
+            sarcastic: "Proof that chronic anger issues, water hazard syndrome, and zero emotional regulation can eventually evolve into greatness.",
+            strategist: "Dragon Dance setup sweeper. However, a single 10-volt AA battery will trigger its 4x Electric weakness and end the dream.",
+            oak: "Rampages for months once angered. Never challenge a Gyarados before its morning coffee.",
+            hype: "DRAGON DANCE IS COMPLETE! WATERFALL IS ABOUT TO SWEEP THE ENTIRE BRACKET!"
+          },
+          category: "⚡ 4X WEAKNESS ALERT",
+          appraisal: { meta: "Electric Allergy", synergy: "A+ Tier &bull; Setup Menace", career: "Demolition Crew Supervisor" }
+        },
+        {
+          id: 133,
+          name: "eevee",
+          types: ["normal"],
+          height: 3,
+          weight: 65,
+          abilities: ["run-away", "adaptability"],
+          stats: { hp: 55, attack: 55, defense: 50, spatk: 45, spdef: 65, speed: 55 },
+          sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png",
+          roasts: {
+            sarcastic: "The undisputed king of career indecision: 8 different evolutionary paths and still sitting in a Pokéball wondering what to major in.",
+            strategist: "Base stats are abysmal. Evolve immediately or face permanent residency in the daycare storage box.",
+            oak: "Its genetic code is delightfully unstable! Much like my former graduate students.",
+            hype: "THE EMBODIMENT OF POTENTIAL! WHICH ELEMENTAL DESTINY WILL THIS HERO EMBRACE?!"
+          },
+          category: "🐾 CAREER CRISIS",
+          appraisal: { meta: "Evolution Dependent", synergy: "A Tier &bull; Versatility", career: "College Career Counselor" }
+        },
+        {
+          id: 149,
+          name: "dragonite",
+          types: ["dragon", "flying"],
+          height: 22,
+          weight: 2100,
+          abilities: ["inner-focus", "multiscale"],
+          stats: { hp: 91, attack: 134, defense: 95, spatk: 100, spdef: 100, speed: 80 },
+          sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png",
+          roasts: {
+            sarcastic: "Looks like a friendly orange huggable cartoon dinosaur until it outspeeds your entire bloodline with Tera Normal Extreme Speed.",
+            strategist: "Multiscale ensures it survives any initial hit, after which Dragon Dance and Extreme Speed clean up the wreckage.",
+            oak: "Can circle the globe in sixteen hours! Faster than any commercial airline and with substantially better legroom.",
+            hype: "EXTREME SPEED ACTIVATED! DRAGONITE IS CROSSING THE FIELD AT MACH TWO!"
+          },
+          category: "🐉 HUGGABLE DESTRUCTION",
+          appraisal: { meta: "Priority Menace", synergy: "S Tier &bull; Competitive Titan", career: "International Air Courier" }
+        },
+        {
+          id: 448,
+          name: "lucario",
+          types: ["fighting", "steel"],
+          height: 12,
+          weight: 540,
+          abilities: ["steadfast", "inner-focus"],
+          stats: { hp: 70, attack: 110, defense: 70, spatk: 115, spdef: 70, speed: 90 },
+          sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png",
+          roasts: {
+            sarcastic: "Aura specialist: Can sense your deepest psychological trauma from 50 paces away and immediately counters it with Close Combat.",
+            strategist: "Dual Fighting/Steel typing gives it 8 resistances, but 70/70/70 bulk means it cannot afford to take a miscalculated hit.",
+            oak: "Understands human speech and emotion with chilling precision. Do not discuss your private browser history around this Pokémon.",
+            hype: "AURA SPHERE LOCKED ON! LUCARIO IS DEMONSTRATING ABSOLUTE COMBAT FOCUS!"
+          },
+          category: "🥋 THERAPEUTIC CLOSE COMBAT",
+          appraisal: { meta: "Fragile Wallbreaker", synergy: "A Tier &bull; Adaptable Fighter", career: "Spiritual Combat Coach" }
+        }
+      ];
+
+      // -----------------------------------------------------------------------
+      // 2. PROCEDURAL GENERATIVE ONE-LINER ENGINE (For ANY of the 1025 Pokémon!)
+      // -----------------------------------------------------------------------
+      function generateDynamicOneLiner(p, persona) {
+        const stats = p.stats;
+        const total = Object.values(stats).reduce((a, b) => a + b, 0);
+        const maxStatName = Object.keys(stats).reduce((a, b) => stats[a] > stats[b] ? a : b);
+        const maxStatVal = stats[maxStatName];
+        const primaryType = p.types[0] || "normal";
+        const cleanName = p.name.charAt(0).toUpperCase() + p.name.slice(1);
+
+        // Persona: Sarcastic Critic
+        if (persona === "sarcastic") {
+          if (stats.speed >= 120) {
+            return `Speed stat of ${stats.speed}: Ran across the battlefield twice before its opponent even finished reading the match regulations.`;
+          }
+          if (stats.attack >= 125) {
+            return `Attack stat of ${stats.attack}: Doesn't need a strategy when its forearms can literally shatter tectonic plates on impact.`;
+          }
+          if (stats.defense >= 120 || stats.spdef >= 120) {
+            return `Basically a reinforced titanium bank vault with eyes. Takes direct thermonuclear hits and yawns.`;
+          }
+          if (stats.hp >= 120) {
+            return `Has enough hit points to survive three different generational battle gimmicks and an balance patch.`;
+          }
+          if (total < 320) {
+            return `Base Stat Total of ${total}: Running purely on optimism, emotional support, and the grace of the Exp. Share.`;
+          }
+          if (primaryType === "ghost") {
+            return `Spooky spectral menace: Floating through walls, ignoring physics, and reminding everyone of their mortality.`;
+          }
+          if (primaryType === "fairy") {
+            return `Sweet pastel exterior concealing an ancient, ruthless dragon-obliterating war machine.`;
+          }
+          if (primaryType === "bug") {
+            return `Evolved in 3 levels, peaked at Route 2, and spent the remaining 8 Gym badges chilling in Box 12.`;
+          }
+          return `Certified ${primaryType.toUpperCase()} specimen: Boasts a BST of ${total} and acts like it owns the regional championship.`;
+        }
+
+        // Persona: Competitive Strategist
+        if (persona === "strategist") {
+          if (total >= 580) {
+            return `Base stat total of ${total} places it squarely in high-threat territory. Requires immediate entry hazard suppression.`;
+          }
+          if (stats.speed > 100) {
+            return `Outspeeds the critical base 100 speed tier. Prime candidate for a Choice Scarf revenge killer.`;
+          }
+          if (stats.attack > stats.spatk) {
+            return `Physical breaker profile (${stats.attack} Atk). Susceptible to Intimidate and Will-O-Wisp burn debuffs.`;
+          }
+          return `Special profile (${stats.spatk} SpAtk). Defensive tier requires defensive pivoting to avoid being 2HKO'd.`;
+        }
+
+        // Persona: Professor Oak
+        if (persona === "oak") {
+          return `Ah, ${cleanName}! In all my years studying Pokémon ecology, I have rarely seen a ${primaryType}-type with such distinct behavioral quirks!`;
+        }
+
+        // Persona: Esports Hype Caster
+        return `LOOK AT ${cleanName.toUpperCase()}! WITH ${maxStatVal} IN ${maxStatName.toUpperCase()}, THIS POKÉMON IS READY TO BLOW THE ROOF OFF THE STADIUM!`;
+      }
+
+      function resolveCategory(p) {
+        if (p.stats.speed >= 115) return "⚡ SPEED DEMON";
+        if (p.stats.attack >= 120) return "💥 BLUNT FORCE";
+        if (p.stats.defense >= 115 || p.stats.spdef >= 115) return "🛡️ TANK REALITY";
+        if (p.stats.spatk >= 120) return "🔮 ARCANE NUKE";
+        const total = Object.values(p.stats).reduce((a, b) => a + b, 0);
+        if (total < 320) return "🍼 UNDERDOG ENERGY";
+        return "🔥 STRATEGIC TRUTH";
+      }
+
+      function resolveAppraisal(p) {
+        const total = Object.values(p.stats).reduce((a, b) => a + b, 0);
+        let meta = "Standard Tier Viable";
+        let synergy = "B Tier &bull; Balanced";
+        let career = "Regional Gym Battler";
+
+        if (total >= 580) {
+          meta = "Uber Threat Detected";
+          synergy = "S+ Tier &bull; Legendary";
+          career = "Ozone Layer Watchman";
+        } else if (p.stats.speed >= 110) {
+          meta = "Priority Vulnerable";
+          synergy = "A Tier &bull; Fast Pivot";
+          career = "Express Courier Specialist";
+        } else if (total < 320) {
+          meta = "Box 1 Permanent Resident";
+          synergy = "D Tier &bull; Emotional Support";
+          career = "Pocket Mascot";
+        }
+
+        return { meta, synergy, career };
+      }
+
+      // -----------------------------------------------------------------------
+      // 3. SOUND SYNTHESIZER (Pure Web Audio API, Zero Audio Files!)
+      // -----------------------------------------------------------------------
+      let audioCtx = null;
+      let soundEnabled = false;
+
+      function playRetroEncounterChime() {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === "suspended") audioCtx.resume();
+
+          const now = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc.type = "square";
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
+          osc.frequency.exponentialRampToValueAtTime(1320, now + 0.2);
+
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.26);
+        } catch (_) {}
+      }
+
+      // -----------------------------------------------------------------------
+      // 4. CHART.JS INSTANCES & COLOR HARMONIZATION
+      // -----------------------------------------------------------------------
+      let radarChart = null;
+      let typeChart = null;
+      const typeCounts = { electric: 1 };
+
+      function initRadarChart(stats) {
+        const canvas = document.getElementById("chart-pokemon-radar");
+        if (!canvas || !window.Chart) return;
+
+        const ctx = canvas.getContext("2d");
+        const labels = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"];
+        const dataVals = [stats.hp, stats.attack, stats.defense, stats.spatk, stats.spdef, stats.speed];
+
+        radarChart = new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Current Pokémon",
+                data: dataVals,
+                backgroundColor: "rgba(59, 130, 246, 0.25)",
+                borderColor: "#3b82f6",
+                borderWidth: 2,
+                pointBackgroundColor: "#3b82f6",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "#3b82f6"
+              },
+              {
+                label: "Standard Baseline (80)",
+                data: [80, 80, 80, 80, 80, 80],
+                backgroundColor: "rgba(156, 163, 175, 0.08)",
+                borderColor: "rgba(156, 163, 175, 0.4)",
+                borderWidth: 1,
+                borderDash: [4, 4],
+                pointRadius: 0
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                min: 0,
+                max: 180,
+                ticks: { display: false, stepSize: 40 },
+                grid: { color: "rgba(156, 163, 175, 0.15)" },
+                angleLines: { color: "rgba(156, 163, 175, 0.2)" },
+                pointLabels: {
+                  font: { size: 10, weight: "bold" },
+                  color: "#6b7280"
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                display: true,
+                position: "bottom",
+                labels: { boxWidth: 10, font: { size: 10 } }
+              }
+            }
+          }
+        });
+
+        // Register in window.reportCharts for automatic DaisyUI theme-change re-color
+        window.reportCharts = window.reportCharts || [];
+        window.reportCharts.push(radarChart);
+      }
+
+      function updateRadarChart(stats) {
+        if (!radarChart) {
+          initRadarChart(stats);
+          return;
+        }
+        radarChart.data.datasets[0].data = [
+          stats.hp, stats.attack, stats.defense, stats.spatk, stats.spdef, stats.speed
+        ];
+        radarChart.update();
+      }
+
+      function initTypeChart() {
+        const canvas = document.getElementById("chart-type-distribution");
+        if (!canvas || !window.Chart) return;
+
+        const ctx = canvas.getContext("2d");
+        const labels = Object.keys(typeCounts);
+        const data = Object.values(typeCounts);
+
+        typeChart = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                data: data,
+                backgroundColor: [
+                  "#F8D030", "#F08030", "#6890F0", "#78C850", "#F85888",
+                  "#705598", "#7038F8", "#A8B820", "#B8A038", "#E0C068"
+                ],
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "right",
+                labels: { boxWidth: 10, font: { size: 10 } }
+              }
+            }
+          }
+        });
+
+        window.reportCharts = window.reportCharts || [];
+        window.reportCharts.push(typeChart);
+      }
+
+      function updateTypeChart(type) {
+        typeCounts[type] = (typeCounts[type] || 0) + 1;
+        if (!typeChart) {
+          initTypeChart();
+          return;
+        }
+        typeChart.data.labels = Object.keys(typeCounts);
+        typeChart.data.datasets[0].data = Object.values(typeCounts);
+        typeChart.update();
+      }
+
+      // -----------------------------------------------------------------------
+      // 5. DOM UPDATERS FOR POKÉMON DOSSIER & AGENT ONE-LINER
+      // -----------------------------------------------------------------------
+      let currentPokemon = POKEMON_RESERVE[0];
+      let encounterTotal = 1;
+      const historyLog = [];
+
+      function renderPokemon(p) {
+        currentPokemon = p;
+        playRetroEncounterChime();
+
+        // 1. Text & IDs
+        const dexIdStr = "#" + String(p.id).padStart(4, "0");
+        document.getElementById("badge-pokemon-id").textContent = dexIdStr;
+        document.getElementById("stat-pokedex-id").textContent = dexIdStr;
+        document.getElementById("pokemon-name").textContent = p.name;
+        document.getElementById("oneliner-target").textContent = `${p.name} (${dexIdStr})`;
+
+        // 2. Types Pills
+        const typeContainer = document.getElementById("container-pokemon-types");
+        typeContainer.innerHTML = "";
+        const typeColors = {
+          electric: "badge-warning", fire: "badge-error", water: "badge-info", grass: "badge-success",
+          psychic: "badge-secondary", ghost: "badge-neutral", dragon: "badge-primary", normal: "badge-ghost",
+          fighting: "badge-accent", flying: "badge-info", poison: "badge-secondary", ground: "badge-warning",
+          rock: "badge-neutral", bug: "badge-success", ice: "badge-info", steel: "badge-ghost", dark: "badge-neutral", fairy: "badge-secondary"
+        };
+
+        p.types.forEach((t) => {
+          const pill = document.createElement("span");
+          const cls = typeColors[t] || "badge-primary";
+          pill.className = `badge ${cls} text-xs font-black tracking-wide shadow-sm uppercase`;
+          pill.textContent = t;
+          typeContainer.appendChild(pill);
+        });
+
+        // 3. Sprite Image & Aura
+        const spriteEl = document.getElementById("img-pokemon-sprite");
+        spriteEl.src = p.sprite;
+        spriteEl.alt = p.name;
+
+        // 4. Biometrics
+        document.getElementById("bio-height").textContent = (p.height / 10).toFixed(1) + " m";
+        document.getElementById("bio-weight").textContent = (p.weight / 10).toFixed(1) + " kg";
+        document.getElementById("bio-abilities").textContent = p.abilities.join(", ");
+
+        // 5. Stat values and bars
+        const bst = Object.values(p.stats).reduce((a, b) => a + b, 0);
+        document.getElementById("stat-bst-total").textContent = bst;
+        document.getElementById("val-hp").textContent = p.stats.hp;
+        document.getElementById("val-attack").textContent = p.stats.attack;
+        document.getElementById("val-defense").textContent = p.stats.defense;
+        document.getElementById("val-spatk").textContent = p.stats.spatk;
+        document.getElementById("val-spdef").textContent = p.stats.spdef;
+        document.getElementById("val-speed").textContent = p.stats.speed;
+
+        document.getElementById("bar-hp").style.width = Math.min(100, Math.round((p.stats.hp / 255) * 100)) + "%";
+        document.getElementById("bar-attack").style.width = Math.min(100, Math.round((p.stats.attack / 255) * 100)) + "%";
+        document.getElementById("bar-defense").style.width = Math.min(100, Math.round((p.stats.defense / 255) * 100)) + "%";
+        document.getElementById("bar-spatk").style.width = Math.min(100, Math.round((p.stats.spatk / 255) * 100)) + "%";
+        document.getElementById("bar-spdef").style.width = Math.min(100, Math.round((p.stats.spdef / 255) * 100)) + "%";
+        document.getElementById("bar-speed").style.width = Math.min(100, Math.round((p.stats.speed / 255) * 100)) + "%";
+
+        // 6. Update Radar Chart
+        updateRadarChart(p.stats);
+
+        // 7. Update Type Frequency Chart
+        if (p.types[0]) updateTypeChart(p.types[0]);
+
+        // 8. Render Agent One-Liner
+        renderAgentOneLiner(p);
+
+        // 9. Update Encounter Counters
+        encounterTotal++;
+        document.getElementById("stat-encounter-count").textContent = encounterTotal;
+        document.getElementById("badge-history-count").textContent = `${encounterTotal} Recorded`;
+
+        // 10. Append to History Table
+        appendHistoryRow(p);
+
+        // 11. Rehydrate Lucide icons if dynamically injected
+        if (window.lucide && typeof window.lucide.createIcons === "function") {
+          window.lucide.createIcons();
+        }
+      }
+
+      function renderAgentOneLiner(p) {
+        const persona = document.getElementById("select-agent-persona").value || "sarcastic";
+        let oneliner = "";
+
+        if (p.roasts && p.roasts[persona]) {
+          oneliner = p.roasts[persona];
+        } else {
+          oneliner = generateDynamicOneLiner(p, persona);
+        }
+
+        const cat = p.category || resolveCategory(p);
+        const app = p.appraisal || resolveAppraisal(p);
+
+        // One-liner box initial update (deterministic baseline / instant display)
+        document.getElementById("agent-oneliner-text").textContent = oneliner;
+        document.getElementById("badge-oneliner-category").textContent = cat;
+        document.getElementById("badge-oneliner-category").className = "badge badge-warning badge-sm font-bold gap-1 text-[11px] shadow-sm";
+        document.getElementById("oneliner-timestamp").textContent = new Date().toLocaleTimeString();
+        document.getElementById("agent-status-label").textContent = "Consulting Antigravity CLI Agent...";
+
+        // Appraisal indicators
+        document.getElementById("agent-appraisal-meta").innerHTML = `<i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> ${app.meta}`;
+        document.getElementById("agent-appraisal-synergy").innerHTML = `<i data-lucide="flame" class="w-3.5 h-3.5"></i> ${app.synergy}`;
+        document.getElementById("agent-appraisal-career").innerHTML = `<i data-lucide="briefcase" class="w-3.5 h-3.5"></i> ${app.career}`;
+
+        // Chain-of-Thought Telemetry
+        const total = Object.values(p.stats).reduce((a, b) => a + b, 0);
+        document.getElementById("trace-step-1").textContent =
+          `Scanned species: ${p.name}. Type: ${p.types.join("/")}. BST: ${total}. Primary peak: ${p.stats.speed > 100 ? "Speed" : "Power"}.`;
+        document.getElementById("trace-step-2").textContent =
+          `Transmitting biometrics to local agy CLI via HTTP POST /api/agent-roast (Zero API key mode)...`;
+        document.getElementById("trace-step-3").textContent =
+          `Awaiting non-deterministic model completion from Google Antigravity...`;
+
+        // Store for history export
+        p._activeOneliner = oneliner;
+        p._activeCategory = cat;
+
+        // TWO-WAY STREET: Query the local CLI agent for genuine non-deterministic roast!
+        const fetchId = p.id;
+        fetch("/api/agent-roast", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: p.name,
+            types: p.types,
+            stats: p.stats,
+            persona: persona
+          })
+        })
+        .then((res) => {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json();
+        })
+        .then((data) => {
+          if (data && data.ok && data.oneliner && currentPokemon.id === fetchId) {
+            // Live AI roast arrived!
+            document.getElementById("agent-oneliner-text").textContent = data.oneliner;
+            document.getElementById("badge-oneliner-category").innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-success animate-pulse mr-1"></span> LIVE AI &bull; NON-DETERMINISTIC`;
+            document.getElementById("badge-oneliner-category").className = "badge badge-success badge-sm font-bold gap-1 text-[11px] shadow-sm text-success-content";
+            document.getElementById("agent-status-label").textContent = `Live Inference via ${data.agent}`;
+            document.getElementById("trace-step-2").textContent = `Local agy session synthesized unique punchline with persona '${data.persona}'.`;
+            document.getElementById("trace-step-3").textContent = `Non-deterministic response streamed into DOM without external API keys.`;
+            p._activeOneliner = data.oneliner;
+            p._activeCategory = "LIVE AI";
+            updateLatestHistoryRow(p);
+          }
+        })
+        .catch((err) => {
+          // Offline fallback / standalone mode: retain baseline
+          document.getElementById("agent-status-label").textContent = "Local Autonomous Engine (Offline/Fallback Mode)";
+          document.getElementById("trace-step-3").textContent = "Generated via local heuristic engine.";
+        });
+      }
+
+      function updateLatestHistoryRow(p) {
+        const tbody = document.getElementById("table-history-body");
+        if (!tbody || !tbody.firstElementChild) return;
+        const firstRow = tbody.firstElementChild;
+        const onelinerCell = firstRow.querySelector("td:nth-child(5)");
+        const badgeCell = firstRow.querySelector("td:nth-child(6) span");
+        if (onelinerCell) {
+          onelinerCell.innerHTML = `&ldquo;${p._activeOneliner}&rdquo;`;
+        }
+        if (badgeCell) {
+          badgeCell.textContent = "LIVE AI";
+          badgeCell.className = "badge badge-xs badge-success text-success-content font-bold text-[10px] truncate max-w-[90px]";
+        }
+      }
+
+      function appendHistoryRow(p) {
+        const tbody = document.getElementById("table-history-body");
+        if (!tbody) return;
+
+        const tr = document.createElement("tr");
+        tr.className = "hover";
+
+        const now = new Date();
+        const timeStr = `${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+        const dexStr = "#" + String(p.id).padStart(4, "0");
+        const bst = Object.values(p.stats).reduce((a, b) => a + b, 0);
+
+        tr.innerHTML = `
+          <td class="font-mono text-base-content/60 text-[11px]">${timeStr}</td>
+          <td class="font-mono font-bold text-primary text-[11px]">${dexStr}</td>
+          <td>
+            <div class="flex items-center gap-1.5 truncate">
+              <div class="avatar shrink-0">
+                <div class="mask mask-squircle w-5 h-5 bg-base-300">
+                  <img src="${p.sprite}" alt="${p.name}" />
+                </div>
+              </div>
+              <div class="truncate">
+                <div class="font-bold capitalize truncate text-xs">${p.name}</div>
+                <div class="badge badge-xs text-[8px] font-black uppercase">${p.types[0] || "NORM"}</div>
+              </div>
+            </div>
+          </td>
+          <td class="font-mono font-bold hidden lg:table-cell text-[11px]">${bst}</td>
+          <td class="italic text-base-content/80 break-words leading-tight text-xs">
+            &ldquo;${p._activeOneliner || "..."}&rdquo;
+          </td>
+          <td class="text-right hidden md:table-cell">
+            <span class="badge badge-xs badge-outline font-bold text-[10px] truncate max-w-[90px]">${p._activeCategory || "ROAST"}</span>
+          </td>
+        `;
+
+        // Prepend to top of table
+        if (tbody.firstChild) {
+          tbody.insertBefore(tr, tbody.firstChild);
+        } else {
+          tbody.appendChild(tr);
+        }
+
+        // Limit table rows to 25 to prevent memory bloat
+        while (tbody.children.length > 25) {
+          tbody.removeChild(tbody.lastChild);
+        }
+
+        historyLog.unshift({
+          timestamp: now.toISOString(),
+          id: p.id,
+          name: p.name,
+          types: p.types,
+          bst: bst,
+          oneliner: p._activeOneliner,
+          category: p._activeCategory
+        });
+      }
+
+      // -----------------------------------------------------------------------
+      // 6. REAL-TIME 15-SECOND POKÉAPI FETCHER
+      // -----------------------------------------------------------------------
+      function getRandomIdForGen(gen) {
+        if (gen === "gen1") return Math.floor(Math.random() * 151) + 1;
+        if (gen === "gen2") return Math.floor(Math.random() * 100) + 152;
+        if (gen === "gen3") return Math.floor(Math.random() * 135) + 252;
+        if (gen === "gen4") return Math.floor(Math.random() * 107) + 387;
+        return Math.floor(Math.random() * 1025) + 1; // All Gens 1-9
+      }
+
+      async function fetchPokemon() {
+        const gen = document.getElementById("select-generation").value || "all";
+        const id = getRandomIdForGen(gen);
+        const apiStatusEl = document.getElementById("live-api-status");
+
+        try {
+          if (apiStatusEl) apiStatusEl.textContent = `API: fetching #${id}...`;
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+          const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`, {
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const data = await res.json();
+
+          const statsObj = {};
+          data.stats.forEach((s) => {
+            const key = s.stat.name.replace("-", "");
+            statsObj[key] = s.base_stat;
+          });
+
+          const p = {
+            id: data.id,
+            name: data.name,
+            types: data.types.map((t) => t.type.name),
+            height: data.height,
+            weight: data.weight,
+            abilities: data.abilities.map((a) => a.ability.name),
+            stats: {
+              hp: statsObj.hp || 50,
+              attack: statsObj.attack || 50,
+              defense: statsObj.defense || 50,
+              spatk: statsObj.specialattack || 50,
+              spdef: statsObj.specialdefense || 50,
+              speed: statsObj.speed || 50
+            },
+            sprite: data.sprites?.other?.["official-artwork"]?.front_default ||
+                    data.sprites?.front_default ||
+                    `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${data.id}.png`
+          };
+
+          if (apiStatusEl) apiStatusEl.textContent = "API: pokeapi.co • OK";
+          renderPokemon(p);
+        } catch (err) {
+          console.warn("[PokéLive] API fetch failed or offline, using reserve:", err);
+          if (apiStatusEl) apiStatusEl.textContent = "API: Offline / Reserve Mode";
+          // Pick a random one from offline reserve
+          const fallback = POKEMON_RESERVE[Math.floor(Math.random() * POKEMON_RESERVE.length)];
+          renderPokemon(fallback);
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // 7. COUNTDOWN & INTERVAL ORCHESTRATION (15s CADENCE)
+      // -----------------------------------------------------------------------
+      let countdown = 15;
+      let isPaused = false;
+      let timerInterval = null;
+
+      function tickSecond() {
+        if (isPaused) return;
+        countdown--;
+        const timerEl = document.getElementById("countdown-timer");
+        if (timerEl) timerEl.textContent = countdown;
+
+        if (countdown <= 0) {
+          countdown = 15;
+          if (timerEl) timerEl.textContent = countdown;
+          fetchPokemon();
+        }
+      }
+
+      function startCadence() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(tickSecond, 1000);
+      }
+
+      // -----------------------------------------------------------------------
+      // 8. EVENT LISTENERS & CONTROLS
+      // -----------------------------------------------------------------------
+      document.addEventListener("DOMContentLoaded", () => {
+        // Initialize Radar & Type charts with Pikachu baseline
+        initRadarChart(POKEMON_RESERVE[0].stats);
+        initTypeChart();
+
+        // Start 15s interval poller
+        startCadence();
+
+        // Button: Force Encounter Now
+        const btnForce = document.getElementById("btn-force-encounter");
+        if (btnForce) {
+          btnForce.addEventListener("click", () => {
+            countdown = 15;
+            const timerEl = document.getElementById("countdown-timer");
+            if (timerEl) timerEl.textContent = countdown;
+            fetchPokemon();
+          });
+        }
+
+        // Button: Pause / Resume Toggle
+        const btnPause = document.getElementById("btn-toggle-pause");
+        if (btnPause) {
+          btnPause.addEventListener("click", () => {
+            isPaused = !isPaused;
+            const textEl = document.getElementById("text-pause-btn");
+            const iconEl = document.getElementById("icon-pause-btn");
+            if (isPaused) {
+              if (textEl) textEl.textContent = "Resume";
+              btnPause.classList.add("btn-warning");
+            } else {
+              if (textEl) textEl.textContent = "Pause";
+              btnPause.classList.remove("btn-warning");
+            }
+          });
+        }
+
+        // Button: Sound FX Toggle
+        const btnSound = document.getElementById("btn-toggle-sound");
+        if (btnSound) {
+          btnSound.addEventListener("click", () => {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById("icon-sound");
+            if (soundEnabled) {
+              icon.setAttribute("data-lucide", "volume-2");
+              icon.classList.remove("text-base-content/60");
+              icon.classList.add("text-primary");
+              playRetroEncounterChime();
+            } else {
+              icon.setAttribute("data-lucide", "volume-x");
+              icon.classList.add("text-base-content/60");
+              icon.classList.remove("text-primary");
+            }
+            if (window.lucide) window.lucide.createIcons();
+          });
+        }
+
+        // Persona Selector Change
+        const selectPersona = document.getElementById("select-agent-persona");
+        if (selectPersona) {
+          selectPersona.addEventListener("change", () => {
+            const val = selectPersona.value;
+            const names = {
+              sarcastic: "Agent Oak AI (Critic)",
+              strategist: "Agent Smogon (Strategist)",
+              oak: "Professor Oak (Exasperated)",
+              hype: "Caster Brock (Esports)"
+            };
+            document.getElementById("agent-display-name").textContent = names[val] || "Agent Oak AI";
+            renderAgentOneLiner(currentPokemon);
+          });
+        }
+
+        // Re-roll One-Liner Button
+        const btnReroll = document.getElementById("btn-reroll-oneliner");
+        if (btnReroll) {
+          btnReroll.addEventListener("click", () => {
+            renderAgentOneLiner(currentPokemon);
+          });
+        }
+
+        // Export JSON History
+        const btnExport = document.getElementById("btn-export-history");
+        if (btnExport) {
+          btnExport.addEventListener("click", () => {
+            const blob = new Blob([JSON.stringify(historyLog, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `pokelive-encounters-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+          });
+        }
+
+        // Clear History
+        const btnClear = document.getElementById("btn-clear-history");
+        if (btnClear) {
+          btnClear.addEventListener("click", () => {
+            const tbody = document.getElementById("table-history-body");
+            if (tbody) tbody.innerHTML = "";
+            historyLog.length = 0;
+            encounterTotal = 0;
+            document.getElementById("stat-encounter-count").textContent = "0";
+            document.getElementById("badge-history-count").textContent = "0 Recorded";
+          });
+        }
+
+        // Inline PWA Install Button
+        const btnPwa = document.getElementById("btn-pwa-inline-install");
+        if (btnPwa) {
+          btnPwa.addEventListener("click", () => {
+            const navInstall = document.getElementById("pwa-install-btn");
+            if (navInstall) {
+              navInstall.click();
+            } else if (window.deferredInstallPrompt) {
+              window.deferredInstallPrompt.prompt();
+            } else {
+              alert("PWA is already installed or your browser supports installing via the browser address bar icon (+).");
+            }
+          });
+        }
+      });
+    })();
+  </script>
+</main>
