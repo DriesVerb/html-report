@@ -169,17 +169,18 @@ The built-in client runtime provides a **turnkey AI agent reconnection prompt** 
 The modal presents a pre-configured prompt synthesized client-side via `HTMLReportAgent.getReconnectPrompt()`:
 
 ````markdown
-# Restore Two-Way Agent Bridge for Report
+I am viewing an interactive publication report: "<Report Title>" (<ReportFile>).
+This report features an active Two-Way AI Agent Bridge and Datastar live hypermedia, but the local development server is currently offline or disconnected.
 
-The two-way AI agent bridge for interactive report **"<Report Title>"** is currently offline or disconnected.
-
-Please restore the agent bridge by running the following dev server command in your workspace:
-
+Please restore the two-way agent bridge by starting the report dev server in the background:
 ```bash
 node skills/html-report/scripts/serve-report.mjs <ReportFile> --port 3000 --no-open
 ```
 
-Once started, this report at `http://localhost:3000` will automatically detect the bridge and reconnect without requiring a page reload.
+Prerequisites & Instructions:
+- Requires Node.js (v18+) in your workspace to run the dev server (uses standard node libraries; zero npm dependencies or npm install required).
+- If Node.js is not installed on this machine, please inform the user that this report is already 100% readable and interactive in static offline mode without Node.
+- Once started, keep this process running in the background. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.
 ````
 
 A single click on **"Copy AI Agent Prompt"** copies the exact instruction to the clipboard. The recipient developer can paste this directly into their autonomous coding agent (Antigravity CLI `agy`, Claude Code, Cursor, Codex, etc.).

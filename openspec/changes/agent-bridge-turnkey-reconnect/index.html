@@ -380,6 +380,14 @@
           This report features an interactive <strong>Two-Way AI Agent Co-Pilot</strong> with Datastar live streaming. Because it was shared or opened without an active local server on <code>localhost:3000</code>, the agent bridge is currently disconnected.
         </p>
 
+        <div class="flex items-start gap-2.5 p-2.5 rounded-lg bg-info/10 border border-info/20 text-xs text-base-content/80">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-info shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <div>
+            <span class="font-semibold text-info">Node.js Requirement:</span>
+            <span> <span class="font-mono font-semibold">Node.js (v18+)</span> is only needed to run the local dev server bridge (zero <code>npm install</code> needed). If you don't have Node, you can continue viewing and interacting with the report offline with zero dependencies.</span>
+          </div>
+        </div>
+
         <div class="p-3.5 rounded-xl bg-base-200/60 border border-base-300 space-y-2.5">
           <div class="flex items-center justify-between text-xs font-semibold text-base-content flex-wrap gap-2">
             <span class="flex items-center gap-1.5">
@@ -590,7 +598,10 @@ sequenceDiagram
     <pre data-prefix="4"><code class="text-warning">Please restore the two-way agent bridge by starting the report dev server in the background:</code></pre>
     <pre data-prefix="5"><code class="text-success font-bold">node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3000 --no-open</code></pre>
     <pre data-prefix="6"><code></code></pre>
-    <pre data-prefix="7"><code>Keep this process running. The report will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.</code></pre>
+    <pre data-prefix="7"><code class="text-info font-semibold">Prerequisites &amp; Instructions:</code></pre>
+    <pre data-prefix="8"><code>- Requires Node.js (v18+) in your workspace to run dev server (zero npm dependencies).</code></pre>
+    <pre data-prefix="9"><code>- If Node is not installed, inform user report is 100% usable in offline mode without Node.</code></pre>
+    <pre data-prefix="10"><code>- Once started, keep this running. The report will automatically reconnect.</code></pre>
   </div>
 
   <div class="flex items-center justify-between pt-2 flex-wrap gap-2">
@@ -817,7 +828,11 @@ Please restore the two-way agent bridge by starting the report dev server in the
 \`\`\`bash
 node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3000 --no-open
 \`\`\`
-Once started, keep this process running. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.`;
+
+Prerequisites & Instructions:
+- Requires Node.js (v18+) in your workspace to run the dev server (uses standard node libraries; zero npm dependencies or npm install required).
+- If Node.js is not installed on this machine, please inform the user that this report is already 100% readable and interactive in static offline mode without Node.
+- Once started, keep this process running in the background. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.`;
 
     navigator.clipboard.writeText(prompt).then(() => {
       const orig = btn.innerHTML;
@@ -2875,7 +2890,11 @@ Please restore the two-way agent bridge by starting the report dev server in the
 \`\`\`bash
 node skills/html-report/scripts/serve-report.mjs ${filename} --port ${port} --no-open
 \`\`\`
-Once started, keep this process running. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.`;
+
+Prerequisites & Instructions:
+- Requires Node.js (v18+) in your workspace to run the dev server (uses standard node libraries; zero npm dependencies or npm install required).
+- If Node.js is not installed on this machine, please inform the user that this report is already 100% readable and interactive in static offline mode without Node.
+- Once started, keep this process running in the background. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.`;
   },
 
   copyReconnectPrompt: async function(btnEl, options = {}) {

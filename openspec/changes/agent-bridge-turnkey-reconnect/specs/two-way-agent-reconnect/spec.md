@@ -24,7 +24,8 @@ The system MUST dynamically generate a clean, copy-ready AI instruction prompt t
 
 #### Scenario: Formatting the turnkey reconnection prompt
 - **WHEN** a user or client requests the reconnection prompt via `HTMLReportAgent.getReconnectPrompt()` or clicks "Copy Reconnect Prompt"
-- **THEN** the returned prompt MUST specify the current document filename, port target (`3000`), the exact shell command to launch (`node skills/html-report/scripts/serve-report.mjs <filename> --port 3000`), and background execution instructions.
+- **THEN** the returned prompt MUST specify the current document filename, port target (`3000`), the exact shell command to launch (`node skills/html-report/scripts/serve-report.mjs <filename> --port 3000`), and background execution instructions
+- **AND** the prompt MUST specify the Node.js (v18+) runtime prerequisite and provide agent fallback instructions for offline mode if Node is unavailable.
 
 ### Requirement: Clipboard Copy Affordance & User Feedback
 The report UI MUST provide a prominent, accessible copy button allowing the user to copy the synthesized prompt with immediate visual confirmation.

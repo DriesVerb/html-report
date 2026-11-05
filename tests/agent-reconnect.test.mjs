@@ -18,6 +18,8 @@ test("Turnkey AI Agent Reconnection & Auto-Recovery", async (t) => {
     assert.ok(prompt.includes("node skills/html-report/scripts/serve-report.mjs quarterly-report.html --port 3000"), "Must include exact launch command");
     assert.ok(prompt.includes("background"), "Must mention running in background");
     assert.ok(prompt.includes("Two-Way AI Agent Bridge"), "Must identify two-way bridge capability");
+    assert.ok(prompt.includes("Node.js (v18+)"), "Must specify Node.js prerequisite");
+    assert.ok(prompt.includes("offline mode without Node"), "Must explain offline fallback if Node is not available");
   });
 
   await t.test("HTMLReportAgent handles connection state transitions and listeners", async () => {
@@ -61,6 +63,7 @@ test("Turnkey AI Agent Reconnection & Auto-Recovery", async (t) => {
     assert.ok(res.html.includes('id="agent-bridge-status-container"'), "Shell must include agent bridge status container in navbar");
     assert.ok(res.html.includes('id="agent-bridge-status-btn"'), "Shell must include status button trigger");
     assert.ok(res.html.includes('id="agent-reconnect-modal"'), "Shell must include turnkey reconnection modal dialog");
+    assert.ok(res.html.includes("Node.js Requirement:"), "Shell must include clear Node.js prerequisite notice");
     assert.ok(res.html.includes('id="agent-reconnect-prompt-preview"'), "Shell must include prompt preview container");
     assert.ok(res.html.includes('id="copy-reconnect-prompt-btn"'), "Shell must include copy prompt action button");
     assert.ok(res.html.includes('id="retry-connection-btn"'), "Shell must include check connection retry button");

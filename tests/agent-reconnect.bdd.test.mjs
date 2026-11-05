@@ -86,6 +86,11 @@ bindOpenSpec("two-way-agent-reconnect", {
       assert.ok(prompt.includes("node skills/html-report/scripts/serve-report.mjs executive-summary.html --port 3000"), "Must include launch command");
       assert.ok(prompt.includes("background"), "Must mention running in background");
     });
+
+    await Then("the prompt MUST specify the Node.js (v18+) runtime prerequisite and provide agent fallback instructions for offline mode if Node is unavailable", () => {
+      assert.ok(prompt.includes("Node.js (v18+)"), "Must specify Node.js requirement");
+      assert.ok(prompt.includes("offline mode without Node"), "Must specify offline fallback");
+    });
   },
 
   "Copying the prompt to system clipboard": async ({ When, Then }) => {

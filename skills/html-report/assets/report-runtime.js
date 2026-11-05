@@ -2029,7 +2029,11 @@ Please restore the two-way agent bridge by starting the report dev server in the
 \`\`\`bash
 node skills/html-report/scripts/serve-report.mjs ${filename} --port ${port} --no-open
 \`\`\`
-Once started, keep this process running. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.`;
+
+Prerequisites & Instructions:
+- Requires Node.js (v18+) in your workspace to run the dev server (uses standard node libraries; zero npm dependencies or npm install required).
+- If Node.js is not installed on this machine, please inform the user that this report is already 100% readable and interactive in static offline mode without Node.
+- Once started, keep this process running in the background. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.`;
   },
 
   copyReconnectPrompt: async function(btnEl, options = {}) {
