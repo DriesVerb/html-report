@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-report-mode="live-report" lang="en" data-theme="light" class="scroll-smooth">
+<html data-report-mode="report" lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <!-- Pre-paint theme restore: apply the saved theme before any CSS renders (prevents light-theme flash on reload) -->
@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Reactive Agent Data & Multimodal Co-Pilot - Journey & Plan</title>
+  <title>Turnkey AI Agent Reconnection Prompt - Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -31,10 +31,7 @@
   </style>
 
   <!-- Optional Addon CDNs & Styles -->
-    <!-- Addon: Chart.js -->
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
-
-  <!-- Addon: Mermaid -->
+    <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
 
   <!-- Addon: Showdown -->
@@ -234,13 +231,27 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Reactive Agent Data & Multimodal Co-Pilot - Journey & Plan
+          Turnkey AI Agent Reconnection Prompt - Journey & Plan
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
 
       <!-- Right: TOC + Theme Picker + Download Menu -->
       <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
+        <!-- 0. Two-Way Agent Bridge Status Badge (Auto-updates via HTMLReportAgent) -->
+        <div id="agent-bridge-status-container" class="hidden items-center">
+          <button
+            id="agent-bridge-status-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.openReconnectModal();"
+            class="badge badge-xs sm:badge-sm font-mono gap-1 transition shadow-sm cursor-pointer border border-base-300"
+            title="Two-Way Agent Bridge Status"
+          >
+            <span id="agent-bridge-status-indicator" class="inline-block w-1.5 h-1.5 rounded-full bg-base-content/40"></span>
+            <span id="agent-bridge-status-text">Checking Agent...</span>
+          </button>
+        </div>
+
         <!-- 1. TOC Dropdown -->
         <div class="dropdown dropdown-end" id="toc-dropdown">
           <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
@@ -348,6 +359,77 @@
     </div>
   </dialog>
 
+  <!-- Turnkey AI Agent Reconnection Modal -->
+  <dialog id="agent-reconnect-modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box bg-base-100 border border-base-300 shadow-2xl max-w-2xl text-left">
+      <div class="flex items-center justify-between pb-3 border-b border-base-200">
+        <div class="flex items-center gap-2.5">
+          <span class="p-2 rounded-xl bg-warning/20 text-warning">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </span>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-base-content">Restore Two-Way Agent Bridge</h3>
+            <p class="text-xs text-base-content/60">Local dev server is offline or unreachable</p>
+          </div>
+        </div>
+        <button type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.closeReconnectModal();" class="btn btn-sm btn-circle btn-ghost">✕</button>
+      </div>
+
+      <div class="space-y-4 pt-4 text-xs sm:text-sm text-base-content/80">
+        <p>
+          This report features an interactive <strong>Two-Way AI Agent Co-Pilot</strong> with Datastar live streaming. Because it was shared or opened without an active local server on <code>localhost:3000</code>, the agent bridge is currently disconnected.
+        </p>
+
+        <div class="p-3.5 rounded-xl bg-base-200/60 border border-base-300 space-y-2.5">
+          <div class="flex items-center justify-between text-xs font-semibold text-base-content flex-wrap gap-2">
+            <span class="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              Turnkey AI Agent Prompt (Copy &amp; Paste into Your Agent)
+            </span>
+            <span class="badge badge-xs badge-outline font-mono">Antigravity / Claude Code / Codex</span>
+          </div>
+
+          <pre id="agent-reconnect-prompt-preview" class="p-3.5 bg-neutral text-neutral-content rounded-lg font-mono text-xs overflow-x-auto whitespace-pre-wrap select-all leading-relaxed"></pre>
+
+          <div class="flex items-center justify-between gap-2 pt-1 flex-wrap">
+            <button
+              id="copy-reconnect-prompt-btn"
+              type="button"
+              onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.copyReconnectPrompt(this);"
+              class="btn btn-primary btn-sm gap-2 font-mono"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span>Copy Agent Prompt</span>
+            </button>
+            <span class="text-[11px] text-base-content/50">Paste directly into your AI agent terminal</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-base-200 pt-3 flex-wrap gap-2">
+          <button
+            id="retry-connection-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.checkConnection(this);"
+            class="btn btn-outline btn-sm gap-2 font-mono"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+            <span>Check Connection Now</span>
+          </button>
+          <button
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.closeReconnectModal();"
+            class="btn btn-ghost btn-sm"
+          >
+            Continue in Offline Mode
+          </button>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
   <!-- Main Content Container -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
 <!-- ========================================== -->
@@ -356,28 +438,25 @@
 <header class="space-y-6 border-b border-base-300 pb-8">
   <div class="flex items-center gap-2 flex-wrap">
     <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
-    <span class="badge badge-outline font-mono text-xs">reactive-agent-data-copilot</span>
+    <span class="badge badge-outline font-mono text-xs">agent-bridge-turnkey-reconnect</span>
     <span class="badge badge-success font-mono text-xs font-semibold gap-1">
-      <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Phase 4: Implementation Complete &amp; Verified
+      <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Phase 4: Verifying & Ready to Ship
     </span>
     <span class="badge badge-secondary font-mono text-xs font-semibold gap-1">
-      <i data-lucide="radio" class="w-3.5 h-3.5"></i> Datastar SSE Hypermedia
+      <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Auto-Recovery & Heartbeat
     </span>
     <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
-      <i data-lucide="eye" class="w-3.5 h-3.5"></i> Multimodal (Vision + API + Ticker)
-    </span>
-    <span class="badge badge-info font-mono text-xs font-semibold gap-1">
-      <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Model-Agnostic Co-Pilot
+      <i data-lucide="terminal" class="w-3.5 h-3.5"></i> Turnkey Agent Prompts
     </span>
   </div>
 
   <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
     <div class="space-y-2">
       <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
-        Reactive Agent Data &amp; Multimodal Co-Pilot
+        Turnkey AI Agent Reconnection Prompt &amp; Auto-Recovery
       </h1>
       <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
-        Live, bidirectional coupling between heterogeneous report feeds (visual images like Pokémon sprites, weather API streams, financial charts) and autonomous AI agent feedback loops rendered via Datastar.js hypermedia SSE.
+        When an interactive report with an autonomous two-way agent bridge is shared with a colleague or opened without an active dev server, the report detects the broken connection, generates a turnkey copy-paste AI prompt for any agent, and auto-recovers live status upon server activation.
       </p>
     </div>
 
@@ -392,569 +471,210 @@
       <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
         <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
       </button>
-      <button type="button" onclick="openMarkdownViewer('specs/reactive-data-copilot/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+      <button type="button" onclick="openMarkdownViewer('specs/two-way-agent-reconnect/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-info transition">
         <i data-lucide="layers" class="w-4 h-4 text-info"></i> spec.md
       </button>
     </div>
   </div>
 
-  <!-- Mandatory Journey Stepper -->
-  <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
-    <div class="flex items-center justify-between text-xs font-bold text-base-content/70">
-      <span class="flex items-center gap-1.5">
-        <i data-lucide="git-pull-request" class="w-4 h-4 text-primary"></i> Current Journey State
-      </span>
-      <span class="font-mono text-success">Stage 4 Active · Implementation Complete &amp; Verified</span>
-    </div>
-    <div class="w-full overflow-x-auto py-2">
-      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
-        <li id="stepper-phase-1" class="step step-primary font-bold">1. Brainstorming</li>
-        <li id="stepper-phase-2" class="step step-primary font-bold">2. Planning</li>
-        <li id="stepper-phase-3" class="step step-primary font-bold">3. Implementing</li>
-        <li id="stepper-phase-4" class="step step-primary font-bold">4. Verifying</li>
-        <li id="stepper-phase-5" class="step">5. Shipped / Complete</li>
-      </ul>
-    </div>
+  <!-- Journey Stepper Standard -->
+  <div class="w-full overflow-x-auto pt-2">
+    <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+      <li class="step step-primary" data-content="✓">Brainstorming</li>
+      <li class="step step-primary" data-content="✓">Planning</li>
+      <li class="step step-primary" data-content="✓">Implementing</li>
+      <li class="step step-primary" data-content="●">Verifying</li>
+      <li class="step" data-content="5">Shipped / Archived</li>
+    </ul>
   </div>
 </header>
 
 <!-- ========================================== -->
-<!-- 1. LIVE PROGRESS METRICS & STATS           -->
+<!-- METRICS & LIVE PROGRESS SCORECARD          -->
 <!-- ========================================== -->
-<section id="progress-metrics" class="space-y-4">
-  <div class="flex items-center justify-between">
-    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
-      <i data-lucide="activity" class="w-6 h-6 text-primary"></i>
-      Journey Progress &amp; Milestone Metrics
-    </h2>
-    <span class="badge badge-outline text-xs font-mono">Synced with tasks.md</span>
+<section class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
+  <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-4">
+    <div class="stat-figure text-primary">
+      <i data-lucide="list-checks" class="w-7 h-7"></i>
+    </div>
+    <div class="stat-title text-xs font-semibold uppercase tracking-wider text-base-content/60">Total Tasks</div>
+    <div class="stat-value text-2xl sm:text-3xl font-black text-primary">9 / 9</div>
+    <div class="stat-desc text-xs text-success font-semibold">100% Completed</div>
   </div>
 
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
-      <div class="stat-figure text-primary">
-        <i data-lucide="list-todo" class="w-8 h-8"></i>
-      </div>
-      <div class="stat-title text-xs font-semibold">Total Milestones</div>
-      <div id="stat-total-tasks" class="stat-value text-2xl font-black text-primary">9</div>
-      <div class="stat-desc text-xs text-base-content/60">Across 3 core phases</div>
+  <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-4">
+    <div class="stat-figure text-success">
+      <i data-lucide="check-check" class="w-7 h-7"></i>
     </div>
+    <div class="stat-title text-xs font-semibold uppercase tracking-wider text-base-content/60">Status</div>
+    <div class="stat-value text-2xl sm:text-3xl font-black text-success">Verified</div>
+    <div class="stat-desc text-xs text-success font-semibold">All Tests Passing</div>
+  </div>
 
-    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
-      <div class="stat-figure text-success">
-        <i data-lucide="check-circle-2" class="w-8 h-8"></i>
-      </div>
-      <div class="stat-title text-xs font-semibold">Completed Tasks</div>
-      <div class="stat-value text-2xl font-black text-success">9</div>
-      <div class="stat-desc text-xs text-base-content/60">100% milestones complete</div>
+  <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-4">
+    <div class="stat-figure text-success">
+      <i data-lucide="shield-check" class="w-7 h-7"></i>
     </div>
+    <div class="stat-title text-xs font-semibold uppercase tracking-wider text-base-content/60">Tests Passed</div>
+    <div class="stat-value text-2xl sm:text-3xl font-black text-success">333</div>
+    <div class="stat-desc text-xs text-success">100% Suite Parity</div>
+  </div>
 
-    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
-      <div class="stat-figure text-secondary">
-        <i data-lucide="clock" class="w-8 h-8"></i>
-      </div>
-      <div class="stat-title text-xs font-semibold">In Progress</div>
-      <div id="stat-in-progress-tasks" class="stat-value text-2xl font-black text-secondary">0</div>
-      <div class="stat-desc text-xs text-base-content/60">0 remaining milestones</div>
+  <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-4">
+    <div class="stat-figure text-secondary">
+      <i data-lucide="radio" class="w-7 h-7"></i>
     </div>
-
-    <div class="stat bg-base-100 border border-base-300 rounded-box p-4 shadow-sm">
-      <div class="stat-figure text-accent">
-        <i data-lucide="shield-check" class="w-8 h-8"></i>
-      </div>
-      <div class="stat-title text-xs font-semibold">Test Suite Status</div>
-      <div class="stat-value text-2xl font-black text-accent">14 / 14</div>
-      <div class="stat-desc text-xs text-base-content/60">100% tests passing</div>
-    </div>
+    <div class="stat-title text-xs font-semibold uppercase tracking-wider text-base-content/60">Recovery Protocol</div>
+    <div class="stat-value text-2xl sm:text-3xl font-black text-secondary">Turnkey</div>
+    <div class="stat-desc text-xs text-base-content/60">Zero-Config AI Paste</div>
   </div>
 </section>
 
 <!-- ========================================== -->
-<!-- 2. MULTIMODAL SHOWCASE & INTERACTIVE DEMO  -->
+<!-- ARCHITECTURE FLOW                          -->
 <!-- ========================================== -->
-<section id="concept-demo" class="space-y-4">
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-    <div>
-      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
-        <i data-lucide="play-circle" class="w-6 h-6 text-primary"></i>
-        Interactive Multimodal Showcase: Live Telemetry &amp; Multimodal Agent Reaction
+<section class="mt-8 bg-base-100 rounded-box border border-base-300 p-6 shadow-sm space-y-4">
+  <div class="flex items-center justify-between border-b border-base-200 pb-3">
+    <div class="flex items-center gap-2">
+      <i data-lucide="git-branch" class="w-5 h-5 text-secondary"></i>
+      <h2 id="architecture-flow" class="text-lg font-bold text-base-content">
+        Turnkey Reconnection Lifecycle &amp; Multi-Agent Workflow
       </h2>
-      <p class="text-sm text-base-content/70">
-        Switch between modalities below to experience how the agent adapts its real-time reactions across visual images, public weather APIs, and financial tickers.
-      </p>
     </div>
-    <!-- Modality Selector Tabs -->
-    <div class="tabs tabs-boxed bg-base-200 p-1 shrink-0">
-      <button id="tab-modality-finance" onclick="selectModality('finance')" class="tab tab-active gap-1.5 text-xs font-bold transition">
-        <i data-lucide="line-chart" class="w-3.5 h-3.5"></i> Financial Ticker
-      </button>
-      <button id="tab-modality-pokemon" onclick="selectModality('pokemon')" class="tab gap-1.5 text-xs font-bold transition">
-        <i data-lucide="eye" class="w-3.5 h-3.5"></i> Pokémon Vision
-      </button>
-      <button id="tab-modality-weather" onclick="selectModality('weather')" class="tab gap-1.5 text-xs font-bold transition">
-        <i data-lucide="cloud-sun" class="w-3.5 h-3.5"></i> Weather API
-      </button>
-    </div>
+    <span class="badge badge-sm badge-outline font-mono">Mermaid Sequence</span>
   </div>
 
-  <!-- Interactive Grid: Left Modality Source, Right Live Agent Reaction Panel -->
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-    <!-- Left Column (7 cols): Dynamic Content per Modality -->
-    <div class="lg:col-span-7 card bg-base-100 border border-base-300 shadow-sm p-4 space-y-4">
-
-      <!-- MODALITY 1: FINANCIAL TICKER -->
-      <div id="view-modality-finance" class="space-y-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <div class="badge badge-neutral font-mono font-bold">TECH / USD</div>
-            <span id="current-price-display" class="font-mono text-lg font-black text-base-content">$182.40</span>
-            <span id="current-delta-display" class="badge badge-success badge-sm font-mono">+0.4%</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="badge badge-xs badge-success gap-1 animate-pulse">
-              <span class="w-1.5 h-1.5 rounded-full bg-success"></span> Live 1 tick/sec
-            </span>
-            <button id="toggle-sim-btn" onclick="toggleSimulation()" class="btn btn-3xs btn-outline">
-              <i data-lucide="pause" class="w-3 h-3"></i> Pause
-            </button>
-          </div>
-        </div>
-
-        <!-- Chart Container -->
-        <div class="relative h-64 sm:h-72 w-full">
-          <canvas id="live-ticker-canvas"></canvas>
-        </div>
-
-        <!-- Simulation Action Triggers -->
-        <div class="bg-base-200/60 p-3 rounded-box space-y-2">
-          <div class="text-xs font-bold text-base-content/70 flex items-center justify-between">
-            <span>Simulate Telemetry Events:</span>
-            <span id="filter-status-indicator" class="font-mono text-3xs text-success">Anomaly Engine Armed</span>
-          </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <button onclick="triggerFlashDip()" class="btn btn-xs btn-error gap-1">
-              <i data-lucide="trending-down" class="w-3 h-3"></i> Trigger Flash Dip (-3.8%)
-            </button>
-            <button onclick="triggerBreakout()" class="btn btn-xs btn-success gap-1">
-              <i data-lucide="trending-up" class="w-3 h-3"></i> Trigger Breakout (+4.2%)
-            </button>
-            <button onclick="triggerRoutineTick()" class="btn btn-xs btn-outline gap-1">
-              <i data-lucide="refresh-cw" class="w-3 h-3"></i> Routine Jitter (Filtered)
-            </button>
-            <button onclick="askCoPilotQuestion()" class="btn btn-xs btn-primary gap-1">
-              <i data-lucide="message-square" class="w-3 h-3"></i> Ask: Explain Trend
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- MODALITY 2: POKÉMON MULTIMODAL VISION -->
-      <div id="view-modality-pokemon" class="space-y-4 hidden">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <div class="badge badge-accent font-mono font-bold">Multimodal Vision</div>
-            <span class="text-xs text-base-content/70">Select a creature image to invoke vision inference</span>
-          </div>
-          <span class="badge badge-xs badge-outline font-mono">Gemini 1.5 / GPT-4o Vision</span>
-        </div>
-
-        <!-- Pokemon Sprite Selector Grid -->
-        <div class="grid grid-cols-4 gap-3">
-          <button onclick="selectPokemon('pikachu')" class="pokemon-select-btn p-3 rounded-box border border-primary bg-primary/10 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="pikachu">
-            <div class="w-14 h-14 flex items-center justify-center">
-              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="45" fill="#fde047" stroke="#eab308" stroke-width="3"/>
-                <path d="M25 25 L10 5 L35 15 Z" fill="#eab308"/>
-                <path d="M75 25 L90 5 L65 15 Z" fill="#eab308"/>
-                <circle cx="35" cy="45" r="5" fill="#1e293b"/>
-                <circle cx="65" cy="45" r="5" fill="#1e293b"/>
-                <circle cx="24" cy="58" r="7" fill="#ef4444"/>
-                <circle cx="76" cy="58" r="7" fill="#ef4444"/>
-                <path d="M44 56 Q50 64 56 56" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <span class="font-bold text-xs">Pikachu</span>
-            <span class="badge badge-warning badge-xs">Electric</span>
-          </button>
-
-          <button onclick="selectPokemon('charizard')" class="pokemon-select-btn p-3 rounded-box border border-base-300 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="charizard">
-            <div class="w-14 h-14 flex items-center justify-center">
-              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="45" fill="#ea580c" stroke="#c2410c" stroke-width="3"/>
-                <path d="M30 40 Q50 15 70 40 Q80 20 50 10 Q20 20 30 40 Z" fill="#fdba74"/>
-                <circle cx="38" cy="42" r="4" fill="#0f172a"/>
-                <circle cx="62" cy="42" r="4" fill="#0f172a"/>
-                <path d="M40 60 Q50 72 60 60" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
-                <path d="M48 25 Q50 5 52 25 Z" fill="#f59e0b"/>
-              </svg>
-            </div>
-            <span class="font-bold text-xs">Charizard</span>
-            <span class="badge badge-error badge-xs">Fire/Flying</span>
-          </button>
-
-          <button onclick="selectPokemon('gengar')" class="pokemon-select-btn p-3 rounded-box border border-base-300 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="gengar">
-            <div class="w-14 h-14 flex items-center justify-center">
-              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="45" fill="#7e22ce" stroke="#6b21a8" stroke-width="3"/>
-                <path d="M25 30 L15 10 L35 22 Z" fill="#6b21a8"/>
-                <path d="M75 30 L85 10 L65 22 Z" fill="#6b21a8"/>
-                <path d="M32 40 L45 46 L32 48 Z" fill="#ef4444"/>
-                <path d="M68 40 L55 46 L68 48 Z" fill="#ef4444"/>
-                <path d="M30 62 Q50 82 70 62 Q50 68 30 62 Z" fill="#ffffff" stroke="#3b0764" stroke-width="2"/>
-              </svg>
-            </div>
-            <span class="font-bold text-xs">Gengar</span>
-            <span class="badge badge-secondary badge-xs">Ghost/Poison</span>
-          </button>
-
-          <button onclick="selectPokemon('lucario')" class="pokemon-select-btn p-3 rounded-box border border-base-300 hover:border-primary flex flex-col items-center gap-1 transition text-center" data-pokemon="lucario">
-            <div class="w-14 h-14 flex items-center justify-center">
-              <svg viewBox="0 0 100 100" class="w-12 h-12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="45" fill="#0284c7" stroke="#0369a1" stroke-width="3"/>
-                <path d="M28 25 L18 5 L35 18 Z" fill="#0f172a"/>
-                <path d="M72 25 L82 5 L65 18 Z" fill="#0f172a"/>
-                <rect x="25" y="38" width="50" height="16" rx="4" fill="#0f172a"/>
-                <circle cx="38" cy="46" r="4" fill="#ef4444"/>
-                <circle cx="62" cy="46" r="4" fill="#ef4444"/>
-                <path d="M46 62 Q50 68 54 62" stroke="#0f172a" stroke-width="2"/>
-              </svg>
-            </div>
-            <span class="font-bold text-xs">Lucario</span>
-            <span class="badge badge-info badge-xs">Fighting/Steel</span>
-          </button>
-        </div>
-
-        <!-- Active Pokemon Display Card -->
-        <div class="card bg-base-200/50 border border-base-300 p-4 flex flex-row items-center gap-4">
-          <div id="active-pokemon-svg-container" class="w-20 h-20 shrink-0 flex items-center justify-center">
-            <svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="45" fill="#fde047" stroke="#eab308" stroke-width="3"/>
-              <path d="M25 25 L10 5 L35 15 Z" fill="#eab308"/>
-              <path d="M75 25 L90 5 L65 15 Z" fill="#eab308"/>
-              <circle cx="35" cy="45" r="5" fill="#1e293b"/>
-              <circle cx="65" cy="45" r="5" fill="#1e293b"/>
-              <circle cx="24" cy="58" r="7" fill="#ef4444"/>
-              <circle cx="76" cy="58" r="7" fill="#ef4444"/>
-              <path d="M44 56 Q50 64 56 56" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="space-y-1">
-            <div class="flex items-center gap-2">
-              <h3 id="active-pokemon-name" class="font-black text-base text-base-content">Pikachu #025</h3>
-              <span id="active-pokemon-badge" class="badge badge-warning badge-sm font-semibold">Electric</span>
-            </div>
-            <p id="active-pokemon-desc" class="text-3xs text-base-content/70">
-              When several of these Pokémon gather, their electricity could build and cause lightning storms. High speed and Special Attack.
-            </p>
-            <div class="flex items-center gap-2 pt-1 text-3xs font-mono text-base-content/60">
-              <span>Weakness: Ground (2x)</span> · <span>Resistance: Flying, Steel, Electric (0.5x)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Vision Query Action Buttons -->
-        <div class="flex flex-wrap items-center gap-2">
-          <button onclick="askPokemonTactics()" class="btn btn-xs btn-primary gap-1">
-            <i data-lucide="swords" class="w-3 h-3"></i> Analyze Battle Strategy
-          </button>
-          <button onclick="askPokemonCounters()" class="btn btn-xs btn-outline gap-1">
-            <i data-lucide="shield-alert" class="w-3 h-3"></i> Identify Counters &amp; Threats
-          </button>
-          <button onclick="askPokemonLore()" class="btn btn-xs btn-ghost gap-1">
-            <i data-lucide="book-open" class="w-3 h-3"></i> Dex Lore &amp; Evolution
-          </button>
-        </div>
-      </div>
-
-      <!-- MODALITY 3: WEATHER API STREAM -->
-      <div id="view-modality-weather" class="space-y-4 hidden">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <div class="badge badge-info font-mono font-bold">Public Weather Feed</div>
-            <span class="text-xs text-base-content/70">Declarative REST polling via <code class="font-mono text-3xs">@weather</code></span>
-          </div>
-          <span class="badge badge-xs badge-success gap-1"><span class="w-1.5 h-1.5 rounded-full bg-success"></span> Online</span>
-        </div>
-
-        <!-- Weather Status Card -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="bg-base-200/60 p-3 rounded-box text-center">
-            <div class="text-3xs text-base-content/60 font-semibold">Temperature</div>
-            <div id="weather-temp-display" class="font-black text-xl text-primary">22°C</div>
-            <div id="weather-temp-feel" class="text-3xs text-base-content/60">Feels like 23°C</div>
-          </div>
-          <div class="bg-base-200/60 p-3 rounded-box text-center">
-            <div class="text-3xs text-base-content/60 font-semibold">Conditions</div>
-            <div id="weather-condition-display" class="font-bold text-sm text-base-content flex items-center justify-center gap-1 mt-1">
-              <i id="weather-icon" data-lucide="sun" class="w-4 h-4 text-warning"></i> Sunny
-            </div>
-            <div class="text-3xs text-base-content/60 mt-0.5">UV Index: 6 (Moderate)</div>
-          </div>
-          <div class="bg-base-200/60 p-3 rounded-box text-center">
-            <div class="text-3xs text-base-content/60 font-semibold">Wind &amp; Gusts</div>
-            <div id="weather-wind-display" class="font-mono font-bold text-sm text-base-content mt-1">12 km/h</div>
-            <div class="text-3xs text-base-content/60 mt-0.5">Humidity: 48%</div>
-          </div>
-          <div class="bg-base-200/60 p-3 rounded-box text-center">
-            <div class="text-3xs text-base-content/60 font-semibold">Precipitation</div>
-            <div id="weather-precip-display" class="font-mono font-bold text-sm text-base-content mt-1">0%</div>
-            <div class="text-3xs text-base-content/60 mt-0.5">Barometer: 1014 hPa</div>
-          </div>
-        </div>
-
-        <!-- Weather Simulation Action Triggers -->
-        <div class="bg-base-200/60 p-3 rounded-box space-y-2">
-          <div class="text-xs font-bold text-base-content/70 flex items-center justify-between">
-            <span>Simulate Extreme Weather Transitions:</span>
-            <span class="text-3xs font-mono text-info">Declarative Thresholds</span>
-          </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <button onclick="triggerThunderstorm()" class="btn btn-xs btn-error gap-1">
-              <i data-lucide="cloud-lightning" class="w-3 h-3"></i> Sudden Severe Storm
-            </button>
-            <button onclick="triggerHeatwave()" class="btn btn-xs btn-warning gap-1">
-              <i data-lucide="flame" class="w-3 h-3"></i> Heatwave Spike (38°C)
-            </button>
-            <button onclick="triggerBlizzard()" class="btn btn-xs btn-info gap-1">
-              <i data-lucide="snowflake" class="w-3 h-3"></i> Flash Blizzard (-4°C)
-            </button>
-            <button onclick="triggerClearWeather()" class="btn btn-xs btn-outline gap-1">
-              <i data-lucide="sun" class="w-3 h-3"></i> Clear &amp; Mild (22°C)
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right Column (5 cols): Universal Agent Reaction Panel -->
-    <div class="lg:col-span-5 card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3 flex flex-col justify-between">
-      <!-- Agent Status Header -->
-      <div class="flex items-center justify-between border-b border-base-300 pb-3">
-        <div class="flex items-center gap-2.5">
-          <div class="avatar online placeholder">
-            <div class="bg-primary text-primary-content rounded-full w-9">
-              <i data-lucide="bot" class="w-5 h-5"></i>
-            </div>
-          </div>
-          <div>
-            <div class="font-bold text-xs flex items-center gap-1">
-              <span>Multimodal Co-Pilot</span>
-              <span id="agent-modality-badge" class="badge badge-xs badge-outline font-mono">Time-Series</span>
-            </div>
-            <div id="agent-active-status" class="text-3xs font-mono text-success flex items-center gap-1">
-              <span class="w-2 h-2 rounded-full bg-success"></span> Watching telemetry feed...
-            </div>
-          </div>
-        </div>
-
-        <div id="sentiment-badge-container">
-          <span id="sentiment-badge" class="badge badge-success badge-sm font-semibold gap-1">
-            <i data-lucide="shield-check" class="w-3 h-3"></i> Bullish (Momentum)
-          </span>
-        </div>
-      </div>
-
-      <!-- Agent Reaction Bubble & Thought Stream -->
-      <div id="agent-thought-stream" class="flex-1 overflow-y-auto max-h-64 space-y-2 p-1 text-xs">
-        <div class="chat chat-start">
-          <div class="chat-header text-3xs font-mono opacity-70 mb-0.5">Initial Assessment · 14:00:00</div>
-          <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-sans shadow-sm">
-            Monitoring TECH/USD ticker stream. Volume is within normal 15-minute moving average bounds. Resistance recognized at $186.00, support at $178.50. Standing by for volatility triggers.
-          </div>
-        </div>
-      </div>
-
-      <!-- Token / Cost Efficiency Callout -->
-      <div class="bg-base-200/70 p-2.5 rounded-box text-3xs text-base-content/70 flex items-center justify-between">
-        <span class="flex items-center gap-1 font-mono">
-          <i data-lucide="filter" class="w-3.5 h-3.5 text-primary"></i> Noise filter: <strong id="suppressed-ticks-count">0</strong> ticks suppressed
-        </span>
-        <span class="font-mono text-success font-bold">100% LLM tokens saved on jitter</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========================================== -->
-<!-- 3. ARCHITECTURAL BRAINSTORM & DEEP DIVE    -->
-<!-- ========================================== -->
-<section id="architectural-brainstorm" class="space-y-6">
-  <div class="space-y-2">
-    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
-      <i data-lucide="lightbulb" class="w-6 h-6 text-warning"></i>
-      Architectural Brainstorm: Answers to Key Questions
-    </h2>
-    <p class="text-sm text-base-content/70">
-      Deep analysis of multimodal feasibility, agent-agnostic pipeline design, and evaluation of this capability.
-    </p>
-  </div>
-
-  <!-- 3 Column Multimodal Modality Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <!-- Modality 1 -->
-    <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-sm">
-      <div class="font-bold text-xs flex items-center gap-1.5 text-primary">
-        <i data-lucide="line-chart" class="w-4 h-4"></i> 1. Numerical &amp; Financial
-      </div>
-      <p class="text-3xs text-base-content/70 leading-relaxed">
-        <strong>Data:</strong> Fast-moving numbers, ticks, latency, and CPU metrics.<br/>
-        <strong>Trigger:</strong> Anomaly detection, rolling standard deviation breaches (>2σ), and periodic heartbeats.<br/>
-        <strong>Agent Action:</strong> Market sentiment, anomaly diagnosis, risk calculation.
-      </p>
-    </div>
-
-    <!-- Modality 2 -->
-    <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-sm">
-      <div class="font-bold text-xs flex items-center gap-1.5 text-accent">
-        <i data-lucide="eye" class="w-4 h-4"></i> 2. Visual &amp; Multimodal
-      </div>
-      <p class="text-3xs text-base-content/70 leading-relaxed">
-        <strong>Data:</strong> Images (e.g. Pokémon sprites, camera feeds, screenshots, diagrams).<br/>
-        <strong>Trigger:</strong> Element selection, camera frame delta, or file drag-and-drop.<br/>
-        <strong>Agent Action:</strong> Visual identification, type matchup analysis, diagnostic critique.
-      </p>
-    </div>
-
-    <!-- Modality 3 -->
-    <div class="card bg-base-100 border border-base-300 p-4 space-y-2 shadow-sm">
-      <div class="font-bold text-xs flex items-center gap-1.5 text-info">
-        <i data-lucide="cloud-sun" class="w-4 h-4"></i> 3. Environmental &amp; Public APIs
-      </div>
-      <p class="text-3xs text-base-content/70 leading-relaxed">
-        <strong>Data:</strong> Public REST/WebSocket feeds (<code class="font-mono text-3xs">@weather</code>, Open-Meteo).<br/>
-        <strong>Trigger:</strong> Rapid delta (e.g. temperature drop >5°C in 30 min) or active warning flags.<br/>
-        <strong>Agent Action:</strong> Severe storm advisory, gear suggestions, situational safety.
-      </p>
-    </div>
-  </div>
-
-  <!-- Technical Flow Mermaid Diagram -->
-  <div class="card bg-base-100 border border-base-300 p-5 space-y-4 shadow-sm">
-    <div class="flex items-center justify-between">
-      <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
-        <i data-lucide="git-branch" class="w-4 h-4 text-primary"></i>
-        Multimodal Reactive Telemetry Pipeline Architecture
-      </h3>
-      <span class="badge badge-sm badge-outline font-mono">Mermaid Sequence</span>
-    </div>
-
-    <pre class="mermaid">
+  <div class="mermaid bg-base-200/50 p-4 rounded-xl overflow-x-auto text-xs">
 sequenceDiagram
     autonumber
-    participant Feed as Telemetry Source<br/>(Ticker / Image / Weather API)
-    participant Filter as Anomaly & Cooldown Filter<br/>(Modality-Aware Pre-filter)
-    participant Agent as Multimodal Agent Reactor<br/>(AGY / GPT-4o / Claude / LLaVA)
-    participant SSE as DatastarBridge (SSE)<br/>(/__datastar_stream__)
-    participant DOM as Report Client (Browser)<br/>(DaisyUI + Lucide)
+    actor Recipient as Human Recipient
+    participant Browser as Report in Browser
+    actor Agent as Recipient's AI Agent
+    participant DevServer as Dev Server (serve-report.mjs)
 
-    Feed->>DOM: Ingest visual image, weather tick, or chart candle
-    Feed->>Filter: Emit TelemetryReactorEvent (modality, payload, metadata)
-    Note over Filter: Check modality trigger policy
-    alt Routine noise (sub-threshold delta or identical image)
-        Filter-->>Filter: Suppress LLM call (0 tokens wasted)
-    else Anomaly breached, severe alert, or new creature selected
-        Filter->>Agent: Dispatch Multimodal Evaluation Context
-        Note over Agent: Multimodal LLM Inference (Vision / Reasoning)
-        loop Stream Token Chunks
-            Agent->>SSE: Yield partial commentary / sentiment
-            SSE->>DOM: SSE datastar-fragment (#agent-thought-stream)
-            Note over DOM: Datastar morphs DOM in real-time
-        end
-        SSE->>DOM: SSE datastar-merge-signals (sentiment: Alert, badge: updated)
-    end
-    </pre>
+    Recipient->>Browser: Opens shared report (file:// or standalone)
+    Browser->>Browser: Heartbeat probes /__agent_status__ (Fails / Unreachable)
+    Browser-->>Recipient: Displays "Two-Way Agent Offline" Card & "Copy Agent Prompt"
+    Recipient->>Browser: Clicks "Copy Turnkey Agent Prompt"
+    Browser-->>Recipient: Clipboard updated with tailored recovery prompt
+    Recipient->>Agent: Pastes prompt into Antigravity / Claude Code / Codex
+    Agent->>DevServer: Executes: node skills/html-report/scripts/serve-report.mjs &lt;file&gt; --port 3000
+    DevServer-->>Agent: Dev server listening on localhost:3000
+    Browser->>DevServer: Heartbeat probe receives HTTP 200 from /__agent_status__
+    Browser-->>Recipient: Badge switches to "LIVE CONNECTED" & Co-Pilot Unlocked!
   </div>
 </section>
 
 <!-- ========================================== -->
-<!-- 4. CONNECTED TASK CHECKLIST                -->
+<!-- INTERACTIVE PROMPT GENERATION PREVIEW      -->
 <!-- ========================================== -->
-<section id="tasks-checklist" class="space-y-4">
-  <div class="flex items-center justify-between border-b border-base-300 pb-3">
-    <div>
-      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2 text-base-content">
-        <i data-lucide="check-square" class="w-6 h-6 text-accent"></i>
+<section class="mt-8 bg-base-100 rounded-box border border-base-300 p-6 shadow-sm space-y-4">
+  <div class="flex items-center justify-between border-b border-base-200 pb-3">
+    <div class="flex items-center gap-2">
+      <i data-lucide="terminal" class="w-5 h-5 text-accent"></i>
+      <h2 id="live-prompt-preview" class="text-lg font-bold text-base-content">
+        Synthesized Turnkey Agent Reconnection Prompt
+      </h2>
+    </div>
+    <span class="badge badge-accent badge-sm font-mono font-bold">Live Preview</span>
+  </div>
+
+  <p class="text-xs text-base-content/75">
+    When the two-way bridge is unreachable, the report constructs this tailored prompt containing the exact document context and shell commands. The reader clicks the button below, pastes it into their agent, and the agent restores the connection.
+  </p>
+
+  <div class="mockup-code text-xs bg-neutral text-neutral-content font-mono rounded-box shadow-md">
+    <pre data-prefix="1"><code>I am viewing an interactive publication report: "Turnkey AI Agent Reconnection" (implementation-progress.html).</code></pre>
+    <pre data-prefix="2"><code>This report features an active Two-Way AI Agent Bridge and Datastar live hypermedia, but the local dev server is currently offline.</code></pre>
+    <pre data-prefix="3"><code></code></pre>
+    <pre data-prefix="4"><code class="text-warning">Please restore the two-way agent bridge by starting the report dev server in the background:</code></pre>
+    <pre data-prefix="5"><code class="text-success font-bold">node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3000 --no-open</code></pre>
+    <pre data-prefix="6"><code></code></pre>
+    <pre data-prefix="7"><code>Keep this process running. The report will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.</code></pre>
+  </div>
+
+  <div class="flex items-center justify-between pt-2 flex-wrap gap-2">
+    <button
+      id="demo-copy-prompt-btn"
+      type="button"
+      onclick="copyDemoPrompt(this)"
+      class="btn btn-accent btn-sm gap-2 font-mono"
+    >
+      <i data-lucide="copy" class="w-4 h-4"></i> Copy Turnkey Agent Prompt
+    </button>
+    <span class="text-xs text-base-content/60 font-mono">Formatted for Antigravity, Claude Code, Cursor &amp; Codex</span>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- TASK TRACKING SECTION                      -->
+<!-- ========================================== -->
+<section class="mt-8 bg-base-100 rounded-box border border-base-300 p-6 shadow-sm space-y-6">
+  <div class="flex items-center justify-between border-b border-base-200 pb-3">
+    <div class="flex items-center gap-2">
+      <i data-lucide="check-square" class="w-5 h-5 text-primary"></i>
+      <h2 id="task-checklist" class="text-lg font-bold text-base-content">
         Implementation Task Checklist
       </h2>
-      <p class="text-xs text-base-content/70">
-        Connected task checklist corresponding directly to <a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono">tasks.md</a>.
-      </p>
     </div>
-    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline gap-1 font-mono">
-      <i data-lucide="external-link" class="w-3.5 h-3.5"></i> View tasks.md
-    </button>
+    <span class="badge badge-sm badge-primary font-mono font-bold">Phase 1 &bull; In Progress</span>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <!-- Phase 1 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between border-b border-base-300 pb-2">
-        <h3 class="font-bold text-xs text-primary flex items-center gap-1.5">
-          <i data-lucide="database" class="w-4 h-4"></i> 1. Schema &amp; Trigger Engine
-        </h3>
-        <span class="badge badge-xs badge-success font-mono font-bold">3 / 3 ✓</span>
-      </div>
-      <div class="space-y-2 text-xs">
-        <label class="flex items-start gap-2 cursor-pointer">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
-          <span class="line-through opacity-70"><strong>1.1</strong> Implement <code class="font-mono text-3xs">TelemetryReactorSchema</code> for time-series, APIs, and images</span>
+  <div class="space-y-4 text-sm">
+    <div class="space-y-2">
+      <h3 class="font-bold text-xs uppercase tracking-wider text-primary">Phase 1: Client Runtime &amp; Reconnection Engine</h3>
+      <div class="grid grid-cols-1 gap-2 pl-2 border-l-2 border-primary/40">
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-primary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">1.1 Implement HTMLReportAgent.getReconnectPrompt(options) in report-runtime.js</span>
         </label>
-        <label class="flex items-start gap-2 cursor-pointer">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
-          <span class="line-through opacity-70"><strong>1.2</strong> Implement sliding window anomaly and threshold filter</span>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-primary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">1.2 Implement connection state tracking (_connectionState) and checkConnection()</span>
         </label>
-        <label class="flex items-start gap-2 cursor-pointer">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
-          <span class="line-through opacity-70"><strong>1.3</strong> Add unit tests in <code class="font-mono text-3xs">test/</code> verifying normalization</span>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-primary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">1.3 Implement background heartbeat auto-recovery with exponential backoff</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-primary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">1.4 Implement HTMLReportAgent.copyReconnectPrompt(btnEl) with clipboard feedback</span>
         </label>
       </div>
     </div>
 
-    <!-- Phase 2 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between border-b border-base-300 pb-2">
-        <h3 class="font-bold text-xs text-secondary flex items-center gap-1.5">
-          <i data-lucide="cpu" class="w-4 h-4"></i> 2. Multimodal Reactor Bridge
-        </h3>
-        <span class="badge badge-xs badge-success font-mono font-bold">3 / 3 ✓</span>
-      </div>
-      <div class="space-y-2 text-xs">
-        <label class="flex items-start gap-2 cursor-pointer">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
-          <span class="line-through opacity-70"><strong>2.1</strong> Implement <code class="font-mono text-3xs">AgentReactorBridge</code> with generic <code class="font-mono text-3xs">react()</code></span>
+    <div class="space-y-2">
+      <h3 class="font-bold text-xs uppercase tracking-wider text-secondary">Phase 2: Shell UI &amp; Component Integration</h3>
+      <div class="grid grid-cols-1 gap-2 pl-2 border-l-2 border-secondary/40">
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-secondary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">2.1 Add connection status indicator badge (#agent-bridge-status-badge) in navbar</span>
         </label>
-        <label class="flex items-start gap-2 cursor-pointer">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
-          <span class="line-through opacity-70"><strong>2.2</strong> Add vision adapters for AGY/Gemini, GPT-4o, and local models</span>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-secondary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">2.2 Add turnkey agent reconnection modal (#agent-reconnect-modal)</span>
         </label>
-        <label class="flex items-start gap-2 cursor-pointer">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
-          <span class="line-through opacity-70"><strong>2.3</strong> Verify visual payload forwarding without memory overflow</span>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-secondary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">2.3 Wire co-pilot failure hooks to open reconnection modal on broken bridge attempts</span>
         </label>
       </div>
     </div>
 
-    <!-- Phase 3 -->
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3">
-      <div class="flex items-center justify-between border-b border-base-300 pb-2">
-        <h3 class="font-bold text-xs text-accent flex items-center gap-1.5">
-          <i data-lucide="layout" class="w-4 h-4"></i> 3. UI Multimodal Showcase
-        </h3>
-        <span class="badge badge-xs badge-success font-mono font-bold">3 / 3 ✓</span>
-      </div>
-      <div class="space-y-2 text-xs">
-        <label class="flex items-start gap-2 cursor-pointer">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
-          <span class="line-through opacity-70"><strong>3.1</strong> Design DaisyUI tabbed component (Ticker, Pokémon, Weather)</span>
+    <div class="space-y-2">
+      <h3 class="font-bold text-xs uppercase tracking-wider text-accent">Phase 3: Verification &amp; OpenSpec Journey</h3>
+      <div class="grid grid-cols-1 gap-2 pl-2 border-l-2 border-accent/40">
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-accent checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">3.1 Build companion index.html report and sync with localhost:3000</span>
         </label>
-        <label class="flex items-start gap-2 cursor-pointer">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
-          <span class="line-through opacity-70"><strong>3.2</strong> Add Lucide sentiment icons &amp; creature stats</span>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-accent checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">3.2 Add automated unit and BDD tests in tests/agent-reconnect.test.mjs</span>
         </label>
-        <label class="flex items-start gap-2 cursor-pointer">
-          <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
-          <span class="line-through opacity-70"><strong>3.3</strong> Verify live dev server on <code class="font-mono text-3xs">localhost:3000</code></span>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-accent checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">3.3 Run full test suite and push to main</span>
         </label>
       </div>
     </div>
@@ -962,34 +682,30 @@ sequenceDiagram
 </section>
 
 <!-- ========================================== -->
-<!-- IN-BROWSER SHOWDOWN MARKDOWN VIEWER MODAL  -->
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER             -->
 <!-- ========================================== -->
 <dialog id="markdown-viewer-modal" class="modal">
-  <div class="modal-box w-11/12 max-w-4xl bg-base-100 border border-base-300 shadow-2xl p-6 space-y-4">
-    <div class="flex items-center justify-between border-b border-base-300 pb-3">
-      <div class="flex items-center gap-2">
-        <i data-lucide="file-text" class="w-5 h-5 text-primary"></i>
-        <span id="markdown-modal-title" class="font-mono font-bold text-sm">proposal.md</span>
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <div class="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300 shrink-0">
+      <div class="flex items-center gap-2 flex-wrap">
+        <i data-lucide="file-code" class="w-5 h-5 text-primary"></i>
+        <span id="markdown-modal-title" class="font-bold text-sm font-mono text-base-content">proposal.md</span>
       </div>
-      <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-circle btn-ghost">✕</button>
+      <div class="flex items-center gap-2">
+        <div class="join">
+          <button id="tab-btn-proposal" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
+          <button id="tab-btn-design" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
+          <button id="tab-btn-tasks" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
+          <button id="tab-btn-spec" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="specs/two-way-agent-reconnect/spec.md" onclick="switchViewerTab('specs/two-way-agent-reconnect/spec.md')">spec.md</button>
+        </div>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost" aria-label="Close modal">✕</button>
+      </div>
     </div>
 
-    <!-- Tab Bar for Direct Artifact Navigation -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-base-200">
-      <button class="btn btn-xs btn-primary doc-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
-      <button class="btn btn-xs btn-ghost doc-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
-      <button class="btn btn-xs btn-ghost doc-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
-      <button class="btn btn-xs btn-ghost doc-tab-btn" data-doc="specs/reactive-data-copilot/spec.md" onclick="switchViewerTab('specs/reactive-data-copilot/spec.md')">spec.md</button>
-    </div>
-
-    <!-- Markdown Rendered HTML Container -->
-    <div id="markdown-modal-body" class="prose max-w-none text-xs leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
-      <p class="text-base-content/60 italic">Loading artifact...</p>
-    </div>
-
-    <div class="modal-action border-t border-base-300 pt-3 flex items-center justify-between">
-      <span class="text-3xs text-base-content/60 font-mono">Rendered with Showdown.js</span>
-      <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-primary">Close</button>
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none flex-1 text-base-content bg-base-100">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
     </div>
   </div>
   <form method="dialog" class="modal-backdrop">
@@ -997,493 +713,27 @@ sequenceDiagram
   </form>
 </dialog>
 
-<!-- Embedded OpenSpec Artifacts JSON -->
-<script type="application/json" id="openspec-artifacts-json">
+<!-- Embedded OpenSpec Artifact Data for Instant Zero-Network Modal Rendering -->
+<script id="open-spec-artifacts-data" type="application/json">
 {
-  "proposal.md": "# Proposal: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## Why\\nStatic and telemetry dashboards present charts, images, and public API data (e.g. stock tickers, weather feeds, sensor grids, camera snapshots, or game assets) but force human users to manually interpret what they see and deduce the implications. While `html-report` already supports live Datastar SSE telemetry and declarative public feeds (`data-public-feed`), it lacks a unified, multimodal **reactive co-pilot pattern** where arbitrary report elements (whether a changing financial graph, a live weather API feed, or a picture of a Pokémon) trigger real-time, context-aware agent commentary and guidance.\\n\\n## What Changes\\n- **Universal Multimodal Telemetry Contract (`TelemetryReactorSchema`)**: Generalizes event payloads beyond numerical time-series to support **Visual/Image Modalities** (image URLs, base64 data, canvas snapshots, e.g. Pokémon sprites/photos), **Environmental & Public API Modalities** (e.g. weather feeds, temperature spikes, pressure drops), and **Numerical Streams** (e.g. financial tickers, server CPU/memory).\\n- **Modality-Specific Trigger & Anomaly Policies**:\\n  - *Time-series:* Volatility spikes and standard deviation thresholds (e.g. >2σ).\\n  - *Weather/Environmental:* Rapid delta triggers (e.g. temperature drop >5°C in 30 min, severe weather alert flags).\\n  - *Visual/Multimodal:* Selection, upload, or image frame changes triggering vision-capable model evaluations.\\n- **Vendor-Neutral Multimodal Agent Reactor Interface (`AgentReactorInterface`)**: Provides clean streaming adapters for multimodal engines (Google Gemini / AGY, OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, and local multimodal models like Ollama LLaVA).\\n- **Interactive Multimodal Showcase Component**: A publication-grade DaisyUI component offering interactive tabs across **Financial Tickers**, **Pokémon Visual Identification**, and **Weather API Feeds**, each dynamically paired with a live streaming Datastar reaction panel.\\n- **Hypermedia Morphing via Datastar SSE**: Live agent reactions, sentiment badges, tactical cards, and warnings are streamed and morphed directly into the DOM via `/__datastar_stream__`.\\n\\n## Capabilities\\n\\n### New Capabilities\\n- `reactive-data-copilot`: Standardizes the reactive coupling between live heterogeneous data/media feeds (visual images, weather APIs, financial tickers) and autonomous, vendor-neutral agent feedback loops rendered via Datastar SSE hypermedia fragments.\\n\\n### Modified Capabilities\\n- `live-dashboards`: Extends `DatastarBridge` and `SessionState` to support multimodal event triggers, agent commentary channels, and side-by-side telemetry-reactor components.\\n\\n## Impact\\n- **Runtime & Scripts**: Enhances `skills/html-report/scripts/datastar-sse.mjs` with multimodal payload schemas and vision adapter abstractions.\\n- **Builder**: `skills/html-report/scripts/build-report.mjs` automatically detects `<div data-reactive-copilot>` components and ensures both Chart.js and Datastar addons are enabled.\\n- **Backlinks & Journey**: Supported by companion [index.html](file:///home/eta/projects/html-report/openspec/changes/reactive-agent-data-copilot/index.html) and live dev server on `http://localhost:3000`.",
-
-  "design.md": "# Design: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## Context\\nSee [proposal.md](file:///home/eta/projects/html-report/openspec/changes/reactive-agent-data-copilot/proposal.md) for motivation and requirements. While initial exploration focused on time-series stock graphs, the architectural pattern applies universally to **any data or media modality** rendered on an HTML report:\\n1. **Numerical / Financial Time-Series:** Chart.js stock tickers, CPU loads, latency curves.\\n2. **Environmental & Public APIs:** Weather feeds (Open-Meteo, storm alerts, air quality).\\n3. **Visual / Multimodal Imagery:** Pictures (e.g. Pokémon sprites, camera feeds, diagnostics, diagrams).\\n\\n## Goals / Non-Goals\\n\\n**Goals:**\\n- Provide a standardized, vendor-neutral `TelemetryReactorSchema` supporting structured metrics, REST JSON payloads, and visual image inputs.\\n- Support multimodal agent inference (vision + text) across Google AGY/Gemini, OpenAI GPT-4o, Anthropic Claude, and local vision LLMs (LLaVA/Ollama).\\n- Implement intelligent rate-limiting and noise filtering tailored to each modality (suppressing sub-threshold ticker jitter, debouncing continuous image hover).\\n- Deliver an interactive, tabbed showcase featuring Financial Ticker, Pokémon Visual Identification, and Weather API streams.\\n\\n**Non-Goals:**\\n- Heavy client-side CV/ML processing inside the browser bundle; visual inference is delegated to the multimodal agent backend.\\n- Proprietary vendor-locked APIs; all data exchanges adhere to standard JSON payloads and Datastar SSE fragments.\\n\\n## Decisions\\n\\n### Decision 1: Discriminated Union Event Contract (`TelemetryReactorSchema`)\\n- **Choice:** Define event payloads with a `modality` discriminator:\\n  - `modality: \\\"time-series\\\"`: `{ metric, value, deltaPct, windowStats }`\\n  - `modality: \\\"environmental-api\\\"`: `{ endpoint, current, forecast, alerts }`\\n  - `modality: \\\"visual-image\\\"`: `{ imageUrl, imageBase64, mimeType, caption, metadata }`\\n- **Rationale:** Allows a single unified bus to route heterogeneous inputs to appropriate prompt constructors or vision pipelines.\\n\\n### Decision 2: Multimodal Agent Adapter Contract (`MultimodalReactor`)\\n- **Choice:** Standardize an abstract reactor method:\\n  ```typescript\\n  interface MultimodalAgentReactor {\\n    react(event: TelemetryReactorEvent): AsyncIterable<string>;\\n  }\\n  ```\\n  For visual events, the adapter constructs multimodal user messages (e.g. Gemini `inlineData` or OpenAI `image_url`).\\n- **Rationale:** Keeps downstream UI code 100% agnostic to whether the model is inspecting a graph, reading temperature numbers, or looking at a Pokémon sprite.\\n\\n### Decision 3: Datastar Hypermedia Morphing (`/__datastar_stream__`)\\n- **Choice:** Regardless of modality, agent reactions stream as Datastar SSE fragments morphing the co-pilot panel (`#agent-reaction-bubble`, `#sentiment-badge`, `#tactical-advisory`).\\n- **Rationale:** Zero client-side framework lock-in, ultra-fast streaming tokens, and automatic DaisyUI theme adaptation.\\n\\n## Risks / Trade-offs\\n\\n- **[Risk] Image payload bandwidth in SSE/events** &rarr; *Mitigation:* Prefer URL references or thumbnail scaling (e.g. max 512x512) for inline base64 transfers.\\n- **[Risk] Hallucination in specialized domains (e.g. Pokemon type matchups or storm paths)** &rarr; *Mitigation:* Ground prompts with known metadata (e.g., passing Pokémon base stats or weather alert codes alongside the raw media).\\n- **[Risk] Token cost on repeated visual queries** &rarr; *Mitigation:* Client-side deduplication and response caching for identical image/entity keys.",
-
-  "tasks.md": "# Tasks: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## 1. Schema & Trigger Engine\\n\\n- [x] 1.1 Implement `TelemetryReactorSchema` in `skills/html-report/scripts/datastar-sse.mjs` supporting `time-series`, `environmental-api`, and `visual-image` modalities\\n- [x] 1.2 Implement sliding window anomaly and threshold filter (`AnomalyTriggerEngine`) to suppress sub-threshold noise\\n- [x] 1.3 Add unit tests in `test/` verifying event normalization and threshold activation logic\\n\\n## 2. Multimodal Agent Reactor Bridge & Adapters\\n\\n- [x] 2.1 Implement `AgentReactorBridge` with generic `react()` streaming interface in `skills/html-report/scripts/datastar-sse.mjs`\\n- [x] 2.2 Add streaming adapters for AGY/Gemini, OpenAI GPT-4o, and generic OpenAI-compatible streaming endpoints (Ollama/vLLM)\\n- [x] 2.3 Verify visual image payload forwarding (URL and base64) to multimodal adapters without buffer overflow\\n\\n## 3. UI Component & Multimodal Showcase\\n\\n- [x] 3.1 Design DaisyUI tabbed component featuring Financial Tickers, Pokémon Visual Identification, and Weather API streams\\n- [x] 3.2 Add Lucide sentiment icons, creature stat badges, and environmental advisory markers\\n- [x] 3.3 Verify interactive demo in `index.html` on `http://localhost:3000` with live simulated ticker ticks, weather transitions, and creature reactions",
-
-  "specs/reactive-data-copilot/spec.md": "# Spec Delta: Reactive Agent Data & Multimodal Co-Pilot\\n\\n## Purpose\\n\\nEnables real-time, vendor-neutral coupling between live heterogeneous data and media streams (visual images like Pokémon sprites, weather API feeds, and financial charts) and autonomous AI agent commentary over Datastar hypermedia Server-Sent Events (SSE).\\n\\n## ADDED Requirements\\n\\n### Requirement: Normalized Multimodal Telemetry Reactor Contract\\nThe system MUST define a vendor-neutral schematic contract (`TelemetryReactorSchema`) supporting discriminated modalities: `time-series`, `environmental-api`, and `visual-image`.\\n\\n#### Scenario: Ingestion of Visual Image Event (e.g. Pokémon Picture)\\n- **WHEN** a visual element emits an event with `modality: \\\"visual-image\\\"`, an image URI, and entity metadata\\n- **THEN** the reactor validates the event schema, assigns a monotonic event sequence ID, and forwards it to the multimodal pipeline without throwing.\\n\\n#### Scenario: Ingestion of Weather API Feed Event\\n- **WHEN** a declarative public feed emits an event with `modality: \\\"environmental-api\\\"` containing temperature, humidity, and alert flags\\n- **THEN** the reactor validates the schema and checks for environmental anomaly thresholds.\\n\\n### Requirement: Windowed Anomaly and Threshold Trigger Policies\\nThe system MUST provide configurable debounce, statistical thresholding, and anomaly filters so that LLM inference is triggered only on meaningful data transitions.\\n\\n#### Scenario: Suppression of Routine Weather & Ticker Jitter\\n- **WHEN** incoming metric fluctuations remain within baseline thresholds (delta < 1% or temperature change < 0.5°C)\\n- **THEN** the reactor suppresses LLM inference calls while updating rolling telemetry windows.\\n\\n#### Scenario: Activation on Sudden Environmental or Visual Transition\\n- **WHEN** a sudden weather alert is flagged or a new distinct image entity is presented\\n- **THEN** the reactor immediately schedules an evaluation cycle and notifies the attached `AgentReactorInterface`.\\n\\n### Requirement: Vendor-Neutral Multimodal Agent Reactor Interface\\nThe system MUST provide an abstract reactor interface supporting multimodal engines (Google Gemini / AGY, OpenAI GPT-4o, Anthropic Claude, and local vision LLMs).\\n\\n#### Scenario: Streaming Multimodal Commentary Delta\\n- **WHEN** a multimodal agent reactor processes an image or weather event and yields token chunks\\n- **THEN** the bridge dispatches Datastar SSE fragments targeting `#agent-reaction-bubble` to live subscribers over `/__datastar_stream__`.\\n\\n### Requirement: Interactive Multimodal Showcase Component\\nThe report MUST provide a publication-grade DaisyUI component offering interactive tabs across financial charts, visual image recognition, and weather API feeds paired with live agent commentary.\\n\\n#### Scenario: Live DOM Morphing of Agent Sentiment and Insights\\n- **WHEN** an agent emits a sentiment update (e.g. Bullish/Bearish or Weather Advisory) with accompanying analysis\\n- **THEN** the Datastar client morphs the sentiment badge and appends the reasoning card with timestamp synchronization."
+  "proposal.md": "# Proposal: Turnkey AI Agent Reconnection Prompt & Auto-Recovery for Shared Two-Way Reports\n\n## Why\n\nReports generated with `html-report` frequently feature live **Two-Way Agent Co-Pilots** and **Datastar SSE hypermedia streaming**. When an author shares an interactive report file (`.html`) with a colleague, opens it on a separate workstation, or inspects it without an active development server running on `localhost:3000`, the two-way bridge connection is broken.\n\nCurrently, recipients encounter silent fallback heuristics or generic connection timeouts with no actionable guidance on how to restore live agent inference. Because modern software engineers and operators frequently have their own local AI agents running (e.g. Google Antigravity, Claude Code, Cursor, Codex, Gemini CLI), the report should empower them to restore live two-way connectivity in seconds by generating a **copy-paste turnkey agent instruction prompt**.\n\n## What Changes\n\n- **Automatic Disconnected Bridge Detection**:\n  - The client runtime (`report-runtime.js`) actively probes `/__agent_status__` on load and listens for bridge request failures.\n  - When disconnected, a prominent yet elegant DaisyUI indicator card or modal appears: `\"Two-Way AI Agent Bridge Offline\"`.\n- **Turnkey Multi-Agent Reconnection Prompt**:\n  - Generates an instant, context-aware prompt customized with the exact report filename, active personas, and shell commands (`node skills/html-report/scripts/serve-report.mjs <file> --port 3000`).\n  - Includes a one-click `\"Copy Turnkey Agent Prompt\"` button with visual feedback.\n  - The prompt is engineered to be pasted directly into *any* autonomous AI agent (Antigravity, Claude Code, Codex, Cursor), commanding the agent to start the local bridge in the background.\n- **Heartbeat Auto-Recovery & Live Reconnection**:\n  - Background polling probes `/__agent_status__` with exponential backoff (2s → 5s → 10s).\n  - Manual `\"Check Connection Now\"` button.\n  - When the bridge comes online, the UI seamlessly transitions to `LIVE CONNECTED` with an OKLCH pulsing indicator, without requiring a page reload.\n- **Configurable Fallback & Modal Integration**:\n  - Reports can embed connection badges in the navbar or inline co-pilot cards.\n\n## Capabilities\n\n### New Capabilities\n- `two-way-agent-reconnect`: Standardizes detection of broken two-way agent bridge connections in shared reports, automated synthesis of turnkey agent reconnection prompts, and seamless live re-hydration upon bridge recovery.\n",
+  "design.md": "# Design: Turnkey AI Agent Reconnection Prompt & Auto-Recovery\n\n## Context & Motivation\n\nWhen an interactive report containing two-way AI co-pilots is shared as a standalone `.html` file or viewed outside the active dev server, the browser cannot communicate with `/__agent_action__`. Instead of frustrating the reader with silent failure or dead buttons, the report actively helps the reader restore two-way communication by generating an AI agent instruction prompt formatted for turnkey execution.\n\n## Architecture Flow\n\n1. Recipient opens shared report\n2. Bridge probe fails\n3. Recipient clicks \"Copy Agent Prompt\"\n4. Recipient pastes prompt into autonomous agent\n5. Agent executes `serve-report.mjs`\n6. Browser heartbeat detects online status and auto-recovers\n",
+  "tasks.md": "# Tasks: Turnkey AI Agent Reconnection Prompt & Auto-Recovery\n\n## 1. Client Runtime & Reconnection Engine\n\n- [x] 1.1 Implement `HTMLReportAgent.getReconnectPrompt(options)` in `skills/html-report/assets/report-runtime.js`\n- [x] 1.2 Implement connection state tracking (`_connectionState`), state change listeners, and `checkConnection()`\n- [x] 1.3 Implement background heartbeat auto-recovery with exponential backoff\n- [x] 1.4 Implement `HTMLReportAgent.copyReconnectPrompt(btnEl)` with clipboard API and visual confirmation\n\n## 2. Shell UI & Component Integration\n\n- [x] 2.1 Add connection status indicator badge (`#agent-bridge-status-badge`) in `skills/html-report/assets/template-shell.html` navbar\n- [x] 2.2 Add turnkey agent reconnection modal (`#agent-reconnect-modal`) with prompt display, copy button, and retry action\n- [x] 2.3 Wire co-pilot failure hooks to open the reconnection modal on broken bridge attempts\n\n## 3. Verification & OpenSpec Journey\n\n- [x] 3.1 Build companion `index.html` report and sync with `implementation-progress.html` on `http://localhost:3000`\n- [x] 3.2 Add automated unit and BDD tests in `tests/agent-reconnect.test.mjs` verifying prompt synthesis and state transitions\n- [x] 3.3 Run full test suite and push to main\n",
+  "specs/two-way-agent-reconnect/spec.md": "# Spec Delta: Turnkey AI Agent Reconnection Prompt & Auto-Recovery\n\n## Purpose\nEnables shared HTML reports featuring interactive Two-Way Agent Co-Pilots to detect broken or offline local bridge connections, generate turnkey, copy-paste AI agent instruction prompts, and automatically recover live status when the local dev server is activated.\n\n## ADDED Requirements\n\n### Requirement: Offline Bridge Detection and Disconnection State\nThe system MUST monitor the availability of the local Two-Way Agent Bridge (`/__agent_status__` / `/api/agent/status`) and reflect the active connection state (`connected`, `disconnected`, or `connecting`).\n\n### Requirement: Turnkey AI Agent Reconnection Prompt Synthesis\nThe system MUST dynamically generate a clean, copy-ready AI instruction prompt tailored for any autonomous AI agent.\n\n### Requirement: Clipboard Copy Affordance & User Feedback\nThe report UI MUST provide a prominent, accessible copy button allowing the user to copy the synthesized prompt with immediate visual confirmation.\n\n### Requirement: Live Heartbeat Auto-Recovery & Zero-Reload Reconnection\nThe system MUST provide both automated polling and on-demand re-checking to seamlessly transition the report from `disconnected` to `connected` when the dev server starts.\n"
 }
 </script>
 
-<!-- Interactive Live Simulation & Markdown Viewer Logic -->
 <script>
-  let tickerChart = null;
-  let isSimRunning = true;
-  let currentPrice = 182.40;
-  let basePrice = 182.40;
-  let suppressedCount = 0;
-  let tickInterval = null;
-  let showdownConverter = null;
   let activeDocKey = "proposal.md";
-  let activeModality = "finance";
-  let activePokemon = "pikachu";
+  let showdownConverter = null;
 
-  const POKEMON_DATA = {
-    pikachu: {
-      name: "Pikachu #025",
-      type: "Electric",
-      badgeClass: "badge-warning",
-      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#fde047" stroke="#eab308" stroke-width="3"/><path d="M25 25 L10 5 L35 15 Z" fill="#eab308"/><path d="M75 25 L90 5 L65 15 Z" fill="#eab308"/><circle cx="35" cy="45" r="5" fill="#1e293b"/><circle cx="65" cy="45" r="5" fill="#1e293b"/><circle cx="24" cy="58" r="7" fill="#ef4444"/><circle cx="76" cy="58" r="7" fill="#ef4444"/><path d="M44 56 Q50 64 56 56" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/></svg>`,
-      desc: "When several of these Pokémon gather, their electricity could build and cause lightning storms. High speed and Special Attack.",
-      weakness: "Ground (2x)",
-      resistance: "Flying, Steel, Electric (0.5x)",
-      initialCommentary: "⚡ Visual Target: Pikachu (Electric). High Speed (90) baseline with Volt Tackle and Thunderbolt options. Optimal against Water and Flying targets, but vulnerable to Earthquake ground sweeps. Suggest pairing with Grass or Flying pivots."
-    },
-    charizard: {
-      name: "Charizard #006",
-      type: "Fire / Flying",
-      badgeClass: "badge-error",
-      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#ea580c" stroke="#c2410c" stroke-width="3"/><path d="M30 40 Q50 15 70 40 Q80 20 50 10 Q20 20 30 40 Z" fill="#fdba74"/><circle cx="38" cy="42" r="4" fill="#0f172a"/><circle cx="62" cy="42" r="4" fill="#0f172a"/><path d="M40 60 Q50 72 60 60" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/><path d="M48 25 Q50 5 52 25 Z" fill="#f59e0b"/></svg>`,
-      desc: "It spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally. Formidable mixed sweeper.",
-      weakness: "Rock (4x), Water (2x), Electric (2x)",
-      resistance: "Grass, Bug, Steel, Fairy, Fighting (0.5x), Ground (Immune)",
-      initialCommentary: "🔥 Visual Target: Charizard (Fire/Flying). High Special Attack (109) with Solar Beam coverage under Sunny Day. Extreme 4x Stealth Rock vulnerability dictates Rapid Spin support or Heavy-Duty Boots."
-    },
-    gengar: {
-      name: "Gengar #094",
-      type: "Ghost / Poison",
-      badgeClass: "badge-secondary",
-      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#7e22ce" stroke="#6b21a8" stroke-width="3"/><path d="M25 30 L15 10 L35 22 Z" fill="#6b21a8"/><path d="M75 30 L85 10 L65 22 Z" fill="#6b21a8"/><path d="M32 40 L45 46 L32 48 Z" fill="#ef4444"/><path d="M68 40 L55 46 L68 48 Z" fill="#ef4444"/><path d="M30 62 Q50 82 70 62 Q50 68 30 62 Z" fill="#ffffff" stroke="#3b0764" stroke-width="2"/></svg>`,
-      desc: "Under a full moon, this Pokémon likes to mimic the shadows of people and laugh at their fright. Premier special ghost sweeper.",
-      weakness: "Ground, Psychic, Ghost, Dark (2x)",
-      resistance: "Poison, Bug (0.25x), Normal & Fighting (Immune)",
-      initialCommentary: "👻 Visual Target: Gengar (Ghost/Poison). Elite 130 Special Attack and 110 Speed. Shadow Ball and Sludge Wave threaten Fairy and Psychic walls. Dual immunity gives clean switches into Close Combat."
-    },
-    lucario: {
-      name: "Lucario #448",
-      type: "Fighting / Steel",
-      badgeClass: "badge-info",
-      svg: `<svg viewBox="0 0 100 100" class="w-20 h-20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#0284c7" stroke="#0369a1" stroke-width="3"/><path d="M28 25 L18 5 L35 18 Z" fill="#0f172a"/><path d="M72 25 L82 5 L65 18 Z" fill="#0f172a"/><rect x="25" y="38" width="50" height="16" rx="4" fill="#0f172a"/><circle cx="38" cy="46" r="4" fill="#ef4444"/><circle cx="62" cy="46" r="4" fill="#ef4444"/><path d="M46 62 Q50 68 54 62" stroke="#0f172a" stroke-width="2"/></svg>`,
-      desc: "By catching the aura emanating from others, it can read their thoughts and movements. Renowned Swords Dance wallbreaker.",
-      weakness: "Fire, Fighting, Ground (2x)",
-      resistance: "Normal, Grass, Ice, Dragon, Dark, Steel, Rock, Bug (0.5x-0.25x), Poison (Immune)",
-      initialCommentary: "⚔️ Visual Target: Lucario (Fighting/Steel). Versatile aura combatant with Extreme Speed priority and Close Combat STAB. Outstanding defensive typing resisting 8 distinct types and immune to toxic poison."
-    }
-  };
-
-  function selectModality(modality) {
-    activeModality = modality;
-    ["finance", "pokemon", "weather"].forEach((m) => {
-      const tab = document.getElementById(`tab-modality-${m}`);
-      const view = document.getElementById(`view-modality-${m}`);
-      if (tab) {
-        if (m === modality) {
-          tab.classList.add("tab-active");
-        } else {
-          tab.classList.remove("tab-active");
-        }
-      }
-      if (view) {
-        if (m === modality) {
-          view.classList.remove("hidden");
-        } else {
-          view.classList.add("hidden");
-        }
-      }
-    });
-
-    const badge = document.getElementById("agent-modality-badge");
-    const sentiment = document.getElementById("sentiment-badge");
-
-    if (modality === "finance") {
-      if (badge) badge.textContent = "Time-Series";
-      if (sentiment) {
-        sentiment.className = "badge badge-success badge-sm font-semibold gap-1";
-        sentiment.innerHTML = `<i data-lucide="shield-check" class="w-3 h-3"></i> Bullish (Momentum)`;
-      }
-      streamAgentResponse("Monitoring TECH/USD ticker stream. Volume is within normal 15-minute moving average bounds. Resistance recognized at $186.00, standing by for volatility triggers.");
-    } else if (modality === "pokemon") {
-      if (badge) badge.textContent = "Vision / Image";
-      if (sentiment) {
-        sentiment.className = "badge badge-accent badge-sm font-semibold gap-1";
-        sentiment.innerHTML = `<i data-lucide="scan" class="w-3 h-3"></i> Entity Identified`;
-      }
-      selectPokemon(activePokemon);
-    } else if (modality === "weather") {
-      if (badge) badge.textContent = "Public REST API";
-      if (sentiment) {
-        sentiment.className = "badge badge-info badge-sm font-semibold gap-1";
-        sentiment.innerHTML = `<i data-lucide="sun" class="w-3 h-3"></i> Clear &amp; Favorable`;
-      }
-      streamAgentResponse("🌦️ Ingesting public weather feed. Current conditions: 22°C with 48% humidity. Barometric pressure steady at 1014 hPa. No severe environmental warnings active in your geographic quadrant.");
-    }
-
-    if (window.lucide) window.lucide.createIcons();
-  }
-
-  function selectPokemon(id) {
-    activePokemon = id;
-    const p = POKEMON_DATA[id] || POKEMON_DATA.pikachu;
-
-    document.querySelectorAll(".pokemon-select-btn").forEach((btn) => {
-      if (btn.getAttribute("data-pokemon") === id) {
-        btn.classList.add("border-primary", "bg-primary/10");
-        btn.classList.remove("border-base-300");
-      } else {
-        btn.classList.remove("border-primary", "bg-primary/10");
-        btn.classList.add("border-base-300");
-      }
-    });
-
-    const svgContainer = document.getElementById("active-pokemon-svg-container");
-    const name = document.getElementById("active-pokemon-name");
-    const badge = document.getElementById("active-pokemon-badge");
-    const desc = document.getElementById("active-pokemon-desc");
-
-    if (svgContainer) svgContainer.innerHTML = p.svg;
-    if (name) name.textContent = p.name;
-    if (badge) {
-      badge.textContent = p.type;
-      badge.className = `badge ${p.badgeClass} badge-sm font-semibold`;
-    }
-    if (desc) desc.textContent = p.desc;
-
-    const sentiment = document.getElementById("sentiment-badge");
-    if (sentiment) {
-      sentiment.className = `badge ${p.badgeClass} badge-sm font-semibold gap-1`;
-      sentiment.innerHTML = `<i data-lucide="sparkles" class="w-3 h-3"></i> ${p.type} Analyzed`;
-      if (window.lucide) window.lucide.createIcons();
-    }
-
-    streamAgentResponse(p.initialCommentary);
-  }
-
-  function askPokemonTactics() {
-    const p = POKEMON_DATA[activePokemon];
-    streamAgentResponse(`⚔️ Tactical Assessment for ${p.name}: Leverage STAB moves immediately. Primary counter strategy involves setting up screens or hazards to capitalize on ${p.name}'s key strengths while pivoting around ${p.weakness} threats.`);
-  }
-
-  function askPokemonCounters() {
-    const p = POKEMON_DATA[activePokemon];
-    streamAgentResponse(`🛡️ Threat Alert for ${p.name}: Major hazard is incoming ${p.weakness} damage. Strongly recommend holding a Focus Sash or defensive Tera pivot if facing grounded physical sweepers.`);
-  }
-
-  function askPokemonLore() {
-    const p = POKEMON_DATA[activePokemon];
-    streamAgentResponse(`📖 Pokédex Insight: ${p.desc} Classified in National Dex with notable regional variants and competitive tournament usage history.`);
-  }
-
-  /* Weather API Simulations */
-  function triggerThunderstorm() {
-    const temp = document.getElementById("weather-temp-display");
-    const feel = document.getElementById("weather-temp-feel");
-    const cond = document.getElementById("weather-condition-display");
-    const wind = document.getElementById("weather-wind-display");
-    const precip = document.getElementById("weather-precip-display");
-
-    if (temp) temp.textContent = "14°C";
-    if (feel) feel.textContent = "Feels like 11°C";
-    if (cond) cond.innerHTML = `<i data-lucide="cloud-lightning" class="w-4 h-4 text-error"></i> Severe Storm`;
-    if (wind) wind.textContent = "58 km/h (Gusts: 85)";
-    if (precip) precip.textContent = "95% (Heavy Rain)";
-
-    const sentiment = document.getElementById("sentiment-badge");
-    if (sentiment) {
-      sentiment.className = "badge badge-error badge-sm font-semibold gap-1";
-      sentiment.innerHTML = `<i data-lucide="alert-triangle" class="w-3 h-3"></i> Storm Warning`;
-    }
-
-    if (window.lucide) window.lucide.createIcons();
-    streamAgentResponse("⛈️ SEVERE WEATHER ADVISORY: Cold frontal boundary crossed with 8°C temperature drop in 25 minutes. Atmospheric pressure plunged to 998 hPa. Dangerous lightning and 85 km/h wind shear detected. Secure outdoor equipment and seek indoor shelter.");
-  }
-
-  function triggerHeatwave() {
-    const temp = document.getElementById("weather-temp-display");
-    const feel = document.getElementById("weather-temp-feel");
-    const cond = document.getElementById("weather-condition-display");
-    const wind = document.getElementById("weather-wind-display");
-    const precip = document.getElementById("weather-precip-display");
-
-    if (temp) temp.textContent = "38°C";
-    if (feel) feel.textContent = "Feels like 43°C";
-    if (cond) cond.innerHTML = `<i data-lucide="flame" class="w-4 h-4 text-warning"></i> Heatwave`;
-    if (wind) wind.textContent = "6 km/h";
-    if (precip) precip.textContent = "0% (Extreme UV)";
-
-    const sentiment = document.getElementById("sentiment-badge");
-    if (sentiment) {
-      sentiment.className = "badge badge-warning badge-sm font-semibold gap-1";
-      sentiment.innerHTML = `<i data-lucide="sun-medium" class="w-3 h-3"></i> Extreme Heat`;
-    }
-
-    if (window.lucide) window.lucide.createIcons();
-    streamAgentResponse("🔥 EXCESSIVE HEAT WARNING: Temperature spiked to 38°C (Heat Index 43°C). UV Index is peaked at 11+. Extreme dehydration risk. Strenuous outdoor activity discouraged between 11:00 and 17:00.");
-  }
-
-  function triggerBlizzard() {
-    const temp = document.getElementById("weather-temp-display");
-    const feel = document.getElementById("weather-temp-feel");
-    const cond = document.getElementById("weather-condition-display");
-    const wind = document.getElementById("weather-wind-display");
-    const precip = document.getElementById("weather-precip-display");
-
-    if (temp) temp.textContent = "-4°C";
-    if (feel) feel.textContent = "Feels like -12°C";
-    if (cond) cond.innerHTML = `<i data-lucide="snowflake" class="w-4 h-4 text-info"></i> Blizzard`;
-    if (wind) wind.textContent = "45 km/h";
-    if (precip) precip.textContent = "100% (Snow Accumulation)";
-
-    const sentiment = document.getElementById("sentiment-badge");
-    if (sentiment) {
-      sentiment.className = "badge badge-info badge-sm font-semibold gap-1";
-      sentiment.innerHTML = `<i data-lucide="snowflake" class="w-3 h-3"></i> Blizzard Alert`;
-    }
-
-    if (window.lucide) window.lucide.createIcons();
-    streamAgentResponse("❄️ BLIZZARD WARNING: Sub-zero arctic surge (-4°C, Wind Chill -12°C) with zero-visibility blowing snow. Road icing imminent. Thermal layering and vehicle winter kits required.");
-  }
-
-  function triggerClearWeather() {
-    const temp = document.getElementById("weather-temp-display");
-    const feel = document.getElementById("weather-temp-feel");
-    const cond = document.getElementById("weather-condition-display");
-    const wind = document.getElementById("weather-wind-display");
-    const precip = document.getElementById("weather-precip-display");
-
-    if (temp) temp.textContent = "22°C";
-    if (feel) feel.textContent = "Feels like 23°C";
-    if (cond) cond.innerHTML = `<i data-lucide="sun" class="w-4 h-4 text-warning"></i> Sunny`;
-    if (wind) wind.textContent = "12 km/h";
-    if (precip) precip.textContent = "0%";
-
-    const sentiment = document.getElementById("sentiment-badge");
-    if (sentiment) {
-      sentiment.className = "badge badge-success badge-sm font-semibold gap-1";
-      sentiment.innerHTML = `<i data-lucide="sun" class="w-3 h-3"></i> Clear &amp; Favorable`;
-    }
-
-    if (window.lucide) window.lucide.createIcons();
-    streamAgentResponse("☀️ Weather conditions returned to seasonal baseline (22°C). Light breeze and zero precipitation. Optimal conditions for outdoor operations.");
-  }
-
-  /* Finance Simulation Init */
-  function initSimulation() {
-    const canvas = document.getElementById("live-ticker-canvas");
-    if (!canvas || typeof Chart === "undefined") return;
-    if (canvas.__initialized) return;
-    canvas.__initialized = true;
-
-    const initialLabels = ["14:00:00", "14:00:05", "14:00:10", "14:00:15", "14:00:20", "14:00:25", "14:00:30"];
-    const initialData = [181.80, 182.10, 181.95, 182.30, 182.15, 182.25, 182.40];
-
-    tickerChart = new Chart(canvas, {
-      type: "line",
-      data: {
-        labels: initialLabels,
-        datasets: [{
-          label: "TECH Price ($)",
-          data: initialData,
-          borderColor: "#2563eb",
-          backgroundColor: "rgba(37, 99, 235, 0.08)",
-          fill: true,
-          tension: 0.3,
-          pointRadius: 2,
-          pointHoverRadius: 5
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { duration: 300 },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => ` Price: $${ctx.parsed.y.toFixed(2)}`
-            }
-          }
-        },
-        scales: {
-          x: { grid: { display: false } },
-          y: {
-            grid: { color: "rgba(150, 150, 150, 0.15)" },
-            suggestedMin: 174,
-            suggestedMax: 190
-          }
-        }
-      }
-    });
-
-    window.reportCharts = window.reportCharts || [];
-    window.reportCharts.push(tickerChart);
-
-    startTickInterval();
-  }
-
-  function startTickInterval() {
-    if (tickInterval) clearInterval(tickInterval);
-    tickInterval = setInterval(() => {
-      if (!isSimRunning || !tickerChart || activeModality !== "finance") return;
-      const jitter = (Math.random() - 0.49) * 0.35;
-      updatePrice(currentPrice + jitter, false);
-      suppressedCount++;
-      const el = document.getElementById("suppressed-ticks-count");
-      if (el) el.textContent = suppressedCount;
-    }, 1200);
-  }
-
-  function toggleSimulation() {
-    isSimRunning = !isSimRunning;
-    const btn = document.getElementById("toggle-sim-btn");
-    if (btn) {
-      btn.innerHTML = isSimRunning
-        ? `<i data-lucide="pause" class="w-3 h-3"></i> Pause`
-        : `<i data-lucide="play" class="w-3 h-3"></i> Resume`;
-      if (window.lucide) window.lucide.createIcons();
-    }
-  }
-
-  function updatePrice(newPrice, isAnomaly = false) {
-    currentPrice = Math.max(160, Math.min(210, newPrice));
-    const now = new Date();
-    const timeStr = now.toTimeString().split(" ")[0];
-
-    if (tickerChart) {
-      tickerChart.data.labels.push(timeStr);
-      tickerChart.data.datasets[0].data.push(currentPrice);
-      if (tickerChart.data.labels.length > 18) {
-        tickerChart.data.labels.shift();
-        tickerChart.data.datasets[0].data.shift();
-      }
-      tickerChart.update("none");
-    }
-
-    const priceEl = document.getElementById("current-price-display");
-    if (priceEl) priceEl.textContent = `$${currentPrice.toFixed(2)}`;
-
-    const deltaPct = ((currentPrice - basePrice) / basePrice) * 100;
-    const deltaEl = document.getElementById("current-delta-display");
-    if (deltaEl) {
-      deltaEl.textContent = `${deltaPct >= 0 ? "+" : ""}${deltaPct.toFixed(1)}%`;
-      deltaEl.className = deltaPct >= 0 ? "badge badge-success badge-sm font-mono" : "badge badge-error badge-sm font-mono";
-    }
-  }
-
-  function triggerFlashDip() {
-    const drop = currentPrice * 0.962; // -3.8% drop
-    updatePrice(drop, true);
-
-    const ind = document.getElementById("filter-status-indicator");
-    if (ind) {
-      ind.textContent = "⚡ ANOMALY DETECTED (-3.8%) -> WAKING AGENT";
-      ind.className = "font-mono text-3xs text-error font-bold animate-pulse";
-      setTimeout(() => {
-        ind.textContent = "Anomaly Engine Armed";
-        ind.className = "font-mono text-3xs text-success";
-      }, 4000);
-    }
-
-    const badge = document.getElementById("sentiment-badge");
-    if (badge) {
-      badge.className = "badge badge-error badge-sm font-semibold gap-1";
-      badge.innerHTML = `<i data-lucide="alert-triangle" class="w-3 h-3"></i> Bearish (Flash Dip)`;
-      if (window.lucide) window.lucide.createIcons();
-    }
-
-    streamAgentResponse("🚨 Sudden liquidity contraction detected. Price fell 3.8% on 2.6x normal candle volume, violating immediate support at $178.50. RSI plunged into oversold territory (26.2). Recommend monitoring for a relief bounce or consolidation before establishing new longs.");
-  }
-
-  function triggerBreakout() {
-    const jump = currentPrice * 1.042; // +4.2% jump
-    updatePrice(jump, true);
-
-    const ind = document.getElementById("filter-status-indicator");
-    if (ind) {
-      ind.textContent = "⚡ ANOMALY DETECTED (+4.2%) -> WAKING AGENT";
-      ind.className = "font-mono text-3xs text-success font-bold animate-pulse";
-      setTimeout(() => {
-        ind.textContent = "Anomaly Engine Armed";
-        ind.className = "font-mono text-3xs text-success";
-      }, 4000);
-    }
-
-    const badge = document.getElementById("sentiment-badge");
-    if (badge) {
-      badge.className = "badge badge-success badge-sm font-semibold gap-1";
-      badge.innerHTML = `<i data-lucide="trending-up" class="w-3 h-3"></i> Bullish (Breakout)`;
-      if (window.lucide) window.lucide.createIcons();
-    }
-
-    streamAgentResponse("🚀 Breakout confirmed! Bullish momentum expansion (+4.2%) cleared the $186.00 resistance shelf. Moving averages (EMA 9/21) showing golden cross alignment. Target zone shifted to $194.00 with trailing stop at $184.20.");
-  }
-
-  function triggerRoutineTick() {
-    const jitter = (Math.random() - 0.49) * 0.4;
-    updatePrice(currentPrice + jitter, false);
-    suppressedCount++;
-    const el = document.getElementById("suppressed-ticks-count");
-    if (el) el.textContent = suppressedCount;
-
-    const ind = document.getElementById("filter-status-indicator");
-    if (ind) {
-      ind.textContent = "Jitter Filtered (LLM Idle, 0 tokens spent)";
-      ind.className = "font-mono text-3xs text-base-content/60";
-      setTimeout(() => {
-        ind.textContent = "Anomaly Engine Armed";
-        ind.className = "font-mono text-3xs text-success";
-      }, 2000);
-    }
-  }
-
-  function askCoPilotQuestion() {
-    streamAgentResponse(`TECH/USD currently trades at $${currentPrice.toFixed(2)}. The 30-minute macro structure shows sideways accumulation. Volatility is within normal ranges. No immediate reversal signals detected.`);
-  }
-
-  function streamAgentResponse(fullText) {
-    const container = document.getElementById("agent-thought-stream");
-    if (!container) return;
-
-    const statusEl = document.getElementById("agent-active-status");
-    if (statusEl) {
-      statusEl.innerHTML = `<span class="loading loading-spinner loading-3xs"></span> Streaming reaction deltas...`;
-      statusEl.className = "text-3xs font-mono text-warning flex items-center gap-1";
-    }
-
-    const now = new Date();
-    const timeStr = now.toTimeString().split(" ")[0];
-
-    const chatDiv = document.createElement("div");
-    chatDiv.className = "chat chat-start transition-all duration-300";
-    chatDiv.innerHTML = `
-      <div class="chat-header text-3xs font-mono opacity-70 mb-0.5">Reaction · ${timeStr}</div>
-      <div class="chat-bubble chat-bubble-primary text-xs leading-relaxed font-sans shadow-sm"></div>
-    `;
-    container.appendChild(chatDiv);
-    container.scrollTop = container.scrollHeight;
-
-    const bubble = chatDiv.querySelector(".chat-bubble");
-    const words = fullText.split(" ");
-    let idx = 0;
-
-    const streamTimer = setInterval(() => {
-      if (idx < words.length) {
-        bubble.textContent += (idx === 0 ? "" : " ") + words[idx];
-        idx++;
-        container.scrollTop = container.scrollHeight;
-      } else {
-        clearInterval(streamTimer);
-        if (statusEl) {
-          statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-success"></span> Watching telemetry feed...`;
-          statusEl.className = "text-3xs font-mono text-success flex items-center gap-1";
-        }
-      }
-    }, 35);
-  }
-
-  /* Showdown In-Browser Markdown Viewer */
   function getShowdownConverter() {
-    if (!showdownConverter && typeof showdown !== "undefined") {
-      showdownConverter = new showdown.Converter({
+    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+      showdownConverter = new window.showdown.Converter({
         tables: true,
         tasklists: true,
         strikethrough: true,
-        emoji: true,
-        simplifiedAutoLink: true
+        emoji: true
       });
     }
     return showdownConverter;
@@ -1491,7 +741,7 @@ sequenceDiagram
 
   function getOpenSpecArtifacts() {
     try {
-      const el = document.getElementById("openspec-artifacts-json");
+      const el = document.getElementById("open-spec-artifacts-data");
       if (el) return JSON.parse(el.textContent);
     } catch (_) {}
     return {};
@@ -1527,66 +777,59 @@ sequenceDiagram
     const titleEl = document.getElementById("markdown-modal-title");
     if (titleEl) titleEl.textContent = docName;
 
-    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
-      if (btn.getAttribute("data-doc") === docName) {
-        btn.classList.add("btn-primary");
-        btn.classList.remove("btn-ghost");
-      } else {
-        btn.classList.remove("btn-primary");
-        btn.classList.add("btn-ghost");
-      }
+    document.querySelectorAll(".doc-tab-btn, .md-tab-btn").forEach((btn) => {
+      const isTarget = btn.getAttribute("data-doc") === docName;
+      btn.classList.toggle("btn-active", isTarget);
+      btn.classList.toggle("btn-primary", isTarget);
     });
 
-    const artifacts = getOpenSpecArtifacts();
-    let rawContent = artifacts[docName];
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (!bodyEl) return;
 
-    if (!rawContent) {
+    const artifacts = getOpenSpecArtifacts();
+    let mdContent = artifacts[docName];
+
+    if (!mdContent) {
       try {
-        const res = await fetch("/" + docName);
-        if (res.ok) rawContent = await res.text();
+        const res = await fetch(`/${docName}`);
+        if (res.ok) mdContent = await res.text();
       } catch (_) {}
     }
 
-    if (!rawContent) {
-      rawContent = "# " + docName + "\n\nContent could not be loaded.";
+    if (!mdContent) {
+      bodyEl.innerHTML = `<div class="alert alert-warning text-xs">Artifact <code>${docName}</code> could not be loaded.</div>`;
+      return;
     }
 
     const converter = getShowdownConverter();
-    const html = converter ? converter.makeHtml(rawContent) : "<pre>" + rawContent + "</pre>";
-    const bodyEl = document.getElementById("markdown-modal-body");
-    if (bodyEl) bodyEl.innerHTML = html;
-  }
-
-  window.openMarkdownViewer = openMarkdownViewer;
-  window.closeMarkdownViewer = closeMarkdownViewer;
-  window.switchViewerTab = switchViewerTab;
-  window.selectModality = selectModality;
-  window.selectPokemon = selectPokemon;
-  window.askPokemonTactics = askPokemonTactics;
-  window.askPokemonCounters = askPokemonCounters;
-  window.askPokemonLore = askPokemonLore;
-  window.triggerThunderstorm = triggerThunderstorm;
-  window.triggerHeatwave = triggerHeatwave;
-  window.triggerBlizzard = triggerBlizzard;
-  window.triggerClearWeather = triggerClearWeather;
-  window.toggleSimulation = toggleSimulation;
-  window.triggerFlashDip = triggerFlashDip;
-  window.triggerBreakout = triggerBreakout;
-  window.triggerRoutineTick = triggerRoutineTick;
-  window.askCoPilotQuestion = askCoPilotQuestion;
-
-  function tryInitSimulation() {
-    if (typeof Chart === "undefined") {
-      setTimeout(tryInitSimulation, 30);
-      return;
+    if (converter) {
+      bodyEl.innerHTML = converter.makeHtml(mdContent);
+    } else {
+      bodyEl.innerHTML = `<pre class="text-xs font-mono whitespace-pre-wrap">${mdContent}</pre>`;
     }
-    initSimulation();
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", tryInitSimulation);
-  } else {
-    tryInitSimulation();
+  function copyDemoPrompt(btn) {
+    const prompt = `I am viewing an interactive publication report: "Turnkey AI Agent Reconnection" (implementation-progress.html).
+This report features an active Two-Way AI Agent Bridge and Datastar live hypermedia, but the local development server is currently offline or disconnected.
+
+Please restore the two-way agent bridge by starting the report dev server in the background:
+\`\`\`bash
+node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3000 --no-open
+\`\`\`
+Once started, keep this process running. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.`;
+
+    navigator.clipboard.writeText(prompt).then(() => {
+      const orig = btn.innerHTML;
+      btn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-success"></i> Copied to Clipboard!';
+      btn.classList.add("btn-success");
+      if (window.lucide) window.lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = orig;
+        btn.classList.remove("btn-success");
+        if (window.lucide) window.lucide.createIcons();
+      }, 2500);
+    });
   }
 </script>
   </main>
@@ -3450,9 +2693,11 @@ if (typeof window !== "undefined") {
     const palette = resolveDaisyUIThemePalette();
     try { await renderMermaidWithTheme(palette); } catch (_) {}
     try { checkInsufficientHorizontalSpace(); } catch (_) {}
+    try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.init(); } catch (_) {}
     window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
     window.addEventListener("beforeunload", () => {
       try { cleanupPublicFeeds(); } catch (_) {}
+      try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.stopHeartbeat(); } catch (_) {}
     });
     window.__REPORT_READY__ = true;
   });
@@ -3481,15 +2726,101 @@ async function reinitReportContent() {
  * Provides programmatic co-pilot inference and action execution from reports.
  */
 const HTMLReportAgent = {
-  isAvailable: async function() {
+  _connectionState: "checking",
+  _listeners: new Set(),
+  _heartbeatTimer: null,
+
+  getState: function() {
+    return this._connectionState;
+  },
+
+  onStateChange: function(fn) {
+    if (typeof fn === "function") {
+      this._listeners.add(fn);
+      return () => this._listeners.delete(fn);
+    }
+    return () => {};
+  },
+
+  _updateState: function(newState, data) {
+    this._connectionState = newState;
+    if (typeof document !== "undefined") {
+      const container = document.getElementById("agent-bridge-status-container");
+      const btn = document.getElementById("agent-bridge-status-btn");
+      const indicator = document.getElementById("agent-bridge-status-indicator");
+      const text = document.getElementById("agent-bridge-status-text");
+
+      if (container) {
+        container.classList.remove("hidden");
+        container.classList.add("flex");
+      }
+
+      if (btn && indicator && text) {
+        if (newState === "connected") {
+          btn.className = "badge badge-success badge-xs sm:badge-sm font-mono gap-1 transition shadow-sm cursor-pointer border border-success/40 text-success-content";
+          indicator.className = "inline-block w-1.5 h-1.5 rounded-full bg-success-content animate-pulse";
+          text.textContent = "LIVE AGENT";
+          btn.title = `Two-Way Agent Bridge Connected (${data?.bridge || 'agy CLI'})`;
+          const modal = document.getElementById("agent-reconnect-modal");
+          if (modal && typeof modal.close === "function" && modal.open) {
+            modal.close();
+          }
+        } else if (newState === "disconnected") {
+          btn.className = "badge badge-warning badge-xs sm:badge-sm font-mono gap-1 transition shadow-sm cursor-pointer border border-warning/40 text-warning-content animate-pulse";
+          indicator.className = "inline-block w-1.5 h-1.5 rounded-full bg-warning-content";
+          text.textContent = "AGENT OFFLINE";
+          btn.title = "Agent Bridge Disconnected. Click to restore connection.";
+        } else {
+          btn.className = "badge badge-ghost badge-xs sm:badge-sm font-mono gap-1 transition shadow-sm cursor-pointer border border-base-300";
+          indicator.className = "inline-block w-1.5 h-1.5 rounded-full bg-base-content/40 animate-pulse";
+          text.textContent = "CHECKING...";
+        }
+      }
+    }
+
+    for (const listener of this._listeners) {
+      try { listener(newState, data); } catch (_) {}
+    }
+  },
+
+  checkConnection: async function(btnEl) {
+    if (btnEl) {
+      btnEl.disabled = true;
+      const originalText = btnEl.innerHTML;
+      btnEl.innerHTML = `<span class="loading loading-spinner loading-xs mr-1"></span> Probing...`;
+      setTimeout(() => {
+        btnEl.disabled = false;
+        btnEl.innerHTML = originalText;
+      }, 1000);
+    }
+
+    // In standalone file:// mode, fetch scheme is unsupported by browsers; flag disconnected without probing
+    if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
+      this._updateState("disconnected");
+      return false;
+    }
+
     try {
-      const res = await fetch("/__agent_status__", { method: "GET" });
+      const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
+        ? `http://127.0.0.1:${process.env.REPORT_PORT || 3000}/__agent_status__`
+        : "/__agent_status__";
+
+      const res = await fetch(endpoint, { method: "GET" });
       if (res.ok) {
         const data = await res.json();
-        return data && data.ok === true;
+        if (data && data.ok) {
+          this._updateState("connected", data);
+          return true;
+        }
       }
     } catch (_) {}
+
+    this._updateState("disconnected");
     return false;
+  },
+
+  isAvailable: async function() {
+    return await this.checkConnection();
   },
 
   registerPersona: async function(persona) {
@@ -3526,9 +2857,133 @@ const HTMLReportAgent = {
     ];
   },
 
+  getReconnectPrompt: function(options = {}) {
+    let filename = options.filename;
+    if (!filename && typeof window !== "undefined") {
+      filename = window.location.pathname.split("/").filter(Boolean).pop();
+    }
+    if (!filename || filename === "" || filename === "/") {
+      filename = "report.html";
+    }
+    const port = options.port || 3000;
+    const title = options.title || (typeof document !== "undefined" && document.title) || "Interactive HTML Report";
+
+    return `I am viewing an interactive publication report: "${title}" (${filename}).
+This report features an active Two-Way AI Agent Bridge and Datastar live hypermedia, but the local development server is currently offline or disconnected.
+
+Please restore the two-way agent bridge by starting the report dev server in the background:
+\`\`\`bash
+node skills/html-report/scripts/serve-report.mjs ${filename} --port ${port} --no-open
+\`\`\`
+Once started, keep this process running. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.`;
+  },
+
+  copyReconnectPrompt: async function(btnEl, options = {}) {
+    const promptText = this.getReconnectPrompt(options);
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(promptText);
+      }
+      if (btnEl) {
+        const originalHtml = btnEl.innerHTML;
+        btnEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-success inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> <span class="text-success font-bold">Copied to Clipboard!</span>`;
+        btnEl.classList.add("btn-success");
+        setTimeout(() => {
+          btnEl.innerHTML = originalHtml;
+          btnEl.classList.remove("btn-success");
+        }, 2200);
+      }
+      return true;
+    } catch (err) {
+      console.warn("Failed to copy reconnect prompt to clipboard:", err);
+      return false;
+    }
+  },
+
+  openReconnectModal: function(options = {}) {
+    if (typeof document === "undefined") return;
+    const modal = document.getElementById("agent-reconnect-modal");
+    const preview = document.getElementById("agent-reconnect-prompt-preview");
+    if (preview) {
+      preview.textContent = this.getReconnectPrompt(options);
+    }
+    if (modal && typeof modal.showModal === "function") {
+      modal.showModal();
+    }
+  },
+
+  closeReconnectModal: function() {
+    if (typeof document === "undefined") return;
+    const modal = document.getElementById("agent-reconnect-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    }
+  },
+
+  startHeartbeat: function(intervalMs = 4000) {
+    if (typeof window === "undefined") return;
+    if (window.location && window.location.protocol === "file:") return;
+    if (this._heartbeatTimer) clearInterval(this._heartbeatTimer);
+
+    this._heartbeatTimer = setInterval(async () => {
+      if (this._connectionState === "disconnected") {
+        await this.checkConnection();
+      }
+    }, intervalMs);
+  },
+
+  stopHeartbeat: function() {
+    if (this._heartbeatTimer) {
+      clearInterval(this._heartbeatTimer);
+      this._heartbeatTimer = null;
+    }
+  },
+
+  init: function() {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
+    const hasAgentTriggers = Boolean(
+      document.querySelector("[data-on-click*='__agent_action__']") ||
+      document.querySelector("[data-on-click*='/api/agent']") ||
+      document.querySelector("#agent-reaction-bubble") ||
+      document.getElementById("agent-bridge-status-container") ||
+      document.querySelector("[data-agent-action]")
+    );
+
+    if (hasAgentTriggers) {
+      const container = document.getElementById("agent-bridge-status-container");
+      if (container) {
+        container.classList.remove("hidden");
+        container.classList.add("flex");
+      }
+      if (window.location && window.location.protocol === "file:") {
+        this._updateState("disconnected");
+      } else {
+        this.checkConnection();
+        this.startHeartbeat();
+      }
+    }
+  },
+
   ask: async function(options) {
     const payload = typeof options === "string" ? { prompt: options } : (options || {});
     const endpoint = payload.endpoint || "/__agent_action__";
+
+    // In standalone file:// mode, immediately invoke local fallback without throwing fetch error
+    if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
+      this._updateState("disconnected");
+      if (payload.autoOpenModal !== false) {
+        try { this.openReconnectModal(); } catch (_) {}
+      }
+      return {
+        ok: false,
+        fallback: true,
+        error: "Standalone file:// mode - dev server offline",
+        result: payload.fallbackText || "Agent bridge offline. Using local deterministic fallback.",
+        agent: "Local Autonomous Fallback",
+        timestamp: new Date().toISOString()
+      };
+    }
+
     try {
       const res = await fetch(endpoint, {
         method: "POST",
@@ -3536,8 +2991,14 @@ const HTMLReportAgent = {
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const data = await res.json();
+      this._updateState("connected");
+      return data;
     } catch (err) {
+      this._updateState("disconnected");
+      if (payload.autoOpenModal !== false) {
+        try { this.openReconnectModal(); } catch (_) {}
+      }
       return {
         ok: false,
         fallback: true,

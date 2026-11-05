@@ -79,6 +79,7 @@ Before writing any HTML report, read the relevant reference guides in this skill
    - Built-in personas (`analyst`, `debugger`, `strategist`, `executive`, `sarcastic`, `oak`, `hype`) and custom system prompts.
    - Global client helper `window.HTMLReportAgent` (`ask()`, `isAvailable()`) with resilient offline fallback.
    - Automatic dev directory fallback routing (`/dev/` and `/experiments/`).
+   - Turnkey AI agent reconnection prompt synthesis and auto-recovery modal for shared reports when bridge is offline or disconnected.
 12. **[Agent Persona Blueprint & Extensibility Guide (`persona-blueprint.md`)](./references/persona-blueprint.md)**:
    - Full specification for defining, styling, and registering specialized AI co-pilot personas.
    - Four registration paths: `personas.json` workspace auto-loading, `POST /api/agent/persona` REST API, inline `personaConfig` in Datastar `@post`, and `HTMLReportAgent.registerPersona(...)`.

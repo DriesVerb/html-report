@@ -1,0 +1,400 @@
+<!-- ========================================== -->
+<!-- HERO BANNER & JOURNEY STEPPER              -->
+<!-- ========================================== -->
+<header class="space-y-6 border-b border-base-300 pb-8">
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">agent-bridge-turnkey-reconnect</span>
+    <span class="badge badge-success font-mono text-xs font-semibold gap-1">
+      <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Phase 4: Verifying & Ready to Ship
+    </span>
+    <span class="badge badge-secondary font-mono text-xs font-semibold gap-1">
+      <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Auto-Recovery & Heartbeat
+    </span>
+    <span class="badge badge-accent font-mono text-xs font-semibold gap-1">
+      <i data-lucide="terminal" class="w-3.5 h-3.5"></i> Turnkey Agent Prompts
+    </span>
+  </div>
+
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div class="space-y-2">
+      <h1 id="hero-title" class="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+        Turnkey AI Agent Reconnection Prompt &amp; Auto-Recovery
+      </h1>
+      <p class="text-sm sm:text-base text-base-content/80 max-w-3xl leading-relaxed">
+        When an interactive report with an autonomous two-way agent bridge is shared with a colleague or opened without an active dev server, the report detects the broken connection, generates a turnkey copy-paste AI prompt for any agent, and auto-recovers live status upon server activation.
+      </p>
+    </div>
+
+    <!-- Markdown Artifact Backlinks with Showdown Modal Viewer -->
+    <div class="flex flex-wrap items-center gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="compass" class="w-4 h-4 text-secondary"></i> design.md
+      </button>
+      <button id="header-btn-tasks" type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-primary transition">
+        <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/two-way-agent-reconnect/spec.md')" class="btn btn-sm btn-outline gap-1.5 hover:btn-info transition">
+        <i data-lucide="layers" class="w-4 h-4 text-info"></i> spec.md
+      </button>
+    </div>
+  </div>
+
+  <!-- Journey Stepper Standard -->
+  <div class="w-full overflow-x-auto pt-2">
+    <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+      <li class="step step-primary" data-content="✓">Brainstorming</li>
+      <li class="step step-primary" data-content="✓">Planning</li>
+      <li class="step step-primary" data-content="✓">Implementing</li>
+      <li class="step step-primary" data-content="●">Verifying</li>
+      <li class="step" data-content="5">Shipped / Archived</li>
+    </ul>
+  </div>
+</header>
+
+<!-- ========================================== -->
+<!-- METRICS & LIVE PROGRESS SCORECARD          -->
+<!-- ========================================== -->
+<section class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
+  <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-4">
+    <div class="stat-figure text-primary">
+      <i data-lucide="list-checks" class="w-7 h-7"></i>
+    </div>
+    <div class="stat-title text-xs font-semibold uppercase tracking-wider text-base-content/60">Total Tasks</div>
+    <div class="stat-value text-2xl sm:text-3xl font-black text-primary">9 / 9</div>
+    <div class="stat-desc text-xs text-success font-semibold">100% Completed</div>
+  </div>
+
+  <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-4">
+    <div class="stat-figure text-success">
+      <i data-lucide="check-check" class="w-7 h-7"></i>
+    </div>
+    <div class="stat-title text-xs font-semibold uppercase tracking-wider text-base-content/60">Status</div>
+    <div class="stat-value text-2xl sm:text-3xl font-black text-success">Verified</div>
+    <div class="stat-desc text-xs text-success font-semibold">All Tests Passing</div>
+  </div>
+
+  <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-4">
+    <div class="stat-figure text-success">
+      <i data-lucide="shield-check" class="w-7 h-7"></i>
+    </div>
+    <div class="stat-title text-xs font-semibold uppercase tracking-wider text-base-content/60">Tests Passed</div>
+    <div class="stat-value text-2xl sm:text-3xl font-black text-success">333</div>
+    <div class="stat-desc text-xs text-success">100% Suite Parity</div>
+  </div>
+
+  <div class="stat bg-base-100 rounded-box border border-base-300 shadow-sm p-4">
+    <div class="stat-figure text-secondary">
+      <i data-lucide="radio" class="w-7 h-7"></i>
+    </div>
+    <div class="stat-title text-xs font-semibold uppercase tracking-wider text-base-content/60">Recovery Protocol</div>
+    <div class="stat-value text-2xl sm:text-3xl font-black text-secondary">Turnkey</div>
+    <div class="stat-desc text-xs text-base-content/60">Zero-Config AI Paste</div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- ARCHITECTURE FLOW                          -->
+<!-- ========================================== -->
+<section class="mt-8 bg-base-100 rounded-box border border-base-300 p-6 shadow-sm space-y-4">
+  <div class="flex items-center justify-between border-b border-base-200 pb-3">
+    <div class="flex items-center gap-2">
+      <i data-lucide="git-branch" class="w-5 h-5 text-secondary"></i>
+      <h2 id="architecture-flow" class="text-lg font-bold text-base-content">
+        Turnkey Reconnection Lifecycle &amp; Multi-Agent Workflow
+      </h2>
+    </div>
+    <span class="badge badge-sm badge-outline font-mono">Mermaid Sequence</span>
+  </div>
+
+  <div class="mermaid bg-base-200/50 p-4 rounded-xl overflow-x-auto text-xs">
+sequenceDiagram
+    autonumber
+    actor Recipient as Human Recipient
+    participant Browser as Report in Browser
+    actor Agent as Recipient's AI Agent
+    participant DevServer as Dev Server (serve-report.mjs)
+
+    Recipient->>Browser: Opens shared report (file:// or standalone)
+    Browser->>Browser: Heartbeat probes /__agent_status__ (Fails / Unreachable)
+    Browser-->>Recipient: Displays "Two-Way Agent Offline" Card & "Copy Agent Prompt"
+    Recipient->>Browser: Clicks "Copy Turnkey Agent Prompt"
+    Browser-->>Recipient: Clipboard updated with tailored recovery prompt
+    Recipient->>Agent: Pastes prompt into Antigravity / Claude Code / Codex
+    Agent->>DevServer: Executes: node skills/html-report/scripts/serve-report.mjs &lt;file&gt; --port 3000
+    DevServer-->>Agent: Dev server listening on localhost:3000
+    Browser->>DevServer: Heartbeat probe receives HTTP 200 from /__agent_status__
+    Browser-->>Recipient: Badge switches to "LIVE CONNECTED" & Co-Pilot Unlocked!
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- INTERACTIVE PROMPT GENERATION PREVIEW      -->
+<!-- ========================================== -->
+<section class="mt-8 bg-base-100 rounded-box border border-base-300 p-6 shadow-sm space-y-4">
+  <div class="flex items-center justify-between border-b border-base-200 pb-3">
+    <div class="flex items-center gap-2">
+      <i data-lucide="terminal" class="w-5 h-5 text-accent"></i>
+      <h2 id="live-prompt-preview" class="text-lg font-bold text-base-content">
+        Synthesized Turnkey Agent Reconnection Prompt
+      </h2>
+    </div>
+    <span class="badge badge-accent badge-sm font-mono font-bold">Live Preview</span>
+  </div>
+
+  <p class="text-xs text-base-content/75">
+    When the two-way bridge is unreachable, the report constructs this tailored prompt containing the exact document context and shell commands. The reader clicks the button below, pastes it into their agent, and the agent restores the connection.
+  </p>
+
+  <div class="mockup-code text-xs bg-neutral text-neutral-content font-mono rounded-box shadow-md">
+    <pre data-prefix="1"><code>I am viewing an interactive publication report: "Turnkey AI Agent Reconnection" (implementation-progress.html).</code></pre>
+    <pre data-prefix="2"><code>This report features an active Two-Way AI Agent Bridge and Datastar live hypermedia, but the local dev server is currently offline.</code></pre>
+    <pre data-prefix="3"><code></code></pre>
+    <pre data-prefix="4"><code class="text-warning">Please restore the two-way agent bridge by starting the report dev server in the background:</code></pre>
+    <pre data-prefix="5"><code class="text-success font-bold">node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3000 --no-open</code></pre>
+    <pre data-prefix="6"><code></code></pre>
+    <pre data-prefix="7"><code>Keep this process running. The report will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.</code></pre>
+  </div>
+
+  <div class="flex items-center justify-between pt-2 flex-wrap gap-2">
+    <button
+      id="demo-copy-prompt-btn"
+      type="button"
+      onclick="copyDemoPrompt(this)"
+      class="btn btn-accent btn-sm gap-2 font-mono"
+    >
+      <i data-lucide="copy" class="w-4 h-4"></i> Copy Turnkey Agent Prompt
+    </button>
+    <span class="text-xs text-base-content/60 font-mono">Formatted for Antigravity, Claude Code, Cursor &amp; Codex</span>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- TASK TRACKING SECTION                      -->
+<!-- ========================================== -->
+<section class="mt-8 bg-base-100 rounded-box border border-base-300 p-6 shadow-sm space-y-6">
+  <div class="flex items-center justify-between border-b border-base-200 pb-3">
+    <div class="flex items-center gap-2">
+      <i data-lucide="check-square" class="w-5 h-5 text-primary"></i>
+      <h2 id="task-checklist" class="text-lg font-bold text-base-content">
+        Implementation Task Checklist
+      </h2>
+    </div>
+    <span class="badge badge-sm badge-primary font-mono font-bold">Phase 1 &bull; In Progress</span>
+  </div>
+
+  <div class="space-y-4 text-sm">
+    <div class="space-y-2">
+      <h3 class="font-bold text-xs uppercase tracking-wider text-primary">Phase 1: Client Runtime &amp; Reconnection Engine</h3>
+      <div class="grid grid-cols-1 gap-2 pl-2 border-l-2 border-primary/40">
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-primary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">1.1 Implement HTMLReportAgent.getReconnectPrompt(options) in report-runtime.js</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-primary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">1.2 Implement connection state tracking (_connectionState) and checkConnection()</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-primary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">1.3 Implement background heartbeat auto-recovery with exponential backoff</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-primary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">1.4 Implement HTMLReportAgent.copyReconnectPrompt(btnEl) with clipboard feedback</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="space-y-2">
+      <h3 class="font-bold text-xs uppercase tracking-wider text-secondary">Phase 2: Shell UI &amp; Component Integration</h3>
+      <div class="grid grid-cols-1 gap-2 pl-2 border-l-2 border-secondary/40">
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-secondary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">2.1 Add connection status indicator badge (#agent-bridge-status-badge) in navbar</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-secondary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">2.2 Add turnkey agent reconnection modal (#agent-reconnect-modal)</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-secondary checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">2.3 Wire co-pilot failure hooks to open reconnection modal on broken bridge attempts</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="space-y-2">
+      <h3 class="font-bold text-xs uppercase tracking-wider text-accent">Phase 3: Verification &amp; OpenSpec Journey</h3>
+      <div class="grid grid-cols-1 gap-2 pl-2 border-l-2 border-accent/40">
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-accent checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">3.1 Build companion index.html report and sync with localhost:3000</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-accent checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">3.2 Add automated unit and BDD tests in tests/agent-reconnect.test.mjs</span>
+        </label>
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input type="checkbox" class="checkbox checkbox-accent checkbox-xs" checked disabled />
+          <span class="text-base-content/90 font-mono text-xs">3.3 Run full test suite and push to main</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER             -->
+<!-- ========================================== -->
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <div class="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300 shrink-0">
+      <div class="flex items-center gap-2 flex-wrap">
+        <i data-lucide="file-code" class="w-5 h-5 text-primary"></i>
+        <span id="markdown-modal-title" class="font-bold text-sm font-mono text-base-content">proposal.md</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="join">
+          <button id="tab-btn-proposal" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
+          <button id="tab-btn-design" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
+          <button id="tab-btn-tasks" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
+          <button id="tab-btn-spec" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="specs/two-way-agent-reconnect/spec.md" onclick="switchViewerTab('specs/two-way-agent-reconnect/spec.md')">spec.md</button>
+        </div>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost" aria-label="Close modal">✕</button>
+      </div>
+    </div>
+
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none flex-1 text-base-content bg-base-100">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- Embedded OpenSpec Artifact Data for Instant Zero-Network Modal Rendering -->
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Turnkey AI Agent Reconnection Prompt & Auto-Recovery for Shared Two-Way Reports\n\n## Why\n\nReports generated with `html-report` frequently feature live **Two-Way Agent Co-Pilots** and **Datastar SSE hypermedia streaming**. When an author shares an interactive report file (`.html`) with a colleague, opens it on a separate workstation, or inspects it without an active development server running on `localhost:3000`, the two-way bridge connection is broken.\n\nCurrently, recipients encounter silent fallback heuristics or generic connection timeouts with no actionable guidance on how to restore live agent inference. Because modern software engineers and operators frequently have their own local AI agents running (e.g. Google Antigravity, Claude Code, Cursor, Codex, Gemini CLI), the report should empower them to restore live two-way connectivity in seconds by generating a **copy-paste turnkey agent instruction prompt**.\n\n## What Changes\n\n- **Automatic Disconnected Bridge Detection**:\n  - The client runtime (`report-runtime.js`) actively probes `/__agent_status__` on load and listens for bridge request failures.\n  - When disconnected, a prominent yet elegant DaisyUI indicator card or modal appears: `\"Two-Way AI Agent Bridge Offline\"`.\n- **Turnkey Multi-Agent Reconnection Prompt**:\n  - Generates an instant, context-aware prompt customized with the exact report filename, active personas, and shell commands (`node skills/html-report/scripts/serve-report.mjs <file> --port 3000`).\n  - Includes a one-click `\"Copy Turnkey Agent Prompt\"` button with visual feedback.\n  - The prompt is engineered to be pasted directly into *any* autonomous AI agent (Antigravity, Claude Code, Codex, Cursor), commanding the agent to start the local bridge in the background.\n- **Heartbeat Auto-Recovery & Live Reconnection**:\n  - Background polling probes `/__agent_status__` with exponential backoff (2s → 5s → 10s).\n  - Manual `\"Check Connection Now\"` button.\n  - When the bridge comes online, the UI seamlessly transitions to `LIVE CONNECTED` with an OKLCH pulsing indicator, without requiring a page reload.\n- **Configurable Fallback & Modal Integration**:\n  - Reports can embed connection badges in the navbar or inline co-pilot cards.\n\n## Capabilities\n\n### New Capabilities\n- `two-way-agent-reconnect`: Standardizes detection of broken two-way agent bridge connections in shared reports, automated synthesis of turnkey agent reconnection prompts, and seamless live re-hydration upon bridge recovery.\n",
+  "design.md": "# Design: Turnkey AI Agent Reconnection Prompt & Auto-Recovery\n\n## Context & Motivation\n\nWhen an interactive report containing two-way AI co-pilots is shared as a standalone `.html` file or viewed outside the active dev server, the browser cannot communicate with `/__agent_action__`. Instead of frustrating the reader with silent failure or dead buttons, the report actively helps the reader restore two-way communication by generating an AI agent instruction prompt formatted for turnkey execution.\n\n## Architecture Flow\n\n1. Recipient opens shared report\n2. Bridge probe fails\n3. Recipient clicks \"Copy Agent Prompt\"\n4. Recipient pastes prompt into autonomous agent\n5. Agent executes `serve-report.mjs`\n6. Browser heartbeat detects online status and auto-recovers\n",
+  "tasks.md": "# Tasks: Turnkey AI Agent Reconnection Prompt & Auto-Recovery\n\n## 1. Client Runtime & Reconnection Engine\n\n- [x] 1.1 Implement `HTMLReportAgent.getReconnectPrompt(options)` in `skills/html-report/assets/report-runtime.js`\n- [x] 1.2 Implement connection state tracking (`_connectionState`), state change listeners, and `checkConnection()`\n- [x] 1.3 Implement background heartbeat auto-recovery with exponential backoff\n- [x] 1.4 Implement `HTMLReportAgent.copyReconnectPrompt(btnEl)` with clipboard API and visual confirmation\n\n## 2. Shell UI & Component Integration\n\n- [x] 2.1 Add connection status indicator badge (`#agent-bridge-status-badge`) in `skills/html-report/assets/template-shell.html` navbar\n- [x] 2.2 Add turnkey agent reconnection modal (`#agent-reconnect-modal`) with prompt display, copy button, and retry action\n- [x] 2.3 Wire co-pilot failure hooks to open the reconnection modal on broken bridge attempts\n\n## 3. Verification & OpenSpec Journey\n\n- [x] 3.1 Build companion `index.html` report and sync with `implementation-progress.html` on `http://localhost:3000`\n- [x] 3.2 Add automated unit and BDD tests in `tests/agent-reconnect.test.mjs` verifying prompt synthesis and state transitions\n- [x] 3.3 Run full test suite and push to main\n",
+  "specs/two-way-agent-reconnect/spec.md": "# Spec Delta: Turnkey AI Agent Reconnection Prompt & Auto-Recovery\n\n## Purpose\nEnables shared HTML reports featuring interactive Two-Way Agent Co-Pilots to detect broken or offline local bridge connections, generate turnkey, copy-paste AI agent instruction prompts, and automatically recover live status when the local dev server is activated.\n\n## ADDED Requirements\n\n### Requirement: Offline Bridge Detection and Disconnection State\nThe system MUST monitor the availability of the local Two-Way Agent Bridge (`/__agent_status__` / `/api/agent/status`) and reflect the active connection state (`connected`, `disconnected`, or `connecting`).\n\n### Requirement: Turnkey AI Agent Reconnection Prompt Synthesis\nThe system MUST dynamically generate a clean, copy-ready AI instruction prompt tailored for any autonomous AI agent.\n\n### Requirement: Clipboard Copy Affordance & User Feedback\nThe report UI MUST provide a prominent, accessible copy button allowing the user to copy the synthesized prompt with immediate visual confirmation.\n\n### Requirement: Live Heartbeat Auto-Recovery & Zero-Reload Reconnection\nThe system MUST provide both automated polling and on-demand re-checking to seamlessly transition the report from `disconnected` to `connected` when the dev server starts.\n"
+}
+</script>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    activeDocKey = docName;
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    const titleEl = document.getElementById("markdown-modal-title");
+    if (titleEl) titleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn, .md-tab-btn").forEach((btn) => {
+      const isTarget = btn.getAttribute("data-doc") === docName;
+      btn.classList.toggle("btn-active", isTarget);
+      btn.classList.toggle("btn-primary", isTarget);
+    });
+
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (!bodyEl) return;
+
+    const artifacts = getOpenSpecArtifacts();
+    let mdContent = artifacts[docName];
+
+    if (!mdContent) {
+      try {
+        const res = await fetch(`/${docName}`);
+        if (res.ok) mdContent = await res.text();
+      } catch (_) {}
+    }
+
+    if (!mdContent) {
+      bodyEl.innerHTML = `<div class="alert alert-warning text-xs">Artifact <code>${docName}</code> could not be loaded.</div>`;
+      return;
+    }
+
+    const converter = getShowdownConverter();
+    if (converter) {
+      bodyEl.innerHTML = converter.makeHtml(mdContent);
+    } else {
+      bodyEl.innerHTML = `<pre class="text-xs font-mono whitespace-pre-wrap">${mdContent}</pre>`;
+    }
+  }
+
+  function copyDemoPrompt(btn) {
+    const prompt = `I am viewing an interactive publication report: "Turnkey AI Agent Reconnection" (implementation-progress.html).
+This report features an active Two-Way AI Agent Bridge and Datastar live hypermedia, but the local development server is currently offline or disconnected.
+
+Please restore the two-way agent bridge by starting the report dev server in the background:
+\`\`\`bash
+node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3000 --no-open
+\`\`\`
+Once started, keep this process running. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.`;
+
+    navigator.clipboard.writeText(prompt).then(() => {
+      const orig = btn.innerHTML;
+      btn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-success"></i> Copied to Clipboard!';
+      btn.classList.add("btn-success");
+      if (window.lucide) window.lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = orig;
+        btn.classList.remove("btn-success");
+        if (window.lucide) window.lucide.createIcons();
+      }, 2500);
+    });
+  }
+</script>

@@ -52,8 +52,10 @@ flowchart LR
    - `oak`: Exasperated field-research commentary.
    - `hype`: Over-the-top Esports shoutcaster excitement.
    - `custom`: Provide any custom `systemPrompt` inline.
-4. **Resilient Offline / Standalone Fallback**:
-   - If an exported report is opened as a standalone file (`file://`) or the dev server is unreachable, `HTMLReportAgent` and `serve-report.mjs` automatically engage a deterministic local fallback without breaking the UI.
+4. **Resilient Offline / Standalone Fallback & Turnkey Reconnection**:
+   - If an exported report is opened as a standalone file (`file://`), shared with another person, or the dev server is unreachable, `HTMLReportAgent` and `serve-report.mjs` automatically engage a deterministic local fallback.
+   - **Turnkey Agent Reconnection Prompt**: When the two-way bridge is broken or offline in a shared report, clicking the status indicator in the navbar opens a modal presenting a copy-ready agent prompt. Pasting this prompt into any autonomous AI agent (Google Antigravity, Claude Code, Cursor, Codex) restores the dev server and bridge instantly.
+   - **Zero-Reload Auto-Recovery**: The client runtime maintains an automatic background heartbeat poll; as soon as the agent starts the dev server, the browser report reconnects seamlessly without page reload.
 
 ---
 
@@ -147,6 +149,52 @@ if (response.ok) {
   console.warn("Fallback Mode:", response.result);
 }
 ```
+
+---
+
+## Turnkey AI Agent Reconnection Prompt & Auto-Recovery
+
+When an interactive report featuring the Two-Way Agent Bridge is shared across developers or moved to a machine where the dev server (`serve-report.mjs`) is not currently running, the bridge is temporarily broken/disconnected.
+
+The built-in client runtime provides a **turnkey AI agent reconnection prompt** and zero-reload auto-recovery:
+
+### 1. Visual Status Affordance & Modal
+* The navbar features `#agent-bridge-status-container` with an interactive button (`#agent-bridge-status-btn`) displaying:
+  * 🟢 **Bridge Connected**: Dev server and local agent session active.
+  * 🟠 **Checking Bridge**: Initial handshake in progress.
+  * 🔴 **Bridge Offline / Disconnected**: Dev server offline or unreachable.
+* Clicking the offline status button immediately opens `#agent-reconnect-modal`.
+
+### 2. Copy-Ready Turnkey AI Agent Prompt
+The modal presents a pre-configured prompt synthesized client-side via `HTMLReportAgent.getReconnectPrompt()`:
+
+````markdown
+# Restore Two-Way Agent Bridge for Report
+
+The two-way AI agent bridge for interactive report **"<Report Title>"** is currently offline or disconnected.
+
+Please restore the agent bridge by running the following dev server command in your workspace:
+
+```bash
+node skills/html-report/scripts/serve-report.mjs <ReportFile> --port 3000 --no-open
+```
+
+Once started, this report at `http://localhost:3000` will automatically detect the bridge and reconnect without requiring a page reload.
+````
+
+A single click on **"Copy AI Agent Prompt"** copies the exact instruction to the clipboard. The recipient developer can paste this directly into their autonomous coding agent (Antigravity CLI `agy`, Claude Code, Cursor, Codex, etc.).
+
+### 3. Zero-Reload Background Heartbeat
+* While disconnected, `HTMLReportAgent` runs a lightweight heartbeat probing `/__agent_status__` every 4 seconds.
+* As soon as the agent starts the dev server in the background, the client automatically detects the online bridge, transitions to `connected`, and updates the badge to green—with zero manual browser refreshes needed.
+
+### 4. Client Runtime API
+Available on `window.HTMLReportAgent`:
+* `HTMLReportAgent.checkConnection()`: Probes server health and returns `{ connected: boolean, state: string }`.
+* `HTMLReportAgent.getReconnectPrompt(options)`: Generates the customized turnkey Markdown prompt.
+* `HTMLReportAgent.copyReconnectPrompt(btnEl, options)`: Copies prompt to clipboard with visual checkmark feedback.
+* `HTMLReportAgent.openReconnectModal()` / `HTMLReportAgent.closeReconnectModal()`: Controls modal visibility.
+* `HTMLReportAgent.onConnectionChange(callback)`: Registers listener for connection state transitions (`connected`, `disconnected`, `checking`).
 
 ---
 

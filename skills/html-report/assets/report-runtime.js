@@ -1847,9 +1847,11 @@ if (typeof window !== "undefined") {
     const palette = resolveDaisyUIThemePalette();
     try { await renderMermaidWithTheme(palette); } catch (_) {}
     try { checkInsufficientHorizontalSpace(); } catch (_) {}
+    try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.init(); } catch (_) {}
     window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
     window.addEventListener("beforeunload", () => {
       try { cleanupPublicFeeds(); } catch (_) {}
+      try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.stopHeartbeat(); } catch (_) {}
     });
     window.__REPORT_READY__ = true;
   });
@@ -1878,15 +1880,101 @@ async function reinitReportContent() {
  * Provides programmatic co-pilot inference and action execution from reports.
  */
 const HTMLReportAgent = {
-  isAvailable: async function() {
+  _connectionState: "checking",
+  _listeners: new Set(),
+  _heartbeatTimer: null,
+
+  getState: function() {
+    return this._connectionState;
+  },
+
+  onStateChange: function(fn) {
+    if (typeof fn === "function") {
+      this._listeners.add(fn);
+      return () => this._listeners.delete(fn);
+    }
+    return () => {};
+  },
+
+  _updateState: function(newState, data) {
+    this._connectionState = newState;
+    if (typeof document !== "undefined") {
+      const container = document.getElementById("agent-bridge-status-container");
+      const btn = document.getElementById("agent-bridge-status-btn");
+      const indicator = document.getElementById("agent-bridge-status-indicator");
+      const text = document.getElementById("agent-bridge-status-text");
+
+      if (container) {
+        container.classList.remove("hidden");
+        container.classList.add("flex");
+      }
+
+      if (btn && indicator && text) {
+        if (newState === "connected") {
+          btn.className = "badge badge-success badge-xs sm:badge-sm font-mono gap-1 transition shadow-sm cursor-pointer border border-success/40 text-success-content";
+          indicator.className = "inline-block w-1.5 h-1.5 rounded-full bg-success-content animate-pulse";
+          text.textContent = "LIVE AGENT";
+          btn.title = `Two-Way Agent Bridge Connected (${data?.bridge || 'agy CLI'})`;
+          const modal = document.getElementById("agent-reconnect-modal");
+          if (modal && typeof modal.close === "function" && modal.open) {
+            modal.close();
+          }
+        } else if (newState === "disconnected") {
+          btn.className = "badge badge-warning badge-xs sm:badge-sm font-mono gap-1 transition shadow-sm cursor-pointer border border-warning/40 text-warning-content animate-pulse";
+          indicator.className = "inline-block w-1.5 h-1.5 rounded-full bg-warning-content";
+          text.textContent = "AGENT OFFLINE";
+          btn.title = "Agent Bridge Disconnected. Click to restore connection.";
+        } else {
+          btn.className = "badge badge-ghost badge-xs sm:badge-sm font-mono gap-1 transition shadow-sm cursor-pointer border border-base-300";
+          indicator.className = "inline-block w-1.5 h-1.5 rounded-full bg-base-content/40 animate-pulse";
+          text.textContent = "CHECKING...";
+        }
+      }
+    }
+
+    for (const listener of this._listeners) {
+      try { listener(newState, data); } catch (_) {}
+    }
+  },
+
+  checkConnection: async function(btnEl) {
+    if (btnEl) {
+      btnEl.disabled = true;
+      const originalText = btnEl.innerHTML;
+      btnEl.innerHTML = `<span class="loading loading-spinner loading-xs mr-1"></span> Probing...`;
+      setTimeout(() => {
+        btnEl.disabled = false;
+        btnEl.innerHTML = originalText;
+      }, 1000);
+    }
+
+    // In standalone file:// mode, fetch scheme is unsupported by browsers; flag disconnected without probing
+    if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
+      this._updateState("disconnected");
+      return false;
+    }
+
     try {
-      const res = await fetch("/__agent_status__", { method: "GET" });
+      const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
+        ? `http://127.0.0.1:${process.env.REPORT_PORT || 3000}/__agent_status__`
+        : "/__agent_status__";
+
+      const res = await fetch(endpoint, { method: "GET" });
       if (res.ok) {
         const data = await res.json();
-        return data && data.ok === true;
+        if (data && data.ok) {
+          this._updateState("connected", data);
+          return true;
+        }
       }
     } catch (_) {}
+
+    this._updateState("disconnected");
     return false;
+  },
+
+  isAvailable: async function() {
+    return await this.checkConnection();
   },
 
   registerPersona: async function(persona) {
@@ -1923,9 +2011,133 @@ const HTMLReportAgent = {
     ];
   },
 
+  getReconnectPrompt: function(options = {}) {
+    let filename = options.filename;
+    if (!filename && typeof window !== "undefined") {
+      filename = window.location.pathname.split("/").filter(Boolean).pop();
+    }
+    if (!filename || filename === "" || filename === "/") {
+      filename = "report.html";
+    }
+    const port = options.port || 3000;
+    const title = options.title || (typeof document !== "undefined" && document.title) || "Interactive HTML Report";
+
+    return `I am viewing an interactive publication report: "${title}" (${filename}).
+This report features an active Two-Way AI Agent Bridge and Datastar live hypermedia, but the local development server is currently offline or disconnected.
+
+Please restore the two-way agent bridge by starting the report dev server in the background:
+\`\`\`bash
+node skills/html-report/scripts/serve-report.mjs ${filename} --port ${port} --no-open
+\`\`\`
+Once started, keep this process running. The report in my browser will automatically detect the connection, update its live badges, and unlock interactive co-pilot queries.`;
+  },
+
+  copyReconnectPrompt: async function(btnEl, options = {}) {
+    const promptText = this.getReconnectPrompt(options);
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(promptText);
+      }
+      if (btnEl) {
+        const originalHtml = btnEl.innerHTML;
+        btnEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-success inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> <span class="text-success font-bold">Copied to Clipboard!</span>`;
+        btnEl.classList.add("btn-success");
+        setTimeout(() => {
+          btnEl.innerHTML = originalHtml;
+          btnEl.classList.remove("btn-success");
+        }, 2200);
+      }
+      return true;
+    } catch (err) {
+      console.warn("Failed to copy reconnect prompt to clipboard:", err);
+      return false;
+    }
+  },
+
+  openReconnectModal: function(options = {}) {
+    if (typeof document === "undefined") return;
+    const modal = document.getElementById("agent-reconnect-modal");
+    const preview = document.getElementById("agent-reconnect-prompt-preview");
+    if (preview) {
+      preview.textContent = this.getReconnectPrompt(options);
+    }
+    if (modal && typeof modal.showModal === "function") {
+      modal.showModal();
+    }
+  },
+
+  closeReconnectModal: function() {
+    if (typeof document === "undefined") return;
+    const modal = document.getElementById("agent-reconnect-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    }
+  },
+
+  startHeartbeat: function(intervalMs = 4000) {
+    if (typeof window === "undefined") return;
+    if (window.location && window.location.protocol === "file:") return;
+    if (this._heartbeatTimer) clearInterval(this._heartbeatTimer);
+
+    this._heartbeatTimer = setInterval(async () => {
+      if (this._connectionState === "disconnected") {
+        await this.checkConnection();
+      }
+    }, intervalMs);
+  },
+
+  stopHeartbeat: function() {
+    if (this._heartbeatTimer) {
+      clearInterval(this._heartbeatTimer);
+      this._heartbeatTimer = null;
+    }
+  },
+
+  init: function() {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
+    const hasAgentTriggers = Boolean(
+      document.querySelector("[data-on-click*='__agent_action__']") ||
+      document.querySelector("[data-on-click*='/api/agent']") ||
+      document.querySelector("#agent-reaction-bubble") ||
+      document.getElementById("agent-bridge-status-container") ||
+      document.querySelector("[data-agent-action]")
+    );
+
+    if (hasAgentTriggers) {
+      const container = document.getElementById("agent-bridge-status-container");
+      if (container) {
+        container.classList.remove("hidden");
+        container.classList.add("flex");
+      }
+      if (window.location && window.location.protocol === "file:") {
+        this._updateState("disconnected");
+      } else {
+        this.checkConnection();
+        this.startHeartbeat();
+      }
+    }
+  },
+
   ask: async function(options) {
     const payload = typeof options === "string" ? { prompt: options } : (options || {});
     const endpoint = payload.endpoint || "/__agent_action__";
+
+    // In standalone file:// mode, immediately invoke local fallback without throwing fetch error
+    if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
+      this._updateState("disconnected");
+      if (payload.autoOpenModal !== false) {
+        try { this.openReconnectModal(); } catch (_) {}
+      }
+      return {
+        ok: false,
+        fallback: true,
+        error: "Standalone file:// mode - dev server offline",
+        result: payload.fallbackText || "Agent bridge offline. Using local deterministic fallback.",
+        agent: "Local Autonomous Fallback",
+        timestamp: new Date().toISOString()
+      };
+    }
+
     try {
       const res = await fetch(endpoint, {
         method: "POST",
@@ -1933,8 +2145,14 @@ const HTMLReportAgent = {
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const data = await res.json();
+      this._updateState("connected");
+      return data;
     } catch (err) {
+      this._updateState("disconnected");
+      if (payload.autoOpenModal !== false) {
+        try { this.openReconnectModal(); } catch (_) {}
+      }
       return {
         ok: false,
         fallback: true,
