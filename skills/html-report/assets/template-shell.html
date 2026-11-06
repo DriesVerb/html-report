@@ -444,6 +444,96 @@
     </div>
   </footer>
 
+  <!-- HTMLReportAgentDock: Floating & Collapsible Two-Way AI Co-Pilot Dock -->
+  <aside id="agent-dock-container" aria-label="AI Co-Pilot Dock" class="print:hidden">
+    <!-- Floating Launcher Toggle (bottom-right) -->
+    <button
+      id="agent-dock-launcher"
+      type="button"
+      onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.toggleDock();"
+      class="fixed bottom-5 right-5 z-40 btn btn-primary shadow-2xl rounded-full gap-2 border border-primary-content/20 hover:scale-105 transition-transform"
+      title="Open AI Agent Co-Pilot (Cmd+K or Ctrl+K)"
+      aria-label="Open AI Agent Co-Pilot Dock"
+    >
+      <span class="relative flex h-2.5 w-2.5">
+        <span id="agent-dock-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-content opacity-75"></span>
+        <span id="agent-dock-dot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-success-content"></span>
+      </span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10a9.96 9.96 0 0 1-4.587-1.112l-3.826 1.074a1 1 0 0 1-1.238-1.238l1.074-3.826A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2z"/><circle cx="8" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="16" cy="12" r="1"/></svg>
+      <span class="font-bold text-xs tracking-wide">AI Co-Pilot</span>
+      <kbd class="kbd kbd-xs bg-primary-content/20 text-primary-content border-none font-mono text-[10px]">⌘K</kbd>
+    </button>
+
+    <!-- Floating Dock Panel -->
+    <div
+      id="agent-dock-panel"
+      class="fixed bottom-5 right-5 z-50 w-96 max-w-[calc(100vw-2rem)] h-[540px] max-h-[85vh] bg-base-100 border border-base-300 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ease-in-out hidden"
+    >
+      <!-- Dock Header -->
+      <div id="agent-dock-header" class="px-4 py-3 bg-base-200/80 border-b border-base-300 flex items-center justify-between gap-2 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="p-1.5 rounded-lg bg-primary/10 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10a9.96 9.96 0 0 1-4.587-1.112l-3.826 1.074a1 1 0 0 1-1.238-1.238l1.074-3.826A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2z"/></svg>
+          </span>
+          <div class="min-w-0">
+            <h3 class="text-xs font-bold text-base-content truncate">Agent Co-Pilot</h3>
+            <span id="agent-dock-status" class="text-[10px] text-base-content/60 font-mono block truncate">Online &bull; Datastar SSE</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <select id="agent-dock-persona" class="select select-bordered select-xs text-[11px] font-sans max-w-[110px]" title="Choose Agent Persona">
+            <option value="analyst" selected>Analyst</option>
+            <option value="debugger">Debugger</option>
+            <option value="strategist">Strategist</option>
+            <option value="executive">Executive</option>
+            <option value="sarcastic">Critic</option>
+          </select>
+          <button type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.closeDock();" class="btn btn-ghost btn-xs btn-circle" title="Minimize Dock">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Context Target Indicator Bar -->
+      <div id="agent-dock-context-bar" class="px-3 py-1.5 bg-base-200/40 border-b border-base-300 flex items-center justify-between text-[11px] text-base-content/70 shrink-0">
+        <div class="flex items-center gap-1.5 truncate">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+          <span class="truncate font-mono" id="agent-dock-context-label">Context: Whole Document</span>
+        </div>
+        <button id="agent-dock-clear-context-btn" type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.clearTargetElement();" class="btn btn-ghost btn-xs text-[10px] hidden px-1 h-5 min-h-0">Clear</button>
+      </div>
+
+      <!-- Messages & Event Stream -->
+      <div id="agent-dock-messages" class="flex-1 overflow-y-auto p-3 space-y-3 text-xs leading-relaxed" style="scroll-behavior: smooth;">
+        <div class="p-3 rounded-xl bg-base-200/60 border border-base-300 text-base-content/80 space-y-1">
+          <p class="font-semibold text-base-content">👋 Welcome to your Agent Co-Pilot</p>
+          <p class="text-[11px] text-base-content/70">Ask questions, request live recalculations, or click any card to inspect its telemetry. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.</p>
+        </div>
+      </div>
+
+      <!-- Pending Action Confirmation Zone -->
+      <div id="agent-dock-action-zone" class="hidden px-3 py-2 bg-warning/10 border-t border-warning/30 text-xs">
+      </div>
+
+      <!-- Prompt Input Form -->
+      <form id="agent-dock-form" onsubmit="event.preventDefault(); if(window.HTMLReportAgent) window.HTMLReportAgent.submitDockPrompt();" class="p-2.5 bg-base-200/50 border-t border-base-300 shrink-0">
+        <div class="join w-full">
+          <input
+            id="agent-dock-input"
+            type="text"
+            autocomplete="off"
+            placeholder="Ask agent or press Cmd+K..."
+            class="input input-bordered input-sm join-item flex-1 text-xs focus:outline-none"
+          />
+          <button id="agent-dock-send-btn" type="submit" class="btn btn-primary btn-sm join-item gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            <span class="hidden sm:inline">Send</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </aside>
+
   <!-- Runtime Scripts -->
   <!-- {{RUNTIME_SCRIPT}} -->
 </body>

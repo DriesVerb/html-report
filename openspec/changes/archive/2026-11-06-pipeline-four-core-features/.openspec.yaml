@@ -1,0 +1,4 @@
+schema: openspec-change
+version: 1.0.0
+id: pipeline-four-core-features
+stage: shipped

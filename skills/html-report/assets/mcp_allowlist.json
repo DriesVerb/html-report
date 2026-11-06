@@ -1,0 +1,37 @@
+{
+  "version": "1.0.0",
+  "allowedServers": [
+    "postgres-prod",
+    "sqlite-local",
+    "github-mcp",
+    "filesystem",
+    "report-internal",
+    "local-dev"
+  ],
+  "allowedTools": [
+    "report_get_state",
+    "report_update_fragment",
+    "report_set_theme",
+    "report_append_alert",
+    "report_export_pdf",
+    "execute_query",
+    "read_query",
+    "list_issues",
+    "get_file",
+    "read_data"
+  ],
+  "toolPolicies": {
+    "report_update_fragment": {
+      "requireApproval": false,
+      "maxExecutionTimeMs": 5000
+    },
+    "report_set_theme": {
+      "requireApproval": false,
+      "maxExecutionTimeMs": 5000
+    },
+    "execute_query": {
+      "requireApproval": true,
+      "maxExecutionTimeMs": 15000
+    }
+  }
+}

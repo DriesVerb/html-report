@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML Report Creation Studio (Static / Zero-Node)</title>
+  
+  <!-- Content-Aware Favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%E2%9C%A8%3C%2Ftext%3E%3C%2Fsvg%3E" />
+
+  <!-- Core CDNs -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+
+  <!-- Dynamic Custom Theme Stylesheet Target -->
+  <style id="daisyui-custom-themes"></style>
+
+  <style>
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    .wizard-target-card, .wizard-mode-card, .wizard-app-card { user-select: none; }
+  </style>
+</head>
+<body class="bg-base-200/50 text-base-content font-sans antialiased">
+
+  <!-- Top Sticky Navbar -->
+  <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
+    <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Creation Studio Navigation">
+      <!-- Left: Title & Mode Badge -->
+      <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
+        <span class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
+          <span>HTML Creation Studio</span>
+        </span>
+        <span class="badge badge-sm badge-outline font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider">
+          /html-create
+        </span>
+      </div>
+
+      <!-- Right: TOC + Theme Picker + Download Menu -->
+      <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
+        <!-- 1. TOC Dropdown -->
+        <div class="dropdown dropdown-end" id="toc-dropdown">
+          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Studio Sections">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            <span>Sections</span>
+          </div>
+          <ul id="report-toc-list" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-64 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
+            <li><a href="#step-purpose" class="py-1.5">1. Purpose &amp; Deliverable</a></li>
+            <li><a href="#step-mode" class="py-1.5">2. Operational Data Mode</a></li>
+            <li><a href="#step-features" class="py-1.5">3. Content Capabilities</a></li>
+            <li><a href="#step-app" class="py-1.5">4. App Installation &amp; Offline</a></li>
+            <li><a href="#step-theme" class="py-1.5">5. Default Startup Theme</a></li>
+            <li><a href="#step-output" class="py-1.5">AI Prompt &amp; Mockup</a></li>
+          </ul>
+        </div>
+
+        <!-- 2. DaisyUI Themes Dropdown -->
+        <div class="dropdown dropdown-end" id="theme-dropdown">
+          <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
+            <span class="text-xs font-medium capitalize" id="active-studio-theme">light</span>
+            <div class="flex items-center gap-0.5" id="navbar-theme-swatches" data-theme="light">
+              <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+              <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+              <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+            </div>
+          </div>
+          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
+            <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+              <!-- Populated via initNavbarThemeDropdown() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Icon-Only Download Dropdown -->
+        <div class="dropdown dropdown-end" id="download-dropdown">
+          <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Actions" title="Download Actions">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
+            </svg>
+          </div>
+          <ul tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-56 p-2 shadow-xl border border-base-300">
+            <li><button type="button" onclick="downloadStarterHtml(this)" class="gap-2"><i data-lucide="file-code" class="w-4 h-4 text-primary"></i> Download Starter HTML</button></li>
+            <li><button type="button" onclick="copyPromptToClipboard(this)" class="gap-2"><i data-lucide="copy" class="w-4 h-4 text-secondary"></i> Copy AI Prompt</button></li>
+            <li><button type="button" onclick="window.print()" class="gap-2"><i data-lucide="printer" class="w-4 h-4 text-base-content/70"></i> Print Specification</button></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Header -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
+    <div class="bg-base-100 rounded-2xl border border-base-300 p-5 sm:p-6 shadow-sm space-y-3">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div class="space-y-1">
+          <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-base-content flex items-center gap-2.5">
+            Interactive Domain Decision Wizard
+            <span class="badge badge-success font-mono font-bold text-xs text-success-content gap-1">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> 100% Static (Zero-Node)
+            </span>
+          </h1>
+          <p class="text-xs sm:text-sm text-base-content/75 max-w-3xl leading-relaxed">
+            Configure your deliverable, synthesize clear AI prompts, and export starter HTML. 
+            Runs completely client-side in your browser via <code class="text-xs font-mono">file:///</code> or static hosting with zero backend server dependencies.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2 text-3xs font-mono">
+          <span class="badge badge-outline"><i data-lucide="check" class="w-2.5 h-2.5 mr-1 text-success"></i> file:/// Compatible</span>
+          <span class="badge badge-outline"><i data-lucide="check" class="w-2.5 h-2.5 mr-1 text-success"></i> AI Prompt First</span>
+          <span class="badge badge-outline"><i data-lucide="check" class="w-2.5 h-2.5 mr-1 text-success"></i> 32 Themes + Custom</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wizard Main Two-Column Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- FORM QUESTIONNAIRE (Left Column - 7 Cols) -->
+      <div class="lg:col-span-7 bg-base-100 rounded-2xl border border-base-300 p-6 space-y-6 shadow-sm">
+        
+        <!-- Step 1: Purpose & Deliverable -->
+        <div id="step-purpose" class="space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-primary text-primary-content text-2xs font-bold flex items-center justify-center">1</span>
+              What are you building? (Deliverable Purpose)
+            </label>
+            <span class="text-3xs text-base-content/50 font-mono">Step 1 of 5</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <!-- Executive Report -->
+            <div class="wizard-target-card cursor-pointer p-3.5 rounded-xl border-2 border-primary bg-primary/5 transition hover:border-primary flex flex-col justify-between gap-2" data-target="report" onclick="selectWizardTarget('report', this)">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-primary text-primary-content flex items-center justify-center shrink-0">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-xs text-base-content">Executive Report</h4>
+                    <p class="text-3xs text-base-content/60">Analytical BI &amp; Findings</p>
+                  </div>
+                </div>
+                <span class="target-check-badge badge badge-primary badge-xs"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
+              </div>
+              <p class="text-3xs text-base-content/75 leading-relaxed">
+                Multi-section business report with KPI metrics, trend charts, searchable data tables, and structured executive findings.
+              </p>
+            </div>
+
+            <!-- Printable PDF -->
+            <div class="wizard-target-card cursor-pointer p-3.5 rounded-xl border border-base-300 bg-base-100 hover:bg-base-200/50 transition flex flex-col justify-between gap-2" data-target="print" onclick="selectWizardTarget('print', this)">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-base-200 text-base-content flex items-center justify-center shrink-0">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-xs text-base-content">Printable PDF / Doc</h4>
+                    <p class="text-3xs text-base-content/60">A4 / Letter Print-Ready</p>
+                  </div>
+                </div>
+                <span class="target-check-badge badge badge-ghost badge-xs hidden"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
+              </div>
+              <p class="text-3xs text-base-content/75 leading-relaxed">
+                Clean, paginated paper-ready documents, invoices, and compliance audits with static print breaks and zero animations.
+              </p>
+            </div>
+
+            <!-- Live Dashboard -->
+            <div class="wizard-target-card cursor-pointer p-3.5 rounded-xl border border-base-300 bg-base-100 hover:bg-base-200/50 transition flex flex-col justify-between gap-2" data-target="dashboard" onclick="selectWizardTarget('dashboard', this)">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-base-200 text-base-content flex items-center justify-center shrink-0">
+                    <i data-lucide="activity" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-xs text-base-content">Live Dashboard</h4>
+                    <p class="text-3xs text-base-content/60">Real-Time Telemetry</p>
+                  </div>
+                </div>
+                <span class="target-check-badge badge badge-ghost badge-xs hidden"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
+              </div>
+              <p class="text-3xs text-base-content/75 leading-relaxed">
+                High-frequency ops cockpit with live auto-refreshing stats, system telemetry, and server streaming feeds.
+              </p>
+            </div>
+
+            <!-- Slide Deck Presentation (Reveal.js) -->
+            <div class="wizard-target-card cursor-pointer p-3.5 rounded-xl border border-base-300 bg-base-100 hover:bg-base-200/50 transition flex flex-col justify-between gap-2" data-target="presentation" onclick="selectWizardTarget('presentation', this)">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-base-200 text-base-content flex items-center justify-center shrink-0">
+                    <i data-lucide="presentation" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-xs text-base-content">Slide Deck Presentation</h4>
+                    <p class="text-3xs text-base-content/60">Pitch Decks &amp; Keynotes (Reveal.js)</p>
+                  </div>
+                </div>
+                <span class="target-check-badge badge badge-ghost badge-xs hidden"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
+              </div>
+              <p class="text-3xs text-base-content/75 leading-relaxed">
+                Interactive executive slide decks and keynotes powered by Reveal.js with smooth transitions, speaker notes, and DaisyUI harmony.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 1.1: Optional User Context & Audience -->
+          <div class="mt-4 p-3.5 bg-base-200/40 rounded-xl border border-base-300/70 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-base-content flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-primary"></i>
+                Describe what you want to build <span class="text-3xs text-base-content/50 font-normal">(Optional)</span>
+              </span>
+              <span class="badge badge-ghost badge-xs text-3xs font-mono">For AI Scaffolding</span>
+            </div>
+            <div class="space-y-3">
+              <div>
+                <label for="input-board-goals" class="block text-3xs font-semibold text-base-content/80 mb-1">
+                  Tell what the board needs to show:
+                </label>
+                <textarea id="input-board-goals" rows="2" class="textarea textarea-bordered textarea-xs w-full text-xs placeholder:text-base-content/40 focus:outline-primary leading-relaxed" placeholder="e.g., Weekly executive sales metrics with regional breakdowns, revenue churn alerts, and quota milestones..." oninput="updatePromptAndPreview()"></textarea>
+              </div>
+              <div>
+                <label for="input-board-audience" class="block text-3xs font-semibold text-base-content/80 mb-1">
+                  Who is the audience?
+                </label>
+                <input type="text" id="input-board-audience" class="input input-bordered input-xs w-full text-xs placeholder:text-base-content/40 focus:outline-primary" placeholder="e.g., C-Suite Executives, Board of Directors, Engineering Leadership, External Auditors..." oninput="updatePromptAndPreview()" />
+              </div>
+
+              <!-- Option 3: Grounding Reference Files, Images & Data-Sets -->
+              <div class="pt-2.5 border-t border-base-300/60 space-y-2">
+                <div class="flex items-center justify-between">
+                  <label class="block text-3xs font-semibold text-base-content/80">
+                    Does it need to be built on the basis of other documents, images, or data-sets?
+                  </label>
+                  <span id="collected-files-count" class="badge badge-ghost badge-xs text-3xs font-mono hidden">0 files</span>
+                </div>
+
+                <!-- Unified Drop & Browse Zone -->
+                <input type="file" id="file-picker-input" multiple class="hidden" onchange="handleFilePickerSelect(event)" />
+                <div id="file-drop-zone" class="p-2.5 border border-dashed border-base-300 rounded-lg text-center bg-base-100/60 hover:bg-base-200/50 hover:border-primary/60 transition cursor-pointer flex items-center justify-center gap-2 group" onclick="document.getElementById('file-picker-input').click()">
+                  <i data-lucide="paperclip" class="w-3.5 h-3.5 text-primary group-hover:scale-110 transition shrink-0"></i>
+                  <span class="text-3xs text-base-content/70">
+                    <span class="font-semibold text-primary underline underline-offset-2">Choose files</span> or drag &amp; drop here <span class="text-base-content/40">(images, PDF, CSV, JSON, code, etc.)</span>
+                  </span>
+                </div>
+
+                <!-- Collected Files List -->
+                <div id="collected-files-list" class="space-y-1.5 hidden">
+                  <!-- Populated dynamically via renderCollectedFiles() -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Operational Data Mode (Only 2 Real Modes!) -->
+        <div id="step-mode" class="space-y-3 border-t border-base-200 pt-4">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-secondary text-secondary-content text-2xs font-bold flex items-center justify-center">2</span>
+              Operational Data Mode (Delivery Infrastructure)
+            </label>
+            <span id="mode-status-badge" class="text-3xs font-mono text-base-content/50">Core Transport</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <!-- Mode 1: Static Standalone -->
+            <div class="wizard-mode-card cursor-pointer p-3.5 rounded-xl border-2 border-secondary bg-secondary/5 transition flex flex-col justify-between gap-2" data-mode="static" onclick="selectWizardMode('static', this)">
+              <div class="flex items-start justify-between">
+                <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                  <i data-lucide="file-check" class="w-4 h-4 text-secondary"></i> Static Standalone
+                </span>
+                <span class="mode-check-badge badge badge-secondary badge-xs"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
+              </div>
+              <p class="text-3xs text-base-content/75 leading-relaxed">
+                Zero server needed. A single self-contained HTML file. Opens in any browser, email attachment, or static host.
+              </p>
+              <div class="badge badge-outline badge-xs text-3xs font-mono">100% Client-Side</div>
+            </div>
+
+            <!-- Mode 2: Live Connected / Server-Backed -->
+            <div class="wizard-mode-card cursor-pointer p-3.5 rounded-xl border border-base-300 bg-base-100 hover:bg-base-200/50 transition flex flex-col justify-between gap-2" data-mode="live" onclick="selectWizardMode('live', this)">
+              <div class="flex items-start justify-between">
+                <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                  <i data-lucide="radio" class="w-4 h-4 text-success"></i> Live Connected (Server-Backed)
+                </span>
+                <span class="mode-check-badge badge badge-ghost badge-xs hidden"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
+              </div>
+              <p class="text-3xs text-base-content/75 leading-relaxed">
+                Requires server connection. Streams real-time telemetry, live stats, and server push events (<code class="text-3xs">SSE</code>) without page refreshes.
+              </p>
+              <div class="badge badge-outline badge-xs text-3xs font-mono text-success">Enables Live Feeds &amp; AI</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Content Capabilities & Intelligence (Features!) -->
+        <div id="step-features" class="space-y-4 border-t border-base-200 pt-4">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-accent text-accent-content text-2xs font-bold flex items-center justify-center">3</span>
+              What features and capabilities do you need?
+            </label>
+            <span class="text-3xs text-base-content/50">Select all that apply</span>
+          </div>
+
+          <!-- Section A: Visual & Data Components -->
+          <div class="space-y-2">
+            <span class="text-3xs font-bold uppercase tracking-wider text-base-content/60">A. Visual &amp; Data Components:</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <!-- Addon: Charts -->
+              <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" id="chk-charts" class="checkbox checkbox-xs checkbox-primary mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-primary"></i> Interactive Charts &amp; Trends
+                  </span>
+                  <p class="text-3xs text-base-content/60">Line, bar, donut metric charts (Chart.js)</p>
+                </div>
+              </label>
+
+              <!-- Addon: Mermaid -->
+              <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" id="chk-mermaid" class="checkbox checkbox-xs checkbox-primary mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="git-branch" class="w-3.5 h-3.5 text-secondary"></i> Process Flows &amp; Diagrams
+                  </span>
+                  <p class="text-3xs text-base-content/60">Flowcharts, architectures, sequence maps (Mermaid)</p>
+                </div>
+              </label>
+
+              <!-- Addon: Grid.js -->
+              <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" id="chk-gridjs" class="checkbox checkbox-xs checkbox-primary mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="table" class="w-3.5 h-3.5 text-accent"></i> Data Tables &amp; CSV / Excel
+                  </span>
+                  <p class="text-3xs text-base-content/60">Searchable, sortable, paginated records (Grid.js)</p>
+                </div>
+              </label>
+
+              <!-- Addon: Leaflet -->
+              <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" id="chk-leaflet" class="checkbox checkbox-xs checkbox-primary mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-info"></i> Geographic Maps &amp; Locations
+                  </span>
+                  <p class="text-3xs text-base-content/60">Interactive world/city map navigation (Leaflet)</p>
+                </div>
+              </label>
+
+              <!-- Addon: KaTeX -->
+              <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" id="chk-katex" class="checkbox checkbox-xs checkbox-primary mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="binary" class="w-3.5 h-3.5 text-success"></i> Math &amp; Scientific Formulas
+                  </span>
+                  <p class="text-3xs text-base-content/60">LaTeX equations and financial models (KaTeX)</p>
+                </div>
+              </label>
+
+              <!-- Addon: FullCalendar -->
+              <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" id="chk-fullcalendar" class="checkbox checkbox-xs checkbox-primary mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-warning"></i> Calendars &amp; Timelines
+                  </span>
+                  <p class="text-3xs text-base-content/60">Sprint milestones, deadlines, agendas (FullCalendar)</p>
+                </div>
+              </label>
+
+              <!-- Addon: Showdown Docs (Normalized single column, same size as other options) -->
+              <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" id="chk-showdown" class="checkbox checkbox-xs checkbox-primary mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 text-secondary"></i> Markdown Document Reader
+                  </span>
+                  <p class="text-3xs text-base-content/60">Embedded doc previewer for specs and proposals (Showdown)</p>
+                </div>
+              </label>
+
+              <!-- Addon: Highlight.js -->
+              <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" id="chk-hljs" class="checkbox checkbox-xs checkbox-primary mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="code" class="w-3.5 h-3.5 text-primary"></i> Code Highlighting
+                  </span>
+                  <p class="text-3xs text-base-content/60">Syntax-highlighted code blocks and snippets (Highlight.js)</p>
+                </div>
+              </label>
+
+              <!-- Addon: Day.js -->
+              <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" id="chk-dayjs" class="checkbox checkbox-xs checkbox-primary mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-accent"></i> Date Calculation
+                  </span>
+                  <p class="text-3xs text-base-content/60">Date formatting, relative time and date math (Day.js)</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Section B: Intelligence & Enterprise Connectivity (Features requiring Live Mode) -->
+          <div class="space-y-2 pt-2 border-t border-base-200">
+            <div class="flex items-center justify-between">
+              <span class="text-3xs font-bold uppercase tracking-wider text-base-content/60">B. Intelligence &amp; Enterprise Connectivity (Features):</span>
+              <span id="intel-notice-badge" class="badge badge-xs badge-ghost text-3xs font-mono">Requires Live Mode</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <!-- Feature: Interactive AI Assistant -->
+              <label id="container-chk-ai" class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition opacity-50 pointer-events-none">
+                <input type="checkbox" id="chk-ai-agent" class="checkbox checkbox-xs checkbox-secondary mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="bot" class="w-3.5 h-3.5 text-secondary"></i> Interactive AI Assistant
+                  </span>
+                  <p class="text-3xs text-base-content/60">Floating Cmd+K prompt dock to chat with AI and morph cards live</p>
+                </div>
+              </label>
+
+              <!-- Feature: Enterprise MCP Tools -->
+              <label id="container-chk-mcp" class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition opacity-50 pointer-events-none">
+                <input type="checkbox" id="chk-mcp-tools" class="checkbox checkbox-xs checkbox-info mt-0.5" onchange="updatePromptAndPreview()" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
+                    <i data-lucide="network" class="w-3.5 h-3.5 text-info"></i> Enterprise Tools &amp; DBs
+                  </span>
+                  <p class="text-3xs text-base-content/60">Proxy widgets to enterprise databases and MCP server tools</p>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: App Installation & Offline Capabilities (Eliminated in Print Mode!) -->
+        <div id="step-app" class="space-y-3 border-t border-base-200 pt-4">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-info text-info-content text-2xs font-bold flex items-center justify-center">4</span>
+              App Installation &amp; Offline Mode
+            </label>
+            <span id="app-status-badge" class="text-3xs text-base-content/50 font-mono">PWA Packaging</span>
+          </div>
+
+          <!-- Printable Mode Notice -->
+          <div id="print-app-hint" class="hidden p-2.5 bg-base-200/50 rounded-xl border border-dashed border-base-300 text-3xs text-base-content/70 flex items-center gap-2">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-info shrink-0"></i>
+            <span>Print mode active: PWA installable app and offline cache options are eliminated for printable documents.</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5" id="app-cards-container">
+            <!-- App Option 1: Standard Web Page -->
+            <div id="app-card-none" class="wizard-app-card cursor-pointer p-3 rounded-xl border-2 border-info bg-info/5 transition flex flex-col justify-between gap-1.5" data-app="none" onclick="selectWizardApp('none', this)">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-base-content flex items-center gap-1.5">
+                  <i data-lucide="globe" class="w-3.5 h-3.5 text-base-content/70"></i> Browser Page
+                </span>
+                <span class="app-check-badge badge badge-info badge-xs"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
+              </div>
+              <p class="text-3xs text-base-content/70">
+                Standard web page opened in regular browser tabs.
+              </p>
+            </div>
+
+            <!-- App Option 2: Live Downloadable App -->
+            <div id="app-card-live" class="wizard-app-card cursor-pointer p-3 rounded-xl border border-base-300 bg-base-100 hover:bg-base-200/50 transition flex flex-col justify-between gap-1.5" data-app="live-app" onclick="selectWizardApp('live-app', this)">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-base-content flex items-center gap-1.5">
+                  <i data-lucide="smartphone" class="w-3.5 h-3.5 text-info"></i> Installable App
+                </span>
+                <span class="app-check-badge badge badge-ghost badge-xs hidden"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
+              </div>
+              <p class="text-3xs text-base-content/70">
+                Pins to dock or home screen. Runs in a dedicated app window.
+              </p>
+            </div>
+
+            <!-- App Option 3: Offline-First App -->
+            <div id="app-card-offline" class="wizard-app-card cursor-pointer p-3 rounded-xl border border-base-300 bg-base-100 hover:bg-base-200/50 transition flex flex-col justify-between gap-1.5" data-app="offline-app" onclick="selectWizardApp('offline-app', this)">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-base-content flex items-center gap-1.5">
+                  <i data-lucide="wifi-off" class="w-3.5 h-3.5 text-warning"></i> Offline-First App
+                </span>
+                <span class="app-check-badge badge badge-ghost badge-xs hidden"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
+              </div>
+              <p class="text-3xs text-base-content/70">
+                Installs as app + full Service Worker cache. Works 100% offline.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Appearance & Default Startup Theme (Opens to the right!) -->
+        <div id="step-theme" class="space-y-3 border-t border-base-200 pt-4">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-neutral text-neutral-content text-2xs font-bold flex items-center justify-center">5</span>
+              Default Startup Theme (Matching Navbar Picker)
+            </label>
+            <span class="text-3xs text-base-content/50">32 Themes + Custom</span>
+          </div>
+
+          <div class="p-3.5 rounded-xl border border-base-300 bg-base-100 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <div class="space-y-0.5">
+                <span class="text-xs font-bold text-base-content">Initial Theme on First Load:</span>
+                <p class="text-3xs text-base-content/60">
+                  Select which theme opens by default. (Your readers can still switch between all themes anytime using the navbar picker).
+                </p>
+              </div>
+              <!-- Theme Picker Dropdown: Opens to the RIGHT without clipping -->
+              <div class="dropdown dropdown-bottom" id="initial-theme-dropdown">
+                <div tabindex="0" role="button" id="initial-theme-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-2 shadow-sm" aria-label="Change Initial Theme">
+                  <span class="text-xs font-semibold capitalize" id="initial-theme-label">light</span>
+                  <div class="flex items-center gap-0.5" id="initial-theme-swatches" data-theme="light">
+                    <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+                    <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+                    <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+                    <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 opacity-60 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-64 max-h-72 overflow-y-auto p-2 shadow-2xl border border-base-300 left-0 right-auto">
+                  <div id="initial-theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+                    <!-- Populated via initInitialThemeDropdown() -->
+                  </div>
+                </div>
+              </div>
+              <!-- Retained select for backward compatibility & automated tests -->
+              <select id="select-default-theme" class="hidden" onchange="changeDefaultTheme(this.value)">
+                <option value="light" selected>light</option>
+              </select>
+            </div>
+
+            <!-- Custom Brand Color & Theme Studio (Text Input + Color Picker, Naming, Single Managed Theme) -->
+            <details id="custom-theme-accordion" class="group border border-base-200 rounded-lg bg-base-200/30 p-2.5 transition">
+              <summary class="cursor-pointer text-xs font-semibold text-primary flex items-center justify-between select-none list-none">
+                <span class="flex items-center gap-1.5">
+                  <i data-lucide="palette" class="w-3.5 h-3.5"></i>
+                  <span>Custom DaisyUI Brand Theme Studio</span>
+                </span>
+                <span class="badge badge-outline badge-xs text-3xs font-mono" id="custom-theme-badge">Custom Theme</span>
+              </summary>
+              <div class="pt-3 space-y-3">
+                <!-- Theme Name Input (defaults to 'user', editable) -->
+                <div class="flex items-center justify-between gap-2 flex-wrap pb-2 border-b border-base-300/40">
+                  <div class="space-y-0.5">
+                    <label for="custom-theme-name-input" class="text-3xs font-bold uppercase tracking-wider text-base-content/70">
+                      Theme Name:
+                    </label>
+                    <p class="text-3xs text-base-content/50">Defaults to "user"; you can change to any custom brand name.</p>
+                  </div>
+                  <input type="text" id="custom-theme-name-input" value="user" class="input input-bordered input-xs font-mono font-bold w-36 text-xs" placeholder="user" />
+                </div>
+
+                <!-- Color Inputs with Text Input & Color Picker -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <!-- Primary -->
+                  <div class="flex items-center justify-between p-2 rounded-lg bg-base-100 border border-base-300/70 gap-2">
+                    <div class="space-y-0.5">
+                      <span class="text-3xs font-bold uppercase text-base-content flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-primary inline-block"></span> Primary
+                      </span>
+                      <span class="text-3xs text-base-content/50">Buttons &amp; main brand</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <input type="color" id="picker-primary" value="#4f46e5" class="w-7 h-7 rounded cursor-pointer border border-base-300 p-0" oninput="syncThemeInput('primary', this.value, 'color')" />
+                      <input type="text" id="text-primary" value="#4f46e5" class="input input-bordered input-xs font-mono w-20 text-3xs uppercase" oninput="syncThemeInput('primary', this.value, 'text')" />
+                    </div>
+                  </div>
+
+                  <!-- Secondary -->
+                  <div class="flex items-center justify-between p-2 rounded-lg bg-base-100 border border-base-300/70 gap-2">
+                    <div class="space-y-0.5">
+                      <span class="text-3xs font-bold uppercase text-base-content flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-secondary inline-block"></span> Secondary
+                      </span>
+                      <span class="text-3xs text-base-content/50">Badges &amp; tags</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <input type="color" id="picker-secondary" value="#ec4899" class="w-7 h-7 rounded cursor-pointer border border-base-300 p-0" oninput="syncThemeInput('secondary', this.value, 'color')" />
+                      <input type="text" id="text-secondary" value="#ec4899" class="input input-bordered input-xs font-mono w-20 text-3xs uppercase" oninput="syncThemeInput('secondary', this.value, 'text')" />
+                    </div>
+                  </div>
+
+                  <!-- Accent -->
+                  <div class="flex items-center justify-between p-2 rounded-lg bg-base-100 border border-base-300/70 gap-2">
+                    <div class="space-y-0.5">
+                      <span class="text-3xs font-bold uppercase text-base-content flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-accent inline-block"></span> Accent
+                      </span>
+                      <span class="text-3xs text-base-content/50">Highlights &amp; metrics</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <input type="color" id="picker-accent" value="#f59e0b" class="w-7 h-7 rounded cursor-pointer border border-base-300 p-0" oninput="syncThemeInput('accent', this.value, 'color')" />
+                      <input type="text" id="text-accent" value="#f59e0b" class="input input-bordered input-xs font-mono w-20 text-3xs uppercase" oninput="syncThemeInput('accent', this.value, 'text')" />
+                    </div>
+                  </div>
+
+                  <!-- Neutral -->
+                  <div class="flex items-center justify-between p-2 rounded-lg bg-base-100 border border-base-300/70 gap-2">
+                    <div class="space-y-0.5">
+                      <span class="text-3xs font-bold uppercase text-base-content flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-neutral inline-block"></span> Neutral
+                      </span>
+                      <span class="text-3xs text-base-content/50">Cards &amp; headers</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <input type="color" id="picker-neutral" value="#1e293b" class="w-7 h-7 rounded cursor-pointer border border-base-300 p-0" oninput="syncThemeInput('neutral', this.value, 'color')" />
+                      <input type="text" id="text-neutral" value="#1e293b" class="input input-bordered input-xs font-mono w-20 text-3xs uppercase" oninput="syncThemeInput('neutral', this.value, 'text')" />
+                    </div>
+                  </div>
+
+                  <!-- Base 100 -->
+                  <div class="flex items-center justify-between p-2 rounded-lg bg-base-100 border border-base-300/70 gap-2 sm:col-span-2">
+                    <div class="space-y-0.5">
+                      <span class="text-3xs font-bold uppercase text-base-content flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-base-content/30 border border-base-content/40 inline-block"></span> Base-100
+                      </span>
+                      <span class="text-3xs text-base-content/50">Canvas &amp; background</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <input type="color" id="picker-base" value="#ffffff" class="w-7 h-7 rounded cursor-pointer border border-base-300 p-0" oninput="syncThemeInput('base-100', this.value, 'color')" />
+                      <input type="text" id="text-base" value="#ffffff" class="input input-bordered input-xs font-mono w-20 text-3xs uppercase" oninput="syncThemeInput('base-100', this.value, 'text')" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="flex items-center justify-between pt-1">
+                  <span class="text-3xs text-base-content/50 font-mono">1 custom theme managed per creation</span>
+                  <button type="button" id="btn-save-custom-theme" onclick="saveCustomTheme()" class="btn btn-xs btn-primary gap-1 font-bold shadow-sm">
+                    <i data-lucide="plus" class="w-3 h-3"></i> Put in Dropdown &amp; Apply
+                  </button>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: AI PROMPT FIRST & EXPANDABLE MOCKUP (5 Cols - Sticky) -->
+      <div id="step-output" class="lg:col-span-5 bg-base-100 rounded-2xl border border-base-300 p-5 shadow-sm space-y-4 sticky top-20">
+        
+        <!-- PRIMARY FOCUS: AI PROMPT (Formerly Deterministic AI Agent Prompt) -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-primary text-primary-content flex items-center justify-center font-bold text-xs shadow-sm">
+                <i data-lucide="bot" class="w-4 h-4"></i>
+              </span>
+              <div>
+                <h3 class="font-bold text-sm text-base-content">AI Prompt</h3>
+                <p class="text-3xs text-base-content/60 font-mono">Synthesized for Antigravity &amp; AI Agents</p>
+              </div>
+            </div>
+            <span class="badge badge-success badge-xs font-mono font-bold text-success-content gap-1">
+              <i data-lucide="check" class="w-2.5 h-2.5"></i> Ready to Run
+            </span>
+          </div>
+
+          <!-- Prompt Output Textarea -->
+          <div class="relative bg-base-200 rounded-xl p-3 border border-base-300">
+            <textarea id="prompt-output-box" readonly class="w-full bg-transparent font-mono text-3xs text-base-content resize-none h-64 focus:outline-hidden leading-relaxed"></textarea>
+          </div>
+
+          <!-- Primary Prompt Actions -->
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="copyPromptToClipboard(this)" class="btn btn-sm btn-primary gap-1.5 shadow-sm">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy AI Prompt
+            </button>
+            <button type="button" onclick="downloadPromptMarkdown()" class="btn btn-sm btn-outline gap-1.5">
+              <i data-lucide="file-down" class="w-3.5 h-3.5"></i> Save Prompt (.md)
+            </button>
+          </div>
+        </div>
+
+        <!-- COLLAPSIBLE LIVE WIREFRAME MOCKUP ACCORDION -->
+        <details id="mockup-accordion" class="group border border-base-300 rounded-xl bg-base-200/30 transition overflow-hidden">
+          <summary class="cursor-pointer p-3 text-xs font-bold text-base-content flex items-center justify-between select-none list-none hover:bg-base-200/60 transition">
+            <span class="flex items-center gap-2">
+              <i data-lucide="layout" class="w-4 h-4 text-secondary"></i>
+              <span>Live Wireframe Mockup</span>
+              <span class="badge badge-ghost badge-xs text-3xs font-mono">Simulated DOM</span>
+            </span>
+            <span class="text-3xs font-mono text-primary flex items-center gap-1 group-open:hidden">
+              <span>Preview</span> <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+            </span>
+            <span class="text-3xs font-mono text-base-content/60 hidden group-open:flex items-center gap-1">
+              <span>Collapse</span> <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+            </span>
+          </summary>
+          <div class="p-3 pt-0 border-t border-base-300/50 space-y-3">
+            <!-- Simulated Window Frame -->
+            <div class="rounded-xl border border-base-300 bg-base-100 shadow-md overflow-hidden text-xs mt-2">
+              <div class="bg-base-200 px-3 py-2 border-b border-base-300 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-error inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-warning inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-success inline-block"></span>
+                  <span id="mockup-window-title" class="font-bold text-3xs font-mono text-base-content/80 ml-1 truncate max-w-[130px]">Executive Report</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span id="mockup-live-indicator" class="badge badge-success badge-xs font-mono text-3xs font-bold hidden gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-success-content animate-pulse"></span> LIVE
+                  </span>
+                  <span id="mockup-install-btn" class="badge badge-accent badge-xs font-mono text-3xs font-bold hidden gap-1 animate-bounce">
+                    <i data-lucide="download" class="w-2.5 h-2.5"></i> App
+                  </span>
+                  <span id="mockup-theme-pill" class="badge badge-outline badge-xs text-3xs capitalize font-mono inline-flex items-center gap-1.5">
+                    <span id="mockup-theme-name">light</span>
+                    <span class="inline-flex items-center gap-0.5" id="mockup-theme-swatches" data-theme="light">
+                      <span class="bg-primary rounded-full w-1.5 h-1.5 inline-block"></span>
+                      <span class="bg-secondary rounded-full w-1.5 h-1.5 inline-block"></span>
+                      <span class="bg-accent rounded-full w-1.5 h-1.5 inline-block"></span>
+                      <span class="bg-neutral rounded-full w-1.5 h-1.5 inline-block"></span>
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Content Body -->
+              <div class="p-3 space-y-2.5 bg-base-100 max-h-[300px] overflow-y-auto">
+                <div class="p-2.5 rounded-lg bg-base-200/50 border border-base-300/60 space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span id="mockup-hero-badge" class="badge badge-primary badge-xs font-mono text-3xs uppercase font-bold">html-report</span>
+                    <span class="text-3xs text-base-content/50 font-mono">2026-Q4</span>
+                  </div>
+                  <h5 id="mockup-hero-title" class="font-bold text-xs text-base-content">Quarterly Performance Analysis</h5>
+                </div>
+
+                <div class="grid grid-cols-3 gap-1.5">
+                  <div class="p-1.5 bg-base-200/40 rounded text-center border border-base-300/40">
+                    <div class="text-3xs text-base-content/60">Uptime</div>
+                    <div class="font-bold text-xs text-success font-mono">99.98%</div>
+                  </div>
+                  <div class="p-1.5 bg-base-200/40 rounded text-center border border-base-300/40">
+                    <div class="text-3xs text-base-content/60">Speed</div>
+                    <div class="font-bold text-xs text-primary font-mono">14.2ms</div>
+                  </div>
+                  <div class="p-1.5 bg-base-200/40 rounded text-center border border-base-300/40">
+                    <div class="text-3xs text-base-content/60">Audit</div>
+                    <div class="font-bold text-xs text-accent font-mono">100/100</div>
+                  </div>
+                </div>
+
+                <div id="mockup-chart-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1">
+                  <div class="text-3xs font-bold text-base-content/70 flex items-center gap-1">
+                    <i data-lucide="bar-chart-3" class="w-3 h-3 text-primary"></i> Charts Active (Chart.js)
+                  </div>
+                  <div class="h-10 flex items-end justify-between gap-1 pt-1">
+                    <div class="flex-1 bg-primary/70 rounded-t h-[40%]"></div>
+                    <div class="flex-1 bg-primary/70 rounded-t h-[70%]"></div>
+                    <div class="flex-1 bg-primary rounded-t h-[100%]"></div>
+                    <div class="flex-1 bg-secondary/80 rounded-t h-[60%]"></div>
+                  </div>
+                </div>
+
+                <div id="mockup-mermaid-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1">
+                  <div class="text-3xs font-bold text-base-content/70 flex items-center gap-1">
+                    <i data-lucide="git-branch" class="w-3 h-3 text-secondary"></i> Process Flows (Mermaid)
+                  </div>
+                  <div class="flex items-center justify-center gap-1 text-3xs font-mono py-0.5">
+                    <span class="px-1.5 py-0.5 bg-base-100 rounded border border-base-300">Spec</span>
+                    <span>&rarr;</span>
+                    <span class="px-1.5 py-0.5 bg-secondary/10 text-secondary border border-secondary/30 rounded">Build</span>
+                    <span>&rarr;</span>
+                    <span class="px-1.5 py-0.5 bg-success/10 text-success border border-success/30 rounded">Report</span>
+                  </div>
+                </div>
+
+                <div id="mockup-table-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1">
+                  <div class="text-3xs font-bold text-base-content/70 flex items-center gap-1">
+                    <i data-lucide="table" class="w-3 h-3 text-accent"></i> Tabular Data (Grid.js)
+                  </div>
+                  <div class="text-3xs font-mono flex items-center justify-between text-base-content/80">
+                    <span>ROW-01: Metric Alpha</span>
+                    <span class="badge badge-success badge-xs scale-75">OK</span>
+                  </div>
+                </div>
+
+                <div id="mockup-agent-dock" class="p-2 bg-secondary/10 border border-secondary/30 rounded flex items-center justify-between text-3xs hidden">
+                  <span class="font-bold text-secondary flex items-center gap-1">
+                    <i data-lucide="bot" class="w-3 h-3"></i> AI Assistant Dock Active (Cmd+K)
+                  </span>
+                  <span class="badge badge-secondary badge-xs">Ready</span>
+                </div>
+
+                <div id="mockup-references-widget" class="p-2 bg-primary/10 border border-primary/30 rounded flex items-center justify-between text-3xs hidden">
+                  <span class="font-bold text-primary flex items-center gap-1">
+                    <i data-lucide="paperclip" class="w-3 h-3"></i> <span id="mockup-references-text">Reference Files Grounded</span>
+                  </span>
+                  <span id="mockup-references-badge" class="badge badge-primary badge-xs">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="mt-auto py-4 border-t border-base-300 bg-base-100 text-center text-xs text-base-content/60">
+    HTML Report Creation Studio &bull; 100% Client-Side Static Page &bull; Zero Node.js Required
+  </footer>
+
+  <!-- STUDIO JAVASCRIPT (ZERO-NODE RUNTIME) -->
+  <script>
+    let currentTarget = "report";
+    let currentMode = "static"; // "static" or "live"
+    let currentApp = "none";    // "none", "live-app", or "offline-app"
+    let currentTheme = "light";
+    let userCustomTheme = null; // Single managed custom theme: { name: "user", colors: { ... } }
+
+    // Collected Reference Documents, Images & Data-Sets
+    let collectedFiles = [];
+
+    // Set of known file types with dedicated icons & styling
+    const KNOWN_FILE_TYPES = {
+      // Images & Diagrams
+      png: { icon: "image", category: "Image", colorClass: "text-success" },
+      jpg: { icon: "image", category: "Image", colorClass: "text-success" },
+      jpeg: { icon: "image", category: "Image", colorClass: "text-success" },
+      gif: { icon: "image", category: "Image", colorClass: "text-success" },
+      svg: { icon: "image", category: "Vector Image", colorClass: "text-success" },
+      webp: { icon: "image", category: "Image", colorClass: "text-success" },
+      bmp: { icon: "image", category: "Image", colorClass: "text-success" },
+      ico: { icon: "image", category: "Icon", colorClass: "text-success" },
+
+      // Datasets & Spreadsheets
+      csv: { icon: "file-spreadsheet", category: "CSV Dataset", colorClass: "text-accent" },
+      tsv: { icon: "file-spreadsheet", category: "TSV Dataset", colorClass: "text-accent" },
+      xlsx: { icon: "file-spreadsheet", category: "Excel Sheet", colorClass: "text-accent" },
+      xls: { icon: "file-spreadsheet", category: "Excel Sheet", colorClass: "text-accent" },
+      parquet: { icon: "file-spreadsheet", category: "Parquet Data", colorClass: "text-accent" },
+
+      // Documents
+      pdf: { icon: "file-text", category: "PDF Document", colorClass: "text-error" },
+      md: { icon: "file-text", category: "Markdown Doc", colorClass: "text-info" },
+      markdown: { icon: "file-text", category: "Markdown Doc", colorClass: "text-info" },
+      txt: { icon: "file-text", category: "Text Document", colorClass: "text-info" },
+      doc: { icon: "file-text", category: "Word Document", colorClass: "text-info" },
+      docx: { icon: "file-text", category: "Word Document", colorClass: "text-info" },
+      rtf: { icon: "file-text", category: "Rich Text", colorClass: "text-info" },
+
+      // Code & Schemas
+      json: { icon: "file-code", category: "JSON Schema", colorClass: "text-secondary" },
+      yaml: { icon: "file-code", category: "YAML Config", colorClass: "text-secondary" },
+      yml: { icon: "file-code", category: "YAML Config", colorClass: "text-secondary" },
+      xml: { icon: "file-code", category: "XML Document", colorClass: "text-secondary" },
+      js: { icon: "file-code", category: "JavaScript", colorClass: "text-secondary" },
+      mjs: { icon: "file-code", category: "JavaScript", colorClass: "text-secondary" },
+      ts: { icon: "file-code", category: "TypeScript", colorClass: "text-secondary" },
+      html: { icon: "file-code", category: "HTML Document", colorClass: "text-secondary" },
+      css: { icon: "file-code", category: "CSS Stylesheet", colorClass: "text-secondary" },
+      py: { icon: "file-code", category: "Python Script", colorClass: "text-secondary" },
+      sql: { icon: "file-code", category: "SQL Query", colorClass: "text-secondary" },
+      sh: { icon: "file-code", category: "Shell Script", colorClass: "text-secondary" }
+    };
+
+    // Default icon when file type is not in the set of known file types
+    const DEFAULT_FILE_TYPE = {
+      icon: "file",
+      category: "File",
+      colorClass: "text-base-content/60"
+    };
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function getFileInfo(fileName) {
+      if (!fileName || !fileName.includes(".")) {
+        return DEFAULT_FILE_TYPE;
+      }
+      const ext = (fileName.split(".").pop() || "").toLowerCase().trim();
+      return KNOWN_FILE_TYPES[ext] || DEFAULT_FILE_TYPE;
+    }
+
+    function formatFileSize(bytes) {
+      if (!bytes || bytes === 0) return null;
+      if (bytes < 1024) return bytes + " B";
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+    }
+
+    function addCollectedFile(fileName, options = {}) {
+      if (!fileName || !fileName.trim()) return;
+      const cleanName = fileName.trim();
+      const existing = collectedFiles.find((f) => f.name.toLowerCase() === cleanName.toLowerCase());
+      if (existing) {
+        existing.isNoteOpen = true;
+        renderCollectedFiles();
+        updatePromptAndPreview();
+        setTimeout(() => {
+          const input = document.getElementById(`note-input-${existing.id}`);
+          if (input) input.focus();
+        }, 50);
+        return;
+      }
+
+      const info = getFileInfo(cleanName);
+      const id = "ref-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7);
+
+      collectedFiles.push({
+        id,
+        name: cleanName,
+        sizeFormatted: options.sizeFormatted || null,
+        icon: options.icon || info.icon,
+        category: options.category || info.category,
+        colorClass: options.colorClass || info.colorClass,
+        note: options.note || "",
+        isNoteOpen: false
+      });
+
+      renderCollectedFiles();
+      updatePromptAndPreview();
+    }
+
+    function handleFilePickerSelect(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        addCollectedFile(file.name, {
+          sizeFormatted: formatFileSize(file.size),
+          sizeBytes: file.size
+        });
+      }
+      event.target.value = "";
+    }
+
+    function removeCollectedFile(id) {
+      collectedFiles = collectedFiles.filter((f) => f.id !== id);
+      renderCollectedFiles();
+      updatePromptAndPreview();
+    }
+
+    function toggleFileNote(id) {
+      const file = collectedFiles.find((f) => f.id === id);
+      if (!file) return;
+      file.isNoteOpen = !file.isNoteOpen;
+      renderCollectedFiles();
+      if (file.isNoteOpen) {
+        setTimeout(() => {
+          const input = document.getElementById(`note-input-${file.id}`);
+          if (input) input.focus();
+        }, 50);
+      }
+    }
+
+    function updateFileNote(id, noteVal) {
+      const file = collectedFiles.find((f) => f.id === id);
+      if (!file) return;
+      file.note = noteVal;
+      updatePromptAndPreview();
+    }
+
+    function renderCollectedFiles() {
+      const container = document.getElementById("collected-files-list");
+      const countBadge = document.getElementById("collected-files-count");
+      if (!container) return;
+
+      if (countBadge) {
+        if (collectedFiles.length > 0) {
+          countBadge.textContent = `${collectedFiles.length} file${collectedFiles.length === 1 ? "" : "s"}`;
+          countBadge.classList.remove("hidden");
+          countBadge.classList.add("badge-primary");
+          countBadge.classList.remove("badge-ghost");
+        } else {
+          countBadge.classList.add("hidden");
+        }
+      }
+
+      if (collectedFiles.length === 0) {
+        container.classList.add("hidden");
+        container.innerHTML = "";
+        return;
+      }
+
+      container.classList.remove("hidden");
+      container.innerHTML = collectedFiles.map((file) => {
+        const hasNote = Boolean(file.note && file.note.trim());
+        return `
+          <div class="p-2.5 rounded-lg bg-base-100 border border-base-300 shadow-2xs space-y-2 collected-file-item" data-file-id="${file.id}">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <div class="w-6 h-6 rounded bg-base-200/80 flex items-center justify-center shrink-0 ${file.colorClass}">
+                  <i data-lucide="${file.icon}" class="w-3.5 h-3.5"></i>
+                </div>
+                <div class="min-w-0 flex items-center gap-1.5 flex-wrap">
+                  <span class="font-bold text-xs text-base-content font-mono truncate max-w-[220px]" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
+                  ${file.sizeFormatted ? `<span class="badge badge-ghost badge-2xs text-3xs font-mono text-base-content/60">${file.sizeFormatted}</span>` : `<span class="badge badge-ghost badge-2xs text-3xs font-mono text-base-content/60">${file.category}</span>`}
+                </div>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                <button type="button" class="btn btn-2xs ${hasNote ? "btn-primary btn-outline" : "btn-ghost border border-base-300"} gap-1 text-3xs btn-note-toggle font-normal" onclick="toggleFileNote('${file.id}')" title="${hasNote ? 'Edit context note' : 'Add context note'}">
+                  <i data-lucide="${hasNote ? 'edit-2' : 'plus'}" class="w-3 h-3"></i>
+                  <span>Note</span>
+                </button>
+                <button type="button" class="btn btn-ghost btn-2xs text-base-content/50 hover:text-error hover:bg-error/10 btn-remove-file p-1" onclick="removeCollectedFile('${file.id}')" title="Remove file">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            ${hasNote && !file.isNoteOpen ? `
+              <div class="flex items-center gap-1.5 text-3xs text-base-content/80 bg-base-200/40 px-2 py-1 rounded border border-base-300/50">
+                <i data-lucide="message-square" class="w-3 h-3 text-primary shrink-0"></i>
+                <span class="truncate italic flex-1 file-note-preview" title="${escapeHtml(file.note)}">Note: "${escapeHtml(file.note)}"</span>
+                <button type="button" class="text-3xs text-primary font-medium hover:underline shrink-0" onclick="toggleFileNote('${file.id}')">Edit</button>
+              </div>
+            ` : ""}
+
+            ${file.isNoteOpen ? `
+              <div class="pt-1.5 border-t border-base-200">
+                <div class="flex items-center gap-1.5">
+                  <input type="text" id="note-input-${file.id}" class="input input-bordered input-xs flex-1 text-xs placeholder:text-base-content/40 focus:outline-primary h-7 min-h-0 note-input" placeholder="Add context note (how should the AI use this file?)" value="${escapeHtml(file.note || '')}" oninput="updateFileNote('${file.id}', this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();toggleFileNote('${file.id}');}" />
+                  <button type="button" class="btn btn-xs btn-primary text-3xs h-7 min-h-0 px-2.5 shrink-0" onclick="toggleFileNote('${file.id}')">Done</button>
+                </div>
+              </div>
+            ` : ""}
+          </div>
+        `;
+      }).join("");
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function initFileDropZone() {
+      const dropZone = document.getElementById("file-drop-zone");
+      if (!dropZone) return;
+
+      ["dragenter", "dragover"].forEach((evt) => {
+        dropZone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add("border-primary", "bg-primary/5");
+        });
+      });
+
+      ["dragleave", "drop"].forEach((evt) => {
+        dropZone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove("border-primary", "bg-primary/5");
+        });
+      });
+
+      dropZone.addEventListener("drop", (e) => {
+        const dt = e.dataTransfer;
+        if (!dt || !dt.files || dt.files.length === 0) return;
+        for (let i = 0; i < dt.files.length; i++) {
+          const file = dt.files[i];
+          addCollectedFile(file.name, {
+            sizeFormatted: formatFileSize(file.size),
+            sizeBytes: file.size
+          });
+        }
+      });
+    }
+
+    const DAISYUI_THEMES = [
+      "light", "dark", "cupcake", "bumblebee", "emerald", "corporate", "synthwave",
+      "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua",
+      "lofi", "pastel", "fantasy", "wireframe", "black", "luxury", "dracula",
+      "cmyk", "autumn", "business", "acid", "lemon", "night", "coffee", "winter",
+      "dim", "nord", "sunset"
+    ];
+
+    function createThemeSwatchItem(theme, currentActive, onSelect) {
+      const isCustom = userCustomTheme && theme === userCustomTheme.name;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.setAttribute("data-theme", theme);
+      btn.setAttribute("data-set-theme", theme);
+      btn.className = "theme-swatch-item outline-base-content text-start rounded-btn w-full cursor-pointer font-sans";
+      
+      let swatchHtml = "";
+      if (isCustom && userCustomTheme.colors) {
+        swatchHtml = `
+          <span class="rounded-badge w-2 h-4" style="background-color: ${userCustomTheme.colors.primary};"></span>
+          <span class="rounded-badge w-2 h-4" style="background-color: ${userCustomTheme.colors.secondary};"></span>
+          <span class="rounded-badge w-2 h-4" style="background-color: ${userCustomTheme.colors.accent};"></span>
+          <span class="rounded-badge w-2 h-4" style="background-color: ${userCustomTheme.colors.neutral};"></span>
+        `;
+      } else {
+        swatchHtml = `
+          <span class="bg-primary rounded-badge w-2 h-4"></span>
+          <span class="bg-secondary rounded-badge w-2 h-4"></span>
+          <span class="bg-accent rounded-badge w-2 h-4"></span>
+          <span class="bg-neutral rounded-badge w-2 h-4"></span>
+        `;
+      }
+
+      btn.innerHTML = `
+        <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
+          <span class="grid grid-cols-5 grid-rows-3">
+            <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentActive ? "opacity-100" : "opacity-0"}">
+                <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
+              </svg>
+              <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
+                <span>${theme}</span>
+                ${isCustom ? '<span class="badge badge-primary badge-xs scale-90 font-mono">Custom</span>' : ''}
+              </span>
+              <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
+                ${swatchHtml}
+              </span>
+            </span>
+          </span>
+        </span>
+      `;
+      btn.addEventListener("click", () => {
+        onSelect(theme);
+        // Cleanly blur dropdown trigger to close dropdown in all browsers
+        const dd = btn.closest(".dropdown");
+        if (dd) {
+          const trigger = dd.querySelector('[role="button"]');
+          if (trigger && typeof trigger.blur === "function") trigger.blur();
+        }
+        if (document.activeElement && typeof document.activeElement.blur === "function") {
+          document.activeElement.blur();
+        }
+      });
+      return btn;
+    }
+
+    function initNavbarThemeDropdown() {
+      const listEl = document.getElementById("theme-swatch-list");
+      if (!listEl) return;
+      listEl.innerHTML = "";
+      const current = document.documentElement.getAttribute("data-theme") || "light";
+      DAISYUI_THEMES.forEach((theme) => {
+        listEl.appendChild(createThemeSwatchItem(theme, current, (t) => {
+          setStudioTheme(t);
+        }));
+      });
+    }
+
+    function updateNavbarThemeDropdown() {
+      const listEl = document.getElementById("theme-swatch-list");
+      if (!listEl) return;
+      const current = document.documentElement.getAttribute("data-theme") || "light";
+      listEl.querySelectorAll(".theme-check").forEach((check, i) => {
+        const theme = DAISYUI_THEMES[i];
+        if (theme === current) {
+          check.classList.remove("opacity-0");
+          check.classList.add("opacity-100");
+        } else {
+          check.classList.remove("opacity-100");
+          check.classList.add("opacity-0");
+        }
+      });
+    }
+
+    function initInitialThemeDropdown() {
+      const listEl = document.getElementById("initial-theme-swatch-list");
+      if (!listEl) return;
+      listEl.innerHTML = "";
+      DAISYUI_THEMES.forEach((theme) => {
+        listEl.appendChild(createThemeSwatchItem(theme, currentTheme, (t) => {
+          changeDefaultTheme(t);
+        }));
+      });
+    }
+
+    function updateInitialThemeDropdown() {
+      const listEl = document.getElementById("initial-theme-swatch-list");
+      if (!listEl) return;
+      listEl.querySelectorAll(".theme-check").forEach((check, i) => {
+        const theme = DAISYUI_THEMES[i];
+        if (theme === currentTheme) {
+          check.classList.remove("opacity-0");
+          check.classList.add("opacity-100");
+        } else {
+          check.classList.remove("opacity-100");
+          check.classList.add("opacity-0");
+        }
+      });
+    }
+
+    function setStudioTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      const label = document.getElementById("active-studio-theme");
+      if (label) label.textContent = theme;
+      const swatches = document.getElementById("navbar-theme-swatches");
+      if (swatches) swatches.setAttribute("data-theme", theme);
+      updateNavbarThemeDropdown();
+    }
+
+    function changeDefaultTheme(theme) {
+      currentTheme = theme;
+      const initialLabel = document.getElementById("initial-theme-label");
+      if (initialLabel) initialLabel.textContent = theme;
+      const initialSwatches = document.getElementById("initial-theme-swatches");
+      if (initialSwatches) initialSwatches.setAttribute("data-theme", theme);
+      const sel = document.getElementById("select-default-theme");
+      if (sel) sel.value = theme;
+      setStudioTheme(theme);
+      updateInitialThemeDropdown();
+      updatePromptAndPreview();
+    }
+
+    function syncThemeInput(colorKey, val, source) {
+      let clean = (val || "").trim();
+      const textId = colorKey === "base-100" ? "text-base" : `text-${colorKey}`;
+      const pickerId = colorKey === "base-100" ? "picker-base" : `picker-${colorKey}`;
+      if (source === "color") {
+        const textEl = document.getElementById(textId);
+        if (textEl) textEl.value = clean.toUpperCase();
+      } else {
+        if (!clean.startsWith("#")) clean = "#" + clean;
+        if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(clean)) {
+          const pickerEl = document.getElementById(pickerId);
+          if (pickerEl) pickerEl.value = clean;
+        }
+      }
+    }
+
+    function hexToOklch(hex) {
+      let clean = (hex || "").replace(/^#/, "").trim();
+      if (clean.length === 3) clean = clean.split("").map((c) => c + c).join("");
+      if (clean.length !== 6) return "60% 0.15 250";
+      const num = parseInt(clean, 16);
+      if (Number.isNaN(num)) return "60% 0.15 250";
+      const r = (num >> 16) & 255;
+      const g = (num >> 8) & 255;
+      const b = num & 255;
+      const s2l = (c) => {
+        const n = c / 255;
+        return n <= 0.04045 ? n / 12.92 : Math.pow((n + 0.055) / 1.055, 2.4);
+      };
+      const lr = s2l(r), lg = s2l(g), lb = s2l(b);
+      const l = 0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb;
+      const m = 0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb;
+      const s = 0.0883024619 * lr + 0.2817188376 * lg + 0.6261798610 * lb;
+      const l_ = Math.cbrt(l), m_ = Math.cbrt(m), s_ = Math.cbrt(s);
+      const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+      const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+      const b_ = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+      const C = Math.sqrt(a * a + b_ * b_);
+      let H = Math.atan2(b_, a) * (180 / Math.PI);
+      if (H < 0) H += 360;
+      return `${(L * 100).toFixed(2)}% ${C.toFixed(3)} ${H.toFixed(2)}`;
+    }
+
+    function getContrastOklch(hex) {
+      let clean = (hex || "").replace(/^#/, "").trim();
+      if (clean.length === 3) clean = clean.split("").map((c) => c + c).join("");
+      const num = parseInt(clean, 16);
+      if (Number.isNaN(num)) return "0% 0 0";
+      const r = (num >> 16) & 255;
+      const g = (num >> 8) & 255;
+      const b = num & 255;
+      const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      return lum > 0.55 ? "20% 0.03 260" : "98% 0.01 260";
+    }
+
+    function injectCustomThemeCss(customTheme) {
+      let styleEl = document.getElementById("daisyui-custom-themes");
+      if (!styleEl) {
+        styleEl = document.createElement("style");
+        styleEl.id = "daisyui-custom-themes";
+        document.head.appendChild(styleEl);
+      }
+      const name = customTheme.name;
+      const colors = customTheme.colors;
+      const pOklch = hexToOklch(colors.primary);
+      const sOklch = hexToOklch(colors.secondary);
+      const aOklch = hexToOklch(colors.accent);
+      const nOklch = hexToOklch(colors.neutral);
+      const b1Oklch = hexToOklch(colors["base-100"]);
+      const pcOklch = getContrastOklch(colors.primary);
+      const scOklch = getContrastOklch(colors.secondary);
+      const acOklch = getContrastOklch(colors.accent);
+      const ncOklch = getContrastOklch(colors.neutral);
+      const bcOklch = getContrastOklch(colors["base-100"]);
+
+      styleEl.textContent = `
+        [data-theme="${name}"] {
+          color-scheme: light;
+          --p: ${pOklch};
+          --pc: ${pcOklch};
+          --s: ${sOklch};
+          --sc: ${scOklch};
+          --a: ${aOklch};
+          --ac: ${acOklch};
+          --n: ${nOklch};
+          --nc: ${ncOklch};
+          --b1: ${b1Oklch};
+          --b2: ${b1Oklch};
+          --b3: ${b1Oklch};
+          --bc: ${bcOklch};
+          --rounded-box: 1rem;
+          --rounded-btn: 0.5rem;
+          --rounded-badge: 1.9rem;
+          --animation-btn: 0.25s;
+          --animation-input: .2s;
+          --btn-focus-scale: 0.95;
+          --border-btn: 1px;
+          --tab-border: 1px;
+          --tab-radius: 0.5rem;
+        }
+      `;
+    }
+
+    function saveCustomTheme() {
+      const nameInput = document.getElementById("custom-theme-name-input");
+      let rawName = nameInput ? nameInput.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "") : "";
+      if (!rawName) rawName = "user";
+
+      const primaryVal = document.getElementById("text-primary")?.value.trim() || "#4f46e5";
+      const secondaryVal = document.getElementById("text-secondary")?.value.trim() || "#ec4899";
+      const accentVal = document.getElementById("text-accent")?.value.trim() || "#f59e0b";
+      const neutralVal = document.getElementById("text-neutral")?.value.trim() || "#1e293b";
+      const baseVal = document.getElementById("text-base")?.value.trim() || "#ffffff";
+
+      // Enforce: "a user can for now only manage one custom theme per creation"
+      if (userCustomTheme && userCustomTheme.name !== rawName) {
+        const oldIdx = DAISYUI_THEMES.indexOf(userCustomTheme.name);
+        if (oldIdx !== -1) DAISYUI_THEMES.splice(oldIdx, 1);
+      }
+
+      // Add/update new custom theme at top of dropdown
+      const existingIdx = DAISYUI_THEMES.indexOf(rawName);
+      if (existingIdx !== -1) {
+        DAISYUI_THEMES.splice(existingIdx, 1);
+      }
+      DAISYUI_THEMES.unshift(rawName);
+
+      userCustomTheme = {
+        name: rawName,
+        colors: {
+          primary: primaryVal,
+          secondary: secondaryVal,
+          accent: accentVal,
+          neutral: neutralVal,
+          "base-100": baseVal
+        }
+      };
+
+      injectCustomThemeCss(userCustomTheme);
+
+      if (nameInput) nameInput.value = rawName;
+      const badge = document.getElementById("custom-theme-badge");
+      if (badge) badge.textContent = `Theme: ${rawName}`;
+
+      initNavbarThemeDropdown();
+      initInitialThemeDropdown();
+      changeDefaultTheme(rawName);
+
+      const btn = document.getElementById("btn-save-custom-theme");
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-success"></i> Added "${rawName}"!`;
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          if (window.lucide) window.lucide.createIcons();
+        }, 2000);
+      }
+    }
+
+    function selectWizardTarget(target, cardEl) {
+      currentTarget = target;
+      document.querySelectorAll(".wizard-target-card").forEach((c) => {
+        c.classList.remove("border-primary", "bg-primary/5", "border-2");
+        c.classList.add("border-base-300", "bg-base-100");
+        c.querySelector(".target-check-badge")?.classList.add("hidden");
+      });
+      cardEl.classList.remove("border-base-300", "bg-base-100");
+      cardEl.classList.add("border-primary", "bg-primary/5", "border-2");
+      cardEl.querySelector(".target-check-badge")?.classList.remove("hidden");
+
+      // Constraint pruning: Printable PDF is strictly static paper document
+      const liveModeCard = document.querySelector('[data-mode="live"]');
+      const staticModeCard = document.querySelector('[data-mode="static"]');
+      const modeNotice = document.getElementById("mode-status-badge");
+
+      const liveAppCard = document.getElementById("app-card-live");
+      const offlineAppCard = document.getElementById("app-card-offline");
+      const noneAppCard = document.getElementById("app-card-none");
+      const printAppHint = document.getElementById("print-app-hint");
+      const appBadge = document.getElementById("app-status-badge");
+
+      if (target === "print") {
+        selectWizardMode("static", staticModeCard);
+        if (liveModeCard) liveModeCard.classList.add("opacity-40", "pointer-events-none");
+        if (modeNotice) modeNotice.textContent = "Print mode: Locked to Static";
+
+        // Eliminate offline-first app and install-app in print mode
+        if (liveAppCard) liveAppCard.classList.add("hidden");
+        if (offlineAppCard) offlineAppCard.classList.add("hidden");
+        if (printAppHint) printAppHint.classList.remove("hidden");
+        if (appBadge) appBadge.textContent = "Print: Browser Only";
+        selectWizardApp("none", noneAppCard);
+      } else {
+        if (liveModeCard) liveModeCard.classList.remove("opacity-40", "pointer-events-none");
+        if (modeNotice) modeNotice.textContent = "Core Transport";
+
+        // Restore app options when not in print mode
+        if (liveAppCard) liveAppCard.classList.remove("hidden");
+        if (offlineAppCard) offlineAppCard.classList.remove("hidden");
+        if (printAppHint) printAppHint.classList.add("hidden");
+        if (appBadge) appBadge.textContent = "PWA Packaging";
+
+        if (target === "dashboard" && currentMode === "static") {
+          selectWizardMode("live", liveModeCard);
+        }
+      }
+
+      updatePromptAndPreview();
+    }
+
+    function selectWizardMode(mode, cardEl) {
+      currentMode = mode;
+      document.querySelectorAll(".wizard-mode-card").forEach((c) => {
+        c.classList.remove("border-secondary", "bg-secondary/5", "border-2");
+        c.classList.add("border-base-300", "bg-base-100");
+        c.querySelector(".mode-check-badge")?.classList.add("hidden");
+      });
+      if (cardEl) {
+        cardEl.classList.remove("border-base-300", "bg-base-100");
+        cardEl.classList.add("border-secondary", "bg-secondary/5", "border-2");
+        cardEl.querySelector(".mode-check-badge")?.classList.remove("hidden");
+      }
+
+      // Enable or disable Intelligence Features based on Mode
+      const containerAi = document.getElementById("container-chk-ai");
+      const containerMcp = document.getElementById("container-chk-mcp");
+      const chkAi = document.getElementById("chk-ai-agent");
+      const chkMcp = document.getElementById("chk-mcp-tools");
+      const intelNotice = document.getElementById("intel-notice-badge");
+
+      if (mode === "live") {
+        if (containerAi) containerAi.classList.remove("opacity-50", "pointer-events-none");
+        if (containerMcp) containerMcp.classList.remove("opacity-50", "pointer-events-none");
+        if (intelNotice) { intelNotice.textContent = "Features Active"; intelNotice.classList.add("badge-success"); }
+      } else {
+        if (containerAi) containerAi.classList.add("opacity-50", "pointer-events-none");
+        if (containerMcp) containerMcp.classList.add("opacity-50", "pointer-events-none");
+        if (chkAi) chkAi.checked = false;
+        if (chkMcp) chkMcp.checked = false;
+        if (intelNotice) { intelNotice.textContent = "Requires Live Mode"; intelNotice.classList.remove("badge-success"); }
+      }
+
+      updatePromptAndPreview();
+    }
+
+    function selectWizardApp(appMode, cardEl) {
+      if (currentTarget === "print" && appMode !== "none") {
+        appMode = "none";
+      }
+      currentApp = appMode;
+      document.querySelectorAll(".wizard-app-card").forEach((c) => {
+        c.classList.remove("border-info", "bg-info/5", "border-2");
+        c.classList.add("border-base-300", "bg-base-100");
+        c.querySelector(".app-check-badge")?.classList.add("hidden");
+      });
+      if (cardEl) {
+        cardEl.classList.remove("border-base-300", "bg-base-100");
+        cardEl.classList.add("border-info", "bg-info/5", "border-2");
+        cardEl.querySelector(".app-check-badge")?.classList.remove("hidden");
+      }
+      updatePromptAndPreview();
+    }
+
+    function updatePromptAndPreview() {
+      const hasCharts = document.getElementById("chk-charts")?.checked ?? false;
+      const hasMermaid = document.getElementById("chk-mermaid")?.checked ?? false;
+      const hasGridjs = document.getElementById("chk-gridjs")?.checked ?? false;
+      const hasLeaflet = document.getElementById("chk-leaflet")?.checked ?? false;
+      const hasKatex = document.getElementById("chk-katex")?.checked ?? false;
+      const hasCalendar = document.getElementById("chk-fullcalendar")?.checked ?? false;
+      const hasShowdown = document.getElementById("chk-showdown")?.checked ?? false;
+      const hasHljs = document.getElementById("chk-hljs")?.checked ?? false;
+      const hasDayjs = document.getElementById("chk-dayjs")?.checked ?? false;
+      const hasAiAgent = document.getElementById("chk-ai-agent")?.checked ?? false;
+      const hasMcpTools = document.getElementById("chk-mcp-tools")?.checked ?? false;
+
+      const userGoals = document.getElementById("input-board-goals")?.value.trim() || "";
+      const userAudience = document.getElementById("input-board-audience")?.value.trim() || "";
+
+      let skillName = "html-report";
+      let humanTargetName = "Executive Analytical Report";
+      let heroTitle = "Quarterly Strategic Performance Report";
+
+      if (currentTarget === "print") {
+        skillName = "html-print";
+        humanTargetName = "Printable Document / Compliance PDF";
+        heroTitle = "Formal Executive Audit & Compliance Document";
+      } else if (currentTarget === "dashboard") {
+        skillName = "html-dashboard";
+        humanTargetName = "Real-Time Telemetry Dashboard";
+        heroTitle = "Live Telemetry & System Monitoring Cockpit";
+      } else if (currentTarget === "presentation") {
+        skillName = "html-presentation";
+        humanTargetName = "Interactive Slide Deck (Reveal.js)";
+        heroTitle = "Strategic Roadmap & Product Keynote Deck";
+      } else if (currentApp === "offline-app" || currentApp === "live-app") {
+        skillName = "html-pwa";
+      }
+
+      if (userGoals) {
+        heroTitle = userGoals.length > 55 ? userGoals.substring(0, 52) + "..." : userGoals;
+      }
+
+      // Content Addons list
+      const addonNames = [];
+      if (hasCharts) addonNames.push("Interactive Charts (Chart.js)");
+      if (hasMermaid) addonNames.push("Process Flows (Mermaid)");
+      if (hasGridjs) addonNames.push("Data Tables (Grid.js)");
+      if (hasLeaflet) addonNames.push("Geographic Maps (Leaflet)");
+      if (hasKatex) addonNames.push("Scientific Math (KaTeX)");
+      if (hasCalendar) addonNames.push("Calendars (FullCalendar)");
+      if (hasShowdown) addonNames.push("Markdown Reader (Showdown)");
+      if (hasHljs) addonNames.push("Code Highlighting (Highlight.js)");
+      if (hasDayjs) addonNames.push("Date Calculation (Day.js)");
+
+      // UPDATE SIMULATED WIREFRAME MOCKUP
+      const winTitle = document.getElementById("mockup-window-title");
+      const hBadge = document.getElementById("mockup-hero-badge");
+      const hTitle = document.getElementById("mockup-hero-title");
+      const liveIndicator = document.getElementById("mockup-live-indicator");
+      const installBtn = document.getElementById("mockup-install-btn");
+
+      if (winTitle) winTitle.textContent = humanTargetName;
+      if (hBadge) hBadge.textContent = `@${skillName}`;
+      if (hTitle) hTitle.textContent = heroTitle;
+      
+      const themeNameEl = document.getElementById("mockup-theme-name");
+      const themeSwatchesEl = document.getElementById("mockup-theme-swatches");
+      const isCustomThemeActive = userCustomTheme && currentTheme === userCustomTheme.name;
+
+      if (themeNameEl) themeNameEl.textContent = currentTheme;
+      if (themeSwatchesEl) {
+        themeSwatchesEl.setAttribute("data-theme", currentTheme);
+      }
+
+      if (liveIndicator) liveIndicator.classList.toggle("hidden", currentMode === "static");
+      if (installBtn) installBtn.classList.toggle("hidden", currentApp === "none");
+
+      const wChart = document.getElementById("mockup-chart-widget");
+      const wMermaid = document.getElementById("mockup-mermaid-widget");
+      const wTable = document.getElementById("mockup-table-widget");
+      const wDock = document.getElementById("mockup-agent-dock");
+      const wRefs = document.getElementById("mockup-references-widget");
+      const wRefsBadge = document.getElementById("mockup-references-badge");
+      const wRefsText = document.getElementById("mockup-references-text");
+
+      if (wChart) wChart.classList.toggle("hidden", !hasCharts);
+      if (wMermaid) wMermaid.classList.toggle("hidden", !hasMermaid);
+      if (wTable) wTable.classList.toggle("hidden", !hasGridjs);
+      if (wDock) wDock.classList.toggle("hidden", !hasAiAgent);
+      if (wRefs) {
+        wRefs.classList.toggle("hidden", collectedFiles.length === 0);
+        if (wRefsBadge) wRefsBadge.textContent = collectedFiles.length;
+        if (wRefsText) wRefsText.textContent = `${collectedFiles.length} Reference File${collectedFiles.length === 1 ? "" : "s"} Grounded`;
+      }
+
+      // SYNTHESIZE AI PROMPT (Front and Center for coding agents!)
+      let promptText = `Invoked via /html-create (Creation Studio) -> Routing to Specialized Facade: @${skillName}\n`;
+      promptText += `Skill Command: /${skillName}\n\n`;
+      promptText += `Task: Build a ${humanTargetName}\n`;
+
+      if (userGoals) {
+        promptText += `\nObjective & Scope (What the board needs to show):\n${userGoals}\n`;
+      }
+      if (userAudience) {
+        promptText += `\nTarget Audience:\n${userAudience}\n`;
+      }
+
+      if (collectedFiles.length > 0) {
+        promptText += `\nReference Documents, Images & Data-Sets:\n`;
+        collectedFiles.forEach((f) => {
+          let line = `• ${f.name}`;
+          if (f.category) line += ` (${f.category})`;
+          if (f.note && f.note.trim()) {
+            line += ` - Context Note: "${f.note.trim()}"`;
+          }
+          promptText += `${line}\n`;
+        });
+      }
+
+      promptText += `\nDeliverable Architecture:\n`;
+      promptText += `- Purpose & Format: ${humanTargetName.toUpperCase()}\n`;
+      promptText += `- Operational Mode: ${currentMode === "static" ? "STATIC_STANDALONE (Zero server required, single self-contained HTML file)" : "LIVE_CONNECTED (Server-backed SSE stream on localhost:3000)"}\n`;
+      promptText += `- App Packaging: ${currentApp === "none" ? "Standard Browser Page" : currentApp === "live-app" ? "Downloadable App (Standalone Window, Live Connected)" : "Downloadable Offline-First App (100% Offline Service Worker Cache)"}\n`;
+      promptText += `- Startup Theme: "${currentTheme}"${isCustomThemeActive ? ` (Custom DaisyUI Theme: "${userCustomTheme.name}")` : " (Default on first load; readers can switch between 32 themes via navbar)"}\n`;
+
+      if (isCustomThemeActive) {
+        promptText += `- Custom DaisyUI Theme Specification ("${userCustomTheme.name}"):\n`;
+        promptText += `  • Primary: ${userCustomTheme.colors.primary}\n`;
+        promptText += `  • Secondary: ${userCustomTheme.colors.secondary}\n`;
+        promptText += `  • Accent: ${userCustomTheme.colors.accent}\n`;
+        promptText += `  • Neutral: ${userCustomTheme.colors.neutral}\n`;
+        promptText += `  • Base-100: ${userCustomTheme.colors["base-100"]}\n`;
+      }
+
+      promptText += `- Features & Capabilities:\n`;
+      promptText += addonNames.length ? addonNames.map((a) => `  • ${a}`).join("\n") : "  • None (core layout only)";
+      if (hasAiAgent) promptText += `\n  • Interactive AI Assistant (In-browser Cmd+K dock with live Datastar fragment morphing)`;
+      if (hasMcpTools) promptText += `\n  • Enterprise Tools Gateway (Proxy widgets to Postgres / GitLab MCP servers)`;
+
+      promptText += `\n\nAI Agent Scaffolding Instructions:\n`;
+      promptText += `1. Activate skill /${skillName}.\n`;
+      promptText += `2. Scaffold the ${humanTargetName} incorporating the selected components and theme.\n`;
+      if (userGoals) {
+        promptText += `3. Structure data widgets and metrics directly fulfilling: "${userGoals}".\n`;
+      } else {
+        promptText += `3. Populate realistic, domain-specific metrics and data visualizations.\n`;
+      }
+      if (userAudience) {
+        promptText += `4. Calibrate typography, layout contrast, and analytical depth for ${userAudience}.\n`;
+      }
+      if (collectedFiles.length > 0) {
+        promptText += `5. Ground visualizations, data schemas, and domain terminology directly on the provided reference files:\n`;
+        collectedFiles.forEach((f) => {
+          if (f.note && f.note.trim()) {
+            promptText += `   • ${f.name}: Ground on context note ("${f.note.trim()}").\n`;
+          } else {
+            promptText += `   • ${f.name}: Ground relevant visualizations/structure on this reference.\n`;
+          }
+        });
+      }
+
+      const promptBox = document.getElementById("prompt-output-box");
+      if (promptBox) promptBox.value = promptText;
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function copyPromptToClipboard(btn) {
+      const box = document.getElementById("prompt-output-box");
+      if (!box) return;
+      navigator.clipboard.writeText(box.value).then(() => {
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-success"></i> Copied!';
+        setTimeout(() => {
+          btn.innerHTML = original;
+          if (window.lucide) window.lucide.createIcons();
+        }, 2000);
+      });
+    }
+
+    function downloadPromptMarkdown() {
+      const box = document.getElementById("prompt-output-box");
+      if (!box) return;
+      const blob = new Blob([box.value], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "report-creation-spec.md";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadStarterHtml(btn) {
+      const hasCharts = document.getElementById("chk-charts")?.checked ?? false;
+      const hasMermaid = document.getElementById("chk-mermaid")?.checked ?? false;
+      const hasGridjs = document.getElementById("chk-gridjs")?.checked ?? false;
+      const hasLeaflet = document.getElementById("chk-leaflet")?.checked ?? false;
+      const hasKatex = document.getElementById("chk-katex")?.checked ?? false;
+      const hasHljs = document.getElementById("chk-hljs")?.checked ?? false;
+      const hasDayjs = document.getElementById("chk-dayjs")?.checked ?? false;
+
+      let starterTitle = "Quarterly Strategic Performance Report";
+      if (currentTarget === "print") starterTitle = "Formal Executive Audit & Compliance Document";
+      if (currentTarget === "dashboard") starterTitle = "Live Telemetry & System Monitoring Cockpit";
+      if (currentTarget === "presentation") starterTitle = "Strategic Roadmap & Product Keynote Deck";
+
+      const htmlBundle = `<!DOCTYPE html>
+<html lang="en" data-theme="${currentTheme}" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${starterTitle}</title>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
+  <' + 'script src="https://cdn.tailwindcss.com"><' + '/script>
+  <' + 'script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"><' + '/script>
+  ${hasCharts ? '<' + 'script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"><' + '/script>' : ''}
+  ${hasMermaid ? '<' + 'script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js"><' + '/script>' : ''}
+  ${hasGridjs ? '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css" /><' + 'script defer src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.umd.js"><' + '/script>' : ''}
+  ${hasLeaflet ? '<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" /><' + 'script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><' + '/script>' : ''}
+  ${hasKatex ? '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" /><' + 'script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"><' + '/script>' : ''}
+  ${hasHljs ? '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css" /><' + 'script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"><' + '/script>' : ''}
+  ${hasDayjs ? '<' + 'script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js"><' + '/script><' + 'script defer src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/plugin/relativeTime.js"><' + '/script>' : ''}
+</head>
+<body class="bg-base-100 text-base-content min-h-screen p-4 sm:p-8 font-sans">
+  <div class="max-w-5xl mx-auto space-y-6">
+    <header class="border-b border-base-300 pb-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-black">${starterTitle}</h1>
+        <p class="text-xs sm:text-sm text-base-content/70">Generated client-side via HTML Creation Studio (Zero Node)</p>
+      </div>
+      <span class="badge badge-primary font-mono text-xs font-bold">${currentTarget.toUpperCase()}</span>
+    </header>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="stat bg-base-200/50 rounded-box border border-base-300">
+        <div class="stat-title text-xs">Uptime</div>
+        <div class="stat-value text-2xl text-success">99.98%</div>
+      </div>
+      <div class="stat bg-base-200/50 rounded-box border border-base-300">
+        <div class="stat-title text-xs">Speed</div>
+        <div class="stat-value text-2xl text-primary">14.2ms</div>
+      </div>
+      <div class="stat bg-base-200/50 rounded-box border border-base-300">
+        <div class="stat-title text-xs">Score</div>
+        <div class="stat-value text-2xl text-accent">100/100</div>
+      </div>
+    </div>
+  </div>
+  <' + 'script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) window.lucide.createIcons();
+      if (window.mermaid) window.mermaid.initialize({ startOnLoad: true });
+      if (window.hljs) window.hljs.highlightAll();
+      if (window.dayjs && window.dayjs_plugin_relativeTime) window.dayjs.extend(window.dayjs_plugin_relativeTime);
+    });
+  <' + '/script>
+<' + '/body>
+<' + '/html>`;
+
+      const blob = new Blob([htmlBundle], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentTarget}-report.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      const original = btn.innerHTML;
+      btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-success"></i> Starter HTML Downloaded!';
+      setTimeout(() => {
+        btn.innerHTML = original;
+        if (window.lucide) window.lucide.createIcons();
+      }, 2500);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initNavbarThemeDropdown();
+      initInitialThemeDropdown();
+      initFileDropZone();
+      renderCollectedFiles();
+      updatePromptAndPreview();
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
