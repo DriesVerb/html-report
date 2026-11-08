@@ -69,6 +69,7 @@ export const ADDON_CATALOG = {
   katex: { flag: "--katex", label: "Scientific Math & Formulas (KaTeX v0.16)" },
   fullcalendar: { flag: "--fullcalendar", label: "Schedules & Calendars (FullCalendar v6.1)" },
   showdown: { flag: "--showdown", label: "Markdown Viewer & Modals (Showdown v2.1)" },
+  quill: { flag: "--quill", label: "WYSIWYG Rich Text Editor (Quill v2.0)" },
   highlightjs: { flag: "--hljs", label: "Code Syntax Highlighting (Highlight.js v11.9)" },
   dayjs: { flag: "--dayjs", label: "Date Calculation (Day.js v1.11)" }
 };

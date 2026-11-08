@@ -41,8 +41,10 @@ describe("Phase 1: Runtime Assets & Template Shell Unit Tests", () => {
 
       assert.ok(shell.includes('id="navbar-report-title"'), "Must include report title element");
       assert.ok(shell.includes('id="toc-dropdown"'), "Must include TOC dropdown");
-      assert.ok(shell.includes('id="theme-dropdown"'), "Must include theme picker dropdown");
-      assert.ok(shell.includes('id="download-dropdown"'), "Must include download dropdown");
+      assert.ok(shell.includes('id="settings-dropdown"'), "Must include settings gear dropdown");
+      assert.ok(shell.includes('id="settings-gear-btn"'), "Must include gear button");
+      assert.ok(shell.includes('id="theme-swatch-list"'), "Must include theme picker inside gear panel");
+      assert.ok(shell.includes('id="download-dropdown-menu"'), "Must include export actions in gear panel");
       assert.ok(shell.includes('id="download-html-btn"'), "Must include download HTML button");
       assert.ok(shell.includes('id="download-pdf-btn"'), "Must include download PDF button");
       assert.ok(shell.includes('id="pdf-not-ready-modal"'), "Must include interactive PDF warning modal");

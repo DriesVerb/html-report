@@ -16,7 +16,18 @@ This specialized skill guides users and agents through a structured, multi-dimen
 ## Slash Commands & Access Modes
 
 ### 1. `/html-create` (Web Onboarding Studio & Theme Creator)
-Launches the standalone interactive creation studio on the live dev server:
+
+#### Fast Instant Launch (Recommended)
+Open the creation studio in milliseconds using the fast launcher script:
+```bash
+# Fast instant launcher (auto-detects Node.js vs No-Node):
+./skills/html-report/scripts/open-create.sh
+
+# Or via Node:
+node skills/html-report/scripts/open-create.mjs
+```
+
+Or start the server manually:
 ```bash
 node skills/html-report/scripts/serve-report.mjs create.html --port 3000
 ```
@@ -24,12 +35,28 @@ node skills/html-report/scripts/serve-report.mjs create.html --port 3000
 - **Live OKLCH Theme Studio**: Real-time DaisyUI palette preview, contrast calculator, and CSS/JSON exporter.
 - **Deterministic Output Card**: 1-click clipboard prompt tailored for autonomous coding agents.
 
+#### Agent Capabilities Fallback (No Node.js on Machine)
+If Node.js is **not installed** or cannot be executed in the environment, the agent MUST leverage its native capabilities to open or present the studio:
+1. **Agent Browser Capabilities**:
+   - Use browser tools (e.g. `/browser` or Chrome DevTools MCP `navigate_page`) to open `create.html` directly via `file:///path/to/html-report/create.html`.
+2. **System Desktop Opener**:
+   - Execute `xdg-open create.html` (Linux), `open create.html` (macOS), or `cmd.exe /c start create.html` (Windows/WSL) via shell command.
+3. **Interactive Decision Interview (Terminal Fallback)**:
+   - If running in a headless sandbox without browser capabilities, the agent directly conducts the structured 4-step interview with the user via multiple-choice questions matching the decision matrix below.
+
 ### 2. `/html-create:cli` (Terminal Grill Interview)
 Executes a zero-dependency interactive terminal interview for CLI-first developers:
 ```bash
 node skills/html-report/scripts/html-grill.mjs
 ```
 Walks the user through top-down architectural decisions via terminal prompts and outputs the exact command and agent prompt.
+
+### 3. `/html-install` (1-Click PWA App Packaging)
+Package and install the creation studio as an offline-first desktop application:
+```bash
+./skills/html-report/scripts/install-pwa.sh
+# or: npm run install:wizard
+```
 
 ---
 
@@ -69,7 +96,7 @@ Target Audience:
 C-Suite Leadership and Operating Committee
 
 Deliverable Architecture:
-- Purpose & Format: EXECUTIVE ANALYTICAL REPORT
+- Purpose & Format: ANALYTICAL REPORT
 - Operational Mode: STATIC_STANDALONE
 - App Packaging: Standard Browser Page
 - Startup Theme: "emerald"

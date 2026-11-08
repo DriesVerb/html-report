@@ -21,6 +21,7 @@ Every report MUST include the following 11-library CDN stack. Scripts use `defer
 | 9 | **KaTeX** | Fast scientific math and LaTeX equation rendering |
 | 10 | **Marked** | Client-side Markdown prose parsing |
 | 11 | **Highlight.js** | Syntax-highlighted code blocks |
+| 12 | **Quill** | In-browser rich text WYSIWYG authoring and note drafting |
 
 ```html
 <!-- 1. Stylesheets (DaisyUI v4 full + all 32 themes, Leaflet, Highlight.js, Grid.js, KaTeX) -->
@@ -87,10 +88,12 @@ Every HTML report MUST start with `<html lang="en" data-theme="light" data-repor
    - **Mode Badge (`#navbar-mode-badge`)**: Displays the active report mode (`PRINT`, `REPORT`, `PRESENTATION`, `DASHBOARD`, `JOURNEY`, `LIVE`) with mode-specific DaisyUI color badges and pulse indicators.
 2. **Right (`navbar-end`)**:
    - **Contents Dropdown (`#toc-dropdown`)**: Maps every `h1`, `h2`, and `h3` in `<main>` via anchor links (`href="#heading-id"`).
-   - **DaisyUI Color-Swatch Theme Dropdown (`#theme-dropdown`)**: Displays all 32 built-in DaisyUI themes (defaulting to `light`) where **each theme option renders its own color scheme preview** (`data-theme="<theme>"` with `bg-base-100`, `text-base-content`, and 4 swatch pills `bg-primary`, `bg-secondary`, `bg-accent`, `bg-neutral`), identical to the official DaisyUI website, and dynamically updates CSS variables, **Chart.js** charts, and **Mermaid** diagrams.
-   - **Icon-Only Download Dropdown (`#download-dropdown`)**: An icon-only trigger button (`#download-dropdown-btn`, `btn-square`, no visible download text) that opens a dropdown menu (`#download-dropdown-menu`) with two options:
-     1. **Download as HTML (`#download-html-btn`)**: Downloads the complete HTML report with all external CDN stylesheets and scripts fetched and embedded inline.
-     2. **Download as PDF (`#download-pdf-btn`)**: Calls `window.exportReportPdf()` (resizes charts/maps and triggers `window.print()` with `@media print` styling). In `print` mode, badge displays `PDF-Ready`.
+   - **Settings Gear Dropdown (`#settings-dropdown` / `#settings-gear-btn`)**: A clean gear button (`aria-label="Settings"`) acting as the unified panel for:
+     1. **Appearance**: Displays all 32 built-in DaisyUI themes (defaulting to `light`) with live color swatches (`#theme-swatch-list`, `#active-theme-label`).
+     2. **Export**: Action buttons for **Download as HTML** (`#download-html-btn`) and **Download as PDF** (`#download-pdf-btn`).
+     3. **Edit**: Opens the bottom-docked Page Edit Queue (`#edit-dock`) to collect tasks and format deterministic AI prompts.
+     4. **AI Activation & Turnkey**: Per-board AI enable toggle and copyable turnkey reconnection commands (`HTMLReportAgent`).
+     5. **Publishing & Release**: Mark report as published and download clean, gear-free standalone HTML (`HTMLReportPublisher`).
 
 ### Complete Navbar HTML Blueprint
 

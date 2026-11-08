@@ -30,6 +30,15 @@ export const DEFAULT_PWA_CONFIG = Object.freeze({
   iconPng512: "icon-512.png"
 });
 
+export const CORE_CDN_PRECACHE_URLS = Object.freeze([
+  "https://cdn.tailwindcss.com",
+  "https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css",
+  "https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js",
+  "https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js",
+  "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css",
+  "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"
+]);
+
 /**
  * Derives a clean short name from a report title (max 16 chars).
  */
@@ -488,6 +497,8 @@ export function generatePwaAssets({
   emoji = "📊",
   cacheVersion = "1.0.0",
   preCacheUrls = null,
+  includeCoreCdn = false,
+  categories = DEFAULT_PWA_CONFIG.categories,
   manifestFileName = DEFAULT_PWA_CONFIG.manifestFileName,
   swFileName = DEFAULT_PWA_CONFIG.swFileName,
   iconFileName = DEFAULT_PWA_CONFIG.iconFileName,
@@ -514,6 +525,7 @@ export function generatePwaAssets({
     startUrl: `./${reportFileName}`,
     scope: "./",
     iconFileName,
+    categories,
     display: "standalone"
   });
   const manifestJson = JSON.stringify(manifestObj, null, 2);
@@ -524,9 +536,10 @@ export function generatePwaAssets({
     `./${manifestFileName}`,
     `./${iconFileName}`
   ];
+  const finalPreCache = preCacheUrls || (includeCoreCdn ? [...defaultPreCache, ...CORE_CDN_PRECACHE_URLS] : defaultPreCache);
   const swCode = buildServiceWorker({
     cacheName,
-    preCacheUrls: preCacheUrls || defaultPreCache,
+    preCacheUrls: finalPreCache,
     version: cacheVersion
   });
 
@@ -565,3 +578,33 @@ export function generatePwaAssets({
 
 export const buildPwa = generatePwaAssets;
 export const buildPwaAssets = generatePwaAssets;
+
+/**
+ * Convenience generator for packaging the HTML Report Creation Studio (create.html)
+ * as an offline-first Progressive Web App.
+ */
+export function generateStudioPwaAssets({
+  outputDir = process.cwd(),
+  themeColor = "#2563eb",
+  writeFiles = true
+} = {}) {
+  const defaultStudioPreCache = [
+    "./create.html",
+    "./manifest.webmanifest",
+    "./icon.svg",
+    ...CORE_CDN_PRECACHE_URLS
+  ];
+  return generatePwaAssets({
+    outputDir,
+    reportFileName: "create.html",
+    title: "HTML Report Creation Studio",
+    shortName: "HTML Studio",
+    description: "Interactive onboarding decision wizard, OKLCH theme studio, and deterministic prompt generator",
+    themeColor,
+    backgroundColor: "#ffffff",
+    emoji: "✨",
+    categories: ["productivity", "developer", "utilities"],
+    preCacheUrls: defaultStudioPreCache,
+    writeFiles
+  });
+}

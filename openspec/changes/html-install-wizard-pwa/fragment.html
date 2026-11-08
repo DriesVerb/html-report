@@ -1,0 +1,339 @@
+<header class="space-y-4 border-b border-base-300 pb-8">
+  <div class="flex flex-wrap gap-2">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">html-install-wizard-pwa</span>
+    <span class="badge badge-success font-mono text-xs text-success-content font-bold">Phase 5: Verified &amp; Shipped</span>
+    <span class="badge badge-ghost font-mono text-xs">Offline PWA Studio</span>
+  </div>
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight">/html-install &mdash; PWA Packaging &amp; Offline Creation Studio</h1>
+  <p class="text-base text-base-content/80 max-w-3xl">
+    Transforms the interactive HTML Report Creation Studio into an installable, 100% offline-resilient Progressive Web App. Introduces the <code>/html-install</code> command, dual-caching Service Worker for CDN bundles, W3C Web App Manifest with developer shortcuts, and 1-click in-navbar installation.
+  </p>
+  <div class="flex flex-wrap gap-3 items-center text-xs">
+    <span class="font-semibold">Artifacts:</span>
+    <a href="proposal.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('proposal.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">proposal.md</a>
+    <a href="design.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('design.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">design.md</a>
+    <a href="tasks.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('tasks.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">tasks.md</a>
+    <a href="specs/html-wizard-pwa-install/spec.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('specs/html-wizard-pwa-install/spec.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">specs/html-wizard-pwa-install/spec.md</a>
+    <a href="specs/mermaid-diagram-zoom/spec.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('specs/mermaid-diagram-zoom/spec.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">specs/mermaid-diagram-zoom/spec.md</a>
+  </div>
+  <div class="w-full overflow-x-auto">
+    <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+      <li class="step step-primary">Brainstorming</li>
+      <li class="step step-primary">Planning</li>
+      <li class="step step-primary">Implementing</li>
+      <li class="step step-primary">Verifying</li>
+      <li class="step step-primary">Shipped / Archived</li>
+    </ul>
+  </div>
+</header>
+
+<section id="metrics" class="grid grid-cols-2 lg:grid-cols-4 gap-4 my-8">
+  <div class="stat bg-base-200 rounded-box">
+    <div class="stat-title text-xs font-bold uppercase">Total Tasks</div>
+    <div class="stat-value text-2xl font-mono text-primary">16</div>
+    <div class="stat-desc font-mono">6 Architectural Milestones</div>
+  </div>
+  <div class="stat bg-base-200 rounded-box">
+    <div class="stat-title text-xs font-bold uppercase">In Progress</div>
+    <div class="stat-value text-2xl font-mono text-warning">0</div>
+    <div class="stat-desc font-mono">All Tasks Completed</div>
+  </div>
+  <div class="stat bg-base-200 rounded-box">
+    <div class="stat-title text-xs font-bold uppercase">Completed</div>
+    <div class="stat-value text-2xl font-mono text-success">16</div>
+    <div class="stat-desc font-mono text-success">100% Execution</div>
+  </div>
+  <div class="stat bg-base-200 rounded-box">
+    <div class="stat-title text-xs font-bold uppercase">Remaining</div>
+    <div class="stat-value text-2xl font-mono text-base-content">0</div>
+    <div class="stat-desc font-mono">Zero Open Tasks</div>
+  </div>
+</section>
+
+<section id="problem-and-vision" class="space-y-4 mb-10">
+  <h2 class="text-2xl font-bold flex items-center gap-2">
+    <span>💡 Problem &amp; Architecture Vision</span>
+  </h2>
+  <p class="text-base-content/80 leading-relaxed">
+    Developers use <a href="../../create.html" class="link link-primary font-semibold">create.html</a> as their primary workspace to design report themes, configure data addons, and synthesize agent execution instructions. Currently, this runs as a transient browser tab. When developers are traveling, offline, or in restricted environments, missing CDN caches break the studio.
+  </p>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="card bg-base-200">
+      <div class="card-body p-4">
+        <h3 class="card-title text-sm font-bold text-error flex items-center gap-1.5">
+          <span>❌ Current Limitations</span>
+        </h3>
+        <ul class="text-xs space-y-1.5 text-base-content/75 list-disc list-inside">
+          <li><strong>Offline Fragility:</strong> Requires live network access to download Tailwind CDN, DaisyUI, Lucide, and Showdown.</li>
+          <li><strong>Browser Tab Clutter:</strong> Competes with dozens of open tabs; lacks dedicated OS window, dock pinning, and application frame.</li>
+          <li><strong>Manual Setup:</strong> Running dev servers requires multi-step commands rather than a single frictionless slash command.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card bg-base-200">
+      <div class="card-body p-4">
+        <h3 class="card-title text-sm font-bold text-success flex items-center gap-1.5">
+          <span>✅ Proposed Solution: /html-install</span>
+        </h3>
+        <ul class="text-xs space-y-1.5 text-base-content/75 list-disc list-inside">
+          <li><strong>1-Click Command:</strong> Running <code>/html-install</code> scaffolds PWA assets, serves the studio, and triggers native desktop installation.</li>
+          <li><strong>100% Offline Resilient:</strong> Dual-caching Service Worker pre-caches all essential CDNs for 0ms offline loads.</li>
+          <li><strong>Native OS App Window:</strong> Launches borderless standalone window in macOS, Windows, Linux, Android, and iOS.</li>
+          <li><strong>Dynamic Theme Sync:</strong> Automatically aligns OS frame theme-color with the active DaisyUI theme.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="diagram-zoom-solution" class="space-y-4 mb-10">
+  <h2 class="text-2xl font-bold flex items-center gap-2">
+    <span>🔍 Interactive Diagram Zoom, Pan &amp; Viewport Solution</span>
+  </h2>
+  <p class="text-base-content/80 leading-relaxed">
+    Wide horizontal flowcharts and architecture diagrams (such as <code>flowchart LR</code>) currently get shrunk to fit modal widths, resulting in microscopic, unreadable text. We introduce a complete DaisyUI interactive inspection toolbar with GPU-accelerated pan and zoom.
+  </p>
+
+  <div class="card bg-base-200 border border-base-300 p-4 space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-base-300 pb-3">
+      <div class="flex items-center gap-2 font-bold text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+        <span>Diagram Preview Toolbar Mockup</span>
+      </div>
+      <!-- DaisyUI Join Toolbar Mockup -->
+      <div class="flex items-center gap-2">
+        <div class="join border border-base-300 bg-base-100 rounded-lg shadow-xs">
+          <button class="join-item btn btn-xs btn-ghost font-bold" title="Zoom Out (-)">−</button>
+          <button class="join-item btn btn-xs btn-ghost font-mono text-3xs px-2" title="Reset Zoom">100%</button>
+          <button class="join-item btn btn-xs btn-ghost font-bold" title="Zoom In (+)">+</button>
+          <button class="join-item btn btn-xs btn-ghost text-3xs font-semibold px-2" title="Fit to Viewport">Fit</button>
+        </div>
+        <button class="btn btn-xs btn-ghost border border-base-300 gap-1 text-3xs font-semibold" title="Fullscreen Modal">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+          <span>Fullscreen</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-3 text-xs">
+      <div class="p-3 bg-base-100 rounded-lg border border-base-300 space-y-1">
+        <div class="font-bold text-primary flex items-center gap-1.5">
+          <span>🖐️ Click &amp; Drag Pan</span>
+        </div>
+        <p class="text-3xs text-base-content/75 leading-relaxed">
+          Smooth GPU translation using <code>cursor: grab</code> and <code>cursor: grabbing</code>. Zero text selection during dragging.
+        </p>
+      </div>
+      <div class="p-3 bg-base-100 rounded-lg border border-base-300 space-y-1">
+        <div class="font-bold text-secondary flex items-center gap-1.5">
+          <span>🖱️ Mouse Wheel Zoom</span>
+        </div>
+        <p class="text-3xs text-base-content/75 leading-relaxed">
+          Scroll wheel zooms between 25% and 400% anchored smoothly at the cursor pointer location.
+        </p>
+      </div>
+      <div class="p-3 bg-base-100 rounded-lg border border-base-300 space-y-1">
+        <div class="font-bold text-accent flex items-center gap-1.5">
+          <span>📐 Smart Aspect Ratio</span>
+        </div>
+        <p class="text-3xs text-base-content/75 leading-relaxed">
+          Wide diagrams (>1.8:1) default to legible font heights (min 12-14px) with horizontal pan rather than shrinking to micro-strips.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="system-architecture" class="space-y-4 mb-10">
+  <h2 class="text-2xl font-bold">System Architecture &amp; Execution Flow</h2>
+  <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">
+flowchart LR
+    Command["/html-install\n(Slash Command)"] --> Script["install-pwa.mjs\n(CLI Orchestrator)"]
+    Script --> Generator["pwa-builder.mjs\n(PWA Asset Generator)"]
+    Generator --> Files["Generated Artifacts\n- manifest.webmanifest\n- sw.js (Offline Cache)\n- icon.svg (512x512)"]
+    Files --> Inject["create.html Injection\n- PWA Head Tags\n- Navbar Install Button\n- SW Registration"]
+    Inject --> Host["Conflict-Free Server\n(Port :3030 + Auto-Hunting)"]
+    Host --> Browser["Browser Launch\n(beforeinstallprompt)"]
+    Browser --> App["Native Desktop / Mobile App\n(Dock / Start Menu / Homescreen)"]
+  </div>
+</section>
+
+<section id="key-pillars" class="space-y-4 mb-10">
+  <h2 class="text-2xl font-bold">Four Core Implementation Pillars</h2>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="card bg-base-200 border border-base-300">
+      <div class="card-body p-4 space-y-2">
+        <div class="badge badge-primary font-mono text-3xs font-bold">Pillar 1</div>
+        <h3 class="font-bold text-sm">W3C App Manifest</h3>
+        <p class="text-xs text-base-content/75">
+          Standalone display, developer categories, vector icon safezones, and deep-link shortcuts for instant navigation.
+        </p>
+      </div>
+    </div>
+    <div class="card bg-base-200 border border-base-300">
+      <div class="card-body p-4 space-y-2">
+        <div class="badge badge-secondary font-mono text-3xs font-bold">Pillar 2</div>
+        <h3 class="font-bold text-sm">Dual-Caching SW</h3>
+        <p class="text-xs text-base-content/75">
+          Pre-caches external Tailwind, DaisyUI, Lucide, and Showdown CDN bundles for zero-network offline functionality.
+        </p>
+      </div>
+    </div>
+    <div class="card bg-base-200 border border-base-300">
+      <div class="card-body p-4 space-y-2">
+        <div class="badge badge-accent font-mono text-3xs font-bold">Pillar 3</div>
+        <h3 class="font-bold text-sm">In-Studio Install UX</h3>
+        <p class="text-xs text-base-content/75">
+          Navbar install trigger with beforeinstallprompt capture, post-install badge, and dynamic theme-color synchronization.
+        </p>
+      </div>
+    </div>
+    <div class="card bg-base-200 border border-base-300">
+      <div class="card-body p-4 space-y-2">
+        <div class="badge badge-neutral font-mono text-3xs font-bold">Pillar 4</div>
+        <h3 class="font-bold text-sm">1-Command Launcher</h3>
+        <p class="text-xs text-base-content/75">
+          Cross-platform shell launcher, Node CLI, npm scripts, and seamless slash command facade for autonomous agents.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="task-checklist" class="space-y-4 mb-10">
+  <div class="flex flex-wrap justify-between items-center gap-2">
+    <h2 class="text-2xl font-bold">Implementation Roadmap &amp; Tasks</h2>
+    <span class="badge badge-outline font-mono text-xs">16 Tasks in <a href="tasks.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('tasks.md');return false;}" class="underline">tasks.md</a></span>
+  </div>
+  
+  <div class="space-y-3">
+    <div class="collapse collapse-plus bg-base-200">
+      <input type="checkbox" checked="checked" />
+      <div class="collapse-title text-sm font-bold flex items-center justify-between pr-8">
+        <span>Phase 1: PWA Asset Generation &amp; Studio Configuration</span>
+        <span class="badge badge-sm badge-ghost font-mono">0 / 2</span>
+      </div>
+      <div class="collapse-content text-xs space-y-2">
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>1.1 Configure Studio PWA metadata and icon generation in pwa-builder.mjs</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>1.2 Implement offline Service Worker pre-caching for Tailwind CDN, DaisyUI 4 CSS, Lucide, Showdown</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="collapse collapse-plus bg-base-200">
+      <input type="checkbox" checked="checked" />
+      <div class="collapse-title text-sm font-bold flex items-center justify-between pr-8">
+        <span>Phase 2: In-Studio Installation UI &amp; Runtime</span>
+        <span class="badge badge-sm badge-ghost font-mono">0 / 3</span>
+      </div>
+      <div class="collapse-content text-xs space-y-2">
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>2.1 Add responsive #pwa-install-btn and status badge in navbar of create.html</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>2.2 Wire beforeinstallprompt event interception, triggerPwaInstall(), and post-install UI state</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>2.3 Add dynamic &lt;meta name="theme-color"&gt; observer to sync OS frame colors with active DaisyUI theme</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="collapse collapse-plus bg-base-200">
+      <input type="checkbox" checked="checked" />
+      <div class="collapse-title text-sm font-bold flex items-center justify-between pr-8">
+        <span>Phase 3: Installer Script &amp; Slash Command Launcher</span>
+        <span class="badge badge-sm badge-ghost font-mono">0 / 4</span>
+      </div>
+      <div class="collapse-content text-xs space-y-2">
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>3.1 Implement standalone installer script install-pwa.mjs supporting zero-arg wizard install</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>3.2 Implement fast bash launcher install-pwa.sh with cross-platform browser launch</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>3.3 Register npm scripts and bin aliases in package.json ("install:wizard", "html-report-install")</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>3.4 Adopt unique non-colliding default port with automatic EADDRINUSE hunting fallback</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="collapse collapse-plus bg-base-200">
+      <input type="checkbox" checked="checked" />
+      <div class="collapse-title text-sm font-bold flex items-center justify-between pr-8">
+        <span>Phase 4: Documentation &amp; Sibling Skill Routing</span>
+        <span class="badge badge-sm badge-ghost font-mono">0 / 2</span>
+      </div>
+      <div class="collapse-content text-xs space-y-2">
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>4.1 Document /html-install slash command and workflow in html-create and html-pwa SKILL.md</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>4.2 Update README and skill references with PWA installation commands</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="collapse collapse-plus bg-base-200">
+      <input type="checkbox" checked="checked" />
+      <div class="collapse-title text-sm font-bold flex items-center justify-between pr-8">
+        <span>Phase 5: Automated Verification &amp; Testing</span>
+        <span class="badge badge-sm badge-ghost font-mono">0 / 2</span>
+      </div>
+      <div class="collapse-content text-xs space-y-2">
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>5.1 Add automated test suite in tests/html-install-pwa.test.mjs</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>5.2 Execute test suite via npm test and verify zero regressions across existing report suites</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="collapse collapse-plus bg-base-200">
+      <input type="checkbox" checked="checked" />
+      <div class="collapse-title text-sm font-bold flex items-center justify-between pr-8">
+        <span>Phase 6: Interactive Diagram Zoom, Pan &amp; Fullscreen Viewport</span>
+        <span class="badge badge-sm badge-ghost font-mono">0 / 4</span>
+      </div>
+      <div class="collapse-content text-xs space-y-2">
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>6.1 Add DaisyUI join toolbar controls ([-], [100% Reset], [+], [Fit], [Fullscreen]) to #mermaid-enlarge-modal</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>6.2 Implement GPU-accelerated pan &amp; zoom engine in report-runtime.js (drag-to-pan, wheel zoom, keys)</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>6.3 Implement smart aspect-ratio initial sizing (prevent wide flowchart LR from shrinking to unreadable scale)</span>
+        </label>
+        <label class="flex items-center gap-2 text-base-content/80 cursor-pointer">
+          <input type="checkbox" disabled class="checkbox checkbox-xs" />
+          <span>6.4 Add automated tests in tests/mermaid-zoom.test.mjs verifying zoom clamping, pan offsets, and toolbar actions</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>

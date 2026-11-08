@@ -308,7 +308,7 @@ function parseArgs(argv) {
   const args = argv.slice(2);
   let filePath = null;
   let port = 3000;
-  let autoOpen = true;
+  let autoOpen = process.env.HTML_REPORT_NO_OPEN !== "1";
   const feedProxies = [];
 
   for (let i = 0; i < args.length; i++) {
@@ -1147,6 +1147,75 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
       }
     }
 
+    // 1b-0. Boards listing & per-board turnkey metadata
+    if (pathname === "/__boards__" && req.method === "GET") {
+      const boards = [];
+      try {
+        const files = fs.readdirSync(rootDir);
+        for (const f of files) {
+          if (f.endsWith(".html")) {
+            const p = path.join(rootDir, f);
+            try {
+              const headChunk = fs.readFileSync(p, { encoding: "utf-8", flag: "r" }).slice(0, 4096);
+              const titleMatch = headChunk.match(/<title>([^<]+)<\/title>/i);
+              const aiMatch = /<meta\s+name=["']html-report-ai["']\s+content=["']on["']/i.test(headChunk);
+              const title = titleMatch ? titleMatch[1].trim() : f;
+              boards.push({
+                file: f,
+                title,
+                aiCapable: aiMatch,
+                serveCommand: `node skills/html-report/scripts/serve-report.mjs ${f} --port ${serverPort} --no-open`
+              });
+            } catch (_) {}
+          }
+        }
+      } catch (_) {}
+      res.writeHead(200, {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache, no-store",
+        "Access-Control-Allow-Origin": "*"
+      });
+      res.end(JSON.stringify({ ok: true, rootDir: path.relative(process.cwd(), rootDir), boards }));
+      return;
+    }
+
+    // 1b-1. Page edit hand-off: localhost only, scoped to the served file, POST only
+    if (pathname === "/__agent_edit__") {
+      const sendJson = (code, obj) => {
+        res.writeHead(code, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" });
+        res.end(JSON.stringify(obj));
+      };
+      const remote = req.socket && req.socket.remoteAddress;
+      const isLoopback = remote === "127.0.0.1" || remote === "::1" || remote === "::ffff:127.0.0.1";
+      const hostHeader = String(req.headers.host || "").split(":")[0];
+      if (!isLoopback || !["localhost", "127.0.0.1", "[::1]", "::1"].includes(hostHeader)) {
+        return sendJson(403, { ok: false, error: "Edit hand-off is restricted to localhost." });
+      }
+      if (req.method !== "POST") return sendJson(405, { ok: false, error: "POST required." });
+      let body = "";
+      req.on("data", (chunk) => { body += chunk; if (body.length > 256 * 1024) req.destroy(); });
+      req.on("end", () => {
+        let payload = {};
+        try { payload = JSON.parse(body); } catch (_) {}
+        const prompt = typeof payload.prompt === "string" ? payload.prompt.trim() : "";
+        if (!prompt) return sendJson(400, { ok: false, error: "Missing prompt." });
+        const requested = typeof payload.file === "string" ? payload.file.trim() : "";
+        if (requested && requested !== "/" && path.basename(requested) !== targetFileName) {
+          return sendJson(403, { ok: false, error: `Edits are scoped to the served file (${targetFileName}).` });
+        }
+        const scoped = `You are editing the html-report page served from ${resolvedPath}. Only modify that report's source content and rebuild it; do not touch other files.\n\n${prompt}`;
+        console.log(`[html-report] Agent edit requested for ${targetFileName}`);
+        execFile("agy", ["-p", scoped], { timeout: 300000, cwd: process.cwd() }, (err, stdout) => {
+          if (err) {
+            console.warn(`[html-report] agy edit failed: ${err.message}`);
+            return sendJson(502, { ok: false, error: "Agent unavailable or timed out." });
+          }
+          sendJson(200, { ok: true, file: targetFileName, result: String(stdout || "").trim() });
+        });
+      });
+      return;
+    }
+
     // 1b-2. Universal Two-Way Agent Bridge & Co-Pilot (Zero-API-Key with agy CLI)
     if (
       pathname === "/__agent_action__" ||
@@ -1597,7 +1666,7 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
       } else {
         console.log(`\n[html-report] File updated: ${fileName}`);
         console.log(`[html-report] -> No active tabs detected. Reopening in browser: ${targetUrl}`);
-        openBrowser(targetUrl);
+        if (autoOpen) openBrowser(targetUrl);
       }
     }, 150);
   }

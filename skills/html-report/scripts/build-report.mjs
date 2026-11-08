@@ -84,6 +84,17 @@ export const ADDON_REGISTRY = {
     signatures: [/\bshowdown\b/i, /new\s+showdown\.Converter/i, /data-showdown/i, /data-markdown-showdown/i, /id=["']showdown-/i],
     head: `<script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>`
   },
+  quill: {
+    name: "Quill",
+    signatures: [
+      /\bql-editor\b/i,
+      /id=["'](?:quill-)?editor["']/i,
+      /data-quill\b/i,
+      /\bnew\s+Quill\s*\(/i
+    ],
+    head: `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js" crossorigin="anonymous"></script>`
+  },
   fullcalendar: {
     name: "FullCalendar",
     signatures: [/id=["']calendar["']/i, /data-fullcalendar/i, /FullCalendar\.Calendar/i, /class=["'][^"']*\bfc\b/i],
@@ -145,6 +156,19 @@ export const MODE_ALIASES = {
   "live-report": "live-report"
 };
 
+function escapeAttr(value) {
+  return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
+
+/**
+ * Removes every region wrapped in `html-report:authoring:start/end` markers
+ * (settings gear, edit dock). Deterministic and idempotent.
+ */
+export function stripAuthoringMarkup(html = "") {
+  return html
+    .replace(/[ \t]*<!-- html-report:authoring:start ([\w-]+) -->[\s\S]*?<!-- html-report:authoring:end \1 -->\n?/g, "");
+}
+
 export function normalizeMode(rawMode) {
   if (!rawMode || typeof rawMode !== "string") return null;
   const cleaned = rawMode.toLowerCase().trim();
@@ -168,6 +192,9 @@ const ADDON_ALIASES = {
   mockjs: "mockjs",
   showdown: "showdown",
   "markdown-showdown": "showdown",
+  quill: "quill",
+  wysiwyg: "quill",
+  editor: "quill",
   fullcalendar: "fullcalendar",
   fullcalender: "fullcalendar",
   calendar: "fullcalendar"
@@ -312,6 +339,8 @@ export function parseArgs(argv) {
     pwaBgColor: null,
     pwaIcon: null,
     noPwaAssets: false,
+    ai: false,
+    published: false,
     version: false,
     help: false
   };
@@ -364,6 +393,10 @@ export function parseArgs(argv) {
       if (!options.addons.includes("datastar")) {
         options.addons.push("datastar");
       }
+    } else if (arg === "--ai") {
+      options.ai = true;
+    } else if (arg === "--published") {
+      options.published = true;
     } else if (arg === "--pwa") {
       options.pwa = true;
     } else if (arg === "--pwa-name" && args[i + 1]) {
@@ -452,6 +485,9 @@ export function buildReport({
   pwaThemeColor = null,
   pwaBgColor = null,
   pwaIcon = null,
+  ai = false,
+  published = false,
+  source = null,
   addons = [],
   favicon = "📊",
   theme = null,
@@ -618,6 +654,15 @@ export function buildReport({
       title: pwaName || title
     }));
   }
+  if (source) {
+    headExtraParts.push(`  <meta name="html-report-source" content="${escapeAttr(source)}" />`);
+  }
+  if (ai && !published) {
+    headExtraParts.push('  <meta name="html-report-ai" content="on" />');
+  }
+  if (published) {
+    headExtraParts.push('  <meta name="html-report-published" content="true" />');
+  }
   const headExtras = headExtraParts.join("\n\n");
 
   // Construct favicon tag
@@ -686,6 +731,10 @@ export function buildReport({
   const version = getPackageVersion();
   html = html.replace(/<!-- {{VERSION}} -->/g, () => version);
 
+  if (published) {
+    html = stripAuthoringMarkup(html);
+  }
+
   return {
     html,
     activeAddons: activeAddonKeys,
@@ -727,6 +776,8 @@ Options:
       --pwa-bg-color <c>    Custom PWA splash screen background color (default: #ffffff)
       --pwa-icon <emoji>    Custom PWA icon emoji glyph (default: favicon or 📊)
       --no-pwa-assets       Skip writing companion PWA files to disk
+      --ai                  Mark the report AI-capable (shows turnkey bridge setup in Settings)
+      --published           Emit a clean, deterministic report without the gear menu or edit dock
       --theme <name>        DaisyUI theme name (default: "light")
       --custom-theme <path> Path to custom theme definition (.json or .css)
       --favicon <emoji>     Favicon emoticon (default: "📊")
@@ -742,6 +793,7 @@ Options:
       --impress             Explicitly include Impress.js
       --mock, --mockjs      Explicitly include Mock.js
       --showdown            Explicitly include Showdown
+      --quill, --wysiwyg, --editor Explicitly include Quill WYSIWYG editor
       --fullcalendar        Explicitly include FullCalendar
       --feed <name>=<url>   Inject feed nickname mapping into #feed-registry
       --freeze-feeds        Fetch and bake snapshot payloads into data-feed-fallback
@@ -810,7 +862,10 @@ if (isDirectCli) {
     favicon: options.favicon,
     feeds: options.feeds,
     freezeFeeds: options.freezeFeeds,
-    feedInterval: options.feedInterval
+    feedInterval: options.feedInterval,
+    ai: options.ai,
+    published: options.published,
+    source: options.output
   });
 
   const outputPath = path.resolve(process.cwd(), options.output);

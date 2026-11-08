@@ -1,0 +1,166 @@
+<header class="space-y-4 border-b border-base-300 pb-8">
+<div class="flex flex-wrap gap-2"><span class="badge badge-primary font-mono text-xs font-bold uppercase">OpenSpec Journey</span><span class="badge badge-outline font-mono text-xs">publish-clean-report</span><span class="badge badge-secondary font-mono text-xs">Story 4</span><span class="badge badge-ghost font-mono text-xs">4 of 4 (completes publishing lifecycle)</span></div>
+<h1 class="text-3xl sm:text-4xl font-black tracking-tight">Publish Mode &amp; Deterministic Clean Download</h1>
+<p class="text-base text-base-content/80 max-w-3xl">Mark a report as published and download a deterministic, production-grade standalone HTML bundle stripped of the gear icon, edit dock, and draft authoring chrome.</p>
+<div class="flex flex-wrap gap-3 items-center text-xs"><span class="font-semibold">Artifacts:</span><a href="proposal.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('proposal.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">proposal.md</a><a href="design.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('design.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">design.md</a><a href="tasks.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('tasks.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">tasks.md</a><a class="link link-primary font-mono text-xs" href="specs/publish-clean-export/spec.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('specs/publish-clean-export/spec.md');return false;}">specs/publish-clean-export/spec.md</a></div>
+<div class="w-full overflow-x-auto"><ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold"><li class="step step-primary">Brainstorming</li><li class="step step-primary">Planning</li><li class="step step-primary">Implementing</li><li class="step step-primary">Verifying</li><li class="step ">Shipped / Archived</li></ul></div>
+</header>
+<section id="metrics" class="grid grid-cols-2 lg:grid-cols-4 gap-4 my-8">
+<div class="stat bg-base-200 rounded-box"><div class="stat-title">Total</div><div class="stat-value text-2xl">8</div></div><div class="stat bg-base-200 rounded-box"><div class="stat-title">In Progress</div><div class="stat-value text-2xl">0</div></div><div class="stat bg-base-200 rounded-box"><div class="stat-title">Completed</div><div class="stat-value text-2xl text-success">8</div></div><div class="stat bg-base-200 rounded-box"><div class="stat-title">Remaining</div><div class="stat-value text-2xl">0</div></div>
+</section>
+<section id="why" class="space-y-3 mb-10"><h2 class="text-2xl font-bold">Problem &amp; Vision</h2><p class="text-base-content/80">Reports are iteratively authored using the bottom-dock editor and agent bridge. Once editing is finalized, stakeholders and public audiences need a clean, uncluttered deliverable without developer tools, gear menus, or prompt editors. Offering a deterministic publish flow guarantees that exported reports are completely self-contained, pristine, and byte-reproducible across identical builds.</p>
+<div class="grid md:grid-cols-2 gap-4"><div class="card bg-base-200"><div class="card-body p-4"><h3 class="font-bold">Goals</h3><ul class="list-disc pl-5 text-sm space-y-1"><li>Provide a clear 'Set as Published' toggle and 'Download Clean HTML' action in the Settings panel.</li><li>Produce a deterministic standalone HTML download that cleanly omits the gear icon (<code>#settings-dropdown</code>), bottom edit dock (<code>#edit-dock</code>), and authoring chrome.</li><li>Ensure zero authoring script footprint or residual task draft queues in the published bundle.</li><li>Support a deterministic CLI/build flag (<code>--published</code> in <code>build-report.mjs</code>) to generate clean, gear-free reports in headless pipelines.</li><li>Guarantee deterministic serialization: no timestamps, no non-deterministic session tokens, completely reproducible byte-for-byte.</li></ul></div></div><div class="card bg-base-200"><div class="card-body p-4"><h3 class="font-bold">Non-goals</h3><ul class="list-disc pl-5 text-sm space-y-1"><li>Does not delete draft tasks from the author's local browser storage (keeps drafts safe for future edits on the development page).</li><li>Does not alter reader features (charts, Mermaid diagrams, TOC, print stylesheets, and tables remain 100% interactive).</li></ul></div></div></div></section>
+<section id="design" class="space-y-4 mb-10"><h2 class="text-2xl font-bold">Design</h2>
+<div class="grid md:grid-cols-2 gap-4"><div class="card bg-base-100 border border-base-300"><div class="card-body p-4"><h3 class="font-bold text-sm">Publishing Toggle &amp; Action</h3><p class="text-sm text-base-content/80">In Settings panel -&gt; Export &amp; Publishing section: add 'Publish State' toggle and 'Download Published (Clean HTML)' button. When marked as published, the active report sets <code>&lt;meta name="html-report-published" content="true"&gt;</code> and offers the clean download.</p></div></div><div class="card bg-base-100 border border-base-300"><div class="card-body p-4"><h3 class="font-bold text-sm">Deterministic DOM Tree Stripping</h3><p class="text-sm text-base-content/80">In <code>buildInlinedHtmlSnapshot({ mode: 'published' })</code>, clone the DOM tree, prune <code>#settings-dropdown</code>, remove <code>#edit-dock</code>, strip authoring modals/toolbars, strip <code>data-agent-authoring</code> attributes, and omit draft task queues. Output is serialized with sorted attributes and standardized whitespace.</p></div></div><div class="card bg-base-100 border border-base-300"><div class="card-body p-4"><h3 class="font-bold text-sm">Deterministic Output Guarantee</h3><p class="text-sm text-base-content/80">Zero non-deterministic IDs (e.g. <code>_sessionId</code> or random math tokens), zero generation timestamps, and normalized whitespace so hashing identical input HTML yields identical output checksums.</p></div></div><div class="card bg-base-100 border border-base-300"><div class="card-body p-4"><h3 class="font-bold text-sm">CLI Pipeline Parity</h3><p class="text-sm text-base-content/80"><code>build-report.mjs --published</code> applies the same DOM pruning template transform at build time, omitting the gear icon and editor from the start.</p></div></div><div class="card bg-base-100 border border-base-300"><div class="card-body p-4"><h3 class="font-bold text-sm">Standalone Viewer Preservation</h3><p class="text-sm text-base-content/80">The published HTML retains responsive layout, Table of Contents dropdown (TOC stays in navbar or standalone header), offline scripts, Grid.js, Chart.js, Mermaid, and print CSS.</p></div></div></div>
+<pre class="mermaid">flowchart TD
+  Author["Author in Development"] --&gt; Editor["Bottom Dock Editor &amp; Gear Menu"]
+  Editor --&gt; Review["Review &amp; Polish Report"]
+  Review --&gt; PublishAction["Settings: 'Mark as Published' or 'Download Published'"]
+  PublishAction --&gt; Pruner["Deterministic Sanitizer Engine"]
+  Pruner --&gt; StripGear["Strip Gear Icon (#settings-dropdown)"]
+  Pruner --&gt; StripDock["Strip Edit Prompt Dock (#edit-dock)"]
+  Pruner --&gt; StripDrafts["Omit Local Draft Queues &amp; Edit Scripts"]
+  StripGear &amp; StripDock &amp; StripDrafts --&gt; CleanHTML["Standalone Published HTML Document"]
+  CleanHTML --&gt; Audience["Stakeholder / Public Audience (Pristine View)"]</pre></section>
+<section id="requirements" class="mb-10"><h2 class="text-2xl font-bold mb-3">Requirements</h2><div class="space-y-2"><div class="collapse collapse-arrow bg-base-200"><input type="checkbox"/><div class="collapse-title font-semibold text-sm">Set as Published Toggle</div><div class="collapse-content text-sm">The system SHALL provide a 'Publish' control in the Settings panel allowing authors to mark the report as published.</div></div><div class="collapse collapse-arrow bg-base-200"><input type="checkbox"/><div class="collapse-title font-semibold text-sm">Deterministic Clean Download</div><div class="collapse-content text-sm">The system SHALL offer a download action that yields a standalone HTML file completely stripped of the gear icon, the edit prompt editor dock, and all authoring controls.</div></div><div class="collapse collapse-arrow bg-base-200"><input type="checkbox"/><div class="collapse-title font-semibold text-sm">Deterministic Serialization</div><div class="collapse-content text-sm">The clean download generation MUST be deterministic, producing identical byte output for identical document content without timestamps or random tokens.</div></div><div class="collapse collapse-arrow bg-base-200"><input type="checkbox"/><div class="collapse-title font-semibold text-sm">CLI Published Flag</div><div class="collapse-content text-sm">The build pipeline <code>build-report.mjs</code> SHALL support a <code>--published</code> flag to emit the clean gear-free report directly.</div></div><div class="collapse collapse-arrow bg-base-200"><input type="checkbox"/><div class="collapse-title font-semibold text-sm">Preservation of Reader Features</div><div class="collapse-content text-sm">The published report MUST preserve core viewer capabilities: responsive reading, Table of Contents, interactive charts, Mermaid diagrams, and print styles.</div></div></div></section>
+<section id="alternatives" class="mb-10"><h2 class="text-2xl font-bold mb-3">Alternatives</h2><div class="overflow-x-auto"><table class="table table-sm"><thead><tr><th>Option</th><th>Verdict</th></tr></thead><tbody><tr><td class="font-semibold">CSS-only hide (display: none)</td><td>Rejected: leaving the editor markup and task queue in the DOM leaks draft edit notes into client source.</td></tr><tr><td class="font-semibold">Server-only headless build</td><td>Rejected: users in client-side or offline viewing must be able to download clean published copies directly from their browser.</td></tr></tbody></table></div></section>
+<section id="tasks" class="mb-10"><h2 class="text-2xl font-bold mb-3">Task Checklist</h2><div class="space-y-4"><div class="card bg-base-200"><div class="card-body p-4"><h3 class="font-bold text-sm">1. Sanitizer &amp; Deterministic Serializer</h3><label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">1.1</span> Implement <code>HTMLReportPublisher.stripAuthoringElements(docClone)</code> in <code>report-runtime.js</code> targeting <code>#settings-dropdown</code>, <code>#edit-dock</code>, and draft queue scripts</span></label><label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">1.2</span> Ensure deterministic output (normalize attributes, strip non-deterministic session IDs/timestamps, sorted element serialization)</span></label><label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">1.3</span> Add <code>--published</code> flag to <code>skills/html-report/scripts/build-report.mjs</code> for pipeline parity</span></label></div></div><div class="card bg-base-200"><div class="card-body p-4"><h3 class="font-bold text-sm">2. Settings UI Integration</h3><label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">2.1</span> Add 'Publishing &amp; Release' subsection in Settings panel with 'Mark as Published' toggle and 'Download Clean (Published) HTML' action</span></label><label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">2.2</span> Wire active state indicators (subtle Published badge when publication mode is toggled)</span></label></div></div><div class="card bg-base-200"><div class="card-body p-4"><h3 class="font-bold text-sm">3. Verification &amp; Journey</h3><label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.1</span> Unit &amp; snapshot tests verifying downloaded HTML has zero <code>#settings-gear-btn</code>, zero <code>#edit-dock</code>, and identical SHA-256 hashes on repeat exports</span></label><label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.2</span> Verify TOC, charts, and print styles remain fully functional in published exports</span></label><label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.3</span> Sync <code>index.html</code> and update <code>implementation-progress.html</code> on <code>localhost:3000</code></span></label></div></div></div></section>
+<section id="epic" class="mb-10"><h2 class="text-2xl font-bold mb-3">Epic: three connected stories</h2><div class="grid md:grid-cols-3 gap-3"><div class="card bg-base-200"><div class="card-body p-4"><span class="badge badge-sm font-mono">Story 3</span><h3 class="font-bold text-sm">Settings Gear Menu (move Download + Theme)</h3><a class="link text-xs font-mono" href="../gear-settings-menu/index.html">gear-settings-menu</a></div></div><div class="card bg-base-200"><div class="card-body p-4"><span class="badge badge-sm font-mono">Story 1</span><h3 class="font-bold text-sm">Page Edit Queue &amp; Deterministic Prompt Editor</h3><a class="link text-xs font-mono" href="../page-edit-prompt-editor/index.html">page-edit-prompt-editor</a></div></div><div class="card bg-base-200"><div class="card-body p-4"><span class="badge badge-sm font-mono">Story 2</span><h3 class="font-bold text-sm">Activate AI from Settings + Turnkey per Board</h3><a class="link text-xs font-mono" href="../settings-activate-ai/index.html">settings-activate-ai</a></div></div><div class="card bg-primary text-primary-content"><div class="card-body p-4"><span class="badge badge-sm font-mono">Story 4</span><h3 class="font-bold text-sm">Publish Mode &amp; Deterministic Clean Download</h3><a class="link text-xs font-mono" href="../publish-clean-report/index.html">publish-clean-report</a></div></div></div></section>
+
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <div class="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300 shrink-0">
+      <div class="flex items-center gap-2 flex-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span id="markdown-modal-title" class="font-bold text-sm font-mono text-base-content">proposal.md</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="join" id="markdown-modal-tabs">
+          <button id="tab-btn-proposal" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
+          <button id="tab-btn-design" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
+          <button id="tab-btn-tasks" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
+        </div>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost" aria-label="Close modal">✕</button>
+      </div>
+    </div>
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none flex-1 text-base-content bg-base-100">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "## Why\n\nReports are iteratively authored using the bottom-dock editor and agent bridge. Once editing is finalized, stakeholders and public audiences need a clean, uncluttered deliverable without developer tools, gear menus, or prompt editors. Offering a deterministic publish flow guarantees that exported reports are completely self-contained, pristine, and byte-reproducible across identical builds.\n\n## What Changes\n\n- Provide a clear 'Set as Published' toggle and 'Download Clean HTML' action in the Settings panel.\n- Produce a deterministic standalone HTML download that cleanly omits the gear icon (`#settings-dropdown`), bottom edit dock (`#edit-dock`), and authoring chrome.\n- Ensure zero authoring script footprint or residual task draft queues in the published bundle.\n- Support a deterministic CLI/build flag (`--published` in `build-report.mjs`) to generate clean, gear-free reports in headless pipelines.\n- Guarantee deterministic serialization: no timestamps, no non-deterministic session tokens, completely reproducible byte-for-byte.\n\n**Out of scope**\n- Does not delete draft tasks from the author's local browser storage (keeps drafts safe for future edits on the development page).\n- Does not alter reader features (charts, Mermaid diagrams, TOC, print stylesheets, and tables remain 100% interactive).\n\n## Capabilities\n\n### New Capabilities\n- `publish-clean-export`: Mark a report as published and download a deterministic, production-grade standalone HTML bundle stripped of the gear icon, edit dock, and draft authoring chrome.\n\n### Modified Capabilities\n- None (no existing main spec covers the report shell navbar)\n\n## Impact\n\n- `skills/html-report/assets/template-shell.html`, `skills/html-report/assets/report-runtime.js`, `skills/html-report/scripts/build-report.mjs`\n- Order: 4 of 4 (completes publishing lifecycle). Part of the epic: gear-settings-menu \u2192 page-edit-prompt-editor \u2192 settings-activate-ai.\n- Companion journey page: [index.html](./index.html)\n\n## Assumptions (please confirm)\n\n- Tasks persist in browser localStorage per page in v1.\n- \"Board\" means one report page; a directory-wide board list is optional v1.1.\n- Agent edits run through the existing local `agy` bridge, localhost only.\n",
+  "design.md": "# Design: Publish Mode & Deterministic Clean Download\n\n## Context\n\nReports are iteratively authored using the bottom-dock editor and agent bridge. Once editing is finalized, stakeholders and public audiences need a clean, uncluttered deliverable without developer tools, gear menus, or prompt editors. Offering a deterministic publish flow guarantees that exported reports are completely self-contained, pristine, and byte-reproducible across identical builds.\n\n## Design\n\n### Publishing Toggle & Action\n\nIn Settings panel -> Export & Publishing section: add 'Publish State' toggle and 'Download Published (Clean HTML)' button. When marked as published, the active report sets `<meta name=\"html-report-published\" content=\"true\">` and offers the clean download.\n\n### Deterministic DOM Tree Stripping\n\nIn `buildInlinedHtmlSnapshot({ mode: 'published' })`, clone the DOM tree, prune `#settings-dropdown`, remove `#edit-dock`, strip authoring modals/toolbars, strip `data-agent-authoring` attributes, and omit draft task queues. Output is serialized with sorted attributes and standardized whitespace.\n\n### Deterministic Output Guarantee\n\nZero non-deterministic IDs (e.g. `_sessionId` or random math tokens), zero generation timestamps, and normalized whitespace so hashing identical input HTML yields identical output checksums.\n\n### CLI Pipeline Parity\n\n`build-report.mjs --published` applies the same DOM pruning template transform at build time, omitting the gear icon and editor from the start.\n\n### Standalone Viewer Preservation\n\nThe published HTML retains responsive layout, Table of Contents dropdown (TOC stays in navbar or standalone header), offline scripts, Grid.js, Chart.js, Mermaid, and print CSS.\n\n## Flow\n\n```mermaid\nflowchart TD\n  Author[\"Author in Development\"] --> Editor[\"Bottom Dock Editor & Gear Menu\"]\n  Editor --> Review[\"Review & Polish Report\"]\n  Review --> PublishAction[\"Settings: 'Mark as Published' or 'Download Published'\"]\n  PublishAction --> Pruner[\"Deterministic Sanitizer Engine\"]\n  Pruner --> StripGear[\"Strip Gear Icon (#settings-dropdown)\"]\n  Pruner --> StripDock[\"Strip Edit Prompt Dock (#edit-dock)\"]\n  Pruner --> StripDrafts[\"Omit Local Draft Queues & Edit Scripts\"]\n  StripGear & StripDock & StripDrafts --> CleanHTML[\"Standalone Published HTML Document\"]\n  CleanHTML --> Audience[\"Stakeholder / Public Audience (Pristine View)\"]\n```\n\n## Alternatives Considered\n\n- **CSS-only hide (display: none)**: Rejected: leaving the editor markup and task queue in the DOM leaks draft edit notes into client source.\n- **Server-only headless build**: Rejected: users in client-side or offline viewing must be able to download clean published copies directly from their browser.\n\n## Risks\n\n- Regressions in existing navbar/bridge behavior: mitigated by keeping IDs and legacy detection.\n",
+  "tasks.md": "# Tasks: Publish Mode & Deterministic Clean Download\n\n## 1. Sanitizer & Deterministic Serializer\n\n- [x] 1.1 Implement `HTMLReportPublisher.stripAuthoringElements(docClone)` in `report-runtime.js` targeting `#settings-dropdown`, `#edit-dock`, and draft queue scripts\n- [x] 1.2 Ensure deterministic output (normalize attributes, strip non-deterministic session IDs/timestamps, sorted element serialization)\n- [x] 1.3 Add `--published` flag to `skills/html-report/scripts/build-report.mjs` for pipeline parity\n\n## 2. Settings UI Integration\n\n- [x] 2.1 Add 'Publishing & Release' subsection in Settings panel with 'Mark as Published' toggle and 'Download Clean (Published) HTML' action\n- [x] 2.2 Wire active state indicators (subtle Published badge when publication mode is toggled)\n\n## 3. Verification & Journey\n\n- [x] 3.1 Unit & snapshot tests verifying downloaded HTML has zero `#settings-gear-btn`, zero `#edit-dock`, and identical SHA-256 hashes on repeat exports\n- [x] 3.2 Verify TOC, charts, and print styles remain fully functional in published exports\n- [x] 3.3 Sync `index.html` and update `implementation-progress.html` on `localhost:3000`\n",
+  "specs/publish-clean-export/spec.md": "## ADDED Requirements\n\n### Requirement: Set as Published Toggle\n\nThe system SHALL satisfy: The system SHALL provide a 'Publish' control in the Settings panel allowing authors to mark the report as published.\n\n#### Scenario: Set as Published Toggle verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the system SHALL provide a 'Publish' control in the Settings panel allowing authors to mark the report as published.\n\n### Requirement: Deterministic Clean Download\n\nThe system SHALL satisfy: The system SHALL offer a download action that yields a standalone HTML file completely stripped of the gear icon, the edit prompt editor dock, and all authoring controls.\n\n#### Scenario: Deterministic Clean Download verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the system SHALL offer a download action that yields a standalone HTML file completely stripped of the gear icon, the edit prompt editor dock, and all authoring controls.\n\n### Requirement: Deterministic Serialization\n\nThe system SHALL satisfy: The clean download generation MUST be deterministic, producing identical byte output for identical document content without timestamps or random tokens.\n\n#### Scenario: Deterministic Serialization verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the clean download generation MUST be deterministic, producing identical byte output for identical document content without timestamps or random tokens.\n\n### Requirement: CLI Published Flag\n\nThe system SHALL satisfy: The build pipeline `build-report.mjs` SHALL support a `--published` flag to emit the clean gear-free report directly.\n\n#### Scenario: CLI Published Flag verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the build pipeline `build-report.mjs` SHALL support a `--published` flag to emit the clean gear-free report directly.\n\n### Requirement: Preservation of Reader Features\n\nThe system SHALL satisfy: The published report MUST preserve core viewer capabilities: responsive reading, Table of Contents, interactive charts, Mermaid diagrams, and print styles.\n\n#### Scenario: Preservation of Reader Features verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the published report MUST preserve core viewer capabilities: responsive reading, Table of Contents, interactive charts, Mermaid diagrams, and print styles.\n",
+  "spec.md": "## ADDED Requirements\n\n### Requirement: Set as Published Toggle\n\nThe system SHALL satisfy: The system SHALL provide a 'Publish' control in the Settings panel allowing authors to mark the report as published.\n\n#### Scenario: Set as Published Toggle verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the system SHALL provide a 'Publish' control in the Settings panel allowing authors to mark the report as published.\n\n### Requirement: Deterministic Clean Download\n\nThe system SHALL satisfy: The system SHALL offer a download action that yields a standalone HTML file completely stripped of the gear icon, the edit prompt editor dock, and all authoring controls.\n\n#### Scenario: Deterministic Clean Download verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the system SHALL offer a download action that yields a standalone HTML file completely stripped of the gear icon, the edit prompt editor dock, and all authoring controls.\n\n### Requirement: Deterministic Serialization\n\nThe system SHALL satisfy: The clean download generation MUST be deterministic, producing identical byte output for identical document content without timestamps or random tokens.\n\n#### Scenario: Deterministic Serialization verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the clean download generation MUST be deterministic, producing identical byte output for identical document content without timestamps or random tokens.\n\n### Requirement: CLI Published Flag\n\nThe system SHALL satisfy: The build pipeline `build-report.mjs` SHALL support a `--published` flag to emit the clean gear-free report directly.\n\n#### Scenario: CLI Published Flag verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the build pipeline `build-report.mjs` SHALL support a `--published` flag to emit the clean gear-free report directly.\n\n### Requirement: Preservation of Reader Features\n\nThe system SHALL satisfy: The published report MUST preserve core viewer capabilities: responsive reading, Table of Contents, interactive charts, Mermaid diagrams, and print styles.\n\n#### Scenario: Preservation of Reader Features verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the published report MUST preserve core viewer capabilities: responsive reading, Table of Contents, interactive charts, Mermaid diagrams, and print styles.\n"
+}
+</script>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    await renderMarkdownDoc(docName);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    activeDocKey = docName;
+    const titleEl = document.getElementById("markdown-modal-title");
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (titleEl) titleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-active", "btn-primary");
+      } else {
+        btn.classList.remove("btn-active", "btn-primary");
+      }
+    });
+
+    const artifacts = getOpenSpecArtifacts();
+    let md = artifacts[docName];
+    if (!md) {
+      for (const k of Object.keys(artifacts)) {
+        if (k.endsWith(docName) || docName.endsWith(k)) {
+          md = artifacts[k];
+          break;
+        }
+      }
+    }
+
+    if (!md) {
+      try {
+        const res = await fetch(docName);
+        if (res.ok) md = await res.text();
+      } catch (_) {}
+    }
+
+    if (bodyEl) {
+      if (md) {
+        const conv = getShowdownConverter();
+        if (conv) {
+          bodyEl.innerHTML = conv.makeHtml(md);
+        } else {
+          bodyEl.innerHTML = "<pre class='whitespace-pre-wrap font-mono text-xs'>" + md.replace(/</g, "&lt;") + "</pre>";
+        }
+      } else {
+        bodyEl.innerHTML = "<div class='alert alert-warning text-xs'>Artifact " + docName + " not loaded.</div>";
+      }
+    }
+  }
+
+  window.openMarkdownViewer = openMarkdownViewer;
+  window.closeMarkdownViewer = closeMarkdownViewer;
+  window.switchViewerTab = switchViewerTab;
+</script>

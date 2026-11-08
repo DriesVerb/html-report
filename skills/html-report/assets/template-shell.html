@@ -54,6 +54,26 @@
       height: auto !important;
       background-color: transparent !important;
     }
+    .mermaid-wrapper {
+      position: relative;
+    }
+    .mermaid-wrapper .mermaid-enlarge-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 10;
+      opacity: 0.75;
+      transition: opacity 0.15s ease;
+    }
+    .mermaid-wrapper:hover .mermaid-enlarge-btn {
+      opacity: 1;
+    }
+    @media print {
+      .mermaid-enlarge-btn,
+      #mermaid-enlarge-modal {
+        display: none !important;
+      }
+    }
     /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping, oversized spinners, and vertical pill overflow */
     .badge {
       white-space: nowrap !important;
@@ -258,63 +278,103 @@
           </ul>
         </div>
 
-        <!-- 2. DaisyUI 32-Themes Dropdown -->
-        <div class="dropdown dropdown-end" id="theme-dropdown">
-          <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
-            <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
-            <div class="flex items-center gap-0.5">
-              <span class="bg-primary rounded-badge w-1.5 h-3"></span>
-              <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
-              <span class="bg-accent rounded-badge w-1.5 h-3"></span>
-              <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
-            </div>
+        <!-- 2. Settings Gear (Appearance, Download & Authoring controls) -->
+        <div class="dropdown dropdown-end" id="settings-dropdown">
+          <div id="settings-gear-btn" tabindex="0" role="button" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 btn-square" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
           </div>
-          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
-            <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
-              <!-- Populated via initThemeDropdown() -->
-            </div>
-          </div>
-        </div>
+          <div id="settings-panel" tabindex="0" role="dialog" aria-label="Settings" class="dropdown-content bg-base-100 text-base-content rounded-box z-[60] mt-2 w-80 max-w-[calc(100vw-1.5rem)] max-h-[70vh] overflow-y-auto p-3 shadow-2xl border border-base-300 space-y-2.5">
+            <!-- html-report:authoring:start all-settings-btn -->
+            <!-- 1. All Settings button (First option) -->
+            <button id="open-all-settings-btn" type="button" class="btn btn-xs sm:btn-sm btn-primary w-full flex items-center justify-center gap-2 font-semibold shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              <span>All Settings</span>
+            </button>
+            <div class="divider my-0.5 text-3xs opacity-40">Quick Controls</div>
+            <!-- html-report:authoring:end all-settings-btn -->
 
-        <!-- 3. Icon-Only Download Dropdown -->
-        <div class="dropdown dropdown-end" id="download-dropdown">
-          <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Report" title="Download Report">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
-            </svg>
+            <!-- 2. Appearance (Unexpanded with live color palette) -->
+            <details class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box" id="settings-section-appearance" data-settings-section="appearance">
+              <summary class="collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none">
+                <span>Appearance</span>
+                <span class="flex items-center gap-1 normal-case tracking-normal mr-3 font-normal">
+                  <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
+                  <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+                  <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+                  <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+                  <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+                </span>
+              </summary>
+              <div class="collapse-content px-3 pb-3 pt-2">
+                <div id="theme-dropdown" class="max-h-48 overflow-y-auto rounded-box bg-base-200 p-1.5 mt-1">
+                  <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+                    <!-- Populated via initThemeDropdown() -->
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <!-- 3. Download (Unexpanded, Renamed from Export) -->
+            <details class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box" id="settings-section-download" data-settings-section="download">
+              <summary class="collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none">
+                <span>Download</span>
+              </summary>
+              <div class="collapse-content px-3 pb-3 pt-2">
+                <div id="download-dropdown" class="mt-1 space-y-1.5">
+                  <!-- html-report:authoring:start publish-toggle -->
+                  <!-- First option: Switch with publish -->
+                  <div id="settings-publish-toggle-wrapper" class="p-2 rounded-lg bg-base-200 border border-base-300/60">
+                    <label class="flex items-center justify-between cursor-pointer">
+                      <div class="flex flex-col">
+                        <span class="text-xs font-semibold">Publish</span>
+                        <span class="text-3xs text-base-content/60">Clean export</span>
+                      </div>
+                      <input id="settings-publish-toggle" type="checkbox" class="toggle toggle-success toggle-sm" />
+                    </label>
+                  </div>
+                  <!-- html-report:authoring:end publish-toggle -->
+                  <!-- Download options -->
+                  <ul id="download-dropdown-menu" class="menu menu-sm p-0 w-full space-y-0.5">
+                    <li>
+                      <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                        <span>Download as HTML</span>
+                      </button>
+                    </li>
+                    <li>
+                      <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                        <div class="flex items-center gap-2.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                          </svg>
+                          <span>Download as PDF</span>
+                        </div>
+                        <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
+                      </button>
+                    </li>
+                    <li id="pwa-install-menu-item" class="hidden">
+                      <button id="pwa-install-dropdown-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                        <div class="flex items-center gap-2.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                          </svg>
+                          <span>Install as App (PWA)</span>
+                        </div>
+                        <span id="pwa-install-status-badge" class="badge badge-accent badge-xs font-mono">Installable</span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </details>
+            <!-- html-report:authoring:start extra-sections -->
+            <div id="settings-extra-sections" class="space-y-2.5"></div>
+            <!-- html-report:authoring:end extra-sections -->
           </div>
-          <ul id="download-dropdown-menu" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-64 p-2 shadow-2xl border border-base-300">
-            <li>
-              <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-                <span>Download as HTML</span>
-              </button>
-            </li>
-            <li>
-              <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
-                <div class="flex items-center gap-2.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                  </svg>
-                  <span>Download as PDF</span>
-                </div>
-                <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
-              </button>
-            </li>
-            <li id="pwa-install-menu-item" class="hidden">
-              <button id="pwa-install-dropdown-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
-                <div class="flex items-center gap-2.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  <span>Install as App (PWA)</span>
-                </div>
-                <span id="pwa-install-status-badge" class="badge badge-accent badge-xs font-mono">Installable</span>
-              </button>
-            </li>
-          </ul>
         </div>
 
         <!-- 4. PWA Install & Offline Indicators -->
@@ -331,6 +391,154 @@
       </div>
     </nav>
   </header>
+
+  <!-- html-report:authoring:start all-settings -->
+  <!-- All Settings Overview Modal -->
+  <dialog id="all-settings-modal" class="modal" role="dialog" aria-label="All Settings Overview">
+    <div class="modal-box w-11/12 max-w-3xl p-4 sm:p-6 bg-base-100 text-base-content border border-base-300 shadow-2xl">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-base-300">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 bg-primary/10 text-primary rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold">All Settings</h3>
+            <p class="text-3xs sm:text-xs text-base-content/60">Configure report appearance, download options, AI agent, and authoring tools</p>
+          </div>
+        </div>
+        <form method="dialog">
+          <button id="close-all-settings-btn" class="btn btn-sm btn-circle btn-ghost" aria-label="Close settings modal">✕</button>
+        </form>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div role="tablist" class="tabs tabs-boxed bg-base-200 p-1 my-4 grid grid-cols-2 sm:grid-cols-4 gap-1">
+        <button role="tab" id="tab-btn-appearance" class="tab tab-active text-xs font-semibold gap-1.5" data-tab-target="panel-appearance">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+          <span>Appearance</span>
+        </button>
+        <button role="tab" id="tab-btn-download" class="tab text-xs font-semibold gap-1.5" data-tab-target="panel-download">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5 5-5m-5 5V3"/></svg>
+          <span>Download</span>
+        </button>
+        <button role="tab" id="tab-btn-ai" class="tab text-xs font-semibold gap-1.5" data-tab-target="panel-ai">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <span>AI Bridge</span>
+        </button>
+        <button role="tab" id="tab-btn-editor" class="tab text-xs font-semibold gap-1.5" data-tab-target="panel-editor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          <span>Page Editor</span>
+        </button>
+      </div>
+
+      <!-- Tab Panels -->
+      <div id="settings-tab-panels" class="py-2">
+        <!-- Panel 1: Appearance -->
+        <div id="panel-appearance" class="settings-tab-panel space-y-4">
+          <div class="flex items-center justify-between p-3 rounded-box bg-base-200">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-wider text-base-content/60">Current Active Theme</div>
+              <div class="text-sm font-semibold capitalize flex items-center gap-2 mt-0.5">
+                <span id="modal-active-theme-label">light</span>
+                <span class="flex items-center gap-1">
+                  <span class="bg-primary rounded-badge w-2 h-4"></span>
+                  <span class="bg-secondary rounded-badge w-2 h-4"></span>
+                  <span class="bg-accent rounded-badge w-2 h-4"></span>
+                  <span class="bg-neutral rounded-badge w-2 h-4"></span>
+                </span>
+              </div>
+            </div>
+            <span class="text-xs text-base-content/60 font-mono">32 DaisyUI Themes</span>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold uppercase tracking-wider text-base-content/60">Select Theme Palette</label>
+            <div id="modal-theme-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-64 overflow-y-auto p-1 bg-base-200/50 rounded-box border border-base-300">
+              <!-- Populated dynamically via initAllSettingsModal() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Download & Publishing -->
+        <div id="panel-download" class="settings-tab-panel hidden space-y-4">
+          <div class="p-4 rounded-box bg-base-200 border border-base-300 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold flex items-center gap-2">
+                  <span>Publish Mode</span>
+                  <span id="modal-publish-badge" class="badge badge-success badge-xs hidden font-mono">Active</span>
+                </h4>
+                <p class="text-xs text-base-content/70 mt-0.5">When active, HTML export automatically strips developer chrome, edit dock, and gear menu for production release.</p>
+              </div>
+              <input id="modal-publish-toggle" type="checkbox" class="toggle toggle-success toggle-md" />
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="p-3.5 rounded-box bg-base-200/60 border border-base-300 space-y-2">
+              <div class="font-bold text-xs uppercase text-base-content/70">HTML Bundle</div>
+              <p class="text-xs text-base-content/60">Download self-contained single-file HTML snapshot with inlined stylesheets.</p>
+              <button id="modal-download-html-btn" type="button" class="btn btn-sm btn-primary w-full gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                <span>Download HTML</span>
+              </button>
+            </div>
+            <div class="p-3.5 rounded-box bg-base-200/60 border border-base-300 space-y-2">
+              <div class="font-bold text-xs uppercase text-base-content/70">Printable PDF</div>
+              <p class="text-xs text-base-content/60">Export via browser print stylesheet with page-break optimizations.</p>
+              <button id="modal-download-pdf-btn" type="button" class="btn btn-sm btn-secondary w-full gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                <span>Download PDF</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3: AI Bridge -->
+        <div id="panel-ai" class="settings-tab-panel hidden space-y-4">
+          <div class="p-4 rounded-box bg-base-200 border border-base-300 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold">Activate AI for this board</h4>
+                <p class="text-xs text-base-content/70 mt-0.5">Enables bidirectional agent bridge, live prompt editing, and background SSE telemetry.</p>
+              </div>
+              <input id="modal-ai-toggle" type="checkbox" class="toggle toggle-primary toggle-md" />
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-box bg-base-200/60 border border-base-300 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase text-base-content/70">Turnkey Reconnection Prompt</span>
+              <button id="modal-copy-reconnect-btn" type="button" class="btn btn-xs btn-outline font-mono">Copy Prompt</button>
+            </div>
+            <pre id="modal-reconnect-prompt" class="p-2.5 rounded bg-base-300 text-3xs font-mono overflow-x-auto whitespace-pre-wrap max-h-32 text-base-content/80 select-all"></pre>
+          </div>
+        </div>
+
+        <!-- Panel 4: Page Editor -->
+        <div id="panel-editor" class="settings-tab-panel hidden space-y-4">
+          <div class="p-4 rounded-box bg-base-200 border border-base-300 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold">In-Browser Page Editor Dock</h4>
+                <p class="text-xs text-base-content/70 mt-0.5">Collect structured editing tasks and synthesize them into deterministic agent prompts.</p>
+              </div>
+              <button id="modal-open-editor-btn" type="button" class="btn btn-sm btn-primary gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span>Launch Editor Dock</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+  <!-- html-report:authoring:end all-settings -->
 
   <!-- Interactive PDF Warning Modal -->
   <dialog id="pdf-not-ready-modal" class="modal">
@@ -350,6 +558,57 @@
         </form>
       </div>
     </div>
+  </dialog>
+
+  <!-- Reusable Mermaid Diagram Enlarge Modal -->
+  <dialog id="mermaid-enlarge-modal" class="modal modal-bottom sm:modal-middle" aria-label="Enlarged Diagram Preview">
+    <div id="mermaid-modal-box" class="modal-box max-w-6xl w-11/12 max-h-[90vh] flex flex-col p-4 bg-base-100 text-base-content border border-base-300 shadow-2xl transition-all duration-200">
+      <div class="flex items-center justify-between pb-3 border-b border-base-300 gap-2 flex-wrap">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          <h3 class="font-bold text-sm sm:text-base">Diagram Preview</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Zoom & Viewport Toolbar -->
+          <div class="join border border-base-300 bg-base-100 rounded-lg shadow-xs">
+            <button type="button" id="mermaid-zoom-out-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Zoom Out (-)">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>
+            </button>
+            <button type="button" id="mermaid-zoom-reset-btn" class="join-item btn btn-xs btn-ghost font-mono text-3xs px-2" title="Reset Zoom">
+              <span id="mermaid-zoom-level">100%</span>
+            </button>
+            <button type="button" id="mermaid-zoom-in-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Zoom In (+)">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <button type="button" id="mermaid-zoom-fit-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Fit to Viewport">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            </button>
+          </div>
+          <button type="button" id="mermaid-fullscreen-btn" class="btn btn-xs btn-ghost btn-square border border-base-300" title="Toggle Fullscreen Viewport">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+          </button>
+          <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost" aria-label="Close">✕</button>
+          </form>
+        </div>
+      </div>
+      <div id="mermaid-enlarge-viewport" class="overflow-hidden relative flex-1 min-h-[350px] flex items-center justify-center p-4 my-2 bg-base-200/50 rounded-box border border-base-300 select-none cursor-grab active:cursor-grabbing">
+        <div id="mermaid-enlarge-content" class="origin-center will-change-transform flex items-center justify-center w-full h-full">
+          <!-- SVG clone dynamically injected here -->
+        </div>
+      </div>
+      <div class="modal-action mt-0 pt-2 flex items-center justify-between">
+        <span class="text-3xs text-base-content/60">Scroll to zoom &bull; Click &amp; drag to pan &bull; Press ESC or 0 to reset</span>
+        <form method="dialog">
+          <button class="btn btn-xs sm:btn-sm btn-ghost">Close</button>
+        </form>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop bg-neutral/40 backdrop-blur-xs">
+      <button>close</button>
+    </form>
   </dialog>
 
   <!-- Turnkey AI Agent Reconnection Modal -->
@@ -444,23 +703,23 @@
     </div>
   </footer>
 
-  <!-- HTMLReportAgentDock: Floating & Collapsible Two-Way AI Co-Pilot Dock -->
-  <aside id="agent-dock-container" aria-label="AI Co-Pilot Dock" class="print:hidden">
+  <!-- HTMLReportAgentDock: Floating & Collapsible Two-Way AI Assistant Dock -->
+  <aside id="agent-dock-container" aria-label="AI Assistant Dock" class="print:hidden hidden">
     <!-- Floating Launcher Toggle (bottom-right) -->
     <button
       id="agent-dock-launcher"
       type="button"
       onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.toggleDock();"
       class="fixed bottom-5 right-5 z-40 btn btn-primary shadow-2xl rounded-full gap-2 border border-primary-content/20 hover:scale-105 transition-transform"
-      title="Open AI Agent Co-Pilot (Cmd+K or Ctrl+K)"
-      aria-label="Open AI Agent Co-Pilot Dock"
+      title="Open AI Assistant (Cmd+K or Ctrl+K)"
+      aria-label="Open AI Assistant Dock"
     >
       <span class="relative flex h-2.5 w-2.5">
         <span id="agent-dock-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-content opacity-75"></span>
         <span id="agent-dock-dot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-success-content"></span>
       </span>
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10a9.96 9.96 0 0 1-4.587-1.112l-3.826 1.074a1 1 0 0 1-1.238-1.238l1.074-3.826A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2z"/><circle cx="8" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="16" cy="12" r="1"/></svg>
-      <span class="font-bold text-xs tracking-wide">AI Co-Pilot</span>
+      <span class="font-bold text-xs tracking-wide">AI Assistant</span>
       <kbd class="kbd kbd-xs bg-primary-content/20 text-primary-content border-none font-mono text-[10px]">⌘K</kbd>
     </button>
 
@@ -476,7 +735,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10a9.96 9.96 0 0 1-4.587-1.112l-3.826 1.074a1 1 0 0 1-1.238-1.238l1.074-3.826A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2z"/></svg>
           </span>
           <div class="min-w-0">
-            <h3 class="text-xs font-bold text-base-content truncate">Agent Co-Pilot</h3>
+            <h3 class="text-xs font-bold text-base-content truncate">AI Assistant</h3>
             <span id="agent-dock-status" class="text-[10px] text-base-content/60 font-mono block truncate">Online &bull; Datastar SSE</span>
           </div>
         </div>
@@ -506,7 +765,7 @@
       <!-- Messages & Event Stream -->
       <div id="agent-dock-messages" class="flex-1 overflow-y-auto p-3 space-y-3 text-xs leading-relaxed" style="scroll-behavior: smooth;">
         <div class="p-3 rounded-xl bg-base-200/60 border border-base-300 text-base-content/80 space-y-1">
-          <p class="font-semibold text-base-content">👋 Welcome to your Agent Co-Pilot</p>
+          <p class="font-semibold text-base-content">👋 Welcome to your AI Assistant</p>
           <p class="text-[11px] text-base-content/70">Ask questions, request live recalculations, or click any card to inspect its telemetry. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.</p>
         </div>
       </div>
@@ -533,6 +792,63 @@
       </form>
     </div>
   </aside>
+
+  <!-- html-report:authoring:start edit-dock -->
+  <!-- Page Edit Queue: bottom-docked, scroll-following prompt editor (opened from Settings -> Edit) -->
+  <aside id="edit-dock" aria-label="Page edit queue" class="print:hidden hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl z-40 bg-base-100 text-base-content border-t-2 border-x border-primary/70 border-b-0 rounded-t-2xl shadow-[0_-10px_35px_-5px_rgba(0,0,0,0.5)] ring-1 ring-base-content/15 text-xs">
+    <div id="edit-dock-bar" class="flex items-center gap-2 px-3 h-10 bg-base-200/90 rounded-t-2xl border-b border-base-300">
+      <button id="edit-dock-toggle" type="button" class="btn btn-ghost btn-xs gap-1.5 font-bold hover:bg-base-300/60" aria-expanded="false" aria-controls="edit-dock-body">
+        <span class="font-bold">Edit</span>
+        <span id="edit-task-count" class="badge badge-primary badge-xs font-mono">0</span>
+      </button>
+      <span id="edit-section-chip" class="badge badge-outline badge-sm truncate max-w-[45%] sm:max-w-[55%] border-base-content/30 text-base-content font-medium" title="Section in view">Top of page</span>
+      <span class="flex-1"></span>
+      <button id="edit-dock-select" type="button" class="btn btn-ghost btn-xs gap-1 hover:bg-base-300/60" aria-label="Toggle element selection mode" title="Select element on page to target">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+        <span class="hidden sm:inline font-semibold">Select</span>
+      </button>
+      <button id="edit-dock-add" type="button" class="btn btn-primary btn-xs" aria-label="New edit task">+ Task</button>
+      <button id="edit-dock-close" type="button" class="btn btn-ghost btn-xs btn-circle" aria-label="Close edit dock">✕</button>
+    </div>
+    <div id="edit-dock-body" class="hidden border-t border-base-300 max-h-[min(38vh,320px)] overflow-y-auto p-3 space-y-2">
+      <div role="tablist" class="tabs tabs-boxed tabs-xs w-fit">
+        <button id="edit-tab-compose" type="button" role="tab" class="tab tab-active" data-edit-tab="compose">Compose</button>
+        <button id="edit-tab-queue" type="button" role="tab" class="tab" data-edit-tab="queue">Queue</button>
+      </div>
+      <div id="edit-pane-compose" class="space-y-2">
+        <div id="edit-selected-target" class="hidden flex items-center gap-1.5 p-1.5 bg-base-200/90 rounded border border-accent/40 text-xs font-mono">
+          <span class="badge badge-accent badge-xs font-bold uppercase">Target</span>
+          <span id="edit-target-id" class="text-accent font-semibold truncate max-w-[200px] sm:max-w-[320px]">#id</span>
+          <span id="edit-target-tag" class="text-base-content/50 text-3xs font-mono">&lt;tag&gt;</span>
+          <button id="edit-clear-target" type="button" class="btn btn-ghost btn-xs btn-circle ml-auto hover:bg-base-300/60" aria-label="Clear selected target" title="Clear selection">✕</button>
+        </div>
+        <input id="edit-task-title" type="text" class="input input-bordered input-sm w-full" placeholder="Task title (e.g. Reword KPI heading)" maxlength="120" />
+        <textarea id="edit-task-content" rows="3" class="textarea textarea-bordered w-full text-xs" placeholder="Describe the change... (Ctrl/Cmd+Enter to add)"></textarea>
+        <div class="flex items-center gap-2 flex-wrap">
+          <select id="edit-task-priority" class="select select-bordered select-xs shrink-0" aria-label="Priority">
+            <option value="1">P1 High</option><option value="2" selected>P2 Medium</option><option value="3">P3 Low</option>
+          </select>
+          <span id="edit-task-anchor" class="badge badge-outline badge-sm truncate max-w-full sm:max-w-[65%] border-base-content/30 text-base-content font-medium" title="Section anchor">Anchor: none</span>
+          <span class="flex-1"></span>
+          <button id="edit-add-btn" type="button" class="btn btn-primary btn-sm">Add</button>
+        </div>
+      </div>
+      <div id="edit-pane-queue" class="hidden space-y-2">
+        <ul id="edit-queue-list" class="space-y-1.5"></ul>
+        <div class="flex items-center gap-2 flex-wrap pt-1">
+          <button id="edit-generate-btn" type="button" class="btn btn-outline btn-sm">Generate prompt</button>
+          <button id="edit-send-btn" type="button" class="btn btn-primary btn-sm btn-disabled opacity-50 cursor-not-allowed" data-send-state="copy" disabled title="Generate a prompt first to copy or send">Copy prompt</button>
+          <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs ml-auto sm:ml-0" title="When enabled, instructs the AI agent to determine its own execution priority order">
+            <input id="edit-auto-priority-toggle" type="checkbox" class="toggle toggle-primary toggle-xs" />
+            <span class="text-3xs font-semibold">Auto-priority</span>
+          </label>
+          <span id="edit-send-status" class="text-3xs font-mono text-base-content/70 w-full sm:w-auto"></span>
+        </div>
+        <pre id="edit-prompt-preview" class="hidden p-2 bg-neutral text-neutral-content rounded font-mono text-3xs whitespace-pre-wrap overflow-x-auto select-all"></pre>
+      </div>
+    </div>
+  </aside>
+  <!-- html-report:authoring:end edit-dock -->
 
   <!-- Runtime Scripts -->
   <!-- {{RUNTIME_SCRIPT}} -->

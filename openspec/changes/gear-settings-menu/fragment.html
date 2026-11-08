@@ -1,0 +1,135 @@
+<header class="space-y-4 border-b border-base-300 pb-8">
+<div class="flex flex-wrap gap-2"><span class="badge badge-primary font-mono text-xs font-bold uppercase">OpenSpec Journey</span><span class="badge badge-outline font-mono text-xs">gear-settings-menu</span><span class="badge badge-success font-mono text-xs text-success-content font-bold">Priority Plan Executed</span><span class="badge badge-ghost font-mono text-xs">Overview &amp; Consolidation</span></div>
+<h1 class="text-3xl sm:text-4xl font-black tracking-tight">Settings Gear Menu Redesign &amp; Tabbed Overview</h1>
+<p class="text-base text-base-content/80 max-w-3xl">Comprehensive enhancement for the settings gear menu: top-level "All Settings" entry with categorized tabs, unexpanded collapsible navbar sections with appearance color palette preview, renamed Download section with integrated Publish switch, and removal of standalone publishing redundancy.</p>
+<div class="flex flex-wrap gap-3 items-center text-xs"><span class="font-semibold">Artifacts:</span><a href="proposal.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('proposal.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">proposal.md</a><a href="design.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('design.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">design.md</a><a href="tasks.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('tasks.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">tasks.md</a><a class="link link-primary font-mono text-xs" href="specs/settings-gear-menu/spec.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('specs/settings-gear-menu/spec.md');return false;}">specs/settings-gear-menu/spec.md</a></div>
+<div class="w-full overflow-x-auto"><ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold"><li class="step step-primary">Brainstorming</li><li class="step step-primary">Planning</li><li class="step step-primary">Implementing</li><li class="step step-primary">Verifying</li><li class="step step-primary">Shipped / Archived</li></ul></div>
+</header>
+
+<section id="metrics" class="grid grid-cols-2 lg:grid-cols-4 gap-4 my-8">
+<div class="stat bg-base-200 rounded-box"><div class="stat-title text-xs font-bold uppercase">Total Tasks</div><div class="stat-value text-2xl font-mono text-primary">16</div><div class="stat-desc font-mono">4 Prioritized Phases</div></div>
+<div class="stat bg-base-200 rounded-box"><div class="stat-title text-xs font-bold uppercase">In Progress</div><div class="stat-value text-2xl font-mono text-warning">0</div><div class="stat-desc font-mono">All Phases Done</div></div>
+<div class="stat bg-base-200 rounded-box"><div class="stat-title text-xs font-bold uppercase">Completed</div><div class="stat-value text-2xl font-mono text-success">16</div><div class="stat-desc font-mono text-success font-semibold">100% Complete</div></div>
+<div class="stat bg-base-200 rounded-box"><div class="stat-title text-xs font-bold uppercase">Remaining</div><div class="stat-value text-2xl font-mono">0</div><div class="stat-desc font-mono">Verified in Tests</div></div>
+</section>
+
+<section id="why" class="space-y-3 mb-10">
+<h2 class="text-2xl font-bold">Problem &amp; Vision</h2>
+<p class="text-base-content/80">The gear menu provides a single entry point for settings, but fully expanded lists cause unnecessary vertical scroll and clutter. Separating "Publishing" into an isolated section also causes redundant user flows. This plan organizes the menu with an "All Settings" modal hub, unexpanded collapsible sections, a unified "Download" section with built-in "Publish" switch, and eliminates the obsolete separate publishing section.</p>
+<div class="grid md:grid-cols-2 gap-4">
+<div class="card bg-base-200"><div class="card-body p-4"><h3 class="font-bold">Key Delivered Goals</h3><ul class="list-disc pl-5 text-sm space-y-1">
+<li>Added "All Settings" as the first option, opening a tabbed overview modal (Appearance, Download, AI, Editor).</li>
+<li>Kept all options in the gear navbar dropdown unexpanded by default with DaisyUI disclosure collapse.</li>
+<li>Preserved the unexpanded "Appearance" title with the live color palette preview badges.</li>
+<li>Renamed "Export" to "Download", and placed the "Publish" switch as its first option followed by "Download as HTML".</li>
+<li>Removed the standalone "Publishing" section to eliminate redundancy.</li>
+</ul></div></div>
+<div class="card bg-base-200"><div class="card-body p-4"><h3 class="font-bold">Prioritization Strategy Delivered</h3><ul class="list-disc pl-5 text-sm space-y-1">
+<li><strong>Priority 1:</strong> Section consolidation (Download title, Publish switch, remove standalone publishing) &amp; unexpanded collapsible navbar sections.</li>
+<li><strong>Priority 2:</strong> "All Settings" top action &amp; tabbed overview modal with two-way synchronization.</li>
+<li><strong>Priority 3:</strong> Keyboard accessibility, test suite updates, and documentation synchronization.</li>
+</ul></div></div>
+</div>
+</section>
+
+<section id="design" class="space-y-4 mb-10">
+<h2 class="text-2xl font-bold">Architecture &amp; Flow</h2>
+<div class="grid md:grid-cols-2 gap-4">
+<div class="card bg-base-100 border border-base-300"><div class="card-body p-4"><h3 class="font-bold text-sm">Gear Dropdown Shell</h3><p class="text-sm text-base-content/80">Starts with <code>#open-all-settings-btn</code>. Dropdown sections use collapsible disclosure accordions unexpanded by default. Appearance header showcases active theme and 4-color dot swatches.</p></div></div>
+<div class="card bg-base-100 border border-base-300"><div class="card-body p-4"><h3 class="font-bold text-sm">All Settings Modal</h3><p class="text-sm text-base-content/80">Full-featured modal with DaisyUI boxed tabs allowing deep configuration of Appearance, Download &amp; Publishing, AI Bridge, and Editor tasks.</p></div></div>
+</div>
+
+<div class="card bg-base-100 border border-base-300">
+<div class="card-body p-4">
+<h3 class="font-bold text-sm mb-2">Information Architecture</h3>
+<div class="mermaid">
+flowchart TD
+  Gear["⚙ Gear Icon (Navbar)"] --> Dropdown["Dropdown Panel (#settings-panel)"]
+  Dropdown --> AllSettings["⚡ All Settings Button (First Option)"]
+  Dropdown --> AccordionApp["▶ Appearance (Unexpanded with Palette Swatches)"]
+  Dropdown --> AccordionDown["▶ Download (Unexpanded, Renamed from Export)"]
+  AccordionDown --> PubSwitch["Switch: Publish Mode (First Option)"]
+  AccordionDown --> DownHTML["Button: Download as HTML"]
+  AccordionDown --> DownPDF["Button: Download as PDF"]
+  AccordionDown --> DownPWA["Button: Install as App (PWA)"]
+
+  AllSettings --> Modal["Overview Modal (#all-settings-modal)"]
+  Modal --> Tab1["Tab: Appearance"]
+  Modal --> Tab2["Tab: Download & Publishing"]
+  Modal --> Tab3["Tab: AI & Agent Bridge"]
+  Modal --> Tab4["Tab: Page Editor"]
+</div>
+</div>
+</div>
+</section>
+
+<section id="tasks" class="mb-10">
+<h2 class="text-2xl font-bold mb-3">Executed Task Plan (<a href="tasks.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('tasks.md');return false;}" class="link link-primary font-mono text-sm">tasks.md</a>)</h2>
+<div class="space-y-4">
+
+<div class="card bg-base-200">
+<div class="card-body p-4">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-sm">Phase 1: Section Consolidation &amp; Download / Publish Switch</h3>
+<span class="badge badge-success badge-sm font-bold font-mono">100% Completed</span>
+</div>
+<div class="space-y-2 mt-2">
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">1.1</span> Rename "Export" section to "Download" (<code>#settings-section-download</code>, title "Download")</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">1.2</span> Add "Publish" toggle switch (<code>#settings-publish-toggle</code>) as the first item inside "Download" ahead of "Download as HTML"</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">1.3</span> Remove standalone <code>publishing</code> section registration from <code>HTMLReportSettings</code> / <code>initAuthoring()</code></span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">1.4</span> Wire "Publish" switch inside Download to <code>HTMLReportPublisher.setPublished(on)</code> to control clean export</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">1.5</span> Preserve existing action IDs (<code>#download-html-btn</code>, <code>#download-pdf-btn</code>) for backward compatibility</span></label>
+</div>
+</div>
+</div>
+
+<div class="card bg-base-200">
+<div class="card-body p-4">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-sm">Phase 2: Unexpanded Collapsible Gear Menu Sections</h3>
+<span class="badge badge-success badge-sm font-bold font-mono">100% Completed</span>
+</div>
+<div class="space-y-2 mt-2">
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">2.1</span> Refactor gear dropdown sections into unexpanded/collapsed disclosures (DaisyUI collapse / details)</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">2.2</span> Style unexpanded "Appearance" header to display title "Appearance" alongside live color palette (<code>#active-theme-label</code> + 4 swatch dots)</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">2.3</span> Ensure expanding "Appearance" accordion reveals 32-theme swatch list with scrollable viewport</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">2.4</span> Ensure "Download" section and registered extension sections default to unexpanded/collapsed state</span></label>
+</div>
+</div>
+</div>
+
+<div class="card bg-base-200">
+<div class="card-body p-4">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-sm">Phase 3: "All Settings" Action &amp; Tabbed Overview Modal</h3>
+<span class="badge badge-success badge-sm font-bold font-mono">100% Completed</span>
+</div>
+<div class="space-y-2 mt-2">
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.1</span> Add "All Settings" button (<code>#open-all-settings-btn</code>) as the first option at top of <code>#settings-panel</code></span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.2</span> Add <code>#all-settings-modal</code> dialog in <code>template-shell.html</code> with tabbed navigation (<code>tabs tabs-boxed</code>)</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.3</span> Implement Tab 1 ("Appearance"): theme switcher grid with active palette indicator</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.4</span> Implement Tab 2 ("Download &amp; Publishing"): Publish toggle, clean download, PDF export, PWA</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.5</span> Implement Tab 3 ("AI &amp; Agent Bridge"): AI activation toggle, bridge connection status, turnkey prompt</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.6</span> Implement Tab 4 ("Page Editor"): Draft tasks summary and quick dock launcher</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.7</span> Synchronize two-way state between dropdown controls and modal tab controls</span></label>
+</div>
+</div>
+</div>
+
+<div class="card bg-base-200">
+<div class="card-body p-4">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-sm">Phase 4: A11y, Verification &amp; Documentation</h3>
+<span class="badge badge-success badge-sm font-bold font-mono">100% Completed</span>
+</div>
+<div class="space-y-2 mt-2">
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">4.1</span> Verify keyboard navigation and a11y: Esc closes modal and dropdown, tab focus trap, ARIA sync</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">4.2</span> Update test suite in <code>tests/settings-authoring.test.mjs</code> for "All Settings", unexpanded headers, and Download publish switch</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">4.3</span> Run full test suite (<code>npm test</code>) and verify zero regressions</span></label>
+<label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">4.4</span> Update OpenSpec companion <code>index.html</code> and mirror to <code>implementation-progress.html</code> on port 3000</span></label>
+</div>
+</div>
+</div>
+
+</div>
+</section>

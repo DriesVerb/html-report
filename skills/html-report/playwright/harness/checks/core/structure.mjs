@@ -41,9 +41,9 @@ export class StructureCheck extends VerificationCheck {
       const navbarEnd = document.querySelector(".navbar .navbar-end");
       const titleEl = document.getElementById("navbar-report-title");
       const tocDropdown = document.getElementById("toc-dropdown");
-      const themeDropdown = document.getElementById("theme-dropdown");
+      const themeDropdown = document.getElementById("settings-dropdown");
       const downloadDropdown = document.getElementById("download-dropdown");
-      const downloadTriggerBtn = document.getElementById("download-dropdown-btn");
+      const downloadTriggerBtn = document.getElementById("settings-gear-btn");
       const downloadHtmlBtn = document.getElementById("download-html-btn");
       const downloadPdfBtn = document.getElementById("download-pdf-btn");
 
@@ -52,10 +52,9 @@ export class StructureCheck extends VerificationCheck {
         navbarEnd &&
         tocDropdown &&
         themeDropdown &&
-        downloadDropdown &&
         navbarEnd.contains(tocDropdown) &&
         navbarEnd.contains(themeDropdown) &&
-        navbarEnd.contains(downloadDropdown)
+        navbarEnd.contains(themeDropdown)
       );
 
       const startRect = navbarStart ? navbarStart.getBoundingClientRect() : null;
@@ -143,10 +142,10 @@ export class StructureCheck extends VerificationCheck {
       errors.push("Report title must be inside .navbar-start on the left.");
     }
     if (!nav.controlsInEnd || !nav.titleOnLeftAndControlsOnRight) {
-      errors.push("Contents dropdown, Theme dropdown, and Download dropdown must be in .navbar-end on the right.");
+      errors.push("Contents dropdown and the Settings gear (theme + download) must be in .navbar-end on the right.");
     }
     if (nav.downloadBtnText !== "" || !nav.downloadHasIcon) {
-      errors.push(`Download dropdown trigger button must be icon-only with no text (found text: "${nav.downloadBtnText}").`);
+      errors.push(`Settings gear trigger button must be icon-only with no text (found text: "${nav.downloadBtnText}").`);
     }
     if (!nav.hasBothDownloadOptions) {
       errors.push("Download dropdown (#download-dropdown) must include both #download-html-btn ('Download as HTML') and #download-pdf-btn ('Download as PDF').");

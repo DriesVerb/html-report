@@ -8,7 +8,8 @@
     "html-report": "./skills/html-report/scripts/harness.mjs",
     "html-report-build": "./skills/html-report/scripts/build-report.mjs",
     "html-report-serve": "./skills/html-report/scripts/serve-report.mjs",
-    "html-report-pwa": "./skills/html-report/scripts/generate-pwa.mjs"
+    "html-report-pwa": "./skills/html-report/scripts/generate-pwa.mjs",
+    "html-report-install": "./skills/html-report/scripts/install-pwa.mjs"
   },
   "exports": {
     ".": "./skills/html-report/scripts/harness.mjs",
@@ -22,9 +23,10 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "node --test tests/*.test.mjs",
+    "test": "HTML_REPORT_NO_OPEN=1 node --test tests/*.test.mjs",
     "build": "node ./skills/html-report/scripts/build-report.mjs",
-    "serve": "node ./skills/html-report/scripts/serve-report.mjs"
+    "serve": "node ./skills/html-report/scripts/serve-report.mjs",
+    "install:wizard": "node ./skills/html-report/scripts/install-pwa.mjs"
   },
   "engines": {
     "node": ">=18.0.0"

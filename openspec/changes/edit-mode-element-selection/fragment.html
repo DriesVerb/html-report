@@ -1,0 +1,164 @@
+<header class="space-y-4 border-b border-base-300 pb-8">
+  <div class="flex flex-wrap gap-2">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">edit-mode-element-selection</span>
+    <span class="badge badge-success font-mono text-xs text-success-content font-bold">100% Implemented</span>
+    <span class="badge badge-ghost font-mono text-xs">Zero-Dependency DOM Picker</span>
+  </div>
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight">Edit Mode Element Selection &amp; Inspector</h1>
+  <p class="text-base text-base-content/80 max-w-3xl">
+    Empowers report reviewers with an interactive element inspection and selection mode. Clicking any heading, KPI card, table, or chart instantly anchors it by ID to an edit task, featuring a zero-reflow GPU inversion hover highlight, just-in-time semantic ID generation, and deterministic AI prompt integration with zero external dependencies.
+  </p>
+  <div class="flex flex-wrap gap-3 items-center text-xs">
+    <span class="font-semibold">Artifacts:</span>
+    <a href="proposal.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('proposal.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">proposal.md</a>
+    <a href="design.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('design.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">design.md</a>
+    <a href="tasks.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('tasks.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">tasks.md</a>
+    <a href="specs/page-edit-selection/spec.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('specs/page-edit-selection/spec.md');return false;}">specs/page-edit-selection/spec.md</a>
+  </div>
+  <div class="w-full overflow-x-auto">
+    <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+      <li class="step step-primary">Brainstorming</li>
+      <li class="step step-primary">Planning</li>
+      <li class="step step-primary">Implementing</li>
+      <li class="step step-primary">Verifying</li>
+      <li class="step step-primary">Shipped / Archived</li>
+    </ul>
+  </div>
+</header>
+
+<section id="metrics" class="grid grid-cols-2 lg:grid-cols-4 gap-4 my-8">
+  <div class="stat bg-base-200 rounded-box">
+    <div class="stat-title text-xs font-bold uppercase">Total Tasks</div>
+    <div class="stat-value text-2xl font-mono text-primary">10</div>
+    <div class="stat-desc font-mono">4 Milestone Phases</div>
+  </div>
+  <div class="stat bg-base-200 rounded-box">
+    <div class="stat-title text-xs font-bold uppercase">In Progress</div>
+    <div class="stat-value text-2xl font-mono text-warning">0</div>
+    <div class="stat-desc font-mono">All Phases Landed</div>
+  </div>
+  <div class="stat bg-base-200 rounded-box">
+    <div class="stat-title text-xs font-bold uppercase">Completed</div>
+    <div class="stat-value text-2xl font-mono text-success">10</div>
+    <div class="stat-desc font-mono text-success font-semibold">100% Complete</div>
+  </div>
+  <div class="stat bg-base-200 rounded-box">
+    <div class="stat-title text-xs font-bold uppercase">Remaining</div>
+    <div class="stat-value text-2xl font-mono">0</div>
+    <div class="stat-desc font-mono">Verified in Tests</div>
+  </div>
+</section>
+
+<section id="why" class="space-y-3 mb-10">
+  <h2 class="text-2xl font-bold">Problem &amp; Vision</h2>
+  <p class="text-base-content/80">
+    Reviewing rich analytical reports produces targeted edits on specific components: reword a KPI heading, alter chart dimensions, modify table columns. Describing these locations in freeform text is ambiguous and slow. Adding an in-dock <code>[⌖ Select]</code> button lets readers click any visual component on screen to bind its exact <code>#id</code> directly to an edit task without reflow, complex overlays, or node_modules.
+  </p>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="card bg-base-200">
+      <div class="card-body p-4">
+        <h3 class="font-bold">Key Architectural Highlights</h3>
+        <ul class="list-disc pl-5 text-sm space-y-1">
+          <li><strong>Zero Reflow Hover:</strong> Uses GPU-accelerated <code>filter: invert(1) hue-rotate(180deg)</code> on hovered elements, ensuring no layout shifts or geometry changes.</li>
+          <li><strong>Hover Only in Selection Mode:</strong> Normal browsing is completely untouched; hover filters and crosshairs activate strictly when selection mode is enabled.</li>
+          <li><strong>Just-in-Time Semantic IDs:</strong> Automatically generates and stamps unique, human-readable IDs (e.g., <code>#h2-revenue-trends</code>) on click if an element lacks an ID.</li>
+          <li><strong>No Autofill Clutter:</strong> Keeps task title and description fields empty for user typing, displaying an isolated dismissible target chip.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card bg-base-200">
+      <div class="card-body p-4">
+        <h3 class="font-bold">Agent Bridge Integration</h3>
+        <ul class="list-disc pl-5 text-sm space-y-1">
+          <li><strong>Deterministic Output:</strong> <code>buildEditPrompt()</code> automatically prepends <code>Target Element: #id (&lt;tag&gt;)</code> to task prompts.</li>
+          <li><strong>High AI Precision:</strong> Code assistants can immediately pinpoint the exact element in content fragments without searching or guessing.</li>
+          <li><strong>Keyboard Ergonomics:</strong> Pressing <code>Escape</code> at any moment cleanly dismisses selection mode and restores normal interactions.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="architecture" class="space-y-4 mb-10">
+  <h2 class="text-2xl font-bold">Interactive Flow Architecture</h2>
+  <div class="card bg-base-100 border border-base-300">
+    <div class="card-body p-4">
+      <div class="mermaid">
+flowchart TD
+  User["👤 User in Edit Mode"] --> Toggle["Click [⌖ Select] in #edit-dock-bar"]
+  Toggle --> Active["Selection Mode Activated<br/>(cursor: crosshair, click interception)"]
+  Active --> Hover["Hover Element in &lt;main&gt;<br/>(Zero-reflow GPU invert filter)"]
+  Active --> Esc["Press Escape / Click Toggle Again<br/>(Cancel &amp; Restore)"]
+  Hover --> Click["Click Desired Element"]
+  Click --> Disarm["Prevent Default (No Link/Button Action)"]
+  Disarm --> IDCheck{"Has el.id?"}
+  IDCheck -- Yes --> UseID["Capture Existing #id"]
+  IDCheck -- No --> GenID["Generate &amp; Assign Semantic ID<br/>(e.g., #h2-revenue-trends)"]
+  UseID --> Compose["Open Compose Pane<br/>Render Target Badge (No Autofill)"]
+  GenID --> Compose
+  Compose --> TaskAdd["User Adds Task<br/>(target: { id, tag } stored in localStorage)"]
+  TaskAdd --> PromptGen["buildEditPrompt()<br/>Formats Target Element: #id (&lt;tag&gt;)"]
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tasks" class="mb-10">
+  <h2 class="text-2xl font-bold mb-3">Completed Implementation Tasks (<a href="tasks.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('tasks.md');return false;}" class="link link-primary font-mono text-sm">tasks.md</a>)</h2>
+  <div class="space-y-4">
+    <div class="card bg-base-200">
+      <div class="card-body p-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-sm">Phase 1: Edit Dock UI &amp; Template Integration</h3>
+          <span class="badge badge-success badge-sm font-bold font-mono">100% Completed</span>
+        </div>
+        <div class="space-y-2 mt-2">
+          <label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">1.1</span> Add <code>[⌖ Select]</code> toggle button next to <code>+ Task</code> in <code>template-shell.html</code></span></label>
+          <label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">1.2</span> Add <code>#edit-selected-target</code> dismissible badge container in <code>#edit-pane-compose</code></span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-200">
+      <div class="card-body p-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-sm">Phase 2: Selection Mode Runtime &amp; Invert Hover</h3>
+          <span class="badge badge-success badge-sm font-bold font-mono">100% Completed</span>
+        </div>
+        <div class="space-y-2 mt-2">
+          <label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">2.1</span> Implement <code>HTMLReportEdit.toggleSelectMode()</code> with cursor &amp; escape key handling</span></label>
+          <label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">2.2</span> Implement zero-reflow <code>.report-select-hover</code> GPU inversion filter and pointer tracking</span></label>
+          <label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">2.3</span> Implement just-in-time semantic ID generation and click interception</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-200">
+      <div class="card-body p-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-sm">Phase 3: Compose Target Badge &amp; Task Data Integration</h3>
+          <span class="badge badge-success badge-sm font-bold font-mono">100% Completed</span>
+        </div>
+        <div class="space-y-2 mt-2">
+          <label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.1</span> Wire element selection to open compose pane and render target badge (no autofill)</span></label>
+          <label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.2</span> Update <code>HTMLReportEdit.addTask()</code> to persist target metadata in localStorage</span></label>
+          <label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">3.3</span> Update <code>HTMLReportEdit.buildEditPrompt()</code> to format target elements in prompt text</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-200">
+      <div class="card-body p-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-sm">Phase 4: Automated Testing &amp; Verification</h3>
+          <span class="badge badge-success badge-sm font-bold font-mono">100% Completed</span>
+        </div>
+        <div class="space-y-2 mt-2">
+          <label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">4.1</span> Add automated unit/BDD tests for selection mode, ID generation, and prompt formatting</span></label>
+          <label class="flex gap-2 text-sm"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled /><span><span class="font-mono text-xs text-base-content/50">4.2</span> Run test suite via <code>npm test</code> and verify 100% passing tests</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

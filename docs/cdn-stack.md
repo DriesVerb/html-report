@@ -24,6 +24,7 @@
 │  Impress.js 1.1  — 3D Presentations (Presentation-Guarded, Print Fallback)  │
 │  Mock.js 1.1     — Client-Side Synthetic Data & Schema Simulation           │
 │  Showdown 2.1    — Two-Way Markdown Converter (Zero Marked Collision)       │
+│  Quill 2.0       — In-Browser WYSIWYG Rich Text Editor (Snow Theme Synced)  │
 │  FullCalendar 6  — Interactive Scheduling Grids & Theme Palette Sync        │
 │  Datastar.js 1.0 — Real-Time SSE Morphing & Reactive Signals (Idiomorph)    │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -50,6 +51,7 @@
 | **Impress.js** | v1.1.0 | Presentation-Guarded | 3D step transitions for pitch decks. Strictly guarded: renders as clean printable cards by default. |
 | **Mock.js** | v1.1.0 | `defer` + UMD | Client-side synthetic data simulation engine (`Mock.mock(...)` via `[data-mock]`) with 0 backend calls. |
 | **Showdown** | v2.1.0 | `defer` + UMD | Two-way Markdown parser with table and strikethrough support that co-exists cleanly with Marked. |
+| **Quill** | v2.0.3 | `defer` + UMD | WYSIWYG rich text editor with Snow theme, DaisyUI styling, and auto-detection (`ql-editor`, `id="editor"`). |
 | **FullCalendar** | v6.1.15 | `defer` + UMD | Interactive scheduling grids (month, week, list) with theme-adaptive border and accent highlights. |
 | **Datastar.js** | v1.0.0-beta.9 | Module + ESM | Real-time SSE hypermedia streaming, live DOM morphing (Idiomorph), and reactive signals. |
 

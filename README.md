@@ -116,6 +116,7 @@ Refreshes your existing browser tab instantly whenever you recompile (zero dupli
 ## ✨ Key Features
 
 - 📱 **Instant Progressive Web Apps (PWA)**: Turn any report into an installable desktop/mobile app with offline Service Worker caching, dynamic DaisyUI theme-color sync, and native install prompt affordances (`--pwa` or `generate-pwa.mjs`).
+- 📲 **1-Click Studio & PWA Installer (`/html-install`)**: Package and install the interactive Creation Studio (`create.html`) or any report as an offline-first desktop application on port 3030 (`npm run install:wizard` or `./skills/html-report/scripts/install-pwa.sh`).
 - ⚡ **<100ms Deterministic Compilation**: Stitches semantic fragments into a pre-bundled publication shell.
 - 🎨 **32 DaisyUI Themes + Custom OKLCH**: Sticky navbar theme switcher synced live with Chart.js, Mermaid, and Grid.js via Ottosson matrix math.
 - 📦 **17-Library Non-Blocking CDN Stack**: Chart.js, Mermaid, Leaflet maps, Grid.js tables, KaTeX math, Marked, Highlight.js, FullCalendar, and more.

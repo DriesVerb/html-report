@@ -89,12 +89,12 @@ describe("Feature Spec: Feature 4 & 4.1 - Interactive html-create Studio & Termi
       const resCreate = await fetchUrl("http://localhost:3000/create");
       assert.equal(resCreate.statusCode, 200);
       assert.match(resCreate.headers["content-type"], /text\/html/);
-      assert.match(resCreate.body, /Interactive Domain Decision Wizard/);
+      assert.match(resCreate.body, /Setup Wizard/);
 
       const resHtmlCreate = await fetchUrl("http://localhost:3000/html-create");
       assert.equal(resHtmlCreate.statusCode, 200);
       assert.match(resHtmlCreate.headers["content-type"], /text\/html/);
-      assert.match(resHtmlCreate.body, /Interactive Domain Decision Wizard/);
+      assert.match(resHtmlCreate.body, /Setup Wizard/);
     });
 
     it("Scenario: Querying /api/create/config returns canonical themes and target metadata", async () => {

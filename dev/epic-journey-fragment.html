@@ -1,0 +1,329 @@
+<header class="space-y-4 border-b border-base-300 pb-8">
+  <div class="flex flex-wrap gap-2 items-center">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase">OpenSpec Epic Journey</span>
+    <span class="badge badge-success font-mono text-xs text-success-content font-bold">4 Plans Implemented</span>
+    <span class="badge badge-outline font-mono text-xs">settings-authoring-publishing</span>
+  </div>
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight">Settings Gear Menu, Page Edit Queue, AI Activation &amp; Clean Publishing</h1>
+  <p class="text-base text-base-content/80 max-w-3xl">
+    Unified implementation journey for the 4 core developer workflow enhancements: consolidating navbar controls into a Settings gear menu, an in-browser bottom-docked page edit queue with deterministic prompt synthesis, per-board AI activation with turnkey reconnection, and deterministic publish mode with clean HTML exports.
+  </p>
+
+  <div class="flex flex-wrap gap-3 items-center text-xs">
+    <span class="font-semibold text-base-content/70">Artifacts Explorer:</span>
+    <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs btn-outline font-mono">proposal.md</button>
+    <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs btn-outline font-mono">design.md</button>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline font-mono">tasks.md</button>
+    <button type="button" onclick="openMarkdownViewer('gear-settings-menu/proposal.md')" class="btn btn-xs btn-ghost font-mono">gear:proposal.md</button>
+    <button type="button" onclick="openMarkdownViewer('page-edit-prompt-editor/proposal.md')" class="btn btn-xs btn-ghost font-mono">edit:proposal.md</button>
+    <button type="button" onclick="openMarkdownViewer('settings-activate-ai/proposal.md')" class="btn btn-xs btn-ghost font-mono">ai:proposal.md</button>
+    <button type="button" onclick="openMarkdownViewer('publish-clean-report/proposal.md')" class="btn btn-xs btn-ghost font-mono">publish:proposal.md</button>
+  </div>
+
+  <div class="w-full overflow-x-auto">
+    <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+      <li class="step step-primary">Brainstorming</li>
+      <li class="step step-primary">Planning</li>
+      <li class="step step-primary">Implementing</li>
+      <li class="step step-primary">Verifying</li>
+      <li class="step ">Shipped / Archived</li>
+    </ul>
+  </div>
+</header>
+
+<!-- Global Metrics -->
+<section id="metrics" class="grid grid-cols-2 lg:grid-cols-4 gap-4 my-8">
+  <div class="stat bg-base-200 rounded-box border border-base-300">
+    <div class="stat-title text-xs font-bold uppercase">Total Tasks</div>
+    <div class="stat-value text-2xl font-mono text-primary">37</div>
+    <div class="stat-desc font-mono">Across 4 standing changes</div>
+  </div>
+  <div class="stat bg-base-200 rounded-box border border-base-300">
+    <div class="stat-title text-xs font-bold uppercase">In Progress</div>
+    <div class="stat-value text-2xl font-mono text-warning">0</div>
+    <div class="stat-desc font-mono">Ready for verification</div>
+  </div>
+  <div class="stat bg-base-200 rounded-box border border-base-300">
+    <div class="stat-title text-xs font-bold uppercase">Completed</div>
+    <div class="stat-value text-2xl font-mono text-success">37</div>
+    <div class="stat-desc font-mono text-success font-semibold">100% of tasks complete</div>
+  </div>
+  <div class="stat bg-base-200 rounded-box border border-base-300">
+    <div class="stat-title text-xs font-bold uppercase">Test Verification</div>
+    <div class="stat-value text-2xl font-mono text-info">15 / 15</div>
+    <div class="stat-desc font-mono">Automated tests passing</div>
+  </div>
+</section>
+
+<!-- Architecture Flow -->
+<section id="architecture" class="space-y-4 mb-10">
+  <h2 class="text-2xl font-bold">Integrated Architecture Flow</h2>
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-4">
+    <div class="mermaid text-center">
+flowchart TD
+  subgraph Navbar ["Cleaned Sticky Navbar"]
+    Title["#navbar-report-title"]
+    TOC["#toc-dropdown (Contents)"]
+    Bridge["#agent-bridge-status-container"]
+    Gear["⚙ #settings-gear-btn (#settings-dropdown)"]
+  end
+
+  subgraph GearPanel ["Settings Panel (Extensible Registry)"]
+    Appearance["Appearance: 32 DaisyUI Themes & Swatches"]
+    Export["Export: Download HTML / PDF"]
+    EditLink["Edit: Launch Page Edit Queue"]
+    AILink["AI: Activate AI & Turnkey Prompt Card"]
+    PublishLink["Publishing: Mark Published & Clean HTML"]
+  end
+
+  subgraph EditDock ["#edit-dock (Bottom-Docked)"]
+    Compose["Compose Tab (Title, Content, Priority, Anchor)"]
+    Queue["Queue Tab (Reorder, Priority Chips, Done Check)"]
+    PromptGen["buildEditPrompt (Pure Deterministic Template)"]
+    EditHandOff["POST /__agent_edit__ (Localhost Bridge Scoped)"]
+  end
+
+  subgraph PublishEngine ["HTMLReportPublisher"]
+    Pruner["stripAuthoringElements (docClone)"]
+    CleanHTML["Clean Production HTML (Zero Gear, Zero Dock)"]
+  end
+
+  Gear --> GearPanel
+  EditLink --> EditDock
+  Compose & Queue --> PromptGen --> EditHandOff
+  PublishLink --> PublishEngine --> CleanHTML
+    </div>
+  </div>
+</section>
+
+<!-- The Four Completed Stories -->
+<section id="stories" class="space-y-6 mb-10">
+  <h2 class="text-2xl font-bold">Implemented Stories &amp; Deliverables</h2>
+  
+  <div class="grid md:grid-cols-2 gap-4">
+    <!-- Story 1 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-primary font-mono text-xs font-bold">1. gear-settings-menu</span>
+          <span class="badge badge-success badge-xs font-mono">Complete</span>
+        </div>
+        <h3 class="font-bold text-lg text-base-content">Settings Gear Menu (Navbar Consolidation)</h3>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          Replaced cluttered navbar theme and download dropdown triggers with a single right-aligned gear button (<code>#settings-gear-btn</code>). Preserved IDs for full backwards compatibility while establishing an extensible section registry (<code>HTMLReportSettings.registerSection</code>).
+        </p>
+        <div class="flex flex-wrap gap-2 text-3xs font-mono pt-1">
+          <a class="btn btn-xs btn-outline" href="openspec/changes/gear-settings-menu/index.html">View Story Companion</a>
+          <button type="button" onclick="openMarkdownViewer('gear-settings-menu/tasks.md')" class="btn btn-xs btn-ghost">Tasks (8/8)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story 2 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-secondary font-mono text-xs font-bold">2. page-edit-prompt-editor</span>
+          <span class="badge badge-success badge-xs font-mono">Complete</span>
+        </div>
+        <h3 class="font-bold text-lg text-base-content">Page Edit Queue &amp; Deterministic Prompt Editor</h3>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          Bottom-docked prompt editor (<code>#edit-dock</code>) with scroll-following section anchoring, priority cycling (P1-P3), task reordering, and pure deterministic prompt generation. Wired to <code>POST /__agent_edit__</code> for direct hot-swap edits on localhost.
+        </p>
+        <div class="flex flex-wrap gap-2 text-3xs font-mono pt-1">
+          <a class="btn btn-xs btn-outline" href="openspec/changes/page-edit-prompt-editor/index.html">View Story Companion</a>
+          <button type="button" onclick="openMarkdownViewer('page-edit-prompt-editor/tasks.md')" class="btn btn-xs btn-ghost">Tasks (13/13)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story 3 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-accent font-mono text-xs font-bold">3. settings-activate-ai</span>
+          <span class="badge badge-success badge-xs font-mono">Complete</span>
+        </div>
+        <h3 class="font-bold text-lg text-base-content">Activate AI from Settings &amp; Turnkey per Board</h3>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          Integrated AI activation section inside the Settings gear panel with persistent toggle per <code>pageKey</code>, live connection state, turnkey prompt copy affordance with report file path, and <code>GET /__boards__</code> listing sibling reports.
+        </p>
+        <div class="flex flex-wrap gap-2 text-3xs font-mono pt-1">
+          <a class="btn btn-xs btn-outline" href="openspec/changes/settings-activate-ai/index.html">View Story Companion</a>
+          <button type="button" onclick="openMarkdownViewer('settings-activate-ai/tasks.md')" class="btn btn-xs btn-ghost">Tasks (8/8)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story 4 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="badge badge-info font-mono text-xs font-bold">4. publish-clean-report</span>
+          <span class="badge badge-success badge-xs font-mono">Complete</span>
+        </div>
+        <h3 class="font-bold text-lg text-base-content">Publish Mode &amp; Deterministic Clean Export</h3>
+        <p class="text-xs text-base-content/80 leading-relaxed">
+          Deterministic publication engine (<code>HTMLReportPublisher</code> and <code>build-report.mjs --published</code>) that completely prunes gear menus, edit docks, and authoring scripts, outputting byte-reproducible clean HTML for stakeholders.
+        </p>
+        <div class="flex flex-wrap gap-2 text-3xs font-mono pt-1">
+          <a class="btn btn-xs btn-outline" href="openspec/changes/publish-clean-report/index.html">View Story Companion</a>
+          <button type="button" onclick="openMarkdownViewer('publish-clean-report/tasks.md')" class="btn btn-xs btn-ghost">Tasks (8/8)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <div class="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300 shrink-0">
+      <div class="flex items-center gap-2 flex-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span id="markdown-modal-title" class="font-bold text-sm font-mono text-base-content">proposal.md</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="join" id="markdown-modal-tabs">
+          <button id="tab-btn-proposal" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
+          <button id="tab-btn-design" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
+          <button id="tab-btn-tasks" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
+        </div>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost" aria-label="Close modal">✕</button>
+      </div>
+    </div>
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none flex-1 text-base-content bg-base-100">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "gear-settings-menu/proposal.md": "## Why\n\nThe navbar currently carries a theme dropdown and a download dropdown side by side (template-shell.html). Subsequent stories (page editor, AI activation, publishing) need a clean place to live, and a crowded navbar on mobile is already tight. A single gear with a sectioned panel keeps the navbar calm and gives later features an extensible plug-in point.\n\n## What Changes\n\n- Add a gear button as the right-most navbar item on every report.\n- Move the theme switcher and the Download HTML/PDF actions into the gear panel without changing their behavior.\n- Expose a tiny section registry so the editor (Story 1), AI activation (Story 2), and clean publishing (Story 4) can add their own sections.\n\n**Out of scope**\n- No change to TOC dropdown or the agent-bridge status badge (they stay in the navbar).\n- No new theme or export formats.\n\n## Capabilities\n\n### New Capabilities\n- `settings-gear-menu`: One gear icon at the top-right of every report navbar becomes the single home for appearance, export, edit and AI settings.\n\n### Modified Capabilities\n- None (no existing main spec covers the report shell navbar)\n\n## Impact\n\n- `skills/html-report/assets/template-shell.html`, `skills/html-report/assets/report-runtime.js`\n- Order: 1 of 4 (foundation, ships first). Part of the epic: gear-settings-menu → page-edit-prompt-editor → settings-activate-ai.\n- Companion journey page: [index.html](./index.html)\n\n## Assumptions (please confirm)\n\n- Tasks persist in browser localStorage per page in v1.\n- \"Board\" means one report page; a directory-wide board list is optional v1.1.\n- Agent edits run through the existing local `agy` bridge, localhost only.\n",
+  "proposal.md": "## Why\n\nThe navbar currently carries a theme dropdown and a download dropdown side by side (template-shell.html). Subsequent stories (page editor, AI activation, publishing) need a clean place to live, and a crowded navbar on mobile is already tight. A single gear with a sectioned panel keeps the navbar calm and gives later features an extensible plug-in point.\n\n## What Changes\n\n- Add a gear button as the right-most navbar item on every report.\n- Move the theme switcher and the Download HTML/PDF actions into the gear panel without changing their behavior.\n- Expose a tiny section registry so the editor (Story 1), AI activation (Story 2), and clean publishing (Story 4) can add their own sections.\n\n**Out of scope**\n- No change to TOC dropdown or the agent-bridge status badge (they stay in the navbar).\n- No new theme or export formats.\n\n## Capabilities\n\n### New Capabilities\n- `settings-gear-menu`: One gear icon at the top-right of every report navbar becomes the single home for appearance, export, edit and AI settings.\n\n### Modified Capabilities\n- None (no existing main spec covers the report shell navbar)\n\n## Impact\n\n- `skills/html-report/assets/template-shell.html`, `skills/html-report/assets/report-runtime.js`\n- Order: 1 of 4 (foundation, ships first). Part of the epic: gear-settings-menu → page-edit-prompt-editor → settings-activate-ai.\n- Companion journey page: [index.html](./index.html)\n\n## Assumptions (please confirm)\n\n- Tasks persist in browser localStorage per page in v1.\n- \"Board\" means one report page; a directory-wide board list is optional v1.1.\n- Agent edits run through the existing local `agy` bridge, localhost only.\n",
+  "gear-settings-menu/design.md": "# Design: Settings Gear Menu (move Download + Theme)\n\n## Context\n\nThe navbar currently carries a theme dropdown and a download dropdown side by side (template-shell.html). Subsequent stories (page editor, AI activation, publishing) need a clean place to live, and a crowded navbar on mobile is already tight. A single gear with a sectioned panel keeps the navbar calm and gives later features an extensible plug-in point.\n\n## Design\n\n### Navbar\n\nReplace `#theme-dropdown` and `#download-dropdown` with one `#settings-dropdown` (DaisyUI `dropdown-end`) whose trigger is `#settings-gear-btn` (lucide `settings` icon, `aria-label=\"Settings\"`). TOC and bridge badge remain.\n\n### Panel layout\n\nPanel `w-80`, `max-h-[70vh]` scrollable, sections in order: **Appearance** (theme swatch list + active label), **Export** (Download HTML, Download PDF), **Edit** (opens editor, added by Story 1), **AI** (added by Story 2), **Publishing** (added by Story 4). On narrow screens the panel is capped to `calc(100vw - 1.5rem)`.\n\n### ID stability\n\nKeep existing IDs (`theme-swatch-list`, `active-theme-label`, `download-html-btn`, `download-pdf-btn`) so `initThemeDropdown()`, download handlers, PWA theme-color sync and existing tests keep working. Only the container moves.\n\n### Section registry\n\n`window.HTMLReportSettings.registerSection({ id, title, icon, order, render(container) })`. Built-in sections register themselves; later stories call it from their own init. Sections with no registrant are simply absent.\n\n### Print / a11y\n\nGear lives inside the `print:hidden` header. Panel is keyboard reachable (focus ring, Esc closes), uses `role=\"dialog\"` semantics via DaisyUI dropdown with `aria-expanded` synced.\n\n## Flow\n\n```mermaid\nflowchart LR\n  Gear[\"⚙ Gear (navbar, top-right)\"] --> Panel[\"Settings panel\"]\n  Panel --> Appearance[\"Appearance: theme swatches\"]\n  Panel --> Export[\"Export: HTML / PDF\"]\n  Panel -.->|\"Story 1\"| Edit[\"Edit: open editor dock\"]\n  Panel -.->|\"Story 2\"| AI[\"AI: activate + turnkey\"]\n  Panel -.->|\"Story 4\"| Publish[\"Publish: mark published & clean download\"]\n  Reg[\"HTMLReportSettings.registerSection()\"] --> Panel\n```\n\n## Alternatives Considered\n\n- **Keep theme + download in navbar, add gear next to them**: Rejected: does not reduce navbar crowding, which is the point of story 3.\n- **Full-screen settings modal**: Rejected: heavier than needed for ~4 sections; dropdown keeps context visible.\n\n## Risks\n\n- Regressions in existing navbar/bridge behavior: mitigated by keeping IDs and legacy detection.\n",
+  "design.md": "# Design: Settings Gear Menu (move Download + Theme)\n\n## Context\n\nThe navbar currently carries a theme dropdown and a download dropdown side by side (template-shell.html). Subsequent stories (page editor, AI activation, publishing) need a clean place to live, and a crowded navbar on mobile is already tight. A single gear with a sectioned panel keeps the navbar calm and gives later features an extensible plug-in point.\n\n## Design\n\n### Navbar\n\nReplace `#theme-dropdown` and `#download-dropdown` with one `#settings-dropdown` (DaisyUI `dropdown-end`) whose trigger is `#settings-gear-btn` (lucide `settings` icon, `aria-label=\"Settings\"`). TOC and bridge badge remain.\n\n### Panel layout\n\nPanel `w-80`, `max-h-[70vh]` scrollable, sections in order: **Appearance** (theme swatch list + active label), **Export** (Download HTML, Download PDF), **Edit** (opens editor, added by Story 1), **AI** (added by Story 2), **Publishing** (added by Story 4). On narrow screens the panel is capped to `calc(100vw - 1.5rem)`.\n\n### ID stability\n\nKeep existing IDs (`theme-swatch-list`, `active-theme-label`, `download-html-btn`, `download-pdf-btn`) so `initThemeDropdown()`, download handlers, PWA theme-color sync and existing tests keep working. Only the container moves.\n\n### Section registry\n\n`window.HTMLReportSettings.registerSection({ id, title, icon, order, render(container) })`. Built-in sections register themselves; later stories call it from their own init. Sections with no registrant are simply absent.\n\n### Print / a11y\n\nGear lives inside the `print:hidden` header. Panel is keyboard reachable (focus ring, Esc closes), uses `role=\"dialog\"` semantics via DaisyUI dropdown with `aria-expanded` synced.\n\n## Flow\n\n```mermaid\nflowchart LR\n  Gear[\"⚙ Gear (navbar, top-right)\"] --> Panel[\"Settings panel\"]\n  Panel --> Appearance[\"Appearance: theme swatches\"]\n  Panel --> Export[\"Export: HTML / PDF\"]\n  Panel -.->|\"Story 1\"| Edit[\"Edit: open editor dock\"]\n  Panel -.->|\"Story 2\"| AI[\"AI: activate + turnkey\"]\n  Panel -.->|\"Story 4\"| Publish[\"Publish: mark published & clean download\"]\n  Reg[\"HTMLReportSettings.registerSection()\"] --> Panel\n```\n\n## Alternatives Considered\n\n- **Keep theme + download in navbar, add gear next to them**: Rejected: does not reduce navbar crowding, which is the point of story 3.\n- **Full-screen settings modal**: Rejected: heavier than needed for ~4 sections; dropdown keeps context visible.\n\n## Risks\n\n- Regressions in existing navbar/bridge behavior: mitigated by keeping IDs and legacy detection.\n",
+  "gear-settings-menu/tasks.md": "# Tasks: Settings Gear Menu (move Download + Theme)\n\n## 1. Navbar & panel shell\n\n- [x] 1.1 Add `#settings-dropdown` + gear trigger in `skills/html-report/assets/template-shell.html`, remove old theme/download dropdown wrappers\n- [x] 1.2 Move theme swatch list and download actions into Appearance / Export sections (IDs preserved)\n- [x] 1.3 Implement `HTMLReportSettings.registerSection` in `report-runtime.js` and register built-in sections\n\n## 2. Behavior & a11y\n\n- [x] 2.1 Esc/outside-click close, `aria-expanded` sync, narrow-screen width cap\n- [x] 2.2 Confirm print output and PWA theme-color sync unaffected\n\n## 3. Verification\n\n- [x] 3.1 Update/extend tests in `tests/` for gear presence, moved controls, theme persistence, download handlers\n- [x] 3.2 Rebuild showcase/examples and run full test suite\n- [x] 3.3 Update `docs/` and SKILL.md navbar description; sync `index.html` + `implementation-progress.html`\n",
+  "tasks.md": "# Tasks: Settings Gear Menu (move Download + Theme)\n\n## 1. Navbar & panel shell\n\n- [x] 1.1 Add `#settings-dropdown` + gear trigger in `skills/html-report/assets/template-shell.html`, remove old theme/download dropdown wrappers\n- [x] 1.2 Move theme swatch list and download actions into Appearance / Export sections (IDs preserved)\n- [x] 1.3 Implement `HTMLReportSettings.registerSection` in `report-runtime.js` and register built-in sections\n\n## 2. Behavior & a11y\n\n- [x] 2.1 Esc/outside-click close, `aria-expanded` sync, narrow-screen width cap\n- [x] 2.2 Confirm print output and PWA theme-color sync unaffected\n\n## 3. Verification\n\n- [x] 3.1 Update/extend tests in `tests/` for gear presence, moved controls, theme persistence, download handlers\n- [x] 3.2 Rebuild showcase/examples and run full test suite\n- [x] 3.3 Update `docs/` and SKILL.md navbar description; sync `index.html` + `implementation-progress.html`\n",
+  "gear-settings-menu/specs/settings-gear-menu/spec.md": "## ADDED Requirements\n\n### Requirement: Gear entry point\n\nThe system SHALL satisfy: Every generated report renders a gear button as the right-most navbar control that opens the settings panel.\n\n#### Scenario: Gear entry point verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** every generated report renders a gear button as the right-most navbar control that opens the settings panel.\n\n### Requirement: Theme switcher relocated\n\nThe system SHALL satisfy: The theme switcher is available only inside the gear panel; selecting a theme persists and applies exactly as before.\n\n#### Scenario: Theme switcher relocated verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the theme switcher is available only inside the gear panel; selecting a theme persists and applies exactly as before.\n\n### Requirement: Download relocated\n\nThe system SHALL satisfy: Download HTML and Download PDF are available inside the gear panel and behave as before (PDF only when printable).\n\n#### Scenario: Download relocated verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** download HTML and Download PDF are available inside the gear panel and behave as before (PDF only when printable).\n\n### Requirement: Extensible sections\n\nThe system SHALL satisfy: Other features can register sections that appear in the panel ordered by `order`.\n\n#### Scenario: Extensible sections verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** other features can register sections that appear in the panel ordered by `order`.\n",
+  "spec.md": "## ADDED Requirements\n\n### Requirement: Set as Published Toggle\n\nThe system SHALL satisfy: The system SHALL provide a 'Publish' control in the Settings panel allowing authors to mark the report as published.\n\n#### Scenario: Set as Published Toggle verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the system SHALL provide a 'Publish' control in the Settings panel allowing authors to mark the report as published.\n\n### Requirement: Deterministic Clean Download\n\nThe system SHALL satisfy: The system SHALL offer a download action that yields a standalone HTML file completely stripped of the gear icon, the edit prompt editor dock, and all authoring controls.\n\n#### Scenario: Deterministic Clean Download verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the system SHALL offer a download action that yields a standalone HTML file completely stripped of the gear icon, the edit prompt editor dock, and all authoring controls.\n\n### Requirement: Deterministic Serialization\n\nThe system SHALL satisfy: The clean download generation MUST be deterministic, producing identical byte output for identical document content without timestamps or random tokens.\n\n#### Scenario: Deterministic Serialization verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the clean download generation MUST be deterministic, producing identical byte output for identical document content without timestamps or random tokens.\n\n### Requirement: CLI Published Flag\n\nThe system SHALL satisfy: The build pipeline `build-report.mjs` SHALL support a `--published` flag to emit the clean gear-free report directly.\n\n#### Scenario: CLI Published Flag verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the build pipeline `build-report.mjs` SHALL support a `--published` flag to emit the clean gear-free report directly.\n\n### Requirement: Preservation of Reader Features\n\nThe system SHALL satisfy: The published report MUST preserve core viewer capabilities: responsive reading, Table of Contents, interactive charts, Mermaid diagrams, and print styles.\n\n#### Scenario: Preservation of Reader Features verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the published report MUST preserve core viewer capabilities: responsive reading, Table of Contents, interactive charts, Mermaid diagrams, and print styles.\n",
+  "page-edit-prompt-editor/proposal.md": "## Why\n\nReviewing a report produces a stream of small change requests (fix this chart, reword that heading). Today they live in your head or a chat. A per-page task queue lets you capture them in place while reading, rank them, and hand the agent one clean, reproducible prompt. Everything is deterministic and baked into every html-report, so no LLM is needed to build the prompt.\n\n## What Changes\n\n- Gear → Edit opens a compact editor docked to the bottom edge of the screen.\n- Create tasks (title + content), list them in a Queue tab, prioritize them, mark them done.\n- Generate a deterministic prompt from the queue; copy it, or send it straight to the agent when the page is AI-capable and connected.\n- Scroll-following: the dock stays put while you read and shows which section you are in, so tasks attach to what you see.\n- AI-capable but offline: surface the turnkey reconnect flow instead of a dead button.\n\n**Out of scope**\n- No server-side persistence of tasks in v1 (localStorage per page).\n- No multi-user collaboration or sync.\n- The prompt is not LLM-generated; it is a pure template function.\n\n## Capabilities\n\n### New Capabilities\n- `page-edit-queue`: A slim, bottom-docked AI-prompt-style editor to collect edit tasks for this page, prioritize them, and turn them into one agent-ready prompt.\n\n### Modified Capabilities\n- None (no existing main spec covers the report shell navbar)\n\n## Impact\n\n- `skills/html-report/assets/template-shell.html`, `skills/html-report/assets/report-runtime.js`, `skills/html-report/scripts/serve-report.mjs`, `skills/html-report/scripts/build-report.mjs`\n- Order: 2 of 4 (depends on gear menu). Part of the epic: gear-settings-menu → page-edit-prompt-editor → settings-activate-ai.\n- Companion journey page: [index.html](./index.html)\n\n## Assumptions (please confirm)\n\n- Tasks persist in browser localStorage per page in v1.\n- \"Board\" means one report page; a directory-wide board list is optional v1.1.\n- Agent edits run through the existing local `agy` bridge, localhost only.\n",
+  "page-edit-prompt-editor/design.md": "# Design: Page Edit Queue & Deterministic Prompt Editor\n\n## Context\n\nReviewing a report produces a stream of small change requests (fix this chart, reword that heading). Today they live in your head or a chat. A per-page task queue lets you capture them in place while reading, rank them, and hand the agent one clean, reproducible prompt. Everything is deterministic and baked into every html-report, so no LLM is needed to build the prompt.\n\n## Design\n\n### Dock UI\n\n`#edit-dock` is `position: fixed; bottom: 0`, full-width capped at `max-w-3xl` centered. **Collapsed**: 40px bar (task-count badge, current-section chip, `+` button). **Expanded**: `max-h: min(38vh, 320px)`, internal scroll. `body` gets `padding-bottom` equal to the dock height via `ResizeObserver` so content is never covered. `print:hidden`, `z-index` below modals, above content.\n\n### Tabs\n\n**Compose**: title input, content textarea (auto-grow to 4 lines), priority select, optional section anchor chip (defaults to the current section), `Add` (Ctrl/Cmd+Enter). **Queue**: sortable list with P1/P2/P3 chips, up/down + drag reorder, done checkbox, delete, click to scroll to anchor. Footer: **Generate prompt**.\n\n### Scroll-following\n\nAn `IntersectionObserver` over headings and `section[id]` tracks the section nearest the viewport top and writes it to the dock chip. New tasks anchor to it. In the Queue tab, tasks anchored to the visible section are highlighted, and clicking a task smooth-scrolls to its anchor and flashes an outline. This gives the better overview of what needs editing.\n\n### Data model\n\nTask `{ id, title, content, priority: 1|2|3, order, done, anchor: { id, label } | null }`. Stored in `localStorage` key `html_report_edit_queue:<pageKey>`; `pageKey` = `<meta name=\"html-report-source\">` (emitted by build-report) else `location.pathname`.\n\n### Deterministic prompt\n\nPure function `buildEditPrompt(tasks, page)` in the runtime, unit-testable in Node. Order: priority asc, then manual order; done tasks excluded. Output is byte-identical for identical input (no timestamps, no randomness). Sections: page identity (title, source path, report mode), numbered tasks with priority and anchor, standing constraints (preserve html-report conventions, edit the source fragment, rebuild with `build-report.mjs`, keep localhost:3000 live, update tasks if OpenSpec).\n\n### Send to agent\n\nStates: **AI-capable + connected** → primary button *Send to agent* posts the prompt to a new dev-server endpoint `POST /__agent_edit__` (localhost only, scoped to the served file) and streams status; hot-swap live reload shows the result. **AI-capable + disconnected** → button becomes *Turnkey reconnect* opening the existing reconnect modal with the edit prompt included. **Not AI-capable** → *Copy prompt* only, with a link to Settings → Activate AI (Story 2).\n\n## Flow\n\n```mermaid\nsequenceDiagram\n  participant U as User\n  participant D as Edit dock\n  participant R as Runtime (buildEditPrompt)\n  participant S as Dev server\n  participant A as Agent (agy)\n  U->>D: Add task (title, content, priority)\n  D->>D: Persist in localStorage, anchor to visible section\n  U->>D: Reorder / prioritize in Queue tab\n  U->>D: Generate prompt\n  D->>R: buildEditPrompt(tasks, page)\n  R-->>D: Deterministic prompt text\n  alt AI-capable and connected\n    D->>S: POST /__agent_edit__\n    S->>A: run edit prompt\n    A-->>S: edits source, rebuilds\n    S-->>U: live-reload hot swap\n  else AI-capable, disconnected\n    D-->>U: Turnkey reconnect modal\n  else Not AI-capable\n    D-->>U: Copy prompt\n  end\n```\n\n## Alternatives Considered\n\n- **Right-side drawer**: Rejected: steals horizontal reading width on dashboards; bottom dock matches chat/prompt mental model.\n- **LLM-composed prompt**: Rejected: user asked for deterministic generation; pure template is testable and free.\n- **Store tasks in the HTML file**: Deferred: requires write access; localStorage first, export/import later.\n\n## Risks\n\n- `/__agent_edit__` lets an agent modify files: restrict to localhost, the served file only, and require an explicit user click.\n",
+  "page-edit-prompt-editor/tasks.md": "# Tasks: Page Edit Queue & Deterministic Prompt Editor\n\n## 1. Core model & prompt\n\n- [x] 1.1 Implement task store (CRUD, priority, order, done, localStorage per `pageKey`) in `report-runtime.js`\n- [x] 1.2 Implement pure `buildEditPrompt(tasks, page)` + unit tests for ordering, done-exclusion, byte-stable output\n- [x] 1.3 Emit `<meta name=\"html-report-source\">` from `build-report.mjs`\n\n## 2. Dock UI\n\n- [x] 2.1 Add `#edit-dock` markup/styles in `template-shell.html`; Edit section registered into the gear panel\n- [x] 2.2 Compose tab, Queue tab (priority chips, reorder, done, delete), prompt preview + copy\n- [x] 2.3 ResizeObserver body padding; keyboard shortcuts; `print:hidden`\n\n## 3. Scroll-following\n\n- [x] 3.1 IntersectionObserver current-section chip and default anchor\n- [x] 3.2 Highlight anchored tasks in view; click-to-scroll with flash outline\n\n## 4. Agent hand-off\n\n- [x] 4.1 Add `POST /__agent_edit__` to `serve-report.mjs` (localhost only, scoped to served file, status stream)\n- [x] 4.2 Wire three send states incl. turnkey reconnect with edit prompt\n- [x] 4.3 Document endpoint in `references/two-way-agent-bridge.md`\n\n## 5. Verification\n\n- [x] 5.1 BDD/Playwright tests: add, prioritize, persist, generate, offline state\n- [x] 5.2 Rebuild examples, run full suite, sync `index.html` + `implementation-progress.html`\n\n## 6. Edit Dock & Queue UX Enhancements\n\n- [x] 6.1 Task & toolbar visibility in darkmode (#edit-dock contrast, top border accent, upward shadow, task card styling)\n- [x] 6.2 Priority and anchor badge text visibility in narrow/small mode\n- [x] 6.3 Auto-priority toggle in Queue tab adding agent prompt instruction\n- [x] 6.4 Reset generated prompt when new tasks enter or queue changes\n- [x] 6.5 Disable copy prompt button when prompt is stale/not generated, with tooltip\n\n"html-report-source\">` from `build-report.mjs`\n\n## 2. Dock UI\n\n- [x] 2.1 Add `#edit-dock` markup/styles in `template-shell.html`; Edit section registered into the gear panel\n- [x] 2.2 Compose tab, Queue tab (priority chips, reorder, done, delete), prompt preview + copy\n- [x] 2.3 ResizeObserver body padding; keyboard shortcuts; `print:hidden`\n\n## 3. Scroll-following\n\n- [x] 3.1 IntersectionObserver current-section chip and default anchor\n- [x] 3.2 Highlight anchored tasks in view; click-to-scroll with flash outline\n\n## 4. Agent hand-off\n\n- [x] 4.1 Add `POST /__agent_edit__` to `serve-report.mjs` (localhost only, scoped to served file, status stream)\n- [x] 4.2 Wire three send states incl. turnkey reconnect with edit prompt\n- [x] 4.3 Document endpoint in `references/two-way-agent-bridge.md`\n\n## 5. Verification\n\n- [x] 5.1 BDD/Playwright tests: add, prioritize, persist, generate, offline state\n- [x] 5.2 Rebuild examples, run full suite, sync `index.html` + `implementation-progress.html`\n",
+  "page-edit-prompt-editor/specs/page-edit-queue/spec.md": "## ADDED Requirements\n\n### Requirement: Bottom-docked editor\n\nThe system SHALL satisfy: The editor sits at the bottom edge, stays compact (collapsed 40px, expanded max 38vh), and never covers page content.\n\n#### Scenario: Bottom-docked editor verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the editor sits at the bottom edge, stays compact (collapsed 40px, expanded max 38vh), and never covers page content.\n\n### Requirement: Task CRUD with priority\n\nThe system SHALL satisfy: Users can create tasks with title and content, edit/delete them, mark done, and set/reorder priority.\n\n#### Scenario: Task CRUD with priority verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** users can create tasks with title and content, edit/delete them, mark done, and set/reorder priority.\n\n### Requirement: Queue tab overview\n\nThe system SHALL satisfy: A tab lists all tasks ordered by priority with counts, and supports reprioritizing.\n\n#### Scenario: Queue tab overview verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** a tab lists all tasks ordered by priority with counts, and supports reprioritizing.\n\n### Requirement: Scroll-following context\n\nThe system SHALL satisfy: The dock shows the section currently in view, anchors new tasks to it, and jumps to a task's anchor on click.\n\n#### Scenario: Scroll-following context verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the dock shows the section currently in view, anchors new tasks to it, and jumps to a task's anchor on click.\n\n### Requirement: Deterministic prompt\n\nThe system SHALL satisfy: Generating a prompt from identical tasks always yields identical text; done tasks are excluded; order follows priority.\n\n#### Scenario: Deterministic prompt verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** generating a prompt from identical tasks always yields identical text; done tasks are excluded; order follows priority.\n\n### Requirement: Agent hand-off states\n\nThe system SHALL satisfy: Connected+AI sends to the agent; AI-capable but disconnected offers the turnkey reconnect; otherwise copy-only.\n\n#### Scenario: Agent hand-off states verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** connected+AI sends to the agent; AI-capable but disconnected offers the turnkey reconnect; otherwise copy-only.\n\n### Requirement: Persistence\n\nThe system SHALL satisfy: Tasks survive reloads per page and never leak between pages.\n\n#### Scenario: Persistence verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** tasks survive reloads per page and never leak between pages.\n",
+  "settings-activate-ai/proposal.md": "## Why\n\nToday a report only shows the agent bridge if the DOM happens to contain agent triggers, and nothing tells a visitor how to enable it. Making AI an explicit, discoverable setting lets any board opt in, and gives each board its own copy-paste turnkey that starts the bridge for that exact file.\n\n## What Changes\n\n- Settings → AI section with an **Activate AI** toggle per board.\n- When activated and the bridge is offline, show a turnkey card with a copy-ready prompt (and status/retry) for that board.\n- Make `isAiCapable()` the single source of truth consumed by the editor (Story 1) and the status badge.\n\n**Out of scope**\n- No bundled API keys or cloud model; the bridge still uses the user's local `agy`.\n- No change to bridge protocols.\n\n## Capabilities\n\n### New Capabilities\n- `ai-activation`: A setting to mark a report as AI-capable, with a one-click turnkey to bring up the agent bridge for each board.\n\n### Modified Capabilities\n- None (no existing main spec covers the report shell navbar)\n\n## Impact\n\n- `skills/html-report/assets/template-shell.html`, `skills/html-report/assets/report-runtime.js`, `skills/html-report/scripts/build-report.mjs`\n- Order: 3 of 4 (depends on gear menu; completes editor hand-off). Part of the epic: gear-settings-menu → page-edit-prompt-editor → settings-activate-ai.\n- Companion journey page: [index.html](./index.html)\n\n## Assumptions (please confirm)\n\n- Tasks persist in browser localStorage per page in v1.\n- \"Board\" means one report page; a directory-wide board list is optional v1.1.\n- Agent edits run through the existing local `agy` bridge, localhost only.\n",
+  "settings-activate-ai/design.md": "# Design: Activate AI from Settings + Turnkey per Board\n\n## Context\n\nToday a report only shows the agent bridge if the DOM happens to contain agent triggers, and nothing tells a visitor how to enable it. Making AI an explicit, discoverable setting lets any board opt in, and gives each board its own copy-paste turnkey that starts the bridge for that exact file.\n\n## Design\n\n### AI-capable resolution\n\n`HTMLReportAgent.isAiCapable()` returns true if any of: `<meta name=\"html-report-ai\" content=\"on\">` (build flag `--ai`), localStorage `html_report_ai:<pageKey>` = `on`, or legacy DOM triggers (backward compatible). Toggling in settings updates localStorage, shows the status badge, and starts the connection check + heartbeat immediately.\n\n### Settings AI section\n\nToggle *Activate AI*. When on: live status line (connected / connecting / disconnected), **Turnkey** card with the prompt preview, *Copy turnkey prompt*, *Retry connection*, and Node.js note (reuses `getReconnectPrompt`). When off: short explainer.\n\n### Per-board turnkey\n\nA *board* is one report page. The prompt is generated per page: includes the board's source path (from `html-report-source` meta) and serve command, so pasting it into any agent starts `serve-report.mjs` on that file. Optional v1.1: when served, `GET /__boards__` lists sibling reports with their AI flag and a turnkey copy button each.\n\n### Build-time marking\n\n`build-report.mjs --ai` writes the meta tag so shared files arrive pre-marked and show the turnkey when opened via `file://`.\n\n### Editor integration\n\nStory 1's send button reads `isAiCapable()` and connection state to choose Send / Turnkey / Copy.\n\n## Flow\n\n```mermaid\nstateDiagram-v2\n  [*] --> NotCapable\n  NotCapable --> Capable: Activate AI (settings) or build --ai\n  Capable --> Connecting: checkConnection()\n  Connecting --> Connected: bridge reachable\n  Connecting --> Disconnected: unreachable or file://\n  Disconnected --> TurnkeyShown: open Settings / editor Send\n  TurnkeyShown --> Connecting: user pastes prompt, heartbeat retry\n  Connected --> NotCapable: Deactivate AI\n  Capable --> NotCapable: Deactivate AI\n```\n\n## Alternatives Considered\n\n- **Global AI switch for all reports**: Rejected: user asked for a turnkey per board; per-page state avoids surprising other reports.\n- **Auto-detect only**: Rejected: invisible to visitors; explicit setting is discoverable.\n\n## Risks\n\n- Regressions in existing navbar/bridge behavior: mitigated by keeping IDs and legacy detection.\n",
+  "settings-activate-ai/tasks.md": "# Tasks: Activate AI from Settings + Turnkey per Board\n\n## 1. Capability & state\n\n- [x] 1.1 Implement `HTMLReportAgent.isAiCapable()` + `setAiActive()` with localStorage per `pageKey`; start/stop check and heartbeat on toggle\n- [x] 1.2 Add `--ai` flag emitting `html-report-ai` meta in `build-report.mjs`\n\n## 2. Settings UI\n\n- [x] 2.1 Register AI section in gear panel: toggle, status line, turnkey card, copy, retry\n- [x] 2.2 Extend `getReconnectPrompt` with per-board source path\n\n## 3. Integration\n\n- [x] 3.1 Editor send-state resolution uses `isAiCapable()`\n- [x] 3.2 Optional: `GET /__boards__` + per-board turnkey list in `serve-report.mjs`\n\n## 4. Verification\n\n- [x] 4.1 Tests: capability resolution matrix, toggle persistence, turnkey prompt contents, `file://` disconnected state\n- [x] 4.2 Docs update, full suite, sync `index.html` + `implementation-progress.html`\n",
+  "settings-activate-ai/specs/ai-activation/spec.md": "## ADDED Requirements\n\n### Requirement: Activate AI setting\n\nThe system SHALL satisfy: The gear panel offers an Activate AI toggle that persists per board and takes effect without reload.\n\n#### Scenario: Activate AI setting verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the gear panel offers an Activate AI toggle that persists per board and takes effect without reload.\n\n### Requirement: Single capability source\n\nThe system SHALL satisfy: `isAiCapable()` unifies meta flag, setting and legacy triggers, and drives badge and editor behavior.\n\n#### Scenario: Single capability source verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** `isAiCapable()` unifies meta flag, setting and legacy triggers, and drives badge and editor behavior.\n\n### Requirement: Turnkey per board\n\nThe system SHALL satisfy: When AI is active but disconnected, a copy-ready prompt specific to this board's source file is shown with retry and auto-recovery.\n\n#### Scenario: Turnkey per board verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** when AI is active but disconnected, a copy-ready prompt specific to this board's source file is shown with retry and auto-recovery.\n\n### Requirement: Build-time flag\n\nThe system SHALL satisfy: `--ai` pre-marks a report so shared copies show the turnkey on open.\n\n#### Scenario: Build-time flag verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** `--ai` pre-marks a report so shared copies show the turnkey on open.\n",
+  "publish-clean-report/proposal.md": "## Why\n\nReports are iteratively authored using the bottom-dock editor and agent bridge. Once editing is finalized, stakeholders and public audiences need a clean, uncluttered deliverable without developer tools, gear menus, or prompt editors. Offering a deterministic publish flow guarantees that exported reports are completely self-contained, pristine, and byte-reproducible across identical builds.\n\n## What Changes\n\n- Provide a clear 'Set as Published' toggle and 'Download Clean HTML' action in the Settings panel.\n- Produce a deterministic standalone HTML download that cleanly omits the gear icon (`#settings-dropdown`), bottom edit dock (`#edit-dock`), and authoring chrome.\n- Ensure zero authoring script footprint or residual task draft queues in the published bundle.\n- Support a deterministic CLI/build flag (`--published` in `build-report.mjs`) to generate clean, gear-free reports in headless pipelines.\n- Guarantee deterministic serialization: no timestamps, no non-deterministic session tokens, completely reproducible byte-for-byte.\n\n**Out of scope**\n- Does not delete draft tasks from the author's local browser storage (keeps drafts safe for future edits on the development page).\n- Does not alter reader features (charts, Mermaid diagrams, TOC, print stylesheets, and tables remain 100% interactive).\n\n## Capabilities\n\n### New Capabilities\n- `publish-clean-export`: Mark a report as published and download a deterministic, production-grade standalone HTML bundle stripped of the gear icon, edit dock, and draft authoring chrome.\n\n### Modified Capabilities\n- None (no existing main spec covers the report shell navbar)\n\n## Impact\n\n- `skills/html-report/assets/template-shell.html`, `skills/html-report/assets/report-runtime.js`, `skills/html-report/scripts/build-report.mjs`\n- Order: 4 of 4 (completes publishing lifecycle). Part of the epic: gear-settings-menu → page-edit-prompt-editor → settings-activate-ai.\n- Companion journey page: [index.html](./index.html)\n\n## Assumptions (please confirm)\n\n- Tasks persist in browser localStorage per page in v1.\n- \"Board\" means one report page; a directory-wide board list is optional v1.1.\n- Agent edits run through the existing local `agy` bridge, localhost only.\n",
+  "publish-clean-report/design.md": "# Design: Publish Mode & Deterministic Clean Download\n\n## Context\n\nReports are iteratively authored using the bottom-dock editor and agent bridge. Once editing is finalized, stakeholders and public audiences need a clean, uncluttered deliverable without developer tools, gear menus, or prompt editors. Offering a deterministic publish flow guarantees that exported reports are completely self-contained, pristine, and byte-reproducible across identical builds.\n\n## Design\n\n### Publishing Toggle & Action\n\nIn Settings panel -> Export & Publishing section: add 'Publish State' toggle and 'Download Published (Clean HTML)' button. When marked as published, the active report sets `<meta name=\"html-report-published\" content=\"true\">` and offers the clean download.\n\n### Deterministic DOM Tree Stripping\n\nIn `buildInlinedHtmlSnapshot({ mode: 'published' })`, clone the DOM tree, prune `#settings-dropdown`, remove `#edit-dock`, strip authoring modals/toolbars, strip `data-agent-authoring` attributes, and omit draft task queues. Output is serialized with sorted attributes and standardized whitespace.\n\n### Deterministic Output Guarantee\n\nZero non-deterministic IDs (e.g. `_sessionId` or random math tokens), zero generation timestamps, and normalized whitespace so hashing identical input HTML yields identical output checksums.\n\n### CLI Pipeline Parity\n\n`build-report.mjs --published` applies the same DOM pruning template transform at build time, omitting the gear icon and editor from the start.\n\n### Standalone Viewer Preservation\n\nThe published HTML retains responsive layout, Table of Contents dropdown (TOC stays in navbar or standalone header), offline scripts, Grid.js, Chart.js, Mermaid, and print CSS.\n\n## Flow\n\n```mermaid\nflowchart TD\n  Author[\"Author in Development\"] --> Editor[\"Bottom Dock Editor & Gear Menu\"]\n  Editor --> Review[\"Review & Polish Report\"]\n  Review --> PublishAction[\"Settings: 'Mark as Published' or 'Download Published'\"]\n  PublishAction --> Pruner[\"Deterministic Sanitizer Engine\"]\n  Pruner --> StripGear[\"Strip Gear Icon (#settings-dropdown)\"]\n  Pruner --> StripDock[\"Strip Edit Prompt Dock (#edit-dock)\"]\n  Pruner --> StripDrafts[\"Omit Local Draft Queues & Edit Scripts\"]\n  StripGear & StripDock & StripDrafts --> CleanHTML[\"Standalone Published HTML Document\"]\n  CleanHTML --> Audience[\"Stakeholder / Public Audience (Pristine View)\"]\n```\n\n## Alternatives Considered\n\n- **CSS-only hide (display: none)**: Rejected: leaving the editor markup and task queue in the DOM leaks draft edit notes into client source.\n- **Server-only headless build**: Rejected: users in client-side or offline viewing must be able to download clean published copies directly from their browser.\n\n## Risks\n\n- Regressions in existing navbar/bridge behavior: mitigated by keeping IDs and legacy detection.\n",
+  "publish-clean-report/tasks.md": "# Tasks: Publish Mode & Deterministic Clean Download\n\n## 1. Sanitizer & Deterministic Serializer\n\n- [x] 1.1 Implement `HTMLReportPublisher.stripAuthoringElements(docClone)` in `report-runtime.js` targeting `#settings-dropdown`, `#edit-dock`, and draft queue scripts\n- [x] 1.2 Ensure deterministic output (normalize attributes, strip non-deterministic session IDs/timestamps, sorted element serialization)\n- [x] 1.3 Add `--published` flag to `skills/html-report/scripts/build-report.mjs` for pipeline parity\n\n## 2. Settings UI Integration\n\n- [x] 2.1 Add 'Publishing & Release' subsection in Settings panel with 'Mark as Published' toggle and 'Download Clean (Published) HTML' action\n- [x] 2.2 Wire active state indicators (subtle Published badge when publication mode is toggled)\n\n## 3. Verification & Journey\n\n- [x] 3.1 Unit & snapshot tests verifying downloaded HTML has zero `#settings-gear-btn`, zero `#edit-dock`, and identical SHA-256 hashes on repeat exports\n- [x] 3.2 Verify TOC, charts, and print styles remain fully functional in published exports\n- [x] 3.3 Sync `index.html` and update `implementation-progress.html` on `localhost:3000`\n",
+  "publish-clean-report/specs/publish-clean-export/spec.md": "## ADDED Requirements\n\n### Requirement: Set as Published Toggle\n\nThe system SHALL satisfy: The system SHALL provide a 'Publish' control in the Settings panel allowing authors to mark the report as published.\n\n#### Scenario: Set as Published Toggle verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the system SHALL provide a 'Publish' control in the Settings panel allowing authors to mark the report as published.\n\n### Requirement: Deterministic Clean Download\n\nThe system SHALL satisfy: The system SHALL offer a download action that yields a standalone HTML file completely stripped of the gear icon, the edit prompt editor dock, and all authoring controls.\n\n#### Scenario: Deterministic Clean Download verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the system SHALL offer a download action that yields a standalone HTML file completely stripped of the gear icon, the edit prompt editor dock, and all authoring controls.\n\n### Requirement: Deterministic Serialization\n\nThe system SHALL satisfy: The clean download generation MUST be deterministic, producing identical byte output for identical document content without timestamps or random tokens.\n\n#### Scenario: Deterministic Serialization verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the clean download generation MUST be deterministic, producing identical byte output for identical document content without timestamps or random tokens.\n\n### Requirement: CLI Published Flag\n\nThe system SHALL satisfy: The build pipeline `build-report.mjs` SHALL support a `--published` flag to emit the clean gear-free report directly.\n\n#### Scenario: CLI Published Flag verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the build pipeline `build-report.mjs` SHALL support a `--published` flag to emit the clean gear-free report directly.\n\n### Requirement: Preservation of Reader Features\n\nThe system SHALL satisfy: The published report MUST preserve core viewer capabilities: responsive reading, Table of Contents, interactive charts, Mermaid diagrams, and print styles.\n\n#### Scenario: Preservation of Reader Features verified\n\n- **WHEN** a user opens a generated report and exercises this behavior\n- **THEN** the published report MUST preserve core viewer capabilities: responsive reading, Table of Contents, interactive charts, Mermaid diagrams, and print styles.\n"
+}
+</script>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    await renderMarkdownDoc(docName);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    activeDocKey = docName;
+    const titleEl = document.getElementById("markdown-modal-title");
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (titleEl) titleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-active", "btn-primary");
+      } else {
+        btn.classList.remove("btn-active", "btn-primary");
+      }
+    });
+
+    const artifacts = getOpenSpecArtifacts();
+    let md = artifacts[docName];
+    if (!md) {
+      for (const k of Object.keys(artifacts)) {
+        if (k.endsWith(docName) || docName.endsWith(k)) {
+          md = artifacts[k];
+          break;
+        }
+      }
+    }
+
+    if (!md) {
+      try {
+        const res = await fetch(docName);
+        if (res.ok) md = await res.text();
+      } catch (_) {}
+    }
+
+    if (bodyEl) {
+      if (md) {
+        const conv = getShowdownConverter();
+        if (conv) {
+          bodyEl.innerHTML = conv.makeHtml(md);
+        } else {
+          bodyEl.innerHTML = "<pre class='whitespace-pre-wrap font-mono text-xs'>" + md.replace(/</g, "&lt;") + "</pre>";
+        }
+      } else {
+        bodyEl.innerHTML = "<div class='alert alert-warning text-xs'>Artifact " + docName + " not loaded.</div>";
+      }
+    }
+  }
+
+  window.openMarkdownViewer = openMarkdownViewer;
+  window.closeMarkdownViewer = closeMarkdownViewer;
+  window.switchViewerTab = switchViewerTab;
+</script>

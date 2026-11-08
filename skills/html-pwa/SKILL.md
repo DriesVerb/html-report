@@ -56,6 +56,14 @@ node skills/html-report/scripts/generate-pwa.mjs ./existing-report.html \
   --emoji "📋"
 ```
 
+### Option C: 1-Click Packaging & Install (`install-pwa.mjs` / `/html-install`)
+Package the Creation Studio or any report as an offline-first app on port 3030:
+```bash
+node skills/html-report/scripts/install-pwa.mjs
+# Or fast bash launcher:
+./skills/html-report/scripts/install-pwa.sh
+```
+
 ### Verification & Testing
 Test PWA manifest and service worker compliance:
 ```bash
