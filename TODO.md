@@ -82,3 +82,22 @@ The `/html-create` interactive creation studio must launch quickly without waiti
     1. Agent browser capabilities (e.g. `/browser` or Chrome DevTools MCP `navigate_page` to `file:///path/to/create.html`).
     2. System desktop opener commands (`xdg-open`, `open`, `start`).
     3. Interactive terminal decision interview via structured questions when operating headlessly.
+
+---
+
+## 5. Studio PWA Packaging Fix & Rich Quill Goals Modal
+
+**Context & Scope:**
+Fix the creation studio PWA metadata naming clash where downloading/installing the setup wizard inherited the legacy `"PokéLive - Live Agent Pokédex"` name. Refactor the studio goals input toggle buttons into compact Simple / Rich buttons (defaulting to simple), opening a dedicated full-sized modal dialog with Quill WYSIWYG editor and synchronizing saved rich content back into the studio.
+
+- [x] **5.1 PWA Studio Manifest & Asset Generation Fix**
+  - [x] Replace legacy PokéLive manifest at repository root with generated `HTML Report Creation Studio` metadata (`name: "HTML Report Creation Studio"`, `short_name: "HTML Studio"`, `start_url: "./create.html"`, `icon.svg` with `✨` emoji).
+  - [x] Preserve legacy PokéLive experiment assets in `experiments/` directory.
+  - [x] Add dedicated studio manifest route in `serve-report.mjs` for `/manifest.webmanifest` when requested in the studio context.
+  - [x] Add automated unit assertions in `tests/html-install-pwa.test.mjs` verifying root manifest, service worker, and icon assets.
+- [x] **5.2 Compact Simple / Rich Toggle & Rich Goals Modal**
+  - [x] Refactor oversized toggle buttons into compact `Simple` and `Rich` buttons with `Simple` as default in `create.html` and `skills/html-report/assets/create.html`.
+  - [x] Implement `<dialog id="modal-rich-goals" class="modal">` providing a large, spacious Quill WYSIWYG editor canvas with toolbar, character counter, and clear controls.
+  - [x] Implement `saveRichGoalsAndClose()` synchronizing formatted markdown/text back into the studio textarea (`#input-board-goals`), activating indicators, persisting to localStorage, and immediately updating prompt output and live preview.
+  - [x] Add automated BDD tests in `tests/quill-editor.bdd.test.mjs` verifying compact buttons, modal elements, and bidirectional sync.
+

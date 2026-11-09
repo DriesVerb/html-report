@@ -1,0 +1,50 @@
+{
+  "name": "PokéLive - Live Agent Pokédex",
+  "short_name": "PokéLive",
+  "description": "Publication-grade PWA for PokéLive - Live Agent Pokédex",
+  "start_url": "./pokemon-live-report.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "categories": [
+    "business",
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Table of Contents",
+      "short_name": "Contents",
+      "description": "Jump straight to the report sections and navigation table of contents",
+      "url": "./pokemon-live-report.html#navbar-report-title",
+      "icons": [
+        {
+          "src": "icon.svg",
+          "sizes": "any"
+        }
+      ]
+    }
+  ]
+}

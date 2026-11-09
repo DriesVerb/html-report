@@ -1,16 +1,16 @@
 {
-  "name": "PokéLive - Live Agent Pokédex",
-  "short_name": "PokéLive",
-  "description": "Publication-grade PWA for PokéLive - Live Agent Pokédex",
-  "start_url": "./pokemon-live-report.html",
+  "name": "HTML Report Creation Studio",
+  "short_name": "HTML Studio",
+  "description": "Interactive onboarding decision wizard, OKLCH theme studio, and deterministic prompt generator",
+  "start_url": "./create.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "theme_color": "#2563eb",
   "background_color": "#ffffff",
   "categories": [
-    "business",
     "productivity",
+    "developer",
     "utilities"
   ],
   "icons": [
@@ -38,7 +38,7 @@
       "name": "Table of Contents",
       "short_name": "Contents",
       "description": "Jump straight to the report sections and navigation table of contents",
-      "url": "./pokemon-live-report.html#navbar-report-title",
+      "url": "./create.html#navbar-report-title",
       "icons": [
         {
           "src": "icon.svg",

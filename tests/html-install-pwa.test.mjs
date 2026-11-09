@@ -46,6 +46,29 @@ describe("Feature Spec: /html-install — PWA Packaging & Studio Offline Install
       assert.ok(assets.iconSvg.includes("viewBox=\"0 0 512 512\""), "iconSvg should be 512x512");
       assert.ok(assets.iconSvg.includes("✨"), "iconSvg should contain sparkle glyph");
     });
+
+    it("ensures repository root manifest.webmanifest and companion assets are studio-branded (not PokéLive)", () => {
+      const rootManifestPath = path.resolve(REPO_ROOT, "manifest.webmanifest");
+      const rootSwPath = path.resolve(REPO_ROOT, "sw.js");
+      const rootIconPath = path.resolve(REPO_ROOT, "icon.svg");
+
+      assert.ok(fs.existsSync(rootManifestPath), "Root manifest.webmanifest must exist");
+      assert.ok(fs.existsSync(rootSwPath), "Root sw.js must exist");
+      assert.ok(fs.existsSync(rootIconPath), "Root icon.svg must exist");
+
+      const manifestContent = JSON.parse(fs.readFileSync(rootManifestPath, "utf-8"));
+      assert.equal(manifestContent.name, "HTML Report Creation Studio");
+      assert.equal(manifestContent.short_name, "HTML Studio");
+      assert.equal(manifestContent.start_url, "./create.html");
+      assert.ok(!manifestContent.name.includes("PokéLive"), "Root manifest must never be PokéLive");
+
+      const swContent = fs.readFileSync(rootSwPath, "utf-8");
+      assert.ok(swContent.includes("./create.html"), "Root sw.js must pre-cache create.html");
+      assert.ok(!swContent.includes("./pokemon-live-report.html"), "Root sw.js must not pre-cache pokemon report");
+
+      const iconContent = fs.readFileSync(rootIconPath, "utf-8");
+      assert.ok(iconContent.includes("✨"), "Root icon.svg must contain sparkle emoji");
+    });
   });
 
   describe("2. Offline Service Worker Pre-Caching Strategy", () => {

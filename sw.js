@@ -13,9 +13,15 @@
 
 const CACHE_NAME = "html-report-pwa-1-0-0";
 const PRECACHE_ASSETS = [
-  "./pokemon-live-report.html",
+  "./create.html",
   "./manifest.webmanifest",
-  "./icon.svg"
+  "./icon.svg",
+  "https://cdn.tailwindcss.com",
+  "https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css",
+  "https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js",
+  "https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js",
+  "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css",
+  "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"
 ];
 
 // CDN domain patterns eligible for Cache-First caching

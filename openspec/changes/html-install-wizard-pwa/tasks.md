@@ -4,6 +4,7 @@
 
 - [x] 1.1 Configure Studio PWA metadata and icon generation (monogram / sparkle glyph, `manifest.webmanifest`, `icon.svg`) via [skills/html-report/scripts/pwa-builder.mjs](file:///home/eta/projects/html-report/skills/html-report/scripts/pwa-builder.mjs)
 - [x] 1.2 Implement offline Service Worker pre-caching for Tailwind CDN, DaisyUI 4 CSS, Lucide Icons, and Showdown in [skills/html-report/scripts/pwa-builder.mjs](file:///home/eta/projects/html-report/skills/html-report/scripts/pwa-builder.mjs)
+- [x] 1.3 Fix root `manifest.webmanifest`, `sw.js`, and `icon.svg` studio assets (resolving legacy PokéLive artifact clash) and add studio manifest route in `serve-report.mjs`
 
 ## 2. In-Studio Installation UI & Runtime
 

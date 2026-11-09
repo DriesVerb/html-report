@@ -90,6 +90,21 @@ describe("Feature Spec: Quill WYSIWYG Editor Support & Wizard Dual-Mode Input", 
       assert.ok(content.includes("switchBoardGoalMode"), "Missing switchBoardGoalMode handler");
     });
 
+    it("Scenario: Compact Simple/Rich buttons with Simple default and dedicated Rich Editor modal", () => {
+      for (const [name, targetPath] of [["root create.html", createHtmlPath], ["asset create.html", assetCreateHtmlPath]]) {
+        const content = fs.readFileSync(targetPath, "utf-8");
+        assert.ok(content.includes('>Rich<') || content.includes('>Rich</span>'), `${name} should have button labeled Rich`);
+        assert.ok(content.includes('>Simple</button>'), `${name} should have button labeled Simple`);
+        assert.ok(content.includes('let boardGoalMode = "simple"'), `${name} default mode must be simple`);
+        assert.ok(content.includes('id="modal-rich-goals"'), `${name} missing #modal-rich-goals`);
+        assert.ok(content.includes('id="btn-save-rich-goals"'), `${name} missing #btn-save-rich-goals`);
+        assert.ok(content.includes('id="rich-goals-indicator"'), `${name} missing #rich-goals-indicator`);
+        assert.ok(content.includes("openRichEditorModal"), `${name} missing openRichEditorModal`);
+        assert.ok(content.includes("closeRichEditorModal"), `${name} missing closeRichEditorModal`);
+        assert.ok(content.includes("saveRichGoalsAndClose"), `${name} missing saveRichGoalsAndClose`);
+      }
+    });
+
     it("Scenario: Goals persistence and mode restore from localStorage", () => {
       const content = fs.readFileSync(createHtmlPath, "utf-8");
       assert.ok(content.includes("html-report-create-goals-mode"), "Should persist active goal mode in localStorage");

@@ -764,7 +764,7 @@
 {
   "proposal.md": "# Proposal: Quill WYSIWYG Editor Support & Wizard Dual-Mode Input\\n\\n## Why\\nUsers and agents often need in-report rich-text authoring, formatted notes, and executive drafting directly inside generated HTML reports without bundlers. Furthermore, when configuring deliverables in the interactive HTML Creation Studio (create.html), complex dashboard briefs benefit greatly from rich-text styling rather than a cramped plain-text textarea.\\n\\n## What Changes\\n- Quill CDN Addon Registration: Register Quill.js v2.0 in the core build pipeline.\\n- Section A Addon Option in HTML Wizard: Add WYSIWYG Rich Text Editor (Quill).\\n- Dual-Mode (Simple vs Complex) Board Goals Input: Toggle between Simple (textarea) and Complex (Quill Snow).\\n- Bidirectional Sync & Persistence: Sync content between modes and persist via localStorage.\\n",
   "design.md": "# Design: Quill WYSIWYG Editor Addon & Wizard Dual-Mode Input\\n\\n## Context\\nRegister Quill v2.0 as a canonical on-demand addon and provide a responsive dual-mode switcher in create.html.\\n\\n## Architecture\\n- Snow Theme loaded via jsDelivr CDN.\\n- DaisyUI theme CSS variables harmonizing with all 32 themes.\\n- Markdown-optimized prompt synthesis translating rich elements to bulleted text for LLMs.\\n",
-  "tasks.md": "# Tasks: Quill WYSIWYG Editor Support & Wizard Dual-Mode Input\\n\\n## 1. Addon Pipeline Registration\\n- [x] 1.1 Register Quill v2.0 in build-report.mjs\\n- [x] 1.2 Register Quill in domain-model.mjs\\n- [x] 1.3 Verify pipeline build and CLI detection\\n\\n## 2. Wizard Visual & Data Component Addon\\n- [x] 2.1 Add Quill checkbox under Section A in create.html\\n- [x] 2.2 Wire to simulated mockup\\n- [x] 2.3 Update downloadStarterHtml()\\n\\n## 3. Dual-Mode Simple vs Complex Board Goals\\n- [x] 3.1 Insert Simple vs Complex toggle tabs\\n- [x] 3.2 Implement Quill Snow container initialization\\n- [x] 3.3 Bidirectional synchronization\\n- [x] 3.4 LocalStorage persistence\\n- [x] 3.5 Markdown prompt serialization\\n\\n## 4. Verification & Documentation\\n- [x] 4.1 Write automated BDD test\\n- [x] 4.2 Run test suite\\n- [x] 4.3 Update documentation\\n"
+  "tasks.md": "# Tasks: Quill WYSIWYG Editor Support & Wizard Dual-Mode Input\n\n## 1. Addon Pipeline Registration\n- [x] 1.1 Register Quill v2.0 in build-report.mjs\n- [x] 1.2 Register Quill in domain-model.mjs\n- [x] 1.3 Verify pipeline build and CLI detection\n\n## 2. Wizard Visual & Data Component Addon\n- [x] 2.1 Add Quill checkbox under Section A in create.html\n- [x] 2.2 Wire to simulated mockup\n- [x] 2.3 Update downloadStarterHtml()\n\n## 3. Dual-Mode Simple vs Complex Board Goals\n- [x] 3.1 Insert Simple vs Complex toggle tabs\n- [x] 3.2 Implement Quill Snow container initialization\n- [x] 3.3 Bidirectional synchronization\n- [x] 3.4 LocalStorage persistence\n- [x] 3.5 Markdown prompt serialization\n- [x] 3.6 Refactor mode toggle buttons to compact Simple/Rich buttons with Simple default\n- [x] 3.7 Implement dedicated Rich Document & Goals Editor modal (#modal-rich-goals)\n- [x] 3.8 Implement saveRichGoalsAndClose() saving formatted content back into Creation Studio\n\n## 4. Verification & Documentation\n- [x] 4.1 Write automated BDD test\n- [x] 4.2 Run test suite\n- [x] 4.3 Update documentation\n- [x] 4.4 Add automated BDD assertions verifying compact Simple/Rich buttons and modal\n"
 }
 </script>
 
@@ -1097,6 +1097,18 @@ flowchart TD
             <span class="badge badge-ghost badge-xs font-mono">3.5</span>
             Update <code>updatePromptAndPreview()</code> to serialize rich Quill goals into clean Markdown lines inside <code>#prompt-output-box</code>
           </li>
+          <li class="flex items-center gap-2">
+            <span class="badge badge-ghost badge-xs font-mono">3.6</span>
+            Refactor mode toggle buttons to compact Simple/Rich buttons with Simple default (<code>#btn-mode-simple</code>, <code>#btn-mode-complex</code>)
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="badge badge-ghost badge-xs font-mono">3.7</span>
+            Implement dedicated Rich Document &amp; Goals Editor modal (<code>#modal-rich-goals</code>) with full spacious Quill canvas and live character counter
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="badge badge-ghost badge-xs font-mono">3.8</span>
+            Implement <code>saveRichGoalsAndClose()</code> saving formatted content back into Creation Studio textarea, indicators, and live prompt/preview
+          </li>
         </ul>
       </div>
     </div>
@@ -1118,6 +1130,10 @@ flowchart TD
           <li class="flex items-center gap-2">
             <span class="badge badge-ghost badge-xs font-mono">4.3</span>
             Update documentation in <code>docs/cdn-stack.md</code> and <code>skills/html-report/references/architecture-and-styling.md</code>
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="badge badge-ghost badge-xs font-mono">4.4</span>
+            Add automated BDD assertions verifying compact Simple/Rich buttons, Rich Editor modal, and bidirectional synchronization
           </li>
         </ul>
       </div>

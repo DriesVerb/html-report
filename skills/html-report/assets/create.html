@@ -271,14 +271,18 @@
                   <label for="input-board-goals" class="text-3xs font-semibold text-base-content/80">
                     Tell what the board needs to show:
                   </label>
-                  <div class="join border border-base-300 rounded-md p-0.5 bg-base-200/50">
-                    <button type="button" id="btn-mode-simple" class="btn btn-2xs join-item btn-primary" onclick="switchBoardGoalMode('simple')">Simple</button>
-                    <button type="button" id="btn-mode-complex" class="btn btn-2xs join-item btn-ghost" onclick="switchBoardGoalMode('complex')">Complex (Quill)</button>
+                  <div class="join border border-base-300 rounded-md p-0.5 bg-base-200/50 shadow-2xs">
+                    <button type="button" id="btn-mode-simple" class="btn btn-2xs h-6 min-h-0 px-2.5 text-[11px] font-medium leading-none join-item btn-primary" onclick="switchBoardGoalMode('simple')">Simple</button>
+                    <button type="button" id="btn-mode-complex" class="btn btn-2xs h-6 min-h-0 px-2.5 text-[11px] font-medium leading-none join-item btn-ghost gap-1" onclick="openRichEditorModal()" title="Open Rich Quill WYSIWYG Editor">
+                      <span>Rich</span>
+                      <i data-lucide="expand" class="w-2.5 h-2.5 opacity-60"></i>
+                    </button>
                   </div>
                 </div>
                 <textarea id="input-board-goals" rows="2" class="textarea textarea-bordered textarea-xs w-full text-xs placeholder:text-base-content/40 focus:outline-primary leading-relaxed" placeholder="e.g., Weekly executive sales metrics with regional breakdowns, revenue churn alerts, and quota milestones..." oninput="updatePromptAndPreview()"></textarea>
-                <div id="quill-board-goals-container" class="hidden">
-                  <div id="quill-board-goals-editor" class="bg-base-100 text-xs min-h-[100px] border border-base-300 rounded-b-lg"></div>
+                <div id="rich-goals-indicator" class="hidden mt-1 flex items-center justify-between text-3xs text-primary font-medium px-0.5">
+                  <span class="inline-flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3 text-success"></i> Rich formatting active</span>
+                  <button type="button" onclick="openRichEditorModal()" class="link link-primary hover:underline text-3xs">Edit Rich</button>
                 </div>
               </div>
               <div>
@@ -898,6 +902,58 @@
   <footer class="mt-auto py-4 border-t border-base-300 bg-base-100 text-center text-xs text-base-content/60">
     HTML Report Creation Studio &bull; Works offline Static Page &bull; Zero Node.js Required
   </footer>
+
+  <!-- Rich Document & Board Goals Editor Modal (Quill WYSIWYG) -->
+  <dialog id="modal-rich-goals" class="modal">
+    <div class="modal-box max-w-4xl w-11/12 p-5 sm:p-6 flex flex-col max-h-[92vh] bg-base-100 shadow-2xl border border-base-300">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-base-200">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+            <i data-lucide="file-pen" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base sm:text-lg flex items-center gap-2">
+              Rich Document &amp; Board Goals Editor
+              <span class="badge badge-primary badge-xs text-3xs font-mono">Quill v2.0</span>
+            </h3>
+            <p class="text-xs text-base-content/60">Compose structured goals, formatting, and executive directives with WYSIWYG styling</p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-circle btn-ghost" onclick="closeRichEditorModal()" aria-label="Close Rich Editor">✕</button>
+      </div>
+
+      <!-- Editor Canvas -->
+      <div class="flex-1 py-4 flex flex-col min-h-0">
+        <div id="quill-board-goals-container" class="flex-1 flex flex-col min-h-[320px]">
+          <div id="quill-board-goals-editor" class="bg-base-100 flex-1 min-h-[280px] text-sm border border-base-300 rounded-b-lg"></div>
+        </div>
+        <div class="flex items-center justify-between pt-2 px-1 text-3xs text-base-content/50">
+          <span class="inline-flex items-center gap-1.5">
+            <i data-lucide="info" class="w-3 h-3 text-info"></i>
+            Supports headers, bold/italic emphasis, bulleted milestones, and code blocks
+          </span>
+          <span id="rich-editor-char-count">0 characters</span>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-action pt-3 border-t border-base-200 flex items-center justify-between">
+        <button type="button" class="btn btn-sm btn-ghost gap-1.5" onclick="closeRichEditorModal()">
+          Cancel
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btn-save-rich-goals" class="btn btn-sm btn-primary gap-1.5 shadow-sm" onclick="saveRichGoalsAndClose()">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            Save &amp; Apply to Studio
+          </button>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button onclick="closeRichEditorModal()">close</button>
+    </form>
+  </dialog>
 
   <!-- STUDIO JAVASCRIPT (ZERO-NODE RUNTIME) -->
   <script>
@@ -1888,13 +1944,20 @@
     let quillEditor = null;
     let boardGoalMode = "simple";
 
+    function updateRichEditorCharCount() {
+      if (!quillEditor) return;
+      const count = quillEditor.getText().trim().length;
+      const el = document.getElementById("rich-editor-char-count");
+      if (el) el.textContent = `${count} character${count === 1 ? '' : 's'}`;
+    }
+
     function initQuillIfNeeded() {
       if (quillEditor || typeof Quill === "undefined") return quillEditor;
       const editorEl = document.getElementById("quill-board-goals-editor");
       if (!editorEl) return null;
       quillEditor = new Quill("#quill-board-goals-editor", {
         theme: "snow",
-        placeholder: "e.g., Weekly executive sales metrics with regional breakdowns, revenue churn alerts...",
+        placeholder: "e.g., Weekly executive sales metrics with regional breakdowns, revenue churn alerts, quota milestones...",
         modules: {
           toolbar: [
             [{ header: [1, 2, 3, false] }],
@@ -1905,50 +1968,98 @@
         }
       });
       quillEditor.on("text-change", () => {
-        updatePromptAndPreview();
-        try {
-          localStorage.setItem("html-report-create-goals-complex", quillEditor.root.innerHTML);
-        } catch (_) {}
+        updateRichEditorCharCount();
       });
       return quillEditor;
     }
 
-    window.switchBoardGoalMode = function (mode) {
-      boardGoalMode = mode;
-      const simpleTextarea = document.getElementById("input-board-goals");
-      const quillWrapper = document.getElementById("quill-board-goals-container");
-      const btnSimple = document.getElementById("btn-mode-simple");
-      const btnComplex = document.getElementById("btn-mode-complex");
+    window.openRichEditorModal = function () {
+      const modal = document.getElementById("modal-rich-goals");
+      if (!modal) return;
+      modal.showModal();
+      const q = initQuillIfNeeded();
+      if (q) {
+        const currentQuillText = q.getText().trim();
+        const simpleTextarea = document.getElementById("input-board-goals");
+        const currentSimpleText = simpleTextarea?.value.trim() || "";
+        if (!currentQuillText && currentSimpleText) {
+          q.setText(currentSimpleText + "\n");
+        }
+        updateRichEditorCharCount();
+        setTimeout(() => q.focus(), 80);
+      }
+      if (window.lucide) window.lucide.createIcons();
+    };
 
-      try {
-        localStorage.setItem("html-report-create-goals-mode", mode);
-      } catch (_) {}
+    window.closeRichEditorModal = function () {
+      const modal = document.getElementById("modal-rich-goals");
+      if (modal && modal.close) modal.close();
+    };
 
-      if (mode === "complex") {
+    window.saveRichGoalsAndClose = function () {
+      const q = initQuillIfNeeded();
+      if (q) {
+        const root = q.root;
+        const paragraphs = Array.from(root.children);
+        const lines = paragraphs.map((p) => {
+          const tag = p.tagName.toLowerCase();
+          const text = p.innerText.trim();
+          if (!text) return "";
+          if (tag === "h1") return "# " + text;
+          if (tag === "h2") return "## " + text;
+          if (tag === "h3") return "### " + text;
+          if (tag === "ul" || p.classList.contains("ql-bullet") || p.getAttribute("data-list") === "bullet") return "• " + text;
+          if (tag === "ol" || p.classList.contains("ql-ordered") || p.getAttribute("data-list") === "ordered") return "- " + text;
+          return text;
+        }).filter(Boolean);
+        const markdownGoals = lines.join("\n") || q.getText().trim();
+        const richHtml = q.root.innerHTML;
+
+        const simpleTextarea = document.getElementById("input-board-goals");
+        if (simpleTextarea) {
+          simpleTextarea.value = markdownGoals;
+        }
+
+        try {
+          localStorage.setItem("html-report-create-goals-complex", richHtml);
+          localStorage.setItem("html-report-create-goals-simple", markdownGoals);
+          localStorage.setItem("html-report-create-goals-mode", "complex");
+        } catch (_) {}
+
+        boardGoalMode = "complex";
+        const btnSimple = document.getElementById("btn-mode-simple");
+        const btnComplex = document.getElementById("btn-mode-complex");
         if (btnSimple) { btnSimple.classList.remove("btn-primary"); btnSimple.classList.add("btn-ghost"); }
         if (btnComplex) { btnComplex.classList.add("btn-primary"); btnComplex.classList.remove("btn-ghost"); }
-        if (simpleTextarea) simpleTextarea.classList.add("hidden");
-        if (quillWrapper) quillWrapper.classList.remove("hidden");
+        const indicator = document.getElementById("rich-goals-indicator");
+        if (indicator) indicator.classList.remove("hidden");
 
-        const q = initQuillIfNeeded();
-        if (q) {
-          const currentQuillText = q.getText().trim();
-          const currentSimpleText = simpleTextarea?.value.trim() || "";
-          if (!currentQuillText && currentSimpleText) {
-            q.setText(currentSimpleText + "\n");
-          }
-        }
-      } else {
-        if (btnComplex) { btnComplex.classList.remove("btn-primary"); btnComplex.classList.add("btn-ghost"); }
-        if (btnSimple) { btnSimple.classList.add("btn-primary"); btnSimple.classList.remove("btn-ghost"); }
-        if (quillWrapper) quillWrapper.classList.add("hidden");
-        if (simpleTextarea) {
-          simpleTextarea.classList.remove("hidden");
-          if (quillEditor) {
-            const qText = quillEditor.getText().trim();
-            if (qText) simpleTextarea.value = qText;
-          }
-        }
+        updatePromptAndPreview();
+      }
+      closeRichEditorModal();
+    };
+
+    window.switchBoardGoalMode = function (mode) {
+      if (mode === "complex" || mode === "rich") {
+        openRichEditorModal();
+        return;
+      }
+
+      boardGoalMode = "simple";
+      const simpleTextarea = document.getElementById("input-board-goals");
+      const btnSimple = document.getElementById("btn-mode-simple");
+      const btnComplex = document.getElementById("btn-mode-complex");
+      const indicator = document.getElementById("rich-goals-indicator");
+
+      try {
+        localStorage.setItem("html-report-create-goals-mode", "simple");
+      } catch (_) {}
+
+      if (btnComplex) { btnComplex.classList.remove("btn-primary"); btnComplex.classList.add("btn-ghost"); }
+      if (btnSimple) { btnSimple.classList.add("btn-primary"); btnSimple.classList.remove("btn-ghost"); }
+      if (indicator) indicator.classList.add("hidden");
+      if (simpleTextarea) {
+        simpleTextarea.classList.remove("hidden");
       }
       updatePromptAndPreview();
     };
@@ -2017,10 +2128,17 @@
         if (savedSimple && document.getElementById("input-board-goals")) {
           document.getElementById("input-board-goals").value = savedSimple;
         }
-        if (savedMode === "complex") {
-          window.switchBoardGoalMode("complex");
-          if (savedComplex && quillEditor) {
-            quillEditor.root.innerHTML = savedComplex;
+        if (savedMode === "complex" || savedMode === "rich") {
+          boardGoalMode = "complex";
+          const btnSimple = document.getElementById("btn-mode-simple");
+          const btnComplex = document.getElementById("btn-mode-complex");
+          if (btnSimple) { btnSimple.classList.remove("btn-primary"); btnSimple.classList.add("btn-ghost"); }
+          if (btnComplex) { btnComplex.classList.add("btn-primary"); btnComplex.classList.remove("btn-ghost"); }
+          const indicator = document.getElementById("rich-goals-indicator");
+          if (indicator) indicator.classList.remove("hidden");
+          const q = initQuillIfNeeded();
+          if (q && savedComplex) {
+            q.root.innerHTML = savedComplex;
           }
         }
       } catch (_) {}

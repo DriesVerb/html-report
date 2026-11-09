@@ -1462,6 +1462,23 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
       }
     }
 
+    // 2c. Dedicated Creation Studio PWA manifest endpoint for /create context
+    if (pathname === "/manifest.webmanifest") {
+      const referer = req.headers.referer || "";
+      const isStudio = targetFileName === "create.html" || referer.includes("/create") || referer.includes("/html-create");
+      if (isStudio) {
+        const rootManifest = path.resolve(__dirname, "../../../manifest.webmanifest");
+        if (fs.existsSync(rootManifest)) {
+          res.writeHead(200, {
+            "Content-Type": "application/manifest+json; charset=utf-8",
+            "Cache-Control": "no-cache"
+          });
+          fs.createReadStream(rootManifest).pipe(res);
+          return;
+        }
+      }
+    }
+
     // 3. Serve static relative files (e.g. CSVs, PDFs, images, Markdown artifacts)
     const sanitizedRelPath = pathname.replace(/^\/+/, "");
     let diskPath = path.resolve(rootDir, sanitizedRelPath);
