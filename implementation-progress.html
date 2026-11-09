@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Quill WYSIWYG Editor - Journey & Plan</title>
+  <title>Creation Studio Dedicated Navbar & Projects View - Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -37,11 +37,7 @@
   <!-- Addon: Showdown -->
   <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
 
-  <!-- Addon: Quill -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" crossorigin="anonymous" />
-  <script defer src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js" crossorigin="anonymous"></script>
-
-  <meta name="html-report-source" content="openspec/changes/quill-wysiwyg-editor/index.html" />
+  <meta name="html-report-source" content="openspec/changes/studio-navbar-projects-view/index.html" />
 
   <style>
     :root {
@@ -254,7 +250,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Quill WYSIWYG Editor - Journey & Plan
+          Creation Studio Dedicated Navbar & Projects View - Journey & Plan
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -705,21 +701,20 @@
 <header class="space-y-4 border-b border-base-300 pb-8">
   <div class="flex flex-wrap gap-2">
     <span class="badge badge-primary font-mono text-xs font-bold uppercase">OpenSpec Journey</span>
-    <span class="badge badge-outline font-mono text-xs">quill-wysiwyg-editor</span>
-    <span class="badge badge-success font-mono text-xs text-success-content font-bold">Phase 4: Verified &amp; Shipped</span>
-    <span class="badge badge-ghost font-mono text-xs">Rich-Text &amp; Wizard Dual-Mode</span>
+    <span class="badge badge-outline font-mono text-xs">studio-navbar-projects-view</span>
+    <span class="badge badge-success font-mono text-xs text-success-content font-bold">Phase 5: Shipped &amp; Verified</span>
+    <span class="badge badge-ghost font-mono text-xs">Studio Navbar &amp; Projects Directory</span>
   </div>
-  <h1 class="text-3xl sm:text-4xl font-black tracking-tight">Quill WYSIWYG Editor &amp; Wizard Dual-Mode Goal Input</h1>
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight">Creation Studio Dedicated Navbar &amp; Projects Directory View</h1>
   <p class="text-base text-base-content/80 max-w-3xl">
-    Integrates Quill.js v2.0 as a first-class build-pipeline addon and expands the HTML Creation Studio (<code>create.html</code>) with Section A component selection, simulated preview widget, and a dual-mode (Simple Textarea vs Complex Quill CDN) board-goal authoring experience with bidirectional sync, local persistence, and structured Markdown prompt synthesis.
+    Restructures the HTML Creation Studio (<code>create.html</code>) with a dedicated top navbar aligned to the publication-grade <code>template-shell.html</code> standard, consolidates secondary controls into a unified Settings Gear dropdown, and introduces an interactive Projects Directory view with automatic workspace report discovery (<code>GET /api/projects</code>), semantic version badges, and new-tab launcher controls.
   </p>
   <div class="flex flex-wrap gap-3 items-center text-xs">
-    <span class="font-semibold">Artifacts:</span>
+    <span class="font-semibold">Planning Artifacts:</span>
     <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">proposal.md</button>
     <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">design.md</button>
     <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">tasks.md</button>
-    <a href="specs/cdn-addons-expansion/spec.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('specs/cdn-addons-expansion/spec.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">specs/cdn-addons-expansion/spec.md</a>
-    <a href="specs/quill-editor/spec.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('specs/quill-editor/spec.md');return false;}" class="link link-primary font-mono text-xs underline cursor-pointer">specs/quill-editor/spec.md</a>
+    <button type="button" onclick="openMarkdownViewer('specs/studio-project-navigation/spec.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">specs/studio-project-navigation/spec.md</button>
   </div>
   <div class="w-full overflow-x-auto">
     <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
@@ -735,21 +730,18 @@
 <!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
 <dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
   <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
-    <div class="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300 shrink-0">
-      <div class="flex items-center gap-2 flex-wrap">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        <span id="markdown-modal-title" class="font-bold text-sm font-mono text-base-content">proposal.md</span>
-      </div>
+    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50">
       <div class="flex items-center gap-2">
-        <div class="join" id="markdown-modal-tabs">
-          <button id="tab-btn-proposal" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
-          <button id="tab-btn-design" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
-          <button id="tab-btn-tasks" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
-        </div>
-        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost" aria-label="Close modal">✕</button>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 id="markdown-modal-title" class="font-mono font-bold text-sm text-base-content">artifact.md</h3>
       </div>
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+      </form>
     </div>
-    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none flex-1 text-base-content bg-base-100">
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto font-sans prose prose-sm max-w-none text-base-content">
       <div class="flex items-center justify-center py-12">
         <span class="loading loading-spinner loading-md text-primary"></span>
       </div>
@@ -760,20 +752,247 @@
   </form>
 </dialog>
 
-<script id="open-spec-artifacts-data" type="application/json">
-{
-  "proposal.md": "# Proposal: Quill WYSIWYG Editor Support & Wizard Dual-Mode Input\\n\\n## Why\\nUsers and agents often need in-report rich-text authoring, formatted notes, and executive drafting directly inside generated HTML reports without bundlers. Furthermore, when configuring deliverables in the interactive HTML Creation Studio (create.html), complex dashboard briefs benefit greatly from rich-text styling rather than a cramped plain-text textarea.\\n\\n## What Changes\\n- Quill CDN Addon Registration: Register Quill.js v2.0 in the core build pipeline.\\n- Section A Addon Option in HTML Wizard: Add WYSIWYG Rich Text Editor (Quill).\\n- Dual-Mode (Simple vs Complex) Board Goals Input: Toggle between Simple (textarea) and Complex (Quill Snow).\\n- Bidirectional Sync & Persistence: Sync content between modes and persist via localStorage.\\n",
-  "design.md": "# Design: Quill WYSIWYG Editor Addon & Wizard Dual-Mode Input\\n\\n## Context\\nRegister Quill v2.0 as a canonical on-demand addon and provide a responsive dual-mode switcher in create.html.\\n\\n## Architecture\\n- Snow Theme loaded via jsDelivr CDN.\\n- DaisyUI theme CSS variables harmonizing with all 32 themes.\\n- Markdown-optimized prompt synthesis translating rich elements to bulleted text for LLMs.\\n",
-  "tasks.md": "# Tasks: Quill WYSIWYG Editor Support & Wizard Dual-Mode Input\n\n## 1. Addon Pipeline Registration\n- [x] 1.1 Register Quill v2.0 in build-report.mjs\n- [x] 1.2 Register Quill in domain-model.mjs\n- [x] 1.3 Verify pipeline build and CLI detection\n\n## 2. Wizard Visual & Data Component Addon\n- [x] 2.1 Add Quill checkbox under Section A in create.html\n- [x] 2.2 Wire to simulated mockup\n- [x] 2.3 Update downloadStarterHtml()\n\n## 3. Dual-Mode Simple vs Complex Board Goals\n- [x] 3.1 Insert Simple vs Complex toggle tabs\n- [x] 3.2 Implement Quill Snow container initialization\n- [x] 3.3 Bidirectional synchronization\n- [x] 3.4 LocalStorage persistence\n- [x] 3.5 Markdown prompt serialization\n- [x] 3.6 Refactor mode toggle buttons to compact Simple/Rich buttons with Simple default\n- [x] 3.7 Implement dedicated Rich Document & Goals Editor modal (#modal-rich-goals)\n- [x] 3.8 Implement saveRichGoalsAndClose() saving formatted content back into Creation Studio\n\n## 4. Verification & Documentation\n- [x] 4.1 Write automated BDD test\n- [x] 4.2 Run test suite\n- [x] 4.3 Update documentation\n- [x] 4.4 Add automated BDD assertions verifying compact Simple/Rich buttons and modal\n"
-}
-</script>
+<!-- SECTION 1: JOURNEY & PROGRESS METRICS -->
+<section id="section-metrics" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="plan-metrics" class="text-xl sm:text-2xl font-bold tracking-tight">Journey &amp; Plan Progress Metrics</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Tracking execution milestones from planning to deployment.</p>
+    </div>
+    <div class="badge badge-success font-mono text-xs">Phase 5: Shipped &amp; Verified</div>
+  </div>
 
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="stat bg-base-200/50 rounded-box border border-base-300 p-4">
+      <div class="stat-title text-3xs font-bold uppercase tracking-wider text-base-content/60">Total Tasks</div>
+      <div class="stat-value text-2xl font-black font-mono text-primary">14</div>
+      <div class="stat-desc text-3xs mt-1">4 implementation phases</div>
+    </div>
+    <div class="stat bg-base-200/50 rounded-box border border-base-300 p-4">
+      <div class="stat-title text-3xs font-bold uppercase tracking-wider text-base-content/60">Completed</div>
+      <div class="stat-value text-2xl font-black font-mono text-success">14</div>
+      <div class="stat-desc text-3xs mt-1">All tasks verified</div>
+    </div>
+    <div class="stat bg-base-200/50 rounded-box border border-base-300 p-4">
+      <div class="stat-title text-3xs font-bold uppercase tracking-wider text-base-content/60">In Progress</div>
+      <div class="stat-value text-2xl font-black font-mono text-warning">0</div>
+      <div class="stat-desc text-3xs mt-1">Ready for archive</div>
+    </div>
+    <div class="stat bg-base-200/50 rounded-box border border-base-300 p-4">
+      <div class="stat-title text-3xs font-bold uppercase tracking-wider text-base-content/60">Progress</div>
+      <div class="stat-value text-2xl font-black font-mono text-success">100%</div>
+      <div class="stat-desc text-3xs mt-1">Feature complete</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: ARCHITECTURE & MERMAID FLOW -->
+<section id="section-architecture" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="architecture-flow" class="text-xl sm:text-2xl font-bold tracking-tight">Dedicated Navbar &amp; Projects Directory Architecture</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Visualizing the unified layout, router state, and workspace discovery pipeline.</p>
+    </div>
+    <span class="badge badge-secondary badge-outline text-3xs font-mono">Mermaid Flow</span>
+  </div>
+
+  <div class="mermaid bg-base-200/50 p-4 rounded-box border border-base-300 overflow-x-auto text-center">
+graph TD
+    subgraph Navbar["Dedicated Creation Studio Navbar"]
+      Start["Brand & Mode: /html-create"]
+      TOC["Sections (TOC Dropdown)"]
+      ProjBtn["📂 Projects Button"]
+      SettingsGear["⚙️ Settings Gear Dropdown"]
+      
+      subgraph GearItems["Inside Settings Gear"]
+        ThemeSwatches["DaisyUI 32-Theme Swatches"]
+        PWAInstall["Install Studio as App"]
+        Exports["Download HTML / Copy Prompt / Print"]
+      end
+      SettingsGear --> GearItems
+    end
+
+    subgraph StudioRouter["Studio Dual-View Router"]
+      WizardView["#view-wizard (Creation Wizard & OKLCH Studio)"]
+      ProjectsView["#view-projects (Projects Directory View)"]
+    end
+
+    ProjBtn -->|Toggle Click| ProjectsView
+    WizardView <-->|Back / Switch| ProjectsView
+
+    subgraph BackendDiscovery["Workspace Discovery & Launcher"]
+      ServerEndpoint["serve-report.mjs: GET /api/projects"]
+      FileScanner["Scan Workspace (maxdepth: 4)"]
+      SemVerParser["Extract SemVer & Category Tags"]
+      JSONResponse["Enriched JSON Project List"]
+      
+      ServerEndpoint --> FileScanner --> SemVerParser --> JSONResponse
+    end
+
+    ProjectsView -->|Fetch Projects| ServerEndpoint
+    ProjectsView -->|Offline file:// Fallback| LocalStorageCache["Local Showcase Cache"]
+    ProjectsView -->|Open Click| NewTab["Launch Report (target='_blank')"]
+  </div>
+</section>
+
+<!-- SECTION 3: KEY DESIGN DECISIONS -->
+<section id="section-decisions" class="space-y-4">
+  <h2 id="key-decisions" class="text-xl sm:text-2xl font-bold tracking-tight">Key Design &amp; Architectural Decisions</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-md bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">1</span>
+        <h3 class="font-bold text-sm">Dedicated Studio Navbar</h3>
+      </div>
+      <p class="text-xs text-base-content/70">
+        Replaces individual top-level theme and download buttons with a standardized, clean navbar mirroring <code>template-shell.html</code>. Keeps <strong>Sections</strong> and <strong>Projects</strong> prominent.
+      </p>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-md bg-secondary/10 text-secondary flex items-center justify-center font-bold text-xs">2</span>
+        <h3 class="font-bold text-sm">Consolidated Settings Gear</h3>
+      </div>
+      <p class="text-xs text-base-content/70">
+        Encapsulates theme swatch selection (32 DaisyUI themes), PWA installation triggers, and export actions inside a single <code>#studio-settings-gear-btn</code> dropdown to prevent visual noise.
+      </p>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-md bg-accent/10 text-accent flex items-center justify-center font-bold text-xs">3</span>
+        <h3 class="font-bold text-sm">Projects Directory &amp; SemVer</h3>
+      </div>
+      <p class="text-xs text-base-content/70">
+        Adds dynamic report discovery via <code>GET /api/projects</code> with category badges (OpenSpec Journey, Report, Benchmark, Dev) and SemVer tags, opening target reports directly in new browser tabs.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: TASK CHECKLIST (MIRRORING TASKS.MD) -->
+<section id="section-tasks" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="task-checklist" class="text-xl sm:text-2xl font-bold tracking-tight">Connected Implementation Tasks</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Execution roadmap directly mapped to <code>tasks.md</code>.</p>
+    </div>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">View tasks.md</button>
+  </div>
+
+  <div class="space-y-4">
+    <!-- Phase 1 -->
+    <div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-sm font-bold flex items-center gap-2">
+        <span class="badge badge-primary badge-sm">Phase 1</span>
+        <span>Creation Studio Dedicated Navbar &amp; Consolidated Settings</span>
+      </div>
+      <div class="collapse-content space-y-2 pt-2">
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>1.1</strong> Redesign the Creation Studio header with a dedicated layout matching <code>template-shell.html</code> standards.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>1.2</strong> Implement the unified Settings Gear dropdown consolidating theme swatches, PWA install, and export options.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>1.3</strong> Add the top-level Projects navigation button (<code>#navbar-projects-btn</code>) in the studio navbar.</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-sm font-bold flex items-center gap-2">
+        <span class="badge badge-secondary badge-sm">Phase 2</span>
+        <span>Workspace Project Discovery API (<code>serve-report.mjs</code>)</span>
+      </div>
+      <div class="collapse-content space-y-2 pt-2">
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>2.1</strong> Implement the <code>GET /api/projects</code> endpoint in <code>serve-report.mjs</code> scanning workspace directories.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>2.2</strong> Add semantic versioning extraction logic and category tagging for discovered projects.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>2.3</strong> Implement offline zero-node fallback in <code>create.html</code> reading cached or bundled showcase reports.</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-sm font-bold flex items-center gap-2">
+        <span class="badge badge-accent badge-sm">Phase 3</span>
+        <span>Projects Directory View (<code>#view-projects</code>)</span>
+      </div>
+      <div class="collapse-content space-y-2 pt-2">
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>3.1</strong> Build the responsive Projects Directory grid layout with search filter and category filters.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>3.2</strong> Implement project cards rendering title, location, category badge, SemVer tag, and an Open button (<code>target="_blank"</code>).</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>3.3</strong> Add URL hash routing (<code>#projects</code>) to allow direct bookmarking and navigation.</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-sm font-bold flex items-center gap-2">
+        <span class="badge badge-neutral badge-sm">Phase 4</span>
+        <span>Verification &amp; Journey Sync</span>
+      </div>
+      <div class="collapse-content space-y-2 pt-2">
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.1</strong> Sync <code>skills/html-report/assets/create.html</code> with root <code>create.html</code> and verify parity.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.2</strong> Write automated integration tests in <code>tests/studio-navbar-projects.test.mjs</code>.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.3</strong> Update <code>skills/html-create/SKILL.md</code> documenting the dedicated navbar and Projects Directory.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.4</strong> Update journey dashboard and synchronize with <code>implementation-progress.html</code> on <code>localhost:3000</code>.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.5</strong> Add mock operations dashboard in <code>projects/mock-dashboard/index.html</code> categorized as <code>Workspace Project</code> with telemetry metrics.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.6</strong> Implement navbar Projects dropdown menu (<code>#navbar-projects-dropdown</code>) with quick launcher, real-time search, and instant view-switch scroll restoration.</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKDOWN VIEWER SCRIPT -->
 <script>
-  let activeDocKey = "proposal.md";
   let showdownConverter = null;
-
-  function getShowdownConverter() {
-    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+  function getShowdown() {
+    if (!showdownConverter && window.showdown) {
       showdownConverter = new window.showdown.Converter({
         tables: true,
         tasklists: true,
@@ -784,362 +1003,27 @@
     return showdownConverter;
   }
 
-  function getOpenSpecArtifacts() {
-    try {
-      const el = document.getElementById("open-spec-artifacts-data");
-      if (el) return JSON.parse(el.textContent);
-    } catch (_) {}
-    return {};
-  }
-
-  async function openMarkdownViewer(docName) {
-    activeDocKey = docName || "proposal.md";
+  window.openMarkdownViewer = async function(filePath) {
     const modal = document.getElementById("markdown-viewer-modal");
-    if (!modal) return;
-    if (typeof modal.showModal === "function") {
-      modal.showModal();
-    } else {
-      modal.setAttribute("open", "true");
-    }
-    await renderMarkdownDoc(activeDocKey);
-  }
-
-  function closeMarkdownViewer() {
-    const modal = document.getElementById("markdown-viewer-modal");
-    if (modal && typeof modal.close === "function") {
-      modal.close();
-    } else if (modal) {
-      modal.removeAttribute("open");
-    }
-  }
-
-  async function switchViewerTab(docName) {
-    await renderMarkdownDoc(docName);
-  }
-
-  async function renderMarkdownDoc(docName) {
-    activeDocKey = docName;
     const titleEl = document.getElementById("markdown-modal-title");
     const bodyEl = document.getElementById("markdown-modal-body");
-    if (titleEl) titleEl.textContent = docName;
+    if (!modal || !titleEl || !bodyEl) return;
 
-    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
-      if (btn.getAttribute("data-doc") === docName) {
-        btn.classList.add("btn-active", "btn-primary");
-      } else {
-        btn.classList.remove("btn-active", "btn-primary");
-      }
-    });
+    titleEl.textContent = filePath;
+    bodyEl.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
+    modal.showModal();
 
-    const artifacts = getOpenSpecArtifacts();
-    let md = artifacts[docName];
-    if (!md) {
-      for (const k of Object.keys(artifacts)) {
-        if (k.endsWith(docName) || docName.endsWith(k)) {
-          md = artifacts[k];
-          break;
-        }
-      }
+    try {
+      const res = await fetch(filePath);
+      if (!res.ok) throw new Error("HTTP " + res.status + " fetching " + filePath);
+      const text = await res.text();
+      const converter = getShowdown();
+      bodyEl.innerHTML = converter ? converter.makeHtml(text) : '<pre class="whitespace-pre-wrap font-mono text-xs">' + text.replace(/</g, "&lt;") + '</pre>';
+    } catch (err) {
+      bodyEl.innerHTML = '<div class="alert alert-error text-xs"><span>Failed to load artifact: ' + err.message + '</span></div>';
     }
-
-    if (!md) {
-      try {
-        const res = await fetch(docName);
-        if (res.ok) md = await res.text();
-      } catch (_) {}
-    }
-
-    if (bodyEl) {
-      if (md) {
-        const conv = getShowdownConverter();
-        if (conv) {
-          bodyEl.innerHTML = conv.makeHtml(md);
-        } else {
-          bodyEl.innerHTML = "<pre class='whitespace-pre-wrap font-mono text-xs'>" + md.replace(/</g, "&lt;") + "</pre>";
-        }
-      } else {
-        bodyEl.innerHTML = "<div class='alert alert-warning text-xs'>Artifact " + docName + " not loaded.</div>";
-      }
-    }
-  }
-
-  window.openMarkdownViewer = openMarkdownViewer;
-  window.closeMarkdownViewer = closeMarkdownViewer;
-  window.switchViewerTab = switchViewerTab;
+  };
 </script>
-
-<section id="metrics" class="grid grid-cols-2 lg:grid-cols-4 gap-4 my-8">
-  <div class="stat bg-base-200 rounded-box">
-    <div class="stat-title text-xs font-bold uppercase">Total Tasks</div>
-    <div class="stat-value text-2xl font-mono text-primary">11</div>
-    <div class="stat-desc font-mono">4 Numbered Phases</div>
-  </div>
-  <div class="stat bg-base-200 rounded-box">
-    <div class="stat-title text-xs font-bold uppercase">In Progress</div>
-    <div class="stat-value text-2xl font-mono text-warning">0</div>
-    <div class="stat-desc font-mono">All Phases Executed</div>
-  </div>
-  <div class="stat bg-base-200 rounded-box">
-    <div class="stat-title text-xs font-bold uppercase">Completed</div>
-    <div class="stat-value text-2xl font-mono text-success">11</div>
-    <div class="stat-desc font-mono text-success">100% Execution</div>
-  </div>
-  <div class="stat bg-base-200 rounded-box">
-    <div class="stat-title text-xs font-bold uppercase">Remaining</div>
-    <div class="stat-value text-2xl font-mono text-base-content">0</div>
-    <div class="stat-desc font-mono">Zero Open Tasks</div>
-  </div>
-</section>
-
-<section id="problem-and-vision" class="space-y-4 mb-10">
-  <h2 class="text-2xl font-bold flex items-center gap-2">
-    <span>💡 Problem &amp; Architecture Vision</span>
-  </h2>
-  <p class="text-base-content/80 leading-relaxed">
-    In modern analytical reporting and dashboard authoring, users frequently need in-browser rich text notes, executive drafting, and formatted descriptions. In <a href="../../create.html" class="link link-primary font-semibold">create.html</a>, users describe their project via a basic 2-row textarea. For complex briefs requiring hierarchy, bulleted KPIs, and emphasis, a plain textarea lacks clarity, while forcing a heavy rich-text editor for simple 1-line queries creates friction.
-  </p>
-  <div class="grid md:grid-cols-2 gap-4">
-    <div class="card bg-base-200">
-      <div class="card-body p-4">
-        <h3 class="card-title text-sm font-bold text-error flex items-center gap-1.5">
-          <span>❌ Current Limitations</span>
-        </h3>
-        <ul class="text-xs space-y-1.5 text-base-content/75 list-disc list-inside">
-          <li><strong>No WYSIWYG Addon:</strong> The build pipeline lacks a native, zero-config rich text editor addon for reports.</li>
-          <li><strong>Cramped Plain Input:</strong> "Tell what the board needs to show" is restricted to an unformatted plain textarea.</li>
-          <li><strong>Unstructured Prompts:</strong> Complex formatting in the textarea cannot be styled with bullets or headings.</li>
-          <li><strong>No Goal Persistence:</strong> Accidental reloads or navigations clear user-entered goals.</li>
-        </ul>
-      </div>
-    </div>
-    <div class="card bg-base-200">
-      <div class="card-body p-4">
-        <h3 class="card-title text-sm font-bold text-success flex items-center gap-1.5">
-          <span>✅ Proposed Solution: Quill v2.0 + Dual-Mode Wizard</span>
-        </h3>
-        <ul class="text-xs space-y-1.5 text-base-content/75 list-disc list-inside">
-          <li><strong>Section A Visual Component:</strong> Selectable "WYSIWYG Rich Text Editor (Quill)" addon in <code>create.html</code>.</li>
-          <li><strong>Dual-Mode Switcher:</strong> Instant toggle between <em>Simple (Textarea)</em> and <em>Complex (Quill Snow)</em>.</li>
-          <li><strong>Bidirectional Synchronization:</strong> Edits in either mode mirror instantly to the other.</li>
-          <li><strong>Automatic LocalStorage Persistence:</strong> Saves entered content and mode selection across browser sessions.</li>
-          <li><strong>Markdown-Optimized Prompt Synthesis:</strong> Translates rich editor content into clean, token-efficient Markdown for LLMs.</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="architecture-diagram" class="space-y-4 mb-10">
-  <h2 class="text-2xl font-bold flex items-center gap-2">
-    <span>📐 Technical Architecture &amp; Data Flow</span>
-  </h2>
-  <div class="card bg-base-200 border border-base-300 p-4">
-    <pre class="mermaid">
-flowchart TD
-    subgraph Studio["HTML Creation Studio (create.html)"]
-        Toggle["Segmented Mode Switcher\n(Simple vs Complex)"]
-        Simple["Simple Mode\n&lt;textarea id='input-board-goals'&gt;"]
-        Complex["Complex Mode\nQuill v2.0 Snow Editor"]
-        Storage[("Browser localStorage\nhtml_create_board_goals")]
-        PromptGen["Prompt Synthesizer\nupdatePromptAndPreview()"]
-        PromptBox["AI Scaffolding Output\n#prompt-output-box"]
-    end
-
-    subgraph AddonCatalog["Section A Visual Components"]
-        ChkQuill["#chk-quill Checkbox\nWYSIWYG Rich Text Editor"]
-        Mockup["Simulated Wireframe Mockup\n#mockup-editor-widget"]
-        Starter["Starter HTML Downloader\nIncludes Quill CSS + JS"]
-    end
-
-    subgraph Pipeline["Build Pipeline (build-report.mjs)"]
-        CLI["CLI Flags: --quill, --wysiwyg, --editor"]
-        Sigs["DOM Signatures: ql-editor, id='editor', new Quill()"]
-        CDN["jsDelivr CDN: quill.snow.css &amp; quill.js (v2.0)"]
-    end
-
-    Toggle -->|Active: Simple| Simple
-    Toggle -->|Active: Complex| Complex
-    Simple <-->|Bidirectional Content Sync| Complex
-    Simple --> Storage
-    Complex --> Storage
-    Simple -->|Plain String| PromptGen
-    Complex -->|Markdown/Clean Bullets| PromptGen
-    PromptGen --> PromptBox
-
-    ChkQuill --> Mockup
-    ChkQuill --> Starter
-    ChkQuill --> PromptGen
-
-    CLI --> CDN
-    Sigs --> CDN
-    </pre>
-  </div>
-</section>
-
-<section id="editor-selection" class="space-y-4 mb-10">
-  <h2 class="text-2xl font-bold flex items-center gap-2">
-    <span>⚖️ Editor Selection &amp; CDN Trade-Offs</span>
-  </h2>
-  <div class="overflow-x-auto">
-    <table class="table table-sm bg-base-200 rounded-box border border-base-300 text-xs">
-      <thead>
-        <tr class="bg-base-300/60 text-base-content">
-          <th>Editor</th>
-          <th>License</th>
-          <th>API Key?</th>
-          <th>CDN Friction</th>
-          <th>DaisyUI Integration</th>
-          <th>Decision</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="bg-primary/10 font-semibold">
-          <td>Quill.js 2.0</td>
-          <td>MIT</td>
-          <td>None</td>
-          <td>Ultra-low (1 CSS + 1 JS from jsDelivr)</td>
-          <td>Easy via CSS variables &amp; snow override</td>
-          <td><span class="badge badge-success badge-xs">Selected</span></td>
-        </tr>
-        <tr>
-          <td>TinyMCE 7</td>
-          <td>GPLv2+ / Paid</td>
-          <td>Required on official cloud CDN</td>
-          <td>Medium (Nag banners or jsDelivr community)</td>
-          <td>Complex shadow-DOM iframe styling</td>
-          <td><span class="badge badge-ghost badge-xs">Rejected</span></td>
-        </tr>
-        <tr>
-          <td>Trix (Basecamp)</td>
-          <td>MIT</td>
-          <td>None</td>
-          <td>Low (Web component)</td>
-          <td>Restricted styling and no heading levels</td>
-          <td><span class="badge badge-ghost badge-xs">Rejected</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<section id="tasks-list" class="space-y-4 mb-10">
-  <h2 class="text-2xl font-bold flex items-center gap-2">
-    <span>📋 Implementation Plan (<a href="tasks.md" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('tasks.md');return false;}" class="link link-primary font-mono text-base">tasks.md</a>)</span>
-  </h2>
-  <div class="space-y-3">
-    <div class="card bg-base-200 border border-base-300">
-      <div class="card-body p-4 space-y-2">
-        <h3 class="font-bold text-sm text-primary flex items-center gap-2">
-          <span>Phase 1: Addon Pipeline Registration</span>
-        </h3>
-        <ul class="text-xs space-y-1 text-base-content/80">
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">1.1</span>
-            Register Quill v2.0 in <code>skills/html-report/scripts/build-report.mjs</code> with CSS/JS CDN tags, signatures, and CLI flags
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">1.2</span>
-            Register Quill in <code>skills/html-report/scripts/domain-model.mjs</code> under <code>ADDON_CATALOG</code>
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">1.3</span>
-            Verify pipeline build and CLI detection using test fragment with Quill signatures
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card bg-base-200 border border-base-300">
-      <div class="card-body p-4 space-y-2">
-        <h3 class="font-bold text-sm text-primary flex items-center gap-2">
-          <span>Phase 2: Wizard Visual &amp; Data Component Addon (Section A)</span>
-        </h3>
-        <ul class="text-xs space-y-1 text-base-content/80">
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">2.1</span>
-            Add Quill WYSIWYG Editor checkbox (<code>#chk-quill</code>) under Section A in <code>create.html</code>
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">2.2</span>
-            Wire <code>#chk-quill</code> to simulated wireframe mockup and prompt generation
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">2.3</span>
-            Update <code>downloadStarterHtml()</code> to inject Quill CSS and JS bundle when <code>#chk-quill</code> is active
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card bg-base-200 border border-base-300">
-      <div class="card-body p-4 space-y-2">
-        <h3 class="font-bold text-sm text-primary flex items-center gap-2">
-          <span>Phase 3: Dual-Mode Simple vs Complex Board Goals in Wizard</span>
-        </h3>
-        <ul class="text-xs space-y-1 text-base-content/80">
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">3.1</span>
-            Insert Simple vs Complex (Quill) toggle tabs above "Tell what the board needs to show" in <code>create.html</code>
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">3.2</span>
-            Implement Quill v2.0 Snow container initialization with DaisyUI theme styling
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">3.3</span>
-            Implement bidirectional synchronization between Simple (<code>#input-board-goals</code>) and Complex (<code>#quill-board-goals-editor</code>)
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">3.4</span>
-            Implement <code>localStorage</code> persistence for active input mode and goal content
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">3.5</span>
-            Update <code>updatePromptAndPreview()</code> to serialize rich Quill goals into clean Markdown lines inside <code>#prompt-output-box</code>
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">3.6</span>
-            Refactor mode toggle buttons to compact Simple/Rich buttons with Simple default (<code>#btn-mode-simple</code>, <code>#btn-mode-complex</code>)
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">3.7</span>
-            Implement dedicated Rich Document &amp; Goals Editor modal (<code>#modal-rich-goals</code>) with full spacious Quill canvas and live character counter
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">3.8</span>
-            Implement <code>saveRichGoalsAndClose()</code> saving formatted content back into Creation Studio textarea, indicators, and live prompt/preview
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card bg-base-200 border border-base-300">
-      <div class="card-body p-4 space-y-2">
-        <h3 class="font-bold text-sm text-primary flex items-center gap-2">
-          <span>Phase 4: Verification &amp; Documentation</span>
-        </h3>
-        <ul class="text-xs space-y-1 text-base-content/80">
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">4.1</span>
-            Write automated BDD test in <code>tests/quill-editor.bdd.test.mjs</code>
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">4.2</span>
-            Run test suite (<code>node --test tests/quill-editor.bdd.test.mjs</code>) and verify all assertions pass
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">4.3</span>
-            Update documentation in <code>docs/cdn-stack.md</code> and <code>skills/html-report/references/architecture-and-styling.md</code>
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="badge badge-ghost badge-xs font-mono">4.4</span>
-            Add automated BDD assertions verifying compact Simple/Rich buttons, Rich Editor modal, and bidirectional synchronization
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
   </main>
 
   <!-- Minimal Centered Footer with Semantic Versioning -->

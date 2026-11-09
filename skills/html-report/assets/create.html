@@ -66,23 +66,24 @@
     <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Creation Studio Navigation">
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
-        <span class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
+        <a href="#wizard" onclick="switchView('wizard'); return false;" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer">
+          <span class="text-base sm:text-lg">✨</span>
           <span>HTML Creation Studio</span>
-        </span>
+        </a>
         <span class="badge badge-sm badge-outline font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider">
           /html-create
         </span>
       </div>
 
-      <!-- Right: TOC + Theme Picker + Download Menu -->
-      <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
+      <!-- Right: Sections TOC + Projects Action + Settings Gear -->
+      <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end items-center">
         <!-- 1. TOC Dropdown -->
         <div class="dropdown dropdown-end" id="toc-dropdown">
           <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Studio Sections">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
             </svg>
-            <span>Sections</span>
+            <span class="hidden sm:inline">Sections</span>
           </div>
           <ul id="report-toc-list" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-64 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
             <li><a href="#step-purpose" class="py-1.5">1. Purpose &amp; Deliverable</a></li>
@@ -94,58 +95,170 @@
           </ul>
         </div>
 
-        <!-- 2. DaisyUI Themes Dropdown -->
-        <div class="dropdown dropdown-end" id="theme-dropdown">
-          <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
-            <span class="text-xs font-medium capitalize" id="active-studio-theme">light</span>
-            <div class="flex items-center gap-0.5" id="navbar-theme-swatches" data-theme="light">
-              <span class="bg-primary rounded-badge w-1.5 h-3"></span>
-              <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
-              <span class="bg-accent rounded-badge w-1.5 h-3"></span>
-              <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
-            </div>
+        <!-- 2. Projects Navigation Dropdown -->
+        <div class="dropdown dropdown-end" id="navbar-projects-dropdown">
+          <div tabindex="0" role="button" id="navbar-projects-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Workspace Projects Directory" title="Explore Workspace Projects">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+            </svg>
+            <span class="hidden xs:inline sm:inline">Projects</span>
+            <span id="navbar-projects-badge" class="badge badge-xs badge-neutral hidden sm:inline-flex font-mono">0</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-60 hidden sm:inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
           </div>
-          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
-            <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
-              <!-- Populated via initNavbarThemeDropdown() -->
+          <div tabindex="0" id="navbar-projects-menu" class="dropdown-content bg-base-100 text-base-content rounded-2xl z-[60] mt-2 w-80 sm:w-96 max-w-[calc(100vw-1.5rem)] max-h-[80vh] overflow-hidden p-3 shadow-2xl border border-base-300 flex flex-col gap-2.5">
+            <!-- Header with Title & Full Directory Button -->
+            <div class="flex items-center justify-between pb-2 border-b border-base-200">
+              <div class="flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                </svg>
+                <span class="font-bold text-xs">Workspace Projects</span>
+                <span id="dropdown-projects-badge" class="badge badge-xs badge-primary font-mono">0</span>
+              </div>
+              <button type="button" onclick="closeProjectsDropdown(); switchView('projects');" class="btn btn-xs btn-outline btn-primary gap-1 font-mono text-3xs">
+                <span>All Projects</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+              </button>
             </div>
+
+            <!-- Quick Search Input -->
+            <div class="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                id="dropdown-projects-search"
+                type="text"
+                placeholder="Filter projects..."
+                oninput="filterDropdownProjectsList(this.value)"
+                class="input input-xs input-bordered w-full pl-8 pr-6 text-2xs"
+              />
+            </div>
+
+            <!-- Scrollable Projects List -->
+            <div id="dropdown-projects-list" class="overflow-y-auto max-h-64 space-y-1 pr-1 divide-y divide-base-200">
+              <!-- Rendered via renderDropdownProjectsList() -->
+            </div>
+
+            <!-- Footer: Switch to Full Directory View -->
+            <button type="button" onclick="closeProjectsDropdown(); switchView('projects');" class="btn btn-xs btn-primary w-full gap-1.5 shadow-sm mt-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+              <span>Explore Full Projects Directory</span>
+            </button>
           </div>
         </div>
 
-        <!-- PWA Install Button & Badges -->
-        <button id="pwa-install-btn" type="button" onclick="if(window.triggerPwaInstall) window.triggerPwaInstall()" class="btn btn-xs sm:btn-sm btn-outline btn-accent hidden gap-1.5 shrink-0" aria-label="Install Studio as App" title="Install Creation Studio as App">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v6m0 0l-3-3m3 3l3-3M12 4v4" />
-          </svg>
-          <span class="hidden md:inline">Install App</span>
-        </button>
-        <span id="pwa-install-status-badge" class="badge badge-accent badge-xs font-mono hidden">PWA</span>
+        <!-- Offline Badge -->
         <span id="pwa-offline-badge" class="badge badge-warning badge-xs hidden gap-1 font-mono text-3xs shrink-0" title="Studio is operating offline from Service Worker cache">
           <span class="inline-block w-1.5 h-1.5 rounded-full bg-warning-content animate-pulse"></span>
           <span>Offline</span>
         </span>
 
-        <!-- 3. Icon-Only Download Dropdown -->
-        <div class="dropdown dropdown-end" id="download-dropdown">
-          <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Actions" title="Download Actions">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
+        <!-- Hidden compat button for any script referencing #pwa-install-btn -->
+        <button id="pwa-install-btn" type="button" onclick="if(window.triggerPwaInstall) window.triggerPwaInstall()" class="hidden"></button>
+
+        <!-- 3. Consolidated Settings Gear Dropdown -->
+        <div class="dropdown dropdown-end" id="studio-settings-dropdown">
+          <div id="studio-settings-gear-btn" tabindex="0" role="button" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 btn-square" aria-label="Studio Settings" title="Studio Settings" aria-haspopup="true" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <circle cx="12" cy="12" r="3"/>
             </svg>
           </div>
-          <ul tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-56 p-2 shadow-xl border border-base-300">
-            <li><button type="button" onclick="downloadStarterHtml(this)" class="gap-2"><i data-lucide="file-code" class="w-4 h-4 text-primary"></i> Download Starter HTML</button></li>
-            <li><button type="button" id="pwa-install-dropdown-btn" onclick="if(window.triggerPwaInstall) window.triggerPwaInstall()" class="gap-2"><i data-lucide="download" class="w-4 h-4 text-accent"></i> Install as App (PWA)</button></li>
-            <li><button type="button" onclick="copyPromptToClipboard(this)" class="gap-2"><i data-lucide="copy" class="w-4 h-4 text-secondary"></i> Copy AI Prompt</button></li>
-            <li><button type="button" onclick="window.print()" class="gap-2"><i data-lucide="printer" class="w-4 h-4 text-base-content/70"></i> Print Specification</button></li>
-          </ul>
+          <div id="studio-settings-panel" tabindex="0" role="dialog" aria-label="Studio Settings" class="dropdown-content bg-base-100 text-base-content rounded-box z-[60] mt-2 w-80 max-w-[calc(100vw-1.5rem)] max-h-[75vh] overflow-y-auto p-3 shadow-2xl border border-base-300 space-y-2.5">
+            <!-- Quick View Switcher -->
+            <button id="studio-quick-view-btn" type="button" onclick="toggleProjectsView()" class="btn btn-xs sm:btn-sm btn-primary w-full flex items-center justify-center gap-2 font-semibold shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              </svg>
+              <span id="studio-quick-view-label">Browse Projects Directory</span>
+            </button>
+
+            <div class="divider my-0.5 text-3xs opacity-40">Appearance &amp; Actions</div>
+
+            <!-- Appearance Section -->
+            <details class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box" id="settings-section-appearance">
+              <summary class="collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none">
+                <span>Appearance</span>
+                <span class="flex items-center gap-1 normal-case tracking-normal mr-3 font-normal">
+                  <span class="text-xs font-medium capitalize" id="active-studio-theme">light</span>
+                  <div class="flex items-center gap-0.5" id="navbar-theme-swatches" data-theme="light">
+                    <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+                    <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+                    <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+                    <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+                  </div>
+                </span>
+              </summary>
+              <div class="collapse-content px-3 pb-3 pt-2">
+                <div id="theme-dropdown" class="max-h-48 overflow-y-auto rounded-box bg-base-200 p-1.5 mt-1">
+                  <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+                    <!-- Populated via initNavbarThemeDropdown() -->
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <!-- Actions & Exports Section -->
+            <details class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box" id="settings-section-export" open>
+              <summary class="collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none">
+                <span>Actions &amp; Export</span>
+              </summary>
+              <div class="collapse-content px-3 pb-3 pt-2">
+                <ul class="menu menu-sm p-0 w-full space-y-1">
+                  <li>
+                    <button type="button" onclick="downloadStarterHtml(this)" class="flex items-center gap-2 py-2 text-xs font-semibold">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                      </svg>
+                      <span>Download Starter HTML</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" onclick="copyPromptToClipboard(this)" class="flex items-center gap-2 py-2 text-xs font-semibold">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                      </svg>
+                      <span>Copy AI Prompt</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" onclick="window.print()" class="flex items-center gap-2 py-2 text-xs font-semibold">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                      </svg>
+                      <span>Print Specification</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" id="pwa-install-dropdown-btn" onclick="if(window.triggerPwaInstall) window.triggerPwaInstall()" class="flex items-center justify-between py-2 text-xs font-semibold">
+                      <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v6m0 0l-3-3m3 3l3-3M12 4v4" />
+                        </svg>
+                        <span>Install Studio App (PWA)</span>
+                      </div>
+                      <span id="pwa-install-status-badge" class="badge badge-accent badge-xs font-mono">PWA</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </details>
+          </div>
         </div>
       </div>
     </nav>
   </header>
 
-  <!-- Hero Header -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
-    <div class="bg-base-100 rounded-2xl border border-base-300 p-5 sm:p-6 shadow-sm space-y-3">
+  <!-- Main Content Container (Dual View: Wizard & Projects) -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full">
+    <!-- VIEW 1: CREATION WIZARD -->
+    <div id="view-wizard" class="space-y-6">
+      <div class="bg-base-100 rounded-2xl border border-base-300 p-5 sm:p-6 shadow-sm space-y-3">
       <div class="flex items-center justify-between flex-wrap gap-2">
         <div class="space-y-1">
           <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-base-content flex items-center gap-2.5">
@@ -897,6 +1010,114 @@
 
       </div>
     </div>
+    <!-- END VIEW 1: CREATION WIZARD -->
+
+    <!-- VIEW 2: WORKSPACE PROJECTS DIRECTORY -->
+    <div id="view-projects" class="hidden space-y-6">
+      <!-- Projects Header Banner -->
+      <div class="bg-base-100 rounded-2xl border border-base-300 p-5 sm:p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="switchView('wizard')" class="btn btn-xs btn-ghost gap-1 font-mono text-primary hover:btn-primary hover:text-primary-content">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Back to Creation Studio</span>
+              </button>
+              <span class="badge badge-primary font-mono text-3xs font-semibold">Workspace Discovery</span>
+            </div>
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-black tracking-tight flex items-center gap-2">
+              <span>Workspace Projects &amp; Dashboards</span>
+            </h1>
+            <p class="text-xs sm:text-sm text-base-content/70 max-w-3xl">
+              Centralized launcher for all local HTML reports, OpenSpec journey companions, performance benchmarks, and interactive prototypes.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="loadWorkspaceProjects()" class="btn btn-xs sm:btn-sm btn-outline border-base-300 gap-1.5" title="Rescan Workspace">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>Refresh</span>
+            </button>
+            <button type="button" onclick="switchView('wizard')" class="btn btn-xs sm:btn-sm btn-primary gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>New Report</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Offline / Zero-Node Banner (shown if API unreachable) -->
+        <div id="projects-offline-banner" class="alert alert-info py-2 px-3 text-xs hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div class="flex-1">
+            <span class="font-semibold">Static / Zero-Node Mode:</span> Showing bundled showcase reports. Start the local dev server (<code class="font-mono text-3xs">node skills/html-report/scripts/serve-report.mjs</code>) to auto-discover all workspace projects.
+          </div>
+        </div>
+
+        <!-- Search Bar & Category Filters -->
+        <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between pt-2 border-t border-base-200">
+          <div class="relative flex-1 max-w-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              id="projects-search-input"
+              type="text"
+              placeholder="Search projects by title, path, category..."
+              oninput="filterProjectsList()"
+              class="input input-sm input-bordered w-full pl-9 pr-8 text-xs"
+            />
+            <button
+              id="projects-search-clear"
+              type="button"
+              onclick="clearProjectsSearch()"
+              class="btn btn-ghost btn-xs btn-circle absolute right-1.5 top-1/2 -translate-y-1/2 text-base-content/50 hidden"
+              title="Clear search"
+            >✕</button>
+          </div>
+
+          <!-- Category filter tabs -->
+          <div id="projects-category-filters" class="flex flex-wrap gap-1.5 items-center text-xs">
+            <!-- Dynamically populated via renderCategoryFilters() -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Projects Grid Container -->
+      <div id="projects-grid-container" class="space-y-4">
+        <div class="flex items-center justify-between text-xs text-base-content/70 px-1">
+          <span id="projects-count-summary">Showing 0 projects</span>
+          <span class="text-3xs font-mono">target="_blank" &bull; new tab</span>
+        </div>
+
+        <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Populated via renderProjectsGrid() -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="projects-empty-state" class="hidden text-center py-12 bg-base-100 rounded-2xl border border-dashed border-base-300 p-8 space-y-3">
+          <div class="w-12 h-12 mx-auto rounded-full bg-base-200 flex items-center justify-center text-base-content/50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="font-bold text-base">No matching projects found</h3>
+          <p class="text-xs text-base-content/70 max-w-sm mx-auto">
+            Try adjusting your search terms or category filter, or create a new report using the Creation Studio.
+          </p>
+          <button type="button" onclick="clearProjectsSearch(); setProjectCategoryFilter('all');" class="btn btn-xs btn-outline btn-primary">
+            Reset Filters
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- END VIEW 2: WORKSPACE PROJECTS DIRECTORY -->
   </main>
 
   <footer class="mt-auto py-4 border-t border-base-300 bg-base-100 text-center text-xs text-base-content/60">
@@ -2120,6 +2341,393 @@
     const themeObserver = new MutationObserver(() => syncThemeColorMeta());
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
+    // ==========================================
+    // WORKSPACE PROJECTS DIRECTORY & DUAL VIEW MODE
+    // ==========================================
+    let workspaceProjects = [];
+    let currentCategoryFilter = "all";
+    let projectsSearchQuery = "";
+
+    const BUNDLED_SHOWCASE_PROJECTS = [
+      {
+        title: "Publication-Grade HTML Report Showcase",
+        path: "skills/html-report/examples/example.html",
+        url: "skills/html-report/examples/example.html",
+        category: "Showcase Example",
+        version: "2.0.0",
+        updatedAt: new Date().toISOString(),
+        size: 215000,
+        description: "Full-fidelity demonstration with DaisyUI 32-theme switcher, Alpine.js reactivity, Chart.js telemetry, and Mermaid diagrams."
+      },
+      {
+        title: "Creation Studio Dedicated Navbar & Projects View - Journey",
+        path: "openspec/changes/studio-navbar-projects-view/index.html",
+        url: "openspec/changes/studio-navbar-projects-view/index.html",
+        category: "OpenSpec Journey",
+        version: "1.0.0",
+        updatedAt: new Date().toISOString(),
+        size: 233671,
+        description: "Living journey dashboard tracking dedicated studio navbar and workspace project directory."
+      },
+      {
+        title: "Traditional vs Modern Report Benchmark",
+        path: "benchmark/traditional-report.html",
+        url: "benchmark/traditional-report.html",
+        category: "Performance Benchmark",
+        version: "1.0.0",
+        updatedAt: new Date().toISOString(),
+        size: 85000,
+        description: "Head-to-head performance audit comparing legacy static reports with reactive hypermedia dashboards."
+      },
+      {
+        title: "Codex Telemetry & Deep Architecture Research",
+        path: "research/index.html",
+        url: "research/index.html",
+        category: "Research Report",
+        version: "1.2.0",
+        updatedAt: new Date().toISOString(),
+        size: 142000,
+        description: "Deep dive telemetry analysis and token economy benchmarks across multi-agent swarms."
+      },
+      {
+        title: "Datastar Real-Time Telemetry Console",
+        path: "skills/html-report/examples/datastar-live-dashboard.html",
+        url: "skills/html-report/examples/datastar-live-dashboard.html",
+        category: "Showcase Example",
+        version: "2.1.0",
+        updatedAt: new Date().toISOString(),
+        size: 178000,
+        description: "High-frequency SSE agent monitoring console with reactive signal updates."
+      }
+    ];
+
+    function getCategoryBadgeClass(category) {
+      switch (category) {
+        case "Workspace Project": return "badge-success text-success-content";
+        case "OpenSpec Journey": return "badge-primary text-primary-content";
+        case "Analytical Report": return "badge-secondary text-secondary-content";
+        case "Creation Studio": return "badge-accent text-accent-content";
+        case "Performance Benchmark": return "badge-warning text-warning-content";
+        case "Dev Prototype": return "badge-info text-info-content";
+        case "Research Report": return "badge-neutral text-neutral-content";
+        case "Showcase Example": return "badge-outline badge-primary";
+        case "Experiment": return "badge-accent badge-outline";
+        default: return "badge-ghost";
+      }
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes || isNaN(bytes)) return "";
+      if (bytes < 1024) return bytes + " B";
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+    }
+
+    window.closeProjectsDropdown = function () {
+      const dropdown = document.getElementById("navbar-projects-dropdown");
+      if (dropdown) {
+        if (document.activeElement && dropdown.contains(document.activeElement)) {
+          document.activeElement.blur();
+        }
+      }
+    };
+
+    window.renderDropdownProjectsList = function (searchQuery = "") {
+      const container = document.getElementById("dropdown-projects-list");
+      if (!container) return;
+
+      let list = workspaceProjects;
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase().trim();
+        list = list.filter((p) =>
+          (p.title && p.title.toLowerCase().includes(q)) ||
+          (p.path && p.path.toLowerCase().includes(q)) ||
+          (p.category && p.category.toLowerCase().includes(q))
+        );
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="py-6 text-center text-xs text-base-content/60">
+            No projects match search
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = "";
+      list.slice(0, 10).forEach((p) => {
+        const item = document.createElement("a");
+        item.href = p.url;
+        item.target = "_blank";
+        item.rel = "noopener noreferrer";
+        item.className = "flex items-center justify-between gap-2 p-2 rounded-lg hover:bg-base-200 transition text-left group pt-2 first:pt-1";
+
+        const left = document.createElement("div");
+        left.className = "min-w-0 flex-1";
+
+        const title = document.createElement("div");
+        title.className = "text-xs font-semibold text-base-content truncate group-hover:text-primary transition-colors";
+        title.textContent = p.title || p.path;
+        title.title = p.title || p.path;
+
+        const sub = document.createElement("div");
+        sub.className = "flex items-center gap-1.5 text-3xs text-base-content/60 font-mono truncate mt-0.5";
+        sub.innerHTML = `<span class="badge badge-3xs ${getCategoryBadgeClass(p.category)} font-mono">${p.category || 'HTML Report'}</span> <span class="truncate">${p.path}</span>`;
+
+        left.appendChild(title);
+        left.appendChild(sub);
+
+        const icon = document.createElement("div");
+        icon.className = "shrink-0 text-base-content/40 group-hover:text-primary transition-colors";
+        icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>`;
+
+        item.appendChild(left);
+        item.appendChild(icon);
+        container.appendChild(item);
+      });
+    };
+
+    window.filterDropdownProjectsList = function (query) {
+      window.renderDropdownProjectsList(query);
+    };
+
+    window.switchView = function (viewName, updateHash = true) {
+      const wizardView = document.getElementById("view-wizard");
+      const projectsView = document.getElementById("view-projects");
+      const navProjectsBtn = document.getElementById("navbar-projects-btn");
+      const tocDropdown = document.getElementById("toc-dropdown");
+      const quickViewLabel = document.getElementById("studio-quick-view-label");
+
+      if (viewName === "projects") {
+        if (wizardView) wizardView.classList.add("hidden");
+        if (projectsView) projectsView.classList.remove("hidden");
+        if (navProjectsBtn) {
+          navProjectsBtn.classList.remove("btn-ghost");
+          navProjectsBtn.classList.add("btn-primary");
+        }
+        if (tocDropdown) tocDropdown.classList.add("hidden");
+        if (quickViewLabel) quickViewLabel.textContent = "Return to Creation Studio";
+        if (updateHash && window.location.hash !== "#projects") {
+          history.pushState(null, "", "#projects");
+        }
+        window.scrollTo({ top: 0, behavior: "instant" });
+        loadWorkspaceProjects();
+      } else {
+        if (wizardView) wizardView.classList.remove("hidden");
+        if (projectsView) projectsView.classList.add("hidden");
+        if (navProjectsBtn) {
+          navProjectsBtn.classList.add("btn-ghost");
+          navProjectsBtn.classList.remove("btn-primary");
+        }
+        if (tocDropdown) tocDropdown.classList.remove("hidden");
+        if (quickViewLabel) quickViewLabel.textContent = "Browse Projects Directory";
+        if (updateHash && window.location.hash === "#projects") {
+          history.pushState(null, "", window.location.pathname + window.location.search);
+        }
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+      if (window.lucide) {
+        try { window.lucide.createIcons(); } catch (_) {}
+      }
+    };
+
+    window.toggleProjectsView = function () {
+      const projectsView = document.getElementById("view-projects");
+      const isProjectsVisible = projectsView && !projectsView.classList.contains("hidden");
+      window.switchView(isProjectsVisible ? "wizard" : "projects");
+    };
+
+    window.loadWorkspaceProjects = async function () {
+      const offlineBanner = document.getElementById("projects-offline-banner");
+      try {
+        const res = await fetch("/api/projects", { cache: "no-store" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.projects)) {
+          workspaceProjects = data.projects;
+          if (offlineBanner) offlineBanner.classList.add("hidden");
+        } else {
+          throw new Error("Invalid response");
+        }
+      } catch (_) {
+        // Zero-node / offline fallback
+        let saved = [];
+        try {
+          const raw = localStorage.getItem("studio_local_projects");
+          if (raw) saved = JSON.parse(raw);
+        } catch (_) {}
+        workspaceProjects = [...saved, ...BUNDLED_SHOWCASE_PROJECTS];
+        if (offlineBanner) offlineBanner.classList.remove("hidden");
+      }
+
+      // Update badge in navbar and dropdown
+      const badge = document.getElementById("navbar-projects-badge");
+      if (badge) {
+        badge.textContent = workspaceProjects.length;
+      }
+      const dropdownBadge = document.getElementById("dropdown-projects-badge");
+      if (dropdownBadge) {
+        dropdownBadge.textContent = workspaceProjects.length;
+      }
+
+      renderDropdownProjectsList();
+      renderCategoryFilters();
+      renderProjectsGrid();
+    };
+
+    window.renderCategoryFilters = function () {
+      const container = document.getElementById("projects-category-filters");
+      if (!container) return;
+
+      const categories = new Set(["all"]);
+      workspaceProjects.forEach((p) => {
+        if (p.category) categories.add(p.category);
+      });
+
+      container.innerHTML = "";
+      categories.forEach((cat) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        const isActive = cat === currentCategoryFilter;
+        btn.className = `btn btn-xs ${isActive ? "btn-primary" : "btn-ghost border border-base-300"} capitalize font-mono text-3xs`;
+        const count = cat === "all" ? workspaceProjects.length : workspaceProjects.filter((p) => p.category === cat).length;
+        btn.textContent = `${cat === "all" ? "All" : cat} (${count})`;
+        btn.onclick = () => window.setProjectCategoryFilter(cat);
+        container.appendChild(btn);
+      });
+    };
+
+    window.setProjectCategoryFilter = function (category) {
+      currentCategoryFilter = category;
+      window.renderCategoryFilters();
+      window.renderProjectsGrid();
+    };
+
+    window.filterProjectsList = function () {
+      const input = document.getElementById("projects-search-input");
+      const clearBtn = document.getElementById("projects-search-clear");
+      projectsSearchQuery = (input ? input.value : "").trim().toLowerCase();
+      if (clearBtn) {
+        if (projectsSearchQuery) clearBtn.classList.remove("hidden");
+        else clearBtn.classList.add("hidden");
+      }
+      window.renderProjectsGrid();
+    };
+
+    window.clearProjectsSearch = function () {
+      const input = document.getElementById("projects-search-input");
+      const clearBtn = document.getElementById("projects-search-clear");
+      if (input) input.value = "";
+      if (clearBtn) clearBtn.classList.add("hidden");
+      projectsSearchQuery = "";
+      window.renderProjectsGrid();
+    };
+
+    window.renderProjectsGrid = function () {
+      const grid = document.getElementById("projects-grid");
+      const emptyState = document.getElementById("projects-empty-state");
+      const countSummary = document.getElementById("projects-count-summary");
+      if (!grid) return;
+
+      let filtered = workspaceProjects;
+      if (currentCategoryFilter !== "all") {
+        filtered = filtered.filter((p) => p.category === currentCategoryFilter);
+      }
+      if (projectsSearchQuery) {
+        filtered = filtered.filter((p) =>
+          (p.title && p.title.toLowerCase().includes(projectsSearchQuery)) ||
+          (p.path && p.path.toLowerCase().includes(projectsSearchQuery)) ||
+          (p.category && p.category.toLowerCase().includes(projectsSearchQuery)) ||
+          (p.description && p.description.toLowerCase().includes(projectsSearchQuery))
+        );
+      }
+
+      if (countSummary) {
+        countSummary.textContent = `Showing ${filtered.length} of ${workspaceProjects.length} projects`;
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = "";
+        if (emptyState) emptyState.classList.remove("hidden");
+        return;
+      }
+
+      if (emptyState) emptyState.classList.add("hidden");
+      grid.innerHTML = "";
+
+      filtered.forEach((p) => {
+        const card = document.createElement("div");
+        card.className = "card bg-base-100 border border-base-300 shadow-sm hover:shadow-md transition-shadow rounded-xl p-4 flex flex-col justify-between";
+
+        const topRow = document.createElement("div");
+        topRow.className = "flex items-center justify-between gap-2";
+
+        const badge = document.createElement("span");
+        badge.className = `badge badge-xs font-mono font-semibold ${getCategoryBadgeClass(p.category)}`;
+        badge.textContent = p.category || "HTML Report";
+
+        const ver = document.createElement("span");
+        ver.className = "badge badge-outline font-mono text-3xs font-semibold";
+        ver.textContent = `v${p.version || "1.0.0"}`;
+
+        topRow.appendChild(badge);
+        topRow.appendChild(ver);
+
+        const body = document.createElement("div");
+        body.className = "space-y-1.5 my-3";
+
+        const h3 = document.createElement("h3");
+        h3.className = "font-bold text-sm text-base-content line-clamp-2";
+        h3.title = p.title || p.path;
+        h3.textContent = p.title || p.path;
+
+        const pathEl = document.createElement("p");
+        pathEl.className = "font-mono text-3xs text-base-content/60 truncate flex items-center gap-1";
+        pathEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg> <span>${p.path}</span>`;
+
+        body.appendChild(h3);
+        body.appendChild(pathEl);
+
+        if (p.description) {
+          const desc = document.createElement("p");
+          desc.className = "text-xs text-base-content/70 line-clamp-2";
+          desc.textContent = p.description;
+          body.appendChild(desc);
+        }
+
+        const footer = document.createElement("div");
+        footer.className = "flex items-center justify-between pt-2 border-t border-base-200 mt-auto";
+
+        const sizeEl = document.createElement("span");
+        sizeEl.className = "text-3xs text-base-content/50 font-mono";
+        sizeEl.textContent = formatBytes(p.size);
+
+        const openBtn = document.createElement("a");
+        openBtn.href = p.url;
+        openBtn.target = "_blank";
+        openBtn.rel = "noopener noreferrer";
+        openBtn.className = "btn btn-xs btn-primary gap-1";
+        openBtn.innerHTML = `<span>Open</span> <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>`;
+
+        footer.appendChild(sizeEl);
+        footer.appendChild(openBtn);
+
+        card.appendChild(topRow);
+        card.appendChild(body);
+        card.appendChild(footer);
+        grid.appendChild(card);
+      });
+    };
+
+    window.addEventListener("hashchange", () => {
+      if (window.location.hash === "#projects") {
+        window.switchView("projects", false);
+      } else {
+        window.switchView("wizard", false);
+      }
+    });
+
     document.addEventListener("DOMContentLoaded", () => {
       try {
         const savedMode = localStorage.getItem("html-report-create-goals-mode");
@@ -2149,6 +2757,14 @@
       renderCollectedFiles();
       updatePromptAndPreview();
       setTimeout(syncThemeColorMeta, 250);
+
+      // Initialize route & preload projects
+      if (window.location.hash === "#projects") {
+        window.switchView("projects", false);
+      } else {
+        window.loadWorkspaceProjects();
+      }
+
       if (window.lucide) window.lucide.createIcons();
     });
   </script>

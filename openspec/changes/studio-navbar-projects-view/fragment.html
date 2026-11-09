@@ -1,0 +1,326 @@
+<header class="space-y-4 border-b border-base-300 pb-8">
+  <div class="flex flex-wrap gap-2">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">studio-navbar-projects-view</span>
+    <span class="badge badge-success font-mono text-xs text-success-content font-bold">Phase 5: Shipped &amp; Verified</span>
+    <span class="badge badge-ghost font-mono text-xs">Studio Navbar &amp; Projects Directory</span>
+  </div>
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight">Creation Studio Dedicated Navbar &amp; Projects Directory View</h1>
+  <p class="text-base text-base-content/80 max-w-3xl">
+    Restructures the HTML Creation Studio (<code>create.html</code>) with a dedicated top navbar aligned to the publication-grade <code>template-shell.html</code> standard, consolidates secondary controls into a unified Settings Gear dropdown, and introduces an interactive Projects Directory view with automatic workspace report discovery (<code>GET /api/projects</code>), semantic version badges, and new-tab launcher controls.
+  </p>
+  <div class="flex flex-wrap gap-3 items-center text-xs">
+    <span class="font-semibold">Planning Artifacts:</span>
+    <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">proposal.md</button>
+    <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">design.md</button>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">tasks.md</button>
+    <button type="button" onclick="openMarkdownViewer('specs/studio-project-navigation/spec.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">specs/studio-project-navigation/spec.md</button>
+  </div>
+  <div class="w-full overflow-x-auto">
+    <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+      <li class="step step-primary">Brainstorming</li>
+      <li class="step step-primary">Planning</li>
+      <li class="step step-primary">Implementing</li>
+      <li class="step step-primary">Verifying</li>
+      <li class="step step-primary">Shipped / Archived</li>
+    </ul>
+  </div>
+</header>
+
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
+<dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50">
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 id="markdown-modal-title" class="font-mono font-bold text-sm text-base-content">artifact.md</h3>
+      </div>
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+      </form>
+    </div>
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto font-sans prose prose-sm max-w-none text-base-content">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- SECTION 1: JOURNEY & PROGRESS METRICS -->
+<section id="section-metrics" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="plan-metrics" class="text-xl sm:text-2xl font-bold tracking-tight">Journey &amp; Plan Progress Metrics</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Tracking execution milestones from planning to deployment.</p>
+    </div>
+    <div class="badge badge-success font-mono text-xs">Phase 5: Shipped &amp; Verified</div>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="stat bg-base-200/50 rounded-box border border-base-300 p-4">
+      <div class="stat-title text-3xs font-bold uppercase tracking-wider text-base-content/60">Total Tasks</div>
+      <div class="stat-value text-2xl font-black font-mono text-primary">14</div>
+      <div class="stat-desc text-3xs mt-1">4 implementation phases</div>
+    </div>
+    <div class="stat bg-base-200/50 rounded-box border border-base-300 p-4">
+      <div class="stat-title text-3xs font-bold uppercase tracking-wider text-base-content/60">Completed</div>
+      <div class="stat-value text-2xl font-black font-mono text-success">14</div>
+      <div class="stat-desc text-3xs mt-1">All tasks verified</div>
+    </div>
+    <div class="stat bg-base-200/50 rounded-box border border-base-300 p-4">
+      <div class="stat-title text-3xs font-bold uppercase tracking-wider text-base-content/60">In Progress</div>
+      <div class="stat-value text-2xl font-black font-mono text-warning">0</div>
+      <div class="stat-desc text-3xs mt-1">Ready for archive</div>
+    </div>
+    <div class="stat bg-base-200/50 rounded-box border border-base-300 p-4">
+      <div class="stat-title text-3xs font-bold uppercase tracking-wider text-base-content/60">Progress</div>
+      <div class="stat-value text-2xl font-black font-mono text-success">100%</div>
+      <div class="stat-desc text-3xs mt-1">Feature complete</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: ARCHITECTURE & MERMAID FLOW -->
+<section id="section-architecture" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="architecture-flow" class="text-xl sm:text-2xl font-bold tracking-tight">Dedicated Navbar &amp; Projects Directory Architecture</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Visualizing the unified layout, router state, and workspace discovery pipeline.</p>
+    </div>
+    <span class="badge badge-secondary badge-outline text-3xs font-mono">Mermaid Flow</span>
+  </div>
+
+  <div class="mermaid bg-base-200/50 p-4 rounded-box border border-base-300 overflow-x-auto text-center">
+graph TD
+    subgraph Navbar["Dedicated Creation Studio Navbar"]
+      Start["Brand & Mode: /html-create"]
+      TOC["Sections (TOC Dropdown)"]
+      ProjBtn["📂 Projects Button"]
+      SettingsGear["⚙️ Settings Gear Dropdown"]
+      
+      subgraph GearItems["Inside Settings Gear"]
+        ThemeSwatches["DaisyUI 32-Theme Swatches"]
+        PWAInstall["Install Studio as App"]
+        Exports["Download HTML / Copy Prompt / Print"]
+      end
+      SettingsGear --> GearItems
+    end
+
+    subgraph StudioRouter["Studio Dual-View Router"]
+      WizardView["#view-wizard (Creation Wizard & OKLCH Studio)"]
+      ProjectsView["#view-projects (Projects Directory View)"]
+    end
+
+    ProjBtn -->|Toggle Click| ProjectsView
+    WizardView <-->|Back / Switch| ProjectsView
+
+    subgraph BackendDiscovery["Workspace Discovery & Launcher"]
+      ServerEndpoint["serve-report.mjs: GET /api/projects"]
+      FileScanner["Scan Workspace (maxdepth: 4)"]
+      SemVerParser["Extract SemVer & Category Tags"]
+      JSONResponse["Enriched JSON Project List"]
+      
+      ServerEndpoint --> FileScanner --> SemVerParser --> JSONResponse
+    end
+
+    ProjectsView -->|Fetch Projects| ServerEndpoint
+    ProjectsView -->|Offline file:// Fallback| LocalStorageCache["Local Showcase Cache"]
+    ProjectsView -->|Open Click| NewTab["Launch Report (target='_blank')"]
+  </div>
+</section>
+
+<!-- SECTION 3: KEY DESIGN DECISIONS -->
+<section id="section-decisions" class="space-y-4">
+  <h2 id="key-decisions" class="text-xl sm:text-2xl font-bold tracking-tight">Key Design &amp; Architectural Decisions</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-md bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">1</span>
+        <h3 class="font-bold text-sm">Dedicated Studio Navbar</h3>
+      </div>
+      <p class="text-xs text-base-content/70">
+        Replaces individual top-level theme and download buttons with a standardized, clean navbar mirroring <code>template-shell.html</code>. Keeps <strong>Sections</strong> and <strong>Projects</strong> prominent.
+      </p>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-md bg-secondary/10 text-secondary flex items-center justify-center font-bold text-xs">2</span>
+        <h3 class="font-bold text-sm">Consolidated Settings Gear</h3>
+      </div>
+      <p class="text-xs text-base-content/70">
+        Encapsulates theme swatch selection (32 DaisyUI themes), PWA installation triggers, and export actions inside a single <code>#studio-settings-gear-btn</code> dropdown to prevent visual noise.
+      </p>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-2">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-md bg-accent/10 text-accent flex items-center justify-center font-bold text-xs">3</span>
+        <h3 class="font-bold text-sm">Projects Directory &amp; SemVer</h3>
+      </div>
+      <p class="text-xs text-base-content/70">
+        Adds dynamic report discovery via <code>GET /api/projects</code> with category badges (OpenSpec Journey, Report, Benchmark, Dev) and SemVer tags, opening target reports directly in new browser tabs.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: TASK CHECKLIST (MIRRORING TASKS.MD) -->
+<section id="section-tasks" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="task-checklist" class="text-xl sm:text-2xl font-bold tracking-tight">Connected Implementation Tasks</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Execution roadmap directly mapped to <code>tasks.md</code>.</p>
+    </div>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">View tasks.md</button>
+  </div>
+
+  <div class="space-y-4">
+    <!-- Phase 1 -->
+    <div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-sm font-bold flex items-center gap-2">
+        <span class="badge badge-primary badge-sm">Phase 1</span>
+        <span>Creation Studio Dedicated Navbar &amp; Consolidated Settings</span>
+      </div>
+      <div class="collapse-content space-y-2 pt-2">
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>1.1</strong> Redesign the Creation Studio header with a dedicated layout matching <code>template-shell.html</code> standards.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>1.2</strong> Implement the unified Settings Gear dropdown consolidating theme swatches, PWA install, and export options.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>1.3</strong> Add the top-level Projects navigation button (<code>#navbar-projects-btn</code>) in the studio navbar.</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-sm font-bold flex items-center gap-2">
+        <span class="badge badge-secondary badge-sm">Phase 2</span>
+        <span>Workspace Project Discovery API (<code>serve-report.mjs</code>)</span>
+      </div>
+      <div class="collapse-content space-y-2 pt-2">
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>2.1</strong> Implement the <code>GET /api/projects</code> endpoint in <code>serve-report.mjs</code> scanning workspace directories.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>2.2</strong> Add semantic versioning extraction logic and category tagging for discovered projects.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>2.3</strong> Implement offline zero-node fallback in <code>create.html</code> reading cached or bundled showcase reports.</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-sm font-bold flex items-center gap-2">
+        <span class="badge badge-accent badge-sm">Phase 3</span>
+        <span>Projects Directory View (<code>#view-projects</code>)</span>
+      </div>
+      <div class="collapse-content space-y-2 pt-2">
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>3.1</strong> Build the responsive Projects Directory grid layout with search filter and category filters.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>3.2</strong> Implement project cards rendering title, location, category badge, SemVer tag, and an Open button (<code>target="_blank"</code>).</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>3.3</strong> Add URL hash routing (<code>#projects</code>) to allow direct bookmarking and navigation.</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-sm font-bold flex items-center gap-2">
+        <span class="badge badge-neutral badge-sm">Phase 4</span>
+        <span>Verification &amp; Journey Sync</span>
+      </div>
+      <div class="collapse-content space-y-2 pt-2">
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.1</strong> Sync <code>skills/html-report/assets/create.html</code> with root <code>create.html</code> and verify parity.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.2</strong> Write automated integration tests in <code>tests/studio-navbar-projects.test.mjs</code>.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.3</strong> Update <code>skills/html-create/SKILL.md</code> documenting the dedicated navbar and Projects Directory.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.4</strong> Update journey dashboard and synchronize with <code>implementation-progress.html</code> on <code>localhost:3000</code>.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.5</strong> Add mock operations dashboard in <code>projects/mock-dashboard/index.html</code> categorized as <code>Workspace Project</code> with telemetry metrics.</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer text-xs">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
+          <span><strong>4.6</strong> Implement navbar Projects dropdown menu (<code>#navbar-projects-dropdown</code>) with quick launcher, real-time search, and instant view-switch scroll restoration.</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKDOWN VIEWER SCRIPT -->
+<script>
+  let showdownConverter = null;
+  function getShowdown() {
+    if (!showdownConverter && window.showdown) {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  window.openMarkdownViewer = async function(filePath) {
+    const modal = document.getElementById("markdown-viewer-modal");
+    const titleEl = document.getElementById("markdown-modal-title");
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (!modal || !titleEl || !bodyEl) return;
+
+    titleEl.textContent = filePath;
+    bodyEl.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
+    modal.showModal();
+
+    try {
+      const res = await fetch(filePath);
+      if (!res.ok) throw new Error("HTTP " + res.status + " fetching " + filePath);
+      const text = await res.text();
+      const converter = getShowdown();
+      bodyEl.innerHTML = converter ? converter.makeHtml(text) : '<pre class="whitespace-pre-wrap font-mono text-xs">' + text.replace(/</g, "&lt;") + '</pre>';
+    } catch (err) {
+      bodyEl.innerHTML = '<div class="alert alert-error text-xs"><span>Failed to load artifact: ' + err.message + '</span></div>';
+    }
+  };
+</script>

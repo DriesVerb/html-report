@@ -304,6 +304,182 @@ function findActiveChangeDir(startDir) {
   return null;
 }
 
+function findWorkspaceRoot(startDir) {
+  let curr = path.resolve(startDir);
+  while (curr && curr !== path.dirname(curr)) {
+    if (fs.existsSync(path.join(curr, "package.json")) || fs.existsSync(path.join(curr, ".git"))) {
+      return curr;
+    }
+    curr = path.dirname(curr);
+  }
+  return path.resolve(startDir);
+}
+
+function extractProjectMetadata(fullPath, relPath, workspaceRoot) {
+  let title = path.basename(relPath, ".html");
+  let version = "1.0.0";
+  let description = "";
+
+  try {
+    const fd = fs.openSync(fullPath, "r");
+    const buffer = Buffer.alloc(8192);
+    const bytesRead = fs.readSync(fd, buffer, 0, 8192, 0);
+    fs.closeSync(fd);
+    const headChunk = buffer.toString("utf-8", 0, bytesRead);
+
+    // Title extraction: <title>...</title>
+    const titleMatch = headChunk.match(/<title[^>]*>([^<]+)<\/title>/i);
+    if (titleMatch && titleMatch[1].trim()) {
+      title = titleMatch[1].trim();
+    } else if (relPath.includes("openspec/changes/")) {
+      const match = relPath.match(/openspec\/changes\/([^\/]+)/);
+      if (match) {
+        title = match[1].replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) + " - Journey";
+      }
+    }
+
+    // Version extraction
+    const versionMatch =
+      headChunk.match(/data-(?:report-)?version=["']([^"']+)["']/i) ||
+      headChunk.match(/<!--\s*(?:VERSION|version):\s*([^\s-]+)\s*-->/i) ||
+      headChunk.match(/<meta\s+name=["']version["']\s+content=["']([^"']+)["']/i) ||
+      headChunk.match(/title=["']Semantic Versioning v([^"']+)["']/i) ||
+      headChunk.match(/<!--\s*v?(\d+\.\d+\.\d+)\s*-->/);
+
+    if (versionMatch && versionMatch[1] && !versionMatch[1].includes("{{")) {
+      version = versionMatch[1].replace(/^v/, "").trim();
+    } else {
+      const pkgVer = getPackageVersion(workspaceRoot);
+      if (pkgVer && pkgVer !== "unknown") {
+        version = pkgVer.startsWith("v") ? pkgVer.slice(1) : pkgVer;
+      }
+    }
+
+    // Description extraction
+    const descMatch = headChunk.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
+    if (descMatch && descMatch[1].trim()) {
+      description = descMatch[1].trim();
+    }
+  } catch (_) {}
+
+  // Category determination
+  let category = "HTML Report";
+  const normalizedRel = relPath.replace(/\\/g, "/");
+  const isFragment = path.basename(normalizedRel).includes("fragment");
+
+  if (normalizedRel.startsWith("projects/")) {
+    category = "Workspace Project";
+  } else if (normalizedRel.startsWith("openspec/changes/")) {
+    category = isFragment ? "OpenSpec Fragment" : "OpenSpec Journey";
+  } else if (normalizedRel.startsWith("benchmark/")) {
+    category = "Performance Benchmark";
+  } else if (normalizedRel.startsWith("research/")) {
+    category = "Research Report";
+  } else if (normalizedRel.startsWith("dev/")) {
+    category = "Dev Prototype";
+  } else if (normalizedRel.startsWith("experiments/")) {
+    category = "Experiment";
+  } else if (normalizedRel.startsWith("reports/") || normalizedRel === "report.html") {
+    category = "Analytical Report";
+  } else if (normalizedRel.includes("examples/")) {
+    category = "Showcase Example";
+  } else if (path.basename(normalizedRel) === "create.html") {
+    category = "Creation Studio";
+  } else if (isFragment) {
+    category = "HTML Fragment";
+  }
+
+  let stat;
+  try {
+    stat = fs.statSync(fullPath);
+  } catch (_) {
+    stat = { size: 0, mtime: new Date() };
+  }
+
+  return {
+    title,
+    path: normalizedRel,
+    url: "/" + normalizedRel,
+    category,
+    version,
+    updatedAt: stat.mtime.toISOString(),
+    size: stat.size,
+    description
+  };
+}
+
+function scanWorkspaceProjects(workspaceRoot, maxDepth = 4) {
+  const IGNORED_DIRS = new Set([
+    ".git",
+    "node_modules",
+    ".cache",
+    ".gemini",
+    "coverage",
+    "dist",
+    "build",
+    ".system_generated",
+    "tmp",
+    ".local",
+    "tests"
+  ]);
+
+  const projects = [];
+
+  function isIgnoredDir(name) {
+    if (IGNORED_DIRS.has(name)) return true;
+    if (name.startsWith(".") && name !== ".openspec.yaml") return true;
+    if (name.startsWith("tmp-") || name.startsWith("tmp.")) return true;
+    return false;
+  }
+
+  function walk(currentDir, depth) {
+    if (depth > maxDepth) return;
+    let entries;
+    try {
+      entries = fs.readdirSync(currentDir, { withFileTypes: true });
+    } catch (_) {
+      return;
+    }
+
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        if (!isIgnoredDir(entry.name)) {
+          walk(path.join(currentDir, entry.name), depth + 1);
+        }
+      } else if (entry.isFile() && entry.name.endsWith(".html")) {
+        if (entry.name.includes("fragment")) continue;
+        const fullPath = path.join(currentDir, entry.name);
+        const relPath = path.relative(workspaceRoot, fullPath);
+        projects.push(extractProjectMetadata(fullPath, relPath, workspaceRoot));
+      }
+    }
+  }
+
+  walk(workspaceRoot, 0);
+
+  const categoryOrder = {
+    "Workspace Project": 1,
+    "OpenSpec Journey": 2,
+    "Analytical Report": 3,
+    "Creation Studio": 4,
+    "Showcase Example": 5,
+    "Research Report": 6,
+    "Performance Benchmark": 7,
+    "Dev Prototype": 8,
+    "Experiment": 9,
+    "HTML Report": 10
+  };
+
+  projects.sort((a, b) => {
+    const orderA = categoryOrder[a.category] || 50;
+    const orderB = categoryOrder[b.category] || 50;
+    if (orderA !== orderB) return orderA - orderB;
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+
+  return projects;
+}
+
 function parseArgs(argv) {
   const args = argv.slice(2);
   let filePath = null;
@@ -507,6 +683,7 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
   const mcpSseClients = new Map();
   let serverPort = initialPort;
   let activeReportTheme = "light";
+  let projectsCache = { timestamp: 0, data: null };
 
   const personaRegistry = new PersonaRegistry();
   personaRegistry.loadFromDisk(rootDir);
@@ -1147,6 +1324,55 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
       }
     }
 
+    // 1b-3b. Workspace Projects Discovery API (/api/projects)
+    if (pathname === "/api/projects") {
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type"
+        });
+        res.end();
+        return;
+      }
+      if (req.method === "GET") {
+        const now = Date.now();
+        const workspaceRoot = findWorkspaceRoot(rootDir);
+        let projects;
+        if (projectsCache.data && (now - projectsCache.timestamp < 5000)) {
+          projects = projectsCache.data;
+        } else {
+          projects = scanWorkspaceProjects(workspaceRoot, 4);
+          projectsCache = { timestamp: now, data: projects };
+        }
+
+        const q = parsedUrl.searchParams.get("search") || parsedUrl.searchParams.get("q");
+        const cat = parsedUrl.searchParams.get("category");
+        let filtered = projects;
+
+        if (cat && cat.toLowerCase() !== "all") {
+          filtered = filtered.filter((p) => p.category.toLowerCase() === cat.toLowerCase());
+        }
+        if (q) {
+          const cleanQ = q.toLowerCase();
+          filtered = filtered.filter((p) =>
+            p.title.toLowerCase().includes(cleanQ) ||
+            p.path.toLowerCase().includes(cleanQ) ||
+            p.category.toLowerCase().includes(cleanQ) ||
+            (p.description && p.description.toLowerCase().includes(cleanQ))
+          );
+        }
+
+        res.writeHead(200, {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "no-cache, no-store"
+        });
+        res.end(JSON.stringify({ ok: true, count: filtered.length, projects: filtered }));
+        return;
+      }
+    }
+
     // 1b-0. Boards listing & per-board turnkey metadata
     if (pathname === "/__boards__" && req.method === "GET") {
       const boards = [];
@@ -1774,7 +2000,19 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
 
 const serveReport = startServer;
 
-export { startServer, serveReport, parseArgs, injectLiveReload, detectReportMode, PersonaRegistry, SessionStateStore, MIME_TYPES };
+export {
+  startServer,
+  serveReport,
+  parseArgs,
+  injectLiveReload,
+  detectReportMode,
+  PersonaRegistry,
+  SessionStateStore,
+  MIME_TYPES,
+  findWorkspaceRoot,
+  extractProjectMetadata,
+  scanWorkspaceProjects
+};
 
 const isMainModule = process.argv[1] && (
   process.argv[1].endsWith("serve-report.mjs") ||

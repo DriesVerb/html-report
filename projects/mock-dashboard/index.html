@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- {{VERSION}}: 1.0.0 -->
+  <title>Mock Operations &amp; Telemetry Dashboard</title>
+  <meta name="description" content="Interactive mock operations dashboard demonstrating real-time KPI metrics, OKLCH theme adaptation, and responsive workspace integration." />
+  <meta name="version" content="1.0.0" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+  </style>
+</head>
+<body class="bg-base-200/50 text-base-content font-sans antialiased">
+  <!-- Top Sticky Header -->
+  <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300">
+    <nav class="navbar max-w-7xl mx-auto px-4 sm:px-6 min-h-14 justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-xl">📊</span>
+        <div class="flex flex-col">
+          <span class="font-bold text-sm sm:text-base leading-tight">Mock Operations Dashboard</span>
+          <span class="font-mono text-3xs text-base-content/60">Workspace Project &bull; v1.0.0</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="/create.html#projects" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5 font-mono text-3xs">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          <span>Creation Studio</span>
+        </a>
+        <div class="badge badge-success badge-sm font-mono text-3xs font-semibold">Active Mock</div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content Dashboard -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
+    <!-- Hero Banner -->
+    <div class="hero bg-base-100 border border-base-300 rounded-2xl p-6 sm:p-8 shadow-sm">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 w-full">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="badge badge-primary font-mono text-3xs font-semibold">Sample Deliverable</span>
+            <span class="badge badge-outline font-mono text-3xs">projects/mock-dashboard</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-base-content">
+            Operations &amp; Velocity Telemetry
+          </h1>
+          <p class="text-xs sm:text-sm text-base-content/70 max-w-2xl">
+            This mock project was generated to verify workspace project discovery, semantic versioning extraction, and seamless navigation from the HTML Creation Studio.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+          <button type="button" onclick="randomizeData()" class="btn btn-sm btn-primary gap-1.5 shadow-sm">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            <span>Randomize Metrics</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Metric Stat Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="stat bg-base-100 border border-base-300 rounded-xl p-4 shadow-sm">
+        <div class="stat-figure text-primary">
+          <i data-lucide="zap" class="w-6 h-6"></i>
+        </div>
+        <div class="stat-title text-3xs uppercase font-bold tracking-wider text-base-content/60">Execution Velocity</div>
+        <div class="stat-value text-2xl text-primary font-mono" id="stat-velocity">98.4%</div>
+        <div class="stat-desc text-3xs text-success flex items-center gap-1 font-mono">
+          <span>↗ +4.2%</span> from baseline
+        </div>
+      </div>
+
+      <div class="stat bg-base-100 border border-base-300 rounded-xl p-4 shadow-sm">
+        <div class="stat-figure text-secondary">
+          <i data-lucide="activity" class="w-6 h-6"></i>
+        </div>
+        <div class="stat-title text-3xs uppercase font-bold tracking-wider text-base-content/60">Token Throughput</div>
+        <div class="stat-value text-2xl text-secondary font-mono" id="stat-throughput">1,420</div>
+        <div class="stat-desc text-3xs text-base-content/60 font-mono">tokens / sec</div>
+      </div>
+
+      <div class="stat bg-base-100 border border-base-300 rounded-xl p-4 shadow-sm">
+        <div class="stat-figure text-accent">
+          <i data-lucide="clock" class="w-6 h-6"></i>
+        </div>
+        <div class="stat-title text-3xs uppercase font-bold tracking-wider text-base-content/60">Median Latency</div>
+        <div class="stat-value text-2xl text-accent font-mono" id="stat-latency">42 ms</div>
+        <div class="stat-desc text-3xs text-success font-mono">p95 &lt; 85 ms</div>
+      </div>
+
+      <div class="stat bg-base-100 border border-base-300 rounded-xl p-4 shadow-sm">
+        <div class="stat-figure text-success">
+          <i data-lucide="check-circle" class="w-6 h-6"></i>
+        </div>
+        <div class="stat-title text-3xs uppercase font-bold tracking-wider text-base-content/60">Success Rate</div>
+        <div class="stat-value text-2xl text-success font-mono">99.98%</div>
+        <div class="stat-desc text-3xs text-base-content/60 font-mono">Zero unhandled crashes</div>
+      </div>
+    </div>
+
+    <!-- Telemetry Chart Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="card bg-base-100 border border-base-300 rounded-xl p-5 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+            <i data-lucide="trending-up" class="w-4 h-4 text-primary"></i>
+            <span>Real-Time Request Throughput</span>
+          </h3>
+          <span class="badge badge-xs badge-outline font-mono text-3xs">Chart.js Live</span>
+        </div>
+        <div class="h-64 relative">
+          <canvas id="chart-throughput"></canvas>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 rounded-xl p-5 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+            <i data-lucide="pie-chart" class="w-4 h-4 text-secondary"></i>
+            <span>Resource Allocation by Model</span>
+          </h3>
+          <span class="badge badge-xs badge-outline font-mono text-3xs">OKLCH Palette</span>
+        </div>
+        <div class="h-64 relative flex items-center justify-center">
+          <canvas id="chart-allocation"></canvas>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="mt-auto py-4 border-t border-base-300 bg-base-100 text-center text-xs text-base-content/60">
+    Mock Operations Dashboard &bull; HTML Report Creation Studio Standard &bull; Zero Node.js Required
+  </footer>
+
+  <script>
+    let throughputChart, allocationChart;
+
+    function initCharts() {
+      const ctx1 = document.getElementById("chart-throughput");
+      if (ctx1) {
+        throughputChart = new Chart(ctx1, {
+          type: "line",
+          data: {
+            labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"],
+            datasets: [{
+              label: "Requests / min",
+              data: [320, 290, 680, 1420, 1280, 950, 410],
+              borderColor: "rgb(37, 99, 235)",
+              backgroundColor: "rgba(37, 99, 235, 0.1)",
+              fill: true,
+              tension: 0.35
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: "rgba(150, 150, 150, 0.1)" } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+      }
+
+      const ctx2 = document.getElementById("chart-allocation");
+      if (ctx2) {
+        allocationChart = new Chart(ctx2, {
+          type: "doughnut",
+          data: {
+            labels: ["Claude 3.5 Sonnet", "Gemini 2.5 Pro", "GPT-4o", "DeepSeek R1"],
+            datasets: [{
+              data: [42, 28, 20, 10],
+              backgroundColor: [
+                "rgb(37, 99, 235)",
+                "rgb(16, 185, 129)",
+                "rgb(245, 158, 11)",
+                "rgb(139, 92, 246)"
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 11 } } }
+            }
+          }
+        });
+      }
+    }
+
+    function randomizeData() {
+      if (throughputChart) {
+        throughputChart.data.datasets[0].data = throughputChart.data.datasets[0].data.map(() =>
+          Math.floor(200 + Math.random() * 1400)
+        );
+        throughputChart.update();
+      }
+      const v = document.getElementById("stat-velocity");
+      if (v) v.textContent = (95 + Math.random() * 4.9).toFixed(1) + "%";
+      const t = document.getElementById("stat-throughput");
+      if (t) t.textContent = Math.floor(1000 + Math.random() * 800).toLocaleString();
+      const l = document.getElementById("stat-latency");
+      if (l) l.textContent = Math.floor(35 + Math.random() * 20) + " ms";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initCharts();
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
