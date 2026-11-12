@@ -10,9 +10,11 @@ description: >-
 
 # HTML Analytical Report Generation Skill (`html-report`)
 
-This specialized skill guides the rapid synthesis of rich, responsive, theme-adaptive analytical reports using a **deterministic assembly pipeline**.
+> **Domain:** `Delivery Archetype` | **Beneficiary:** `Hybrid` | **Serving:** `Static File` | **Behavior:** `Interactive / Reactive`
 
-Agents generate **only the semantic `<main>` content fragment** (KPI cards, stats, charts, diagrams, tables), saving ~70% of output tokens. The shared CLI builder (`build-report.mjs`) automatically stitches the fragment into the pre-bundled DaisyUI shell (`template-shell.html`) and client runtime (`report-runtime.js`) in <100ms.
+This specialized skill guides the rapid synthesis of rich, responsive, theme-adaptive analytical reports using a **deterministic Assembly & Pipeline workflow**.
+
+Agents generate **only the Semantic Fragment** (`<main id="report-main">`: KPI cards, stats, charts, diagrams, tables), saving ~70% of output tokens. The shared CLI builder (`build-report.mjs`) automatically assembles the Semantic Fragment into the pre-bundled DaisyUI Template Shell (`template-shell.html`) and client runtime (`report-runtime.js`) in <100ms.
 
 ---
 
@@ -44,10 +46,18 @@ node skills/html-report/scripts/build-report.mjs \
   --output report.html
 ```
 
-### Step 3: Verification & Quality Assurance
-Run lean Playwright verification testing mobile (`sm`) and desktop (`lg`) viewports in <4s:
+### Step 3: Dual-Path Verification & Quality Assurance
+1. **Deterministic Pipeline Gate**: Run `build-report.mjs --verify` or invoke `verify-report.mjs` directly (use `--json` for structured `ruleId` / `fixTarget` / `remediation` diagnostics):
 ```bash
-node skills/html-report/playwright/verify-report.mjs report.html --quick
+node skills/html-report/playwright/verify-report.mjs report.html --quick --json verify.json
+```
+2. **Agentic Assembly Review (Round 1 or Round 2+ Edits)**: Generate an Assembly Review Packet with screenshots and section telemetry to inspect visual layout and content:
+```bash
+node skills/html-report/playwright/verify-report.mjs report.html --quick --review-packet review-packet.json --screenshots ./screenshots
+```
+3. **Final Published Round**: Ephemeral verification classes/attributes (`verify-*`, `data-insufficient-space`, `data-verify-*`, `#html-report-verify-styles`) are automatically stripped when publishing:
+```bash
+node skills/html-report/scripts/build-report.mjs --content report-fragment.html --published --output published.html
 ```
 
 ### Step 4: Local Live-Reload Dev Server

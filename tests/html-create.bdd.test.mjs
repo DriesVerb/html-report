@@ -490,6 +490,45 @@ describe("Feature Spec: Feature 4 & 4.1 - Interactive html-create Studio & Termi
 
       await page.close();
     });
+
+    it("Scenario: Navbar Settings Reset to Default button resets all studio state to defaults", async () => {
+      const page = await browser.newPage();
+      await page.goto("http://localhost:3000/create", { waitUntil: "domcontentloaded" });
+
+      // Modify target, goals, audience, checkboxes, theme
+      await page.click('[data-target="dashboard"]');
+      await page.fill("#input-board-goals", "Custom dashboard goals");
+      await page.fill("#input-board-audience", "Engineering VPs");
+      await page.check("#chk-charts");
+      await page.check("#chk-mermaid");
+      await page.evaluate(() => changeDefaultTheme("dark"));
+      await page.waitForTimeout(100);
+
+      let promptBefore = await page.inputValue("#prompt-output-box");
+      assert.match(promptBefore, /Custom dashboard goals/);
+      assert.match(promptBefore, /Engineering VPs/);
+      assert.match(promptBefore, /Startup Theme: "dark"/);
+
+      // Open navbar settings gear and click Reset to Default
+      await page.click("#studio-settings-gear-btn");
+      await page.waitForSelector("#studio-reset-default-btn", { state: "visible" });
+      await page.click("#studio-reset-default-btn");
+      await page.waitForTimeout(150);
+
+      assert.equal(await page.inputValue("#input-board-goals"), "");
+      assert.equal(await page.inputValue("#input-board-audience"), "");
+      assert.equal(await page.isChecked("#chk-charts"), false);
+      assert.equal(await page.isChecked("#chk-mermaid"), false);
+      assert.equal(await page.getAttribute("html", "data-theme"), "light");
+
+      const promptAfter = await page.inputValue("#prompt-output-box");
+      assert.doesNotMatch(promptAfter, /Custom dashboard goals/);
+      assert.doesNotMatch(promptAfter, /Engineering VPs/);
+      assert.match(promptAfter, /Startup Theme: "light"/);
+      assert.match(promptAfter, /Analytical Report/);
+
+      await page.close();
+    });
   });
 
   describe("Requirement: Modular Skill Router Intent Handoff", () => {

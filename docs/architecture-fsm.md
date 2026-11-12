@@ -1,6 +1,6 @@
-# 🛡️ Architecture & Deterministic FSM Harness
+# 🛡️ Pipeline Architecture & Deterministic FSM Harness
 
-At the core of `html-report` is an explicit, zero-dependency Node.js **Finite State Machine (FSM)** (`skills/html-report/scripts/harness.mjs`). By structuring the compilation, auto-repair, and verification lifecycle as mathematically defined states, the system achieves bulletproof reliability and protects agent token budgets.
+At the core of `html-report` is an explicit, zero-dependency Node.js **Pipeline Finite State Machine (FSM)** (`skills/html-report/scripts/harness.mjs`) orchestrating validation, auto-repair, **Assembly** (`build-report.mjs`, `<100ms` mechanical join of `Semantic Fragment` + `Template Shell`), and verification. Structuring the Pipeline as mathematically defined states achieves bulletproof reliability and protects agent token budgets.
 
 ---
 

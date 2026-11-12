@@ -164,9 +164,24 @@ function escapeAttr(value) {
  * Removes every region wrapped in `html-report:authoring:start/end` markers
  * (settings gear, edit dock). Deterministic and idempotent.
  */
-export function stripAuthoringMarkup(html = "") {
+export function stripVerificationArtifacts(html = "") {
+  if (!html || typeof html !== "string") return "";
   return html
+    .replace(/<style\s+id=["']html-report-verify-styles["'][^>]*>[\s\S]*?<\/style>\s*/gi, "")
+    .replace(/\s+data-insufficient-space(?:=["'][^"']*["'])?/gi, "")
+    .replace(/\s+data-verify-[\w-]+(?:=["'][^"']*["'])?/gi, "")
+    .replace(/\sclass=(["'])([^"']*)\1/gi, (full, quote, classValue) => {
+      const kept = classValue
+        .split(/\s+/)
+        .filter((token) => token && !token.startsWith("verify-"));
+      return kept.length > 0 ? ` class=${quote}${kept.join(" ")}${quote}` : "";
+    });
+}
+
+export function stripAuthoringMarkup(html = "") {
+  const withoutAuthoring = html
     .replace(/[ \t]*<!-- html-report:authoring:start ([\w-]+) -->[\s\S]*?<!-- html-report:authoring:end \1 -->\n?/g, "");
+  return stripVerificationArtifacts(withoutAuthoring);
 }
 
 export function normalizeMode(rawMode) {
@@ -302,6 +317,52 @@ export function extractMainContent(rawContent = "") {
   return content;
 }
 
+function removeBalancedElement(html, startIdx, tagName) {
+  let depth = 0;
+  const tokenRe = new RegExp(`<(/?)${tagName}\\b[^>]*>`, "gi");
+  tokenRe.lastIndex = startIdx;
+  let match;
+  while ((match = tokenRe.exec(html)) !== null) {
+    if (match[1] === "/") {
+      depth--;
+      if (depth <= 0) {
+        return html.slice(0, startIdx) + html.slice(tokenRe.lastIndex);
+      }
+    } else {
+      depth++;
+    }
+  }
+  return html;
+}
+
+/**
+ * Strips duplicate navbars or sticky print:hidden control bars from fragments
+ * so template-shell.html remains the single source of truth for navigation.
+ */
+export function stripDuplicateNavbars(html = "") {
+  if (!html || typeof html !== "string") return { html: html || "", strippedCount: 0 };
+  let result = html;
+  let strippedCount = 0;
+
+  const patterns = [
+    { tag: "nav", regex: /<nav\b[^>]*class=["'][^"']*\bnavbar\b[^"']*["'][^>]*>/i },
+    { tag: "header", regex: /<header\b[^>]*class=["'](?=[^"']*\bsticky\b)(?=[^"']*\btop-(?:0|12|14|16|20)\b)[^"']*["'][^>]*>/i },
+    { tag: "div", regex: /<div\b[^>]*class=["'](?=[^"']*\bprint:hidden\b)(?=[^"']*\bsticky\b)(?=[^"']*\btop-(?:0|12|14|16|20)\b)[^"']*["'][^>]*>/i }
+  ];
+
+  for (const { tag, regex } of patterns) {
+    let match;
+    while ((match = regex.exec(result)) !== null) {
+      const next = removeBalancedElement(result, match.index, tag);
+      if (next === result) break;
+      result = next;
+      strippedCount++;
+    }
+  }
+
+  return { html: result.trim(), strippedCount };
+}
+
 /**
  * Generates an SVG emoji favicon tag.
  */
@@ -321,6 +382,7 @@ export function parseArgs(argv) {
     title: "HTML Report",
     content: null,
     output: "./report.html",
+    project: null,
     mode: null,
     printable: false,
     presentation: false,
@@ -340,7 +402,14 @@ export function parseArgs(argv) {
     pwaIcon: null,
     noPwaAssets: false,
     ai: false,
+    aiPort: 3000,
+    aiModel: "Gemini 3.8 Flash (Low)",
+    aiPersona: "analyst",
+    aiPurpose: "",
+    aiDock: true,
     published: false,
+    verify: false,
+    json: false,
     version: false,
     help: false
   };
@@ -358,6 +427,15 @@ export function parseArgs(argv) {
       options.content = args[++i];
     } else if ((arg === "--output" || arg === "-o") && args[i + 1]) {
       options.output = args[++i];
+    } else if (arg === "--project" && args[i + 1]) {
+      const slug = args[++i]
+        .toLowerCase()
+        .replace(/[^a-z0-9-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      if (slug) {
+        options.project = slug;
+        options.output = options.published ? `projects/${slug}/published.html` : `projects/${slug}/index.html`;
+      }
     } else if ((arg === "--mode" || arg === "-m") && args[i + 1]) {
       const rawMode = args[++i];
       const normalized = normalizeMode(rawMode);
@@ -395,8 +473,31 @@ export function parseArgs(argv) {
       }
     } else if (arg === "--ai") {
       options.ai = true;
+    } else if (arg === "--ai-port" && args[i + 1]) {
+      const parsedPort = Number(args[++i]);
+      if (Number.isFinite(parsedPort) && parsedPort > 0) options.aiPort = parsedPort;
+      options.ai = true;
+    } else if (arg === "--ai-model" && args[i + 1]) {
+      options.aiModel = args[++i];
+      options.ai = true;
+    } else if (arg === "--ai-persona" && args[i + 1]) {
+      options.aiPersona = args[++i];
+      options.ai = true;
+    } else if (arg === "--ai-purpose" && args[i + 1]) {
+      options.aiPurpose = args[++i];
+      options.ai = true;
+    } else if (arg === "--ai-dock") {
+      options.aiDock = true;
+      options.ai = true;
+    } else if (arg === "--no-ai-dock") {
+      options.aiDock = false;
+      options.ai = true;
     } else if (arg === "--published") {
       options.published = true;
+    } else if (arg === "--verify") {
+      options.verify = true;
+    } else if (arg === "--json") {
+      options.json = true;
     } else if (arg === "--pwa") {
       options.pwa = true;
     } else if (arg === "--pwa-name" && args[i + 1]) {
@@ -469,12 +570,219 @@ export function fetchFeedSnapshotSync(url) {
 }
 
 /**
- * Deterministically builds the final HTML report from the template shell,
- * runtime script, and content fragment.
+ * Deterministic Agent Hook Stamper:
+ * Scans a Semantic Fragment (<main id="report-main">) in document order and
+ * stamps deterministic data-agent-* attributes on sections and widgets
+ * without clobbering existing IDs or attributes.
+ * @param {string} fragmentHtml
+ * @returns {{ html: string, sections: Array<object>, widgets: Array<object> }}
+ */
+export function stampAgentHooks(fragmentHtml = "") {
+  if (!fragmentHtml || typeof fragmentHtml !== "string") {
+    return { html: "", sections: [], widgets: [] };
+  }
+
+  const sections = [];
+  const widgets = [];
+  const seenSlugs = new Map();
+  let sectionIndex = 0;
+
+  const slugify = (text, fallback) => {
+    const clean = String(text || "")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&[a-z0-9#]+;/gi, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 48);
+    return clean || fallback;
+  };
+
+  const extractAttr = (attrs, name) => {
+    const m = attrs.match(new RegExp(`(?:^|\\s)${name}=["']([^"']*)["']`, "i"));
+    return m ? m[1] : null;
+  };
+
+  // 1. Stamp <section> elements deterministically in document order
+  let stamped = fragmentHtml.replace(/<section\b([^>]*)>/gi, (fullMatch, attrs, offset) => {
+    sectionIndex += 1;
+    const afterOffset = offset + fullMatch.length;
+    const rest = fragmentHtml.slice(afterOffset);
+    const nextBoundary = rest.search(/<\/section>|<section\b/i);
+    const innerSnippet = nextBoundary >= 0 ? rest.slice(0, nextBoundary) : rest.slice(0, 600);
+    const headingMatch = innerSnippet.match(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/i);
+    const label = headingMatch
+      ? headingMatch[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()
+      : `Section ${sectionIndex}`;
+
+    const existingId = extractAttr(attrs, "id");
+    let slug = extractAttr(attrs, "data-agent-section");
+    if (!slug) {
+      const baseSlug = slugify(label, `section-${sectionIndex}`);
+      const count = (seenSlugs.get(baseSlug) || 0) + 1;
+      seenSlugs.set(baseSlug, count);
+      slug = count > 1 ? `${baseSlug}-${count}` : baseSlug;
+    }
+
+    let agentId = extractAttr(attrs, "data-agent-id");
+    if (!agentId) {
+      agentId = `section-${sectionIndex}`;
+    }
+
+    let updatedAttrs = attrs;
+    if (!/\bdata-agent-section=/i.test(updatedAttrs)) {
+      updatedAttrs += ` data-agent-section="${slug}"`;
+    }
+    if (!/\bdata-agent-id=/i.test(updatedAttrs)) {
+      updatedAttrs += ` data-agent-id="${agentId}"`;
+    }
+
+    sections.push({
+      agentId,
+      slug,
+      label,
+      id: existingId,
+      selector: existingId ? `#${existingId}` : `[data-agent-id="${agentId}"]`
+    });
+
+    return `<section${updatedAttrs}>`;
+  });
+
+  // 2. Stamp widget elements deterministically in document order
+  const widgetCounters = { kpi: 0, chart: 0, mermaid: 0, table: 0 };
+  const stampWidgetTag = (tagPattern, type) => {
+    stamped = stamped.replace(tagPattern, (fullMatch, tagName, attrs) => {
+      widgetCounters[type] += 1;
+      const idx = widgetCounters[type];
+      const existingId = extractAttr(attrs, "id");
+      const existingAgentId = extractAttr(attrs, "data-agent-id");
+      const agentId = existingAgentId || `${type}-${idx}`;
+
+      let updatedAttrs = attrs;
+      if (!/\bdata-agent-widget=/i.test(updatedAttrs)) {
+        updatedAttrs += ` data-agent-widget="${type}"`;
+      }
+      if (!/\bdata-agent-id=/i.test(updatedAttrs)) {
+        updatedAttrs += ` data-agent-id="${agentId}"`;
+      }
+
+      widgets.push({
+        agentId,
+        type,
+        id: existingId,
+        selector: existingId ? `#${existingId}` : `[data-agent-id="${agentId}"]`
+      });
+
+      return `<${tagName}${updatedAttrs}>`;
+    });
+  };
+
+  stampWidgetTag(/<(div)\b([^>]*\bclass=["'](?:[^"']*\s)?stat(?:\s[^"']*)?["'][^>]*)>/gi, "kpi");
+  stampWidgetTag(/<(canvas)\b([^>]*)>/gi, "chart");
+  stampWidgetTag(/<(div)\b([^>]*\bclass=["'](?:[^"']*\s)?mermaid(?:\s[^"']*)?["'][^>]*)>/gi, "mermaid");
+  stampWidgetTag(/<(table)\b([^>]*)>/gi, "table");
+
+  return { html: stamped, sections, widgets };
+}
+
+/**
+ * Builds the deterministic machine-readable Agent Manifest for both
+ * embedded HTML (<script id="agent-manifest">) and workspace report.manifest.json.
+ */
+export function buildAgentManifest({
+  project = null,
+  title = "HTML Report",
+  mode = "report",
+  theme = "light",
+  ai = false,
+  aiPort = 3000,
+  aiModel = "Gemini 3.8 Flash (Low)",
+  aiPersona = "analyst",
+  aiPurpose = "",
+  aiDock = true,
+  published = false,
+  pwa = false,
+  activeAddons = [],
+  source = null,
+  contentPath = null,
+  sections = [],
+  widgets = []
+} = {}) {
+  const entryPath = project ? `projects/${project}/index.html` : (source || "report.html");
+  const fragmentPath = project ? `projects/${project}/fragment.html` : (contentPath || "fragment.html");
+  const publishedPath = project ? `projects/${project}/published.html` : null;
+
+  const resolvedAiPort = Number.isFinite(Number(aiPort)) && Number(aiPort) > 0 ? Number(aiPort) : 3000;
+  const resolvedAiModel = aiModel && String(aiModel).trim() ? String(aiModel).trim() : "Gemini 3.8 Flash (Low)";
+  const resolvedAiPersona = aiPersona && String(aiPersona).trim() ? String(aiPersona).trim() : "analyst";
+  const resolvedAiPurpose = aiPurpose && String(aiPurpose).trim() ? String(aiPurpose).trim() : "";
+
+  const rebuildArgs = [
+    "node skills/html-report/scripts/build-report.mjs",
+    project ? `--project ${project}` : `--output ${entryPath}`,
+    `--content ${fragmentPath}`,
+    `--title "${String(title).replace(/"/g, '\\"')}"`,
+    `--mode ${mode}`,
+    `--theme ${theme}`
+  ];
+  if (activeAddons.length > 0) rebuildArgs.push(`--addons ${activeAddons.join(",")}`);
+  if (ai) {
+    rebuildArgs.push("--ai");
+    if (resolvedAiPort !== 3000) rebuildArgs.push(`--ai-port ${resolvedAiPort}`);
+    if (resolvedAiModel !== "Gemini 3.8 Flash (Low)") rebuildArgs.push(`--ai-model "${resolvedAiModel.replace(/"/g, '\\"')}"`);
+    if (resolvedAiPersona !== "analyst") rebuildArgs.push(`--ai-persona ${resolvedAiPersona}`);
+    if (resolvedAiPurpose) rebuildArgs.push(`--ai-purpose "${resolvedAiPurpose.replace(/"/g, '\\"')}"`);
+    if (!aiDock) rebuildArgs.push("--no-ai-dock");
+  }
+  if (pwa) rebuildArgs.push("--pwa");
+
+  return {
+    schemaVersion: "1.0.0",
+    project: project || null,
+    title,
+    mode,
+    theme,
+    aiBridge: Boolean(ai),
+    aiConfig: ai ? {
+      port: resolvedAiPort,
+      model: resolvedAiModel,
+      persona: resolvedAiPersona,
+      floatingAssistant: Boolean(aiDock),
+      ...(resolvedAiPurpose ? { purpose: resolvedAiPurpose } : {})
+    } : null,
+    published: Boolean(published),
+    pwa: Boolean(pwa),
+    activeAddons,
+    files: {
+      entry: entryPath,
+      fragment: fragmentPath,
+      ...(publishedPath ? { published: publishedPath } : {}),
+      ...(project ? {
+        manifest: `projects/${project}/report.manifest.json`,
+        agents: `projects/${project}/AGENTS.md`
+      } : {})
+    },
+    pipeline: {
+      rebuildCommand: rebuildArgs.join(" "),
+      serveCommand: `node skills/html-report/scripts/serve-report.mjs ${entryPath} --port ${resolvedAiPort}`
+    },
+    sections,
+    widgets
+  };
+}
+
+/**
+ * Assembly Engine: Deterministically joins a Semantic Fragment (<main id="report-main">),
+ * Template Shell (template-shell.html), and Runtime Script into an Output Deliverable (<100ms).
+ * Pipeline orchestration (pre-flight linting, auto-fixing, verification) lives in harness.mjs.
  */
 export function buildReport({
   title = "HTML Report",
   content = "",
+  project = null,
+  contentPath = null,
   mode = null,
   printable = false,
   presentation = false,
@@ -486,6 +794,11 @@ export function buildReport({
   pwaBgColor = null,
   pwaIcon = null,
   ai = false,
+  aiPort = 3000,
+  aiModel = "Gemini 3.8 Flash (Low)",
+  aiPersona = "analyst",
+  aiPurpose = "",
+  aiDock = true,
   published = false,
   source = null,
   addons = [],
@@ -509,6 +822,11 @@ export function buildReport({
   }
 
   let cleanBody = extractMainContent(content);
+  const { html: dedupedBody, strippedCount } = stripDuplicateNavbars(cleanBody);
+  cleanBody = dedupedBody;
+  if (strippedCount > 0 && process.env.NODE_ENV !== "test") {
+    console.warn(`[html-report] Stripped ${strippedCount} duplicate navbar/control bar(s) from fragment.`);
+  }
 
   // Inject CLI feeds into #feed-registry if provided
   if (feeds && Object.keys(feeds).length > 0) {
@@ -657,12 +975,50 @@ export function buildReport({
   if (source) {
     headExtraParts.push(`  <meta name="html-report-source" content="${escapeAttr(source)}" />`);
   }
+  const resolvedAiPort = Number.isFinite(Number(aiPort)) && Number(aiPort) > 0 ? Number(aiPort) : 3000;
+  const resolvedAiModel = aiModel && String(aiModel).trim() ? String(aiModel).trim() : "Gemini 3.8 Flash (Low)";
+  const resolvedAiPersona = aiPersona && String(aiPersona).trim() ? String(aiPersona).trim() : "analyst";
+  const resolvedAiPurpose = aiPurpose && String(aiPurpose).trim() ? String(aiPurpose).trim() : "";
+
   if (ai && !published) {
     headExtraParts.push('  <meta name="html-report-ai" content="on" />');
+    headExtraParts.push(`  <meta name="html-report-ai-port" content="${escapeAttr(String(resolvedAiPort))}" />`);
+    headExtraParts.push(`  <meta name="html-report-ai-model" content="${escapeAttr(resolvedAiModel)}" />`);
+    headExtraParts.push(`  <meta name="html-report-ai-persona" content="${escapeAttr(resolvedAiPersona)}" />`);
+    if (resolvedAiPurpose) {
+      headExtraParts.push(`  <meta name="html-report-ai-purpose" content="${escapeAttr(resolvedAiPurpose)}" />`);
+    }
+    headExtraParts.push(`  <meta name="html-report-ai-dock" content="${aiDock ? "on" : "off"}" />`);
   }
   if (published) {
     headExtraParts.push('  <meta name="html-report-published" content="true" />');
   }
+  // Deterministic Agent-Facing DOM Stamping
+  const stampedResult = stampAgentHooks(cleanBody);
+  cleanBody = stampedResult.html;
+
+  const agentManifest = buildAgentManifest({
+    project,
+    title,
+    mode: resolvedMode,
+    theme: resolvedTheme || "light",
+    ai,
+    aiPort: resolvedAiPort,
+    aiModel: resolvedAiModel,
+    aiPersona: resolvedAiPersona,
+    aiPurpose: resolvedAiPurpose,
+    aiDock,
+    published,
+    pwa: isPwa,
+    activeAddons: activeAddonKeys,
+    source,
+    contentPath,
+    sections: stampedResult.sections,
+    widgets: stampedResult.widgets
+  });
+  const safeAgentManifestJson = JSON.stringify(agentManifest, null, 2).replace(/<\//g, "<\\/");
+  headExtraParts.push(`  <!-- Deterministic Agent Manifest -->\n  <script type="application/json" id="agent-manifest">\n${safeAgentManifestJson}\n  </script>`);
+
   const headExtras = headExtraParts.join("\n\n");
 
   // Construct favicon tag
@@ -742,6 +1098,7 @@ export function buildReport({
     theme: resolvedTheme || "light",
     hasCustomTheme: Boolean(compiledCustomCss),
     isPwa,
+    agentManifest,
     pwaConfig: isPwa ? {
       title: pwaName || title,
       shortName: pwaShortName || deriveShortName(pwaName || title),
@@ -754,30 +1111,33 @@ export function buildReport({
 
 function showHelp() {
   console.log(`
-html-report deterministic build CLI (build-report.mjs)
+html-report deterministic Assembly CLI (build-report.mjs)
 
 Usage:
   node build-report.mjs --content <fragment.html> [options]
 
 Options:
-  -c, --content <file>      Path to semantic <main> HTML fragment file (required)
-  -t, --title <string>      Report title (default: "HTML Report")
-  -o, --output <file>       Destination HTML file (default: "./report.html")
-  -m, --mode <name>         Report mode: print, report, presentation, dashboard, working-report, live-report, pwa (default: "report")
-  -p, --print, --printable  Enable printable/PDF mode (@media print rules, static mode)
-      --presentation        Enable interactive presentation mode for Impress.js
-      --dashboard           Enable interactive dashboard mode
-      --working-report      Enable working journey companion mode
-  -l, --live, --live-report Enable real-time Datastar live dashboard mode
-      --pwa                 Enable Progressive Web App mode (manifest, sw.js, and icons)
+  -c, --content <file>      Path to Semantic Fragment (<main id="report-main">) file (required)
+  -t, --title <string>      Output Deliverable title (default: "HTML Report")
+  -o, --output <file>       Destination Output Deliverable HTML file (default: "./report.html")
+      --project <slug>      Scaffold output into projects/<slug>/index.html (or published.html with --published)
+  -m, --mode <name>         Delivery Archetype / mode: print, report, presentation, dashboard, working-report, live-report (default: "report")
+  -p, --print, --printable  Enable printable/PDF mode (@media print rules, Static File + Passive)
+      --presentation        Enable interactive slide deck presentation mode
+      --dashboard           Enable interactive telemetry dashboard mode
+      --working-report      Enable OpenSpec Journey companion mode
+  -l, --live, --live-report Enable Server-Connected Datastar SSE live mode
+      --pwa                 Enable Offline Packaging Modifier (PWA manifest, sw.js, and icons)
       --pwa-name <name>     Custom PWA app name
       --pwa-short-name <nm> Custom PWA short name for homescreen
       --pwa-theme-color <c> Custom PWA window/status-bar theme color (default: #2563eb)
       --pwa-bg-color <c>    Custom PWA splash screen background color (default: #ffffff)
       --pwa-icon <emoji>    Custom PWA icon emoji glyph (default: favicon or 📊)
       --no-pwa-assets       Skip writing companion PWA files to disk
-      --ai                  Mark the report AI-capable (shows turnkey bridge setup in Settings)
-      --published           Emit a clean, deterministic report without the gear menu or edit dock
+      --ai                  Enable Two-Way AI Agent Bridge controls in Settings
+      --published           Emit a Published Document with Edit Mode authoring chrome pruned
+      --verify              Run deterministic Playwright verification (verify-report.mjs --quick) after assembly
+      --json                Output machine-readable JSON Assembly summary (Agent-Facing)
       --theme <name>        DaisyUI theme name (default: "light")
       --custom-theme <path> Path to custom theme definition (.json or .css)
       --favicon <emoji>     Favicon emoticon (default: "📊")
@@ -843,9 +1203,11 @@ if (isDirectCli) {
       : options.customTheme)
     : null;
 
-  const { html, activeAddons, mode, isPwa, pwaConfig } = buildReport({
+  const { html, activeAddons, mode, isPwa, pwaConfig, agentManifest } = buildReport({
     title: options.title,
     content: rawContent,
+    project: options.project || null,
+    contentPath: options.content,
     mode: options.mode,
     printable: options.printable,
     presentation: options.presentation,
@@ -864,6 +1226,11 @@ if (isDirectCli) {
     freezeFeeds: options.freezeFeeds,
     feedInterval: options.feedInterval,
     ai: options.ai,
+    aiPort: options.aiPort,
+    aiModel: options.aiModel,
+    aiPersona: options.aiPersona,
+    aiPurpose: options.aiPurpose,
+    aiDock: options.aiDock,
     published: options.published,
     source: options.output
   });
@@ -872,6 +1239,11 @@ if (isDirectCli) {
   const outputDir = path.dirname(outputPath);
   fs.mkdirSync(outputDir, { recursive: true });
   fs.writeFileSync(outputPath, html, "utf-8");
+
+  if (options.project && !options.published) {
+    const manifestPath = path.join(outputDir, "report.manifest.json");
+    fs.writeFileSync(manifestPath, JSON.stringify(agentManifest, null, 2) + "\n", "utf-8");
+  }
 
   if (isPwa && !options.noPwaAssets) {
     generatePwaAssets({
@@ -886,12 +1258,55 @@ if (isDirectCli) {
     });
   }
 
-  const elapsedMs = Math.round((performance.now() - startTime) * 100) / 100;
-  console.log(`[html-report] Report assembled in ${elapsedMs}ms:`);
-  console.log(`  Output:        ${outputPath}`);
-  console.log(`  Mode:          ${mode}`);
-  if (isPwa) {
-    console.log(`  PWA Assets:    manifest.webmanifest, sw.js, icon.svg in ${outputDir}`);
+  let verifySummary = null;
+  if (options.verify) {
+    const verifyScript = path.resolve(__dirname, "../playwright/verify-report.mjs");
+    const verifyJsonPath = path.join(outputDir, ".verify-report.json");
+    const res = child_process.spawnSync(
+      process.execPath,
+      [verifyScript, outputPath, "--quick", "--json", verifyJsonPath],
+      { encoding: "utf-8", stdio: options.json ? "pipe" : "inherit" }
+    );
+    if (fs.existsSync(verifyJsonPath)) {
+      try {
+        verifySummary = JSON.parse(fs.readFileSync(verifyJsonPath, "utf-8"));
+      } catch (_) {}
+      try { fs.unlinkSync(verifyJsonPath); } catch (_) {}
+    }
+    if (res.status !== 0) {
+      if (options.json) {
+        console.log(JSON.stringify({
+          ok: false,
+          output: outputPath,
+          mode,
+          activeAddons,
+          published: Boolean(options.published),
+          verification: verifySummary || { summary: { compliant: false }, errors: ["Verification failed"] }
+        }, null, 2));
+      }
+      process.exit(res.status || 1);
+    }
   }
-  console.log(`  Active Addons: ${activeAddons.length > 0 ? activeAddons.join(", ") : "Core 4 only"}`);
+
+  const elapsedMs = Math.round((performance.now() - startTime) * 100) / 100;
+  if (options.json) {
+    console.log(JSON.stringify({
+      ok: true,
+      output: outputPath,
+      mode,
+      activeAddons,
+      isPwa,
+      published: Boolean(options.published),
+      ...(verifySummary ? { verification: verifySummary } : {}),
+      elapsedMs
+    }, null, 2));
+  } else {
+    console.log(`[html-report] Report assembled in ${elapsedMs}ms:`);
+    console.log(`  Output:        ${outputPath}`);
+    console.log(`  Mode:          ${mode}`);
+    if (isPwa) {
+      console.log(`  PWA Assets:    manifest.webmanifest, sw.js, icon.svg in ${outputDir}`);
+    }
+    console.log(`  Active Addons: ${activeAddons.length > 0 ? activeAddons.join(", ") : "Core 4 only"}`);
+  }
 }

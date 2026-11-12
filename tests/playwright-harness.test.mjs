@@ -451,4 +451,38 @@ describe("Playwright Extensible Harness Test Suite", () => {
       assert.ok(!executionOrder.includes("third"), "Third check must NOT run when bail is enabled");
     });
   });
+
+  describe("6. Core Structure Duplicate Navbar Verification", () => {
+    it("should fail core:structure when a report contains a second navbar or sticky control bar inside <main>", async () => {
+      const { buildReport } = await import(
+        path.resolve(process.cwd(), "skills/html-report/scripts/build-report.mjs")
+      );
+      const { html } = buildReport({
+        title: "Bad Layout Verification Test",
+        content: `<h1 id="sec-1">Section 1</h1><p>Body</p>`,
+        mode: "print"
+      });
+      // Inject a legacy/hand-edited duplicate sticky control bar into <main>
+      const badHtml = html.replace(
+        `<h1 id="sec-1">`,
+        `<div class="print:hidden sticky top-16 z-30"><nav class="navbar">Duplicate</nav></div><h1 id="sec-1">`
+      );
+      const badFile = path.join(tmpDir, "bad-layout.html");
+      fs.writeFileSync(badFile, badHtml, "utf-8");
+
+      const res = await runHarness(badFile, {
+        only: ["core:structure"],
+        quick: true
+      });
+
+      assert.equal(res.success, false);
+      const structureResult = res.results.find((r) => r.id === "core:structure");
+      assert.ok(structureResult);
+      assert.equal(structureResult.status, "failed");
+      assert.ok(
+        structureResult.errors.some((e) => e.includes("duplicate") || e.includes(".navbar")),
+        `Expected duplicate navbar error, got: ${JSON.stringify(structureResult.errors)}`
+      );
+    });
+  });
 });

@@ -7,6 +7,7 @@
   "bin": {
     "html-report": "./skills/html-report/scripts/harness.mjs",
     "html-report-build": "./skills/html-report/scripts/build-report.mjs",
+    "html-report-scaffold": "./skills/html-report/scripts/scaffold-project.mjs",
     "html-report-serve": "./skills/html-report/scripts/serve-report.mjs",
     "html-report-pwa": "./skills/html-report/scripts/generate-pwa.mjs",
     "html-report-install": "./skills/html-report/scripts/install-pwa.mjs"
@@ -14,6 +15,7 @@
   "exports": {
     ".": "./skills/html-report/scripts/harness.mjs",
     "./build": "./skills/html-report/scripts/build-report.mjs",
+    "./scaffold": "./skills/html-report/scripts/scaffold-project.mjs",
     "./harness": "./skills/html-report/scripts/harness.mjs",
     "./serve": "./skills/html-report/scripts/serve-report.mjs",
     "./pwa": "./skills/html-report/scripts/pwa-builder.mjs",
@@ -25,6 +27,7 @@
   "scripts": {
     "test": "HTML_REPORT_NO_OPEN=1 node --test tests/*.test.mjs",
     "build": "node ./skills/html-report/scripts/build-report.mjs",
+    "scaffold": "node ./skills/html-report/scripts/scaffold-project.mjs",
     "serve": "node ./skills/html-report/scripts/serve-report.mjs",
     "install:wizard": "node ./skills/html-report/scripts/install-pwa.mjs"
   },

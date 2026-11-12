@@ -317,7 +317,7 @@ function findWorkspaceRoot(startDir) {
 
 function extractProjectMetadata(fullPath, relPath, workspaceRoot) {
   let title = path.basename(relPath, ".html");
-  let version = "1.0.0";
+  let version = "0.0.0-beta.1";
   let description = "";
 
   try {
@@ -409,6 +409,11 @@ function extractProjectMetadata(fullPath, relPath, workspaceRoot) {
 }
 
 function scanWorkspaceProjects(workspaceRoot, maxDepth = 4) {
+  const projectsDir = path.join(workspaceRoot, "projects");
+  if (!fs.existsSync(projectsDir)) {
+    return [];
+  }
+
   const IGNORED_DIRS = new Set([
     ".git",
     "node_modules",
@@ -432,8 +437,19 @@ function scanWorkspaceProjects(workspaceRoot, maxDepth = 4) {
     return false;
   }
 
+  const visitedRealPaths = new Set();
+
   function walk(currentDir, depth) {
     if (depth > maxDepth) return;
+    let realCurrent;
+    try {
+      realCurrent = fs.realpathSync(currentDir);
+    } catch (_) {
+      realCurrent = currentDir;
+    }
+    if (visitedRealPaths.has(realCurrent)) return;
+    visitedRealPaths.add(realCurrent);
+
     let entries;
     try {
       entries = fs.readdirSync(currentDir, { withFileTypes: true });
@@ -441,39 +457,38 @@ function scanWorkspaceProjects(workspaceRoot, maxDepth = 4) {
       return;
     }
 
+    const subdirs = [];
+    const htmlFiles = [];
+
     for (const entry of entries) {
-      if (entry.isDirectory()) {
+      if (entry.isDirectory() && !entry.isSymbolicLink()) {
         if (!isIgnoredDir(entry.name)) {
-          walk(path.join(currentDir, entry.name), depth + 1);
+          subdirs.push(path.join(currentDir, entry.name));
         }
       } else if (entry.isFile() && entry.name.endsWith(".html")) {
         if (entry.name.includes("fragment")) continue;
-        const fullPath = path.join(currentDir, entry.name);
-        const relPath = path.relative(workspaceRoot, fullPath);
-        projects.push(extractProjectMetadata(fullPath, relPath, workspaceRoot));
+        htmlFiles.push(entry.name);
       }
+    }
+
+    // Prefer a single primary entry point per directory (index.html over published snapshot)
+    if (htmlFiles.length > 0) {
+      const primaryFile = htmlFiles.includes("index.html")
+        ? "index.html"
+        : (htmlFiles.find((f) => !f.includes("published")) || htmlFiles[0]);
+      const fullPath = path.join(currentDir, primaryFile);
+      const relPath = path.relative(workspaceRoot, fullPath);
+      projects.push(extractProjectMetadata(fullPath, relPath, workspaceRoot));
+    }
+
+    for (const sub of subdirs) {
+      walk(sub, depth + 1);
     }
   }
 
-  walk(workspaceRoot, 0);
-
-  const categoryOrder = {
-    "Workspace Project": 1,
-    "OpenSpec Journey": 2,
-    "Analytical Report": 3,
-    "Creation Studio": 4,
-    "Showcase Example": 5,
-    "Research Report": 6,
-    "Performance Benchmark": 7,
-    "Dev Prototype": 8,
-    "Experiment": 9,
-    "HTML Report": 10
-  };
+  walk(projectsDir, 0);
 
   projects.sort((a, b) => {
-    const orderA = categoryOrder[a.category] || 50;
-    const orderB = categoryOrder[b.category] || 50;
-    if (orderA !== orderB) return orderA - orderB;
     return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
   });
 
@@ -530,8 +545,9 @@ function openBrowser(url) {
   });
 }
 
+// Server-Connected live-reload script: injected only at HTTP serve time (never into Static File builds).
 function injectLiveReload(html) {
-  const snippet = `
+  const liveReloadScript = `
   <!-- __html_report_live_reload_injected__ -->
   <script id="__html_report_live_reload__">
     (() => {
@@ -647,6 +663,13 @@ function injectLiveReload(html) {
 
       const es = new EventSource("/__live_reload__");
       es.addEventListener("reload", onChange);
+      es.addEventListener("projects-changed", () => {
+        if (typeof window.loadWorkspaceProjects === "function") {
+          window.loadWorkspaceProjects({ refresh: true });
+        } else {
+          window.dispatchEvent(new CustomEvent("html-report:projects-changed"));
+        }
+      });
       window.addEventListener("beforeunload", () => {
         try { es.close(); } catch (_) {}
       });
@@ -655,12 +678,12 @@ function injectLiveReload(html) {
 `;
 
   if (html.includes("</body>")) {
-    return html.replace("</body>", `${snippet}\n</body>`);
+    return html.replace("</body>", `${liveReloadScript}\n</body>`);
   }
   if (html.includes("</html>")) {
-    return html.replace("</html>", `${snippet}\n</html>`);
+    return html.replace("</html>", `${liveReloadScript}\n</html>`);
   }
-  return html + snippet;
+  return html + liveReloadScript;
 }
 
 function detectReportMode(htmlContent) {
@@ -684,6 +707,21 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
   let serverPort = initialPort;
   let activeReportTheme = "light";
   let projectsCache = { timestamp: 0, data: null };
+  let projectsDebounceTimer = null;
+
+  function broadcastProjectsChanged() {
+    projectsCache = { timestamp: 0, data: null };
+    clearTimeout(projectsDebounceTimer);
+    projectsDebounceTimer = setTimeout(() => {
+      for (const client of sseClients) {
+        try {
+          client.write("event: projects-changed\ndata: {}\n\n");
+        } catch (_) {
+          sseClients.delete(client);
+        }
+      }
+    }, 100);
+  }
 
   const personaRegistry = new PersonaRegistry();
   personaRegistry.loadFromDisk(rootDir);
@@ -1324,22 +1362,116 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
       }
     }
 
-    // 1b-3b. Workspace Projects Discovery API (/api/projects)
-    if (pathname === "/api/projects") {
+    // 1b-3b. Workspace Projects Discovery & Management API (/api/projects)
+    if (pathname === "/api/projects" || pathname === "/api/projects/delete") {
       if (req.method === "OPTIONS") {
         res.writeHead(204, {
           "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type"
         });
         res.end();
         return;
       }
+
+      if (req.method === "DELETE" || (req.method === "POST" && pathname === "/api/projects/delete")) {
+        let body = "";
+        req.on("data", (chunk) => { body += chunk; });
+        req.on("end", () => {
+          try {
+            const raw = body ? JSON.parse(body) : {};
+            const targetRel = (raw.path || parsedUrl.searchParams.get("path") || "").trim();
+            if (!targetRel) {
+              res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+              res.end(JSON.stringify({ ok: false, error: "Missing 'path' parameter" }));
+              return;
+            }
+
+            const workspaceRoot = findWorkspaceRoot(rootDir);
+            const projectsDir = path.join(workspaceRoot, "projects");
+            const fullTarget = path.resolve(workspaceRoot, targetRel);
+
+            // Security guard: Ensure target is inside <workspaceRoot>/projects/ and not projects root itself
+            const relFromProjects = path.relative(projectsDir, fullTarget);
+            if (relFromProjects.startsWith("..") || relFromProjects === "" || path.isAbsolute(relFromProjects)) {
+              res.writeHead(403, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+              res.end(JSON.stringify({ ok: false, error: "Access denied: Target must be inside projects/ directory" }));
+              return;
+            }
+
+            // Determine target to delete: if file was provided inside a project subfolder, delete its containing folder;
+            // if file is directly inside projects/, delete just that file.
+            let targetToDelete = fullTarget;
+            let isDirectFile = false;
+            try {
+              const stat = fs.lstatSync(fullTarget);
+              if (stat.isFile()) {
+                if (path.dirname(fullTarget) === projectsDir) {
+                  isDirectFile = true;
+                  targetToDelete = fullTarget;
+                } else {
+                  targetToDelete = path.dirname(fullTarget);
+                }
+              }
+            } catch (_) {
+              // If file not found directly, check if target was already a directory path
+              if (fullTarget.endsWith(".html") && path.dirname(fullTarget) !== projectsDir) {
+                targetToDelete = path.dirname(fullTarget);
+              }
+            }
+
+            // Check if targetToDelete is inside projects and not projects itself
+            const targetRelFromProjects = path.relative(projectsDir, targetToDelete);
+            if (targetRelFromProjects.startsWith("..") || targetRelFromProjects === "") {
+              res.writeHead(403, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+              res.end(JSON.stringify({ ok: false, error: "Cannot delete root projects directory" }));
+              return;
+            }
+
+            // Delete project folder or direct file
+            if (fs.existsSync(targetToDelete)) {
+              if (isDirectFile) {
+                fs.unlinkSync(targetToDelete);
+              } else {
+                fs.rmSync(targetToDelete, { recursive: true, force: true });
+              }
+            }
+
+            // Also remove matching symlinks (e.g. trailing hyphen aliases)
+            if (!isDirectFile) {
+              try {
+                const baseName = path.basename(targetToDelete);
+                const siblingEntries = fs.readdirSync(projectsDir, { withFileTypes: true });
+                for (const entry of siblingEntries) {
+                  if (entry.isSymbolicLink() && (entry.name === baseName || entry.name.replace(/-+$/, "") === baseName.replace(/-+$/, ""))) {
+                    fs.unlinkSync(path.join(projectsDir, entry.name));
+                  }
+                }
+              } catch (_) {}
+            }
+
+            // Invalidate projects cache and notify connected tabs
+            broadcastProjectsChanged();
+
+            res.writeHead(200, {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*"
+            });
+            res.end(JSON.stringify({ ok: true, deleted: path.relative(workspaceRoot, targetToDelete) }));
+          } catch (err) {
+            res.writeHead(500, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+            res.end(JSON.stringify({ ok: false, error: err.message }));
+          }
+        });
+        return;
+      }
+
       if (req.method === "GET") {
         const now = Date.now();
         const workspaceRoot = findWorkspaceRoot(rootDir);
+        const forceRefresh = parsedUrl.searchParams.get("refresh") === "1" || parsedUrl.searchParams.get("force") === "1";
         let projects;
-        if (projectsCache.data && (now - projectsCache.timestamp < 5000)) {
+        if (!forceRefresh && projectsCache.data && (now - projectsCache.timestamp < 5000)) {
           projects = projectsCache.data;
         } else {
           projects = scanWorkspaceProjects(workspaceRoot, 4);
@@ -1938,6 +2070,36 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
     watchers.push(dirWatcher);
   } catch (_) {}
 
+  // Watch projects/ directory for additions, deletions, and metadata updates without full page reload
+  const watchedProjectsDir = path.join(findWorkspaceRoot(rootDir), "projects");
+  if (fs.existsSync(watchedProjectsDir)) {
+    try {
+      const projectsWatcher = fs.watch(watchedProjectsDir, { recursive: true }, () => {
+        broadcastProjectsChanged();
+      });
+      watchers.push(projectsWatcher);
+    } catch (_) {
+      // Fallback for platforms where recursive fs.watch is unavailable
+      try {
+        const projectsWatcher = fs.watch(watchedProjectsDir, () => {
+          broadcastProjectsChanged();
+        });
+        watchers.push(projectsWatcher);
+        const entries = fs.readdirSync(watchedProjectsDir, { withFileTypes: true });
+        for (const entry of entries) {
+          if (entry.isDirectory()) {
+            try {
+              const subWatcher = fs.watch(path.join(watchedProjectsDir, entry.name), () => {
+                broadcastProjectsChanged();
+              });
+              watchers.push(subWatcher);
+            } catch (_) {}
+          }
+        }
+      } catch (_) {}
+    }
+  }
+
   // Handle port conflicts with auto-retry
   server.on("error", (err) => {
     if (err.code === "EADDRINUSE") {
@@ -1979,6 +2141,8 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
         serverPort,
         close: () => {
           clearInterval(heartbeat);
+          clearTimeout(debounceTimer);
+          clearTimeout(projectsDebounceTimer);
           for (const w of watchers) { try { w.close(); } catch (_) {} }
           for (const c of sseClients) { try { c.end(); } catch (_) {} }
           for (const c of datastarClients) { try { c.end(); } catch (_) {} }

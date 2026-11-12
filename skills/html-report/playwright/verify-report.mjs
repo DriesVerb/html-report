@@ -81,6 +81,12 @@ export function parseArgs(argv) {
       options.colorContrast = true;
     } else if (arg === "--json" && args[i + 1] && !args[i + 1].startsWith("--")) {
       options.json = args[++i];
+    } else if (arg === "--review-packet") {
+      if (args[i + 1] && !args[i + 1].startsWith("--")) {
+        options.reviewPacket = args[++i];
+      } else {
+        options.reviewPacket = true;
+      }
     } else if (arg === "--screenshots") {
       if (args[i + 1] && !args[i + 1].startsWith("--")) {
         options.screenshots = args[++i];

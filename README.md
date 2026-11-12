@@ -3,7 +3,7 @@
 # ⚡ html-report
 
 **Publication-grade, interactive, and print-ready HTML5 reports for AI coding agents.**  
-Generate theme-adaptive dashboards with **~70% fewer tokens** and **<100ms compilation**.
+Generate theme-adaptive Output Deliverables with **~70% fewer tokens** and **<100ms Assembly**.
 
 [Live GitHub Pages Showcase](https://driesverb.github.io/html-report/) · [Quickstart](#-quickstart-in-30-seconds) · [Key Features](#-key-features) · [Documentation Hub](#-documentation-hub) · [License](#-license)
 

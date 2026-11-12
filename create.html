@@ -79,25 +79,25 @@
       <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end items-center">
         <!-- 1. TOC Dropdown -->
         <div class="dropdown dropdown-end" id="toc-dropdown">
-          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Studio Sections">
+          <button type="button" id="toc-dropdown-btn" onclick="toggleNavbarDropdown('toc-dropdown', 'report-toc-list', 'toc-dropdown-btn', event)" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Studio Sections" aria-haspopup="true" aria-expanded="false">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
             </svg>
             <span class="hidden sm:inline">Sections</span>
-          </div>
-          <ul id="report-toc-list" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-64 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
-            <li><a href="#step-purpose" class="py-1.5">1. Purpose &amp; Deliverable</a></li>
-            <li><a href="#step-mode" class="py-1.5">2. Operational Data Mode</a></li>
-            <li><a href="#step-features" class="py-1.5">3. Content Capabilities</a></li>
-            <li><a href="#step-app" class="py-1.5">4. Installable App</a></li>
-            <li><a href="#step-theme" class="py-1.5">5. Default Startup Theme</a></li>
-            <li><a href="#step-output" class="py-1.5">AI Prompt &amp; Mockup</a></li>
+          </button>
+          <ul id="report-toc-list" class="dropdown-content hidden menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-64 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
+            <li><a href="#step-purpose" onclick="closeAllNavbarDropdowns()" class="py-1.5">1. Purpose &amp; Deliverable</a></li>
+            <li><a href="#step-mode" onclick="closeAllNavbarDropdowns()" class="py-1.5">2. Operational Data Mode</a></li>
+            <li><a href="#step-features" onclick="closeAllNavbarDropdowns()" class="py-1.5">3. Content Capabilities</a></li>
+            <li><a href="#step-app" onclick="closeAllNavbarDropdowns()" class="py-1.5">4. Installable App</a></li>
+            <li><a href="#step-theme" onclick="closeAllNavbarDropdowns()" class="py-1.5">5. Default Startup Theme</a></li>
+            <li><a href="#step-output" onclick="closeAllNavbarDropdowns()" class="py-1.5 font-bold text-primary">6. Final AI Prompt &amp; Mockup (Last Step)</a></li>
           </ul>
         </div>
 
         <!-- 2. Projects Navigation Dropdown -->
         <div class="dropdown dropdown-end" id="navbar-projects-dropdown">
-          <div tabindex="0" role="button" id="navbar-projects-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Workspace Projects Directory" title="Explore Workspace Projects">
+          <button type="button" id="navbar-projects-btn" onclick="toggleNavbarDropdown('navbar-projects-dropdown', 'navbar-projects-menu', 'navbar-projects-btn', event)" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Workspace Projects Directory" title="Explore Workspace Projects" aria-haspopup="true" aria-expanded="false">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
             </svg>
@@ -106,8 +106,8 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-60 hidden sm:inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-          </div>
-          <div tabindex="0" id="navbar-projects-menu" class="dropdown-content bg-base-100 text-base-content rounded-2xl z-[60] mt-2 w-80 sm:w-96 max-w-[calc(100vw-1.5rem)] max-h-[80vh] overflow-hidden p-3 shadow-2xl border border-base-300 flex flex-col gap-2.5">
+          </button>
+          <div id="navbar-projects-menu" class="dropdown-content hidden bg-base-100 text-base-content rounded-2xl z-[60] mt-2 w-80 sm:w-96 max-w-[calc(100vw-1.5rem)] max-h-[80vh] overflow-hidden p-3 shadow-2xl border border-base-300 flex flex-col gap-2.5">
             <!-- Header with Title & Full Directory Button -->
             <div class="flex items-center justify-between pb-2 border-b border-base-200">
               <div class="flex items-center gap-1.5">
@@ -163,15 +163,15 @@
 
         <!-- 3. Consolidated Settings Gear Dropdown -->
         <div class="dropdown dropdown-end" id="studio-settings-dropdown">
-          <div id="studio-settings-gear-btn" tabindex="0" role="button" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 btn-square" aria-label="Studio Settings" title="Studio Settings" aria-haspopup="true" aria-expanded="false">
+          <button type="button" id="studio-settings-gear-btn" onclick="toggleNavbarDropdown('studio-settings-dropdown', 'studio-settings-panel', 'studio-settings-gear-btn', event)" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 btn-square" aria-label="Studio Settings" title="Studio Settings" aria-haspopup="true" aria-expanded="false">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
               <circle cx="12" cy="12" r="3"/>
             </svg>
-          </div>
-          <div id="studio-settings-panel" tabindex="0" role="dialog" aria-label="Studio Settings" class="dropdown-content bg-base-100 text-base-content rounded-box z-[60] mt-2 w-80 max-w-[calc(100vw-1.5rem)] max-h-[75vh] overflow-y-auto p-3 shadow-2xl border border-base-300 space-y-2.5">
+          </button>
+          <div id="studio-settings-panel" role="dialog" aria-label="Studio Settings" class="dropdown-content hidden bg-base-100 text-base-content rounded-box z-[60] mt-2 w-80 max-w-[calc(100vw-1.5rem)] max-h-[75vh] overflow-y-auto p-3 shadow-2xl border border-base-300 space-y-2.5">
             <!-- Quick View Switcher -->
-            <button id="studio-quick-view-btn" type="button" onclick="toggleProjectsView()" class="btn btn-xs sm:btn-sm btn-primary w-full flex items-center justify-center gap-2 font-semibold shadow-sm">
+            <button id="studio-quick-view-btn" type="button" onclick="closeAllNavbarDropdowns(); toggleProjectsView()" class="btn btn-xs sm:btn-sm btn-primary w-full flex items-center justify-center gap-2 font-semibold shadow-sm">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
               </svg>
@@ -245,6 +245,14 @@
                       <span id="pwa-install-status-badge" class="badge badge-accent badge-xs font-mono">PWA</span>
                     </button>
                   </li>
+                  <li class="pt-1 mt-1 border-t border-base-300/60">
+                    <button type="button" id="studio-reset-default-btn" onclick="resetStudioToDefault(this)" class="flex items-center gap-2 py-2 text-xs font-semibold text-error hover:bg-error/10">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span>Reset to Default</span>
+                    </button>
+                  </li>
                 </ul>
               </div>
             </details>
@@ -276,11 +284,11 @@
       </div>
     </div>
 
-    <!-- Wizard Main Two-Column Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <!-- Wizard Vertical Linear Flow: Steps 1-5 Questionnaire on top, Step 6 Final Prompt at the Bottom -->
+    <div class="space-y-8">
       
-      <!-- FORM QUESTIONNAIRE (Left Column - 7 Cols) -->
-      <div class="lg:col-span-7 bg-base-100 rounded-2xl border border-base-300 p-6 space-y-6 shadow-sm">
+      <!-- FORM QUESTIONNAIRE (Steps 1 to 5) -->
+      <div class="bg-base-100 rounded-2xl border border-base-300 p-6 sm:p-8 space-y-8 shadow-sm">
         
         <!-- Step 1: Purpose & Deliverable -->
         <div id="step-purpose" class="space-y-3">
@@ -289,7 +297,7 @@
               <span class="w-5 h-5 rounded-full bg-primary text-primary-content text-2xs font-bold flex items-center justify-center">1</span>
               What are you building? (Deliverable Purpose)
             </label>
-            <span class="text-3xs text-base-content/50 font-mono">Step 1 of 5</span>
+            <span class="text-3xs text-base-content/50 font-mono">Step 1 of 6</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <!-- Executive Report -->
@@ -432,42 +440,53 @@
           </div>
         </div>
 
-        <!-- Step 2: Operational Data Mode (Only 2 Real Modes!) -->
+        <!-- Step 2: Two-Axis Runtime Classification -->
         <div id="step-mode" class="space-y-3 border-t border-base-200 pt-4">
           <div class="flex items-center justify-between">
             <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
               <span class="w-5 h-5 rounded-full bg-secondary text-secondary-content text-2xs font-bold flex items-center justify-center">2</span>
-              Operational Data Mode (Delivery Infrastructure)
+              Two-Axis Runtime Classification
             </label>
             <span id="mode-status-badge" class="text-3xs font-mono text-base-content/50">Core Transport</span>
           </div>
+
+          <!-- Behavioral Mode Selector (Interactive / Reactive vs Passive / Printable) -->
+          <div class="space-y-1.5">
+            <span class="text-3xs font-bold uppercase tracking-wider text-base-content/60">Behavioral Mode</span>
+            <div id="behavioral-selector" class="join w-full grid grid-cols-2">
+              <button type="button" class="wizard-behavioral-btn join-item btn btn-xs btn-accent" data-behavioral="interactive" onclick="selectWizardBehavioral('interactive', this)">Interactive / Reactive</button>
+              <button type="button" class="wizard-behavioral-btn join-item btn btn-xs btn-outline" data-behavioral="passive" onclick="selectWizardBehavioral('passive', this)">Passive / Printable</button>
+            </div>
+          </div>
+
+          <span class="text-3xs font-bold uppercase tracking-wider text-base-content/60 block pt-1">Serving Mode (Delivery Infrastructure)</span>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <!-- Mode 1: Static Standalone -->
+            <!-- Mode 1: Static File -->
             <div class="wizard-mode-card cursor-pointer p-3.5 rounded-xl border-2 border-secondary bg-secondary/5 transition flex flex-col justify-between gap-2" data-mode="static" onclick="selectWizardMode('static', this)">
               <div class="flex items-start justify-between">
                 <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
-                  <i data-lucide="file-check" class="w-4 h-4 text-secondary"></i> Static Standalone
+                  <i data-lucide="file-check" class="w-4 h-4 text-secondary"></i> Static File (Zero Backend)
                 </span>
                 <span class="mode-check-badge badge badge-secondary badge-xs"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
               </div>
               <p class="text-3xs text-base-content/75 leading-relaxed">
-                No internet needed. One file you can open in any browser, email to someone, or put on a website.
+                Zero server required. Opens via <code>file:///</code> or static hosting; supports client-side <code>fetch()</code> APIs.
               </p>
-              <div class="badge badge-outline badge-xs text-3xs font-mono">Works offline</div>
+              <div class="badge badge-outline badge-xs text-3xs font-mono">Works offline &bull; file:///</div>
             </div>
 
-            <!-- Mode 2: Live Data -->
+            <!-- Mode 2: Server-Connected -->
             <div class="wizard-mode-card cursor-pointer p-3.5 rounded-xl border border-base-300 bg-base-100 hover:bg-base-200/50 transition flex flex-col justify-between gap-2" data-mode="live" onclick="selectWizardMode('live', this)">
               <div class="flex items-start justify-between">
                 <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
-                  <i data-lucide="radio" class="w-4 h-4 text-success"></i> Live Data (Needs Internet)
+                  <i data-lucide="radio" class="w-4 h-4 text-success"></i> Server-Connected (Live Backend)
                 </span>
                 <span class="mode-check-badge badge badge-ghost badge-xs hidden"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
               </div>
               <p class="text-3xs text-base-content/75 leading-relaxed">
-                Needs an internet connection to work. Numbers and information update by themselves, without reloading the page.
+                Backed by <code>serve-report.mjs</code> on <code>localhost:3000</code> with Datastar SSE morphs and Agent Bridge.
               </p>
-              <div class="badge badge-outline badge-xs text-3xs font-mono text-success">Live updates &amp; AI features</div>
+              <div class="badge badge-outline badge-xs text-3xs font-mono text-success">Live SSE &amp; Agent Bridge</div>
             </div>
           </div>
         </div>
@@ -605,14 +624,14 @@
               <span id="intel-notice-badge" class="badge badge-xs badge-ghost text-3xs font-mono">Requires Live Mode</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <!-- Feature: Interactive AI Assistant -->
+              <!-- Feature: Two-Way Agent Bridge & AI Dock -->
               <label id="container-chk-ai" class="flex items-start gap-2.5 p-2.5 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition opacity-50 pointer-events-none">
                 <input type="checkbox" id="chk-ai-agent" class="checkbox checkbox-xs checkbox-secondary mt-0.5" onchange="updatePromptAndPreview()" />
                 <div class="space-y-0.5">
                   <span class="font-bold text-xs flex items-center gap-1.5 text-base-content">
-                    <i data-lucide="bot" class="w-3.5 h-3.5 text-secondary"></i> Interactive AI Assistant
+                    <i data-lucide="bot" class="w-3.5 h-3.5 text-secondary"></i> Two-Way Agent Bridge &amp; AI Dock
                   </span>
-                  <p class="text-3xs text-base-content/60">Floating Cmd+K prompt dock to chat with AI and morph cards live</p>
+                  <p class="text-3xs text-base-content/60">Pre-bake --ai bridge, Cmd+K prompt dock, and live SSE card morphing</p>
                 </div>
               </label>
 
@@ -626,6 +645,69 @@
                   <p class="text-3xs text-base-content/60">Proxy widgets to enterprise databases and MCP server tools</p>
                 </div>
               </label>
+            </div>
+
+            <!-- Turnkey AI Handshake (visible when Two-Way Agent Bridge is enabled) -->
+            <div id="ai-turnkey-config" class="hidden mt-2 p-3.5 rounded-xl bg-secondary/5 border border-secondary/30 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="space-y-0.5">
+                  <span class="text-2xs font-bold uppercase tracking-wider text-secondary flex items-center gap-1.5">
+                    <i data-lucide="key-round" class="w-3.5 h-3.5"></i> Connect AI Support to Your Board
+                  </span>
+                  <p class="text-3xs text-base-content/70">Your board needs a live handshake with your agent so you can chat with your data and ask the board to update itself.</p>
+                </div>
+                <label class="flex items-center gap-1.5 bg-base-100 border border-base-300 rounded-lg px-2 py-1 shrink-0">
+                  <span class="text-3xs font-semibold text-base-content/70">Port</span>
+                  <input id="ai-bridge-port" type="number" min="1" max="65535" value="3031" oninput="updatePromptAndPreview()" class="input input-ghost input-xs font-mono w-16 p-0 text-center focus:outline-hidden" placeholder="3031" />
+                </label>
+              </div>
+
+              <label class="form-control w-full">
+                <span class="label-text text-3xs font-semibold text-base-content/80 mb-1">What should the AI on your board do?</span>
+                <textarea id="ai-bridge-purpose" rows="2" oninput="updatePromptAndPreview()" class="textarea textarea-bordered textarea-xs w-full leading-snug resize-y bg-base-100" placeholder="e.g., Answer questions about these metrics, let me ask for new charts, and pull fresh data from my local workspace..."></textarea>
+              </label>
+
+              <label class="flex items-start gap-2.5 p-2.5 rounded-lg bg-base-100 border border-base-300 cursor-pointer hover:border-secondary/60 transition">
+                <input id="ai-floating-assistant" type="checkbox" checked onchange="updatePromptAndPreview()" class="checkbox checkbox-secondary checkbox-xs mt-0.5" />
+                <div class="space-y-0.5">
+                  <span class="text-2xs font-semibold text-base-content block">Activate hovering AI Assistant button (&#8984;K)</span>
+                  <span class="text-3xs text-base-content/60 block">Shows the floating AI Assistant chat launcher in the bottom-right corner of your board. Uncheck for headless live updates only.</span>
+                </div>
+              </label>
+
+              <!-- Key & Lock Handshake -->
+              <div class="space-y-3 pt-2 border-t border-secondary/20">
+                <!-- Part 1: The Key (Send to Your Agent) -->
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-3xs font-bold uppercase tracking-wider text-secondary flex items-center gap-1.5">
+                      <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                      <span class="badge badge-secondary badge-xs font-mono">Step 1 · The Key</span>
+                      Give this prompt to "Your Agent"
+                    </span>
+                    <button type="button" onclick="copyTurnkeyPart1Prompt(this)" class="btn btn-xs btn-secondary btn-outline gap-1">
+                      <i data-lucide="copy" class="w-3 h-3"></i> Copy Key (Part 1)
+                    </button>
+                  </div>
+                  <textarea id="ai-turnkey-part1-prompt" readonly rows="5" class="textarea textarea-bordered w-full font-mono text-3xs bg-base-100 leading-relaxed resize-y focus:outline-hidden"></textarea>
+                </div>
+
+                <!-- Part 2: The Lock (Paste Agent Reply to Unlock) -->
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-3xs font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-1.5">
+                      <i id="ai-turnkey-lock-icon" data-lucide="lock" class="w-3.5 h-3.5 text-warning"></i>
+                      <span class="badge badge-primary badge-xs font-mono">Step 2 · The Lock</span>
+                      Paste Agent Reply to Unlock
+                    </span>
+                    <div class="flex items-center gap-1.5">
+                      <span id="ai-turnkey-part2-status" class="badge badge-warning badge-xs font-mono gap-1">🔒 Locked — Waiting for Agent Reply</span>
+                      <button type="button" onclick="clearTurnkeyReplyPrompt()" class="btn btn-xs btn-ghost text-3xs px-1.5">Clear</button>
+                    </div>
+                  </div>
+                  <textarea id="ai-turnkey-reply-prompt" rows="3" oninput="updatePromptAndPreview()" class="textarea textarea-bordered w-full font-mono text-3xs bg-base-100 leading-relaxed resize-y focus:outline-primary" placeholder="Paste the Reply Prompt from &quot;your agent&quot; here to unlock the Main AI Prompt and complete the handshake..."></textarea>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -838,179 +920,208 @@
           </div>
         </div>
       </div>
+      <!-- END FORM QUESTIONNAIRE (Steps 1 to 5) -->
 
-      <!-- RIGHT COLUMN: AI PROMPT FIRST & EXPANDABLE MOCKUP (5 Cols - Sticky) -->
-      <div id="step-output" class="lg:col-span-5 bg-base-100 rounded-2xl border border-base-300 p-5 shadow-sm space-y-4 sticky top-20">
+      <!-- STEP 6: FINAL DELIVERABLE - UPDATED AI PROMPT & EXPANDABLE MOCKUP (ALWAYS AT THE BOTTOM OF THE SCREEN) -->
+      <div id="step-output" class="bg-base-100 rounded-2xl border-2 border-primary/40 p-6 sm:p-8 shadow-xl space-y-6 scroll-mt-20">
         
-        <!-- PRIMARY FOCUS: AI PROMPT (Formerly Deterministic AI Agent Prompt) -->
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="w-7 h-7 rounded-lg bg-primary text-primary-content flex items-center justify-center font-bold text-xs shadow-sm">
-                <i data-lucide="bot" class="w-4 h-4"></i>
-              </span>
-              <div>
-                <h3 class="font-bold text-sm text-base-content">AI Prompt</h3>
-                <p class="text-3xs text-base-content/60 font-mono">Synthesized for Antigravity &amp; AI Agents</p>
-              </div>
-            </div>
-            <span class="badge badge-success badge-xs font-mono font-bold text-success-content gap-1">
-              <i data-lucide="check" class="w-2.5 h-2.5"></i> Ready to Run
+        <!-- Step 6 Header: Explicit Final Step Announcement -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-base-200 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-primary text-primary-content flex items-center justify-center font-bold text-sm shadow-sm">
+              6
             </span>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-bold text-base sm:text-lg text-base-content">Final Step: AI Prompt</h3>
+                <span id="prompt-ready-badge" class="badge badge-success badge-xs font-mono font-bold text-success-content gap-1">
+                  <i data-lucide="check" class="w-2.5 h-2.5"></i> Live &amp; Ready
+                </span>
+              </div>
+              <p class="text-xs text-base-content/60 font-mono">This prompt updates live with your choices above &bull; Hand it to Antigravity to build your report</p>
+            </div>
           </div>
-
-          <!-- Prompt Output Textarea -->
-          <div class="relative bg-base-200 rounded-xl p-3 border border-base-300">
-            <textarea id="prompt-output-box" readonly class="w-full bg-transparent font-mono text-3xs text-base-content resize-none h-64 focus:outline-hidden leading-relaxed"></textarea>
-          </div>
-
-          <!-- Primary Prompt Actions -->
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="copyPromptToClipboard(this)" class="btn btn-sm btn-primary gap-1.5 shadow-sm">
-              <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy AI Prompt
-            </button>
-            <button type="button" onclick="downloadPromptMarkdown()" class="btn btn-sm btn-outline gap-1.5">
-              <i data-lucide="file-down" class="w-3.5 h-3.5"></i> Save Prompt (.md)
-            </button>
-          </div>
+          <span class="badge badge-primary badge-outline font-mono text-xs uppercase font-bold">Last Step &bull; Step 6 of 6</span>
         </div>
 
-        <!-- COLLAPSIBLE LIVE WIREFRAME MOCKUP ACCORDION -->
-        <details id="mockup-accordion" class="group border border-base-300 rounded-xl bg-base-200/30 transition overflow-hidden">
-          <summary class="cursor-pointer p-3 text-xs font-bold text-base-content flex items-center justify-between select-none list-none hover:bg-base-200/60 transition">
-            <span class="flex items-center gap-2">
-              <i data-lucide="layout" class="w-4 h-4 text-secondary"></i>
-              <span>Live Wireframe Mockup</span>
-              <span class="badge badge-ghost badge-xs text-3xs font-mono">Simulated DOM</span>
-            </span>
-            <span class="text-3xs font-mono text-primary flex items-center gap-1 group-open:hidden">
-              <span>Preview</span> <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
-            </span>
-            <span class="text-3xs font-mono text-base-content/60 hidden group-open:flex items-center gap-1">
-              <span>Collapse</span> <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
-            </span>
-          </summary>
-          <div class="p-3 pt-0 border-t border-base-300/50 space-y-3">
-            <!-- Simulated Window Frame -->
-            <div class="rounded-xl border border-base-300 bg-base-100 shadow-md overflow-hidden text-xs mt-2">
-              <div class="bg-base-200 px-3 py-2 border-b border-base-300 flex items-center justify-between">
-                <div class="flex items-center gap-1.5">
-                  <span class="w-2.5 h-2.5 rounded-full bg-error inline-block"></span>
-                  <span class="w-2.5 h-2.5 rounded-full bg-warning inline-block"></span>
-                  <span class="w-2.5 h-2.5 rounded-full bg-success inline-block"></span>
-                  <span id="mockup-window-title" class="font-bold text-3xs font-mono text-base-content/80 ml-1 truncate max-w-[130px]">Report</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span id="mockup-live-indicator" class="badge badge-success badge-xs font-mono text-3xs font-bold hidden gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-success-content animate-pulse"></span> LIVE
-                  </span>
-                  <span id="mockup-install-btn" class="badge badge-accent badge-xs font-mono text-3xs font-bold hidden gap-1 animate-bounce">
-                    <i data-lucide="download" class="w-2.5 h-2.5"></i> App
-                  </span>
-                  <span id="mockup-theme-pill" class="badge badge-outline badge-xs text-3xs capitalize font-mono inline-flex items-center gap-1.5">
-                    <span id="mockup-theme-name">light</span>
-                    <span class="inline-flex items-center gap-0.5" id="mockup-theme-swatches" data-theme="light">
-                      <span class="bg-primary rounded-full w-1.5 h-1.5 inline-block"></span>
-                      <span class="bg-secondary rounded-full w-1.5 h-1.5 inline-block"></span>
-                      <span class="bg-accent rounded-full w-1.5 h-1.5 inline-block"></span>
-                      <span class="bg-neutral rounded-full w-1.5 h-1.5 inline-block"></span>
-                    </span>
-                  </span>
-                </div>
-              </div>
+        <!-- Desktop Grid Inside Final Step 6: 7 Cols Prompt Textarea + 5 Cols Live Mockup -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <!-- LEFT: Prompt Output & Primary Actions (7 Cols) -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="relative bg-base-200 rounded-xl p-3.5 border border-base-300 shadow-inner">
+              <textarea id="prompt-output-box" readonly class="w-full bg-transparent font-mono text-xs text-base-content resize-none h-80 focus:outline-hidden leading-relaxed"></textarea>
+            </div>
 
-              <!-- Content Body -->
-              <div class="p-3 space-y-2.5 bg-base-100 max-h-[300px] overflow-y-auto">
-                <div class="p-2.5 rounded-lg bg-base-200/50 border border-base-300/60 space-y-1">
-                  <div class="flex items-center justify-between">
-                    <span id="mockup-hero-badge" class="badge badge-primary badge-xs font-mono text-3xs uppercase font-bold">html-report</span>
-                    <span class="text-3xs text-base-content/50 font-mono">2026-Q4</span>
-                  </div>
-                  <h5 id="mockup-hero-title" class="font-bold text-xs text-base-content">Quarterly Performance Analysis</h5>
-                </div>
-
-                <div class="grid grid-cols-3 gap-1.5">
-                  <div class="p-1.5 bg-base-200/40 rounded text-center border border-base-300/40">
-                    <div class="text-3xs text-base-content/60">Uptime</div>
-                    <div class="font-bold text-xs text-success font-mono">99.98%</div>
-                  </div>
-                  <div class="p-1.5 bg-base-200/40 rounded text-center border border-base-300/40">
-                    <div class="text-3xs text-base-content/60">Speed</div>
-                    <div class="font-bold text-xs text-primary font-mono">14.2ms</div>
-                  </div>
-                  <div class="p-1.5 bg-base-200/40 rounded text-center border border-base-300/40">
-                    <div class="text-3xs text-base-content/60">Audit</div>
-                    <div class="font-bold text-xs text-accent font-mono">100/100</div>
-                  </div>
-                </div>
-
-                <div id="mockup-chart-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1">
-                  <div class="text-3xs font-bold text-base-content/70 flex items-center gap-1">
-                    <i data-lucide="bar-chart-3" class="w-3 h-3 text-primary"></i> Charts Active (Chart.js)
-                  </div>
-                  <div class="h-10 flex items-end justify-between gap-1 pt-1">
-                    <div class="flex-1 bg-primary/70 rounded-t h-[40%]"></div>
-                    <div class="flex-1 bg-primary/70 rounded-t h-[70%]"></div>
-                    <div class="flex-1 bg-primary rounded-t h-[100%]"></div>
-                    <div class="flex-1 bg-secondary/80 rounded-t h-[60%]"></div>
-                  </div>
-                </div>
-
-                <div id="mockup-mermaid-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1">
-                  <div class="text-3xs font-bold text-base-content/70 flex items-center gap-1">
-                    <i data-lucide="git-branch" class="w-3 h-3 text-secondary"></i> Process Flows (Mermaid)
-                  </div>
-                  <div class="flex items-center justify-center gap-1 text-3xs font-mono py-0.5">
-                    <span class="px-1.5 py-0.5 bg-base-100 rounded border border-base-300">Spec</span>
-                    <span>&rarr;</span>
-                    <span class="px-1.5 py-0.5 bg-secondary/10 text-secondary border border-secondary/30 rounded">Build</span>
-                    <span>&rarr;</span>
-                    <span class="px-1.5 py-0.5 bg-success/10 text-success border border-success/30 rounded">Report</span>
-                  </div>
-                </div>
-
-                <div id="mockup-table-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1">
-                  <div class="text-3xs font-bold text-base-content/70 flex items-center gap-1">
-                    <i data-lucide="table" class="w-3 h-3 text-accent"></i> Tabular Data (Grid.js)
-                  </div>
-                  <div class="text-3xs font-mono flex items-center justify-between text-base-content/80">
-                    <span>ROW-01: Metric Alpha</span>
-                    <span class="badge badge-success badge-xs scale-75">OK</span>
-                  </div>
-                </div>
-
-                <div id="mockup-editor-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1 hidden">
-                  <div class="text-3xs font-bold text-base-content/70 flex items-center justify-between">
-                    <span class="flex items-center gap-1"><i data-lucide="edit-3" class="w-3 h-3 text-secondary"></i> Rich Text WYSIWYG Editor</span>
-                    <span class="badge badge-secondary badge-xs">Quill v2.0</span>
-                  </div>
-                  <div class="text-3xs font-mono bg-base-100 rounded border border-base-300 p-1.5 space-y-1">
-                    <div class="h-2 w-3/4 bg-base-content/20 rounded"></div>
-                    <div class="h-2 w-1/2 bg-base-content/10 rounded"></div>
-                  </div>
-                </div>
-
-                <div id="mockup-agent-dock" class="p-2 bg-secondary/10 border border-secondary/30 rounded flex items-center justify-between text-3xs hidden">
-                  <span class="font-bold text-secondary flex items-center gap-1">
-                    <i data-lucide="bot" class="w-3 h-3"></i> AI Assistant Dock Active (Cmd+K)
-                  </span>
-                  <span class="badge badge-secondary badge-xs">Ready</span>
-                </div>
-
-                <div id="mockup-references-widget" class="p-2 bg-primary/10 border border-primary/30 rounded flex items-center justify-between text-3xs hidden">
-                  <span class="font-bold text-primary flex items-center gap-1">
-                    <i data-lucide="paperclip" class="w-3 h-3"></i> <span id="mockup-references-text">Reference Files Grounded</span>
-                  </span>
-                  <span id="mockup-references-badge" class="badge badge-primary badge-xs">0</span>
-                </div>
-              </div>
+            <!-- Primary Prompt Actions -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button id="btn-copy-prompt" type="button" onclick="copyPromptToClipboard(this)" class="btn btn-primary gap-2 shadow-sm font-semibold">
+                <i data-lucide="copy" class="w-4 h-4"></i> Copy AI Prompt
+              </button>
+              <button id="btn-save-prompt" type="button" onclick="downloadPromptMarkdown()" class="btn btn-outline gap-2">
+                <i data-lucide="file-down" class="w-4 h-4"></i> Save Prompt (.md)
+              </button>
             </div>
           </div>
-        </details>
 
+          <!-- RIGHT: Live Wireframe Mockup Preview (5 Cols) -->
+          <div class="lg:col-span-5 space-y-3">
+            <!-- COLLAPSIBLE LIVE WIREFRAME MOCKUP ACCORDION -->
+            <details id="mockup-accordion" open class="group border border-base-300 rounded-xl bg-base-200/30 transition overflow-hidden">
+              <summary class="cursor-pointer p-3 text-xs font-bold text-base-content flex items-center justify-between select-none list-none hover:bg-base-200/60 transition">
+                <span class="flex items-center gap-2">
+                  <i data-lucide="layout" class="w-4 h-4 text-secondary"></i>
+                  <span>Live Wireframe Mockup</span>
+                  <span class="badge badge-ghost badge-xs text-3xs font-mono">Simulated DOM</span>
+                </span>
+                <span class="text-3xs font-mono text-primary flex items-center gap-1 group-open:hidden">
+                  <span>Preview</span> <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                </span>
+                <span class="text-3xs font-mono text-base-content/60 hidden group-open:flex items-center gap-1">
+                  <span>Collapse</span> <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
+                </span>
+              </summary>
+              <div class="p-3 pt-0 border-t border-base-300/50 space-y-3">
+                <!-- Simulated Window Frame -->
+                <div class="rounded-xl border border-base-300 bg-base-100 shadow-md overflow-hidden text-xs mt-2">
+                  <div class="bg-base-200 px-3 py-2 border-b border-base-300 flex items-center justify-between">
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-error inline-block"></span>
+                      <span class="w-2.5 h-2.5 rounded-full bg-warning inline-block"></span>
+                      <span class="w-2.5 h-2.5 rounded-full bg-success inline-block"></span>
+                      <span id="mockup-window-title" class="font-bold text-3xs font-mono text-base-content/80 ml-1 truncate max-w-[130px]">Report</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span id="mockup-live-indicator" class="badge badge-success badge-xs font-mono text-3xs font-bold hidden gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-success-content animate-pulse"></span> LIVE
+                      </span>
+                      <span id="mockup-install-btn" class="badge badge-accent badge-xs font-mono text-3xs font-bold hidden gap-1 animate-bounce">
+                        <i data-lucide="download" class="w-2.5 h-2.5"></i> App
+                      </span>
+                      <span id="mockup-theme-pill" class="badge badge-outline badge-xs text-3xs capitalize font-mono inline-flex items-center gap-1.5">
+                        <span id="mockup-theme-name">light</span>
+                        <span class="inline-flex items-center gap-0.5" id="mockup-theme-swatches" data-theme="light">
+                          <span class="bg-primary rounded-full w-1.5 h-1.5 inline-block"></span>
+                          <span class="bg-secondary rounded-full w-1.5 h-1.5 inline-block"></span>
+                          <span class="bg-accent rounded-full w-1.5 h-1.5 inline-block"></span>
+                          <span class="bg-neutral rounded-full w-1.5 h-1.5 inline-block"></span>
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Content Body -->
+                  <div class="p-3 space-y-2.5 bg-base-100 max-h-[300px] overflow-y-auto">
+                    <div class="p-2.5 rounded-lg bg-base-200/50 border border-base-300/60 space-y-1">
+                      <div class="flex items-center justify-between">
+                        <span id="mockup-hero-badge" class="badge badge-primary badge-xs font-mono text-3xs uppercase font-bold">html-report</span>
+                        <span class="text-3xs text-base-content/50 font-mono">2026-Q4</span>
+                      </div>
+                      <h5 id="mockup-hero-title" class="font-bold text-xs text-base-content">Quarterly Performance Analysis</h5>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-1.5">
+                      <div class="p-1.5 bg-base-200/40 rounded text-center border border-base-300/40">
+                        <div class="text-3xs text-base-content/60">Uptime</div>
+                        <div class="font-bold text-xs text-success font-mono">99.98%</div>
+                      </div>
+                      <div class="p-1.5 bg-base-200/40 rounded text-center border border-base-300/40">
+                        <div class="text-3xs text-base-content/60">Speed</div>
+                        <div class="font-bold text-xs text-primary font-mono">14.2ms</div>
+                      </div>
+                      <div class="p-1.5 bg-base-200/40 rounded text-center border border-base-300/40">
+                        <div class="text-3xs text-base-content/60">Audit</div>
+                        <div class="font-bold text-xs text-accent font-mono">100/100</div>
+                      </div>
+                    </div>
+
+                    <div id="mockup-chart-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1">
+                      <div class="text-3xs font-bold text-base-content/70 flex items-center gap-1">
+                        <i data-lucide="bar-chart-3" class="w-3 h-3 text-primary"></i> Charts Active (Chart.js)
+                      </div>
+                      <div class="h-10 flex items-end justify-between gap-1 pt-1">
+                        <div class="flex-1 bg-primary/70 rounded-t h-[40%]"></div>
+                        <div class="flex-1 bg-primary/70 rounded-t h-[70%]"></div>
+                        <div class="flex-1 bg-primary rounded-t h-[100%]"></div>
+                        <div class="flex-1 bg-secondary/80 rounded-t h-[60%]"></div>
+                      </div>
+                    </div>
+
+                    <div id="mockup-mermaid-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1">
+                      <div class="text-3xs font-bold text-base-content/70 flex items-center gap-1">
+                        <i data-lucide="git-branch" class="w-3 h-3 text-secondary"></i> Process Flows (Mermaid)
+                      </div>
+                      <div class="flex items-center justify-center gap-1 text-3xs font-mono py-0.5">
+                        <span class="px-1.5 py-0.5 bg-base-100 rounded border border-base-300">Spec</span>
+                        <span>&rarr;</span>
+                        <span class="px-1.5 py-0.5 bg-secondary/10 text-secondary border border-secondary/30 rounded">Build</span>
+                        <span>&rarr;</span>
+                        <span class="px-1.5 py-0.5 bg-success/10 text-success border border-success/30 rounded">Report</span>
+                      </div>
+                    </div>
+
+                    <div id="mockup-table-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1">
+                      <div class="text-3xs font-bold text-base-content/70 flex items-center gap-1">
+                        <i data-lucide="table" class="w-3 h-3 text-accent"></i> Tabular Data (Grid.js)
+                      </div>
+                      <div class="text-3xs font-mono flex items-center justify-between text-base-content/80">
+                        <span>ROW-01: Metric Alpha</span>
+                        <span class="badge badge-success badge-xs scale-75">OK</span>
+                      </div>
+                    </div>
+
+                    <div id="mockup-editor-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1 hidden">
+                      <div class="text-3xs font-bold text-base-content/70 flex items-center justify-between">
+                        <span class="flex items-center gap-1"><i data-lucide="edit-3" class="w-3 h-3 text-secondary"></i> Rich Text WYSIWYG Editor</span>
+                        <span class="badge badge-secondary badge-xs">Quill v2.0</span>
+                      </div>
+                      <div class="text-3xs font-mono bg-base-100 rounded border border-base-300 p-1.5 space-y-1">
+                        <div class="h-2 w-3/4 bg-base-content/20 rounded"></div>
+                        <div class="h-2 w-1/2 bg-base-content/10 rounded"></div>
+                      </div>
+                    </div>
+
+                    <div id="mockup-agent-dock" class="p-2 bg-secondary/10 border border-secondary/30 rounded flex items-center justify-between text-3xs hidden">
+                      <span class="font-bold text-secondary flex items-center gap-1">
+                        <i data-lucide="bot" class="w-3 h-3"></i> AI Assistant Dock Active (Cmd+K)
+                      </span>
+                      <span class="badge badge-secondary badge-xs">Ready</span>
+                    </div>
+
+                    <div id="mockup-references-widget" class="p-2 bg-primary/10 border border-primary/30 rounded flex items-center justify-between text-3xs hidden">
+                      <span class="font-bold text-primary flex items-center gap-1">
+                        <i data-lucide="paperclip" class="w-3 h-3"></i> <span id="mockup-references-text">Reference Files Grounded</span>
+                      </span>
+                      <span id="mockup-references-badge" class="badge badge-primary badge-xs">0</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+        </div>
       </div>
     </div>
+    </div>
     <!-- END VIEW 1: CREATION WIZARD -->
+
+    <!-- Floating Bottom Sticky Bar: Always shows the prompt is updating and provides 1-click jump to the last step -->
+    <div id="sticky-bottom-prompt-bar" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 bg-base-100/95 backdrop-blur-md border border-base-300 shadow-2xl rounded-full px-4 py-2 flex items-center gap-3 transition-all hover:border-primary/50">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-success animate-pulse"></span>
+        <span class="font-bold text-xs text-base-content flex items-center gap-1.5">
+          <i data-lucide="bot" class="w-3.5 h-3.5 text-primary"></i>
+          <span>Final Step:</span> <span class="text-base-content/70 hidden sm:inline">AI Prompt Live</span>
+        </span>
+      </div>
+      <a href="#step-output" class="btn btn-xs btn-primary gap-1 shadow-sm font-semibold">
+        <span>Go to Prompt ↓</span>
+      </a>
+      <button type="button" onclick="copyPromptToClipboard(this)" class="btn btn-xs btn-outline gap-1">
+        <i data-lucide="copy" class="w-3 h-3"></i> <span class="hidden sm:inline">Copy</span>
+      </button>
+    </div>
 
     <!-- VIEW 2: WORKSPACE PROJECTS DIRECTORY -->
     <div id="view-projects" class="hidden space-y-6">
@@ -1035,7 +1146,7 @@
             </p>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" onclick="loadWorkspaceProjects()" class="btn btn-xs sm:btn-sm btn-outline border-base-300 gap-1.5" title="Rescan Workspace">
+            <button type="button" onclick="loadWorkspaceProjects({ refresh: true })" class="btn btn-xs sm:btn-sm btn-outline border-base-300 gap-1.5" title="Rescan Workspace">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -1176,10 +1287,57 @@
     </form>
   </dialog>
 
+  <!-- DaisyUI Native Modal for Project Deletion -->
+  <dialog id="modal-delete-project" class="modal">
+    <div class="modal-box max-w-md bg-base-100 border border-base-300 shadow-2xl space-y-4 p-5 sm:p-6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-error/15 text-error flex items-center justify-center shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-base text-base-content">Delete Workspace Project</h3>
+          <p class="text-xs text-base-content/60">This will permanently remove the project and its files.</p>
+        </div>
+      </div>
+
+      <div class="bg-base-200/70 p-3 rounded-xl border border-base-300/80 text-xs space-y-1 font-mono">
+        <div id="delete-modal-project-title" class="text-base-content font-bold truncate"></div>
+        <div class="text-base-content/60 text-3xs truncate flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+          </svg>
+          <span id="delete-modal-project-path" class="truncate"></span>
+        </div>
+      </div>
+
+      <p class="text-xs text-base-content/80 leading-relaxed">
+        Are you sure you want to delete this project? The folder and all its deliverables (HTML, PDF, fragments) will be permanently deleted from disk.
+      </p>
+
+      <div class="modal-action flex items-center justify-end gap-2 pt-2 border-t border-base-200">
+        <form method="dialog">
+          <button class="btn btn-sm btn-ghost">Cancel</button>
+        </form>
+        <button type="button" id="btn-confirm-delete-project" class="btn btn-sm btn-error text-white gap-1.5 shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          <span>Confirm Delete</span>
+        </button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
   <!-- STUDIO JAVASCRIPT (ZERO-NODE RUNTIME) -->
   <script>
     let currentTarget = "report";
-    let currentMode = "static"; // "static" or "live"
+    let currentMode = "static"; // "static" (Static File) or "live" (Server-Connected)
+    let currentBehavioral = "interactive"; // "interactive" | "passive"
     let currentApp = "none";    // "none", "live-app", or "offline-app"
     let currentTheme = "light";
     let userCustomTheme = null; // Single managed custom theme: { name: "user", colors: { ... } }
@@ -1763,8 +1921,9 @@
 
       if (target === "print") {
         selectWizardMode("static", staticModeCard);
+        selectWizardBehavioral("passive", document.querySelector('[data-behavioral="passive"]'));
         if (liveModeCard) liveModeCard.classList.add("opacity-40", "pointer-events-none");
-        if (modeNotice) modeNotice.textContent = "Print mode: Locked to Static";
+        if (modeNotice) modeNotice.textContent = "Print mode: Locked to Static + Passive";
 
         // Eliminate offline-first app and install-app in print mode
         if (liveAppCard) liveAppCard.classList.add("hidden");
@@ -1785,8 +1944,27 @@
         if (target === "dashboard" && currentMode === "static") {
           selectWizardMode("live", liveModeCard);
         }
+        if (currentBehavioral === "passive") {
+          selectWizardBehavioral("interactive", document.querySelector('[data-behavioral="interactive"]'));
+        }
       }
 
+      updatePromptAndPreview();
+    }
+
+    function selectWizardBehavioral(behavioral, btnEl) {
+      if (currentTarget === "print" && behavioral !== "passive") {
+        behavioral = "passive";
+      }
+      currentBehavioral = behavioral;
+      document.querySelectorAll(".wizard-behavioral-btn").forEach((b) => {
+        b.classList.remove("btn-accent");
+        b.classList.add("btn-outline");
+      });
+      if (btnEl) {
+        btnEl.classList.remove("btn-outline");
+        btnEl.classList.add("btn-accent");
+      }
       updatePromptAndPreview();
     }
 
@@ -1819,6 +1997,8 @@
         if (containerMcp) containerMcp.classList.add("opacity-50", "pointer-events-none");
         if (chkAi) chkAi.checked = false;
         if (chkMcp) chkMcp.checked = false;
+        const aiConfigPanel = document.getElementById("ai-turnkey-config");
+        if (aiConfigPanel) aiConfigPanel.classList.add("hidden");
         if (intelNotice) { intelNotice.textContent = "Requires Live Mode"; intelNotice.classList.remove("badge-success"); }
       }
 
@@ -1856,6 +2036,12 @@
       const hasQuill = document.getElementById("chk-quill")?.checked ?? false;
       const hasAiAgent = document.getElementById("chk-ai-agent")?.checked ?? false;
       const hasMcpTools = document.getElementById("chk-mcp-tools")?.checked ?? false;
+      const aiConfigPanel = document.getElementById("ai-turnkey-config");
+      if (aiConfigPanel) aiConfigPanel.classList.toggle("hidden", !hasAiAgent);
+      const aiPortRaw = document.getElementById("ai-bridge-port")?.value?.trim();
+      const aiPort = aiPortRaw && Number(aiPortRaw) > 0 ? String(Number(aiPortRaw)) : "3031";
+      const aiPurpose = document.getElementById("ai-bridge-purpose")?.value?.trim() || "";
+      const aiFloatingAssistant = document.getElementById("ai-floating-assistant")?.checked ?? true;
 
       let userGoals = "";
       if (boardGoalMode === "complex" && quillEditor) {
@@ -1898,8 +2084,6 @@
         skillName = "html-presentation";
         humanTargetName = "Interactive Slide Deck (Reveal.js)";
         heroTitle = "Strategic Roadmap & Product Keynote Deck";
-      } else if (currentApp === "offline-app" || currentApp === "live-app") {
-        skillName = "html-pwa";
       }
 
       if (userGoals) {
@@ -1988,6 +2172,8 @@
 
       promptText += `\nDeliverable Architecture:\n`;
       promptText += `- Purpose & Format: ${humanTargetName.toUpperCase()}\n`;
+      promptText += `- Serving Mode: ${currentMode === "static" ? "Static File (Zero Backend, file:/// compatible, no Datastar server hooks)" : "Server-Connected (Live Backend on localhost:3000 with Datastar SSE)"}\n`;
+      promptText += `- Behavioral Mode: ${currentBehavioral === "passive" ? "Passive / Printable Document (@page A4/Letter PDF)" : "Interactive / Reactive Application (Alpine.js, Chart.js, client-side fetch)"}\n`;
       promptText += `- Operational Mode: ${currentMode === "static" ? "STATIC_STANDALONE (Zero server required, single self-contained HTML file)" : "LIVE_CONNECTED (Server-backed SSE stream on localhost:3000)"}\n`;
       promptText += `- App Packaging: ${currentApp === "none" ? "Standard Browser Page" : currentApp === "live-app" ? "Downloadable App (Standalone Window, Live Connected)" : "Downloadable Offline-First App (100% Offline Service Worker Cache)"}\n`;
       promptText += `- Startup Theme: "${currentTheme}"${isCustomThemeActive ? ` (Custom DaisyUI Theme: "${userCustomTheme.name}")` : " (Default on first load; readers can switch between 32 themes via navbar)"}\n`;
@@ -2003,22 +2189,134 @@
 
       promptText += `- Features & Capabilities:\n`;
       promptText += addonNames.length ? addonNames.map((a) => `  • ${a}`).join("\n") : "  • None (core layout only)";
-      if (hasAiAgent) promptText += `\n  • Interactive AI Assistant (In-browser Cmd+K dock with live Datastar fragment morphing)`;
+      if (hasAiAgent) {
+        promptText += `\n  • Two-Way Agent Bridge & AI Dock (Pre-baked --ai controls, Cmd+K prompt dock, and live Datastar fragment morphing)`;
+        promptText += `\n  • Turnkey AI Connection: port=${aiPort}`;
+        promptText += `\n  • Hovering AI Assistant Button (⌘K): ${aiFloatingAssistant ? "Activated (floating chat launcher visible)" : "Disabled (headless live bridge updates only)"}`;
+        if (aiPurpose) promptText += `\n  • Board AI Support Description: "${aiPurpose}"`;
+      }
       if (hasMcpTools) promptText += `\n  • Enterprise Tools Gateway (Proxy widgets to Postgres / GitLab MCP servers)`;
+
+      const projectSlug = (userGoals || heroTitle || `${currentTarget}-project`)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 40) || `${currentTarget}-project`;
+
+      const serveCmd = `node skills/html-report/scripts/serve-report.mjs projects/${projectSlug}/index.html --port ${aiPort}`;
+
+      const purposeText = aiPurpose || `Provide live AI support on the board: answer user questions about the metrics, help explore data, and push live updates back to the HTML board.`;
+      const turnkeyPart1El = document.getElementById("ai-turnkey-part1-prompt");
+      if (turnkeyPart1El) {
+        turnkeyPart1El.value = [
+          `/goal Establish AI board support and prepare a Reply Prompt for create.html (pre-scaffold handshake).`,
+          ``,
+          `What the AI on this board should do:`,
+          `${purposeText}`,
+          ``,
+          `How to maintain a connection to the board:`,
+          `- Once the board is scaffolded, keep the Two-Way Agent Bridge running on port ${aiPort} via skills/html-report/scripts/serve-report.mjs --port ${aiPort}.`,
+          `- Hovering AI Assistant (⌘K): ${aiFloatingAssistant ? "Activated (user can open the floating chat dock in the bottom-right corner)" : "Disabled (headless bridge only — push live updates without showing the floating chat button)"}.`,
+          `- Stay connected to the board's SSE stream (http://localhost:${aiPort}/events) and handle two-way requests (POST /api/agent and POST /api/agent/prompt) to push live updates back to the HTML file.`,
+          ``,
+          `Reply Prompt to give back (paste into Step 2 in create.html to unlock):`,
+          `The board is NOT scaffolded yet — do not guess unbuilt widget IDs or page schemas. Output a concise, copy-ready Reply Prompt block labeled "REPLY PROMPT FOR CREATE.HTML" containing what html-report needs from you to wire up and maintain the connection after scaffolding:`,
+          `1. Connection & Keep-Alive Details: How you will connect to and stay synced with port ${aiPort} (e.g., local agy CLI model/persona, webhook/MCP endpoint, or SSE + POST /api/agent listener) and any required config.`,
+          `2. Hovering AI Assistant (⌘K) Integration Schema: The request payload/context you expect from the dock/bridge (e.g., prompt, targetSelector, datasetState, domSnippet), the actions you support, and the response/live-update format you will return (chat text, Datastar HTML fragments, or structured action proposals).`,
+          `3. Agent-Side Capabilities & Context: What tools, live data, or workspace context you already have access to on your side that the board can query once live.`
+        ].join("\n");
+      }
+
+      const turnkeyReplyInput = document.getElementById("ai-turnkey-reply-prompt");
+      const turnkeyReply = turnkeyReplyInput ? turnkeyReplyInput.value.trim() : "";
+      const isHandshakeLocked = hasAiAgent && !turnkeyReply;
+
+      const turnkeyPart2Status = document.getElementById("ai-turnkey-part2-status");
+      const turnkeyLockIcon = document.getElementById("ai-turnkey-lock-icon");
+      if (turnkeyPart2Status) {
+        if (turnkeyReply) {
+          turnkeyPart2Status.textContent = "🔓 Unlocked — Handshake Complete";
+          turnkeyPart2Status.className = "badge badge-success badge-xs font-mono text-success-content gap-1";
+        } else {
+          turnkeyPart2Status.textContent = "🔒 Locked — Waiting for Agent Reply";
+          turnkeyPart2Status.className = "badge badge-warning badge-xs font-mono gap-1";
+        }
+      }
+      if (turnkeyLockIcon) {
+        turnkeyLockIcon.setAttribute("data-lucide", turnkeyReply ? "unlock" : "lock");
+        turnkeyLockIcon.className = turnkeyReply ? "w-3.5 h-3.5 text-success" : "w-3.5 h-3.5 text-warning";
+      }
+
+      const promptReadyBadge = document.getElementById("prompt-ready-badge");
+      const btnCopyPrompt = document.getElementById("btn-copy-prompt");
+      const btnSavePrompt = document.getElementById("btn-save-prompt");
+      if (promptReadyBadge) {
+        if (isHandshakeLocked) {
+          promptReadyBadge.innerHTML = '<i data-lucide="lock" class="w-2.5 h-2.5"></i> Locked — Complete AI Handshake';
+          promptReadyBadge.className = "badge badge-warning badge-xs font-mono font-bold gap-1";
+        } else {
+          promptReadyBadge.innerHTML = '<i data-lucide="check" class="w-2.5 h-2.5"></i> Live &amp; Ready';
+          promptReadyBadge.className = "badge badge-success badge-xs font-mono font-bold text-success-content gap-1";
+        }
+      }
+      if (btnCopyPrompt) {
+        btnCopyPrompt.disabled = isHandshakeLocked;
+        btnCopyPrompt.title = isHandshakeLocked ? "Paste the Agent Reply in Step 3 (The Lock) to unlock" : "";
+      }
+      if (btnSavePrompt) {
+        btnSavePrompt.disabled = isHandshakeLocked;
+        btnSavePrompt.title = isHandshakeLocked ? "Paste the Agent Reply in Step 3 (The Lock) to unlock" : "";
+      }
+
+      const scaffoldAddonKeys = [];
+      if (hasCharts) scaffoldAddonKeys.push("charts");
+      if (hasMermaid) scaffoldAddonKeys.push("mermaid");
+      if (hasGridjs) scaffoldAddonKeys.push("gridjs");
+      if (hasLeaflet) scaffoldAddonKeys.push("leaflet");
+      if (hasKatex) scaffoldAddonKeys.push("katex");
+      if (hasCalendar) scaffoldAddonKeys.push("fullcalendar");
+      if (hasShowdown) scaffoldAddonKeys.push("showdown");
+      if (hasHljs) scaffoldAddonKeys.push("hljs");
+      if (hasDayjs) scaffoldAddonKeys.push("dayjs");
+      if (hasQuill) scaffoldAddonKeys.push("quill");
+
+      const scaffoldMode = currentMode === "live" && currentTarget === "report" ? "live-report" : currentTarget;
+      const scaffoldCmdParts = [
+        "node skills/html-report/scripts/scaffold-project.mjs",
+        `--project ${projectSlug}`,
+        `--title "${heroTitle.replace(/"/g, '\\"')}"`,
+        `--mode ${scaffoldMode}`,
+        `--theme ${currentTheme}`
+      ];
+      if (scaffoldAddonKeys.length > 0) scaffoldCmdParts.push(`--addons ${scaffoldAddonKeys.join(",")}`);
+      if (hasAiAgent) {
+        scaffoldCmdParts.push("--ai");
+        scaffoldCmdParts.push(`--ai-port ${aiPort}`);
+        if (!aiFloatingAssistant) scaffoldCmdParts.push("--no-ai-dock");
+        if (aiPurpose) scaffoldCmdParts.push(`--ai-purpose "${aiPurpose.replace(/"/g, '\\"')}"`);
+      }
+      if (currentApp !== "none") scaffoldCmdParts.push("--pwa");
+
+      if (hasAiAgent && turnkeyReply) {
+        promptText += `\n\nTurnkey Agent Reply (Scaffold Info & Two-Way Agent Bridge):\n`;
+        promptText += `---\n${turnkeyReply}\n---`;
+      }
 
       promptText += `\n\nAI Agent Scaffolding Instructions:\n`;
       promptText += `1. Activate skill /${skillName}.\n`;
-      promptText += `2. Scaffold the ${humanTargetName} incorporating the selected components and theme.\n`;
+      promptText += `2. Run the project scaffolding pipeline to create projects/${projectSlug}/ (fragment.html, index.html, report.manifest.json, AGENTS.md):\n`;
+      promptText += `   ${scaffoldCmdParts.join(" ")}\n`;
+      promptText += `3. Edit projects/${projectSlug}/fragment.html (<main id="report-main">) and rebuild to projects/${projectSlug}/index.html using build-report.mjs --project ${projectSlug}.\n`;
       if (userGoals) {
-        promptText += `3. Structure data widgets and metrics directly fulfilling: "${userGoals}".\n`;
+        promptText += `4. Structure data widgets and metrics directly fulfilling: "${userGoals}".\n`;
       } else {
-        promptText += `3. Populate realistic, domain-specific metrics and data visualizations.\n`;
+        promptText += `4. Populate realistic, domain-specific metrics and data visualizations.\n`;
       }
       if (userAudience) {
-        promptText += `4. Calibrate typography, layout contrast, and analytical depth for ${userAudience}.\n`;
+        promptText += `5. Calibrate typography, layout contrast, and analytical depth for ${userAudience}.\n`;
       }
       if (collectedFiles.length > 0) {
-        promptText += `5. Ground visualizations, data schemas, and domain terminology directly on the provided reference files:\n`;
+        promptText += `${userAudience ? 6 : 5}. Ground visualizations, data schemas, and domain terminology directly on the provided reference files:\n`;
         collectedFiles.forEach((f) => {
           if (f.note && f.note.trim()) {
             promptText += `   • ${f.name}: Ground on context note ("${f.note.trim()}").\n`;
@@ -2027,11 +2325,36 @@
           }
         });
       }
+      if (hasAiAgent) {
+        const bridgeStepNum = (userAudience ? 6 : 5) + (collectedFiles.length > 0 ? 1 : 0);
+        promptText += `${bridgeStepNum}. Start and verify the Two-Way Agent Bridge server on port ${aiPort}:\n`;
+        promptText += `   ${serveCmd}\n`;
+      }
 
       const promptBox = document.getElementById("prompt-output-box");
       if (promptBox) promptBox.value = promptText;
 
       if (window.lucide) window.lucide.createIcons();
+    }
+
+    function copyTurnkeyPart1Prompt(btn) {
+      const box = document.getElementById("ai-turnkey-part1-prompt");
+      if (!box) return;
+      navigator.clipboard.writeText(box.value).then(() => {
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-success"></i> Copied Part 1!';
+        setTimeout(() => {
+          btn.innerHTML = original;
+          if (window.lucide) window.lucide.createIcons();
+        }, 2000);
+      });
+    }
+
+    function clearTurnkeyReplyPrompt() {
+      const box = document.getElementById("ai-turnkey-reply-prompt");
+      if (!box) return;
+      box.value = "";
+      updatePromptAndPreview();
     }
 
     function copyPromptToClipboard(btn) {
@@ -2059,6 +2382,119 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+    }
+
+    function resetStudioToDefault(btn) {
+      // 1. Reset Step 1: Purpose & Deliverable, Behavioral, Goals, Audience, Reference Files
+      const reportCard = document.querySelector('[data-target="report"]');
+      if (reportCard) selectWizardTarget("report", reportCard);
+
+      const staticCard = document.querySelector('[data-mode="static"]');
+      if (staticCard) selectWizardMode("static", staticCard);
+
+      const interactiveBtn = document.querySelector('[data-behavioral="interactive"]');
+      if (interactiveBtn) selectWizardBehavioral("interactive", interactiveBtn);
+
+      const noneAppCard = document.getElementById("app-card-none");
+      if (noneAppCard) selectWizardApp("none", noneAppCard);
+
+      const goalsInput = document.getElementById("input-board-goals");
+      if (goalsInput) {
+        goalsInput.value = "";
+        goalsInput.classList.remove("hidden");
+      }
+      const audienceInput = document.getElementById("input-board-audience");
+      if (audienceInput) audienceInput.value = "";
+
+      if (typeof boardGoalMode !== "undefined") boardGoalMode = "simple";
+      const btnSimple = document.getElementById("btn-mode-simple");
+      const btnComplex = document.getElementById("btn-mode-complex");
+      if (btnSimple) { btnSimple.classList.add("btn-primary"); btnSimple.classList.remove("btn-ghost"); }
+      if (btnComplex) { btnComplex.classList.remove("btn-primary"); btnComplex.classList.add("btn-ghost"); }
+      const richIndicator = document.getElementById("rich-goals-indicator");
+      if (richIndicator) richIndicator.classList.add("hidden");
+      if (typeof quillInstance !== "undefined" && quillInstance) {
+        quillInstance.setText("");
+      }
+      try {
+        localStorage.removeItem("html-report-create-goals-mode");
+        localStorage.removeItem("html-report-create-goals-simple");
+        localStorage.removeItem("html-report-create-goals-complex");
+      } catch (_) {}
+
+      collectedFiles = [];
+      const filePicker = document.getElementById("file-picker-input");
+      if (filePicker) filePicker.value = "";
+      renderCollectedFiles();
+
+      // 2. Reset Step 3: Content Capabilities checkboxes
+      [
+        "chk-charts", "chk-mermaid", "chk-gridjs", "chk-leaflet",
+        "chk-katex", "chk-fullcalendar", "chk-showdown", "chk-hljs",
+        "chk-dayjs", "chk-quill", "chk-ai-agent", "chk-mcp-tools"
+      ].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.checked = false;
+      });
+      const resetPort = document.getElementById("ai-bridge-port");
+      if (resetPort) resetPort.value = "3031";
+      const resetPurpose = document.getElementById("ai-bridge-purpose");
+      if (resetPurpose) resetPurpose.value = "";
+      const resetFloatingAssistant = document.getElementById("ai-floating-assistant");
+      if (resetFloatingAssistant) resetFloatingAssistant.checked = true;
+      const resetReplyPrompt = document.getElementById("ai-turnkey-reply-prompt");
+      if (resetReplyPrompt) resetReplyPrompt.value = "";
+      const resetAiPanel = document.getElementById("ai-turnkey-config");
+      if (resetAiPanel) resetAiPanel.classList.add("hidden");
+
+      // 3. Reset Step 5: Custom Theme & Default Theme
+      if (userCustomTheme) {
+        const customIdx = DAISYUI_THEMES.indexOf(userCustomTheme.name);
+        if (customIdx !== -1) DAISYUI_THEMES.splice(customIdx, 1);
+        userCustomTheme = null;
+      }
+      const customStyleEl = document.getElementById("daisyui-custom-themes");
+      if (customStyleEl) customStyleEl.textContent = "";
+
+      const customNameInput = document.getElementById("custom-theme-name-input");
+      if (customNameInput) customNameInput.value = "user";
+      const customDefaults = [
+        ["picker-primary", "text-primary", "#4f46e5"],
+        ["picker-secondary", "text-secondary", "#ec4899"],
+        ["picker-accent", "text-accent", "#f59e0b"],
+        ["picker-neutral", "text-neutral", "#1e293b"],
+        ["picker-base", "text-base", "#ffffff"]
+      ];
+      customDefaults.forEach(([pickerId, textId, val]) => {
+        const p = document.getElementById(pickerId);
+        const t = document.getElementById(textId);
+        if (p) p.value = val;
+        if (t) t.value = val;
+      });
+      const customBadge = document.getElementById("custom-theme-badge");
+      if (customBadge) customBadge.textContent = "Custom Theme";
+      const customAccordion = document.getElementById("custom-theme-accordion");
+      if (customAccordion) customAccordion.removeAttribute("open");
+
+      initNavbarThemeDropdown();
+      initInitialThemeDropdown();
+      changeDefaultTheme("light");
+      if (typeof syncThemeColorMeta === "function") {
+        setTimeout(syncThemeColorMeta, 50);
+      }
+
+      // 4. Refresh prompt & mockup
+      updatePromptAndPreview();
+
+      // 5. Button feedback
+      if (btn) {
+        if (!btn.dataset.origHtml) btn.dataset.origHtml = btn.innerHTML;
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span class="text-success">Reset to Default!</span>';
+        clearTimeout(btn._resetTimer);
+        btn._resetTimer = setTimeout(() => {
+          btn.innerHTML = btn.dataset.origHtml;
+        }, 1500);
+      }
     }
 
     function downloadStarterHtml(btn) {
@@ -2348,58 +2784,7 @@
     let currentCategoryFilter = "all";
     let projectsSearchQuery = "";
 
-    const BUNDLED_SHOWCASE_PROJECTS = [
-      {
-        title: "Publication-Grade HTML Report Showcase",
-        path: "skills/html-report/examples/example.html",
-        url: "skills/html-report/examples/example.html",
-        category: "Showcase Example",
-        version: "2.0.0",
-        updatedAt: new Date().toISOString(),
-        size: 215000,
-        description: "Full-fidelity demonstration with DaisyUI 32-theme switcher, Alpine.js reactivity, Chart.js telemetry, and Mermaid diagrams."
-      },
-      {
-        title: "Creation Studio Dedicated Navbar & Projects View - Journey",
-        path: "openspec/changes/studio-navbar-projects-view/index.html",
-        url: "openspec/changes/studio-navbar-projects-view/index.html",
-        category: "OpenSpec Journey",
-        version: "1.0.0",
-        updatedAt: new Date().toISOString(),
-        size: 233671,
-        description: "Living journey dashboard tracking dedicated studio navbar and workspace project directory."
-      },
-      {
-        title: "Traditional vs Modern Report Benchmark",
-        path: "benchmark/traditional-report.html",
-        url: "benchmark/traditional-report.html",
-        category: "Performance Benchmark",
-        version: "1.0.0",
-        updatedAt: new Date().toISOString(),
-        size: 85000,
-        description: "Head-to-head performance audit comparing legacy static reports with reactive hypermedia dashboards."
-      },
-      {
-        title: "Codex Telemetry & Deep Architecture Research",
-        path: "research/index.html",
-        url: "research/index.html",
-        category: "Research Report",
-        version: "1.2.0",
-        updatedAt: new Date().toISOString(),
-        size: 142000,
-        description: "Deep dive telemetry analysis and token economy benchmarks across multi-agent swarms."
-      },
-      {
-        title: "Datastar Real-Time Telemetry Console",
-        path: "skills/html-report/examples/datastar-live-dashboard.html",
-        url: "skills/html-report/examples/datastar-live-dashboard.html",
-        category: "Showcase Example",
-        version: "2.1.0",
-        updatedAt: new Date().toISOString(),
-        size: 178000,
-        description: "High-frequency SSE agent monitoring console with reactive signal updates."
-      }
-    ];
+    const BUNDLED_SHOWCASE_PROJECTS = [];
 
     function getCategoryBadgeClass(category) {
       switch (category) {
@@ -2423,13 +2808,70 @@
       return (bytes / (1024 * 1024)).toFixed(1) + " MB";
     }
 
-    window.closeProjectsDropdown = function () {
-      const dropdown = document.getElementById("navbar-projects-dropdown");
-      if (dropdown) {
-        if (document.activeElement && dropdown.contains(document.activeElement)) {
-          document.activeElement.blur();
+    const NAVBAR_DROPDOWNS = [
+      { dropdownId: "toc-dropdown", menuId: "report-toc-list", btnId: "toc-dropdown-btn" },
+      { dropdownId: "navbar-projects-dropdown", menuId: "navbar-projects-menu", btnId: "navbar-projects-btn" },
+      { dropdownId: "studio-settings-dropdown", menuId: "studio-settings-panel", btnId: "studio-settings-gear-btn" }
+    ];
+
+    window.closeAllNavbarDropdowns = function (exceptDropdownId = null) {
+      NAVBAR_DROPDOWNS.forEach(({ dropdownId, menuId, btnId }) => {
+        if (dropdownId === exceptDropdownId) return;
+        const dd = document.getElementById(dropdownId);
+        const menu = document.getElementById(menuId);
+        const btn = document.getElementById(btnId);
+        if (dd) dd.classList.remove("dropdown-open");
+        if (menu) menu.classList.add("hidden");
+        if (btn) btn.setAttribute("aria-expanded", "false");
+      });
+    };
+
+    window.toggleNavbarDropdown = function (dropdownId, menuId, btnId, event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      const dd = document.getElementById(dropdownId);
+      const menu = document.getElementById(menuId);
+      const btn = document.getElementById(btnId);
+      if (!dd || !menu) return;
+
+      const isCurrentlyOpen = dd.classList.contains("dropdown-open") && !menu.classList.contains("hidden");
+      window.closeAllNavbarDropdowns(isCurrentlyOpen ? null : dropdownId);
+
+      if (isCurrentlyOpen) {
+        dd.classList.remove("dropdown-open");
+        menu.classList.add("hidden");
+        if (btn) btn.setAttribute("aria-expanded", "false");
+        if (btn && document.activeElement === btn) btn.blur();
+      } else {
+        dd.classList.add("dropdown-open");
+        menu.classList.remove("hidden");
+        if (btn) btn.setAttribute("aria-expanded", "true");
+        if (dropdownId === "navbar-projects-dropdown") {
+          window.renderDropdownProjectsList(document.getElementById("dropdown-projects-search")?.value || "");
         }
       }
+    };
+
+    document.addEventListener("click", (event) => {
+      const clickedInsideAny = NAVBAR_DROPDOWNS.some(({ dropdownId }) => {
+        const dd = document.getElementById(dropdownId);
+        return dd && dd.contains(event.target);
+      });
+      if (!clickedInsideAny) {
+        window.closeAllNavbarDropdowns();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        window.closeAllNavbarDropdowns();
+      }
+    });
+
+    window.closeProjectsDropdown = function () {
+      window.closeAllNavbarDropdowns();
     };
 
     window.renderDropdownProjectsList = function (searchQuery = "") {
@@ -2498,10 +2940,12 @@
       const navProjectsBtn = document.getElementById("navbar-projects-btn");
       const tocDropdown = document.getElementById("toc-dropdown");
       const quickViewLabel = document.getElementById("studio-quick-view-label");
+      const bottomBar = document.getElementById("sticky-bottom-prompt-bar");
 
       if (viewName === "projects") {
         if (wizardView) wizardView.classList.add("hidden");
         if (projectsView) projectsView.classList.remove("hidden");
+        if (bottomBar) bottomBar.classList.add("hidden");
         if (navProjectsBtn) {
           navProjectsBtn.classList.remove("btn-ghost");
           navProjectsBtn.classList.add("btn-primary");
@@ -2516,6 +2960,7 @@
       } else {
         if (wizardView) wizardView.classList.remove("hidden");
         if (projectsView) projectsView.classList.add("hidden");
+        if (bottomBar) bottomBar.classList.remove("hidden");
         if (navProjectsBtn) {
           navProjectsBtn.classList.add("btn-ghost");
           navProjectsBtn.classList.remove("btn-primary");
@@ -2538,10 +2983,11 @@
       window.switchView(isProjectsVisible ? "wizard" : "projects");
     };
 
-    window.loadWorkspaceProjects = async function () {
+    window.loadWorkspaceProjects = async function (options = {}) {
       const offlineBanner = document.getElementById("projects-offline-banner");
+      const url = options && options.refresh ? "/api/projects?refresh=1" : "/api/projects";
       try {
-        const res = await fetch("/api/projects", { cache: "no-store" });
+        const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error("HTTP " + res.status);
         const data = await res.json();
         if (data.ok && Array.isArray(data.projects)) {
@@ -2576,6 +3022,10 @@
       renderProjectsGrid();
     };
 
+    window.addEventListener("html-report:projects-changed", () => {
+      window.loadWorkspaceProjects({ refresh: true });
+    });
+
     window.renderCategoryFilters = function () {
       const container = document.getElementById("projects-category-filters");
       if (!container) return;
@@ -2584,6 +3034,9 @@
       workspaceProjects.forEach((p) => {
         if (p.category) categories.add(p.category);
       });
+      if (currentCategoryFilter !== "all" && !categories.has(currentCategoryFilter)) {
+        currentCategoryFilter = "all";
+      }
 
       container.innerHTML = "";
       categories.forEach((cat) => {
@@ -2622,6 +3075,80 @@
       if (clearBtn) clearBtn.classList.add("hidden");
       projectsSearchQuery = "";
       window.renderProjectsGrid();
+    };
+
+    let projectPendingDeletion = null;
+
+    window.deleteProject = function (project) {
+      if (!project || !project.path) return;
+      projectPendingDeletion = project;
+
+      const modal = document.getElementById("modal-delete-project");
+      const titleEl = document.getElementById("delete-modal-project-title");
+      const pathEl = document.getElementById("delete-modal-project-path");
+      const confirmBtn = document.getElementById("btn-confirm-delete-project");
+
+      if (titleEl) titleEl.textContent = project.title || project.path;
+      if (pathEl) pathEl.textContent = project.path;
+
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          <span>Confirm Delete</span>
+        `;
+        confirmBtn.onclick = async () => {
+          confirmBtn.disabled = true;
+          confirmBtn.innerHTML = `<span class="loading loading-spinner loading-xs"></span> <span>Deleting...</span>`;
+          await window.executeDeleteProject(projectPendingDeletion);
+        };
+      }
+
+      if (modal && typeof modal.showModal === "function") {
+        modal.showModal();
+      } else {
+        // Fallback for non-supporting viewports
+        if (confirm(`Permanently delete project?\n\n${project.title || project.path}`)) {
+          window.executeDeleteProject(project);
+        }
+      }
+    };
+
+    window.executeDeleteProject = async function (project) {
+      const modal = document.getElementById("modal-delete-project");
+      try {
+        const res = await fetch("/api/projects", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path: project.path })
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          throw new Error(data.error || "Failed to delete project");
+        }
+
+        if (modal && typeof modal.close === "function") modal.close();
+
+        // Clean up from local in-memory array
+        workspaceProjects = workspaceProjects.filter((p) => p.path !== project.path);
+        try {
+          const raw = localStorage.getItem("studio_local_projects");
+          if (raw) {
+            const saved = JSON.parse(raw).filter((p) => p.path !== project.path);
+            localStorage.setItem("studio_local_projects", JSON.stringify(saved));
+          }
+        } catch (_) {}
+
+        // Reload fresh list from server
+        await window.loadWorkspaceProjects({ refresh: true });
+      } catch (err) {
+        if (modal && typeof modal.close === "function") modal.close();
+        alert("Error deleting project: " + err.message);
+      } finally {
+        projectPendingDeletion = null;
+      }
     };
 
     window.renderProjectsGrid = function () {
@@ -2669,7 +3196,7 @@
 
         const ver = document.createElement("span");
         ver.className = "badge badge-outline font-mono text-3xs font-semibold";
-        ver.textContent = `v${p.version || "1.0.0"}`;
+        ver.textContent = `v${p.version || "0.0.0-beta.1"}`;
 
         topRow.appendChild(badge);
         topRow.appendChild(ver);
@@ -2703,6 +3230,9 @@
         sizeEl.className = "text-3xs text-base-content/50 font-mono";
         sizeEl.textContent = formatBytes(p.size);
 
+        const actions = document.createElement("div");
+        actions.className = "flex items-center gap-1.5";
+
         const openBtn = document.createElement("a");
         openBtn.href = p.url;
         openBtn.target = "_blank";
@@ -2710,8 +3240,22 @@
         openBtn.className = "btn btn-xs btn-primary gap-1";
         openBtn.innerHTML = `<span>Open</span> <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>`;
 
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "btn btn-xs btn-outline btn-error gap-1 hover:text-white";
+        deleteBtn.title = "Delete this project and its folder";
+        deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg> <span>Delete</span>`;
+        deleteBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          window.deleteProject(p);
+        };
+
+        actions.appendChild(openBtn);
+        actions.appendChild(deleteBtn);
+
         footer.appendChild(sizeEl);
-        footer.appendChild(openBtn);
+        footer.appendChild(actions);
 
         card.appendChild(topRow);
         card.appendChild(body);

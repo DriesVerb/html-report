@@ -26,6 +26,15 @@ export const CANONICAL_SKILL_NAMES = [
 
 export const MAX_SKILL_SIZE_BYTES = 5120; // 5.0 KB strict limit
 
+export const SKILL_DOMAIN_METADATA = Object.freeze({
+  'html-report': { role: 'Delivery Archetype', beneficiary: 'hybrid', servingMode: 'staticFile', behavioralMode: 'interactive' },
+  'html-print': { role: 'Delivery Archetype', beneficiary: 'user', servingMode: 'staticFile', behavioralMode: 'passive' },
+  'html-dashboard': { role: 'Delivery Archetype', beneficiary: 'hybrid', servingMode: 'serverConnected', behavioralMode: 'interactive' },
+  'html-presentation': { role: 'Delivery Archetype', beneficiary: 'user', servingMode: 'staticFile', behavioralMode: 'interactive' },
+  'html-pwa': { role: 'Offline Packaging Modifier', beneficiary: 'user', servingMode: 'staticFile', behavioralMode: 'interactive' },
+  'html-create': { role: 'Create Mode', beneficiary: 'hybrid', servingMode: 'staticFile', behavioralMode: 'interactive' }
+});
+
 /**
  * Parses YAML frontmatter and markdown body from SKILL.md
  */
@@ -109,6 +118,7 @@ export function discoverSkills(skillsDir = path.join(REPO_ROOT, 'skills')) {
         isUnderSizeLimit: stats.size <= MAX_SKILL_SIZE_BYTES,
         description: frontmatter.description || '',
         hasDuplicatedAssets: hasSeparateAssets || hasSeparateScripts,
+        domainMetadata: SKILL_DOMAIN_METADATA[entry.name] || null,
         frontmatter,
         body
       });
@@ -312,38 +322,50 @@ export function runBenchmark() {
 
 // CLI handler
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const command = process.argv[2] || 'list';
+  const rawArgs = process.argv.slice(2);
+  const jsonOutput = rawArgs.includes('--json');
+  const filteredArgs = rawArgs.filter((a) => a !== '--json');
+  const command = filteredArgs[0] || 'list';
 
   if (command === 'list') {
     const skills = discoverSkills();
-    console.log(`\nDiscovered ${skills.length} Modular Skill Facades in skills/:\n`);
-    for (const skill of skills) {
-      const status = skill.isUnderSizeLimit ? '✅' : '❌ EXCEEDS 5KB';
-      console.log(`  ${status} ${skill.name.padEnd(20)} [${skill.sizeKB} KB] (${skill.sizeBytes} bytes)`);
-      if (skill.hasDuplicatedAssets) {
-        console.warn(`     ⚠️ WARNING: Potential duplicated assets in ${skill.name}`);
+    if (jsonOutput) {
+      console.log(JSON.stringify({ count: skills.length, skills }, null, 2));
+    } else {
+      console.log(`\nDiscovered ${skills.length} Modular Skill Facades in skills/:\n`);
+      for (const skill of skills) {
+        const status = skill.isUnderSizeLimit ? '✅' : '❌ EXCEEDS 5KB';
+        console.log(`  ${status} ${skill.name.padEnd(20)} [${skill.sizeKB} KB] (${skill.sizeBytes} bytes)`);
+        if (skill.hasDuplicatedAssets) {
+          console.warn(`     ⚠️ WARNING: Potential duplicated assets in ${skill.name}`);
+        }
       }
+      console.log('');
     }
-    console.log('');
   } else if (command === 'route') {
-    const prompt = process.argv.slice(3).join(' ');
+    const prompt = filteredArgs.slice(1).join(' ');
     const routing = routeSkill(prompt);
     console.log(JSON.stringify(routing, null, 2));
   } else if (command === 'benchmark') {
     const bench = runBenchmark();
-    console.log(`\nSkill Intent Routing Benchmark:`);
-    console.log(`Total: ${bench.total} | Passed: ${bench.passed} | Failed: ${bench.failed}`);
-    console.log(`Accuracy: ${bench.accuracy}%\n`);
-    if (bench.accuracy < 95) {
-      console.error('❌ Benchmark failed: accuracy is below 95% target.');
-      process.exit(1);
+    if (jsonOutput) {
+      console.log(JSON.stringify(bench, null, 2));
+      if (bench.accuracy < 95) process.exit(1);
     } else {
-      console.log('✅ Benchmark passed: accuracy exceeds 95% threshold!');
+      console.log(`\nSkill Intent Routing Benchmark:`);
+      console.log(`Total: ${bench.total} | Passed: ${bench.passed} | Failed: ${bench.failed}`);
+      console.log(`Accuracy: ${bench.accuracy}%\n`);
+      if (bench.accuracy < 95) {
+        console.error('❌ Benchmark failed: accuracy is below 95% target.');
+        process.exit(1);
+      } else {
+        console.log('✅ Benchmark passed: accuracy exceeds 95% threshold!');
+      }
     }
   } else {
     console.log('Usage:');
-    console.log('  node skill-router.mjs list');
+    console.log('  node skill-router.mjs list [--json]');
     console.log('  node skill-router.mjs route "<prompt>"');
-    console.log('  node skill-router.mjs benchmark');
+    console.log('  node skill-router.mjs benchmark [--json]');
   }
 }

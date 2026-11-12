@@ -4,11 +4,19 @@ import {
   DAISYUI_THEMES,
   TARGET_DEFINITIONS,
   ADDON_CATALOG,
+  BOUNDED_CONTEXTS,
+  UBIQUITOUS_GLOSSARY,
+  FEATURE_BENEFICIARIES,
+  SERVING_MODES,
+  BEHAVIORAL_MODES,
+  FEATURE_ALIGNMENT_RUBRIC,
   normalizeTarget,
   normalizeDomainConfig,
   resolveSiblingSkill,
   generateCliCommand,
-  generateDeterministicPrompt
+  generateDeterministicPrompt,
+  evaluateFeatureAlignment,
+  generateFeatureAlignmentPrompt
 } from "../skills/html-report/scripts/domain-model.mjs";
 
 describe("Domain Model: Target Normalization & Constants", () => {
@@ -227,3 +235,113 @@ describe("Domain Model: Deterministic Prompt Synthesis", () => {
     assert.match(prompt, /• compliance-audit\.pdf/);
   });
 });
+
+describe("Domain Model: Ubiquitous Language & Feature Alignment Rubric", () => {
+  it("should define all formal Bounded Contexts with primary artifacts", () => {
+    assert.ok(BOUNDED_CONTEXTS.assembly);
+    assert.ok(BOUNDED_CONTEXTS.pipeline);
+    assert.ok(BOUNDED_CONTEXTS.deliveryArchetypes);
+    assert.ok(BOUNDED_CONTEXTS.createMode);
+    assert.ok(BOUNDED_CONTEXTS.editMode);
+    assert.ok(BOUNDED_CONTEXTS.publishedDocument);
+    assert.ok(BOUNDED_CONTEXTS.openSpecJourney);
+
+    for (const bc of Object.values(BOUNDED_CONTEXTS)) {
+      assert.ok(typeof bc.name === "string" && bc.name.length > 0);
+      assert.ok(bc.description.length > 10);
+      assert.ok(Array.isArray(bc.primaryArtifacts) && bc.primaryArtifacts.length > 0);
+    }
+  });
+
+  it("should define the Canonical Ubiquitous Glossary mapping deprecated synonyms", () => {
+    assert.ok(UBIQUITOUS_GLOSSARY.length >= 10);
+    const fragmentDef = UBIQUITOUS_GLOSSARY.find(g => g.canonical === "Semantic Fragment");
+    assert.ok(fragmentDef);
+    assert.ok(fragmentDef.deprecated.includes("snippet"));
+    assert.ok(fragmentDef.deprecated.includes("partial"));
+
+    const bridgeDef = UBIQUITOUS_GLOSSARY.find(g => g.canonical === "Two-Way Agent Bridge");
+    assert.ok(bridgeDef);
+    assert.ok(bridgeDef.deprecated.includes("co-pilot socket"));
+  });
+
+  it("should define the 5-Step Feature Alignment Rubric", () => {
+    assert.equal(FEATURE_ALIGNMENT_RUBRIC.length, 5);
+    assert.equal(FEATURE_ALIGNMENT_RUBRIC[0].name, "Context Attribution");
+    assert.equal(FEATURE_ALIGNMENT_RUBRIC[1].name, "Ubiquitous Vocabulary");
+    assert.equal(FEATURE_ALIGNMENT_RUBRIC[2].name, "Archetype Impact");
+    assert.equal(FEATURE_ALIGNMENT_RUBRIC[3].name, "Bridge & Authoring Invariants");
+    assert.equal(FEATURE_ALIGNMENT_RUBRIC[4].name, "Journey & Live Mirror");
+  });
+
+  it("should evaluate a fully compliant feature proposal with 100% score", () => {
+    const proposal = {
+      title: "Real-Time Telemetry Anomaly Filter",
+      boundedContext: "agentBridge",
+      archetypes: ["@html-dashboard"],
+      invariants: "Must suppress jitter fluctuations below 25% delta.",
+      artifactQuad: true,
+      changeDir: "openspec/changes/telemetry-filter"
+    };
+
+    const result = evaluateFeatureAlignment(proposal);
+    assert.equal(result.aligned, true);
+    assert.equal(result.score, 100);
+    assert.equal(result.violations.length, 0);
+  });
+
+  it("should detect deprecated synonyms and flag alignment violations", () => {
+    const proposal = {
+      title: "Add HTML snippet for partial preview",
+      description: "This feature adds a template snippet and partial to the bundler.",
+      boundedContext: "coreAssembly",
+      archetypes: ["@html-report"],
+      invariants: "None",
+      artifactQuad: true
+    };
+
+    const result = evaluateFeatureAlignment(proposal);
+    assert.equal(result.aligned, false);
+    assert.ok(result.score < 100);
+    assert.ok(result.violations.some(v => v.includes("deprecated domain synonyms")));
+  });
+
+  it("should define Feature Beneficiaries distinguishing user vs agent capabilities", () => {
+    assert.ok(FEATURE_BENEFICIARIES.user);
+    assert.ok(FEATURE_BENEFICIARIES.agent);
+    assert.ok(FEATURE_BENEFICIARIES.hybrid);
+    assert.match(FEATURE_BENEFICIARIES.user.description, /Studio GUI/);
+    assert.match(FEATURE_BENEFICIARIES.agent.description, /Headless CLI/);
+  });
+
+  it("should define the Two-Axis runtime model (Serving Mode vs Behavioral Mode)", () => {
+    assert.ok(SERVING_MODES.staticFile);
+    assert.ok(SERVING_MODES.serverConnected);
+    assert.ok(BEHAVIORAL_MODES.passive);
+    assert.ok(BEHAVIORAL_MODES.interactive);
+    assert.match(SERVING_MODES.staticFile.description, /Zero dedicated server/);
+    assert.match(BEHAVIORAL_MODES.interactive.description, /Dynamic user or data interaction/);
+  });
+
+  it("should generate standardized OpenSpec feature proposal prompt", () => {
+    const prompt = generateFeatureAlignmentPrompt({
+      title: "Multi-Turn Anomaly Detector",
+      boundedContext: "agentBridge",
+      beneficiary: "agent",
+      servingMode: "serverConnected",
+      behavioralMode: "interactive",
+      archetypes: ["@html-dashboard", "@html-report"],
+      invariants: "Must adhere to SSE token rate thresholds."
+    });
+
+    assert.match(prompt, /### OpenSpec Feature Proposal: Multi-Turn Anomaly Detector/);
+    assert.match(prompt, /Target Beneficiary:[\s\S]*Agent-Facing/);
+    assert.match(prompt, /Serving Mode: Server-Connected/);
+    assert.match(prompt, /Behavioral Mode: Interactive/);
+    assert.match(prompt, /Two-Way AI Agent Bridge & Telemetry/);
+    assert.match(prompt, /@html-dashboard, @html-report/);
+    assert.match(prompt, /Must adhere to SSE token rate thresholds/);
+    assert.match(prompt, /http:\/\/localhost:3000/);
+  });
+});
+

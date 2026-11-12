@@ -1,0 +1,151 @@
+<main id="report-main" class="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+  <!-- Header & Artifact Links -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body gap-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span class="badge badge-success badge-sm font-mono uppercase">OpenSpec Change · Shipped</span>
+          <h1 id="sec-overview" class="text-2xl sm:text-3xl font-bold mt-2">Dual-Path Verification Pipeline &amp; Ephemeral Verification Classes</h1>
+          <p class="text-sm text-base-content/70 mt-1">
+            Structuring deterministic pipeline verification, agentic assembly review (Round 1 &amp; Round 2+ edits), and automatic cleanup of verification-only CSS classes before final publish.
+          </p>
+        </div>
+      </div>
+
+      <!-- Journey Phase Stepper -->
+      <div class="w-full overflow-x-auto pt-2">
+        <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary">Brainstorming</li>
+          <li class="step step-primary">Planning</li>
+          <li class="step step-primary">Implementing</li>
+          <li class="step step-primary">Verifying</li>
+          <li class="step step-primary">Shipped / Archived</li>
+        </ul>
+      </div>
+
+      <!-- Direct Markdown Artifact Links -->
+      <div class="flex flex-wrap gap-2 pt-2 border-t border-base-200">
+        <button type="button" onclick="openMarkdownViewer('openspec/changes/verification-pipeline-flows/proposal.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('openspec/changes/verification-pipeline-flows/design.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('openspec/changes/verification-pipeline-flows/tasks.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('openspec/changes/verification-pipeline-flows/specs/verification-pipeline/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> specs/verification-pipeline/spec.md
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Progress Metrics & Chart -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4">
+        <div class="stat-title text-xs">Total Tasks</div>
+        <div class="stat-value text-2xl font-mono">8</div>
+        <div class="stat-desc text-xs">4 phases</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4">
+        <div class="stat-title text-xs">Completed</div>
+        <div class="stat-value text-2xl font-mono text-success">8</div>
+        <div class="stat-desc text-xs">100% done</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4">
+        <div class="stat-title text-xs">In Progress</div>
+        <div class="stat-value text-2xl font-mono text-warning">0</div>
+        <div class="stat-desc text-xs">All phases complete</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4">
+        <div class="stat-title text-xs">Remaining</div>
+        <div class="stat-value text-2xl font-mono text-primary">0</div>
+        <div class="stat-desc text-xs">Verified &amp; shipped</div>
+      </div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 flex items-center justify-center">
+      <div class="w-40 h-40">
+        <canvas id="tasks-progress-chart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture & Mermaid Flow -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body">
+      <h2 id="sec-architecture" class="card-title text-lg">Dual-Path Verification &amp; Ephemeral Class Lifecycle</h2>
+      <p class="text-sm text-base-content/70">
+        Verification runs through both a deterministic pipeline gate and an agentic assembly review. Diagnostic CSS classes (<code>verify-*</code>, <code>data-insufficient-space</code>) may be baked in during verification and are stripped cleanly in the final <code>--published</code> round.
+      </p>
+      <div class="mermaid bg-base-200/40 rounded-xl p-4 overflow-x-auto">
+flowchart TD
+    A["Assembly (build-report.mjs)<br/>fragment.html + template-shell + verify-* classes"] --> B["Pipeline Verification"]
+    B --> D["Deterministic Path<br/>(verify-report.mjs --json)"]
+    B --> AG["Agentic Path<br/>(Assembly Review Packet)"]
+    D -->|"Fail: ruleId + fixTarget"| E["Edit Round 1 / Round 2+<br/>(fragment.html or flags)"]
+    AG -->|"Visual / content / regression edits"| E
+    E -->|"Re-assemble"| A
+    D -->|"Pass"| P["Final Publish (--published)<br/>Strip verify-* & data-insufficient-space"]
+    AG -->|"Pass"| P
+      </div>
+    </div>
+  </section>
+
+  <!-- Connected Task Checklist -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 id="sec-tasks" class="card-title text-lg">Implementation Checklist</h2>
+        <button type="button" onclick="openMarkdownViewer('openspec/changes/verification-pipeline-flows/tasks.md')" class="link link-primary text-xs font-mono">View tasks.md</button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div>
+          <h3 class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">1. Ephemeral Verification CSS Lifecycle</h3>
+          <ul class="space-y-1 pl-1">
+            <li>☑ <strong>1.1</strong> Toggle <code>verify-insufficient-space</code> alongside <code>data-insufficient-space</code> in <code>report-runtime.js</code></li>
+            <li>☑ <strong>1.2</strong> Strip all <code>verify-*</code> classes, <code>data-insufficient-space</code>, <code>data-verify-*</code>, and <code>#html-report-verify-styles</code> in <code>HTMLReportPublisher.prepare()</code> and <code>--published</code></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">2. Deterministic Pipeline Verification</h3>
+          <ul class="space-y-1 pl-1">
+            <li>☑ <strong>2.1</strong> Add structured remediation metadata (<code>ruleId</code>, <code>fixTarget</code>, <code>remediation</code>) to <code>reporter.mjs</code>, <code>structure.mjs</code>, and <code>responsive.mjs</code></li>
+            <li>☑ <strong>2.2</strong> Add <code>--verify</code> flag to <code>build-report.mjs</code></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">3. Agentic Verification &amp; Review Packet</h3>
+          <ul class="space-y-1 pl-1">
+            <li>☑ <strong>3.1</strong> Add <code>--review-packet</code> summary to <code>verify-report.mjs</code> for Round 1 &amp; Round 2+ reviews</li>
+            <li>☑ <strong>3.2</strong> Document dual-path verification and ephemeral class cleanup in <code>SKILL.md</code></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">4. Verification Tests</h3>
+          <ul class="space-y-1 pl-1">
+            <li>☑ <strong>4.1</strong> Test that <code>verify-*</code> classes apply during verification and are stripped in <code>--published</code></li>
+            <li>☑ <strong>4.2</strong> Test structured <code>--json</code> remediation hints and <code>build-report.mjs --verify</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const ctx = document.getElementById("tasks-progress-chart");
+      if (ctx && typeof Chart !== "undefined") {
+        new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Completed", "Remaining"],
+            datasets: [{ data: [8, 0], backgroundColor: ["#22c55e", "#6366f1"] }]
+          },
+          options: { plugins: { legend: { position: "bottom" } }, cutout: "68%" }
+        });
+      }
+    });
+  </script>
+</main>

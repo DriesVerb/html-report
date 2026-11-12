@@ -45,6 +45,7 @@ export class ResponsiveCheck extends VerificationCheck {
   async run({ page, options }) {
     const errors = [];
     const messages = [];
+    const remediations = [];
     const targetBreakpoints = parseViewports(options.viewports, options.quick);
 
     for (const bp of targetBreakpoints) {
@@ -77,17 +78,35 @@ export class ResponsiveCheck extends VerificationCheck {
         errors.push(
           `Breakpoint ${bp.name} (${bp.width}px) has page horizontal overflow: scrollWidth=${bpMetrics.docWidth}px > innerWidth=${bpMetrics.winWidth}px`
         );
+        remediations.push({
+          ruleId: "core:responsive:page-overflow",
+          fixTarget: "fragment",
+          selector: "main",
+          remediation: `Constrain wide elements at ${bp.name} (${bp.width}px) using max-w-full, responsive grids, or min-w-0.`
+        });
       }
       if (bpMetrics.overflowingBadges.length > 0) {
         errors.push(
           `Breakpoint ${bp.name} (${bp.width}px) badges overflowing pill boundaries: ${bpMetrics.overflowingBadges.join(", ")}`
         );
+        remediations.push({
+          ruleId: "core:responsive:badge-overflow",
+          fixTarget: "fragment",
+          selector: ".badge",
+          remediation: `Shorten badge text or add whitespace-nowrap / shrink-0 at ${bp.name} (${bp.width}px).`
+        });
       }
       if (bpMetrics.insufficientElements.length > 0) {
         const details = bpMetrics.insufficientElements
           .map((item) => `<${item.tag}${item.id ? "#" + item.id : ""}> (${item.scrollWidth}px > ${item.clientWidth}px: ${item.message})`)
           .join("; ");
         errors.push(`Breakpoint ${bp.name} (${bp.width}px) elements without enough space: ${details}`);
+        remediations.push({
+          ruleId: "core:responsive:insufficient-space",
+          fixTarget: "fragment",
+          selector: "[data-insufficient-space='true'], .verify-insufficient-space",
+          remediation: `Give overflowing container(s) more horizontal room or responsive wrapping at ${bp.name} (${bp.width}px), then rebuild with --published to strip verify-* classes.`
+        });
       } else {
         messages.push(`${bp.name} (${bp.width}x${bp.height}): 0px page overflow & 0 elements with horizontal scrollbar.`);
       }
@@ -100,6 +119,7 @@ export class ResponsiveCheck extends VerificationCheck {
       name: this.name,
       status: errors.length > 0 ? "failed" : "passed",
       errors,
+      remediations,
       messages
     };
   }

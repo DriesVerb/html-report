@@ -1,0 +1,642 @@
+<header class="space-y-4 border-b border-base-300 pb-8">
+  <div class="flex flex-wrap gap-2">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">domain-language-unification</span>
+    <span class="badge badge-success font-mono text-xs font-bold">Phase 5: Shipped &amp; Archived</span>
+    <span class="badge badge-accent font-mono text-xs">User vs. Agent Beneficiary &amp; 2-Axis Model</span>
+  </div>
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight">Ubiquitous Domain Language &amp; Feature Alignment Architecture</h1>
+  <p class="text-base text-base-content/80 max-w-3xl">
+    Refined conceptual model grounding the <code>html-report</code> ecosystem in clear user-centric concepts: <strong>Feature Beneficiary</strong> (User-Facing vs. Agent-Facing), <strong>Two-Axis Runtime Model</strong> (Serving Mode vs. Behavioral Mode), <strong>Assembly vs. Pipeline</strong>, <strong>Delivery Archetypes</strong>, <strong>Create Mode</strong>, <strong>Edit Mode</strong>, and <strong>Published Document</strong>.
+  </p>
+  <div class="flex flex-wrap gap-3 items-center text-xs">
+    <span class="font-semibold">Planning Artifacts:</span>
+    <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">proposal.md</button>
+    <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">design.md</button>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">tasks.md</button>
+    <button type="button" onclick="openMarkdownViewer('specs/domain-language-model/spec.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">specs/domain-language-model/spec.md</button>
+  </div>
+  <div class="w-full overflow-x-auto">
+    <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+      <li class="step step-primary">Brainstorming</li>
+      <li class="step step-primary">Planning</li>
+      <li class="step step-primary">Implementing</li>
+      <li class="step step-primary">Verifying</li>
+      <li class="step step-primary">Shipped / Archived</li>
+    </ul>
+  </div>
+</header>
+
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
+<dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50">
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 id="markdown-modal-title" class="font-mono font-bold text-sm text-base-content">artifact.md</h3>
+      </div>
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+      </form>
+    </div>
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto font-sans prose prose-sm max-w-none text-base-content">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- SECTION 1: USER-FACING VS AGENT-FACING FEATURES -->
+<section id="section-beneficiary" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="feature-beneficiary" class="text-xl sm:text-2xl font-bold tracking-tight">1. Feature Beneficiary: User-Facing vs. Agent-Facing</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Every capability in this platform must clarify who it serves: human developers/readers or autonomous AI coding agents.</p>
+    </div>
+    <span class="badge badge-primary font-mono text-xs">Beneficiary Taxonomy</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- User-Facing -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3 hover:border-primary/50 transition-colors">
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <span class="badge badge-primary font-mono text-xs">User-Facing</span>
+        <span class="text-xs font-semibold text-primary">Human-Centric</span>
+      </div>
+      <p class="text-xs text-base-content/80">
+        Prioritizes visual clarity, interactive delight, aesthetic DaisyUI styling, WYSIWYG editing, and zero-coding accessibility.
+      </p>
+      <div class="p-3 bg-base-200/50 rounded-lg text-xs space-y-1">
+        <div class="font-bold text-primary">Examples:</div>
+        <ul class="list-disc list-inside space-y-0.5 text-base-content/70">
+          <li>Creation Studio GUI (<code>create.html</code>)</li>
+          <li>Quill WYSIWYG rich text modal</li>
+          <li>DaisyUI 32-theme switcher</li>
+          <li>Mermaid <code>[⤢ Enlarge]</code> diagram zoom</li>
+          <li>A4 Print and PDF download buttons</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Agent-Facing -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3 hover:border-secondary/50 transition-colors">
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <span class="badge badge-secondary font-mono text-xs">Agent-Facing</span>
+        <span class="text-xs font-semibold text-secondary">Agent-Centric</span>
+      </div>
+      <p class="text-xs text-base-content/80">
+        Prioritizes headless CLI automation, token efficiency (~70% savings), deterministic speed (&lt;100ms), and schema-validated contracts.
+      </p>
+      <div class="p-3 bg-base-200/50 rounded-lg text-xs space-y-1">
+        <div class="font-bold text-secondary">Examples:</div>
+        <ul class="list-disc list-inside space-y-0.5 text-base-content/70">
+          <li>Semantic <code>&lt;main&gt;</code> fragment injection</li>
+          <li>Deterministic build CLI (<code>build-report.mjs</code>)</li>
+          <li>Mechanical pre-flight auto-repairs</li>
+          <li>JSON status API (<code>GET /__agent_status__</code>)</li>
+          <li>Turnkey reconnect prompt synthesizer</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Hybrid Loop -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4 space-y-3 hover:border-accent/50 transition-colors">
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <span class="badge badge-accent font-mono text-xs">Hybrid Loop</span>
+        <span class="text-xs font-semibold text-accent">Human + Agent</span>
+      </div>
+      <p class="text-xs text-base-content/80">
+        Bridges human visual inspection with agent editing capabilities, creating a seamless co-design feedback loop.
+      </p>
+      <div class="p-3 bg-base-200/50 rounded-lg text-xs space-y-1">
+        <div class="font-bold text-accent">Examples:</div>
+        <ul class="list-disc list-inside space-y-0.5 text-base-content/70">
+          <li>Edit Mode Dock (<code>#edit-dock</code>)</li>
+          <li>Element Selection Canvas (<code>TargetElement</code>)</li>
+          <li>Two-Way Agent Bridge (<code>window.HTMLReportAgent</code>)</li>
+          <li>Staging Task Queue for agent prompt dispatch</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: THE TWO ORTHOGONAL AXES -->
+<section id="section-two-axes" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="two-axis-model" class="text-xl sm:text-2xl font-bold tracking-tight">2. The Two Orthogonal Axes: Serving Mode vs. Behavioral Mode</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Hosting is NOT the same thing as interactivity. A static file can still fetch dynamic APIs!</p>
+    </div>
+    <span class="badge badge-info badge-outline font-mono text-xs">2x2 Matrix</span>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="table table-bordered table-sm w-full">
+        <thead class="bg-base-200 text-xs">
+          <tr>
+            <th class="w-1/4">Serving Mode \ Behavioral Mode</th>
+            <th class="w-3/8 text-primary">Passive / Printable (Fixed Document)</th>
+            <th class="w-3/8 text-secondary">Interactive / Reactive (Dynamic App)</th>
+          </tr>
+        </thead>
+        <tbody class="text-xs">
+          <tr>
+            <th class="bg-base-200/60 font-mono">
+              <span class="badge badge-sm badge-neutral">Static File</span><br/>
+              <span class="text-[11px] opacity-70">file:///, S3, GitHub Pages<br/>Zero server process required</span>
+            </th>
+            <td class="p-4 align-top">
+              <div class="font-bold text-base-content">A. The Paged Document (@html-print)</div>
+              <p class="text-base-content/70 mt-1">Invoices, compliance audits, receipts. Fixed layout with <code>@page</code> sizing and <code>.break-inside-avoid</code>. Zero network needed.</p>
+            </td>
+            <td class="p-4 align-top bg-base-200/20">
+              <div class="font-bold text-base-content">B. The Standalone Interactive App (@html-report)</div>
+              <p class="text-base-content/70 mt-1">Single portable file fetching public CORS APIs (PokéAPI, OpenMeteo weather), sorting Grid.js tables, animating Chart.js, switching DaisyUI themes via Alpine.js. <strong>0 backend server required!</strong></p>
+            </td>
+          </tr>
+          <tr>
+            <th class="bg-base-200/60 font-mono">
+              <span class="badge badge-sm badge-info">Server-Connected</span><br/>
+              <span class="text-[11px] opacity-70">localhost:3000 (serve-report.mjs)<br/>Active Node dev server process</span>
+            </th>
+            <td class="p-4 align-top">
+              <div class="font-bold text-base-content">C. Dev Print Preview</div>
+              <p class="text-base-content/70 mt-1">Live previewing page breaks on port 3000 while editing markdown before running headless Playwright PDF export.</p>
+            </td>
+            <td class="p-4 align-top bg-base-200/20">
+              <div class="font-bold text-base-content">D. The Living Cockpit (@html-dashboard)</div>
+              <p class="text-base-content/70 mt-1">Persistent SSE hypermedia streaming via <strong>Datastar</strong>, subagent swarm hierarchy, hot-reloading on disk changes, and bidirectional agent action dispatcher.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: SYSTEM ARCHITECTURE & LIFECYCLE FLOW -->
+<section id="section-architecture-overview" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="core-architecture-flow" class="text-xl sm:text-2xl font-bold tracking-tight">3. System Architecture &amp; Subsystems</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">From guided intent to fast assembly, draft editing, and final publication.</p>
+    </div>
+    <span class="badge badge-primary badge-outline font-mono text-xs">Mental Model Map</span>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-6 space-y-4">
+    <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">
+flowchart LR
+  CM["1. Create Mode\n(Studio & CLI Guided Intent)"]
+  PL["2. Pipeline\n(State Machine Orchestrator)"]
+  AS["3. Assembly\n(Fast & Reliable Fusion Engine)"]
+  DA["4. Delivery Archetypes\n(Goal-Driven Destinations)"]
+  EM["5. Edit Mode\n(In-Flight Draft Adjustments)"]
+  PD["6. Published Document\n(Finalized End-Product)"]
+  OJ["7. OpenSpec Journey\n(Living Dev Loop on :3000)"]
+
+  CM -->|Resolves Intent to Recipe| PL
+  PL -->|Orchestrates Execution| AS
+  AS -->|Instantiates| DA
+  DA -->|Draft Lifecycle| EM
+  EM -->|Finalize & Strip Chrome| PD
+  OJ -.->|Governs Evolution| PL
+  OJ -.->|Tracks Progress| EM
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+      <div class="p-3 bg-base-200/50 rounded-lg border border-base-300 space-y-1">
+        <span class="font-bold text-primary block">Assembly vs. Pipeline</span>
+        <p class="text-base-content/80"><strong>Assembly</strong> is the pure mechanical join putting pieces together fast and reliably (&lt;100ms). <strong>Pipeline</strong> is the surrounding state machine ensuring speed, pre-flight normalizations, and correctness.</p>
+      </div>
+      <div class="p-3 bg-base-200/50 rounded-lg border border-base-300 space-y-1">
+        <span class="font-bold text-secondary block">Goal-Driven Archetypes</span>
+        <p class="text-base-content/80">Each archetype knows <em>what it needs to become</em> (@html-report, @html-dashboard, @html-print, etc.), supported by tailored assembly and pipeline configurations.</p>
+      </div>
+      <div class="p-3 bg-base-200/50 rounded-lg border border-base-300 space-y-1">
+        <span class="font-bold text-accent block">Draft vs. Published</span>
+        <p class="text-base-content/80"><strong>Edit Mode</strong> is where adjustments happen on an in-flight product. A <strong>Published Document</strong> is finalized: edit-mode is pruned away, leaving pure content and viewer tools.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: CANONICAL UBIQUITOUS GLOSSARY -->
+<section id="section-glossary" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="ubiquitous-glossary" class="text-xl sm:text-2xl font-bold tracking-tight">4. Canonical Ubiquitous Glossary &amp; Disambiguation</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Approved vocabulary mapped to user and agent concepts, rejecting ambiguous synonyms.</p>
+    </div>
+    <div class="w-full sm:w-64">
+      <input type="text" id="glossary-search-input" placeholder="Search terms or synonyms..." class="input input-sm input-bordered w-full" oninput="filterGlossary()" />
+    </div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table id="glossary-table" class="table table-zebra table-sm w-full">
+        <thead class="bg-base-200">
+          <tr>
+            <th class="w-1/4">Canonical Domain Term</th>
+            <th class="w-1/4 text-error">Deprecated / Ambiguous Synonyms</th>
+            <th class="w-1/6">Subsystem</th>
+            <th class="w-1/3">Definition &amp; Invariant Context Rule</th>
+          </tr>
+        </thead>
+        <tbody class="text-xs">
+          <tr>
+            <td class="font-bold text-primary font-mono">Assembly</td>
+            <td class="text-error line-through">raw stitching, file concat, glue step</td>
+            <td><span class="badge badge-xs badge-primary">Assembly</span></td>
+            <td>The fast, reliable engine that joins the Semantic Fragment, Template Shell, and assets into an assembled document in &lt;100ms.</td>
+          </tr>
+          <tr>
+            <td class="font-bold text-primary font-mono">Pipeline</td>
+            <td class="text-error line-through">build runner, compiler script, bundler loop</td>
+            <td><span class="badge badge-xs badge-secondary">Pipeline</span></td>
+            <td>The state machine orchestrating pre-flight checks, addon detection, caching, and post-processing around assembly.</td>
+          </tr>
+          <tr>
+            <td class="font-bold text-primary font-mono">Delivery Archetype</td>
+            <td class="text-error line-through">report kind, template mode, output flavor</td>
+            <td><span class="badge badge-xs badge-accent">Archetypes</span></td>
+            <td>Goal-driven destinations (@html-report, @html-dashboard, etc.) that know what they need to become.</td>
+          </tr>
+          <tr>
+            <td class="font-bold text-primary font-mono">Create Mode</td>
+            <td class="text-error line-through">wizard form, setup screen, init step</td>
+            <td><span class="badge badge-xs badge-info">Create Mode</span></td>
+            <td>Guided Studio/CLI intent resolution finding the quickest combination of assembly, pipeline, and archetype.</td>
+          </tr>
+          <tr>
+            <td class="font-bold text-primary font-mono">Edit Mode</td>
+            <td class="text-error line-through">admin bar, inspector tool, bottom toolbar</td>
+            <td><span class="badge badge-xs badge-success">Edit Mode</span></td>
+            <td>In-flight product workspace (#edit-dock) for making adjustments to an unpublished document.</td>
+          </tr>
+          <tr>
+            <td class="font-bold text-primary font-mono">Published Document</td>
+            <td class="text-error line-through">clean HTML, production build, stripped export</td>
+            <td><span class="badge badge-xs badge-warning">Published</span></td>
+            <td>The finalized end-product that no longer needs edit-mode, with authoring chrome cleanly pruned.</td>
+          </tr>
+          <tr>
+            <td class="font-bold text-primary font-mono">Semantic Fragment</td>
+            <td class="text-error line-through">snippet, HTML body, partial, template content</td>
+            <td><span class="badge badge-xs badge-primary">Assembly</span></td>
+            <td>Pure &lt;main id="report-main"&gt; HTML content emitted by LLMs without doctype or shell boilerplate (~70% token savings).</td>
+          </tr>
+          <tr>
+            <td class="font-bold text-primary font-mono">Template Shell</td>
+            <td class="text-error line-through">layout, wrapper, scaffold, base HTML</td>
+            <td><span class="badge badge-xs badge-primary">Assembly</span></td>
+            <td>The pre-bundled DaisyUI 4/Tailwind/Alpine container document (<code>template-shell.html</code>).</td>
+          </tr>
+          <tr>
+            <td class="font-bold text-primary font-mono">Two-Way Agent Bridge</td>
+            <td class="text-error line-through">co-pilot socket, agent webhook, chat connector</td>
+            <td><span class="badge badge-xs badge-success">Edit Mode</span></td>
+            <td>Runtime bidirectional channel (<code>window.HTMLReportAgent</code>) connecting browser UI to active agent CLI session.</td>
+          </tr>
+          <tr>
+            <td class="font-bold text-primary font-mono">OpenSpec Journey</td>
+            <td class="text-error line-through">dev process, git branch flow, sprint tracker</td>
+            <td><span class="badge badge-xs badge-neutral">Journey</span></td>
+            <td>The 5-stage evolution cycle (Brainstorming to Archived) mirrored live on <code>localhost:3000</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: INTERACTIVE FEATURE ALIGNMENT WORKBENCH -->
+<section id="section-workbench" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="feature-alignment-workbench" class="text-xl sm:text-2xl font-bold tracking-tight">5. Interactive Feature Alignment Workbench</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Configure your proposed feature, declare target beneficiary &amp; 2-axis mode, and synthesize a standardized OpenSpec prompt.</p>
+    </div>
+    <span class="badge badge-primary font-mono text-xs">Alignment Studio</span>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-6 space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <div>
+          <label class="label text-xs font-bold uppercase text-base-content/70">Feature Title</label>
+          <input type="text" id="wb-feature-title" class="input input-bordered input-sm w-full font-semibold" value="PokéAPI Live Card Viewer" oninput="updateWorkbenchPrompt()" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="label text-xs font-bold uppercase text-base-content/70">Target Beneficiary</label>
+            <select id="wb-beneficiary" class="select select-bordered select-sm w-full" onchange="updateWorkbenchPrompt()">
+              <option value="user" selected>User-Facing (Human-Centric)</option>
+              <option value="agent">Agent-Facing (Agent-Centric)</option>
+              <option value="hybrid">Hybrid (Human + Agent Loop)</option>
+            </select>
+          </div>
+          <div>
+            <label class="label text-xs font-bold uppercase text-base-content/70">Core Subsystem</label>
+            <select id="wb-bounded-context" class="select select-bordered select-sm w-full" onchange="updateWorkbenchPrompt()">
+              <option value="deliveryArchetypes" selected>3. Delivery Archetypes: Destinations</option>
+              <option value="assembly">1. Assembly: The Fusion Engine</option>
+              <option value="pipeline">2. Pipeline: State Machine Orchestrator</option>
+              <option value="createMode">4. Create Mode: Guided Intent Resolution</option>
+              <option value="editMode">5. Edit Mode: In-Flight Draft Adjustments</option>
+              <option value="publishedDocument">6. Published Document: Final End-Product</option>
+              <option value="openSpecJourney">7. OpenSpec Journey: Living Dev Loop</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="label text-xs font-bold uppercase text-base-content/70">Serving Mode</label>
+            <select id="wb-serving-mode" class="select select-bordered select-sm w-full" onchange="updateWorkbenchPrompt()">
+              <option value="staticFile" selected>Static File (file:///, Zero Server)</option>
+              <option value="serverConnected">Server-Connected (localhost:3000 SSE)</option>
+            </select>
+          </div>
+          <div>
+            <label class="label text-xs font-bold uppercase text-base-content/70">Behavioral Mode</label>
+            <select id="wb-behavioral-mode" class="select select-bordered select-sm w-full" onchange="updateWorkbenchPrompt()">
+              <option value="interactive" selected>Interactive / Reactive (API / Filters)</option>
+              <option value="passive">Passive / Printable (Fixed / PDF)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="label text-xs font-bold uppercase text-base-content/70">Target Delivery Archetypes</label>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <label class="cursor-pointer label gap-1 border border-base-300 rounded-lg px-2 py-1">
+              <input type="checkbox" id="wb-arch-report" class="checkbox checkbox-xs checkbox-primary" checked onchange="updateWorkbenchPrompt()" />
+              <span>@html-report</span>
+            </label>
+            <label class="cursor-pointer label gap-1 border border-base-300 rounded-lg px-2 py-1">
+              <input type="checkbox" id="wb-arch-dashboard" class="checkbox checkbox-xs checkbox-primary" onchange="updateWorkbenchPrompt()" />
+              <span>@html-dashboard</span>
+            </label>
+            <label class="cursor-pointer label gap-1 border border-base-300 rounded-lg px-2 py-1">
+              <input type="checkbox" id="wb-arch-presentation" class="checkbox checkbox-xs checkbox-primary" onchange="updateWorkbenchPrompt()" />
+              <span>@html-presentation</span>
+            </label>
+            <label class="cursor-pointer label gap-1 border border-base-300 rounded-lg px-2 py-1">
+              <input type="checkbox" id="wb-arch-print" class="checkbox checkbox-xs checkbox-primary" onchange="updateWorkbenchPrompt()" />
+              <span>@html-print</span>
+            </label>
+            <label class="cursor-pointer label gap-1 border border-base-300 rounded-lg px-2 py-1">
+              <input type="checkbox" id="wb-arch-pwa" class="checkbox checkbox-xs checkbox-primary" onchange="updateWorkbenchPrompt()" />
+              <span>@html-pwa</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="label text-xs font-bold uppercase text-base-content/70">Invariants &amp; Responsibilities</label>
+          <textarea id="wb-entities-invariants" rows="3" class="textarea textarea-bordered textarea-sm w-full font-mono text-xs" oninput="updateWorkbenchPrompt()">Beneficiary: User-Facing
+Serving Mode: Static File (runs directly in browser without server)
+Behavior: Client-side fetch to PokéAPI, rendered via Alpine.js with zero server dependency.</textarea>
+        </div>
+      </div>
+
+      <div class="space-y-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-bold uppercase text-base-content/70">Synthesized OpenSpec Feature Prompt</label>
+            <button type="button" onclick="copyWorkbenchPrompt()" class="btn btn-xs btn-primary gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+              <span id="wb-copy-btn-text">Copy Prompt</span>
+            </button>
+          </div>
+          <div class="mockup-code text-xs bg-base-300 text-base-content font-mono p-4 rounded-box overflow-x-auto max-h-72">
+            <pre id="wb-synthesized-prompt"></pre>
+          </div>
+        </div>
+
+        <div class="p-3 bg-success/10 border border-success/30 rounded-lg text-xs flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-success flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span class="text-base-content/80 font-medium">Domain Alignment: <strong>100%</strong> — Explicit beneficiary, 2-axis runtime mode, and zero deprecated synonyms.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: TASK TRACKING CHECKLIST -->
+<section id="section-tasks" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="task-tracking" class="text-xl sm:text-2xl font-bold tracking-tight">Active Journey Task Execution (tasks.md)</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Execution log matching <code>openspec/changes/domain-language-unification/tasks.md</code>.</p>
+    </div>
+    <span class="badge badge-success font-mono text-xs">Phase 1 &amp; 2 Complete</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2">
+      <div class="font-bold text-sm text-base-content border-b border-base-300 pb-1">1. User-Grounded Domain Modeling &amp; Normalization</div>
+      <ul class="space-y-1 text-xs">
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>1.1 Separate Assembly (fusion) from Pipeline (state machine)</span>
+        </li>
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>1.2 Distinguish User-Facing from Agent-Facing capabilities</span>
+        </li>
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>1.3 Formalize the Two-Axis model: Serving Mode vs Behavioral Mode</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2">
+      <div class="font-bold text-sm text-base-content border-b border-base-300 pb-1">2. Feature Alignment Specification &amp; Rubric</div>
+      <ul class="space-y-1 text-xs">
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>2.1 Formalize 5-Step Alignment Rubric in spec.md</span>
+        </li>
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>2.2 Standardize feature prompt template with beneficiary &amp; 2-axis options</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2">
+      <div class="font-bold text-sm text-base-content border-b border-base-300 pb-1">3. Interactive Report &amp; Workbench</div>
+      <ul class="space-y-1 text-xs">
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>3.1 Synthesize semantic fragment.html with 2x2 matrix and beneficiary cards</span>
+        </li>
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>3.2 Wire Mermaid enlarge modals and Showdown viewers</span>
+        </li>
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>3.3 Compile standalone publication-grade index.html</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2">
+      <div class="font-bold text-sm text-base-content border-b border-base-300 pb-1">4. Live Server Mirror &amp; Verification</div>
+      <ul class="space-y-1 text-xs">
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>4.1 Mirror index.html to implementation-progress.html on port 3000</span>
+        </li>
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>4.2 Verify stepper formatting and responsive layouts</span>
+        </li>
+        <li class="flex items-center gap-2 text-success font-medium">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span>4.3 Verify automated test suite passes (490+ tests)</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- RUNTIME LOGIC FOR SHOWDOWN VIEWER & WORKBENCH -->
+<script>
+  window.openMarkdownViewer = async function(filePath) {
+    const modal = document.getElementById('markdown-viewer-modal');
+    const title = document.getElementById('markdown-modal-title');
+    const body = document.getElementById('markdown-modal-body');
+    if (!modal || !body) return;
+
+    title.textContent = filePath;
+    body.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
+    modal.showModal();
+
+    try {
+      const candidates = [
+        `openspec/changes/domain-language-unification/${filePath}`,
+        filePath
+      ];
+      let text = null;
+      for (const p of candidates) {
+        try {
+          const res = await fetch(p);
+          if (res.ok) {
+            text = await res.text();
+            break;
+          }
+        } catch (_) {}
+      }
+
+      if (!text) {
+        body.innerHTML = `<div class="alert alert-warning text-xs">Could not fetch artifact: <code>${filePath}</code></div>`;
+        return;
+      }
+
+      if (window.showdown) {
+        const conv = new window.showdown.Converter({ tables: true, tasklists: true, strikethrough: true });
+        body.innerHTML = conv.makeHtml(text);
+      } else {
+        body.innerHTML = `<pre class="text-xs font-mono p-4 bg-base-200 rounded">${text.replace(/</g, '&lt;')}</pre>`;
+      }
+    } catch (err) {
+      body.innerHTML = `<div class="alert alert-error text-xs">Error loading markdown: ${err.message}</div>`;
+    }
+  };
+
+  window.filterGlossary = function() {
+    const query = (document.getElementById('glossary-search-input')?.value || '').toLowerCase().trim();
+    const rows = document.querySelectorAll('#glossary-table tbody tr');
+    rows.forEach(r => {
+      const txt = r.textContent.toLowerCase();
+      r.style.display = (!query || txt.includes(query)) ? '' : 'none';
+    });
+  };
+
+  window.updateWorkbenchPrompt = function() {
+    const title = document.getElementById('wb-feature-title')?.value || 'Proposed Feature';
+    const benSelect = document.getElementById('wb-beneficiary');
+    const benText = benSelect ? benSelect.options[benSelect.selectedIndex].text : 'User-Facing (Human-Centric)';
+
+    const bcSelect = document.getElementById('wb-bounded-context');
+    const bcText = bcSelect ? bcSelect.options[bcSelect.selectedIndex].text : '3. Delivery Archetypes: Destinations';
+
+    const servSelect = document.getElementById('wb-serving-mode');
+    const servText = servSelect ? servSelect.options[servSelect.selectedIndex].text : 'Static File (Zero Server)';
+
+    const behSelect = document.getElementById('wb-behavioral-mode');
+    const behText = behSelect ? behSelect.options[behSelect.selectedIndex].text : 'Interactive / Reactive';
+
+    const archetypes = [];
+    if (document.getElementById('wb-arch-report')?.checked) archetypes.push('@html-report');
+    if (document.getElementById('wb-arch-dashboard')?.checked) archetypes.push('@html-dashboard');
+    if (document.getElementById('wb-arch-presentation')?.checked) archetypes.push('@html-presentation');
+    if (document.getElementById('wb-arch-print')?.checked) archetypes.push('@html-print');
+    if (document.getElementById('wb-arch-pwa')?.checked) archetypes.push('@html-pwa');
+
+    const archStr = archetypes.length > 0 ? archetypes.join(', ') : 'All Archetypes';
+    const entities = document.getElementById('wb-entities-invariants')?.value || 'None specified';
+
+    const promptText = `### OpenSpec Feature Proposal: ${title}
+
+**Target Beneficiary:**
+${benText}
+
+**Primary Core Subsystem:**
+${bcText}
+
+**Runtime Classification (Two-Axis):**
+- Serving Mode: ${servText}
+- Behavioral Mode: ${behText}
+
+**Applicable Delivery Archetypes:**
+${archStr}
+
+**Invariants & Domain Boundaries:**
+${entities}
+
+**Verification & Quality Gate:**
+- [ ] Conforms to the 5-Step Feature Alignment Rubric
+- [ ] Maintains zero token waste using Semantic Fragments (<main id="report-main">)
+- [ ] Compiles via Deterministic Assembly (<100ms)
+- [ ] Distinguishes between In-Flight Draft (Edit Mode) vs Finalized Export (Published Document)
+- [ ] Mirrors live journey state to http://localhost:3000 via implementation-progress.html`;
+
+    const el = document.getElementById('wb-synthesized-prompt');
+    if (el) el.textContent = promptText;
+  };
+
+  window.copyWorkbenchPrompt = function() {
+    const el = document.getElementById('wb-synthesized-prompt');
+    const btnText = document.getElementById('wb-copy-btn-text');
+    if (!el) return;
+    navigator.clipboard.writeText(el.textContent).then(() => {
+      if (btnText) {
+        btnText.textContent = 'Copied!';
+        setTimeout(() => { btnText.textContent = 'Copy Prompt'; }, 2000);
+      }
+    });
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.updateWorkbenchPrompt) window.updateWorkbenchPrompt();
+  });
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    window.updateWorkbenchPrompt();
+  }
+</script>

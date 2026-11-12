@@ -25,6 +25,7 @@ export class StructureCheck extends VerificationCheck {
   async run({ page, options }) {
     const errors = [];
     const messages = [];
+    const remediations = [];
     const effectiveMode = (options.mode || options.detectedMode || "interactive").toLowerCase();
 
     const nav = await page.evaluate((currMode) => {
@@ -36,7 +37,21 @@ export class StructureCheck extends VerificationCheck {
         faviconHref && (faviconHref.startsWith("data:image/svg+xml") || faviconHref.includes("svg"))
       );
 
-      const navbar = document.querySelector(".navbar");
+      const navbars = Array.from(document.querySelectorAll(".navbar"));
+      const navbar = navbars[0] || null;
+      const mainEl = document.querySelector("main");
+      const duplicateStickyBars = mainEl
+        ? Array.from(mainEl.querySelectorAll("*")).filter((el) => {
+            const tag = el.tagName;
+            if (tag === "THEAD" || tag === "TH" || tag === "TR") return false;
+            if (el.classList.contains("navbar")) return true;
+            const style = getComputedStyle(el);
+            if (style.position !== "sticky") return false;
+            const topPx = parseFloat(style.top);
+            if (Number.isNaN(topPx) || topPx > 120) return false;
+            return el.classList.contains("print:hidden") || tag === "NAV" || tag === "HEADER";
+          }).length
+        : 0;
       const navbarStart = document.querySelector(".navbar .navbar-start");
       const navbarEnd = document.querySelector(".navbar .navbar-end");
       const titleEl = document.getElementById("navbar-report-title");
@@ -110,6 +125,8 @@ export class StructureCheck extends VerificationCheck {
         hasEmojiFavicon,
         faviconHref,
         hasNavbar: Boolean(navbar),
+        navbarCount: navbars.length,
+        duplicateStickyBars,
         titleText: titleEl ? titleEl.textContent.trim() : "",
         titleInStart,
         controlsInEnd,
@@ -133,11 +150,35 @@ export class StructureCheck extends VerificationCheck {
 
     if (nav.initialTheme !== "light" || nav.activeThemeLabelText !== "light") {
       errors.push(`Default theme must always be "light" (found data-theme="${nav.initialTheme}", label="${nav.activeThemeLabelText}").`);
+      remediations.push({
+        ruleId: "core:structure:default-theme",
+        fixTarget: "build-flags",
+        selector: "html",
+        remediation: "Rebuild with --theme light (or omit --theme) so the report defaults to light."
+      });
     }
     if (!nav.hasEmojiFavicon) {
       errors.push(`Each report must have a favicon in <head> (<link rel="icon">, found "${nav.faviconHref}").`);
     }
     if (!nav.hasNavbar) errors.push("Missing DaisyUI .navbar element.");
+    if (nav.navbarCount > 1) {
+      errors.push(`Found ${nav.navbarCount} .navbar elements; reports must have exactly one shell navbar (remove duplicate navbar from fragment).`);
+      remediations.push({
+        ruleId: "core:structure:duplicate-navbar",
+        fixTarget: "fragment",
+        selector: "main .navbar",
+        remediation: "Remove the duplicate <nav class=\"navbar\"> from fragment.html and rebuild."
+      });
+    }
+    if (nav.duplicateStickyBars > 0) {
+      errors.push(`Found ${nav.duplicateStickyBars} duplicate sticky control/navigation bar(s) inside <main>; remove them from the fragment so only the shell navbar is rendered.`);
+      remediations.push({
+        ruleId: "core:structure:duplicate-sticky-bar",
+        fixTarget: "fragment",
+        selector: "main .sticky",
+        remediation: "Remove the sticky control/navigation bar from fragment.html and rebuild."
+      });
+    }
     if (!nav.titleText || !nav.titleInStart) {
       errors.push("Report title must be inside .navbar-start on the left.");
     }
@@ -221,6 +262,7 @@ export class StructureCheck extends VerificationCheck {
       name: this.name,
       status: errors.length > 0 ? "failed" : "passed",
       errors,
+      remediations,
       messages
     };
   }

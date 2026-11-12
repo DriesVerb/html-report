@@ -1085,28 +1085,28 @@ export const runHarness = runLifecycle;
  */
 export function getHelpText() {
   return `
-State Machine Harness & Pre-Flight Orchestrator (Zero-Dep Pure Node)
+Pipeline State Machine Harness & Pre-Flight Orchestrator (Zero-Dep Pure Node)
 
 USAGE:
   node harness.mjs <command> [options]
 
 COMMANDS:
-  run <fragment.html>       Execute full lifecycle: Validate -> Auto-Fix -> Assemble -> Verify
-  lint <fragment.html>      Perform pre-flight semantic linting on fragment
-  fix <fragment.html>       Apply deterministic auto-fixes to fragment and output result
+  run <fragment.html>       Execute full Pipeline: Validate -> Auto-Fix -> Assemble -> Verify
+  lint <fragment.html>      Perform pre-flight semantic linting on Semantic Fragment
+  fix <fragment.html>       Apply deterministic auto-fixes to Semantic Fragment and output result
 
 OPTIONS:
-  --output, -o <file>       Output file destination (default: ./report.html or ./report-<caller>.html)
-  --title, -t <title>       Report title (default: "HTML Report")
+  --output, -o <file>       Output Deliverable destination (default: ./report.html or ./report-<caller>.html)
+  --title, -t <title>       Output Deliverable title (default: "HTML Report")
   --theme <name>            DaisyUI theme override (e.g. "light", "cupcake", "synthwave")
   --run-id <runId>          Run ID for multi-attempt correlation in vault
-  --mode, -m <name>         Report mode: print, report, presentation, dashboard, working-report, live-report, pwa
-  --print, -p, --printable  Enable printable styles (@media print, static mode)
-  --presentation            Enable interactive presentation mode
-  --dashboard               Enable interactive dashboard mode
-  --working-report          Enable working journey companion mode
-  --live-report, -l         Enable real-time live streaming mode
-  --pwa                     Enable Progressive Web App mode (manifest, sw.js, and icons)
+  --mode, -m <name>         Delivery Archetype / mode: print, report, presentation, dashboard, working-report, live-report
+  --print, -p, --printable  Enable printable styles (@media print, Static File + Passive)
+  --presentation            Enable interactive slide deck presentation mode
+  --dashboard               Enable interactive telemetry dashboard mode
+  --working-report          Enable OpenSpec Journey companion mode
+  --live-report, -l         Enable Server-Connected Datastar SSE live streaming mode
+  --pwa                     Enable Offline Packaging Modifier (PWA manifest, sw.js, and icons)
   --serve                   Force start/check dev server
   --no-serve                Disable dev server regardless of mode policy
   --port <number>           Target dev server port (default: 3000)

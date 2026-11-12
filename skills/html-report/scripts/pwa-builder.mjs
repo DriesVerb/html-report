@@ -5,7 +5,8 @@ import path from "node:path";
 /**
  * skills/html-report/scripts/pwa-builder.mjs
  *
- * Core Progressive Web App (PWA) Engine for html-report.
+ * Core Progressive Web App (PWA) Offline Packaging Modifier (--pwa) for html-report.
+ * Wraps any Interactive Delivery Archetype (Report, Dashboard, Presentation, Studio) during Assembly.
  * Zero external runtime dependencies - pure Node.js standard library built-ins.
  *
  * Provides:

@@ -11,6 +11,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import http from "node:http";
 import { fileURLToPath } from "node:url";
@@ -83,6 +84,8 @@ describe("1. Creation Studio Dedicated Navbar & Consolidated Settings", () => {
     assert.ok(panel.includes("downloadStarterHtml"), "Download Starter HTML must be inside gear panel");
     assert.ok(panel.includes("copyPromptToClipboard"), "Copy prompt must be inside gear panel");
     assert.ok(panel.includes('id="pwa-install-dropdown-btn"'), "PWA install button must be inside gear panel");
+    assert.ok(panel.includes('id="studio-reset-default-btn"'), "Reset to Default button must be inside gear panel");
+    assert.ok(panel.includes("resetStudioToDefault"), "Reset to Default handler must be inside gear panel");
     assert.ok(panel.includes('id="studio-quick-view-btn"'), "Quick view switch button must be inside gear panel");
 
     // Loose theme button outside panel must NOT exist
@@ -109,29 +112,36 @@ describe("2. Workspace Project Discovery Engine & API", () => {
     }
   });
 
-  it("scanWorkspaceProjects discovers HTML reports and categorizes them correctly", () => {
-    const projects = scanWorkspaceProjects(workspaceRoot, 4);
-    assert.ok(projects.length > 5, `Expected multiple projects, found ${projects.length}`);
+  it("scanWorkspaceProjects discovers HTML reports strictly inside projects/", () => {
+    const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "html-report-projects-test-"));
+    try {
+      const sampleDir = path.join(tmpRoot, "projects", "sample-dashboard");
+      const otherDir = path.join(tmpRoot, "openspec", "changes", "some-change");
+      fs.mkdirSync(sampleDir, { recursive: true });
+      fs.mkdirSync(otherDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(sampleDir, "index.html"),
+        '<!DOCTYPE html><html><head><title>Sample Dashboard</title><meta name="version" content="1.2.0"></head><body></body></html>'
+      );
+      fs.writeFileSync(
+        path.join(sampleDir, "fragment.html"),
+        "<main id='report-main'>Fragment</main>"
+      );
+      fs.writeFileSync(
+        path.join(otherDir, "index.html"),
+        "<!DOCTYPE html><html><head><title>Internal OpenSpec</title></head></html>"
+      );
 
-    const categories = new Set(projects.map((p) => p.category));
-    assert.ok(categories.has("OpenSpec Journey"), "Should have OpenSpec Journey category");
-    assert.ok(categories.has("Performance Benchmark"), "Should have Performance Benchmark category");
-    assert.ok(categories.has("Workspace Project"), "Should have Workspace Project category from mock dashboard");
-
-    const mockProj = projects.find((p) => p.path === "projects/mock-dashboard/index.html");
-    assert.ok(mockProj, "Mock project in projects/mock-dashboard/index.html must be discovered");
-    assert.equal(mockProj.category, "Workspace Project");
-    assert.equal(mockProj.version, "1.0.0");
-    assert.ok(mockProj.title.includes("Mock Operations"), "Title must match mock dashboard");
-
-    for (const p of projects) {
-      assert.ok(p.title, "Project must have title");
-      assert.ok(p.path, "Project must have path");
-      assert.ok(p.url.startsWith("/"), "URL must start with /");
-      assert.ok(p.category, "Project must have category");
-      assert.ok(p.version, "Project must have version");
-      assert.ok(!p.path.includes("node_modules"), "Must not include node_modules");
-      assert.ok(!p.path.includes(".git/"), "Must not include .git");
+      const projects = scanWorkspaceProjects(tmpRoot, 4);
+      assert.equal(projects.length, 1, "Must only discover non-fragment HTML files inside projects/");
+      const p = projects[0];
+      assert.equal(p.path, "projects/sample-dashboard/index.html");
+      assert.equal(p.url, "/projects/sample-dashboard/index.html");
+      assert.equal(p.category, "Workspace Project");
+      assert.equal(p.version, "1.2.0");
+      assert.equal(p.title, "Sample Dashboard");
+    } finally {
+      fs.rmSync(tmpRoot, { recursive: true, force: true });
     }
   });
 
@@ -144,7 +154,7 @@ describe("2. Workspace Project Discovery Engine & API", () => {
       assert.equal(json.ok, true);
       assert.ok(typeof json.count === "number");
       assert.ok(Array.isArray(json.projects));
-      assert.ok(json.projects.length > 0);
+      assert.equal(json.projects.length, json.count);
     } catch (err) {
       // If server port differs in isolated environment, test unit logic passed
       console.warn("Dev server not on port 3000, skipping HTTP check: " + err.message);

@@ -9,7 +9,9 @@ description: >-
 
 # Progressive Web App (PWA) Skill (`html-pwa`)
 
-This specialized skill builds installable, offline-first report applications and mobile field tools with **W3C Web App Manifests**, **dual-caching Service Workers**, and **dynamic theme-color synchronization**.
+> **Domain Classification:** `Offline Packaging Modifier (--pwa)` | **Beneficiary:** `User-Facing` | **Serving Mode:** `Static File / Server-Connected` | **Behavioral Mode:** `Interactive / Reactive`
+
+This specialized skill acts as a cross-cutting **Offline Packaging Modifier** (`--pwa`) that wraps any Interactive Delivery Archetype (`@html-report`, `@html-dashboard`, `@html-presentation`, or Studio) into an installable, offline-first app with **W3C Web App Manifests**, **dual-caching Service Workers**, and **dynamic theme-color synchronization**.
 
 ---
 

@@ -1,0 +1,254 @@
+<header class="space-y-4 border-b border-base-300 pb-8">
+  <div class="flex flex-wrap gap-2">
+    <span class="badge badge-primary font-mono text-xs font-bold uppercase">OpenSpec Journey</span>
+    <span class="badge badge-outline font-mono text-xs">domain-language-code-review</span>
+    <span class="badge badge-success font-mono text-xs font-bold">Phase 5: Shipped / Archived</span>
+    <span class="badge badge-ghost font-mono text-xs">Code Review &amp; Cross-Codebase Alignment</span>
+  </div>
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight">Domain-Language Code Review &amp; Alignment Plan</h1>
+  <p class="text-base text-base-content/80 max-w-3xl">
+    Targeted architectural audit aligning core scripts, runtime assets, sibling skill facades, MCP tool schemas, and documentation with our archived Ubiquitous Domain Language (<code>openspec/specs/domain-language-model/spec.md</code>).
+  </p>
+  <div class="flex flex-wrap gap-3 items-center text-xs">
+    <span class="font-semibold">Planning Artifacts:</span>
+    <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">proposal.md</button>
+    <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">design.md</button>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">tasks.md</button>
+    <button type="button" onclick="openMarkdownViewer('specs/domain-code-alignment/spec.md')" class="btn btn-xs btn-outline btn-primary font-mono text-xs">specs/domain-code-alignment/spec.md</button>
+  </div>
+  <div class="w-full overflow-x-auto">
+    <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+      <li class="step step-primary">Brainstorming</li>
+      <li class="step step-primary">Planning</li>
+      <li class="step step-primary">Implementing</li>
+      <li class="step step-primary">Verifying</li>
+      <li class="step step-primary">Shipped / Archived</li>
+    </ul>
+  </div>
+</header>
+
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
+<dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50">
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 id="markdown-modal-title" class="font-mono font-bold text-sm text-base-content">artifact.md</h3>
+      </div>
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+      </form>
+    </div>
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto font-sans prose prose-sm max-w-none text-base-content">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- SECTION 1: PROGRESS METRICS -->
+<section id="section-metrics" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="plan-metrics" class="text-xl sm:text-2xl font-bold tracking-tight">Code Review &amp; Alignment Scope</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">8 alignment surfaces across core runtime, CLI, Studio, MCP, skills, and docs.</p>
+    </div>
+    <span class="badge badge-success badge-outline font-mono text-xs">12 / 12 Tasks Complete (100%)</span>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4">
+      <div class="text-xs font-semibold uppercase text-base-content/60">Core Review Areas</div>
+      <div class="text-3xl font-black text-primary mt-1">4</div>
+      <div class="text-xs text-base-content/70 mt-1">Assembly/Pipeline, Edit/Publish, User/Agent, 2-Axis</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4">
+      <div class="text-xs font-semibold uppercase text-base-content/60">Extended Alignments</div>
+      <div class="text-3xl font-black text-secondary mt-1">5</div>
+      <div class="text-xs text-base-content/70 mt-1">PWA Modifier, Skill Router, MCP, Studio, Docs</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4">
+      <div class="text-xs font-semibold uppercase text-base-content/60">Planned Tasks</div>
+      <div class="text-3xl font-black text-accent mt-1">12</div>
+      <div class="text-xs text-base-content/70 mt-1">Organized in 4 verifiable phases</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-4">
+      <div class="text-xs font-semibold uppercase text-base-content/60">Breaking Changes</div>
+      <div class="text-3xl font-black text-success mt-1">0</div>
+      <div class="text-xs text-base-content/70 mt-1">100% backward-compatible CLI &amp; APIs</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: AUDIT ARCHITECTURE -->
+<section id="section-audit-map" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="audit-topology" class="text-xl sm:text-2xl font-bold tracking-tight">Codebase Alignment Topology</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Mapping our canonical domain specification onto every subsystem in the repository.</p>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-6">
+    <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">
+flowchart TD
+  SPEC["Canonical Domain Language\n(domain-language-model/spec.md)"]
+
+  R1["1. Assembly & Pipeline\n(build-report.mjs, harness.mjs)"]
+  R2["2. Edit Mode & Published Doc\n(template-shell.html, report-runtime.js)"]
+  R3["3. User vs. Agent Surfaces\n(create.html, html-grill.mjs)"]
+  R4["4. Two-Axis Runtime\n(serve-report.mjs, datastar-sse.mjs)"]
+
+  E1["5. PWA Packaging Modifier\n(pwa-builder.mjs, generate-pwa.mjs)"]
+  E2["6. Skill Router & Facades\n(skill-router.mjs, skills/*/SKILL.md)"]
+  E3["7. MCP Tool Schemas\n(mcp-server.mjs)"]
+  E4["8. Docs & Guides\n(README.md, docs/*.md)"]
+
+  SPEC --> R1
+  SPEC --> R2
+  SPEC --> R3
+  SPEC --> R4
+  SPEC --> E1
+  SPEC --> E2
+  SPEC --> E3
+  SPEC --> E4
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: CORE REVIEW AREAS VS ADDITIONAL ALIGNMENT OPPORTUNITIES -->
+<section id="section-opportunities" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="alignment-targets" class="text-xl sm:text-2xl font-bold tracking-tight">Core Review Areas &amp; Additional Alignment Opportunities</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Concrete gaps where aligning code with the domain language eliminates drift.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <!-- Core 4 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <h3 class="font-bold text-base text-primary">Core 4 Review Areas</h3>
+        <span class="badge badge-primary badge-xs font-mono">Phase 1 &amp; 2</span>
+      </div>
+      <ul class="space-y-2 text-xs text-base-content/80">
+        <li><strong>1. Assembly vs. Pipeline:</strong> Separate mechanical join (&lt;100ms) from FSM pre-flight normalizers in <code>build-report.mjs</code> and <code>harness.mjs</code>.</li>
+        <li><strong>2. Edit Mode vs. Published Document:</strong> Standardize authoring markers in <code>template-shell.html</code> and <code>report-runtime.js</code>; verify <code>stripAuthoringMarkup()</code> leaves only clean viewer tools.</li>
+        <li><strong>3. User-Facing vs. Agent-Facing:</strong> Surface Beneficiary &amp; 2-Axis selectors in <code>create.html</code> (Human GUI); keep CLI tools headless, JSON-friendly, and token-efficient.</li>
+        <li><strong>4. Two-Axis Decoupling:</strong> Verify <code>Static File</code> builds run client-side <code>fetch()</code> (PokéAPI/Weather) cleanly without server hooks; scope Datastar SSE to <code>Server-Connected</code> mode.</li>
+      </ul>
+    </div>
+
+    <!-- Extended 5 -->
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+      <div class="flex items-center justify-between border-b border-base-300 pb-2">
+        <h3 class="font-bold text-base text-secondary">Additional Alignment Opportunities</h3>
+        <span class="badge badge-secondary badge-xs font-mono">Phase 3</span>
+      </div>
+      <ul class="space-y-2 text-xs text-base-content/80">
+        <li><strong>5. PWA as Packaging Modifier:</strong> Clarify across <code>pwa-builder.mjs</code> and <code>skills/html-pwa/SKILL.md</code> that PWA (<code>--pwa</code>) wraps any Interactive Archetype rather than competing with content archetypes.</li>
+        <li><strong>6. Skill Router &amp; Facades:</strong> Tag each <code>skills/*/SKILL.md</code> and <code>skill-router.mjs</code> entry with its Beneficiary, Serving Mode, and Behavioral Mode (keeping &lt;5KB limits).</li>
+        <li><strong>7. MCP Tool Schemas:</strong> Align <code>mcp-server.mjs</code> (<code>NATIVE_MCP_TOOLS</code>) descriptions with canonical terms (<code>SemanticFragment</code>, <code>OutputDeliverable</code>, <code>PublishedDocument</code>).</li>
+        <li><strong>8. Docs &amp; Guides:</strong> Harmonize <code>README.md</code>, <code>docs/architecture-fsm.md</code>, <code>api-and-cli-reference.md</code>, and <code>live-telemetry.md</code> with the Ubiquitous Glossary.</li>
+        <li><strong>9. Automated Domain Linter:</strong> Add test assertions scanning CLI <code>--help</code> strings and MCP schemas for deprecated synonyms.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: TASK CHECKLIST -->
+<section id="section-tasks" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <div>
+      <h2 id="task-tracking" class="text-xl sm:text-2xl font-bold tracking-tight">Planned Execution Checklist (tasks.md)</h2>
+      <p class="text-xs sm:text-sm text-base-content/70">Pending tasks ready for implementation once approved.</p>
+    </div>
+    <span class="badge badge-success font-mono text-xs">All 12 Tasks Complete</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2">
+      <div class="font-bold text-sm border-b border-base-300 pb-1">1. Core Review: Assembly, Pipeline &amp; Lifecycle</div>
+      <ul class="space-y-1 text-base-content/80">
+        <li>✅ 1.1 Audit <code>build-report.mjs</code> &amp; <code>harness.mjs</code> (Assembly vs. Pipeline)</li>
+        <li>✅ 1.2 Audit <code>template-shell.html</code> &amp; <code>report-runtime.js</code> (Edit vs. Published)</li>
+        <li>✅ 1.3 Audit <code>serve-report.mjs</code> &amp; <code>datastar-sse.mjs</code> (Two-Axis decoupling)</li>
+      </ul>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2">
+      <div class="font-bold text-sm border-b border-base-300 pb-1">2. User vs. Agent Surface Alignment</div>
+      <ul class="space-y-1 text-base-content/80">
+        <li>✅ 2.1 Add Beneficiary &amp; Two-Axis selectors to <code>create.html</code></li>
+        <li>✅ 2.2 Audit CLI entrypoints (<code>html-grill.mjs</code>, <code>skill-router.mjs</code>) for headless determinism</li>
+      </ul>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2">
+      <div class="font-bold text-sm border-b border-base-300 pb-1">3. Extended Domain Alignment</div>
+      <ul class="space-y-1 text-base-content/80">
+        <li>✅ 3.1 Clarify PWA as Offline Packaging Modifier</li>
+        <li>✅ 3.2 Align <code>skills/*/SKILL.md</code> &amp; <code>skill-router.mjs</code> metadata</li>
+        <li>✅ 3.3 Align <code>mcp-server.mjs</code> tool schemas with canonical terms</li>
+        <li>✅ 3.4 Align <code>README.md</code> and <code>docs/*.md</code></li>
+      </ul>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-2">
+      <div class="font-bold text-sm border-b border-base-300 pb-1">4. Verification &amp; Companion Sync</div>
+      <ul class="space-y-1 text-base-content/80">
+        <li>✅ 4.1 Add automated domain-lint assertions for CLI &amp; MCP</li>
+        <li>✅ 4.2 Run full test suite (<code>npm test</code>) &amp; Playwright QA</li>
+        <li>✅ 4.3 Update companion report &amp; sync to <code>localhost:3000</code></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  window.openMarkdownViewer = async function(filePath) {
+    const modal = document.getElementById('markdown-viewer-modal');
+    const title = document.getElementById('markdown-modal-title');
+    const body = document.getElementById('markdown-modal-body');
+    if (!modal || !body) return;
+
+    title.textContent = filePath;
+    body.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
+    modal.showModal();
+
+    try {
+      const candidates = [
+        `openspec/changes/domain-language-code-review/${filePath}`,
+        filePath
+      ];
+      let text = null;
+      for (const p of candidates) {
+        try {
+          const res = await fetch(p);
+          if (res.ok) {
+            text = await res.text();
+            break;
+          }
+        } catch (_) {}
+      }
+
+      if (!text) {
+        body.innerHTML = `<div class="alert alert-warning text-xs">Could not fetch artifact: <code>${filePath}</code></div>`;
+        return;
+      }
+
+      if (window.showdown) {
+        const conv = new window.showdown.Converter({ tables: true, tasklists: true, strikethrough: true });
+        body.innerHTML = conv.makeHtml(text);
+      } else {
+        body.innerHTML = `<pre class="text-xs font-mono p-4 bg-base-200 rounded">${text.replace(/</g, '&lt;')}</pre>`;
+      }
+    } catch (err) {
+      body.innerHTML = `<div class="alert alert-error text-xs">Error loading markdown: ${err.message}</div>`;
+    }
+  };
+</script>

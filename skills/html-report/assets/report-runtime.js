@@ -1,8 +1,8 @@
 /**
  * html-report client runtime (report-runtime.js)
  * Pre-bundled runtime for 32 DaisyUI themes, canvas 2D OKLCH palette resolution,
- * Mermaid list syntax defense, dynamic TOC generation, snapshot bundler,
- * and horizontal space detection.
+ * Mermaid list syntax defense, dynamic TOC generation, Published Document snapshot exporter,
+ * Edit Mode (#edit-dock & Target Element selection), and horizontal space detection.
  */
 
 const STANDARD_DAISYUI_THEMES = new Set([
@@ -779,6 +779,7 @@ function checkInsufficientHorizontalSpace() {
     const style = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle(el) : el.style;
     if (style.display === "none" || style.visibility === "hidden" || el.clientWidth === 0) {
       el.removeAttribute("data-insufficient-space");
+      if (el.classList) el.classList.remove("verify-insufficient-space");
       return;
     }
     const hasHorizontalScrollbar =
@@ -787,6 +788,7 @@ function checkInsufficientHorizontalSpace() {
 
     if (hasHorizontalScrollbar) {
       el.setAttribute("data-insufficient-space", "true");
+      if (el.classList) el.classList.add("verify-insufficient-space");
       insufficient.push({
         tag: el.tagName.toLowerCase(),
         id: el.id || null,
@@ -797,6 +799,7 @@ function checkInsufficientHorizontalSpace() {
       });
     } else {
       el.removeAttribute("data-insufficient-space");
+      if (el.classList) el.classList.remove("verify-insufficient-space");
     }
   });
 
@@ -1981,6 +1984,28 @@ const HTMLReportAgent = {
     }
   },
 
+  getAiConfig: function() {
+    const defaults = { port: 3000, model: "Gemini 3.8 Flash (Low)", persona: "analyst" };
+    if (typeof document === "undefined") return defaults;
+    const readMeta = (name) => {
+      const el = document.querySelector(`meta[name="${name}"]`);
+      return el && el.getAttribute("content") ? el.getAttribute("content").trim() : null;
+    };
+    let manifestCfg = null;
+    try {
+      const mEl = document.getElementById("agent-manifest");
+      if (mEl && mEl.textContent) {
+        const parsed = JSON.parse(mEl.textContent);
+        if (parsed && parsed.aiConfig) manifestCfg = parsed.aiConfig;
+      }
+    } catch (_) {}
+    const portRaw = readMeta("html-report-ai-port") || (manifestCfg && manifestCfg.port);
+    const port = Number.isFinite(Number(portRaw)) && Number(portRaw) > 0 ? Number(portRaw) : defaults.port;
+    const model = readMeta("html-report-ai-model") || (manifestCfg && manifestCfg.model) || defaults.model;
+    const persona = readMeta("html-report-ai-persona") || (manifestCfg && manifestCfg.persona) || defaults.persona;
+    return { port, model, persona };
+  },
+
   checkConnection: async function(btnEl) {
     if (btnEl) {
       btnEl.disabled = true;
@@ -1999,8 +2024,9 @@ const HTMLReportAgent = {
     }
 
     try {
+      const cfg = this.getAiConfig();
       const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
-        ? `http://127.0.0.1:${process.env.REPORT_PORT || 3000}/__agent_status__`
+        ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3000}/__agent_status__`
         : "/__agent_status__";
 
       const res = await fetch(endpoint, { method: "GET" });
@@ -2067,7 +2093,8 @@ const HTMLReportAgent = {
     if (!filename || filename === "" || filename === "/") {
       filename = "report.html";
     }
-    const port = options.port || 3000;
+    const cfg = this.getAiConfig();
+    const port = options.port || cfg.port || 3000;
     const title = options.title || (typeof document !== "undefined" && document.title) || "Interactive HTML Report";
 
     return `I am viewing an interactive publication report: "${title}" (${filename}).
@@ -2192,8 +2219,18 @@ Prerequisites & Instructions:
     if (typeof document === "undefined") return;
     const dockContainer = document.getElementById("agent-dock-container");
     const capable = this.isAiCapable();
+    const dockMeta = document.querySelector('meta[name="html-report-ai-dock"]')?.getAttribute("content");
+    const showDock = capable && dockMeta !== "off";
     if (dockContainer) {
-      dockContainer.classList.toggle("hidden", !capable);
+      dockContainer.classList.toggle("hidden", !showDock);
+    }
+    const personaSel = document.getElementById("agent-dock-persona");
+    if (capable && personaSel && !personaSel.dataset.aiConfigInit) {
+      personaSel.dataset.aiConfigInit = "1";
+      const cfgPersona = this.getAiConfig().persona;
+      if (cfgPersona && Array.from(personaSel.options).some((o) => o.value === cfgPersona)) {
+        personaSel.value = cfgPersona;
+      }
     }
     if (!capable && this._isDockOpen) {
       this.closeDock();
@@ -2500,7 +2537,8 @@ Prerequisites & Instructions:
     const prompt = promptText.trim();
     this.appendDockMessage("user", prompt);
 
-    const persona = options.persona || ((typeof document !== "undefined" && document.getElementById("agent-dock-persona")) ? document.getElementById("agent-dock-persona").value : "analyst");
+    const cfg = this.getAiConfig();
+    const persona = options.persona || ((typeof document !== "undefined" && document.getElementById("agent-dock-persona")) ? document.getElementById("agent-dock-persona").value : cfg.persona);
     const loadingEl = this.appendDockMessage("assistant", `<span class="loading loading-dots loading-xs"></span> Reasoning...`, {
       persona
     });
@@ -2515,7 +2553,8 @@ Prerequisites & Instructions:
       targetSelector,
       context,
       history: this._history.slice(-10),
-      persona
+      persona,
+      model: options.model || cfg.model
     };
 
     this._history.push({ role: "user", content: prompt, timestamp: new Date().toISOString() });
@@ -2686,7 +2725,13 @@ Prerequisites & Instructions:
   },
 
   ask: async function(options) {
-    const payload = typeof options === "string" ? { prompt: options } : (options || {});
+    const cfg = this.getAiConfig();
+    const rawPayload = typeof options === "string" ? { prompt: options } : (options || {});
+    const payload = {
+      ...rawPayload,
+      model: rawPayload.model || cfg.model,
+      persona: rawPayload.persona || cfg.persona
+    };
     const endpoint = payload.endpoint || "/__agent_action__";
 
     // In standalone file:// mode, immediately invoke local fallback without throwing fetch error
@@ -3637,6 +3682,87 @@ const HTMLReportEdit = {
   }
 };
 
+/* ------------------------------ Deterministic Agent Inspection API ------------------------------ */
+
+HTMLReportAgent.getManifest = function() {
+  if (typeof document === "undefined" || !document || typeof document.getElementById !== "function") return null;
+  const el = document.getElementById("agent-manifest");
+  if (!el || !el.textContent) return null;
+  try {
+    return JSON.parse(el.textContent);
+  } catch (_) {
+    return null;
+  }
+};
+
+HTMLReportAgent.getSections = function() {
+  const manifest = this.getManifest();
+  if (manifest && Array.isArray(manifest.sections)) {
+    return manifest.sections.map((sec) => {
+      const el = (typeof document !== "undefined" && document.querySelector)
+        ? (document.querySelector(`[data-agent-id="${sec.agentId}"]`) || (sec.id ? document.getElementById(sec.id) : null))
+        : null;
+      return Object.assign({}, sec, { present: Boolean(el), el });
+    });
+  }
+  if (typeof document === "undefined" || !document.querySelectorAll) return [];
+  return Array.from(document.querySelectorAll("[data-agent-section]")).map((el, idx) => ({
+    agentId: el.getAttribute("data-agent-id") || `section-${idx + 1}`,
+    slug: el.getAttribute("data-agent-section"),
+    label: (el.querySelector("h1,h2,h3,h4,h5,h6")?.textContent || "").trim(),
+    id: el.id || null,
+    selector: el.id ? `#${el.id}` : `[data-agent-id="${el.getAttribute("data-agent-id")}"]`,
+    present: true,
+    el
+  }));
+};
+
+HTMLReportAgent.getWidgets = function(type) {
+  const manifest = this.getManifest();
+  let list = [];
+  if (manifest && Array.isArray(manifest.widgets)) {
+    list = manifest.widgets.map((w) => {
+      const el = (typeof document !== "undefined" && document.querySelector)
+        ? (document.querySelector(`[data-agent-id="${w.agentId}"]`) || (w.id ? document.getElementById(w.id) : null))
+        : null;
+      return Object.assign({}, w, { present: Boolean(el), el });
+    });
+  } else if (typeof document !== "undefined" && document.querySelectorAll) {
+    list = Array.from(document.querySelectorAll("[data-agent-widget]")).map((el, idx) => ({
+      agentId: el.getAttribute("data-agent-id") || `widget-${idx + 1}`,
+      type: el.getAttribute("data-agent-widget"),
+      id: el.id || null,
+      selector: el.id ? `#${el.id}` : `[data-agent-id="${el.getAttribute("data-agent-id")}"]`,
+      present: true,
+      el
+    }));
+  }
+  return type ? list.filter((w) => w.type === type) : list;
+};
+
+HTMLReportAgent.scrollToAgent = function(agentId) {
+  if (typeof document === "undefined" || !agentId) return false;
+  const el = document.querySelector(`[data-agent-id="${agentId}"]`) || document.getElementById(agentId);
+  if (!el || typeof el.scrollIntoView !== "function") return false;
+  el.scrollIntoView({ behavior: "smooth", block: "start" });
+  return true;
+};
+
+HTMLReportAgent.getEditPrompt = function(agentId, instruction = "") {
+  const manifest = this.getManifest();
+  const target = manifest?.sections?.find((s) => s.agentId === agentId || s.slug === agentId || s.id === agentId)
+    || manifest?.widgets?.find((w) => w.agentId === agentId || w.id === agentId);
+  const selector = target ? target.selector : `[data-agent-id="${agentId}"]`;
+  const fragment = manifest?.files?.fragment || "fragment.html";
+  const rebuild = manifest?.pipeline?.rebuildCommand || "node skills/html-report/scripts/build-report.mjs";
+  return [
+    `Target Element: ${selector} (agentId: ${agentId})`,
+    `Source Fragment: ${fragment}`,
+    `Rebuild Command: ${rebuild}`,
+    instruction ? `Instruction: ${instruction}` : ""
+  ].filter(Boolean).join("\n");
+};
+
 /* ------------------------------ AI activation ------------------------------ */
 
 const AI_FLAG_PREFIX = "html_report_ai:";
@@ -3967,9 +4093,25 @@ const HTMLReportPublisher = {
       if (d.textContent && d.textContent.includes("Quick Controls")) d.remove();
     });
     docClone.querySelectorAll('meta[name="html-report-ai"]').forEach((el) => el.remove());
-    docClone.querySelectorAll("[data-agent-authoring], [data-session-id]").forEach((el) => {
+    docClone.querySelectorAll("#html-report-verify-styles").forEach((el) => el.remove());
+    docClone.querySelectorAll("[data-agent-authoring], [data-session-id], [data-insufficient-space]").forEach((el) => {
       el.removeAttribute("data-agent-authoring");
       el.removeAttribute("data-session-id");
+      el.removeAttribute("data-insufficient-space");
+    });
+    docClone.querySelectorAll("*").forEach((el) => {
+      if (el.attributes) {
+        Array.from(el.attributes).forEach((attr) => {
+          if (attr.name.startsWith("data-verify-")) el.removeAttribute(attr.name);
+        });
+      }
+      if (el.classList && el.classList.length > 0) {
+        const toRemove = Array.from(el.classList).filter((cls) => cls.startsWith("verify-"));
+        if (toRemove.length > 0) {
+          toRemove.forEach((cls) => el.classList.remove(cls));
+          if (el.classList.length === 0) el.removeAttribute("class");
+        }
+      }
     });
     const body = docClone.querySelector("body");
     if (body && body.style) {

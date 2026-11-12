@@ -6,9 +6,9 @@ This document provides a comprehensive reference for the command-line interfaces
 
 ## 💻 CLI Commands
 
-### 1. Unified FSM Harness (`harness.mjs`)
+### 1. Unified Pipeline FSM Harness (`harness.mjs`)
 
-The recommended entrypoint for agent workflows. Coordinates validation, pre-flight auto-fixing, deterministic compilation, and multi-breakpoint verification.
+The recommended Agent-Facing entrypoint. Coordinates pre-flight validation, auto-fixing, deterministic **Assembly**, and multi-breakpoint verification.
 
 ```bash
 node skills/html-report/scripts/harness.mjs run <fragment-path> [options]
@@ -27,22 +27,24 @@ node skills/html-report/scripts/harness.mjs run <fragment-path> [options]
 
 ---
 
-### 2. Deterministic Report Compiler (`build-report.mjs`)
+### 2. Deterministic Assembly Engine (`build-report.mjs`)
 
-The core assembly engine. Stitches semantic HTML fragments into the pre-bundled template shell in **<100ms**.
+The core **Assembly** engine. Joins a **Semantic Fragment** (`<main id="report-main">`) into the pre-bundled **Template Shell** (`template-shell.html`) in **<100ms** to emit an **Output Deliverable**.
 
 ```bash
 node skills/html-report/scripts/build-report.mjs [options]
 ```
 
 #### Options:
-- `--content <path>`: Path to the input HTML fragment file (required).
-- `--output <path>`: Destination path for the compiled report (defaults to `./report.html`).
+- `--content <path>`: Path to the input Semantic Fragment file (required).
+- `--output <path>`: Destination path for the Output Deliverable (defaults to `./report.html`).
 - `--title <string>`: Document and navbar title.
 - `--theme <name>`: Initial DaisyUI theme (defaults to `light`).
 - `--custom-theme <path>`: Path to custom JSON or CSS theme definition.
-- `--live`: Enables Datastar.js streaming mode.
-- `--pwa`: Generates an instant Progressive Web App with companion `manifest.webmanifest`, `sw.js`, and `icon.svg`.
+- `--live`: Enables Server-Connected Datastar.js SSE streaming mode.
+- `--published`: Emits a **Published Document** with Edit Mode authoring chrome pruned.
+- `--json`: Outputs machine-readable JSON Assembly summary (Agent-Facing).
+- `--pwa`: Applies the **Offline Packaging Modifier** (`manifest.webmanifest`, `sw.js`, and `icon.svg`) to any Interactive Delivery Archetype.
 - `--pwa-name <name>`: Custom PWA app name.
 - `--pwa-short-name <short>`: Custom PWA homescreen short name.
 - `--pwa-theme-color <hex>`: Custom PWA window/status-bar theme color.

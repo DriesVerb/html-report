@@ -138,15 +138,15 @@ Usage:
   node skills/html-report/scripts/html-grill.mjs [options]
 
 Options:
-  --target <type>        Target format: report, print, dashboard, presentation
-  --mode <type>          Operational data mode: static, live
+  --target <type>        Delivery Archetype: report, print, dashboard, presentation
+  --mode <type>          Serving Mode: static (Static File), live (Server-Connected)
   --app <type>           App packaging: browser, live-app, offline-app
   --theme <name>         Startup DaisyUI theme (e.g. light, dark, emerald)
-  --title <title>        Deliverable title
+  --title <title>        Output Deliverable title
   --addons <list>        Comma-separated addons (charts, mermaid, gridjs, etc.)
-  --ai                   Enable interactive AI Co-Pilot dock
+  --ai                   Enable Two-Way AI Agent Bridge dock
   --mcp                  Enable enterprise MCP gateway proxy
-  --non-interactive      Skip interactive prompts and synthesize immediately
+  --non-interactive      Skip interactive prompts and synthesize immediately (Agent-Facing)
   --json                 Output structured JSON
   -h, --help             Show this help guide
 \n`);

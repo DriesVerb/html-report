@@ -9,6 +9,8 @@ description: >-
 
 # Interactive Creation Studio & Skill Router (`html-create`)
 
+> **Domain:** `Create Mode` | **Beneficiary:** `Hybrid` | **Serving:** `Static File / Server-Connected` | **Behavior:** `Interactive`
+
 This specialized skill guides users and agents through a structured, multi-dimensional decision wizard to determine the optimal report architecture, DaisyUI theme, and deterministic execution pipeline.
 
 ---

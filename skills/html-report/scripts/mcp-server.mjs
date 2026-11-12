@@ -1,8 +1,9 @@
 /**
  * @file mcp-server.mjs
  * Model Context Protocol (MCP) Server & Client Gateway Bridge.
+ * Domain Scope: Agent-Facing / Hybrid Gateway operating in Server-Connected mode.
  * Implements JSON-RPC 2.0 over SSE transport conforming to MCP 2024-11-05 spec.
- * Exposes native report manipulation tools to external agents (Claude, Cursor, Antigravity)
+ * Exposes native Output Deliverable manipulation tools to external agents (Claude, Cursor, Antigravity)
  * and provides a secure, CSRF-gated proxy gateway for browser widgets.
  */
 
@@ -34,7 +35,7 @@ export const JSON_RPC_ERRORS = {
 export const NATIVE_MCP_TOOLS = [
   {
     name: "report_get_state",
-    description: "Returns the current state of the live report, including active DaisyUI theme, DOM structure summary, and active client tabs.",
+    description: "Returns the current state of the Server-Connected Output Deliverable, including active DaisyUI theme, Semantic Fragment DOM summary, and active client tabs.",
     inputSchema: {
       type: "object",
       properties: {},
@@ -43,17 +44,17 @@ export const NATIVE_MCP_TOOLS = [
   },
   {
     name: "report_update_fragment",
-    description: "Updates a target element in the report DOM by CSS selector with new HTML via real-time Datastar SSE fragment morphing.",
+    description: "Updates a Target Element in the Semantic Fragment DOM by CSS selector via Server-Connected Datastar SSE fragment morphing.",
     inputSchema: {
       type: "object",
       properties: {
         selector: {
           type: "string",
-          description: "CSS selector identifying target DOM element (e.g. '#kpi-card-revenue', '#agent-reaction-bubble')"
+          description: "CSS selector identifying the Target Element (e.g. '#kpi-card-revenue', '#agent-reaction-bubble')"
         },
         html: {
           type: "string",
-          description: "New HTML fragment to merge into the target element"
+          description: "New Semantic Fragment HTML to merge into the Target Element"
         },
         mergeMode: {
           type: "string",
@@ -66,7 +67,7 @@ export const NATIVE_MCP_TOOLS = [
   },
   {
     name: "report_set_theme",
-    description: "Switches the active DaisyUI theme across all open browser tabs in real-time.",
+    description: "Switches the active DaisyUI theme across all open Server-Connected Output Deliverable tabs in real-time.",
     inputSchema: {
       type: "object",
       properties: {
@@ -80,7 +81,7 @@ export const NATIVE_MCP_TOOLS = [
   },
   {
     name: "report_append_alert",
-    description: "Injects a dismissible DaisyUI alert banner (toast or notification) at the top of the report main view.",
+    description: "Injects a dismissible DaisyUI alert banner (toast or notification) at the top of the Semantic Fragment (#report-main).",
     inputSchema: {
       type: "object",
       properties: {
@@ -99,7 +100,7 @@ export const NATIVE_MCP_TOOLS = [
   },
   {
     name: "report_export_pdf",
-    description: "Triggers headless PDF generation of the report and returns the artifact path.",
+    description: "Triggers headless PDF export of the Published Document and returns the output file path.",
     inputSchema: {
       type: "object",
       properties: {

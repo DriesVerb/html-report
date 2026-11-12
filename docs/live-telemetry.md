@@ -4,9 +4,9 @@
 
 ---
 
-## ⚡ The Live Mode Flag (`--live`)
+## ⚡ The Server-Connected Live Mode Flag (`--live`)
 
-When building a live dashboard, pass the `--live` flag to `build-report.mjs` or `harness.mjs`:
+Under the **Two-Axis Runtime Model**, Datastar SSE streaming operates in **Server-Connected + Interactive** mode (backed by `serve-report.mjs`), whereas **Static File + Interactive** reports run client-side `fetch()` without a backend. When building a Server-Connected live dashboard, pass `--live` to `build-report.mjs` or `harness.mjs`:
 
 ```bash
 node skills/html-report/scripts/build-report.mjs \

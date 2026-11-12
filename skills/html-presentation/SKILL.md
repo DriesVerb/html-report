@@ -8,6 +8,8 @@ description: >-
 
 # Interactive Slide Deck Skill (`html-presentation`)
 
+> **Domain:** `Delivery Archetype` | **Beneficiary:** `User-Facing` | **Serving:** `Static File` | **Behavior:** `Interactive / Reactive`
+
 Specialized skill producing interactive slide presentations, pitches, and structured decks using **Reveal.js** combined with Tailwind CSS and DaisyUI styling.
 
 > [!NOTE]

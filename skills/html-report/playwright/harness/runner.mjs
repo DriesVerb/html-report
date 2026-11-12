@@ -192,6 +192,40 @@ export async function runHarness(htmlPath, rawOptions = {}) {
     }
   }
 
+  if (options.reviewPacket) {
+    try {
+      const screenshotDir = typeof options.screenshots === "string" ? options.screenshots : "./screenshots";
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await reporter.captureScreenshot(page, "review_desktop", screenshotDir);
+      const inventory = await page.evaluate(() => {
+        const title = document.getElementById("navbar-report-title")?.textContent?.trim() || document.title;
+        const mode = document.documentElement.getAttribute("data-report-mode") || "report";
+        const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).map((h) => ({
+          tag: h.tagName.toLowerCase(),
+          id: h.id || null,
+          text: h.textContent.trim().slice(0, 120)
+        }));
+        const insufficientSpaceCount = document.querySelectorAll('[data-insufficient-space="true"], .verify-insufficient-space').length;
+        return {
+          title,
+          mode,
+          headings,
+          counts: {
+            charts: document.querySelectorAll("main canvas").length,
+            mermaid: document.querySelectorAll("main .mermaid").length,
+            tables: document.querySelectorAll("main table").length,
+            insufficientSpace: insufficientSpaceCount
+          }
+        };
+      });
+      reporter.reviewPacket = {
+        generatedAt: new Date().toISOString(),
+        reportPath: resolvedHtmlPath,
+        ...inventory
+      };
+    } catch (_) {}
+  }
+
   await browser.close();
   return reporter.onRunComplete();
 }

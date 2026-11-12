@@ -11,6 +11,9 @@ export class Reporter {
     this.results = [];
     this.failures = [];
     this.warnings = [];
+    this.remediations = [];
+    this.screenshots = [];
+    this.reviewPacket = null;
     this.startTime = 0;
     this.durationMs = 0;
   }
@@ -36,6 +39,12 @@ export class Reporter {
     if (result.errors && result.errors.length > 0) {
       for (const err of result.errors) {
         this.failures.push(err);
+      }
+    }
+
+    if (Array.isArray(result.remediations) && result.remediations.length > 0) {
+      for (const item of result.remediations) {
+        this.remediations.push(item);
       }
     }
 
@@ -69,6 +78,7 @@ export class Reporter {
       const safeName = name.replace(/[^a-zA-Z0-9_-]/g, "_").toLowerCase();
       const filePath = path.join(resolvedDir, `${Date.now()}_${safeName}.png`);
       await page.screenshot({ path: filePath, fullPage: true });
+      this.screenshots.push({ name, path: filePath });
       return filePath;
     } catch {
       return null;
@@ -109,7 +119,10 @@ export class Reporter {
       },
       results: this.results,
       errors: this.failures,
-      warnings: this.warnings
+      warnings: this.warnings,
+      remediations: this.remediations,
+      screenshots: this.screenshots,
+      ...(this.reviewPacket ? { reviewPacket: this.reviewPacket } : {})
     };
 
     fs.writeFileSync(resolvedPath, JSON.stringify(report, null, 2), "utf-8");
@@ -131,10 +144,25 @@ export class Reporter {
       this.exportJson(this.options.json);
     }
 
+    if (typeof this.options.reviewPacket === "string" && this.reviewPacket) {
+      const rpPath = path.resolve(process.cwd(), this.options.reviewPacket);
+      fs.mkdirSync(path.dirname(rpPath), { recursive: true });
+      fs.writeFileSync(rpPath, JSON.stringify({
+        ...this.reviewPacket,
+        remediations: this.remediations,
+        screenshots: this.screenshots,
+        errors: this.failures,
+        warnings: this.warnings
+      }, null, 2), "utf-8");
+    }
+
     return {
       success: this.failures.length === 0,
       failures: this.failures,
       warnings: this.warnings,
+      remediations: this.remediations,
+      screenshots: this.screenshots,
+      reviewPacket: this.reviewPacket,
       results: this.results,
       durationMs: this.durationMs
     };

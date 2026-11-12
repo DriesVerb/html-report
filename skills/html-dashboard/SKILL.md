@@ -9,6 +9,8 @@ description: >-
 
 # Live Telemetry & Real-Time Dashboard Skill (`html-dashboard`)
 
+> **Domain:** `Delivery Archetype` | **Beneficiary:** `Hybrid` | **Serving:** `Server-Connected` | **Behavior:** `Interactive / Reactive`
+
 This specialized skill builds reactive, live-updating monitoring consoles and multi-agent telemetry interfaces using **Datastar.js Server-Sent Events (SSE)** and the **Universal Two-Way Agent Bridge**.
 
 Instead of heavy frontend frameworks or full-page polling, this architecture streams targeted HTML morphs directly over persistent SSE connections without page reloads.

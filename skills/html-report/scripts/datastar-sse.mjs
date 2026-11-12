@@ -1,5 +1,6 @@
 /**
  * datastar-sse.mjs - Real-Time Datastar.js SSE Telemetry Engine
+ * Two-Axis Scope: Server-Connected + Interactive / Reactive (scoped to serve-report.mjs).
  * Standardized TaskTelemetrySchema, SessionState, DatastarBridge,
  * and Vendor-Neutral LLM Adapters for Google Antigravity (AGY) and OpenAI Codex.
  */

@@ -13,6 +13,7 @@ const cliPath = path.resolve(__dirname, "../skills/html-report/scripts/build-rep
 const {
   detectAddons,
   extractMainContent,
+  stripDuplicateNavbars,
   generateFaviconTag,
   parseArgs,
   buildReport,
@@ -449,6 +450,41 @@ addons: [charts]
       assert.ok(builtHtml.includes('data-theme="acme-brand"'));
       assert.ok(builtHtml.includes('<style id="daisyui-custom-themes">'));
       assert.ok(builtHtml.includes('[data-theme="acme-brand"]'));
+    });
+  });
+
+  describe("stripDuplicateNavbars", () => {
+    it("strips a print:hidden sticky control bar with nested divs while preserving report content", () => {
+      const fragment = `
+        <div class="print:hidden bg-base-100 border rounded-2xl p-4 sticky top-16 z-30">
+          <div class="flex items-center"><span>Executive Printable Suite</span></div>
+          <div><button onclick="window.print()">Print / Save PDF</button></div>
+        </div>
+        <header class="border-b pb-4"><h1>Cover Title</h1></header>
+        <section id="body">Real Content</section>
+      `;
+      const { html, strippedCount } = stripDuplicateNavbars(fragment);
+      assert.equal(strippedCount, 1);
+      assert.ok(!html.includes("Executive Printable Suite"));
+      assert.ok(!html.includes("Print / Save PDF"));
+      assert.ok(html.includes("<h1>Cover Title</h1>"));
+      assert.ok(html.includes("Real Content"));
+    });
+
+    it("strips a nested .navbar element and ensures buildReport emits only the single shell navbar", () => {
+      const fragment = `
+        <nav class="navbar bg-base-200"><div><span>Duplicate Nav</span></div></nav>
+        <section id="main-sec"><h2>Report Body</h2></section>
+      `;
+      const { html } = buildReport({
+        title: "Print Test",
+        content: fragment,
+        mode: "print"
+      });
+      assert.ok(!html.includes("Duplicate Nav"));
+      assert.ok(html.includes("<h2>Report Body</h2>"));
+      const navbarMatches = html.match(/<nav\b[^>]*class="[^"]*\bnavbar\b[^"]*"/g) || [];
+      assert.equal(navbarMatches.length, 1, "Only the shell navbar should exist in compiled output");
     });
   });
 });

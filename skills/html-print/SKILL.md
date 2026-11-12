@@ -9,6 +9,8 @@ description: >-
 
 # HTML Print & Paged PDF Skill (`html-print`)
 
+> **Domain:** `Delivery Archetype` | **Beneficiary:** `User-Facing` | **Serving:** `Static File` | **Behavior:** `Passive / Printable`
+
 This specialized skill produces publication-grade printable documents and paged PDFs (invoices, compliance audits, receipts, whitepapers) with deterministic pagination and zero screen-only clutter.
 
 Agents generate **only the semantic `<main>` content fragment**, styled specifically for standard sheet dimensions (A4 / US Letter) and print engines.
@@ -39,6 +41,7 @@ Use Tailwind / CSS print utilities to avoid awkward splits across pages:
 - **Explicit Page Breaks**: Use `break-after-page print:break-after-page` between distinct chapters or invoice sections.
 - **Table Integrity**: Ensure tables use `thead { display: table-header-group; }` and rows use `tr { break-inside: avoid; }` so table headers repeat neatly on subsequent sheets.
 - **Screen UI Suppression**: Ensure screen-only action buttons, filter inputs, and interactive widgets are flagged with `print:hidden`.
+- **Single Navbar Rule**: Never add a second navbar, sticky control bar, or duplicate quick-nav/print toolbar inside `<main id="report-main">`. The shared template shell (`template-shell.html`) already renders the single sticky top navbar with the report title, `PRINT` badge, `Contents` TOC dropdown, theme switcher, and Print/PDF export action.
 
 ### 3. Recommended DaisyUI Themes for Print
 Always specify high-contrast, ink-conserving themes:
