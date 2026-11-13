@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Headless Bridge Test</title>
+  <title>Experience Review Remediations - OpenSpec Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -31,61 +31,84 @@
   </style>
 
   <!-- Optional Addon CDNs & Styles -->
-    <meta name="html-report-source" content="projects/headless-bridge-test/index.html" />
+    <!-- Addon: Chart.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
 
-  <meta name="html-report-ai" content="on" />
+  <!-- Addon: Mermaid -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
 
-  <meta name="html-report-ai-port" content="3031" />
+  <!-- Addon: Showdown -->
+  <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
 
-  <meta name="html-report-ai-model" content="Gemini 3.8 Flash (Low)" />
+  <!-- Addon: Datastar -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
 
-  <meta name="html-report-ai-persona" content="analyst" />
-
-  <meta name="html-report-ai-dock" content="off" />
+  <meta name="html-report-source" content="openspec/changes/experience-review-remediations/index.html" />
 
   <!-- Deterministic Agent Manifest -->
   <script type="application/json" id="agent-manifest">
 {
   "schemaVersion": "1.0.0",
-  "project": "headless-bridge-test",
-  "title": "Headless Bridge Test",
+  "project": null,
+  "title": "Experience Review Remediations - OpenSpec Journey & Plan",
   "mode": "report",
   "theme": "light",
-  "aiBridge": true,
-  "aiConfig": {
-    "port": 3031,
-    "model": "Gemini 3.8 Flash (Low)",
-    "persona": "analyst",
-    "floatingAssistant": false
-  },
+  "aiBridge": false,
+  "aiConfig": null,
   "published": false,
   "pwa": false,
-  "activeAddons": [],
+  "activeAddons": [
+    "charts",
+    "mermaid",
+    "showdown",
+    "datastar"
+  ],
   "files": {
-    "entry": "projects/headless-bridge-test/index.html",
-    "fragment": "projects/headless-bridge-test/fragment.html",
-    "published": "projects/headless-bridge-test/published.html",
-    "manifest": "projects/headless-bridge-test/report.manifest.json",
-    "agents": "projects/headless-bridge-test/AGENTS.md"
+    "entry": "openspec/changes/experience-review-remediations/index.html",
+    "fragment": "openspec/changes/experience-review-remediations/fragment.html"
   },
   "pipeline": {
-    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --project headless-bridge-test --content projects/headless-bridge-test/fragment.html --title \"Headless Bridge Test\" --mode report --theme light --ai --ai-port 3031 --no-ai-dock",
-    "serveCommand": "node skills/html-report/scripts/serve-report.mjs projects/headless-bridge-test/index.html --port 3031"
+    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output openspec/changes/experience-review-remediations/index.html --content openspec/changes/experience-review-remediations/fragment.html --title \"Experience Review Remediations - OpenSpec Journey & Plan\" --mode report --theme light --addons charts,mermaid,showdown,datastar",
+    "serveCommand": "node skills/html-report/scripts/serve-report.mjs openspec/changes/experience-review-remediations/index.html --port 3031",
+    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs openspec/changes/experience-review-remediations/index.html",
+    "preflightCommand": "node skills/html-report/scripts/preflight.mjs --json",
+    "authoringGuide": "../../skills/html-report/references/agent-authoring-guide.md"
   },
   "sections": [
     {
       "agentId": "section-1",
-      "slug": "headless-bridge-test",
-      "label": "Headless Bridge Test",
-      "id": "overview",
-      "selector": "#overview"
+      "slug": "experience-review-remediations-reactive-assembly",
+      "label": "Experience Review Remediations — Reactive Assembly, Symlink-Safe Verification, Dedicated Ports &amp; Agent-Agnostic Turnkey AI Bridge",
+      "id": null,
+      "selector": "[data-agent-id=\"section-1\"]"
     },
     {
       "agentId": "section-2",
-      "slug": "core-analysis",
-      "label": "Core Analysis",
-      "id": "analysis",
-      "selector": "#analysis"
+      "slug": "section-2",
+      "label": "Section 2",
+      "id": null,
+      "selector": "[data-agent-id=\"section-2\"]"
+    },
+    {
+      "agentId": "section-3",
+      "slug": "surgical-defects-bigger-architectural-upgrades",
+      "label": "Surgical Defects &amp; Bigger Architectural Upgrades",
+      "id": null,
+      "selector": "[data-agent-id=\"section-3\"]"
+    },
+    {
+      "agentId": "section-4",
+      "slug": "end-to-end-remediation-architecture-ports-3031-3",
+      "label": "End-to-End Remediation Architecture (Ports 3031/3032 &amp; Agent-Agnostic Bridge)",
+      "id": null,
+      "selector": "[data-agent-id=\"section-4\"]"
+    },
+    {
+      "agentId": "section-5",
+      "slug": "implementation-checklist-15-tasks-across-5-phase",
+      "label": "Implementation Checklist (15 Tasks across 5 Phases)",
+      "id": null,
+      "selector": "[data-agent-id=\"section-5\"]"
     }
   ],
   "widgets": [
@@ -106,6 +129,24 @@
       "type": "kpi",
       "id": null,
       "selector": "[data-agent-id=\"kpi-3\"]"
+    },
+    {
+      "agentId": "kpi-4",
+      "type": "kpi",
+      "id": null,
+      "selector": "[data-agent-id=\"kpi-4\"]"
+    },
+    {
+      "agentId": "chart-1",
+      "type": "chart",
+      "id": "tasks-progress-chart",
+      "selector": "#tasks-progress-chart"
+    },
+    {
+      "agentId": "mermaid-1",
+      "type": "mermaid",
+      "id": null,
+      "selector": "[data-agent-id=\"mermaid-1\"]"
     }
   ]
 }
@@ -322,7 +363,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Headless Bridge Test
+          Experience Review Remediations - OpenSpec Journey & Plan
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -689,6 +730,7 @@
     </form>
   </dialog>
 
+  <!-- html-report:authoring:start agent-reconnect-modal -->
   <!-- Turnkey AI Agent Reconnection Modal -->
   <dialog id="agent-reconnect-modal" class="modal modal-bottom sm:modal-middle">
     <div class="modal-box bg-base-100 border border-base-300 shadow-2xl max-w-2xl text-left">
@@ -707,7 +749,7 @@
 
       <div class="space-y-4 pt-4 text-xs sm:text-sm text-base-content/80">
         <p>
-          This report features an interactive <strong>Two-Way AI Agent Co-Pilot</strong> with Datastar live streaming. Because it was shared or opened without an active local server on <code>localhost:3000</code>, the agent bridge is currently disconnected.
+          This report features an interactive <strong>Two-Way AI Agent Co-Pilot</strong> with Datastar live streaming. Because it was shared or opened without an active local server on <code>localhost:3031</code>, the agent bridge is currently disconnected.
         </p>
 
         <div class="flex items-start gap-2.5 p-2.5 rounded-lg bg-info/10 border border-info/20 text-xs text-base-content/80">
@@ -767,55 +809,320 @@
       <button>close</button>
     </form>
   </dialog>
+  <!-- html-report:authoring:end agent-reconnect-modal -->
 
   <!-- Main Content Container -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
-<!-- Hero Header -->
-  <section id="overview" class="space-y-4" data-agent-section="headless-bridge-test" data-agent-id="section-1">
-    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-base-300 pb-4">
-      <div>
-        <div class="badge badge-primary badge-outline badge-sm font-mono mb-2">report</div>
-        <h1 class="text-3xl font-extrabold tracking-tight">Headless Bridge Test</h1>
-        <p class="text-sm text-base-content/70 mt-1">Project scaffold: <code>projects/headless-bridge-test/</code> · Two-Way Agent Bridge enabled</p>
+  <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full max-w-6xl space-y-8">
+<!-- Header, Journey Phase Stepper & Direct Markdown Artifact Links -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="experience-review-remediations-reactive-assembly" data-agent-id="section-1">
+    <div class="card-body gap-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="badge badge-success badge-sm font-mono uppercase">OpenSpec Journey · Shipped (15/15)</span>
+            <span class="badge badge-outline badge-sm font-mono">experience-review-remediations</span>
+          </div>
+          <h1 id="sec-overview" class="text-2xl sm:text-3xl font-bold mt-2">Experience Review Remediations — Reactive Assembly, Symlink-Safe Verification, Dedicated Ports &amp; Agent-Agnostic Turnkey AI Bridge</h1>
+          <p class="text-sm text-base-content/70 mt-1">
+            Comprehensive remediation of the 7 reproduced defects and 6 architectural gaps from the 13 Nov 2026 Stone / Form review: gitignoring <code>projects/</code>, dedicated ports <code>3031</code>/<code>3032</code>, preflight CLI, reactive <code>&lt;main&gt;</code> preservation, symlink &amp; Chrome fallback verification, and an agent-agnostic Turnkey AI Bridge.
+          </p>
+        </div>
       </div>
-    </div>
 
-    <div class="stats stats-vertical lg:stats-horizontal shadow-sm w-full border border-base-300 bg-base-100">
-      <div class="stat" data-agent-widget="kpi" data-agent-id="kpi-1">
-        <div class="stat-title">Primary KPI</div>
-        <div class="stat-value text-primary">--</div>
-        <div class="stat-desc">Replace with domain metric</div>
+      <!-- Journey Phase Stepper -->
+      <div class="w-full overflow-x-auto pt-2">
+        <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary">Brainstorming</li>
+          <li class="step step-primary">Planning</li>
+          <li class="step step-primary">Implementing</li>
+          <li class="step step-primary">Verifying</li>
+          <li class="step step-primary">Shipped / Archived</li>
+        </ul>
       </div>
-      <div class="stat" data-agent-widget="kpi" data-agent-id="kpi-2">
-        <div class="stat-title">Secondary KPI</div>
-        <div class="stat-value text-secondary">--</div>
-        <div class="stat-desc">Replace with domain metric</div>
-      </div>
-      <div class="stat" data-agent-widget="kpi" data-agent-id="kpi-3">
-        <div class="stat-title">Status</div>
-        <div class="stat-value text-accent">Ready</div>
-        <div class="stat-desc">Deterministic scaffold</div>
+
+      <!-- Direct Markdown Artifact Links -->
+      <div class="flex flex-wrap gap-2 pt-2 border-t border-base-200">
+        <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('specs/skill-packaging/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="package" class="w-3.5 h-3.5"></i> specs/skill-packaging/spec.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('specs/deterministic-assembly/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="layers" class="w-3.5 h-3.5"></i> specs/deterministic-assembly/spec.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('specs/lean-verification/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> specs/lean-verification/spec.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('specs/reactive-data-copilot/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="radio" class="w-3.5 h-3.5"></i> specs/reactive-data-copilot/spec.md
+        </button>
       </div>
     </div>
   </section>
 
-  <!-- Primary Analysis Section -->
-  <section id="analysis" class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="core-analysis" data-agent-id="section-2">
+  <!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
+  <dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50">
+        <div class="flex items-center gap-2">
+          <i data-lucide="file-code" class="w-4 h-4 text-primary"></i>
+          <h3 id="markdown-modal-title" class="font-mono font-bold text-sm text-base-content">artifact.md</h3>
+        </div>
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+        </form>
+      </div>
+      <div id="markdown-modal-body" class="p-6 overflow-y-auto font-sans prose prose-sm max-w-none text-base-content">
+        <div class="flex items-center justify-center py-12">
+          <span class="loading loading-spinner loading-md text-primary"></span>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- Live Progress Metrics & Chart -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6" data-agent-section="section-2" data-agent-id="section-2">
+    <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4" data-agent-widget="kpi" data-agent-id="kpi-1">
+        <div class="stat-title text-xs">Total Tasks</div>
+        <div class="stat-value text-2xl font-mono">15</div>
+        <div class="stat-desc text-xs">5 phases (4 capabilities)</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4" data-agent-widget="kpi" data-agent-id="kpi-2">
+        <div class="stat-title text-xs">Completed</div>
+        <div class="stat-value text-2xl font-mono text-success">15</div>
+        <div class="stat-desc text-xs">100% done</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4" data-agent-widget="kpi" data-agent-id="kpi-3">
+        <div class="stat-title text-xs">In Progress</div>
+        <div class="stat-value text-2xl font-mono text-warning">0</div>
+        <div class="stat-desc text-xs">All phases verified</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4" data-agent-widget="kpi" data-agent-id="kpi-4">
+        <div class="stat-title text-xs">Remaining</div>
+        <div class="stat-value text-2xl font-mono text-primary">0</div>
+        <div class="stat-desc text-xs">Ready to ship</div>
+      </div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 flex items-center justify-center min-w-0">
+      <div class="w-full h-44 relative min-w-0">
+        <canvas id="tasks-progress-chart" data-agent-widget="chart" data-agent-id="chart-1"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Defect & Architectural Upgrade Matrix (Responsive Cards) -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="surgical-defects-bigger-architectural-upgrades" data-agent-id="section-3">
+    <div class="card-body space-y-4">
+      <h2 id="sec-findings" class="card-title text-lg">Surgical Defects &amp; Bigger Architectural Upgrades</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">1. Ephemeral projects/ Git Hygiene</span>
+            <span class="badge badge-primary badge-xs font-mono">Arch</span>
+          </div>
+          <p class="text-base-content/70">Gitignore <code>projects/</code> in <code>.gitignore</code> and remove all tracked <code>projects/*</code> files from the git index and working tree so generated reports never pollute repository history.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">2. Dedicated Ports 3031/3032 &amp; Preflight CLI</span>
+            <span class="badge badge-primary badge-xs font-mono">Arch</span>
+          </div>
+          <p class="text-base-content/70">Default project servers &amp; Turnkey AI Bridge to port <code>3031</code> (and <code>3032</code> fallback); add <code>preflight.mjs</code> checking canonical skill paths, ports, Chrome binaries, and AI providers upfront.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">3. Reactive &lt;main&gt; &amp; Conditional AI Chrome</span>
+            <span class="badge badge-error badge-xs font-mono">P1</span>
+          </div>
+          <p class="text-base-content/70">Preserve <code>x-data</code>, <code>x-init</code>, <code>id</code>, <code>data-*</code>, and merged classes via <code>extractMainElement()</code>; omit <code>#agent-dock-container</code> HTML when <code>--ai</code> is disabled.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">4. Symlink-Safe CLI &amp; System Chrome Fallback</span>
+            <span class="badge badge-error badge-xs font-mono">P1</span>
+          </div>
+          <p class="text-base-content/70">Canonicalize CLI direct-execution checks with <code>fs.realpathSync()</code> across all scripts and automatically fall back to system Google Chrome in <code>runner.mjs</code>.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">5. Agent-Agnostic Turnkey AI Bridge + Honest 503</span>
+            <span class="badge badge-error badge-xs font-mono">P1 / Arch</span>
+          </div>
+          <p class="text-base-content/70">Replace hardcoded <code>agy</code> dependency with <code>AgentInferenceRouter</code> (<code>claude</code>, <code>gemini</code>, <code>codex</code>, <code>opencode</code>, <code>agy</code>, <code>ollama</code>, HTTP APIs) and return HTTP <code>503</code> instead of fake <code>"14.2%"</code> claims on failure.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">6. Turnkey /events SSE, Verifier &amp; Board SDK</span>
+            <span class="badge badge-warning badge-xs font-mono">P2 / Arch</span>
+          </div>
+          <p class="text-base-content/70">Add <code>/events</code> SSE + <code>/api/board/state</code>, manifest-aware startup theme &amp; composite chart checks, <code>--url</code> HTTP verifier mode, <code>HTMLReportBoard</code> SDK, and 7-step Vertical-Slice Workflow docs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture & Mermaid Flow -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="end-to-end-remediation-architecture-ports-3031-3" data-agent-id="section-4">
     <div class="card-body">
-      <h2 class="card-title text-xl font-bold">Core Analysis</h2>
-      <p class="text-sm text-base-content/70">Populate this section in <code>projects/headless-bridge-test/fragment.html</code> with domain charts, Mermaid diagrams, or data tables.</p>
+      <h2 id="sec-architecture" class="card-title text-lg">End-to-End Remediation Architecture (Ports 3031/3032 &amp; Agent-Agnostic Bridge)</h2>
+      <p class="text-sm text-base-content/70">
+        Unifying pre-authoring preflight, reactive assembly, agent-agnostic Turnkey AI Bridge routing, Datastar SSE board persistence, and symlink/HTTP Playwright verification.
+      </p>
+      <div class="mermaid bg-base-200/40 rounded-xl p-4 text-center" data-agent-widget="mermaid" data-agent-id="mermaid-1">
+flowchart TD
+    PF["1. Preflight &amp; Scaffolding (Port 3031/3032)\npreflight.mjs + scaffold-project.mjs (projects/ gitignored)"]
+    ASM["2. Deterministic Assembly (build-report.mjs)\nextractMainElement() + Conditional AI Chrome + #agent-manifest"]
+    SRV["3. Agent-Agnostic Live Server (serve-report.mjs :3031)\nAgentInferenceRouter + 503 on failure + /events SSE + /api/board/state"]
+    VER["4. Playwright Verifier (verify-report.mjs)\nfs.realpathSync() + System Chrome Fallback + --url HTTP Mode"]
+    PF --> ASM
+    ASM --> SRV
+    ASM --> VER
+      </div>
     </div>
   </section>
+
+  <!-- Connected Task Checklist -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="implementation-checklist-15-tasks-across-5-phase" data-agent-id="section-5">
+    <div class="card-body space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 id="sec-tasks" class="card-title text-lg">Implementation Checklist (15 Tasks across 5 Phases)</h2>
+        <button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary text-xs font-mono">View tasks.md</button>
+      </div>
+      <div class="space-y-4 text-sm">
+        <div>
+          <h3 id="sec-phase-1" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">1. Ephemeral projects/ Git Hygiene, Dedicated Ports (3031/3032) &amp; Preflight CLI</h3>
+          <ul class="space-y-1.5 pl-1">
+            <li>☑ <strong>1.1</strong> Add <code>projects/</code> to <code>.gitignore</code> and remove all tracked <code>projects/</code> files from git index and disk</li>
+            <li>☑ <strong>1.2</strong> Update default project server and Turnkey AI Bridge ports from <code>3000</code> to <code>3031</code> (and <code>3032</code> secondary)</li>
+            <li>☑ <strong>1.3</strong> Create <code>skills/html-report/scripts/preflight.mjs</code> for skill path, port <code>3031</code>/<code>3032</code>, Chrome &amp; AI provider readiness</li>
+          </ul>
+        </div>
+        <div>
+          <h3 id="sec-phase-2" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">2. Reactive Root Preservation, Conditional AI Chrome &amp; Installation-Aware Scaffolding</h3>
+          <ul class="space-y-1.5 pl-1">
+            <li>☑ <strong>2.1</strong> Preserve <code>&lt;main&gt;</code> attributes (<code>id</code>, <code>x-data</code>, <code>x-init</code>, <code>x-*</code>, <code>@*</code>, <code>data-*</code>, <code>aria-*</code>) and merge custom classes in <code>build-report.mjs</code></li>
+            <li>☑ <strong>2.2</strong> Conditionally omit <code>#agent-dock-container</code> and <code>#agent-reconnect-modal</code> when <code>ai === false</code></li>
+            <li>☑ <strong>2.3</strong> Resolve installation-aware skill paths dynamically and emit project-local <code>package.json</code> runner scripts in <code>scaffold-project.mjs</code></li>
+          </ul>
+        </div>
+        <div>
+          <h3 id="sec-phase-3" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">3. Symlink-Safe CLI Entrypoints, System Chrome Fallback &amp; Verifier Upgrades</h3>
+          <ul class="space-y-1.5 pl-1">
+            <li>☑ <strong>3.1</strong> Canonicalize CLI direct-execution checks with <code>fs.realpathSync()</code> across all CLI scripts</li>
+            <li>☑ <strong>3.2</strong> Add automatic system Chrome/Chromium fallback in <code>runner.mjs</code> when Playwright's bundled browser revision is missing</li>
+            <li>☑ <strong>3.3</strong> Make <code>core:structure</code> read expected startup theme from <code>#agent-manifest</code> or <code>--expected-theme</code></li>
+            <li>☑ <strong>3.4</strong> Update <code>core:theme-switcher</code> to inspect composite chart palette signatures (<code>borderColor</code>, array <code>backgroundColor</code>, scale colors)</li>
+            <li>☑ <strong>3.5</strong> Add first-class <code>--url &lt;http://...&gt;</code> verification mode to <code>verify-report.mjs</code> and <code>runner.mjs</code></li>
+          </ul>
+        </div>
+        <div>
+          <h3 id="sec-phase-4" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">4. Agent-Agnostic Turnkey AI Bridge, Honest 503 Semantics &amp; Preflight API</h3>
+          <ul class="space-y-1.5 pl-1">
+            <li>☑ <strong>4.1</strong> Implement agent-agnostic <code>AgentInferenceRouter</code> (<code>claude</code>, <code>gemini</code>, <code>codex</code>, <code>opencode</code>, <code>agy</code>, <code>ollama</code>, HTTP APIs) + HTTP <code>503</code> on failure</li>
+            <li>☑ <strong>4.2</strong> Add <code>GET /api/agent/preflight</code> (and enrich <code>/api/agent/health</code>) plus accurate <code>--no-open</code> reload logging in <code>serve-report.mjs</code></li>
+          </ul>
+        </div>
+        <div>
+          <h3 id="sec-phase-5" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">5. Turnkey /events Datastar SSE, /api/board/state, Client SDK &amp; Authoring Docs</h3>
+          <ul class="space-y-1.5 pl-1">
+            <li>☑ <strong>5.1</strong> Add <code>GET /events</code> Datastar SSE stream (15s heartbeat) and <code>GET</code>/<code>POST /api/board/state</code> (with <code>400</code>/<code>403</code> validation &amp; fragment morphing)</li>
+            <li>☑ <strong>5.2</strong> Expose <code>registerContextProvider</code>, <code>setTransportAdapter</code>, <code>HTMLReportBoard</code>, 3-channel status badges &amp; 7-step Vertical-Slice Workflow docs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    window.openMarkdownViewer = async function(filePath) {
+      const modal = document.getElementById("markdown-viewer-modal");
+      const title = document.getElementById("markdown-modal-title");
+      const body = document.getElementById("markdown-modal-body");
+      if (!modal || !body) return;
+
+      const resolvedPath = filePath.startsWith("openspec/")
+        ? filePath
+        : `openspec/changes/experience-review-remediations/${filePath}`;
+      title.textContent = resolvedPath;
+      body.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
+      modal.showModal();
+
+      try {
+        let res = await fetch(resolvedPath);
+        if (!res.ok && resolvedPath !== filePath) {
+          res = await fetch(filePath);
+        }
+        if (!res.ok) {
+          body.innerHTML = `<div class="alert alert-warning text-xs">Could not fetch artifact: <code>${resolvedPath}</code></div>`;
+          return;
+        }
+        const text = await res.text();
+        if (window.showdown) {
+          const conv = new window.showdown.Converter({ tables: true, tasklists: true, strikethrough: true });
+          body.innerHTML = conv.makeHtml(text);
+        } else {
+          body.innerHTML = `<pre class="text-xs font-mono p-4 bg-base-200 rounded">${text.replace(/</g, "&lt;")}</pre>`;
+        }
+      } catch (err) {
+        body.innerHTML = `<div class="alert alert-error text-xs">Error loading markdown: ${err.message}</div>`;
+      }
+    };
+
+    window.initReportCharts = function () {
+      const ctx = document.getElementById("tasks-progress-chart");
+      if (!ctx || typeof Chart === "undefined") return;
+      window.reportCharts = window.reportCharts || [];
+      if (window.reportCharts.length > 0) {
+        window.reportCharts.forEach((c) => c.destroy());
+        window.reportCharts = [];
+      }
+      const colors = typeof window.getThemePalette === "function"
+        ? window.getThemePalette()
+        : { primary: "#6366f1", success: "#22c55e", text: "#334155" };
+      const chart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["Completed", "Remaining"],
+          datasets: [{
+            data: [15, 0],
+            backgroundColor: [colors.success || "#22c55e", colors.primary || "#6366f1"],
+            borderColor: colors.primary || "#6366f1",
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom", labels: { color: colors.text } } },
+          cutout: "68%"
+        }
+      });
+      window.reportCharts.push(chart);
+    };
+    window.addEventListener("load", window.initReportCharts);
+  </script>
   </main>
 
   <!-- Minimal Centered Footer with Semantic Versioning -->
   <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
     <div class="flex items-center justify-center gap-1.5 flex-wrap">
       <span>generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a></span>
-      <span class="badge badge-ghost badge-xs font-mono font-semibold" title="Semantic Versioning v1.0.0">v1.0.0</span>
+      <span class="badge badge-ghost badge-xs font-mono font-semibold" title="Semantic Versioning v0.0.0-beta.1">v0.0.0-beta.1</span>
     </div>
   </footer>
 
+  <!-- html-report:authoring:start agent-dock -->
   <!-- HTMLReportAgentDock: Floating & Collapsible Two-Way AI Assistant Dock -->
   <aside id="agent-dock-container" aria-label="AI Assistant Dock" class="print:hidden hidden">
     <!-- Floating Launcher Toggle (bottom-right) -->
@@ -905,6 +1212,7 @@
       </form>
     </div>
   </aside>
+  <!-- html-report:authoring:end agent-dock -->
 
   <!-- html-report:authoring:start edit-dock -->
   <!-- Edit Mode (#edit-dock): bottom-docked, scroll-following prompt editor & Target Element selector (pruned in Published Document via --published) -->
@@ -1594,6 +1902,10 @@ function initThemeDropdown() {
   const listEl = document.getElementById("theme-swatch-list");
   if (!listEl) return;
   const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  const activeLabel = document.getElementById("active-theme-label");
+  if (activeLabel) activeLabel.textContent = currentTheme;
+  const modalActiveLabel = document.getElementById("modal-active-theme-label");
+  if (modalActiveLabel) modalActiveLabel.textContent = currentTheme;
   listEl.innerHTML = "";
 
   DAISYUI_THEMES.forEach((theme) => {
@@ -1662,21 +1974,71 @@ async function setReportTheme(themeName) {
 
   const palette = resolveDaisyUIThemePalette();
 
-  // Dynamic Chart.js color sync
-  if (typeof window !== "undefined" && window.reportCharts && Array.isArray(window.reportCharts)) {
-    window.reportCharts.forEach((chart, idx) => {
+  // Dynamic Chart.js color sync (scalar & array datasets, scales, and legend)
+  const paletteSequence = ["primary", "secondary", "accent", "info", "success", "warning", "error"];
+  const activeCharts = (typeof window !== "undefined" && Array.isArray(window.reportCharts) && window.reportCharts.length > 0)
+    ? window.reportCharts
+    : (typeof document !== "undefined" && typeof Chart !== "undefined" && typeof Chart.getChart === "function"
+        ? Array.from(document.querySelectorAll("canvas")).map((c) => Chart.getChart(c)).filter(Boolean)
+        : []);
+  if (activeCharts.length > 0) {
+    activeCharts.forEach((chart) => {
       if (chart?.data?.datasets) {
         chart.data.datasets.forEach((ds, dsIdx) => {
-          const colorKey = dsIdx % 3 === 0 ? "primary" : dsIdx % 3 === 1 ? "secondary" : "accent";
-          const chosen = palette[colorKey] ? palette[colorKey].hex : "#3b82f6";
-          if (ds.borderColor) ds.borderColor = chosen;
-          if (ds.backgroundColor && typeof ds.backgroundColor === "string" && ds.backgroundColor.includes("rgba")) {
-            ds.backgroundColor = palette[colorKey] ? palette[colorKey].rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+          const colorKey = paletteSequence[dsIdx % paletteSequence.length];
+          const chosenEntry = palette[colorKey] || palette.primary || { hex: "#3b82f6", rgba: (a) => `rgba(59, 130, 246, ${a})` };
+
+          if (Array.isArray(ds.borderColor)) {
+            ds.borderColor = ds.borderColor.map((_, i) => {
+              const k = paletteSequence[i % paletteSequence.length];
+              return palette[k] ? palette[k].hex : chosenEntry.hex;
+            });
+          } else if (ds.borderColor) {
+            ds.borderColor = chosenEntry.hex;
+          }
+
+          if (Array.isArray(ds.backgroundColor)) {
+            ds.backgroundColor = ds.backgroundColor.map((orig, i) => {
+              const k = paletteSequence[i % paletteSequence.length];
+              const entry = palette[k] || chosenEntry;
+              if (typeof orig === "string" && orig.includes("rgba")) {
+                return entry.rgba ? entry.rgba(0.75) : entry.hex;
+              }
+              return entry.hex;
+            });
+          } else if (ds.backgroundColor && typeof ds.backgroundColor === "string") {
+            if (ds.backgroundColor.includes("rgba")) {
+              ds.backgroundColor = chosenEntry.rgba ? chosenEntry.rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+            } else {
+              ds.backgroundColor = chosenEntry.hex;
+            }
           }
         });
+      }
+
+      if (chart?.options?.scales && typeof chart.options.scales === "object") {
+        const textHex = palette.text ? palette.text.hex : "#64748b";
+        const gridColor = palette.grid ? palette.grid.rgba(0.25) : "rgba(148, 163, 184, 0.2)";
+        for (const scale of Object.values(chart.options.scales)) {
+          if (!scale || typeof scale !== "object") continue;
+          if (scale.ticks && typeof scale.ticks === "object") scale.ticks.color = textHex;
+          if (scale.grid && typeof scale.grid === "object") scale.grid.color = gridColor;
+          if (scale.pointLabels && typeof scale.pointLabels === "object") scale.pointLabels.color = textHex;
+          if (scale.angleLines && typeof scale.angleLines === "object") scale.angleLines.color = gridColor;
+        }
+      }
+
+      if (chart?.options?.plugins?.legend?.labels && typeof chart.options.plugins.legend.labels === "object") {
+        chart.options.plugins.legend.labels.color = palette.text ? palette.text.hex : "#64748b";
+      }
+
+      if (typeof chart?.update === "function") {
         chart.update();
       }
     });
+  }
+  if (typeof window !== "undefined" && typeof window.onReportThemeChange === "function") {
+    try { window.onReportThemeChange(themeName, palette); } catch (_) {}
   }
 
   // Dynamic Mermaid sync
@@ -1746,6 +2108,7 @@ function checkInsufficientHorizontalSpace() {
     const style = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle(el) : el.style;
     if (style.display === "none" || style.visibility === "hidden" || el.clientWidth === 0) {
       el.removeAttribute("data-insufficient-space");
+      if (el.classList) el.classList.remove("verify-insufficient-space");
       return;
     }
     const hasHorizontalScrollbar =
@@ -1754,6 +2117,7 @@ function checkInsufficientHorizontalSpace() {
 
     if (hasHorizontalScrollbar) {
       el.setAttribute("data-insufficient-space", "true");
+      if (el.classList) el.classList.add("verify-insufficient-space");
       insufficient.push({
         tag: el.tagName.toLowerCase(),
         id: el.id || null,
@@ -1764,6 +2128,7 @@ function checkInsufficientHorizontalSpace() {
       });
     } else {
       el.removeAttribute("data-insufficient-space");
+      if (el.classList) el.classList.remove("verify-insufficient-space");
     }
   });
 
@@ -2874,6 +3239,64 @@ const HTMLReportAgent = {
   _isDockOpen: false,
   _dockInitialized: false,
   _history: [],
+  _contextProviders: [],
+  _transportAdapter: null,
+  _lastPreflight: null,
+
+  registerContextProvider: function(fn) {
+    if (typeof fn === "function") {
+      this._contextProviders.push(fn);
+      return () => {
+        this._contextProviders = this._contextProviders.filter((p) => p !== fn);
+      };
+    }
+    return () => {};
+  },
+
+  setTransportAdapter: function(fn) {
+    this._transportAdapter = typeof fn === "function" ? fn : null;
+    return this;
+  },
+
+  collectCustomContext: function(baseContext = {}) {
+    const merged = {};
+    for (const provider of this._contextProviders) {
+      try {
+        const extra = provider(baseContext);
+        if (extra && typeof extra === "object" && !Array.isArray(extra)) {
+          Object.assign(merged, extra);
+        }
+      } catch (_) {}
+    }
+    return merged;
+  },
+
+  checkPreflight: async function() {
+    if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
+      return { ok: false, offline: true, ai: { available: false, activeProvider: null } };
+    }
+    try {
+      const cfg = this.getAiConfig();
+      const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
+        ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/preflight`
+        : "/api/agent/preflight";
+      const res = await fetch(endpoint, { method: "GET" });
+      if (res.ok) {
+        const data = await res.json();
+        this._lastPreflight = data;
+        if (typeof document !== "undefined") {
+          const dockStatus = document.getElementById("agent-dock-status");
+          if (dockStatus && data.ai) {
+            dockStatus.textContent = data.ai.available
+              ? `Bridge: Online • AI: ${data.ai.activeProvider}`
+              : "Bridge: Online • AI Provider: Unavailable";
+          }
+        }
+        return data;
+      }
+    } catch (_) {}
+    return { ok: false, ai: { available: false, activeProvider: null } };
+  },
 
   getState: function() {
     return this._connectionState;
@@ -2949,7 +3372,7 @@ const HTMLReportAgent = {
   },
 
   getAiConfig: function() {
-    const defaults = { port: 3000, model: "Gemini 3.8 Flash (Low)", persona: "analyst" };
+    const defaults = { port: 3031, fallbackPort: 3032, model: "Gemini 3.8 Flash (Low)", persona: "analyst" };
     if (typeof document === "undefined") return defaults;
     const readMeta = (name) => {
       const el = document.querySelector(`meta[name="${name}"]`);
@@ -2989,17 +3412,23 @@ const HTMLReportAgent = {
 
     try {
       const cfg = this.getAiConfig();
-      const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
-        ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3000}/__agent_status__`
-        : "/__agent_status__";
+      const endpoints = (typeof window === "undefined" && typeof process !== "undefined")
+        ? (process.env.REPORT_PORT
+            ? [`http://127.0.0.1:${process.env.REPORT_PORT}/__agent_status__`]
+            : Array.from(new Set([cfg.port || 3031, cfg.fallbackPort || 3032, 3000])).map((p) => `http://127.0.0.1:${p}/__agent_status__`))
+        : ["/__agent_status__"];
 
-      const res = await fetch(endpoint, { method: "GET" });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.ok) {
-          this._updateState("connected", data);
-          return true;
-        }
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint, { method: "GET" });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.ok) {
+              this._updateState("connected", data);
+              return true;
+            }
+          }
+        } catch (_) {}
       }
     } catch (_) {}
 
@@ -3058,7 +3487,7 @@ const HTMLReportAgent = {
       filename = "report.html";
     }
     const cfg = this.getAiConfig();
-    const port = options.port || cfg.port || 3000;
+    const port = options.port || cfg.port || 3031;
     const title = options.title || (typeof document !== "undefined" && document.title) || "Interactive HTML Report";
 
     return `I am viewing an interactive publication report: "${title}" (${filename}).
@@ -3219,13 +3648,17 @@ Prerequisites & Instructions:
     const activeTheme = (typeof document !== "undefined" && document.documentElement && document.documentElement.getAttribute("data-theme")) || "light";
 
     if (!el) {
-      return {
+      const base = {
         elementId: null,
         selector: null,
         domSnippet: null,
         datasetState: null,
         activeTheme
       };
+      if (this._contextProviders && this._contextProviders.length > 0) {
+        base.customContext = this.collectCustomContext(base);
+      }
+      return base;
     }
 
     const container = (typeof el.closest === "function" && el.closest(".card, [data-agent-target], section, article, table, canvas")) || el;
@@ -3277,13 +3710,17 @@ Prerequisites & Instructions:
       domSnippet = domSnippet.slice(0, 4000) + "... [truncated]";
     }
 
-    return {
+    const resultCtx = {
       elementId,
       selector,
       domSnippet,
       datasetState,
       activeTheme
     };
+    if (this._contextProviders && this._contextProviders.length > 0) {
+      resultCtx.customContext = this.collectCustomContext(resultCtx);
+    }
+    return resultCtx;
   },
 
   openDock: function(options = {}) {
@@ -3507,7 +3944,11 @@ Prerequisites & Instructions:
       persona
     });
 
-    const context = options.context || this.serializeElementContext(this._targetElement);
+    const baseContext = options.context || this.serializeElementContext(this._targetElement);
+    const customContext = this.collectCustomContext(baseContext);
+    const context = Object.keys(customContext).length > 0
+      ? { ...baseContext, customContext: { ...(baseContext.customContext || {}), ...customContext } }
+      : baseContext;
     const targetSelector = options.targetSelector || (this._targetElement ? this.serializeElementContext(this._targetElement).selector : undefined);
     const sessionId = options.sessionId || this.getSessionId();
 
@@ -3518,14 +3959,34 @@ Prerequisites & Instructions:
       context,
       history: this._history.slice(-10),
       persona,
-      model: options.model || cfg.model
+      model: options.model || cfg.model,
+      ...(options.heuristic ? { heuristic: true } : {})
     };
 
     this._history.push({ role: "user", content: prompt, timestamp: new Date().toISOString() });
 
+    if (typeof this._transportAdapter === "function") {
+      try {
+        const customRes = await this._transportAdapter(payload, options);
+        const textOut = (customRes && (customRes.result || customRes.text)) || "Assessment complete.";
+        if (loadingEl) {
+          const contentEl = loadingEl.querySelector(".message-content");
+          if (contentEl) contentEl.innerHTML = this._formatMarkdown(textOut);
+        }
+        this._history.push({ role: "assistant", content: textOut, timestamp: new Date().toISOString() });
+        return customRes || { ok: true, result: textOut };
+      } catch (adapterErr) {
+        if (loadingEl) {
+          const contentEl = loadingEl.querySelector(".message-content");
+          if (contentEl) contentEl.innerHTML = `<span class="text-error font-semibold">Error: ${adapterErr.message}</span>`;
+        }
+        return { ok: false, error: adapterErr.message };
+      }
+    }
+
     if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
       this._updateState("disconnected");
-      const fallbackText = "Agent bridge offline (standalone file:// mode). Start dev server on localhost:3000 to enable real-time co-pilot.";
+      const fallbackText = `Agent bridge offline (standalone file:// mode). Start dev server on localhost:${cfg.port || 3031} to enable real-time co-pilot.`;
       if (loadingEl) {
         const contentEl = loadingEl.querySelector(".message-content");
         if (contentEl) contentEl.innerHTML = `<span class="text-warning">${fallbackText}</span>`;
@@ -3535,7 +3996,7 @@ Prerequisites & Instructions:
 
     try {
       const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
-        ? `http://127.0.0.1:${process.env.REPORT_PORT || 3000}/api/agent/prompt`
+        ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/prompt`
         : "/api/agent/prompt";
 
       const res = await fetch(endpoint, {
@@ -3547,7 +4008,24 @@ Prerequisites & Instructions:
         body: JSON.stringify(payload)
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        let errBody = null;
+        try { errBody = await res.json(); } catch (_) {}
+        if (res.status === 503 || (errBody && errBody.code === "inference_unavailable")) {
+          this._updateState("connected");
+          if (typeof document !== "undefined") {
+            const dockStatus = document.getElementById("agent-dock-status");
+            if (dockStatus) dockStatus.textContent = "Bridge: Online • AI Provider: Unavailable";
+          }
+          const msg = (errBody && (errBody.error || errBody.reason)) || "AI inference provider is unavailable on this machine.";
+          if (loadingEl) {
+            const contentEl = loadingEl.querySelector(".message-content");
+            if (contentEl) contentEl.innerHTML = `<span class="text-warning font-semibold">${typeof escapeHtml === "function" ? escapeHtml(msg) : msg}</span>`;
+          }
+          return errBody || { ok: false, status: "error", code: "inference_unavailable", error: msg };
+        }
+        throw new Error((errBody && errBody.error) || `HTTP ${res.status}`);
+      }
 
       const contentType = res.headers.get("content-type") || "";
 
@@ -3658,8 +4136,9 @@ Prerequisites & Instructions:
     }
 
     try {
+      const cfg = this.getAiConfig();
       const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
-        ? `http://127.0.0.1:${process.env.REPORT_PORT || 3000}/api/agent/confirm-action`
+        ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/confirm-action`
         : "/api/agent/confirm-action";
 
       const res = await fetch(endpoint, {
@@ -5057,9 +5536,25 @@ const HTMLReportPublisher = {
       if (d.textContent && d.textContent.includes("Quick Controls")) d.remove();
     });
     docClone.querySelectorAll('meta[name="html-report-ai"]').forEach((el) => el.remove());
-    docClone.querySelectorAll("[data-agent-authoring], [data-session-id]").forEach((el) => {
+    docClone.querySelectorAll("#html-report-verify-styles").forEach((el) => el.remove());
+    docClone.querySelectorAll("[data-agent-authoring], [data-session-id], [data-insufficient-space]").forEach((el) => {
       el.removeAttribute("data-agent-authoring");
       el.removeAttribute("data-session-id");
+      el.removeAttribute("data-insufficient-space");
+    });
+    docClone.querySelectorAll("*").forEach((el) => {
+      if (el.attributes) {
+        Array.from(el.attributes).forEach((attr) => {
+          if (attr.name.startsWith("data-verify-")) el.removeAttribute(attr.name);
+        });
+      }
+      if (el.classList && el.classList.length > 0) {
+        const toRemove = Array.from(el.classList).filter((cls) => cls.startsWith("verify-"));
+        if (toRemove.length > 0) {
+          toRemove.forEach((cls) => el.classList.remove(cls));
+          if (el.classList.length === 0) el.removeAttribute("class");
+        }
+      }
     });
     const body = docClone.querySelector("body");
     if (body && body.style) {
@@ -5246,14 +5741,112 @@ function initAuthoring() {
   HTMLReportEdit.initDock();
 }
 
+/**
+ * Turnkey Live Board State & SSE Helper
+ * Provides persistence (/api/board/state) and reactive SSE (/events) with file:// guards.
+ */
+const HTMLReportBoard = {
+  _activeStream: null,
+
+  isFileProtocol: function() {
+    return typeof window !== "undefined" && Boolean(window.location && window.location.protocol === "file:");
+  },
+
+  _resolveEndpoint: function(path) {
+    if (typeof window === "undefined" && typeof process !== "undefined") {
+      const cfg = HTMLReportAgent.getAiConfig();
+      const port = process.env.REPORT_PORT || cfg.port || 3031;
+      return `http://127.0.0.1:${port}${path}`;
+    }
+    return path;
+  },
+
+  saveState: async function(stateObj, options = {}) {
+    if (!stateObj || typeof stateObj !== "object" || Array.isArray(stateObj)) {
+      return { ok: false, error: "State payload must be a JSON object" };
+    }
+    if (this.isFileProtocol()) {
+      return { ok: false, offline: true, reason: "Standalone file:// mode - board persistence requires dev server" };
+    }
+    try {
+      const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(stateObj)
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  },
+
+  loadState: async function(options = {}) {
+    if (this.isFileProtocol()) {
+      return { ok: false, offline: true, state: {} };
+    }
+    try {
+      const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
+      const res = await fetch(endpoint, { method: "GET" });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return { ok: false, error: err.message, state: {} };
+    }
+  },
+
+  connectStream: function(path = "/events", handlers = {}) {
+    if (this.isFileProtocol()) {
+      return { ok: false, offline: true, reason: "Standalone file:// mode - SSE disabled", close() {} };
+    }
+    if (typeof EventSource === "undefined") {
+      return { ok: false, unsupported: true, reason: "EventSource unavailable in this environment", close() {} };
+    }
+    try {
+      if (this._activeStream && typeof this._activeStream.close === "function") {
+        this._activeStream.close();
+      }
+      const source = new EventSource(path);
+      this._activeStream = source;
+      if (typeof handlers.onOpen === "function") {
+        source.addEventListener("open", (e) => handlers.onOpen(e));
+      }
+      if (typeof handlers.onMessage === "function") {
+        source.addEventListener("message", (e) => handlers.onMessage(e));
+      }
+      if (typeof handlers.onState === "function") {
+        source.addEventListener("board-state", (e) => {
+          try { handlers.onState(JSON.parse(e.data), e); } catch (_) {}
+        });
+      }
+      if (typeof handlers.onError === "function") {
+        source.addEventListener("error", (e) => handlers.onError(e));
+      }
+      return {
+        ok: true,
+        source,
+        close: () => {
+          try { source.close(); } catch (_) {}
+          if (this._activeStream === source) this._activeStream = null;
+        }
+      };
+    } catch (err) {
+      return { ok: false, error: err.message, close() {} };
+    }
+  }
+};
+
 if (typeof window !== "undefined") {
   window.HTMLReportAgent = HTMLReportAgent;
+  window.HTMLReportBoard = HTMLReportBoard;
   window.HTMLReportSettings = HTMLReportSettings;
   window.HTMLReportEdit = HTMLReportEdit;
   window.HTMLReportPublisher = HTMLReportPublisher;
   window.initAuthoring = initAuthoring;
   window.HTMLReport = window.HTMLReport || {};
   window.HTMLReport.agent = HTMLReportAgent;
+  window.HTMLReport.board = HTMLReportBoard;
 }
 
 // Node.js CommonJS exports for unit testing
@@ -5307,6 +5900,7 @@ if (typeof module !== "undefined" && module.exports) {
     syncPwaThemeColor,
     initPwa,
     HTMLReportAgent,
+    HTMLReportBoard,
     HTMLReportSettings,
     HTMLReportEdit,
     HTMLReportMermaid,

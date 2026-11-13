@@ -25,8 +25,10 @@ skills/html-report/
 │   ├── report-runtime.js         # Client runtime (settings gear, theme switcher, edit queue, element selection, publisher)
 │   └── create.html               # Interactive onboarding decision wizard & OKLCH theme studio
 ├── scripts/
-│   ├── build-report.mjs          # Static HTML compiler (--title, --content, --theme, --ai, --published)
-│   ├── serve-report.mjs          # Dev server with live-reload & agent bridge (default: localhost:3000)
+│   ├── preflight.mjs             # Environment preflight (ports 3031/3032, browser, agent-agnostic AI router)
+│   ├── scaffold-project.mjs      # Project workspace generator (projects/<slug>/ with local package.json)
+│   ├── build-report.mjs          # Static HTML compiler (--title, --content, --theme, --ai, --no-ai-dock, --published)
+│   ├── serve-report.mjs          # Dev server with live-reload, /events SSE, /api/board/state & AI bridge (default: 3031)
 │   ├── generate-pwa.mjs          # Progressive Web App manifest and service worker generator
 │   ├── theme-compiler.mjs        # DaisyUI 32-theme compiler & custom OKLCH palette evaluator
 │   └── compatibility.mjs         # Node.js and browser environment compatibility matrix
@@ -38,28 +40,60 @@ skills/html-report/
 
 ---
 
-## 3. Tooling Usage Guidelines for Agents
+## 3. Canonical 7-Step Vertical-Slice Workflow
 
-Agents receiving an edit prompt from a report should leverage their native capabilities:
+Instead of reading every reference file up front, follow this lean vertical-slice workflow when creating a report or live reactive board:
 
-1. **Inspect Target Elements**:
-   - If the edit prompt specifies a `Target Element: #id (<tag>)`, locate that specific element in the content fragment or report HTML.
-   - Respect semantic HTML hierarchies.
-
-2. **Source Fragment vs. Compiled Shell**:
-   - When editing a report that has a separate source fragment (e.g. `dev/*-fragment.html` or `content.html`), edit the source fragment rather than modifying minified/inlined output directly.
-   - If editing a standalone single-file report, edit the file in place.
-
-3. **Rebuilding and Live Preview**:
-   - If `node` and `build-report.mjs` are available:
-     ```bash
-     node skills/html-report/scripts/build-report.mjs --title "Report Title" --content path/to/fragment.html --output report.html
-     ```
-   - If the dev server is active on `http://localhost:3000`, saving updates to the served file automatically triggers live-reload in the browser.
+1. **Preflight Check**:
+   ```bash
+   node skills/html-report/scripts/preflight.mjs --json
+   ```
+   Verifies port availability (`3031` primary, `3032` fallback), Playwright/Chrome readiness, resolved skill paths, and available AI inference providers.
+2. **Scaffold Project Workspace** (note: `projects/` is gitignored by default so generated boards never pollute repository git history):
+   ```bash
+   node skills/html-report/scripts/scaffold-project.mjs --topic "<Topic>" --theme light
+   ```
+   Generates `projects/<slug>/` with `fragment.html`, `AGENTS.md`, and a local `package.json` (`npm run build`, `npm run serve`, `npm run verify`, `npm run verify:live`, `npm run preflight`).
+3. **Author `<main>` Fragment (`fragment.html`)**:
+   - All attributes on `<main>` (`id`, `class`, `x-data`, `x-init`, `@*`, `data-*`, `aria-*`, `role`, `style`) are preserved during assembly.
+   - **Responsive `<canvas>` Rule**: Always place `<canvas>` inside `<div class="relative h-72 sm:h-80 w-full min-w-0">` and ensure parent flex/grid items include `min-w-0` so Chart.js `responsive: true` shrinks cleanly at 375px mobile width.
+   - **Datastar Action Syntax**: Always use Datastar action expressions (`data-on-load="@get('/events')"`, `data-on-click="@post('/api/board/state')"`) rather than bare URL paths (`data-on-load="/events"` is invalid JS in Datastar).
+4. **Build Report**:
+   ```bash
+   npm --prefix projects/<slug> run build
+   ```
+5. **Verify Static File**:
+   ```bash
+   npm --prefix projects/<slug> run verify
+   ```
+6. **Start Turnkey Server** (only when live SSE `/events`, `/api/board/state`, or AI assistant features are used):
+   ```bash
+   npm --prefix projects/<slug> run serve
+   ```
+7. **Verify Live URL**:
+   ```bash
+   npm --prefix projects/<slug> run verify:live
+   ```
 
 ---
 
-## 4. Project-Agnostic Design Principles
+## 4. Turnkey Live Board & AI Bridge Hooks
+
+- **Turnkey SSE & State Persistence (`HTMLReportBoard`)**:
+  - `GET /events` (and `GET /api/events`): Built-in SSE stream emitting `connected`, `board-state`, and `datastar-merge-fragments` (`#live-board-status`).
+  - `GET /api/board/state` & `POST /api/board/state`: Built-in JSON state store backed by `.board-state.json` alongside the served HTML file, with same-origin protection.
+  - Client helpers (`window.HTMLReportBoard`): `HTMLReportBoard.saveState(obj)`, `HTMLReportBoard.loadState()`, and `HTMLReportBoard.connectStream('/events', handlers)` (automatically guarded when opened over `file://`).
+- **Composable Client Hooks (`HTMLReportAgent`)**:
+  - `HTMLReportAgent.registerContextProvider((baseCtx) => ({ selectedIds: [...] }))`: Appends custom application state to every AI dock prompt payload.
+  - `HTMLReportAgent.setTransportAdapter(async (payload, options) => ({ ok: true, result: "..." }))`: Overrides the default `/api/agent/prompt` fetch when a custom transport is desired.
+  - `HTMLReportAgent.checkPreflight()`: Queries `GET /api/agent/preflight` and separates bridge connectivity (`Bridge: Online`) from AI provider readiness (`AI: <Provider>` vs `AI Provider: Unavailable`).
+- **Agent-Agnostic Inference & Honest `503`**:
+  - `serve-report.mjs` routes prompts through `AgentInferenceRouter` (`HTML_REPORT_AI_CMD`, `HTML_REPORT_AI_URL`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `claude`, `gemini`, `codex`, `opencode`, `agy`, `ollama`).
+  - When no provider is available, `POST /api/agent/prompt` returns HTTP `503 Service Unavailable` (`code: "inference_unavailable"`) instead of fabricated prose.
+
+---
+
+## 5. Project-Agnostic Design Principles
 
 All modifications must adhere to the foundational principles of this project:
 

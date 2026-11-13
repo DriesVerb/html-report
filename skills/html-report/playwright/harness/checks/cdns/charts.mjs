@@ -24,23 +24,30 @@ export class ChartsCheck extends VerificationCheck {
       const canvases = Array.from(document.querySelectorAll("canvas"));
       if (canvases.length === 0) return { hasCanvas: false };
 
-      const chartCount = window.reportCharts ? window.reportCharts.length : 0;
+      const discoveredCharts = [];
+      if (Array.isArray(window.reportCharts) && window.reportCharts.length > 0) {
+        discoveredCharts.push(...window.reportCharts);
+      } else if (typeof Chart !== "undefined" && typeof Chart.getChart === "function") {
+        for (const c of canvases) {
+          const inst = Chart.getChart(c);
+          if (inst) discoveredCharts.push(inst);
+        }
+      }
+      const chartCount = discoveredCharts.length;
       let hasNanData = false;
       let hasClipping = false;
 
-      if (window.reportCharts) {
-        for (const chart of window.reportCharts) {
-          const datasets = chart.data?.datasets || [];
-          for (const ds of datasets) {
-            if (Array.isArray(ds.data) && ds.data.some((v) => Number.isNaN(v))) {
-              hasNanData = true;
-            }
+      for (const chart of discoveredCharts) {
+        const datasets = chart.data?.datasets || [];
+        for (const ds of datasets) {
+          if (Array.isArray(ds.data) && ds.data.some((v) => Number.isNaN(v))) {
+            hasNanData = true;
           }
-          const canvasEl = chart.canvas;
-          if (canvasEl && canvasEl.parentElement) {
-            if (canvasEl.scrollWidth > canvasEl.parentElement.clientWidth + 2) {
-              hasClipping = true;
-            }
+        }
+        const canvasEl = chart.canvas;
+        if (canvasEl && canvasEl.parentElement) {
+          if (canvasEl.scrollWidth > canvasEl.parentElement.clientWidth + 2) {
+            hasClipping = true;
           }
         }
       }

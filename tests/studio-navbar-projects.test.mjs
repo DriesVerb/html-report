@@ -107,7 +107,7 @@ describe("2. Workspace Project Discovery Engine & API", () => {
       const meta = extractProjectMetadata(indexPath, "openspec/changes/studio-navbar-projects-view/index.html", workspaceRoot);
       assert.ok(meta.title.includes("Creation Studio Dedicated Navbar"), "Should extract title from index.html");
       assert.equal(meta.category, "OpenSpec Journey", "Should categorize as OpenSpec Journey");
-      assert.equal(meta.version, "1.0.0", "Should extract SemVer version");
+      assert.equal(meta.version, "0.0.0-beta.1", "Should extract SemVer version");
       assert.equal(meta.url, "/openspec/changes/studio-navbar-projects-view/index.html");
     }
   });

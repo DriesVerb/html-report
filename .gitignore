@@ -3,5 +3,7 @@ skills/html-report/playwright/node_modules/
 skills/html-report/examples/*.pdf
 .DS_Store
 .caller-requests/
+projects/
+.board-state.json
 
 tmp-pwa-bdd/

@@ -35,12 +35,57 @@ export class ThemeSwitcherCheck extends VerificationCheck {
           return Boolean(themeAttr) && swatches.length === 4;
         });
 
-      const hasCharts = Boolean(window.reportCharts && window.reportCharts.length > 0);
-      const initialChartColor = hasCharts ? (window.reportCharts[0]?.data?.datasets?.[0]?.borderColor || null) : null;
+      const initialDocTheme = document.documentElement.getAttribute("data-theme") || "light";
 
-      const themesToTest = explicitThemes && explicitThemes.length > 0 ? explicitThemes : ["dark"];
+      const resolveActiveCharts = () => {
+        if (window.reportCharts && Array.isArray(window.reportCharts) && window.reportCharts.length > 0) {
+          return window.reportCharts;
+        }
+        if (typeof Chart !== "undefined" && typeof Chart.getChart === "function") {
+          return Array.from(document.querySelectorAll("canvas"))
+            .map((c) => Chart.getChart(c))
+            .filter(Boolean);
+        }
+        return [];
+      };
+
+      const getChartsPaletteSignature = () => {
+        const activeCharts = resolveActiveCharts();
+        if (activeCharts.length === 0) {
+          return null;
+        }
+        return JSON.stringify(
+          activeCharts.map((chart) => {
+            const datasets = Array.isArray(chart?.data?.datasets)
+              ? chart.data.datasets.map((ds) => ({
+                  borderColor: ds?.borderColor ?? null,
+                  backgroundColor: ds?.backgroundColor ?? null,
+                  pointBackgroundColor: ds?.pointBackgroundColor ?? null,
+                  pointBorderColor: ds?.pointBorderColor ?? null
+                }))
+              : [];
+            const scales = chart?.options?.scales
+              ? Object.entries(chart.options.scales).map(([k, s]) => ({
+                  key: k,
+                  tickColor: s?.ticks?.color ?? null,
+                  gridColor: s?.grid?.color ?? null,
+                  pointLabelsColor: s?.pointLabels?.color ?? null,
+                  angleLinesColor: s?.angleLines?.color ?? null
+                }))
+              : [];
+            const legendColor = chart?.options?.plugins?.legend?.labels?.color ?? null;
+            return { datasets, scales, legendColor };
+          })
+        );
+      };
+
+      const hasCharts = resolveActiveCharts().length > 0;
+      const initialChartSignature = getChartsPaletteSignature();
+
+      const defaultSwitchTarget = initialDocTheme === "dark" ? ["light"] : ["dark"];
+      const themesToTest = explicitThemes && explicitThemes.length > 0 ? explicitThemes : defaultSwitchTarget;
       let allSwitchedCorrectly = true;
-      let lastTheme = "light";
+      let lastTheme = initialDocTheme;
 
       for (const t of themesToTest) {
         if (typeof window.setReportTheme === "function") {
@@ -53,14 +98,14 @@ export class ThemeSwitcherCheck extends VerificationCheck {
         lastTheme = current;
       }
 
-      const updatedChartColor = hasCharts ? (window.reportCharts[0]?.data?.datasets?.[0]?.borderColor || null) : null;
+      const updatedChartSignature = getChartsPaletteSignature();
       const chartColorChanged = hasCharts
-        ? Boolean(initialChartColor && updatedChartColor && initialChartColor !== updatedChartColor)
+        ? Boolean(initialChartSignature && updatedChartSignature && initialChartSignature !== updatedChartSignature)
         : true;
 
-      // Restore light theme
+      // Restore initial startup theme
       if (typeof window.setReportTheme === "function") {
-        await window.setReportTheme("light");
+        await window.setReportTheme(initialDocTheme);
       }
 
       return {

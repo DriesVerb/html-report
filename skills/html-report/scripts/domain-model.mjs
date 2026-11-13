@@ -264,7 +264,7 @@ export function generateCliCommand(config, options = {}) {
 
   let serveCommand = null;
   if (norm.operationalMode === "live") {
-    const port = options.port || 3000;
+    const port = options.port || 3031;
     serveCommand = `node skills/html-report/scripts/serve-report.mjs ${outputFile} --port ${port}`;
   }
 

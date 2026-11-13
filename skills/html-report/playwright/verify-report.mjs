@@ -1,11 +1,15 @@
 #!/usr/bin/env node
-import { pathToFileURL } from "node:url";
 import { runHarness } from "./harness/runner.mjs";
+import { isDirectCliExecution } from "../scripts/preflight.mjs";
 
-export function parseArgs(argv) {
-  const args = argv.slice(2);
+export function parseArgs(argv = process.argv) {
+  const args = (Array.isArray(argv) && argv.length >= 2 && (argv[0] === process.execPath || argv[0].endsWith("node") || argv[1].endsWith(".mjs") || argv[1].endsWith(".js")))
+    ? argv.slice(2)
+    : (Array.isArray(argv) ? argv : []);
   let htmlPath = null;
   const options = {
+    url: null,
+    expectedTheme: null,
     pdf: null,
     mode: null,
     caller: null,
@@ -47,7 +51,11 @@ export function parseArgs(argv) {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
-    if (arg === "--pdf" && args[i + 1] && !args[i + 1].startsWith("--")) {
+    if (arg === "--url" && args[i + 1] && !args[i + 1].startsWith("--")) {
+      options.url = args[++i];
+    } else if (arg === "--expected-theme" && args[i + 1] && !args[i + 1].startsWith("--")) {
+      options.expectedTheme = args[++i];
+    } else if (arg === "--pdf" && args[i + 1] && !args[i + 1].startsWith("--")) {
       options.pdf = args[++i];
     } else if (arg === "--mode" && args[i + 1] && !args[i + 1].startsWith("--")) {
       options.mode = args[++i];
@@ -123,23 +131,37 @@ export function parseArgs(argv) {
       options.checkFullcalendar = true;
     } else if (!arg.startsWith("--") && !htmlPath) {
       htmlPath = arg;
+      if (/^https?:\/\//i.test(arg) && !options.url) {
+        options.url = arg;
+      }
     }
+  }
+
+  if (options.url && !htmlPath) {
+    htmlPath = options.url;
   }
 
   return { htmlPath, ...options };
 }
 
 export async function main() {
+  if (process.argv.includes("--help") || process.argv.includes("-h")) {
+    console.log(
+      "Usage: node verify-report.mjs <path-to-report.html | --url http://localhost:3031> [--expected-theme <theme>] [--mode <interactive|static>] [--pdf <output.pdf>] [--caller <caller-id>] [--quick]"
+    );
+    process.exit(0);
+  }
   const parsed = parseArgs(process.argv);
-  if (!parsed.htmlPath) {
+  const target = parsed.url || parsed.htmlPath;
+  if (!target) {
     console.error(
-      "Usage: node verify-report.mjs <path-to-report.html> [--mode <interactive|static>] [--pdf <output.pdf>] [--caller <caller-id>] [--quick]"
+      "Usage: node verify-report.mjs <path-to-report.html | --url http://localhost:3031> [--expected-theme <theme>] [--mode <interactive|static>] [--pdf <output.pdf>] [--caller <caller-id>] [--quick]"
     );
     process.exit(1);
   }
 
   try {
-    const result = await runHarness(parsed.htmlPath, parsed);
+    const result = await runHarness(target, parsed);
     process.exit(result.success ? 0 : 1);
   } catch (err) {
     console.error("Fatal error running Playwright verifier:", err);
@@ -147,8 +169,7 @@ export async function main() {
   }
 }
 
-const isDirectExecution =
-  process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url;
+const isDirectExecution = isDirectCliExecution(process.argv[1], import.meta.url);
 
 if (isDirectExecution) {
   main();

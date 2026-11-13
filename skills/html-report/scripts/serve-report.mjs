@@ -26,6 +26,10 @@ import {
   JSON_RPC_ERRORS
 } from "./mcp-server.mjs";
 import { getPackageVersion } from "./compatibility.mjs";
+import {
+  AgentInferenceRouter,
+  isDirectCliExecution
+} from "./preflight.mjs";
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -498,13 +502,13 @@ function scanWorkspaceProjects(workspaceRoot, maxDepth = 4) {
 function parseArgs(argv) {
   const args = argv.slice(2);
   let filePath = null;
-  let port = 3000;
+  let port = 3031;
   let autoOpen = process.env.HTML_REPORT_NO_OPEN !== "1";
   const feedProxies = [];
 
   for (let i = 0; i < args.length; i++) {
     if ((args[i] === "--port" || args[i] === "-p") && args[i + 1]) {
-      port = parseInt(args[++i], 10) || 3000;
+      port = parseInt(args[++i], 10) || 3031;
     } else if (args[i] === "--no-open") {
       autoOpen = false;
     } else if (args[i] === "--feed-proxy" && args[i + 1]) {
@@ -692,7 +696,14 @@ function detectReportMode(htmlContent) {
   return match ? match[1].toLowerCase() : "report";
 }
 
-async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = []) {
+async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen = true, feedProxies = []) {
+  let targetFilePath = targetFilePathOrOptions;
+  if (targetFilePathOrOptions && typeof targetFilePathOrOptions === "object" && !Array.isArray(targetFilePathOrOptions)) {
+    targetFilePath = targetFilePathOrOptions.file || targetFilePathOrOptions.filePath || targetFilePathOrOptions.targetFilePath;
+    initialPort = targetFilePathOrOptions.port !== undefined ? targetFilePathOrOptions.port : 3031;
+    autoOpen = targetFilePathOrOptions.autoOpen !== undefined ? targetFilePathOrOptions.autoOpen : false;
+    feedProxies = targetFilePathOrOptions.feedProxies || [];
+  }
   const resolvedPath = path.resolve(process.cwd(), targetFilePath);
   if (!fs.existsSync(resolvedPath)) {
     console.error(`Error: Report file not found at ${resolvedPath}`);
@@ -729,6 +740,62 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
   const sessionStore = new SessionStateStore();
   const csrfManager = new CSRFManager();
   const allowlistManager = new AllowlistManager();
+
+  // Turnkey Board State Persistence (in-memory + disk inside project/temp directories)
+  const workspaceRootForState = findWorkspaceRoot(rootDir);
+  const boardStateFile = path.join(rootDir, ".board-state.json");
+  const shouldPersistBoardStateToDisk =
+    path.resolve(rootDir) !== path.resolve(workspaceRootForState) ||
+    fs.existsSync(path.join(rootDir, "report.manifest.json")) ||
+    fs.existsSync(boardStateFile);
+
+  let boardState = {
+    updatedAt: null
+  };
+  if (fs.existsSync(boardStateFile)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(boardStateFile, "utf-8"));
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        boardState = parsed;
+      }
+    } catch (_) {}
+  }
+
+  function saveBoardState(nextState) {
+    boardState = {
+      ...boardState,
+      ...nextState,
+      updatedAt: new Date().toISOString()
+    };
+    try {
+      fs.writeFileSync(boardStateFile, JSON.stringify(boardState, null, 2) + "\n", "utf-8");
+    } catch (_) {}
+    return boardState;
+  }
+
+  function isSameOriginOrLocalRequest(req) {
+    const hostHeader = String(req.headers.host || "");
+    if (hostHeader && !CSRFManager.validateHost(hostHeader)) {
+      return false;
+    }
+    const originHeader = req.headers.origin;
+    if (originHeader) {
+      try {
+        const originUrl = new URL(originHeader);
+        const allowedHosts = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
+        if (!allowedHosts.has(originUrl.hostname)) {
+          return false;
+        }
+        const reqHostName = hostHeader.split(":")[0];
+        if (reqHostName && !allowedHosts.has(reqHostName)) {
+          return false;
+        }
+      } catch (_) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   function broadcastDatastarFragment(fragmentData) {
     let ssePayload = "";
@@ -839,8 +906,18 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
       }
     }
 
-    // 1a. Datastar Real-Time SSE Stream Endpoint
-    if (pathname === "/__datastar_stream__") {
+    // 1a. Datastar Real-Time SSE Stream Endpoint (/events, /api/events, /__datastar_stream__)
+    if (pathname === "/__datastar_stream__" || pathname === "/events" || pathname === "/api/events") {
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, datastar-request, Cache-Control"
+        });
+        res.end();
+        return;
+      }
+
       if (req.method === "POST") {
         let body = "";
         req.on("data", (chunk) => { body += chunk; });
@@ -865,20 +942,166 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
       }
 
       res.writeHead(200, {
-        "Content-Type": "text/event-stream",
+        "Content-Type": "text/event-stream; charset=utf-8",
         "Cache-Control": "no-cache, no-transform",
         Connection: "keep-alive",
         "Access-Control-Allow-Origin": "*"
       });
-      res.write("event: connected\ndata: {}\n\n");
+      const initialStatusHtml = `<div id="live-board-status" data-board-updated="${boardState.updatedAt || "initial"}">Live stream connected</div>`;
+      res.write(
+        `: connected\n\nevent: connected\ndata: {"ok":true}\n\nevent: board-state\ndata: ${JSON.stringify(boardState)}\n\nevent: datastar-merge-fragments\ndata: fragments ${initialStatusHtml}\n\n`
+      );
 
       datastarClients.add(res);
-      console.log(`[html-report] Datastar stream connected (active listeners: ${datastarClients.size})`);
+      if (process.env.NODE_ENV !== "test") {
+        console.log(`[html-report] Datastar SSE stream connected on ${pathname} (active listeners: ${datastarClients.size})`);
+      }
 
       req.on("close", () => {
         datastarClients.delete(res);
-        console.log(`[html-report] Datastar stream disconnected (remaining listeners: ${datastarClients.size})`);
+        if (process.env.NODE_ENV !== "test") {
+          console.log(`[html-report] Datastar SSE stream disconnected (remaining listeners: ${datastarClients.size})`);
+        }
       });
+      return;
+    }
+
+    // 1a-2. Turnkey Board State Persistence & SSE Broadcast (GET/POST /api/board/state)
+    if (pathname === "/api/board/state") {
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, {
+          "Access-Control-Allow-Origin": `http://localhost:${serverPort}`,
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, datastar-request"
+        });
+        res.end();
+        return;
+      }
+
+      if (req.method === "GET") {
+        res.writeHead(200, {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache, no-store"
+        });
+        res.end(JSON.stringify({
+          ok: true,
+          state: boardState,
+          updatedAt: boardState.updatedAt
+        }));
+        return;
+      }
+
+      if (req.method === "POST") {
+        if (!isSameOriginOrLocalRequest(req)) {
+          res.writeHead(403, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({
+            ok: false,
+            error: "Forbidden: Cross-origin board state mutation rejected."
+          }));
+          return;
+        }
+
+        let body = "";
+        let tooLarge = false;
+        req.on("data", (chunk) => {
+          body += chunk;
+          if (body.length > 1024 * 1024) {
+            tooLarge = true;
+            req.destroy();
+          }
+        });
+        req.on("end", () => {
+          if (tooLarge) {
+            res.writeHead(413, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ ok: false, error: "Payload too large (1MB limit)." }));
+            return;
+          }
+
+          let parsed;
+          try {
+            parsed = JSON.parse(body);
+          } catch (_) {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ ok: false, error: "Invalid JSON payload: expected a JSON object." }));
+            return;
+          }
+
+          if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ ok: false, error: "Invalid board state: JSON object required." }));
+            return;
+          }
+
+          const updated = saveBoardState(parsed);
+          const statusHtml = `<div id="live-board-status" data-board-updated="${escapeHtml(updated.updatedAt)}" class="text-xs font-mono text-success">Saved ${escapeHtml(new Date(updated.updatedAt).toLocaleTimeString())}</div>`;
+          broadcastDatastarFragment({
+            selector: "#live-board-status",
+            html: statusHtml,
+            merge: "morph"
+          });
+
+          const isDatastarReq =
+            req.headers["datastar-request"] === "true" ||
+            (req.headers.accept || "").includes("text/event-stream");
+
+          if (isDatastarReq) {
+            res.writeHead(200, {
+              "Content-Type": "text/event-stream; charset=utf-8",
+              "Cache-Control": "no-cache, no-transform"
+            });
+            res.write(DatastarBridge.formatFragment({ selector: "#live-board-status", html: statusHtml, merge: "morph" }));
+            res.end();
+            return;
+          }
+
+          res.writeHead(200, {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache, no-store"
+          });
+          res.end(JSON.stringify({
+            ok: true,
+            state: updated,
+            updatedAt: updated.updatedAt,
+            listeners: datastarClients.size
+          }));
+        });
+        return;
+      }
+    }
+
+    // 1a-3. Turnkey AI Preflight & Health Endpoint (GET /api/agent/preflight & /api/agent/health)
+    if ((pathname === "/api/agent/preflight" || pathname === "/api/agent/health") && req.method === "GET") {
+      const providerStatus = AgentInferenceRouter.detectProviders();
+      res.writeHead(200, {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache, no-store"
+      });
+      res.end(JSON.stringify({
+        ok: true,
+        bridge: "online",
+        uiConfigured: true,
+        bridgeReachable: true,
+        providerAvailable: providerStatus.providerAvailable,
+        activeProvider: providerStatus.activeProvider,
+        activeProviderName: providerStatus.activeProviderName,
+        availableProviders: providerStatus.availableProviders,
+        checkedProviders: providerStatus.checkedProviders,
+        ai: {
+          available: providerStatus.providerAvailable,
+          providerAvailable: providerStatus.providerAvailable,
+          activeProvider: providerStatus.activeProvider,
+          activeProviderName: providerStatus.activeProviderName,
+          availableProviders: providerStatus.availableProviders,
+          checkedProviders: providerStatus.checkedProviders
+        },
+        streamConnected: datastarClients.size > 0,
+        streamListeners: datastarClients.size,
+        modelConfigured: true,
+        defaultModel: "Gemini 3.8 Flash (Low)",
+        port: serverPort,
+        version: getPackageVersion()
+      }));
       return;
     }
 
@@ -1182,11 +1405,13 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
               action,
               targetSelector,
               persona: persona.id,
+              provider: activeProvider,
               history: session.history,
               timestamp: new Date().toISOString()
             }));
           };
 
+          let activeProvider = "heuristic";
           if (payload.heuristic === true) {
             const responseText = isMutatingPrompt
               ? `Heuristic telemetry assessment for ${targetSelector || 'target metrics'}: Evaluated requested adjustment. Applying filter reduces error spikes by 14.2% across observed cohorts.`
@@ -1205,46 +1430,53 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
             return;
           }
 
-          const agyArgs = ["--model", model, "-p", systemPrompt];
-          execFile("agy", agyArgs, { timeout: 20000 }, (err, stdout) => {
-            let responseText = "";
-            let action = null;
-
-            if (err) {
-              if (isMutatingPrompt) {
-                responseText = `Heuristic telemetry assessment for ${targetSelector || 'target metrics'}: Evaluated requested adjustment. Applying filter reduces error spikes by 14.2% across observed cohorts.`;
-                action = {
-                  id: `act_${Date.now().toString(36)}`,
-                  type: "recalculate_metric",
-                  description: `Apply filter and recalculate metrics for ${targetSelector || 'selected element'}`,
-                  preview: JSON.stringify({ adjustment: "-14.2%", cohort: "timeout_excluded", status: "ready" }, null, 2)
-                };
-                sessionStore.storePendingAction(sessionId, action);
-              } else {
-                responseText = `Assessment: Telemetry for ${context.elementId || 'dashboard'} analyzed under persona '${persona.name}'. All primary thresholds within normal operating bounds.`;
-              }
-            } else {
-              responseText = stdout.trim().replace(/^["']|["']$/g, "");
+          AgentInferenceRouter.dispatch({
+            prompt,
+            systemPrompt,
+            model,
+            provider: payload.provider || null,
+            timeoutMs: 25000,
+            throwOnError: true
+          })
+            .then((dispatchResult) => {
+              activeProvider = dispatchResult.provider || null;
+              const responseText = String(dispatchResult.text || "").trim().replace(/^["']|["']$/g, "");
               if (!responseText) {
-                if (isMutatingPrompt) {
-                  responseText = `Heuristic telemetry assessment for ${targetSelector || 'target metrics'}: Evaluated requested adjustment. Applying filter reduces error spikes by 14.2% across observed cohorts.`;
-                } else {
-                  responseText = `Assessment: Telemetry for ${context.elementId || 'dashboard'} analyzed under persona '${persona.name}'. All primary thresholds within normal operating bounds.`;
-                }
+                const emptyErr = new Error("AI inference provider returned an empty response.");
+                emptyErr.code = "inference_unavailable";
+                emptyErr.reason = "Provider returned empty output.";
+                throw emptyErr;
               }
+              let action = null;
               if (isMutatingPrompt) {
                 action = {
                   id: `act_${Date.now().toString(36)}`,
                   type: "recalculate_metric",
-                  description: `Apply filter and recalculate metrics for ${targetSelector || 'selected element'}`,
-                  preview: JSON.stringify({ adjustment: "-14.2%", cohort: "timeout_excluded", status: "ready" }, null, 2)
+                  description: `Apply filter and recalculate metrics for ${targetSelector || "selected element"}`,
+                  preview: JSON.stringify({ target: targetSelector || "document", status: "ready" }, null, 2)
                 };
                 sessionStore.storePendingAction(sessionId, action);
               }
-            }
-
-            handleDispatch(responseText, action);
-          });
+              handleDispatch(responseText, action);
+            })
+            .catch((err) => {
+              const preflightInfo = err.preflight || AgentInferenceRouter.detectProviders();
+              res.writeHead(503, {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache, no-store"
+              });
+              res.end(JSON.stringify({
+                ok: false,
+                status: "error",
+                code: err.code || "inference_unavailable",
+                error: err.message || "AI inference provider is unavailable.",
+                reason: err.reason || err.message || "No AI CLI or HTTP LLM provider is configured or reachable.",
+                sessionId,
+                preflight: preflightInfo,
+                timestamp: new Date().toISOString()
+              }));
+            });
         });
         return;
       }
@@ -1563,18 +1795,29 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
         }
         const scoped = `You are editing the html-report page served from ${resolvedPath}. Only modify that report's source content and rebuild it; do not touch other files.\n\n${prompt}`;
         console.log(`[html-report] Agent edit requested for ${targetFileName}`);
-        execFile("agy", ["-p", scoped], { timeout: 300000, cwd: process.cwd() }, (err, stdout) => {
-          if (err) {
-            console.warn(`[html-report] agy edit failed: ${err.message}`);
-            return sendJson(502, { ok: false, error: "Agent unavailable or timed out." });
-          }
-          sendJson(200, { ok: true, file: targetFileName, result: String(stdout || "").trim() });
-        });
+        AgentInferenceRouter.dispatch({ prompt: scoped, systemPrompt: scoped, timeoutMs: 300000 })
+          .then((dispatchResult) => {
+            sendJson(200, {
+              ok: true,
+              file: targetFileName,
+              provider: dispatchResult.provider,
+              result: String(dispatchResult.text || "").trim()
+            });
+          })
+          .catch((err) => {
+            console.warn(`[html-report] Agent edit failed: ${err.message}`);
+            return sendJson(502, {
+              ok: false,
+              code: err.code || "inference_unavailable",
+              error: err.message || "Agent unavailable or timed out.",
+              preflight: err.preflight || AgentInferenceRouter.detectProviders()
+            });
+          });
       });
       return;
     }
 
-    // 1b-2. Universal Two-Way Agent Bridge & Co-Pilot (Zero-API-Key with agy CLI)
+    // 1b-2. Universal Two-Way Agent Bridge & Co-Pilot (Agent-Agnostic Turnkey Bridge)
     if (
       pathname === "/__agent_action__" ||
       pathname === "/api/agent" ||
@@ -1595,6 +1838,7 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
       }
 
       if (req.method === "GET") {
+        const providerStatus = AgentInferenceRouter.detectProviders();
         res.writeHead(200, {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
@@ -1602,7 +1846,19 @@ async function startServer(targetFilePath, initialPort, autoOpen, feedProxies = 
         });
         res.end(JSON.stringify({
           ok: true,
-          bridge: "Google Antigravity agy CLI Bridge",
+          bridge: providerStatus.activeProviderName
+            ? `Turnkey AI Bridge (${providerStatus.activeProviderName})`
+            : "Google Antigravity agy CLI Bridge",
+          uiConfigured: true,
+          bridgeReachable: true,
+          providerAvailable: providerStatus.providerAvailable,
+          activeProvider: providerStatus.activeProvider,
+          activeProviderName: providerStatus.activeProviderName,
+          availableProviders: providerStatus.availableProviders,
+          checkedProviders: providerStatus.checkedProviders,
+          streamConnected: datastarClients.size > 0,
+          streamListeners: datastarClients.size,
+          modelConfigured: true,
           defaultModel: "Gemini 3.8 Flash (Low)",
           personas: personaRegistry.list().map((p) => p.id),
           actions: ["query", "analyze", "summarize", "roast", "action"],
@@ -2038,10 +2294,13 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
             sseClients.delete(client);
           }
         }
-      } else {
+      } else if (autoOpen) {
         console.log(`\n[html-report] File updated: ${fileName}`);
         console.log(`[html-report] -> No active tabs detected. Reopening in browser: ${targetUrl}`);
-        if (autoOpen) openBrowser(targetUrl);
+        openBrowser(targetUrl);
+      } else {
+        console.log(`\n[html-report] File updated: ${fileName}`);
+        console.log(`[html-report] -> No active tabs detected (--no-open active; waiting for browser connection at ${targetUrl}).`);
       }
     }, 150);
   }
@@ -2127,7 +2386,11 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
         console.log(` URL:     ${serverUrl}`);
         console.log(` Status:  Watching for updates...`);
         console.log(`\n  • When updated while tab is open: refreshes existing tab in place.`);
-        console.log(`  • When updated while tab is closed: reopens automatically in a tab.`);
+        console.log(
+          autoOpen
+            ? `  • When updated while tab is closed: reopens automatically in a tab.`
+            : `  • Browser auto-open disabled (--no-open).`
+        );
         console.log(`======================================================\n`);
       }
 
@@ -2178,10 +2441,7 @@ export {
   scanWorkspaceProjects
 };
 
-const isMainModule = process.argv[1] && (
-  process.argv[1].endsWith("serve-report.mjs") ||
-  path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))
-);
+const isMainModule = isDirectCliExecution(process.argv[1], import.meta.url);
 
 if (isMainModule) {
   const { filePath, port, autoOpen, feedProxies } = parseArgs(process.argv);

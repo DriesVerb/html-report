@@ -18,7 +18,7 @@ const __dirname = path.dirname(__filename);
 export const MCP_PROTOCOL_VERSION = "2024-11-05";
 export const MCP_SERVER_INFO = {
   name: "html-report-mcp-server",
-  version: "1.0.0"
+  version: "0.0.0-beta.1"
 };
 
 export const JSON_RPC_ERRORS = {

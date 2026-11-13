@@ -1,0 +1,301 @@
+<main id="report-main" class="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+  <!-- Header, Journey Phase Stepper & Direct Markdown Artifact Links -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body gap-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="badge badge-success badge-sm font-mono uppercase">OpenSpec Journey · Shipped (15/15)</span>
+            <span class="badge badge-outline badge-sm font-mono">experience-review-remediations</span>
+          </div>
+          <h1 id="sec-overview" class="text-2xl sm:text-3xl font-bold mt-2">Experience Review Remediations — Reactive Assembly, Symlink-Safe Verification, Dedicated Ports &amp; Agent-Agnostic Turnkey AI Bridge</h1>
+          <p class="text-sm text-base-content/70 mt-1">
+            Comprehensive remediation of the 7 reproduced defects and 6 architectural gaps from the 13 Nov 2026 Stone / Form review: gitignoring <code>projects/</code>, dedicated ports <code>3031</code>/<code>3032</code>, preflight CLI, reactive <code>&lt;main&gt;</code> preservation, symlink &amp; Chrome fallback verification, and an agent-agnostic Turnkey AI Bridge.
+          </p>
+        </div>
+      </div>
+
+      <!-- Journey Phase Stepper -->
+      <div class="w-full overflow-x-auto pt-2">
+        <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary">Brainstorming</li>
+          <li class="step step-primary">Planning</li>
+          <li class="step step-primary">Implementing</li>
+          <li class="step step-primary">Verifying</li>
+          <li class="step step-primary">Shipped / Archived</li>
+        </ul>
+      </div>
+
+      <!-- Direct Markdown Artifact Links -->
+      <div class="flex flex-wrap gap-2 pt-2 border-t border-base-200">
+        <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('specs/skill-packaging/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="package" class="w-3.5 h-3.5"></i> specs/skill-packaging/spec.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('specs/deterministic-assembly/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="layers" class="w-3.5 h-3.5"></i> specs/deterministic-assembly/spec.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('specs/lean-verification/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> specs/lean-verification/spec.md
+        </button>
+        <button type="button" onclick="openMarkdownViewer('specs/reactive-data-copilot/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+          <i data-lucide="radio" class="w-3.5 h-3.5"></i> specs/reactive-data-copilot/spec.md
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
+  <dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50">
+        <div class="flex items-center gap-2">
+          <i data-lucide="file-code" class="w-4 h-4 text-primary"></i>
+          <h3 id="markdown-modal-title" class="font-mono font-bold text-sm text-base-content">artifact.md</h3>
+        </div>
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+        </form>
+      </div>
+      <div id="markdown-modal-body" class="p-6 overflow-y-auto font-sans prose prose-sm max-w-none text-base-content">
+        <div class="flex items-center justify-center py-12">
+          <span class="loading loading-spinner loading-md text-primary"></span>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- Live Progress Metrics & Chart -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4">
+        <div class="stat-title text-xs">Total Tasks</div>
+        <div class="stat-value text-2xl font-mono">15</div>
+        <div class="stat-desc text-xs">5 phases (4 capabilities)</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4">
+        <div class="stat-title text-xs">Completed</div>
+        <div class="stat-value text-2xl font-mono text-success">15</div>
+        <div class="stat-desc text-xs">100% done</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4">
+        <div class="stat-title text-xs">In Progress</div>
+        <div class="stat-value text-2xl font-mono text-warning">0</div>
+        <div class="stat-desc text-xs">All phases verified</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4">
+        <div class="stat-title text-xs">Remaining</div>
+        <div class="stat-value text-2xl font-mono text-primary">0</div>
+        <div class="stat-desc text-xs">Ready to ship</div>
+      </div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 flex items-center justify-center min-w-0">
+      <div class="w-full h-44 relative min-w-0">
+        <canvas id="tasks-progress-chart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Defect & Architectural Upgrade Matrix (Responsive Cards) -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body space-y-4">
+      <h2 id="sec-findings" class="card-title text-lg">Surgical Defects &amp; Bigger Architectural Upgrades</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">1. Ephemeral projects/ Git Hygiene</span>
+            <span class="badge badge-primary badge-xs font-mono">Arch</span>
+          </div>
+          <p class="text-base-content/70">Gitignore <code>projects/</code> in <code>.gitignore</code> and remove all tracked <code>projects/*</code> files from the git index and working tree so generated reports never pollute repository history.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">2. Dedicated Ports 3031/3032 &amp; Preflight CLI</span>
+            <span class="badge badge-primary badge-xs font-mono">Arch</span>
+          </div>
+          <p class="text-base-content/70">Default project servers &amp; Turnkey AI Bridge to port <code>3031</code> (and <code>3032</code> fallback); add <code>preflight.mjs</code> checking canonical skill paths, ports, Chrome binaries, and AI providers upfront.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">3. Reactive &lt;main&gt; &amp; Conditional AI Chrome</span>
+            <span class="badge badge-error badge-xs font-mono">P1</span>
+          </div>
+          <p class="text-base-content/70">Preserve <code>x-data</code>, <code>x-init</code>, <code>id</code>, <code>data-*</code>, and merged classes via <code>extractMainElement()</code>; omit <code>#agent-dock-container</code> HTML when <code>--ai</code> is disabled.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">4. Symlink-Safe CLI &amp; System Chrome Fallback</span>
+            <span class="badge badge-error badge-xs font-mono">P1</span>
+          </div>
+          <p class="text-base-content/70">Canonicalize CLI direct-execution checks with <code>fs.realpathSync()</code> across all scripts and automatically fall back to system Google Chrome in <code>runner.mjs</code>.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">5. Agent-Agnostic Turnkey AI Bridge + Honest 503</span>
+            <span class="badge badge-error badge-xs font-mono">P1 / Arch</span>
+          </div>
+          <p class="text-base-content/70">Replace hardcoded <code>agy</code> dependency with <code>AgentInferenceRouter</code> (<code>claude</code>, <code>gemini</code>, <code>codex</code>, <code>opencode</code>, <code>agy</code>, <code>ollama</code>, HTTP APIs) and return HTTP <code>503</code> instead of fake <code>"14.2%"</code> claims on failure.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">6. Turnkey /events SSE, Verifier &amp; Board SDK</span>
+            <span class="badge badge-warning badge-xs font-mono">P2 / Arch</span>
+          </div>
+          <p class="text-base-content/70">Add <code>/events</code> SSE + <code>/api/board/state</code>, manifest-aware startup theme &amp; composite chart checks, <code>--url</code> HTTP verifier mode, <code>HTMLReportBoard</code> SDK, and 7-step Vertical-Slice Workflow docs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture & Mermaid Flow -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body">
+      <h2 id="sec-architecture" class="card-title text-lg">End-to-End Remediation Architecture (Ports 3031/3032 &amp; Agent-Agnostic Bridge)</h2>
+      <p class="text-sm text-base-content/70">
+        Unifying pre-authoring preflight, reactive assembly, agent-agnostic Turnkey AI Bridge routing, Datastar SSE board persistence, and symlink/HTTP Playwright verification.
+      </p>
+      <div class="mermaid bg-base-200/40 rounded-xl p-4 text-center">
+flowchart TD
+    PF["1. Preflight &amp; Scaffolding (Port 3031/3032)\npreflight.mjs + scaffold-project.mjs (projects/ gitignored)"]
+    ASM["2. Deterministic Assembly (build-report.mjs)\nextractMainElement() + Conditional AI Chrome + #agent-manifest"]
+    SRV["3. Agent-Agnostic Live Server (serve-report.mjs :3031)\nAgentInferenceRouter + 503 on failure + /events SSE + /api/board/state"]
+    VER["4. Playwright Verifier (verify-report.mjs)\nfs.realpathSync() + System Chrome Fallback + --url HTTP Mode"]
+    PF --> ASM
+    ASM --> SRV
+    ASM --> VER
+      </div>
+    </div>
+  </section>
+
+  <!-- Connected Task Checklist -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 id="sec-tasks" class="card-title text-lg">Implementation Checklist (15 Tasks across 5 Phases)</h2>
+        <button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary text-xs font-mono">View tasks.md</button>
+      </div>
+      <div class="space-y-4 text-sm">
+        <div>
+          <h3 id="sec-phase-1" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">1. Ephemeral projects/ Git Hygiene, Dedicated Ports (3031/3032) &amp; Preflight CLI</h3>
+          <ul class="space-y-1.5 pl-1">
+            <li>☑ <strong>1.1</strong> Add <code>projects/</code> to <code>.gitignore</code> and remove all tracked <code>projects/</code> files from git index and disk</li>
+            <li>☑ <strong>1.2</strong> Update default project server and Turnkey AI Bridge ports from <code>3000</code> to <code>3031</code> (and <code>3032</code> secondary)</li>
+            <li>☑ <strong>1.3</strong> Create <code>skills/html-report/scripts/preflight.mjs</code> for skill path, port <code>3031</code>/<code>3032</code>, Chrome &amp; AI provider readiness</li>
+          </ul>
+        </div>
+        <div>
+          <h3 id="sec-phase-2" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">2. Reactive Root Preservation, Conditional AI Chrome &amp; Installation-Aware Scaffolding</h3>
+          <ul class="space-y-1.5 pl-1">
+            <li>☑ <strong>2.1</strong> Preserve <code>&lt;main&gt;</code> attributes (<code>id</code>, <code>x-data</code>, <code>x-init</code>, <code>x-*</code>, <code>@*</code>, <code>data-*</code>, <code>aria-*</code>) and merge custom classes in <code>build-report.mjs</code></li>
+            <li>☑ <strong>2.2</strong> Conditionally omit <code>#agent-dock-container</code> and <code>#agent-reconnect-modal</code> when <code>ai === false</code></li>
+            <li>☑ <strong>2.3</strong> Resolve installation-aware skill paths dynamically and emit project-local <code>package.json</code> runner scripts in <code>scaffold-project.mjs</code></li>
+          </ul>
+        </div>
+        <div>
+          <h3 id="sec-phase-3" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">3. Symlink-Safe CLI Entrypoints, System Chrome Fallback &amp; Verifier Upgrades</h3>
+          <ul class="space-y-1.5 pl-1">
+            <li>☑ <strong>3.1</strong> Canonicalize CLI direct-execution checks with <code>fs.realpathSync()</code> across all CLI scripts</li>
+            <li>☑ <strong>3.2</strong> Add automatic system Chrome/Chromium fallback in <code>runner.mjs</code> when Playwright's bundled browser revision is missing</li>
+            <li>☑ <strong>3.3</strong> Make <code>core:structure</code> read expected startup theme from <code>#agent-manifest</code> or <code>--expected-theme</code></li>
+            <li>☑ <strong>3.4</strong> Update <code>core:theme-switcher</code> to inspect composite chart palette signatures (<code>borderColor</code>, array <code>backgroundColor</code>, scale colors)</li>
+            <li>☑ <strong>3.5</strong> Add first-class <code>--url &lt;http://...&gt;</code> verification mode to <code>verify-report.mjs</code> and <code>runner.mjs</code></li>
+          </ul>
+        </div>
+        <div>
+          <h3 id="sec-phase-4" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">4. Agent-Agnostic Turnkey AI Bridge, Honest 503 Semantics &amp; Preflight API</h3>
+          <ul class="space-y-1.5 pl-1">
+            <li>☑ <strong>4.1</strong> Implement agent-agnostic <code>AgentInferenceRouter</code> (<code>claude</code>, <code>gemini</code>, <code>codex</code>, <code>opencode</code>, <code>agy</code>, <code>ollama</code>, HTTP APIs) + HTTP <code>503</code> on failure</li>
+            <li>☑ <strong>4.2</strong> Add <code>GET /api/agent/preflight</code> (and enrich <code>/api/agent/health</code>) plus accurate <code>--no-open</code> reload logging in <code>serve-report.mjs</code></li>
+          </ul>
+        </div>
+        <div>
+          <h3 id="sec-phase-5" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">5. Turnkey /events Datastar SSE, /api/board/state, Client SDK &amp; Authoring Docs</h3>
+          <ul class="space-y-1.5 pl-1">
+            <li>☑ <strong>5.1</strong> Add <code>GET /events</code> Datastar SSE stream (15s heartbeat) and <code>GET</code>/<code>POST /api/board/state</code> (with <code>400</code>/<code>403</code> validation &amp; fragment morphing)</li>
+            <li>☑ <strong>5.2</strong> Expose <code>registerContextProvider</code>, <code>setTransportAdapter</code>, <code>HTMLReportBoard</code>, 3-channel status badges &amp; 7-step Vertical-Slice Workflow docs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    window.openMarkdownViewer = async function(filePath) {
+      const modal = document.getElementById("markdown-viewer-modal");
+      const title = document.getElementById("markdown-modal-title");
+      const body = document.getElementById("markdown-modal-body");
+      if (!modal || !body) return;
+
+      const resolvedPath = filePath.startsWith("openspec/")
+        ? filePath
+        : `openspec/changes/experience-review-remediations/${filePath}`;
+      title.textContent = resolvedPath;
+      body.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
+      modal.showModal();
+
+      try {
+        let res = await fetch(resolvedPath);
+        if (!res.ok && resolvedPath !== filePath) {
+          res = await fetch(filePath);
+        }
+        if (!res.ok) {
+          body.innerHTML = `<div class="alert alert-warning text-xs">Could not fetch artifact: <code>${resolvedPath}</code></div>`;
+          return;
+        }
+        const text = await res.text();
+        if (window.showdown) {
+          const conv = new window.showdown.Converter({ tables: true, tasklists: true, strikethrough: true });
+          body.innerHTML = conv.makeHtml(text);
+        } else {
+          body.innerHTML = `<pre class="text-xs font-mono p-4 bg-base-200 rounded">${text.replace(/</g, "&lt;")}</pre>`;
+        }
+      } catch (err) {
+        body.innerHTML = `<div class="alert alert-error text-xs">Error loading markdown: ${err.message}</div>`;
+      }
+    };
+
+    window.initReportCharts = function () {
+      const ctx = document.getElementById("tasks-progress-chart");
+      if (!ctx || typeof Chart === "undefined") return;
+      window.reportCharts = window.reportCharts || [];
+      if (window.reportCharts.length > 0) {
+        window.reportCharts.forEach((c) => c.destroy());
+        window.reportCharts = [];
+      }
+      const colors = typeof window.getThemePalette === "function"
+        ? window.getThemePalette()
+        : { primary: "#6366f1", success: "#22c55e", text: "#334155" };
+      const chart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["Completed", "Remaining"],
+          datasets: [{
+            data: [15, 0],
+            backgroundColor: [colors.success || "#22c55e", colors.primary || "#6366f1"],
+            borderColor: colors.primary || "#6366f1",
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom", labels: { color: colors.text } } },
+          cutout: "68%"
+        }
+      });
+      window.reportCharts.push(chart);
+    };
+    window.addEventListener("load", window.initReportCharts);
+  </script>
+</main>

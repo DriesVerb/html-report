@@ -14,9 +14,9 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
 import { buildReport, normalizeMode, CANONICAL_MODES } from "./build-report.mjs";
 import { generatePwaAssets } from "./pwa-builder.mjs";
+import { isDirectCliExecution } from "./preflight.mjs";
 
 export function slugifyProject(raw = "") {
   return String(raw)
@@ -105,6 +105,9 @@ export function generateProjectAgentsMd(manifest) {
   const aiConfigLines = manifest.aiBridge && manifest.aiConfig
     ? `\n- **Turnkey AI Bridge Port**: \`${manifest.aiConfig.port}\`\n- **Turnkey AI Default Model**: \`${manifest.aiConfig.model}\`\n- **Turnkey AI Default Persona**: \`${manifest.aiConfig.persona}\`${aiPurposeLine}`
     : "";
+  const authoringGuideLink = manifest.pipeline?.authoringGuide || "../../skills/html-report/references/agent-authoring-guide.md";
+  const verifyCmd = manifest.pipeline?.verifyCommand || `node skills/html-report/playwright/verify-report.mjs ${manifest.files.entry}`;
+
   return `# Project Agent Guide: ${manifest.title}
 
 - **Project Slug**: \`${manifest.project}\`
@@ -119,24 +122,49 @@ export function generateProjectAgentsMd(manifest) {
    \`\`\`bash
    ${manifest.pipeline.rebuildCommand}
    \`\`\`
+   *(or \`npm --prefix projects/${manifest.project} run build\`)*
 3. **Live Preview & Two-Way Bridge**:
    \`\`\`bash
    ${manifest.pipeline.serveCommand}
    \`\`\`
-4. **Machine-Readable Manifest**: See [report.manifest.json](./report.manifest.json) (and the embedded \`#agent-manifest\` JSON in \`index.html\`) for deterministic section and widget selectors.
+   *(or \`npm --prefix projects/${manifest.project} run serve\`)*
+4. **Verify the Deliverable**:
+   \`\`\`bash
+   ${verifyCmd}
+   \`\`\`
+   *(or \`npm --prefix projects/${manifest.project} run verify\`)*
+5. **Machine-Readable Manifest**: See [report.manifest.json](./report.manifest.json) (and the embedded \`#agent-manifest\` JSON in \`index.html\`) for deterministic section and widget selectors.
 
-For full authoring conventions, see [agent-authoring-guide.md](../../skills/html-report/references/agent-authoring-guide.md).
+For full authoring conventions, see [agent-authoring-guide.md](${authoringGuideLink}).
 `;
+}
+
+export function generateProjectPackageJson(manifest) {
+  const pkg = {
+    name: `html-report-project-${manifest.project || "board"}`,
+    version: "1.0.0",
+    private: true,
+    type: "module",
+    description: `Local runner scripts for html-report project: ${manifest.title}`,
+    scripts: {
+      build: `cd ../.. && ${manifest.pipeline.rebuildCommand}`,
+      serve: `cd ../.. && ${manifest.pipeline.serveCommand}`,
+      verify: `cd ../.. && ${manifest.pipeline.verifyCommand || `node skills/html-report/playwright/verify-report.mjs ${manifest.files.entry}`}`,
+      preflight: `cd ../.. && ${manifest.pipeline.preflightCommand || "node skills/html-report/scripts/preflight.mjs --json"}`
+    }
+  };
+  return JSON.stringify(pkg, null, 2) + "\n";
 }
 
 export function scaffoldProject({
   project,
+  topic = null,
   title = null,
   mode = "report",
   theme = "light",
   addons = [],
   ai = false,
-  aiPort = 3000,
+  aiPort = 3031,
   aiModel = "Gemini 3.8 Flash (Low)",
   aiPersona = "analyst",
   aiPurpose = "",
@@ -144,16 +172,17 @@ export function scaffoldProject({
   pwa = false,
   content = null,
   force = false,
-  workspaceRoot = process.cwd()
+  rootDir = null,
+  workspaceRoot = rootDir || process.cwd()
 } = {}) {
-  const slug = slugifyProject(project);
+  const slug = slugifyProject(project || topic || title);
   if (!slug) {
     throw new Error("A valid --project <slug> is required (letters, numbers, hyphens).");
   }
 
   const resolvedMode = normalizeMode(mode) || "report";
-  const resolvedTitle = title && String(title).trim()
-    ? String(title).trim()
+  const resolvedTitle = (title || topic) && String(title || topic).trim()
+    ? String(title || topic).trim()
     : slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   const projectDir = path.resolve(workspaceRoot, "projects", slug);
@@ -165,6 +194,7 @@ export function scaffoldProject({
   const entryPath = path.join(projectDir, "index.html");
   const manifestPath = path.join(projectDir, "report.manifest.json");
   const agentsPath = path.join(projectDir, "AGENTS.md");
+  const packageJsonPath = path.join(projectDir, "package.json");
 
   let fragmentHtml;
   if (content) {
@@ -192,12 +222,14 @@ export function scaffoldProject({
     aiPurpose,
     aiDock,
     pwa,
-    source: entryRel
+    source: entryRel,
+    workspaceRoot
   });
 
   fs.writeFileSync(entryPath, built.html, "utf-8");
   fs.writeFileSync(manifestPath, JSON.stringify(built.agentManifest, null, 2) + "\n", "utf-8");
   fs.writeFileSync(agentsPath, generateProjectAgentsMd(built.agentManifest), "utf-8");
+  fs.writeFileSync(packageJsonPath, generateProjectPackageJson(built.agentManifest), "utf-8");
 
   if (built.isPwa && built.pwaConfig) {
     generatePwaAssets({
@@ -215,11 +247,14 @@ export function scaffoldProject({
   return {
     slug,
     projectDir,
+    packageJsonPath,
+    agentsMdPath: agentsPath,
     files: {
       fragment: fragmentPath,
       entry: entryPath,
       manifest: manifestPath,
-      agents: agentsPath
+      agents: agentsPath,
+      packageJson: packageJsonPath
     },
     manifest: built.agentManifest
   };
@@ -234,7 +269,7 @@ function parseCliArgs(argv) {
     theme: "light",
     addons: [],
     ai: false,
-    aiPort: 3000,
+    aiPort: 3031,
     aiModel: "Gemini 3.8 Flash (Low)",
     aiPersona: "analyst",
     aiPurpose: "",
@@ -298,10 +333,7 @@ function parseCliArgs(argv) {
   return opts;
 }
 
-const isDirectCli = process.argv[1] && (
-  process.argv[1].endsWith("scaffold-project.mjs") ||
-  import.meta.url === pathToFileURL(process.argv[1]).href
-);
+const isDirectCli = isDirectCliExecution(process.argv[1], import.meta.url);
 
 if (isDirectCli) {
   const opts = parseCliArgs(process.argv);
@@ -319,7 +351,7 @@ Options:
       --theme <name>     DaisyUI theme (default: light)
       --addons <list>    Comma-separated addons (charts,mermaid,gridjs,...)
       --ai, --bridge     Pre-bake Two-Way AI Agent Bridge controls (--ai)
-      --ai-port <port>   Turnkey AI bridge server port (default: 3000)
+      --ai-port <port>   Turnkey AI bridge server port (default: 3031)
       --ai-model <name>  Turnkey AI default model (default: "Gemini 3.8 Flash (Low)")
       --ai-persona <id>  Turnkey AI default persona (default: analyst)
       --pwa              Include PWA manifest, service worker, and icon

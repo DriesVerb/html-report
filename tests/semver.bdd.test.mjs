@@ -70,7 +70,7 @@ bindOpenSpec("semantic-versioning", {
 
     await Then("it MUST display a SemVer 2.0.0 badge, current version indicator, and a Semantic Versioning commitment section", () => {
       assert.ok(readmeText.includes("badge/SemVer-2.0.0"), "README must contain SemVer badge");
-      assert.ok(readmeText.includes("badge/Version-v1.0.0"), "README must contain Version badge");
+      assert.ok(readmeText.includes("badge/Version-v0.0.0--beta.1"), "README must contain Version badge");
       assert.ok(readmeText.includes("Semantic Versioning & Downstream Integration"), "README must contain SemVer section");
     });
   },
@@ -88,8 +88,8 @@ bindOpenSpec("semantic-versioning", {
 
     await Then("the footer at the bottom of the report MUST display html-report accompanied by the active SemVer version number and a SemVer indicator", () => {
       assert.ok(compiledHtml.includes("html-report"), "Footer must include library name");
-      assert.ok(compiledHtml.includes("v1.0.0"), "Footer must include active SemVer version");
-      assert.ok(compiledHtml.includes('title="Semantic Versioning v1.0.0"'), "Footer must include SemVer indicator in badge title");
+      assert.ok(compiledHtml.includes("v0.0.0-beta.1"), "Footer must include active SemVer version");
+      assert.ok(compiledHtml.includes('title="Semantic Versioning v0.0.0-beta.1"'), "Footer must include SemVer indicator in badge title");
       assert.ok(!compiledHtml.includes("(SemVer 2.0.0)"), "Footer must not contain raw (SemVer 2.0.0) clutter");
     });
   },
@@ -187,7 +187,7 @@ bindOpenSpec("semantic-versioning", {
     await Then("it SHALL report all deprecated or incompatible usages, their target replacements, and the corresponding migration guide", () => {
       assert.ok(auditReport.scannedFilesCount > 0, "Audit must scan project files");
       assert.equal(auditReport.isCompatible, true, "html-report workspace must have 0 deprecation violations");
-      assert.equal(auditReport.currentVersion, "1.0.0");
+      assert.equal(auditReport.currentVersion, "0.0.0-beta.1");
     });
   }
 });

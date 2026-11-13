@@ -23,7 +23,7 @@ export const DEFAULT_PWA_CONFIG = Object.freeze({
   display: "standalone",
   orientation: "any",
   categories: ["business", "productivity", "utilities"],
-  cacheVersion: "1.0.0",
+  cacheVersion: "0.0.0-beta.1",
   swFileName: "sw.js",
   manifestFileName: "manifest.webmanifest",
   iconFileName: "icon.svg",

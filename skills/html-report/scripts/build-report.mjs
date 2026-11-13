@@ -16,6 +16,10 @@ import {
   checkDeprecatedCliArgs,
   checkDeprecatedApiOptions
 } from "./compatibility.mjs";
+import {
+  isDirectCliExecution,
+  resolveSkillPaths
+} from "./preflight.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -178,6 +182,11 @@ export function stripVerificationArtifacts(html = "") {
     });
 }
 
+export function stripAiDockMarkup(html = "") {
+  if (!html || typeof html !== "string") return "";
+  return html.replace(/[ \t]*<!-- html-report:authoring:start (?:agent-dock|agent-reconnect-modal) -->[\s\S]*?<!-- html-report:authoring:end (?:agent-dock|agent-reconnect-modal) -->\n?/g, "");
+}
+
 export function stripAuthoringMarkup(html = "") {
   const withoutAuthoring = html
     .replace(/[ \t]*<!-- html-report:authoring:start ([\w-]+) -->[\s\S]*?<!-- html-report:authoring:end \1 -->\n?/g, "");
@@ -295,10 +304,11 @@ export function detectAddons(content = "", explicitAddons = []) {
 }
 
 /**
- * Normalizes content fragment, removing accidental outer <main> wrappers or frontmatter.
+ * Extracts <main> element attributes, classes, id, and inner content from a fragment.
+ * Preserves reactive attributes (x-data, x-init, x-*, @*, :*, data-*, aria-*, role, style, etc.).
  */
-export function extractMainContent(rawContent = "") {
-  let content = rawContent.trim();
+export function extractMainElement(rawContent = "") {
+  let content = String(rawContent || "").trim();
 
   // Strip leading YAML frontmatter if present
   if (content.startsWith("---")) {
@@ -308,13 +318,68 @@ export function extractMainContent(rawContent = "") {
     }
   }
 
-  // If wrapped in <main>...</main>, unwrap inner content
-  const mainMatch = content.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
-  if (mainMatch) {
-    return mainMatch[1].trim();
+  // Quote-aware match for outer <main ...>...</main>
+  const mainMatch = content.match(/^<main\b((?:[^>"']|"[^"]*"|'[^']*')*)>([\s\S]*?)<\/main>\s*$/i)
+    || content.match(/<main\b((?:[^>"']|"[^"]*"|'[^']*')*)>([\s\S]*?)<\/main>/i);
+
+  if (!mainMatch) {
+    return {
+      hasMainWrapper: false,
+      id: "report-main",
+      classes: [],
+      extraAttrs: [],
+      attributes: {},
+      innerHtml: content
+    };
   }
 
-  return content;
+  const rawAttrs = mainMatch[1] || "";
+  const innerHtml = mainMatch[2].trim();
+  let id = "report-main";
+  const classes = [];
+  const extraAttrs = [];
+  const attributes = {};
+
+  const attrRegex = /([^\s=/>"']+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=>]+)))?/g;
+  let match;
+  while ((match = attrRegex.exec(rawAttrs)) !== null) {
+    const fullToken = match[0].trim();
+    const attrName = match[1];
+    const attrNameLower = attrName.toLowerCase();
+    const attrValue = match[2] !== undefined
+      ? match[2]
+      : (match[3] !== undefined ? match[3] : (match[4] !== undefined ? match[4] : ""));
+
+    if (attrNameLower === "id") {
+      if (attrValue.trim()) {
+        id = attrValue.trim();
+        attributes.id = id;
+      }
+    } else if (attrNameLower === "class") {
+      const tokens = attrValue.split(/\s+/).map((t) => t.trim()).filter(Boolean);
+      classes.push(...tokens);
+      attributes.class = tokens.join(" ");
+    } else {
+      extraAttrs.push(fullToken);
+      attributes[attrName] = match[2] !== undefined || match[3] !== undefined || match[4] !== undefined ? attrValue : true;
+    }
+  }
+
+  return {
+    hasMainWrapper: true,
+    id,
+    classes: Array.from(new Set(classes)),
+    extraAttrs,
+    attributes,
+    innerHtml
+  };
+}
+
+/**
+ * Normalizes content fragment, removing accidental outer <main> wrappers or frontmatter.
+ */
+export function extractMainContent(rawContent = "") {
+  return extractMainElement(rawContent).innerHtml;
 }
 
 function removeBalancedElement(html, startIdx, tagName) {
@@ -402,7 +467,7 @@ export function parseArgs(argv) {
     pwaIcon: null,
     noPwaAssets: false,
     ai: false,
-    aiPort: 3000,
+    aiPort: 3031,
     aiModel: "Gemini 3.8 Flash (Low)",
     aiPersona: "analyst",
     aiPurpose: "",
@@ -697,7 +762,7 @@ export function buildAgentManifest({
   mode = "report",
   theme = "light",
   ai = false,
-  aiPort = 3000,
+  aiPort = 3031,
   aiModel = "Gemini 3.8 Flash (Low)",
   aiPersona = "analyst",
   aiPurpose = "",
@@ -708,19 +773,22 @@ export function buildAgentManifest({
   source = null,
   contentPath = null,
   sections = [],
-  widgets = []
+  widgets = [],
+  workspaceRoot = process.cwd()
 } = {}) {
   const entryPath = project ? `projects/${project}/index.html` : (source || "report.html");
   const fragmentPath = project ? `projects/${project}/fragment.html` : (contentPath || "fragment.html");
   const publishedPath = project ? `projects/${project}/published.html` : null;
 
-  const resolvedAiPort = Number.isFinite(Number(aiPort)) && Number(aiPort) > 0 ? Number(aiPort) : 3000;
+  const resolvedAiPort = Number.isFinite(Number(aiPort)) && Number(aiPort) > 0 ? Number(aiPort) : 3031;
   const resolvedAiModel = aiModel && String(aiModel).trim() ? String(aiModel).trim() : "Gemini 3.8 Flash (Low)";
   const resolvedAiPersona = aiPersona && String(aiPersona).trim() ? String(aiPersona).trim() : "analyst";
   const resolvedAiPurpose = aiPurpose && String(aiPurpose).trim() ? String(aiPurpose).trim() : "";
 
+  const skillPaths = resolveSkillPaths(workspaceRoot);
+
   const rebuildArgs = [
-    "node skills/html-report/scripts/build-report.mjs",
+    `node ${skillPaths.buildScript}`,
     project ? `--project ${project}` : `--output ${entryPath}`,
     `--content ${fragmentPath}`,
     `--title "${String(title).replace(/"/g, '\\"')}"`,
@@ -730,7 +798,7 @@ export function buildAgentManifest({
   if (activeAddons.length > 0) rebuildArgs.push(`--addons ${activeAddons.join(",")}`);
   if (ai) {
     rebuildArgs.push("--ai");
-    if (resolvedAiPort !== 3000) rebuildArgs.push(`--ai-port ${resolvedAiPort}`);
+    if (resolvedAiPort !== 3031) rebuildArgs.push(`--ai-port ${resolvedAiPort}`);
     if (resolvedAiModel !== "Gemini 3.8 Flash (Low)") rebuildArgs.push(`--ai-model "${resolvedAiModel.replace(/"/g, '\\"')}"`);
     if (resolvedAiPersona !== "analyst") rebuildArgs.push(`--ai-persona ${resolvedAiPersona}`);
     if (resolvedAiPurpose) rebuildArgs.push(`--ai-purpose "${resolvedAiPurpose.replace(/"/g, '\\"')}"`);
@@ -761,17 +829,33 @@ export function buildAgentManifest({
       ...(publishedPath ? { published: publishedPath } : {}),
       ...(project ? {
         manifest: `projects/${project}/report.manifest.json`,
-        agents: `projects/${project}/AGENTS.md`
+        agents: `projects/${project}/AGENTS.md`,
+        packageJson: `projects/${project}/package.json`
       } : {})
     },
     pipeline: {
       rebuildCommand: rebuildArgs.join(" "),
-      serveCommand: `node skills/html-report/scripts/serve-report.mjs ${entryPath} --port ${resolvedAiPort}`
+      serveCommand: `node ${skillPaths.serveScript} ${entryPath} --port ${resolvedAiPort}`,
+      verifyCommand: `node ${skillPaths.verifyScript} ${entryPath}`,
+      preflightCommand: `node ${skillPaths.preflightScript} --json`,
+      authoringGuide: skillPaths.authoringGuide
     },
     sections,
     widgets
   };
 }
+
+const DEFAULT_MAIN_CLASSES = [
+  "max-w-7xl",
+  "mx-auto",
+  "px-4",
+  "sm:px-6",
+  "lg:px-8",
+  "py-8",
+  "space-y-10",
+  "flex-1",
+  "w-full"
+];
 
 /**
  * Assembly Engine: Deterministically joins a Semantic Fragment (<main id="report-main">),
@@ -794,7 +878,7 @@ export function buildReport({
   pwaBgColor = null,
   pwaIcon = null,
   ai = false,
-  aiPort = 3000,
+  aiPort = 3031,
   aiModel = "Gemini 3.8 Flash (Low)",
   aiPersona = "analyst",
   aiPurpose = "",
@@ -811,6 +895,7 @@ export function buildReport({
   feedInterval = null,
   mockFeeds = null,
   fetchSnapshot = null,
+  workspaceRoot = process.cwd(),
   templateShellPath = path.resolve(__dirname, "../assets/template-shell.html"),
   runtimeScriptPath = path.resolve(__dirname, "../assets/report-runtime.js")
 } = {}) {
@@ -821,7 +906,8 @@ export function buildReport({
     throw new Error(`Runtime script not found at: ${runtimeScriptPath}`);
   }
 
-  let cleanBody = extractMainContent(content);
+  const mainElement = extractMainElement(content);
+  let cleanBody = mainElement.innerHtml;
   const { html: dedupedBody, strippedCount } = stripDuplicateNavbars(cleanBody);
   cleanBody = dedupedBody;
   if (strippedCount > 0 && process.env.NODE_ENV !== "test") {
@@ -975,7 +1061,7 @@ export function buildReport({
   if (source) {
     headExtraParts.push(`  <meta name="html-report-source" content="${escapeAttr(source)}" />`);
   }
-  const resolvedAiPort = Number.isFinite(Number(aiPort)) && Number(aiPort) > 0 ? Number(aiPort) : 3000;
+  const resolvedAiPort = Number.isFinite(Number(aiPort)) && Number(aiPort) > 0 ? Number(aiPort) : 3031;
   const resolvedAiModel = aiModel && String(aiModel).trim() ? String(aiModel).trim() : "Gemini 3.8 Flash (Low)";
   const resolvedAiPersona = aiPersona && String(aiPersona).trim() ? String(aiPersona).trim() : "analyst";
   const resolvedAiPurpose = aiPurpose && String(aiPurpose).trim() ? String(aiPurpose).trim() : "";
@@ -1014,7 +1100,8 @@ export function buildReport({
     source,
     contentPath,
     sections: stampedResult.sections,
-    widgets: stampedResult.widgets
+    widgets: stampedResult.widgets,
+    workspaceRoot
   });
   const safeAgentManifestJson = JSON.stringify(agentManifest, null, 2).replace(/<\//g, "<\\/");
   headExtraParts.push(`  <!-- Deterministic Agent Manifest -->\n  <script type="application/json" id="agent-manifest">\n${safeAgentManifestJson}\n  </script>`);
@@ -1030,9 +1117,11 @@ export function buildReport({
   // Slot replacements
   let html = shellTemplate;
 
-  // Set theme attribute on <html> if provided
+  // Set theme attribute on <html> and active theme labels if provided
   if (resolvedTheme) {
     html = html.replace(/data-theme="[^"]*"/i, `data-theme="${resolvedTheme}"`);
+    html = html.replace(/(<span[^>]*id="active-theme-label"[^>]*>)[^<]*(<\/span>)/i, `$1${resolvedTheme}$2`);
+    html = html.replace(/(<span[^>]*id="modal-active-theme-label"[^>]*>)[^<]*(<\/span>)/i, `$1${resolvedTheme}$2`);
   }
 
   // Set report mode attribute on <html>
@@ -1079,6 +1168,13 @@ export function buildReport({
     processedBody = processedBody.replace(/\bdata-showdown\b/g, "data-markdown-showdown");
   }
 
+  // Preserve <main> id, merged classes, and reactive/custom attributes from fragment
+  const mainId = mainElement.id || "report-main";
+  const mergedMainClasses = Array.from(new Set([...DEFAULT_MAIN_CLASSES, ...mainElement.classes])).join(" ");
+  const mainExtraAttrs = mainElement.extraAttrs.length > 0 ? " " + mainElement.extraAttrs.join(" ") : "";
+  const renderedMainOpenTag = `<main id="${escapeAttr(mainId)}" class="${escapeAttr(mergedMainClasses)}"${mainExtraAttrs}>`;
+  html = html.replace(/<main\b[^>]*>(?=\s*<!-- \{\{CONTENT\}\} -->)/i, () => renderedMainOpenTag);
+
   html = html.replace(/<!-- {{HEAD_EXTRAS}} -->/g, () => headExtras);
   html = html.replace(/<!-- {{CONTENT}} -->/g, () => processedBody);
   html = html.replace(/<!-- {{RUNTIME_SCRIPT}} -->/g, () => inlinedRuntime);
@@ -1086,6 +1182,10 @@ export function buildReport({
 
   const version = getPackageVersion();
   html = html.replace(/<!-- {{VERSION}} -->/g, () => version);
+
+  if (!aiDock) {
+    html = stripAiDockMarkup(html);
+  }
 
   if (published) {
     html = stripAuthoringMarkup(html);
@@ -1099,6 +1199,7 @@ export function buildReport({
     hasCustomTheme: Boolean(compiledCustomCss),
     isPwa,
     agentManifest,
+    mainElement,
     pwaConfig: isPwa ? {
       title: pwaName || title,
       shortName: pwaShortName || deriveShortName(pwaName || title),
@@ -1164,10 +1265,7 @@ Options:
 }
 
 // CLI entry point
-const isDirectCli = process.argv[1] && (
-  process.argv[1].endsWith("build-report.mjs") ||
-  import.meta.url === pathToFileURL(process.argv[1]).href
-);
+const isDirectCli = isDirectCliExecution(process.argv[1], import.meta.url);
 
 if (isDirectCli) {
   const options = parseArgs(process.argv);

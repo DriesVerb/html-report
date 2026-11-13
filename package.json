@@ -1,6 +1,6 @@
 {
   "name": "html-report",
-  "version": "1.0.0",
+  "version": "0.0.0-beta.1",
   "description": "Publication-grade, interactive, and print-ready HTML5 reports for AI coding agents.",
   "type": "module",
   "main": "./skills/html-report/scripts/harness.mjs",

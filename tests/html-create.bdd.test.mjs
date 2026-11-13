@@ -385,8 +385,8 @@ describe("Feature Spec: Feature 4 & 4.1 - Interactive html-create Studio & Termi
       assert.equal(cliAccordion, null, "Deterministic CLI accordion must be removed");
 
       // 3. Verify card title is 'AI Prompt'
-      const h3Text = await page.textContent("h3");
-      assert.equal(h3Text.trim(), "AI Prompt");
+      const h3Text = await page.textContent("#step-output h3");
+      assert.ok(h3Text.includes("AI Prompt"));
 
       // 4. Fill optional prompt context: what the board needs to show & audience
       await page.fill("#input-board-goals", "Quarterly SaaS ARR Growth and Churn Cohort Metrics");

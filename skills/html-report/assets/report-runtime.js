@@ -627,6 +627,10 @@ function initThemeDropdown() {
   const listEl = document.getElementById("theme-swatch-list");
   if (!listEl) return;
   const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  const activeLabel = document.getElementById("active-theme-label");
+  if (activeLabel) activeLabel.textContent = currentTheme;
+  const modalActiveLabel = document.getElementById("modal-active-theme-label");
+  if (modalActiveLabel) modalActiveLabel.textContent = currentTheme;
   listEl.innerHTML = "";
 
   DAISYUI_THEMES.forEach((theme) => {
@@ -695,21 +699,71 @@ async function setReportTheme(themeName) {
 
   const palette = resolveDaisyUIThemePalette();
 
-  // Dynamic Chart.js color sync
-  if (typeof window !== "undefined" && window.reportCharts && Array.isArray(window.reportCharts)) {
-    window.reportCharts.forEach((chart, idx) => {
+  // Dynamic Chart.js color sync (scalar & array datasets, scales, and legend)
+  const paletteSequence = ["primary", "secondary", "accent", "info", "success", "warning", "error"];
+  const activeCharts = (typeof window !== "undefined" && Array.isArray(window.reportCharts) && window.reportCharts.length > 0)
+    ? window.reportCharts
+    : (typeof document !== "undefined" && typeof Chart !== "undefined" && typeof Chart.getChart === "function"
+        ? Array.from(document.querySelectorAll("canvas")).map((c) => Chart.getChart(c)).filter(Boolean)
+        : []);
+  if (activeCharts.length > 0) {
+    activeCharts.forEach((chart) => {
       if (chart?.data?.datasets) {
         chart.data.datasets.forEach((ds, dsIdx) => {
-          const colorKey = dsIdx % 3 === 0 ? "primary" : dsIdx % 3 === 1 ? "secondary" : "accent";
-          const chosen = palette[colorKey] ? palette[colorKey].hex : "#3b82f6";
-          if (ds.borderColor) ds.borderColor = chosen;
-          if (ds.backgroundColor && typeof ds.backgroundColor === "string" && ds.backgroundColor.includes("rgba")) {
-            ds.backgroundColor = palette[colorKey] ? palette[colorKey].rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+          const colorKey = paletteSequence[dsIdx % paletteSequence.length];
+          const chosenEntry = palette[colorKey] || palette.primary || { hex: "#3b82f6", rgba: (a) => `rgba(59, 130, 246, ${a})` };
+
+          if (Array.isArray(ds.borderColor)) {
+            ds.borderColor = ds.borderColor.map((_, i) => {
+              const k = paletteSequence[i % paletteSequence.length];
+              return palette[k] ? palette[k].hex : chosenEntry.hex;
+            });
+          } else if (ds.borderColor) {
+            ds.borderColor = chosenEntry.hex;
+          }
+
+          if (Array.isArray(ds.backgroundColor)) {
+            ds.backgroundColor = ds.backgroundColor.map((orig, i) => {
+              const k = paletteSequence[i % paletteSequence.length];
+              const entry = palette[k] || chosenEntry;
+              if (typeof orig === "string" && orig.includes("rgba")) {
+                return entry.rgba ? entry.rgba(0.75) : entry.hex;
+              }
+              return entry.hex;
+            });
+          } else if (ds.backgroundColor && typeof ds.backgroundColor === "string") {
+            if (ds.backgroundColor.includes("rgba")) {
+              ds.backgroundColor = chosenEntry.rgba ? chosenEntry.rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+            } else {
+              ds.backgroundColor = chosenEntry.hex;
+            }
           }
         });
+      }
+
+      if (chart?.options?.scales && typeof chart.options.scales === "object") {
+        const textHex = palette.text ? palette.text.hex : "#64748b";
+        const gridColor = palette.grid ? palette.grid.rgba(0.25) : "rgba(148, 163, 184, 0.2)";
+        for (const scale of Object.values(chart.options.scales)) {
+          if (!scale || typeof scale !== "object") continue;
+          if (scale.ticks && typeof scale.ticks === "object") scale.ticks.color = textHex;
+          if (scale.grid && typeof scale.grid === "object") scale.grid.color = gridColor;
+          if (scale.pointLabels && typeof scale.pointLabels === "object") scale.pointLabels.color = textHex;
+          if (scale.angleLines && typeof scale.angleLines === "object") scale.angleLines.color = gridColor;
+        }
+      }
+
+      if (chart?.options?.plugins?.legend?.labels && typeof chart.options.plugins.legend.labels === "object") {
+        chart.options.plugins.legend.labels.color = palette.text ? palette.text.hex : "#64748b";
+      }
+
+      if (typeof chart?.update === "function") {
         chart.update();
       }
     });
+  }
+  if (typeof window !== "undefined" && typeof window.onReportThemeChange === "function") {
+    try { window.onReportThemeChange(themeName, palette); } catch (_) {}
   }
 
   // Dynamic Mermaid sync
@@ -1910,6 +1964,64 @@ const HTMLReportAgent = {
   _isDockOpen: false,
   _dockInitialized: false,
   _history: [],
+  _contextProviders: [],
+  _transportAdapter: null,
+  _lastPreflight: null,
+
+  registerContextProvider: function(fn) {
+    if (typeof fn === "function") {
+      this._contextProviders.push(fn);
+      return () => {
+        this._contextProviders = this._contextProviders.filter((p) => p !== fn);
+      };
+    }
+    return () => {};
+  },
+
+  setTransportAdapter: function(fn) {
+    this._transportAdapter = typeof fn === "function" ? fn : null;
+    return this;
+  },
+
+  collectCustomContext: function(baseContext = {}) {
+    const merged = {};
+    for (const provider of this._contextProviders) {
+      try {
+        const extra = provider(baseContext);
+        if (extra && typeof extra === "object" && !Array.isArray(extra)) {
+          Object.assign(merged, extra);
+        }
+      } catch (_) {}
+    }
+    return merged;
+  },
+
+  checkPreflight: async function() {
+    if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
+      return { ok: false, offline: true, ai: { available: false, activeProvider: null } };
+    }
+    try {
+      const cfg = this.getAiConfig();
+      const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
+        ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/preflight`
+        : "/api/agent/preflight";
+      const res = await fetch(endpoint, { method: "GET" });
+      if (res.ok) {
+        const data = await res.json();
+        this._lastPreflight = data;
+        if (typeof document !== "undefined") {
+          const dockStatus = document.getElementById("agent-dock-status");
+          if (dockStatus && data.ai) {
+            dockStatus.textContent = data.ai.available
+              ? `Bridge: Online • AI: ${data.ai.activeProvider}`
+              : "Bridge: Online • AI Provider: Unavailable";
+          }
+        }
+        return data;
+      }
+    } catch (_) {}
+    return { ok: false, ai: { available: false, activeProvider: null } };
+  },
 
   getState: function() {
     return this._connectionState;
@@ -1985,7 +2097,7 @@ const HTMLReportAgent = {
   },
 
   getAiConfig: function() {
-    const defaults = { port: 3000, model: "Gemini 3.8 Flash (Low)", persona: "analyst" };
+    const defaults = { port: 3031, fallbackPort: 3032, model: "Gemini 3.8 Flash (Low)", persona: "analyst" };
     if (typeof document === "undefined") return defaults;
     const readMeta = (name) => {
       const el = document.querySelector(`meta[name="${name}"]`);
@@ -2025,17 +2137,23 @@ const HTMLReportAgent = {
 
     try {
       const cfg = this.getAiConfig();
-      const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
-        ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3000}/__agent_status__`
-        : "/__agent_status__";
+      const endpoints = (typeof window === "undefined" && typeof process !== "undefined")
+        ? (process.env.REPORT_PORT
+            ? [`http://127.0.0.1:${process.env.REPORT_PORT}/__agent_status__`]
+            : Array.from(new Set([cfg.port || 3031, cfg.fallbackPort || 3032, 3000])).map((p) => `http://127.0.0.1:${p}/__agent_status__`))
+        : ["/__agent_status__"];
 
-      const res = await fetch(endpoint, { method: "GET" });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.ok) {
-          this._updateState("connected", data);
-          return true;
-        }
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint, { method: "GET" });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.ok) {
+              this._updateState("connected", data);
+              return true;
+            }
+          }
+        } catch (_) {}
       }
     } catch (_) {}
 
@@ -2094,7 +2212,7 @@ const HTMLReportAgent = {
       filename = "report.html";
     }
     const cfg = this.getAiConfig();
-    const port = options.port || cfg.port || 3000;
+    const port = options.port || cfg.port || 3031;
     const title = options.title || (typeof document !== "undefined" && document.title) || "Interactive HTML Report";
 
     return `I am viewing an interactive publication report: "${title}" (${filename}).
@@ -2255,13 +2373,17 @@ Prerequisites & Instructions:
     const activeTheme = (typeof document !== "undefined" && document.documentElement && document.documentElement.getAttribute("data-theme")) || "light";
 
     if (!el) {
-      return {
+      const base = {
         elementId: null,
         selector: null,
         domSnippet: null,
         datasetState: null,
         activeTheme
       };
+      if (this._contextProviders && this._contextProviders.length > 0) {
+        base.customContext = this.collectCustomContext(base);
+      }
+      return base;
     }
 
     const container = (typeof el.closest === "function" && el.closest(".card, [data-agent-target], section, article, table, canvas")) || el;
@@ -2313,13 +2435,17 @@ Prerequisites & Instructions:
       domSnippet = domSnippet.slice(0, 4000) + "... [truncated]";
     }
 
-    return {
+    const resultCtx = {
       elementId,
       selector,
       domSnippet,
       datasetState,
       activeTheme
     };
+    if (this._contextProviders && this._contextProviders.length > 0) {
+      resultCtx.customContext = this.collectCustomContext(resultCtx);
+    }
+    return resultCtx;
   },
 
   openDock: function(options = {}) {
@@ -2543,7 +2669,11 @@ Prerequisites & Instructions:
       persona
     });
 
-    const context = options.context || this.serializeElementContext(this._targetElement);
+    const baseContext = options.context || this.serializeElementContext(this._targetElement);
+    const customContext = this.collectCustomContext(baseContext);
+    const context = Object.keys(customContext).length > 0
+      ? { ...baseContext, customContext: { ...(baseContext.customContext || {}), ...customContext } }
+      : baseContext;
     const targetSelector = options.targetSelector || (this._targetElement ? this.serializeElementContext(this._targetElement).selector : undefined);
     const sessionId = options.sessionId || this.getSessionId();
 
@@ -2554,14 +2684,34 @@ Prerequisites & Instructions:
       context,
       history: this._history.slice(-10),
       persona,
-      model: options.model || cfg.model
+      model: options.model || cfg.model,
+      ...(options.heuristic ? { heuristic: true } : {})
     };
 
     this._history.push({ role: "user", content: prompt, timestamp: new Date().toISOString() });
 
+    if (typeof this._transportAdapter === "function") {
+      try {
+        const customRes = await this._transportAdapter(payload, options);
+        const textOut = (customRes && (customRes.result || customRes.text)) || "Assessment complete.";
+        if (loadingEl) {
+          const contentEl = loadingEl.querySelector(".message-content");
+          if (contentEl) contentEl.innerHTML = this._formatMarkdown(textOut);
+        }
+        this._history.push({ role: "assistant", content: textOut, timestamp: new Date().toISOString() });
+        return customRes || { ok: true, result: textOut };
+      } catch (adapterErr) {
+        if (loadingEl) {
+          const contentEl = loadingEl.querySelector(".message-content");
+          if (contentEl) contentEl.innerHTML = `<span class="text-error font-semibold">Error: ${adapterErr.message}</span>`;
+        }
+        return { ok: false, error: adapterErr.message };
+      }
+    }
+
     if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
       this._updateState("disconnected");
-      const fallbackText = "Agent bridge offline (standalone file:// mode). Start dev server on localhost:3000 to enable real-time co-pilot.";
+      const fallbackText = `Agent bridge offline (standalone file:// mode). Start dev server on localhost:${cfg.port || 3031} to enable real-time co-pilot.`;
       if (loadingEl) {
         const contentEl = loadingEl.querySelector(".message-content");
         if (contentEl) contentEl.innerHTML = `<span class="text-warning">${fallbackText}</span>`;
@@ -2571,7 +2721,7 @@ Prerequisites & Instructions:
 
     try {
       const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
-        ? `http://127.0.0.1:${process.env.REPORT_PORT || 3000}/api/agent/prompt`
+        ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/prompt`
         : "/api/agent/prompt";
 
       const res = await fetch(endpoint, {
@@ -2583,7 +2733,24 @@ Prerequisites & Instructions:
         body: JSON.stringify(payload)
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        let errBody = null;
+        try { errBody = await res.json(); } catch (_) {}
+        if (res.status === 503 || (errBody && errBody.code === "inference_unavailable")) {
+          this._updateState("connected");
+          if (typeof document !== "undefined") {
+            const dockStatus = document.getElementById("agent-dock-status");
+            if (dockStatus) dockStatus.textContent = "Bridge: Online • AI Provider: Unavailable";
+          }
+          const msg = (errBody && (errBody.error || errBody.reason)) || "AI inference provider is unavailable on this machine.";
+          if (loadingEl) {
+            const contentEl = loadingEl.querySelector(".message-content");
+            if (contentEl) contentEl.innerHTML = `<span class="text-warning font-semibold">${typeof escapeHtml === "function" ? escapeHtml(msg) : msg}</span>`;
+          }
+          return errBody || { ok: false, status: "error", code: "inference_unavailable", error: msg };
+        }
+        throw new Error((errBody && errBody.error) || `HTTP ${res.status}`);
+      }
 
       const contentType = res.headers.get("content-type") || "";
 
@@ -2694,8 +2861,9 @@ Prerequisites & Instructions:
     }
 
     try {
+      const cfg = this.getAiConfig();
       const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
-        ? `http://127.0.0.1:${process.env.REPORT_PORT || 3000}/api/agent/confirm-action`
+        ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/confirm-action`
         : "/api/agent/confirm-action";
 
       const res = await fetch(endpoint, {
@@ -4298,14 +4466,112 @@ function initAuthoring() {
   HTMLReportEdit.initDock();
 }
 
+/**
+ * Turnkey Live Board State & SSE Helper
+ * Provides persistence (/api/board/state) and reactive SSE (/events) with file:// guards.
+ */
+const HTMLReportBoard = {
+  _activeStream: null,
+
+  isFileProtocol: function() {
+    return typeof window !== "undefined" && Boolean(window.location && window.location.protocol === "file:");
+  },
+
+  _resolveEndpoint: function(path) {
+    if (typeof window === "undefined" && typeof process !== "undefined") {
+      const cfg = HTMLReportAgent.getAiConfig();
+      const port = process.env.REPORT_PORT || cfg.port || 3031;
+      return `http://127.0.0.1:${port}${path}`;
+    }
+    return path;
+  },
+
+  saveState: async function(stateObj, options = {}) {
+    if (!stateObj || typeof stateObj !== "object" || Array.isArray(stateObj)) {
+      return { ok: false, error: "State payload must be a JSON object" };
+    }
+    if (this.isFileProtocol()) {
+      return { ok: false, offline: true, reason: "Standalone file:// mode - board persistence requires dev server" };
+    }
+    try {
+      const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(stateObj)
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  },
+
+  loadState: async function(options = {}) {
+    if (this.isFileProtocol()) {
+      return { ok: false, offline: true, state: {} };
+    }
+    try {
+      const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
+      const res = await fetch(endpoint, { method: "GET" });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return { ok: false, error: err.message, state: {} };
+    }
+  },
+
+  connectStream: function(path = "/events", handlers = {}) {
+    if (this.isFileProtocol()) {
+      return { ok: false, offline: true, reason: "Standalone file:// mode - SSE disabled", close() {} };
+    }
+    if (typeof EventSource === "undefined") {
+      return { ok: false, unsupported: true, reason: "EventSource unavailable in this environment", close() {} };
+    }
+    try {
+      if (this._activeStream && typeof this._activeStream.close === "function") {
+        this._activeStream.close();
+      }
+      const source = new EventSource(path);
+      this._activeStream = source;
+      if (typeof handlers.onOpen === "function") {
+        source.addEventListener("open", (e) => handlers.onOpen(e));
+      }
+      if (typeof handlers.onMessage === "function") {
+        source.addEventListener("message", (e) => handlers.onMessage(e));
+      }
+      if (typeof handlers.onState === "function") {
+        source.addEventListener("board-state", (e) => {
+          try { handlers.onState(JSON.parse(e.data), e); } catch (_) {}
+        });
+      }
+      if (typeof handlers.onError === "function") {
+        source.addEventListener("error", (e) => handlers.onError(e));
+      }
+      return {
+        ok: true,
+        source,
+        close: () => {
+          try { source.close(); } catch (_) {}
+          if (this._activeStream === source) this._activeStream = null;
+        }
+      };
+    } catch (err) {
+      return { ok: false, error: err.message, close() {} };
+    }
+  }
+};
+
 if (typeof window !== "undefined") {
   window.HTMLReportAgent = HTMLReportAgent;
+  window.HTMLReportBoard = HTMLReportBoard;
   window.HTMLReportSettings = HTMLReportSettings;
   window.HTMLReportEdit = HTMLReportEdit;
   window.HTMLReportPublisher = HTMLReportPublisher;
   window.initAuthoring = initAuthoring;
   window.HTMLReport = window.HTMLReport || {};
   window.HTMLReport.agent = HTMLReportAgent;
+  window.HTMLReport.board = HTMLReportBoard;
 }
 
 // Node.js CommonJS exports for unit testing
@@ -4359,6 +4625,7 @@ if (typeof module !== "undefined" && module.exports) {
     syncPwaThemeColor,
     initPwa,
     HTMLReportAgent,
+    HTMLReportBoard,
     HTMLReportSettings,
     HTMLReportEdit,
     HTMLReportMermaid,

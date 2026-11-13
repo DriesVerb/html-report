@@ -11,7 +11,7 @@ Generate theme-adaptive Output Deliverables with **~70% fewer tokens** and **<10
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success.svg?logo=github&style=flat-square)](https://driesverb.github.io/html-report/)
 [![SemVer: 2.0.0](https://img.shields.io/badge/SemVer-2.0.0-blue.svg?logo=semver&style=flat-square)](docs/semantic-versioning.md)
-[![Version: v1.0.0](https://img.shields.io/badge/Version-v1.0.0-orange.svg?style=flat-square)](package.json)
+[![Version: v0.0.0-beta.1](https://img.shields.io/badge/Version-v0.0.0--beta.1-orange.svg?style=flat-square)](package.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Agent Skill: LLM-Agnostic](https://img.shields.io/badge/Agent%20Skill-LLM--Agnostic-blueviolet.svg?style=flat-square)](https://agentskills.io)
 [![CDN Stack: 17 Libraries](https://img.shields.io/badge/CDN%20Stack-17%20Libraries-3b82f6.svg?style=flat-square)](docs/cdn-stack.md)
@@ -155,7 +155,7 @@ When including `html-report` in other libraries, CLI toolchains, or AI agent har
   ```bash
   node skills/html-report/scripts/harness.mjs --check-compatibility
   ```
-- **Report Footer Versioning**: Every generated report displays its exact SemVer version number in the footer (`v1.0.0`).
+- **Report Footer Versioning**: Every generated report displays its exact SemVer version number in the footer (`v0.0.0-beta.1`).
 
 ---
 

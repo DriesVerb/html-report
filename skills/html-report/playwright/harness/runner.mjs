@@ -4,19 +4,49 @@ import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 import { createDefaultRegistry } from "./registry.mjs";
 import { Reporter } from "./reporter.mjs";
+import { detectSystemChrome } from "../../scripts/preflight.mjs";
+
+export async function launchBrowserWithFallback(options = {}, launcher = chromium) {
+  const launchOpts = { headless: !options.headed };
+  if (process.env.PLAYWRIGHT_CHROME_EXECUTABLE && fs.existsSync(process.env.PLAYWRIGHT_CHROME_EXECUTABLE)) {
+    launchOpts.executablePath = process.env.PLAYWRIGHT_CHROME_EXECUTABLE;
+  }
+  try {
+    return await launcher.launch(launchOpts);
+  } catch (primaryErr) {
+    const systemChrome = options.systemChromePath !== undefined ? options.systemChromePath : detectSystemChrome();
+    if (systemChrome && systemChrome !== launchOpts.executablePath) {
+      return await launcher.launch({
+        ...launchOpts,
+        executablePath: systemChrome
+      });
+    }
+    throw primaryErr;
+  }
+}
 
 export async function runHarness(htmlPath, rawOptions = {}) {
-  if (!htmlPath) {
+  const targetInput = rawOptions.url || htmlPath;
+  if (!targetInput) {
     throw new Error("HTML report path must be provided.");
   }
 
-  const resolvedHtmlPath = path.resolve(process.cwd(), htmlPath);
-  if (!fs.existsSync(resolvedHtmlPath)) {
-    throw new Error(`HTML report not found at ${resolvedHtmlPath}`);
+  const isHttpUrl = /^https?:\/\//i.test(String(targetInput).trim());
+  let resolvedHtmlPath = String(targetInput).trim();
+  let fileUrl = resolvedHtmlPath;
+
+  if (!isHttpUrl) {
+    resolvedHtmlPath = path.resolve(process.cwd(), resolvedHtmlPath);
+    if (!fs.existsSync(resolvedHtmlPath)) {
+      throw new Error(`HTML report not found at ${resolvedHtmlPath}`);
+    }
+    fileUrl = pathToFileURL(resolvedHtmlPath).href;
   }
 
   const options = {
     ...rawOptions,
+    url: isHttpUrl ? fileUrl : (rawOptions.url || null),
+    expectedTheme: rawOptions.expectedTheme || rawOptions["expected-theme"] || null,
     quick: Boolean(rawOptions.quick),
     headed: Boolean(rawOptions.headed),
     bail: Boolean(rawOptions.bail),
@@ -40,9 +70,8 @@ export async function runHarness(htmlPath, rawOptions = {}) {
 
   const reporter = new Reporter(options);
   const registry = options.registry || (await createDefaultRegistry());
-  const fileUrl = pathToFileURL(resolvedHtmlPath).href;
 
-  const browser = await chromium.launch({ headless: !options.headed });
+  const browser = await launchBrowserWithFallback(options);
   const context = await browser.newContext({
     viewport: { width: 1280, height: 900 },
     acceptDownloads: true
@@ -81,9 +110,12 @@ export async function runHarness(htmlPath, rawOptions = {}) {
   });
 
   try {
-    if (options.quick) {
+    if (options.quick || isHttpUrl) {
       await page.goto(fileUrl, { waitUntil: "domcontentloaded", timeout: options.timeout });
-      await page.waitForFunction(() => window.__REPORT_READY__ === true, null, { timeout: 4000 }).catch(() => {});
+      await page.waitForFunction(() => window.__REPORT_READY__ === true, null, { timeout: options.quick ? 4000 : 10000 }).catch(() => {});
+      if (!options.quick) {
+        await page.waitForTimeout(300);
+      }
     } else {
       await page.goto(fileUrl, { waitUntil: "networkidle", timeout: options.timeout });
       await page.waitForFunction(() => window.__REPORT_READY__ === true, null, { timeout: 15000 }).catch(() => {});

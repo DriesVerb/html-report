@@ -75,6 +75,8 @@ describe("Project Scaffolding & Deterministic Agent-Facing Hooks", () => {
     assert.match(builtA.html, /data-agent-widget="chart"/);
     assert.equal(builtA.agentManifest.project, "det-test");
     assert.equal(builtA.agentManifest.aiBridge, true);
+    assert.equal(builtA.agentManifest.aiConfig.port, 3031, "--ai must default to port 3031");
+    assert.match(builtA.html, /meta name="html-report-ai-port" content="3031"/);
     assert.equal(builtA.agentManifest.sections[0].slug, "metrics");
     assert.equal(builtA.agentManifest.widgets[0].selector, "#c1");
   });

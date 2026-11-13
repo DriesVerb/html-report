@@ -135,6 +135,7 @@ test("3. Dev Server Streaming POST /api/agent/prompt & Datastar SSE", async () =
       targetSelector: "#test-card",
       context: { elementId: "test-card", activeTheme: "light" },
       format: "json",
+      heuristic: true,
       stream: false
     };
 
@@ -157,6 +158,7 @@ test("3. Dev Server Streaming POST /api/agent/prompt & Datastar SSE", async () =
       prompt: "Please recalculate error spikes by excluding timeout failures",
       targetSelector: "#test-card",
       format: "json",
+      heuristic: true,
       stream: false
     };
 
@@ -177,6 +179,7 @@ test("3. Dev Server Streaming POST /api/agent/prompt & Datastar SSE", async () =
       sessionId,
       prompt: "Filter telemetry and re-evaluate",
       targetSelector: "#test-card",
+      heuristic: true,
       stream: true
     };
 

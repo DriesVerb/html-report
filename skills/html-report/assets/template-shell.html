@@ -611,6 +611,7 @@
     </form>
   </dialog>
 
+  <!-- html-report:authoring:start agent-reconnect-modal -->
   <!-- Turnkey AI Agent Reconnection Modal -->
   <dialog id="agent-reconnect-modal" class="modal modal-bottom sm:modal-middle">
     <div class="modal-box bg-base-100 border border-base-300 shadow-2xl max-w-2xl text-left">
@@ -629,7 +630,7 @@
 
       <div class="space-y-4 pt-4 text-xs sm:text-sm text-base-content/80">
         <p>
-          This report features an interactive <strong>Two-Way AI Agent Co-Pilot</strong> with Datastar live streaming. Because it was shared or opened without an active local server on <code>localhost:3000</code>, the agent bridge is currently disconnected.
+          This report features an interactive <strong>Two-Way AI Agent Co-Pilot</strong> with Datastar live streaming. Because it was shared or opened without an active local server on <code>localhost:3031</code>, the agent bridge is currently disconnected.
         </p>
 
         <div class="flex items-start gap-2.5 p-2.5 rounded-lg bg-info/10 border border-info/20 text-xs text-base-content/80">
@@ -689,9 +690,10 @@
       <button>close</button>
     </form>
   </dialog>
+  <!-- html-report:authoring:end agent-reconnect-modal -->
 
   <!-- Main Content Container -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
+  <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
 <!-- {{CONTENT}} -->
   </main>
 
@@ -703,6 +705,7 @@
     </div>
   </footer>
 
+  <!-- html-report:authoring:start agent-dock -->
   <!-- HTMLReportAgentDock: Floating & Collapsible Two-Way AI Assistant Dock -->
   <aside id="agent-dock-container" aria-label="AI Assistant Dock" class="print:hidden hidden">
     <!-- Floating Launcher Toggle (bottom-right) -->
@@ -792,6 +795,7 @@
       </form>
     </div>
   </aside>
+  <!-- html-report:authoring:end agent-dock -->
 
   <!-- html-report:authoring:start edit-dock -->
   <!-- Edit Mode (#edit-dock): bottom-docked, scroll-following prompt editor & Target Element selector (pruned in Published Document via --published) -->

@@ -31,6 +31,16 @@ export class StructureCheck extends VerificationCheck {
     const nav = await page.evaluate((currMode) => {
       const initialTheme = document.documentElement.getAttribute("data-theme");
       const activeThemeLabelText = document.getElementById("active-theme-label")?.textContent?.trim() || "";
+      let manifestTheme = null;
+      const manifestEl = document.getElementById("agent-manifest");
+      if (manifestEl && manifestEl.textContent) {
+        try {
+          const parsed = JSON.parse(manifestEl.textContent);
+          if (parsed && typeof parsed.theme === "string" && parsed.theme.trim()) {
+            manifestTheme = parsed.theme.trim().toLowerCase();
+          }
+        } catch (_) {}
+      }
       const faviconEl = document.querySelector('link[rel="icon"]');
       const faviconHref = faviconEl ? faviconEl.getAttribute("href") : "";
       const hasEmojiFavicon = Boolean(
@@ -122,6 +132,7 @@ export class StructureCheck extends VerificationCheck {
       return {
         initialTheme,
         activeThemeLabelText,
+        manifestTheme,
         hasEmojiFavicon,
         faviconHref,
         hasNavbar: Boolean(navbar),
@@ -148,13 +159,26 @@ export class StructureCheck extends VerificationCheck {
       };
     }, effectiveMode);
 
-    if (nav.initialTheme !== "light" || nav.activeThemeLabelText !== "light") {
-      errors.push(`Default theme must always be "light" (found data-theme="${nav.initialTheme}", label="${nav.activeThemeLabelText}").`);
+    const expectedTheme = String(
+      options.expectedTheme ||
+      options["expected-theme"] ||
+      nav.manifestTheme ||
+      "light"
+    ).trim().toLowerCase();
+    const actualTheme = String(nav.initialTheme || "").trim().toLowerCase();
+    const actualLabel = String(nav.activeThemeLabelText || "").trim().toLowerCase();
+
+    if (actualTheme !== expectedTheme || (actualLabel && actualLabel !== expectedTheme)) {
+      if (expectedTheme === "light") {
+        errors.push(`Default theme must always be "light" (found data-theme="${nav.initialTheme}", label="${nav.activeThemeLabelText}").`);
+      } else {
+        errors.push(`Configured startup theme must be "${expectedTheme}" (found data-theme="${nav.initialTheme}", label="${nav.activeThemeLabelText}").`);
+      }
       remediations.push({
         ruleId: "core:structure:default-theme",
         fixTarget: "build-flags",
         selector: "html",
-        remediation: "Rebuild with --theme light (or omit --theme) so the report defaults to light."
+        remediation: `Rebuild with --theme ${expectedTheme} (or update #agent-manifest) so the report starts in "${expectedTheme}".`
       });
     }
     if (!nav.hasEmojiFavicon) {
@@ -254,7 +278,7 @@ export class StructureCheck extends VerificationCheck {
     }
 
     if (errors.length === 0) {
-      messages.push(`Default theme: "light", Title: "${nav.titleText}", TOC: ${nav.tocLinkCount}/${nav.headingCount} headings mapped, Footer valid.`);
+      messages.push(`Default theme: "${expectedTheme}", Title: "${nav.titleText}", TOC: ${nav.tocLinkCount}/${nav.headingCount} headings mapped, Footer valid.`);
     }
 
     return {

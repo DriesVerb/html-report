@@ -30,15 +30,16 @@ Before writing report fragments, refer to the shared core guides:
 ## Assembly & Verification Workflow
 
 ### Step 1: Synthesize Semantic `<main>` Fragment Only
-Do not emit HTML boilerplate, `<head>`, navbar, or footer. Emit strictly `<main id="report-main" class="container mx-auto px-4 py-8 space-y-8">`:
-- **Heading IDs**: Every `<h1>`, `<h2>`, and `<h3>` must have a descriptive kebab-case `id` (e.g. `<h2 id="kpi-metrics">`) for automated TOC mapping.
+Emit only `<main id="report-main" class="container mx-auto px-4 py-8 space-y-8">` (`x-data`, `x-init`, `data-*`, `aria-*` attributes on `<main>` are preserved):
+- **Heading IDs**: Every `<h1>`, `<h2>`, and `<h3>` must have a kebab-case `id` (e.g. `<h2 id="kpi-metrics">`) for TOC mapping.
 - **Responsive Headers**: Wrap card headers in `flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full`.
-- **Chart.js Canvases**: Use fixed-height responsive wrappers (`<div class="h-72 sm:h-80"><canvas id="my-chart"></canvas></div>`) and place initializer scripts **inside** `<main>`.
+- **Chart.js Canvases**: Wrap `<canvas>` in `<div class="relative h-72 sm:h-80 w-full min-w-0">` inside `min-w-0` grid/flex items and place scripts **inside** `<main>`.
+- **Datastar Actions**: Use action expressions (`data-on-load="@get('/events')"`, `data-on-click="@post('/api/board/state')"`) rather than bare URL paths.
 - **Mermaid Diagrams**: Wrap in `<div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">...</div>`.
 - Save fragment to disk (e.g. `report-fragment.html`).
 
 ### Step 2: Deterministic Assembly
-Compile the fragment into a standalone, distribution-ready HTML document:
+Compile the fragment into a standalone HTML document (use `--no-ai-dock` when no AI assistant dock is needed):
 ```bash
 node skills/html-report/scripts/build-report.mjs \
   --title "Quarterly Performance Report" \
@@ -47,23 +48,24 @@ node skills/html-report/scripts/build-report.mjs \
 ```
 
 ### Step 3: Dual-Path Verification & Quality Assurance
-1. **Deterministic Pipeline Gate**: Run `build-report.mjs --verify` or invoke `verify-report.mjs` directly (use `--json` for structured `ruleId` / `fixTarget` / `remediation` diagnostics):
+1. **Preflight & Deterministic Gate**: Run `preflight.mjs --json` to check ports/browser/AI providers, then run `verify-report.mjs` on a file or live `--url`:
 ```bash
 node skills/html-report/playwright/verify-report.mjs report.html --quick --json verify.json
+node skills/html-report/playwright/verify-report.mjs --url http://localhost:3031 --quick
 ```
 2. **Agentic Assembly Review (Round 1 or Round 2+ Edits)**: Generate an Assembly Review Packet with screenshots and section telemetry to inspect visual layout and content:
 ```bash
 node skills/html-report/playwright/verify-report.mjs report.html --quick --review-packet review-packet.json --screenshots ./screenshots
 ```
-3. **Final Published Round**: Ephemeral verification classes/attributes (`verify-*`, `data-insufficient-space`, `data-verify-*`, `#html-report-verify-styles`) are automatically stripped when publishing:
+3. **Final Published Round**: Ephemeral verification classes/attributes (`verify-*`, `data-insufficient-space`, `data-verify-*`, `#html-report-verify-styles`) and authoring/AI dock chrome are automatically stripped when publishing:
 ```bash
 node skills/html-report/scripts/build-report.mjs --content report-fragment.html --published --output published.html
 ```
 
-### Step 4: Local Live-Reload Dev Server
-Launch the single-tab live-reload dev server on port 3000:
+### Step 4: Local Live-Reload & Turnkey AI Bridge Server
+Launch the single-tab live-reload & Turnkey AI Bridge server on default port 3031 (fallback 3032):
 ```bash
-node skills/html-report/scripts/serve-report.mjs report.html --port 3000
+node skills/html-report/scripts/serve-report.mjs report.html --port 3031 --no-open
 ```
 
 ---

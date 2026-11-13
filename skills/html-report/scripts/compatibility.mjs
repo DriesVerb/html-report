@@ -45,13 +45,13 @@ export function getPackageMetadata() {
   // Fallback defaults
   cachedPackageJson = {
     name: "html-report",
-    version: "1.0.0"
+    version: "0.0.0-beta.1"
   };
   return cachedPackageJson;
 }
 
 export function getPackageVersion() {
-  return getPackageMetadata().version || "1.0.0";
+  return getPackageMetadata().version || "0.0.0-beta.1";
 }
 
 export function formatVersionString() {
