@@ -13,10 +13,15 @@
  */
 
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { buildReport, normalizeMode, CANONICAL_MODES } from "./build-report.mjs";
 import { generatePwaAssets } from "./pwa-builder.mjs";
 import { isDirectCliExecution } from "./preflight.mjs";
+
+const __scaffoldDirname = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(__scaffoldDirname, "../../..");
 
 export function slugifyProject(raw = "") {
   return String(raw)
@@ -242,6 +247,21 @@ export function scaffoldProject({
       emoji: built.pwaConfig.emoji,
       writeFiles: true
     });
+  }
+
+  // Mirror scaffolded project to REPO_ROOT/projects/<slug>/ when invoked from an external directory
+  const resolvedWorkspace = path.resolve(workspaceRoot);
+  if (
+    !rootDir &&
+    !resolvedWorkspace.startsWith(os.tmpdir()) &&
+    resolvedWorkspace !== REPO_ROOT &&
+    fs.existsSync(path.join(REPO_ROOT, "create.html"))
+  ) {
+    const repoProjectDir = path.join(REPO_ROOT, "projects", slug);
+    try {
+      fs.mkdirSync(repoProjectDir, { recursive: true });
+      fs.cpSync(projectDir, repoProjectDir, { recursive: true, force: true });
+    } catch (_) {}
   }
 
   return {

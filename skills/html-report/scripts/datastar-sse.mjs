@@ -40,17 +40,29 @@ export function sendSSE(res, event, dataLines) {
 }
 
 /**
- * Formats and streams a datastar-fragment SSE event.
+ * Formats and streams a Datastar fragment SSE event.
+ * Emits both the pinned Datastar v1.0.0-beta.9 `datastar-merge-fragments` protocol
+ * and the legacy `datastar-fragment` event for backward compatibility.
  */
-export function sendFragment(res, { selector, mergeMode = "outer", html = "" } = {}) {
-  const data = [];
-  if (selector) data.push(`selector ${selector}`);
-  if (mergeMode) data.push(`merge ${mergeMode}`);
+export function sendFragment(res, { selector, mergeMode = "outer", merge, html = "" } = {}) {
+  const resolvedMerge = merge || mergeMode || "outer";
   const fragmentLines = String(html).trim().split("\n");
+
+  const mergeData = [];
+  if (selector) mergeData.push(`selector ${selector}`);
+  if (resolvedMerge && resolvedMerge !== "outer") mergeData.push(`mergeMode ${resolvedMerge}`);
   for (const line of fragmentLines) {
-    data.push(`fragment ${line}`);
+    mergeData.push(`fragments ${line}`);
   }
-  sendSSE(res, "datastar-fragment", data);
+  sendSSE(res, "datastar-merge-fragments", mergeData);
+
+  const legacyData = [];
+  if (selector) legacyData.push(`selector ${selector}`);
+  if (resolvedMerge) legacyData.push(`merge ${resolvedMerge}`);
+  for (const line of fragmentLines) {
+    legacyData.push(`fragment ${line}`);
+  }
+  sendSSE(res, "datastar-fragment", legacyData);
 }
 
 /**
@@ -474,16 +486,30 @@ export class DatastarBridge extends EventEmitter {
 
   /**
    * Encodes a Datastar fragment SSE message.
+   * Emits both the pinned Datastar v1.0.0-beta.9 `datastar-merge-fragments` protocol
+   * (`fragments ...`) and the legacy `datastar-fragment` event (`fragment ...`).
    */
-  static formatFragment({ selector, mergeMode = "outer", html }) {
-    const lines = ["event: datastar-fragment"];
-    if (selector) lines.push(`data: selector ${selector}`);
-    if (mergeMode) lines.push(`data: merge ${mergeMode}`);
-    const fragmentLines = String(html).trim().split("\n");
-    for (const line of fragmentLines) {
-      lines.push(`data: fragment ${line}`);
+  static formatFragment({ selector, mergeMode = "outer", merge, html }) {
+    const resolvedMerge = merge || mergeMode || "outer";
+    const fragmentLines = String(html || "").trim().split("\n");
+
+    const mergeLines = ["event: datastar-merge-fragments"];
+    if (selector) mergeLines.push(`data: selector ${selector}`);
+    if (resolvedMerge && resolvedMerge !== "outer" && resolvedMerge !== "morph") {
+      mergeLines.push(`data: mergeMode ${resolvedMerge}`);
     }
-    return lines.join("\n") + "\n\n";
+    for (const line of fragmentLines) {
+      mergeLines.push(`data: fragments ${line}`);
+    }
+
+    const legacyLines = ["event: datastar-fragment"];
+    if (selector) legacyLines.push(`data: selector ${selector}`);
+    if (resolvedMerge) legacyLines.push(`data: merge ${resolvedMerge}`);
+    for (const line of fragmentLines) {
+      legacyLines.push(`data: fragment ${line}`);
+    }
+
+    return mergeLines.join("\n") + "\n\n" + legacyLines.join("\n") + "\n\n";
   }
 
   /**

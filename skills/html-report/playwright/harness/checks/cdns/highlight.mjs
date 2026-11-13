@@ -27,9 +27,16 @@ export class HighlightCheck extends VerificationCheck {
       const tsCode = document.getElementById("frontend-ts-code") || document.querySelector("code.language-typescript");
       const ktCode = document.getElementById("backend-kotlin-code") || document.querySelector("code.language-kotlin");
 
-      const tsHighlighted = Boolean(tsCode && tsCode.querySelectorAll(".hljs-keyword").length >= 1);
-      const ktHighlighted = Boolean(ktCode && ktCode.querySelectorAll(".hljs-keyword").length >= 1);
+      const tsHighlighted = Boolean(tsCode && tsCode.querySelectorAll(".hljs-keyword, [class*='hljs-']").length >= 1);
+      const ktHighlighted = Boolean(ktCode && ktCode.querySelectorAll(".hljs-keyword, [class*='hljs-']").length >= 1);
       const totalKeywordCount = document.querySelectorAll(".hljs-keyword").length;
+      const totalTokenCount = document.querySelectorAll("[class*='hljs-']").length;
+      const highlightedBlockCount = codeBlocks.filter(
+        (el) =>
+          el.classList.contains("hljs") ||
+          el.getAttribute("data-highlighted") === "yes" ||
+          el.querySelectorAll("[class*='hljs-']").length > 0
+      ).length;
 
       return {
         hasCode: true,
@@ -38,7 +45,9 @@ export class HighlightCheck extends VerificationCheck {
         tsHighlighted,
         hasKtCode: Boolean(ktCode),
         ktHighlighted,
-        totalKeywordCount
+        totalKeywordCount,
+        totalTokenCount,
+        highlightedBlockCount
       };
     });
 
@@ -51,8 +60,8 @@ export class HighlightCheck extends VerificationCheck {
       if (check.hasKtCode && !check.ktHighlighted) {
         errors.push("Kotlin code block detected but Highlight.js failed to highlight keywords.");
       }
-      if (!check.hasTsCode && !check.hasKtCode && check.totalKeywordCount === 0) {
-        errors.push("Code blocks present but Highlight.js failed to format syntax keywords.");
+      if (!check.hasTsCode && !check.hasKtCode && check.totalKeywordCount === 0 && check.totalTokenCount === 0 && check.highlightedBlockCount === 0) {
+        errors.push("Code blocks present but Highlight.js failed to format syntax tokens.");
       }
     }
 
@@ -62,7 +71,7 @@ export class HighlightCheck extends VerificationCheck {
       status: errors.length > 0 ? "failed" : "passed",
       errors,
       styleguide: { compliant: errors.length === 0, rulesChecked: this.styleguideRules },
-      messages: errors.length === 0 ? [`Highlight.js: ${check.codeBlockCount} code block(s) styled with ${check.totalKeywordCount} keywords.`] : []
+      messages: errors.length === 0 ? [`Highlight.js: ${check.codeBlockCount} code block(s) styled (${check.totalTokenCount} token(s), ${check.totalKeywordCount} keyword(s)).`] : []
     };
   }
 }

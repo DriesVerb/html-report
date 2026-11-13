@@ -71,6 +71,14 @@ class PersonaRegistry {
         systemPrompt: "You are an elite telemetry and systems data analyst. Provide concise, high-signal, actionable insights based on the provided data and context."
       },
       {
+        id: "support",
+        name: "Documentation Support",
+        description: "Provides document-grounded setup, troubleshooting, and operational assistance.",
+        badgeColor: "badge-info",
+        icon: "life-buoy",
+        systemPrompt: "You are a document-grounded technical support assistant. Answer using the provided documentation, setup steps, and troubleshooting guides."
+      },
+      {
         id: "debugger",
         name: "Systems Debugger",
         description: "Isolates root causes, potential regressions, and concrete remediation steps.",
@@ -311,8 +319,24 @@ function findActiveChangeDir(startDir) {
 function findWorkspaceRoot(startDir) {
   let curr = path.resolve(startDir);
   while (curr && curr !== path.dirname(curr)) {
-    if (fs.existsSync(path.join(curr, "package.json")) || fs.existsSync(path.join(curr, ".git"))) {
+    if (fs.existsSync(path.join(curr, ".git"))) {
       return curr;
+    }
+    const pkgPath = path.join(curr, "package.json");
+    if (fs.existsSync(pkgPath)) {
+      const parentBase = path.basename(path.dirname(curr));
+      let isProjectSubpackage = parentBase === "projects";
+      if (!isProjectSubpackage) {
+        try {
+          const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+          if (pkg && typeof pkg.name === "string" && pkg.name.startsWith("html-report-project-")) {
+            isProjectSubpackage = true;
+          }
+        } catch (_) {}
+      }
+      if (!isProjectSubpackage) {
+        return curr;
+      }
     }
     curr = path.dirname(curr);
   }
@@ -1033,6 +1057,10 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
           }
 
           const updated = saveBoardState(parsed);
+          const stateEventPayload = `event: board-state\ndata: ${JSON.stringify(updated)}\n\n`;
+          for (const client of datastarClients) {
+            try { client.write(stateEventPayload); } catch (_) { datastarClients.delete(client); }
+          }
           const statusHtml = `<div id="live-board-status" data-board-updated="${escapeHtml(updated.updatedAt)}" class="text-xs font-mono text-success">Saved ${escapeHtml(new Date(updated.updatedAt).toLocaleTimeString())}</div>`;
           broadcastDatastarFragment({
             selector: "#live-board-status",
@@ -1071,37 +1099,58 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
 
     // 1a-3. Turnkey AI Preflight & Health Endpoint (GET /api/agent/preflight & /api/agent/health)
     if ((pathname === "/api/agent/preflight" || pathname === "/api/agent/health") && req.method === "GET") {
-      const providerStatus = AgentInferenceRouter.detectProviders();
-      res.writeHead(200, {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "no-cache, no-store"
-      });
-      res.end(JSON.stringify({
-        ok: true,
-        bridge: "online",
-        uiConfigured: true,
-        bridgeReachable: true,
-        providerAvailable: providerStatus.providerAvailable,
-        activeProvider: providerStatus.activeProvider,
-        activeProviderName: providerStatus.activeProviderName,
-        availableProviders: providerStatus.availableProviders,
-        checkedProviders: providerStatus.checkedProviders,
-        ai: {
-          available: providerStatus.providerAvailable,
+      const shouldVerify = parsedUrl.searchParams.get("verify") === "1" || parsedUrl.searchParams.get("probe") === "1";
+      const respondPreflight = (providerStatus, verification = null) => {
+        const inferenceVerified = verification ? Boolean(verification.inferenceVerified) : Boolean(providerStatus.inferenceVerified);
+        res.writeHead(200, {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "no-cache, no-store"
+        });
+        res.end(JSON.stringify({
+          ok: true,
+          bridge: "online",
+          uiConfigured: true,
+          bridgeReachable: true,
+          installed: providerStatus.installed,
+          authenticated: providerStatus.authenticated,
+          inferenceVerified,
           providerAvailable: providerStatus.providerAvailable,
           activeProvider: providerStatus.activeProvider,
           activeProviderName: providerStatus.activeProviderName,
           availableProviders: providerStatus.availableProviders,
-          checkedProviders: providerStatus.checkedProviders
-        },
-        streamConnected: datastarClients.size > 0,
-        streamListeners: datastarClients.size,
-        modelConfigured: true,
-        defaultModel: "Gemini 3.8 Flash (Low)",
-        port: serverPort,
-        version: getPackageVersion()
-      }));
+          authenticatedProviders: providerStatus.authenticatedProviders,
+          checkedProviders: providerStatus.checkedProviders,
+          ...(verification ? { verification } : {}),
+          ai: {
+            available: providerStatus.providerAvailable,
+            installed: providerStatus.installed,
+            authenticated: providerStatus.authenticated,
+            inferenceVerified,
+            providerAvailable: providerStatus.providerAvailable,
+            activeProvider: providerStatus.activeProvider,
+            activeProviderName: providerStatus.activeProviderName,
+            availableProviders: providerStatus.availableProviders,
+            authenticatedProviders: providerStatus.authenticatedProviders,
+            checkedProviders: providerStatus.checkedProviders
+          },
+          streamConnected: datastarClients.size > 0,
+          streamListeners: datastarClients.size,
+          modelConfigured: true,
+          defaultModel: "Gemini 3.8 Flash (Low)",
+          port: serverPort,
+          version: getPackageVersion()
+        }));
+      };
+
+      const providerStatus = AgentInferenceRouter.detectProviders();
+      if (shouldVerify) {
+        AgentInferenceRouter.verifyInference({ timeoutMs: 12000 })
+          .then((verification) => respondPreflight(providerStatus, verification))
+          .catch((err) => respondPreflight(providerStatus, { ok: false, inferenceVerified: false, error: err.message }));
+        return;
+      }
+      respondPreflight(providerStatus);
       return;
     }
 
@@ -1414,15 +1463,15 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
           let activeProvider = "heuristic";
           if (payload.heuristic === true) {
             const responseText = isMutatingPrompt
-              ? `Heuristic telemetry assessment for ${targetSelector || 'target metrics'}: Evaluated requested adjustment. Applying filter reduces error spikes by 14.2% across observed cohorts.`
-              : `Assessment: Telemetry for ${context.elementId || 'dashboard'} analyzed under persona '${persona.name}'. All primary thresholds within normal operating bounds.`;
+              ? `[Demo Fixture] Simulated adjustment preview for ${targetSelector || "target element"} under persona '${persona.name}'. (Demo-only fixture; no live telemetry recalculated).`
+              : `[Demo Fixture] Simulated response for ${context.elementId || "document"} under persona '${persona.name}'. (Demo-only fixture; live AI provider not invoked).`;
             let action = null;
             if (isMutatingPrompt) {
               action = {
                 id: `act_${Date.now().toString(36)}`,
                 type: "recalculate_metric",
-                description: `Apply filter and recalculate metrics for ${targetSelector || 'selected element'}`,
-                preview: JSON.stringify({ adjustment: "-14.2%", cohort: "timeout_excluded", status: "ready" }, null, 2)
+                description: `[Demo Fixture] Preview action for ${targetSelector || "selected element"}`,
+                preview: JSON.stringify({ fixture: true, target: targetSelector || "document", status: "demo_only" }, null, 2)
               };
               sessionStore.storePendingAction(sessionId, action);
             }
@@ -1847,14 +1896,18 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
         res.end(JSON.stringify({
           ok: true,
           bridge: providerStatus.activeProviderName
-            ? `Turnkey AI Bridge (${providerStatus.activeProviderName})`
+            ? `Turnkey AI Bridge (${providerStatus.activeProviderName} / agy CLI compatible)`
             : "Google Antigravity agy CLI Bridge",
           uiConfigured: true,
           bridgeReachable: true,
+          installed: providerStatus.installed,
+          authenticated: providerStatus.authenticated,
+          inferenceVerified: Boolean(providerStatus.inferenceVerified),
           providerAvailable: providerStatus.providerAvailable,
           activeProvider: providerStatus.activeProvider,
           activeProviderName: providerStatus.activeProviderName,
           availableProviders: providerStatus.availableProviders,
+          authenticatedProviders: providerStatus.authenticatedProviders,
           checkedProviders: providerStatus.checkedProviders,
           streamConnected: datastarClients.size > 0,
           streamListeners: datastarClients.size,
@@ -1921,17 +1974,20 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
             prompt = `${personaPrompt}${formattingPrompt}\nPlease provide an assessment of current dashboard state and metrics.`;
           }
 
-          const agyArgs = ["--model", model, "-p", prompt];
-          execFile("agy", agyArgs, { timeout: 20000 }, (err, stdout, stderr) => {
-            const isError = Boolean(err);
+          const completeAgentResponse = (isError, rawText, providerId, errObj = null) => {
             let responseText = "";
-
             if (isError) {
-              console.warn(`[html-report] agy CLI call failed: ${err.message}`);
-              responseText = payload.fallbackText || `[Local Fallback] Telemetry evaluated for action '${action}'. Agent CLI temporarily offline or timed out.`;
+              if (errObj) {
+                console.warn(`[html-report] Agent inference call failed: ${errObj.message}`);
+              }
+              responseText = payload.fallbackText || `[Local Fallback] Request evaluated for action '${action}'. Agent provider temporarily offline or timed out.`;
             } else {
-              responseText = stdout.trim().replace(/^["']|["']$/g, "");
+              responseText = String(rawText || "").trim().replace(/^["']|["']$/g, "");
             }
+
+            const engineLabel = isError
+              ? "Local Heuristic Engine (Fallback)"
+              : `Turnkey AI Bridge (${providerId || "agy"} • ${model})`;
 
             if (isDatastarRequest) {
               res.writeHead(200, {
@@ -1954,13 +2010,13 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
                   </div>
                   <p class="text-sm text-base-content leading-relaxed">${escapeHtml(responseText)}</p>
                   <div class="text-[11px] text-base-content/50 font-mono pt-1 border-t border-base-200 flex items-center justify-between">
-                    <span>Engine: ${isError ? 'Local Heuristic Engine' : `Google Antigravity (${model} via agy CLI)`}</span>
+                    <span>Engine: ${escapeHtml(engineLabel)}</span>
                     <span class="font-mono text-[10px] text-base-content/40">${escapeHtml(activePersona.id)}</span>
                   </div>
                 </div>
               `.trim();
 
-              res.write(`event: datastar-merge-fragments\ndata: fragments ${fragment.replace(/\n/g, " ")}\n\n`);
+              res.write(DatastarBridge.formatFragment({ selector: targetSelector, html: fragment, merge: "morph" }));
               res.end();
               return;
             }
@@ -1976,14 +2032,34 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
               personaName: activePersona.name,
               badgeColor: activePersona.badgeColor,
               icon: activePersona.icon,
+              provider: providerId || null,
               result: responseText,
               oneliner: responseText,
-              agent: isError ? "Local Heuristic Engine (Fallback)" : `Google Antigravity (${model} via agy CLI)`,
+              agent: engineLabel,
               isLiveAI: !isError,
               fallback: isError,
               timestamp: new Date().toISOString()
             }));
-          });
+          };
+
+          AgentInferenceRouter.dispatch({
+            prompt,
+            systemPrompt: `${personaPrompt}${formattingPrompt}`,
+            model,
+            provider: payload.provider || null,
+            timeoutMs: 25000,
+            throwOnError: true
+          })
+            .then((dispatchResult) => {
+              const out = String(dispatchResult.text || "").trim();
+              if (!out) {
+                throw new Error("Empty inference output");
+              }
+              completeAgentResponse(false, out, dispatchResult.provider);
+            })
+            .catch((err) => {
+              completeAgentResponse(true, "", null, err);
+            });
         });
         return;
       }
@@ -2095,13 +2171,17 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
 
     // 3. Serve static relative files (e.g. CSVs, PDFs, images, Markdown artifacts)
     const sanitizedRelPath = pathname.replace(/^\/+/, "");
+    const workspaceRootDir = findWorkspaceRoot(rootDir);
     let diskPath = path.resolve(rootDir, sanitizedRelPath);
 
-    // Fallback to dev/ or experiments/ directories if not found at root
+    // Fallback to workspaceRootDir, dev/, or experiments/ directories if not found at rootDir
     if (!fs.existsSync(diskPath) || fs.statSync(diskPath).isDirectory()) {
+      const wsCandidate = path.resolve(workspaceRootDir, sanitizedRelPath);
       const devCandidate = path.join(rootDir, "dev", sanitizedRelPath);
       const expCandidate = path.join(rootDir, "experiments", sanitizedRelPath);
-      if (fs.existsSync(devCandidate) && fs.statSync(devCandidate).isFile()) {
+      if (wsCandidate.startsWith(workspaceRootDir) && fs.existsSync(wsCandidate) && fs.statSync(wsCandidate).isFile()) {
+        diskPath = wsCandidate;
+      } else if (fs.existsSync(devCandidate) && fs.statSync(devCandidate).isFile()) {
         diskPath = devCandidate;
       } else if (fs.existsSync(expCandidate) && fs.statSync(expCandidate).isFile()) {
         diskPath = expCandidate;
@@ -2132,8 +2212,8 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
       }
     }
 
-    // Security check: prevent directory traversal outside rootDir
-    if (!diskPath.startsWith(rootDir)) {
+    // Security check: prevent directory traversal outside rootDir / workspaceRootDir
+    if (!diskPath.startsWith(rootDir) && !diskPath.startsWith(workspaceRootDir)) {
       res.writeHead(403, { "Content-Type": "text/plain" });
       res.end("403 Forbidden");
       return;
@@ -2330,8 +2410,12 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
   } catch (_) {}
 
   // Watch projects/ directory for additions, deletions, and metadata updates without full page reload
-  const watchedProjectsDir = path.join(findWorkspaceRoot(rootDir), "projects");
-  if (fs.existsSync(watchedProjectsDir)) {
+  const workspaceRootForWatch = findWorkspaceRoot(rootDir);
+  const watchedProjectsDir = path.join(workspaceRootForWatch, "projects");
+  let projectsDirWatched = false;
+  const attachProjectsWatcher = () => {
+    if (projectsDirWatched || !fs.existsSync(watchedProjectsDir)) return;
+    projectsDirWatched = true;
     try {
       const projectsWatcher = fs.watch(watchedProjectsDir, { recursive: true }, () => {
         broadcastProjectsChanged();
@@ -2357,6 +2441,18 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
         }
       } catch (_) {}
     }
+  };
+  attachProjectsWatcher();
+  if (!projectsDirWatched && fs.existsSync(workspaceRootForWatch)) {
+    try {
+      const wsWatcher = fs.watch(workspaceRootForWatch, (event, filename) => {
+        if (filename === "projects" && fs.existsSync(watchedProjectsDir)) {
+          attachProjectsWatcher();
+          broadcastProjectsChanged();
+        }
+      });
+      watchers.push(wsWatcher);
+    } catch (_) {}
   }
 
   // Handle port conflicts with auto-retry

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import child_process from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -23,6 +24,7 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const REPO_ROOT = path.resolve(__dirname, "../../..");
 
 export const ADDON_REGISTRY = {
   charts: {
@@ -1183,6 +1185,36 @@ export function buildReport({
   const version = getPackageVersion();
   html = html.replace(/<!-- {{VERSION}} -->/g, () => version);
 
+  if (ai && !published) {
+    const safePersona = escapeAttr(resolvedAiPersona);
+    const personaLabel = resolvedAiPersona.charAt(0).toUpperCase() + resolvedAiPersona.slice(1);
+    html = html.replace(
+      /(<select id="agent-dock-persona"[^>]*>)([\s\S]*?)(<\/select>)/i,
+      (full, openTag, innerOpts, closeTag) => {
+        let updatedOpts = innerOpts.replace(/\s+selected\b/gi, "");
+        const optRegex = new RegExp(`(<option\\s+value=["']${safePersona}["'])(>)`, "i");
+        if (optRegex.test(updatedOpts)) {
+          updatedOpts = updatedOpts.replace(optRegex, `$1 selected$2`);
+        } else {
+          updatedOpts = `\n            <option value="${safePersona}" selected>${escapeAttr(personaLabel)}</option>` + updatedOpts;
+        }
+        return `${openTag}${updatedOpts}${closeTag}`;
+      }
+    );
+
+    if (resolvedAiPurpose) {
+      html = html.replace(
+        /(<p id="agent-dock-welcome-copy"[^>]*>)[\s\S]*?(<\/p>)/i,
+        `$1${escapeAttr(resolvedAiPurpose)} Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.$2`
+      );
+    } else if (resolvedAiPersona.toLowerCase() === "support") {
+      html = html.replace(
+        /(<p id="agent-dock-welcome-copy"[^>]*>)[\s\S]*?(<\/p>)/i,
+        `$1Ask questions about the documentation, setup steps, or troubleshooting guidance on this page. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.$2`
+      );
+    }
+  }
+
   if (!aiDock) {
     html = stripAiDockMarkup(html);
   }
@@ -1268,6 +1300,8 @@ Options:
 const isDirectCli = isDirectCliExecution(process.argv[1], import.meta.url);
 
 if (isDirectCli) {
+  const rawArgv = process.argv.slice(2);
+  const hasFlag = (...names) => rawArgv.some((a) => names.includes(a));
   const options = parseArgs(process.argv);
 
   if (options.version) {
@@ -1280,8 +1314,72 @@ if (isDirectCli) {
     process.exit(0);
   }
 
+  // Infer project slug from --content or --output if --project was not explicitly provided
+  if (!options.project) {
+    for (const candidate of [options.output, options.content]) {
+      if (!candidate) continue;
+      const normalizedCand = String(candidate).replace(/\\/g, "/");
+      const m = normalizedCand.match(/(?:^|\/)projects\/([a-z0-9-]+)\//i);
+      if (m) {
+        options.project = m[1].toLowerCase();
+        break;
+      }
+    }
+  }
+
+  // Support `build-report.mjs --project <slug>` without requiring --content
+  if (options.project) {
+    const cwdProjectDir = path.resolve(process.cwd(), "projects", options.project);
+    const repoProjectDir = path.resolve(REPO_ROOT, "projects", options.project);
+    const projectBaseDir = fs.existsSync(cwdProjectDir)
+      ? cwdProjectDir
+      : (fs.existsSync(repoProjectDir) ? repoProjectDir : cwdProjectDir);
+
+    if (!options.content) {
+      const defaultFrag = path.join(projectBaseDir, "fragment.html");
+      if (fs.existsSync(defaultFrag)) {
+        options.content = defaultFrag;
+      }
+    }
+
+    const manifestFile = path.join(projectBaseDir, "report.manifest.json");
+    if (fs.existsSync(manifestFile)) {
+      try {
+        const saved = JSON.parse(fs.readFileSync(manifestFile, "utf-8"));
+        if (!hasFlag("--title", "-t") && saved.title) options.title = saved.title;
+        if (!hasFlag("--mode", "-m", "--print", "--printable", "-p", "--presentation", "--dashboard", "--working", "--working-report", "--live", "-l", "--live-report") && saved.mode) {
+          options.mode = saved.mode;
+          if (saved.mode === "print") options.printable = true;
+          if (saved.mode === "presentation") options.presentation = true;
+          if (saved.mode === "live-report") options.live = true;
+        }
+        if (!hasFlag("--theme") && saved.theme) options.theme = saved.theme;
+        if (!hasFlag("--addons") && Array.isArray(saved.activeAddons) && saved.activeAddons.length > 0) {
+          options.addons = Array.from(new Set([...options.addons, ...saved.activeAddons]));
+        }
+        if (saved.pwa && !hasFlag("--pwa")) options.pwa = true;
+        if (saved.aiBridge) {
+          if (!hasFlag("--ai")) options.ai = true;
+          if (saved.aiConfig) {
+            if (!hasFlag("--ai-port") && saved.aiConfig.port) options.aiPort = saved.aiConfig.port;
+            if (!hasFlag("--ai-model") && saved.aiConfig.model) options.aiModel = saved.aiConfig.model;
+            if (!hasFlag("--ai-persona") && saved.aiConfig.persona) options.aiPersona = saved.aiConfig.persona;
+            if (!hasFlag("--ai-purpose") && saved.aiConfig.purpose) options.aiPurpose = saved.aiConfig.purpose;
+            if (!hasFlag("--ai-dock", "--no-ai-dock") && typeof saved.aiConfig.floatingAssistant === "boolean") {
+              options.aiDock = saved.aiConfig.floatingAssistant;
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (options.published && !hasFlag("--output", "-o")) {
+      options.output = `projects/${options.project}/published.html`;
+    }
+  }
+
   if (!options.content) {
-    console.error("Error: --content <file> is required.");
+    console.error("Error: --content <file> is required (or pass --project <slug> for an existing project with fragment.html).");
     showHelp();
     process.exit(1);
   }
@@ -1354,6 +1452,22 @@ if (isDirectCli) {
       emoji: pwaConfig.emoji,
       writeFiles: true
     });
+  }
+
+  // Mirror project outputs to REPO_ROOT/projects/<slug>/ when invoked from an external working directory
+  if (
+    options.project &&
+    path.resolve(process.cwd()) !== REPO_ROOT &&
+    !outputDir.startsWith(os.tmpdir()) &&
+    fs.existsSync(path.join(REPO_ROOT, "create.html"))
+  ) {
+    const repoProjectDir = path.join(REPO_ROOT, "projects", options.project);
+    if (path.resolve(outputDir) !== path.resolve(repoProjectDir)) {
+      try {
+        fs.mkdirSync(repoProjectDir, { recursive: true });
+        fs.cpSync(outputDir, repoProjectDir, { recursive: true, force: true });
+      } catch (_) {}
+    }
   }
 
   let verifySummary = null;

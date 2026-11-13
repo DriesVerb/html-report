@@ -809,12 +809,28 @@ function initTOC() {
     a.textContent = h.textContent.trim();
     a.className = level === 1 ? "font-bold text-xs" : level === 2 ? "pl-3 text-xs" : "pl-6 text-2xs opacity-80";
     a.addEventListener("click", () => {
-      const dropdown = document.getElementById("toc-dropdown");
-      if (dropdown) dropdown.removeAttribute("open");
+      if (typeof HTMLReportSettings !== "undefined" && typeof HTMLReportSettings.closeToc === "function") {
+        HTMLReportSettings.closeToc();
+      } else {
+        const dropdown = document.getElementById("toc-dropdown");
+        const btn = document.getElementById("toc-dropdown-btn");
+        if (dropdown) {
+          dropdown.classList.remove("dropdown-open");
+          dropdown.removeAttribute("open");
+          if (document.activeElement && dropdown.contains(document.activeElement) && typeof document.activeElement.blur === "function") {
+            document.activeElement.blur();
+          }
+        }
+        if (btn) btn.setAttribute("aria-expanded", "false");
+      }
     });
     li.appendChild(a);
     tocList.appendChild(li);
   });
+
+  if (typeof HTMLReportSettings !== "undefined" && typeof HTMLReportSettings.initGear === "function") {
+    try { HTMLReportSettings.initGear(); } catch (_) {}
+  }
 }
 
 /**
@@ -2097,7 +2113,7 @@ const HTMLReportAgent = {
   },
 
   getAiConfig: function() {
-    const defaults = { port: 3031, fallbackPort: 3032, model: "Gemini 3.8 Flash (Low)", persona: "analyst" };
+    const defaults = { port: 3031, fallbackPort: 3032, model: "Gemini 3.8 Flash (Low)", persona: "analyst", purpose: null };
     if (typeof document === "undefined") return defaults;
     const readMeta = (name) => {
       const el = document.querySelector(`meta[name="${name}"]`);
@@ -2115,7 +2131,8 @@ const HTMLReportAgent = {
     const port = Number.isFinite(Number(portRaw)) && Number(portRaw) > 0 ? Number(portRaw) : defaults.port;
     const model = readMeta("html-report-ai-model") || (manifestCfg && manifestCfg.model) || defaults.model;
     const persona = readMeta("html-report-ai-persona") || (manifestCfg && manifestCfg.persona) || defaults.persona;
-    return { port, model, persona };
+    const purpose = readMeta("html-report-ai-purpose") || (manifestCfg && manifestCfg.purpose) || defaults.purpose;
+    return { port, model, persona, purpose };
   },
 
   checkConnection: async function(btnEl) {
@@ -2342,12 +2359,28 @@ Prerequisites & Instructions:
     if (dockContainer) {
       dockContainer.classList.toggle("hidden", !showDock);
     }
+    const cfg = this.getAiConfig();
     const personaSel = document.getElementById("agent-dock-persona");
     if (capable && personaSel && !personaSel.dataset.aiConfigInit) {
       personaSel.dataset.aiConfigInit = "1";
-      const cfgPersona = this.getAiConfig().persona;
-      if (cfgPersona && Array.from(personaSel.options).some((o) => o.value === cfgPersona)) {
+      const cfgPersona = cfg.persona;
+      if (cfgPersona) {
+        if (!Array.from(personaSel.options).some((o) => o.value === cfgPersona)) {
+          const opt = document.createElement("option");
+          opt.value = cfgPersona;
+          opt.textContent = cfgPersona.charAt(0).toUpperCase() + cfgPersona.slice(1);
+          personaSel.insertBefore(opt, personaSel.firstChild);
+        }
         personaSel.value = cfgPersona;
+      }
+    }
+    const welcomeCopy = document.getElementById("agent-dock-welcome-copy");
+    if (welcomeCopy && !welcomeCopy.dataset.aiPurposeInit) {
+      welcomeCopy.dataset.aiPurposeInit = "1";
+      if (cfg.purpose) {
+        welcomeCopy.innerHTML = `${typeof escapeHtml === "function" ? escapeHtml(cfg.purpose) : cfg.purpose} Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.`;
+      } else if (cfg.persona && cfg.persona.toLowerCase() === "support") {
+        welcomeCopy.innerHTML = `Ask questions about the documentation, setup steps, or troubleshooting guidance on this page. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.`;
       }
     }
     if (!capable && this._isDockOpen) {
@@ -2783,10 +2816,16 @@ Prerequisites & Instructions:
             }
 
             const rawData = (dataLines.length > 0 ? dataLines.join("\n") : block.replace(/^data:\s*/m, "")).trim();
-            const isDatastar = eventType === "datastar-merge-fragments" || block.includes("event: datastar-merge-fragments") || rawData.startsWith("fragments ");
+            const isDatastar =
+              eventType === "datastar-merge-fragments" ||
+              eventType === "datastar-fragment" ||
+              block.includes("event: datastar-merge-fragments") ||
+              block.includes("event: datastar-fragment") ||
+              rawData.startsWith("fragments ") ||
+              rawData.startsWith("fragment ");
 
             if (isDatastar) {
-              const fragmentHtml = rawData.replace(/^fragments\s+/, "");
+              const fragmentHtml = rawData.replace(/^fragments?\s+/, "");
               if (targetSelector && typeof document !== "undefined") {
                 const targetEl = document.querySelector(targetSelector);
                 if (targetEl && fragmentHtml.includes(`id="${targetEl.id}"`)) {
@@ -2813,7 +2852,7 @@ Prerequisites & Instructions:
                 }
               }
             } catch (_) {
-              if (rawData && !rawData.startsWith("fragments ") && !rawData.startsWith("{")) {
+              if (rawData && !isDatastar && !rawData.startsWith("fragments ") && !rawData.startsWith("fragment ") && !rawData.startsWith("{")) {
                 fullText = rawData;
               }
             }
@@ -3207,19 +3246,111 @@ const HTMLReportSettings = {
     if (typeof document === "undefined") return;
     const dd = document.getElementById("settings-dropdown");
     const btn = document.getElementById("settings-gear-btn");
-    if (!dd || !btn || dd.__gearWired) return;
-    dd.__gearWired = true;
-    const setExpanded = (v) => btn.setAttribute("aria-expanded", v ? "true" : "false");
-    dd.addEventListener("focusin", () => setExpanded(true));
-    dd.addEventListener("focusout", (e) => { if (!e.relatedTarget || !dd.contains(e.relatedTarget)) setExpanded(false); });
-    const close = () => {
-      const a = document.activeElement;
-      if (a && dd.contains(a) && typeof a.blur === "function") a.blur();
-      setExpanded(false);
+    const tocDd = document.getElementById("toc-dropdown");
+    const tocBtn = document.getElementById("toc-dropdown-btn");
+
+    const closeDropdown = (dropdownEl, triggerBtn) => {
+      if (!dropdownEl) return;
+      dropdownEl.classList.remove("dropdown-open");
+      dropdownEl.removeAttribute("open");
+      if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "false");
+      const active = document.activeElement;
+      if (active && dropdownEl.contains(active) && typeof active.blur === "function") {
+        active.blur();
+      }
     };
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && dd.contains(document.activeElement)) close(); });
-    document.addEventListener("mousedown", (e) => { if (!dd.contains(e.target)) close(); });
-    this.close = close;
+
+    const openDropdown = (dropdownEl, triggerBtn) => {
+      if (!dropdownEl) return;
+      dropdownEl.classList.add("dropdown-open");
+      if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "true");
+    };
+
+    const closeSettings = () => closeDropdown(dd, btn);
+    const closeToc = () => closeDropdown(tocDd, tocBtn);
+    const closeAll = () => {
+      closeSettings();
+      closeToc();
+    };
+
+    this.close = closeSettings;
+    this.closeToc = closeToc;
+    this.closeAll = closeAll;
+
+    if (tocDd && tocBtn && !tocDd.__tocWired) {
+      tocDd.__tocWired = true;
+      tocBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = tocDd.classList.contains("dropdown-open");
+        if (isOpen) {
+          closeToc();
+        } else {
+          closeSettings();
+          openDropdown(tocDd, tocBtn);
+        }
+      });
+      tocBtn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          tocBtn.click();
+        }
+      });
+    }
+
+    if (dd && btn && !dd.__gearWired) {
+      dd.__gearWired = true;
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = dd.classList.contains("dropdown-open");
+        if (isOpen) {
+          closeSettings();
+        } else {
+          closeToc();
+          openDropdown(dd, btn);
+        }
+      });
+      btn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+
+      const panel = document.getElementById("settings-panel");
+      if (panel) {
+        panel.addEventListener("click", (e) => {
+          const actionBtn = e.target && e.target.closest && e.target.closest("#open-all-settings-btn, #download-html-btn, #download-pdf-btn, #pwa-install-dropdown-btn, #settings-open-editor");
+          if (actionBtn) {
+            setTimeout(() => closeSettings(), 0);
+          }
+        });
+      }
+    }
+
+    if (!document.__toolbarDropdownsGlobalWired) {
+      document.__toolbarDropdownsGlobalWired = true;
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          const gearEl = document.getElementById("settings-dropdown");
+          const tocEl = document.getElementById("toc-dropdown");
+          if ((gearEl && gearEl.classList.contains("dropdown-open")) || (tocEl && tocEl.classList.contains("dropdown-open"))) {
+            closeAll();
+          }
+        }
+      });
+      document.addEventListener("mousedown", (e) => {
+        const gearEl = document.getElementById("settings-dropdown");
+        const tocEl = document.getElementById("toc-dropdown");
+        if (gearEl && gearEl.classList.contains("dropdown-open") && !gearEl.contains(e.target)) {
+          closeDropdown(gearEl, document.getElementById("settings-gear-btn"));
+        }
+        if (tocEl && tocEl.classList.contains("dropdown-open") && !tocEl.contains(e.target)) {
+          closeDropdown(tocEl, document.getElementById("toc-dropdown-btn"));
+        }
+      });
+    }
   }
 };
 

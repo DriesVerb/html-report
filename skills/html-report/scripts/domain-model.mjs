@@ -215,8 +215,15 @@ export function resolveSiblingSkill(config) {
  */
 export function generateCliCommand(config, options = {}) {
   const norm = normalizeDomainConfig(config);
-  const contentFile = options.contentFile || "fragment.html";
-  const outputFile = options.outputFile || (norm.target === "print" ? "print.html" : "report.html");
+  const projectSlug = options.project ||
+    String(norm.title || "report")
+      .toLowerCase()
+      .replace(/[^a-z0-9-]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) ||
+    "report";
+  const contentFile = options.contentFile || (options.outputFile ? "fragment.html" : `projects/${projectSlug}/fragment.html`);
+  const outputFile = options.outputFile || `projects/${projectSlug}/index.html`;
 
   const buildFlags = [];
 
@@ -257,10 +264,11 @@ export function generateCliCommand(config, options = {}) {
     buildFlags.push(`--custom-theme "primary=${norm.customBrandColorHex}"`);
   }
 
+  const targetFlag = options.outputFile ? `--output ${outputFile}` : `--project ${projectSlug}`;
   const buildCommand = `node skills/html-report/scripts/build-report.mjs \\
   --title "${norm.title}" \\
   --content ${contentFile} \\
-  --output ${outputFile}${buildFlags.length > 0 ? " \\\n  " + buildFlags.join(" \\\n  ") : ""}`;
+  ${targetFlag}${buildFlags.length > 0 ? " \\\n  " + buildFlags.join(" \\\n  ") : ""}`;
 
   let serveCommand = null;
   if (norm.operationalMode === "live") {

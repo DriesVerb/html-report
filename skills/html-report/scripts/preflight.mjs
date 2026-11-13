@@ -296,6 +296,60 @@ export const SUPPORTED_CLI_PROVIDERS = [
  * Agent-agnostic Turnkey AI Bridge router supporting CLI harnesses and HTTP LLM APIs.
  */
 export class AgentInferenceRouter {
+  static _checkProviderAuthenticated(id, env = process.env) {
+    try {
+      const home = os.homedir();
+      switch (id) {
+        case "custom-cmd":
+        case "http-custom":
+        case "ollama":
+          return true;
+        case "openai-http":
+          return Boolean(env.OPENAI_API_KEY);
+        case "anthropic-http":
+          return Boolean(env.ANTHROPIC_API_KEY);
+        case "gemini-http":
+          return Boolean(env.GEMINI_API_KEY);
+        case "codex":
+          return Boolean(
+            env.OPENAI_API_KEY ||
+            fs.existsSync(path.join(home, ".codex", "auth.json")) ||
+            fs.existsSync(path.join(home, ".codex", "config.toml"))
+          );
+        case "claude":
+          return Boolean(
+            env.ANTHROPIC_API_KEY ||
+            fs.existsSync(path.join(home, ".claude.json")) ||
+            fs.existsSync(path.join(home, ".claude"))
+          );
+        case "gemini":
+          return Boolean(
+            env.GEMINI_API_KEY ||
+            fs.existsSync(path.join(home, ".gemini")) ||
+            fs.existsSync(path.join(home, ".config", "gcloud"))
+          );
+        case "agy":
+          return Boolean(
+            env.GEMINI_API_KEY ||
+            env.GOOGLE_API_KEY ||
+            fs.existsSync(path.join(home, ".gemini", "antigravity-cli")) ||
+            fs.existsSync(path.join(home, ".config", "antigravity"))
+          );
+        case "opencode":
+          return Boolean(
+            env.OPENAI_API_KEY ||
+            env.ANTHROPIC_API_KEY ||
+            fs.existsSync(path.join(home, ".config", "opencode")) ||
+            fs.existsSync(path.join(home, ".local", "share", "opencode"))
+          );
+        default:
+          return false;
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+
   static detectProviders(options = {}) {
     const env = options.env || process.env;
     const envPath = options.envPath !== undefined ? options.envPath : (env.PATH || "");
@@ -311,7 +365,9 @@ export class AgentInferenceRouter {
         id: "custom-cmd",
         type: "cli-custom",
         name: `Custom Command (${customCmd.split(/\s+/)[0]})`,
-        command: customCmd
+        command: customCmd,
+        installed: true,
+        authenticated: true
       });
     }
 
@@ -322,7 +378,9 @@ export class AgentInferenceRouter {
         id: "http-custom",
         type: "http",
         name: "Custom HTTP LLM Endpoint",
-        url: env.HTML_REPORT_AI_URL
+        url: env.HTML_REPORT_AI_URL,
+        installed: true,
+        authenticated: true
       });
     }
     if (env.OPENAI_API_KEY) {
@@ -330,7 +388,9 @@ export class AgentInferenceRouter {
         id: "openai-http",
         type: "http",
         name: "OpenAI HTTP API",
-        url: "https://api.openai.com/v1/chat/completions"
+        url: "https://api.openai.com/v1/chat/completions",
+        installed: true,
+        authenticated: true
       });
     }
     if (env.ANTHROPIC_API_KEY) {
@@ -338,7 +398,9 @@ export class AgentInferenceRouter {
         id: "anthropic-http",
         type: "http",
         name: "Anthropic Messages API",
-        url: "https://api.anthropic.com/v1/messages"
+        url: "https://api.anthropic.com/v1/messages",
+        installed: true,
+        authenticated: true
       });
     }
     if (env.GEMINI_API_KEY) {
@@ -346,7 +408,9 @@ export class AgentInferenceRouter {
         id: "gemini-http",
         type: "http",
         name: "Google Gemini HTTP API",
-        url: "https://generativelanguage.googleapis.com/v1beta/models"
+        url: "https://generativelanguage.googleapis.com/v1beta/models",
+        installed: true,
+        authenticated: true
       });
     }
 
@@ -367,7 +431,9 @@ export class AgentInferenceRouter {
           name: def.name,
           bin: def.bin,
           binPath,
-          buildArgs: def.buildArgs
+          buildArgs: def.buildArgs,
+          installed: true,
+          authenticated: AgentInferenceRouter._checkProviderAuthenticated(def.id, env)
         });
       }
     }
@@ -376,10 +442,13 @@ export class AgentInferenceRouter {
     if (preferredProvider) {
       activeProvider = available.find((p) => p.id === preferredProvider || p.bin === preferredProvider) || null;
     } else if (available.length > 0) {
-      activeProvider = available[0];
+      activeProvider = available.find((p) => p.authenticated) || available[0];
     }
 
     return {
+      installed: Boolean(activeProvider),
+      authenticated: activeProvider ? Boolean(activeProvider.authenticated) : false,
+      inferenceVerified: false,
       providerAvailable: Boolean(activeProvider),
       activeProvider: activeProvider ? activeProvider.id : null,
       activeProviderName: activeProvider ? activeProvider.name : null,
@@ -388,9 +457,47 @@ export class AgentInferenceRouter {
         id: p.id,
         type: p.type,
         name: p.name,
+        installed: true,
+        authenticated: Boolean(p.authenticated),
         ...(p.binPath ? { binPath: p.binPath } : {})
       })),
       _resolvedActive: activeProvider
+    };
+  }
+
+  /**
+   * Executes a tiny bounded smoke request to verify end-to-end provider authentication and inference.
+   */
+  static async verifyInference(options = {}) {
+    const detected = AgentInferenceRouter.detectProviders(options);
+    if (!detected.providerAvailable) {
+      return {
+        ...detected,
+        installed: false,
+        authenticated: false,
+        inferenceVerified: false,
+        verificationError: "No AI provider installed."
+      };
+    }
+    const startMs = Date.now();
+    const res = await AgentInferenceRouter.dispatch(
+      {
+        prompt: options.probePrompt || "Reply with the single word OK.",
+        timeoutMs: options.timeoutMs || 8000,
+        provider: options.provider || detected.activeProvider
+      },
+      options
+    );
+    const latencyMs = Date.now() - startMs;
+    return {
+      ...detected,
+      installed: true,
+      authenticated: res.ok ? true : detected.authenticated,
+      inferenceVerified: Boolean(res.ok),
+      latencyMs,
+      ...(res.ok
+        ? { sampleOutput: String(res.text || "").slice(0, 80) }
+        : { verificationError: res.error || res.reason || "Inference probe failed." })
     };
   }
 
@@ -444,7 +551,7 @@ export class AgentInferenceRouter {
             .map((t) => t.replace(/^["']|["']$/g, ""));
           const cmd = tokens[0];
           const baseArgs = tokens.slice(1);
-          execFile(cmd, [...baseArgs, fullPrompt], { timeout: timeoutMs, env }, (err, stdout, stderr) => {
+          const child = execFile(cmd, [...baseArgs, fullPrompt], { timeout: timeoutMs, env }, (err, stdout, stderr) => {
             if (err) {
               const wrapped = new Error(`Custom AI command '${cmd}' failed: ${err.message}`);
               wrapped.code = "inference_unavailable";
@@ -463,6 +570,9 @@ export class AgentInferenceRouter {
             }
             resolve({ ok: true, text, result: text, provider: target.id, providerName: target.name });
           });
+          if (child && child.stdin) {
+            try { child.stdin.end(); } catch (_) {}
+          }
         });
         return res;
       } catch (err) {
@@ -474,7 +584,7 @@ export class AgentInferenceRouter {
       try {
         const res = await new Promise((resolve, reject) => {
           const args = target.buildArgs({ prompt: fullPrompt, model });
-          execFile(target.binPath || target.bin, args, { timeout: timeoutMs, env }, (err, stdout, stderr) => {
+          const child = execFile(target.binPath || target.bin, args, { timeout: timeoutMs, env }, (err, stdout, stderr) => {
             if (err) {
               const wrapped = new Error(`AI CLI provider '${target.id}' failed: ${err.message}`);
               wrapped.code = "inference_unavailable";
@@ -493,6 +603,9 @@ export class AgentInferenceRouter {
             }
             resolve({ ok: true, text, result: text, provider: target.id, providerName: target.name });
           });
+          if (child && child.stdin) {
+            try { child.stdin.end(); } catch (_) {}
+          }
         });
         return res;
       } catch (err) {
@@ -593,7 +706,9 @@ export async function runPreflight(options = {}) {
   const skillPaths = resolveSkillPaths(workspaceRoot);
   const ports = await probePorts(primaryPort, secondaryPort);
   const browser = await detectBrowserReadiness();
-  const ai = AgentInferenceRouter.detectProviders(options);
+  const ai = options.verifyAi
+    ? await AgentInferenceRouter.verifyInference(options)
+    : AgentInferenceRouter.detectProviders(options);
 
   return {
     ok: true,
@@ -614,11 +729,16 @@ export async function runPreflight(options = {}) {
     },
     browser,
     ai: {
+      installed: ai.installed,
+      authenticated: ai.authenticated,
+      inferenceVerified: Boolean(ai.inferenceVerified),
       providerAvailable: ai.providerAvailable,
       activeProvider: ai.activeProvider,
       activeProviderName: ai.activeProviderName,
       checkedProviders: ai.checkedProviders,
-      availableProviders: ai.availableProviders
+      availableProviders: ai.availableProviders,
+      ...(ai.latencyMs !== undefined ? { latencyMs: ai.latencyMs } : {}),
+      ...(ai.verificationError ? { verificationError: ai.verificationError } : {})
     }
   };
 }
@@ -628,12 +748,14 @@ function parseCliArgs(argv) {
   const opts = {
     port: DEFAULT_PRIMARY_PORT,
     fallbackPort: DEFAULT_SECONDARY_PORT,
+    verifyAi: false,
     json: false,
     help: false
   };
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (arg === "--json") opts.json = true;
+    else if (arg === "--verify-ai" || arg === "--probe-ai") opts.verifyAi = true;
     else if (arg === "--help" || arg === "-h") opts.help = true;
     else if ((arg === "--port" || arg === "-p") && args[i + 1]) {
       opts.port = Number(args[++i]) || DEFAULT_PRIMARY_PORT;

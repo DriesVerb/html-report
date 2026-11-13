@@ -26,8 +26,11 @@ import {
 } from "../skills/html-report/scripts/scaffold-project.mjs";
 import {
   startServer,
-  parseArgs as parseServeArgs
+  parseArgs as parseServeArgs,
+  findWorkspaceRoot
 } from "../skills/html-report/scripts/serve-report.mjs";
+import { generateCliCommand } from "../skills/html-report/scripts/domain-model.mjs";
+import { HighlightCheck } from "../skills/html-report/playwright/harness/checks/cdns/highlight.mjs";
 import {
   parseArgs as parseVerifyArgs
 } from "../skills/html-report/playwright/verify-report.mjs";
@@ -461,6 +464,170 @@ describe("Experience Review Remediations (Phases 1-5)", () => {
       const streamRes = HTMLReportBoard.connectStream("/events");
       assert.equal(streamRes.ok, false);
       assert.equal(streamRes.unsupported, true);
+    });
+  });
+
+  describe("Phase 6: Toolbar Dropdowns, Project Persistence, and Post-Mortem Bridge Fixes", () => {
+    it("6.1 template-shell.html & create.html enforce deterministic .dropdown-open CSS and blur on close", () => {
+      const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+      const shellHtml = fs.readFileSync(path.join(repoRoot, "skills/html-report/assets/template-shell.html"), "utf-8");
+      const createHtml = fs.readFileSync(path.join(repoRoot, "skills/html-report/assets/create.html"), "utf-8");
+
+      assert.match(shellHtml, /#toc-dropdown:not\(\.dropdown-open\) > \.dropdown-content/);
+      assert.match(shellHtml, /#settings-dropdown:not\(\.dropdown-open\) > \.dropdown-content/);
+      assert.match(shellHtml, /id="toc-dropdown-btn"[^>]*aria-haspopup="true"/);
+      assert.match(shellHtml, /<option value="support">Support<\/option>/);
+
+      assert.match(createHtml, /#toc-dropdown:not\(\.dropdown-open\) > \.dropdown-content/);
+      assert.match(createHtml, /#navbar-projects-dropdown:not\(\.dropdown-open\) > \.dropdown-content/);
+      assert.match(createHtml, /#studio-settings-dropdown:not\(\.dropdown-open\) > \.dropdown-content/);
+      assert.match(createHtml, /#initial-theme-dropdown:not\(\.dropdown-open\) > \.dropdown-content/);
+      assert.match(createHtml, /document\.activeElement\.blur\(\)/);
+    });
+
+    it("6.2 findWorkspaceRoot skips projects/<slug>/package.json and resolves workspace root", () => {
+      const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "html-report-wsroot-"));
+      try {
+        fs.writeFileSync(path.join(tmpRoot, "package.json"), JSON.stringify({ name: "workspace-root" }));
+        const projDir = path.join(tmpRoot, "projects", "my-board");
+        fs.mkdirSync(projDir, { recursive: true });
+        fs.writeFileSync(path.join(projDir, "package.json"), JSON.stringify({ name: "html-report-project-my-board" }));
+
+        assert.equal(findWorkspaceRoot(projDir), tmpRoot);
+      } finally {
+        fs.rmSync(tmpRoot, { recursive: true, force: true });
+      }
+    });
+
+    it("6.3 build-report.mjs --project <slug> rebuilds without --content and domain-model defaults to projects/", () => {
+      const cli = generateCliCommand({ title: "Latency Audit", target: "report" });
+      assert.match(cli.buildCommand, /--project latency-audit/);
+      assert.match(cli.buildCommand, /projects\/latency-audit\/fragment\.html/);
+
+      const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "html-report-projbuild-"));
+      try {
+        scaffoldProject({
+          project: "demo-support",
+          title: "Support Guide",
+          ai: true,
+          aiPersona: "support",
+          aiPurpose: "Answer setup questions from the guide.",
+          workspaceRoot: tmpRoot,
+          rootDir: tmpRoot
+        });
+        fs.writeFileSync(
+          path.join(tmpRoot, "projects", "demo-support", "fragment.html"),
+          '<main id="report-main"><section id="s1"><h1>Updated Guide</h1></section></main>',
+          "utf-8"
+        );
+        const buildScript = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../skills/html-report/scripts/build-report.mjs");
+        execFileSync(process.execPath, [buildScript, "--project", "demo-support"], {
+          cwd: tmpRoot,
+          encoding: "utf-8"
+        });
+        const rebuilt = fs.readFileSync(path.join(tmpRoot, "projects", "demo-support", "index.html"), "utf-8");
+        assert.match(rebuilt, /Updated Guide/);
+        assert.match(rebuilt, /<option value="support" selected>/i);
+        assert.match(rebuilt, /Answer setup questions from the guide\./);
+      } finally {
+        fs.rmSync(tmpRoot, { recursive: true, force: true });
+      }
+    });
+
+    it("6.4 AgentInferenceRouter closes child stdin, reports auth/verify fields, and /api/agent routes through it", async () => {
+      const status = AgentInferenceRouter.detectProviders({ env: { PATH: "" } });
+      assert.equal(status.installed, false);
+      assert.equal(status.authenticated, false);
+      assert.equal(status.inferenceVerified, false);
+
+      // Script that blocks until stdin EOF (would hang if child.stdin were left open)
+      const stdinEofCmd = `${process.execPath} -e "let d=''; process.stdin.on('data', c => d+=c); process.stdin.on('end', () => process.stdout.write('EOF-OK'));"`;
+      const res = await AgentInferenceRouter.dispatch(
+        { prompt: "hi" },
+        { env: { ...process.env, HTML_REPORT_AI_CMD: stdinEofCmd }, timeoutMs: 3000 }
+      );
+      assert.equal(res.ok, true);
+      assert.equal(res.text, "EOF-OK");
+
+      // Verify /api/agent uses AgentInferenceRouter instead of hardcoded agy
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "html-report-api-agent-"));
+      const reportPath = path.join(tmpDir, "board.html");
+      fs.writeFileSync(reportPath, "<!DOCTYPE html><html><head><title>Test</title></head><body><main></main></body></html>", "utf-8");
+      const srv = await startServer({ file: reportPath, port: 0, autoOpen: false });
+      const baseUrl = `http://127.0.0.1:${srv.server.address().port}`;
+      const prevCmd = process.env.HTML_REPORT_AI_CMD;
+      try {
+        process.env.HTML_REPORT_AI_CMD = `${process.execPath} -e "process.stdout.write('Routed via AgentInferenceRouter')"`;
+        const agentRes = await fetch(`${baseUrl}/api/agent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: "Check status", persona: "support" })
+        });
+        assert.equal(agentRes.status, 200);
+        const json = await agentRes.json();
+        assert.equal(json.ok, true);
+        assert.equal(json.persona, "support");
+        assert.equal(json.result, "Routed via AgentInferenceRouter");
+      } finally {
+        if (prevCmd === undefined) delete process.env.HTML_REPORT_AI_CMD;
+        else process.env.HTML_REPORT_AI_CMD = prevCmd;
+        await srv.close();
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+
+    it("6.5 POST /api/board/state broadcasts board-state SSE frame to second-tab listeners", async () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "html-report-sse-sync-"));
+      const reportPath = path.join(tmpDir, "board.html");
+      fs.writeFileSync(reportPath, "<!DOCTYPE html><html><head><title>Sync</title></head><body><main><div id='live-board-status'></div></main></body></html>", "utf-8");
+      const srv = await startServer({ file: reportPath, port: 0, autoOpen: false });
+      const baseUrl = `http://127.0.0.1:${srv.server.address().port}`;
+      const controller = new AbortController();
+      try {
+        const sseRes = await fetch(`${baseUrl}/events`, {
+          headers: { Accept: "text/event-stream" },
+          signal: controller.signal
+        });
+        const reader = sseRes.body.getReader();
+        const decoder = new TextDecoder();
+        await reader.read(); // consume initial connected + board-state frame
+
+        const postRes = await fetch(`${baseUrl}/api/board/state`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ checklist: ["step-1", "step-2"] })
+        });
+        assert.equal(postRes.status, 200);
+
+        const nextChunk = await reader.read();
+        const text = decoder.decode(nextChunk.value);
+        assert.match(text, /event: board-state/);
+        assert.match(text, /step-2/);
+      } finally {
+        controller.abort();
+        await srv.close();
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+
+    it("6.6 HighlightCheck passes on valid Bash code blocks without .hljs-keyword", async () => {
+      const check = new HighlightCheck();
+      const fakePage = {
+        evaluate: async () => ({
+          hasCode: true,
+          codeBlockCount: 1,
+          hasTsCode: false,
+          tsHighlighted: false,
+          hasKtCode: false,
+          ktHighlighted: false,
+          totalKeywordCount: 0,
+          totalTokenCount: 2,
+          highlightedBlockCount: 1
+        })
+      };
+      const res = await check.run({ page: fakePage, options: {} });
+      assert.equal(res.status, "passed");
+      assert.equal(res.errors.length, 0);
     });
   });
 });

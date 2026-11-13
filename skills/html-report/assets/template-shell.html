@@ -68,6 +68,7 @@
     .mermaid-wrapper:hover .mermaid-enlarge-btn {
       opacity: 1;
     }
+
     @media print {
       .mermaid-enlarge-btn,
       #mermaid-enlarge-modal {
@@ -227,6 +228,15 @@
       height: 100%;
     }
 
+    /* Deterministic Toolbar Dropdown Visibility (prevents DaisyUI :focus-within stuck-open bug) */
+    #toc-dropdown:not(.dropdown-open) > .dropdown-content,
+    #settings-dropdown:not(.dropdown-open) > .dropdown-content {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
     @media print {
       header,
       .navbar,
@@ -267,7 +277,7 @@
 
         <!-- 1. TOC Dropdown -->
         <div class="dropdown dropdown-end" id="toc-dropdown">
-          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
+          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents" aria-haspopup="true" aria-expanded="false">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
             </svg>
@@ -745,6 +755,7 @@
         <div class="flex items-center gap-1 shrink-0">
           <select id="agent-dock-persona" class="select select-bordered select-xs text-[11px] font-sans max-w-[110px]" title="Choose Agent Persona">
             <option value="analyst" selected>Analyst</option>
+            <option value="support">Support</option>
             <option value="debugger">Debugger</option>
             <option value="strategist">Strategist</option>
             <option value="executive">Executive</option>
@@ -769,7 +780,7 @@
       <div id="agent-dock-messages" class="flex-1 overflow-y-auto p-3 space-y-3 text-xs leading-relaxed" style="scroll-behavior: smooth;">
         <div class="p-3 rounded-xl bg-base-200/60 border border-base-300 text-base-content/80 space-y-1">
           <p class="font-semibold text-base-content">👋 Welcome to your AI Assistant</p>
-          <p class="text-[11px] text-base-content/70">Ask questions, request live recalculations, or click any card to inspect its telemetry. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.</p>
+          <p id="agent-dock-welcome-copy" class="text-[11px] text-base-content/70">Ask questions, request live recalculations, or click any card to inspect its telemetry. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.</p>
         </div>
       </div>
 
