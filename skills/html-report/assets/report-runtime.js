@@ -15,6 +15,15 @@ const STANDARD_DAISYUI_THEMES = new Set([
 
 const DAISYUI_THEMES = Array.from(STANDARD_DAISYUI_THEMES);
 
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // Zero-dependency pure JS OKLCH engine & compiler for browser runtime
 function srgbToLinear(c) {
   const norm = c / 255;

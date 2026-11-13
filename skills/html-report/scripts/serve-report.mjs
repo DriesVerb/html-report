@@ -316,6 +316,18 @@ function findActiveChangeDir(startDir) {
   return null;
 }
 
+function isPathInside(baseDir, targetPath) {
+  const rel = path.relative(path.resolve(baseDir), path.resolve(targetPath));
+  return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
+}
+
+function isLoopbackAddress(addr = "") {
+  return addr === "127.0.0.1" || addr === "::1" || addr === "::ffff:127.0.0.1";
+}
+
+let cachedVerifyResult = null;
+let cachedVerifyExpiresAt = 0;
+
 function findWorkspaceRoot(startDir) {
   let curr = path.resolve(startDir);
   while (curr && curr !== path.dirname(curr)) {
@@ -1145,8 +1157,28 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
 
       const providerStatus = AgentInferenceRouter.detectProviders();
       if (shouldVerify) {
+        const remoteAddr = req.socket?.remoteAddress || "";
+        const origin = req.headers.origin || "";
+        const isLocalOrigin = !origin || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(origin);
+        if (!isLoopbackAddress(remoteAddr) || !isLocalOrigin) {
+          respondPreflight(providerStatus, {
+            ok: false,
+            inferenceVerified: false,
+            verificationError: "Live inference probe is restricted to local requests."
+          });
+          return;
+        }
+        const now = Date.now();
+        if (cachedVerifyResult && now < cachedVerifyExpiresAt) {
+          respondPreflight(providerStatus, cachedVerifyResult);
+          return;
+        }
         AgentInferenceRouter.verifyInference({ timeoutMs: 12000 })
-          .then((verification) => respondPreflight(providerStatus, verification))
+          .then((verification) => {
+            cachedVerifyResult = verification;
+            cachedVerifyExpiresAt = Date.now() + 30000;
+            respondPreflight(providerStatus, verification);
+          })
           .catch((err) => respondPreflight(providerStatus, { ok: false, inferenceVerified: false, error: err.message }));
         return;
       }
@@ -2177,13 +2209,14 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
     // Fallback to workspaceRootDir, dev/, or experiments/ directories if not found at rootDir
     if (!fs.existsSync(diskPath) || fs.statSync(diskPath).isDirectory()) {
       const wsCandidate = path.resolve(workspaceRootDir, sanitizedRelPath);
+      const hasDotSegment = sanitizedRelPath.split(/[\\/]+/).some((seg) => seg.startsWith("."));
       const devCandidate = path.join(rootDir, "dev", sanitizedRelPath);
       const expCandidate = path.join(rootDir, "experiments", sanitizedRelPath);
-      if (wsCandidate.startsWith(workspaceRootDir) && fs.existsSync(wsCandidate) && fs.statSync(wsCandidate).isFile()) {
+      if (!hasDotSegment && isPathInside(workspaceRootDir, wsCandidate) && fs.existsSync(wsCandidate) && fs.statSync(wsCandidate).isFile()) {
         diskPath = wsCandidate;
-      } else if (fs.existsSync(devCandidate) && fs.statSync(devCandidate).isFile()) {
+      } else if (isPathInside(rootDir, devCandidate) && fs.existsSync(devCandidate) && fs.statSync(devCandidate).isFile()) {
         diskPath = devCandidate;
-      } else if (fs.existsSync(expCandidate) && fs.statSync(expCandidate).isFile()) {
+      } else if (isPathInside(rootDir, expCandidate) && fs.existsSync(expCandidate) && fs.statSync(expCandidate).isFile()) {
         diskPath = expCandidate;
       }
     }
@@ -2213,7 +2246,7 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
     }
 
     // Security check: prevent directory traversal outside rootDir / workspaceRootDir
-    if (!diskPath.startsWith(rootDir) && !diskPath.startsWith(workspaceRootDir)) {
+    if (!isPathInside(rootDir, diskPath) && !isPathInside(workspaceRootDir, diskPath)) {
       res.writeHead(403, { "Content-Type": "text/plain" });
       res.end("403 Forbidden");
       return;

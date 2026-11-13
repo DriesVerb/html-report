@@ -629,5 +629,44 @@ describe("Experience Review Remediations (Phases 1-5)", () => {
       assert.equal(res.status, "passed");
       assert.equal(res.errors.length, 0);
     });
+
+    it("6.7 Review remediations: escapeHtml in runtime, safe regex/replacer in buildReport, Datastar CRLF normalization, and dotfile/traversal guard", async () => {
+      const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+      const runtimeSrc = fs.readFileSync(path.join(repoRoot, "skills/html-report/assets/report-runtime.js"), "utf-8");
+      assert.match(runtimeSrc, /function escapeHtml\(str\)/);
+
+      const { html: built } = buildReport({
+        title: "Security Check",
+        contentHtml: "<section><h2>Body</h2><p>Text</p></section>",
+        ai: true,
+        aiPersona: "support+(test)",
+        aiPurpose: "Save $$100 & $& <script>alert(1)</script>"
+      });
+      assert.ok(built.includes('value="support+(test)" selected'));
+      assert.ok(!built.includes("<script>alert(1)</script>"));
+      assert.ok(built.includes("Save $$100 &amp; $&amp; &lt;script>alert(1)&lt;/script>"));
+
+      const { DatastarBridge } = await import("../skills/html-report/scripts/datastar-sse.mjs");
+      const formatted = DatastarBridge.formatFragment({
+        selector: "#box",
+        merge: "morph",
+        html: "<div>\r\n  <span>hi</span>\r\n</div>"
+      });
+      assert.ok(!formatted.includes("\r"));
+      assert.ok(!formatted.includes("data: mergeMode morph"));
+      assert.ok(formatted.includes("data: fragments <div>"));
+
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "serve-sec-test-"));
+      fs.writeFileSync(path.join(tmpDir, "index.html"), "<html><body>OK</body></html>");
+      const srv = await startServer({ filePath: path.join(tmpDir, "index.html"), port: 0, autoOpen: false });
+      try {
+        const port = srv.server.address().port;
+        const dotRes = await fetch(`http://127.0.0.1:${port}/.git/HEAD`);
+        assert.equal(dotRes.status, 404);
+      } finally {
+        await srv.close();
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
   });
 });

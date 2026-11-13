@@ -1187,12 +1187,13 @@ export function buildReport({
 
   if (ai && !published) {
     const safePersona = escapeAttr(resolvedAiPersona);
+    const escapedPersonaRegex = safePersona.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const personaLabel = resolvedAiPersona.charAt(0).toUpperCase() + resolvedAiPersona.slice(1);
     html = html.replace(
       /(<select id="agent-dock-persona"[^>]*>)([\s\S]*?)(<\/select>)/i,
       (full, openTag, innerOpts, closeTag) => {
         let updatedOpts = innerOpts.replace(/\s+selected\b/gi, "");
-        const optRegex = new RegExp(`(<option\\s+value=["']${safePersona}["'])(>)`, "i");
+        const optRegex = new RegExp(`(<option\\s+value=["']${escapedPersonaRegex}["'])(>)`, "i");
         if (optRegex.test(updatedOpts)) {
           updatedOpts = updatedOpts.replace(optRegex, `$1 selected$2`);
         } else {
@@ -1203,14 +1204,15 @@ export function buildReport({
     );
 
     if (resolvedAiPurpose) {
+      const safePurpose = escapeAttr(resolvedAiPurpose);
       html = html.replace(
         /(<p id="agent-dock-welcome-copy"[^>]*>)[\s\S]*?(<\/p>)/i,
-        `$1${escapeAttr(resolvedAiPurpose)} Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.$2`
+        (full, openTag, closeTag) => `${openTag}${safePurpose} Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.${closeTag}`
       );
     } else if (resolvedAiPersona.toLowerCase() === "support") {
       html = html.replace(
         /(<p id="agent-dock-welcome-copy"[^>]*>)[\s\S]*?(<\/p>)/i,
-        `$1Ask questions about the documentation, setup steps, or troubleshooting guidance on this page. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.$2`
+        (full, openTag, closeTag) => `${openTag}Ask questions about the documentation, setup steps, or troubleshooting guidance on this page. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.${closeTag}`
       );
     }
   }
@@ -1462,10 +1464,18 @@ if (isDirectCli) {
     fs.existsSync(path.join(REPO_ROOT, "create.html"))
   ) {
     const repoProjectDir = path.join(REPO_ROOT, "projects", options.project);
-    if (path.resolve(outputDir) !== path.resolve(repoProjectDir)) {
+    const resolvedOutputDir = path.resolve(outputDir);
+    if (resolvedOutputDir !== path.resolve(repoProjectDir)) {
       try {
         fs.mkdirSync(repoProjectDir, { recursive: true });
-        fs.cpSync(outputDir, repoProjectDir, { recursive: true, force: true });
+        const isDedicatedProjectDir =
+          path.basename(resolvedOutputDir) === options.project &&
+          path.basename(path.dirname(resolvedOutputDir)) === "projects";
+        if (isDedicatedProjectDir) {
+          fs.cpSync(resolvedOutputDir, repoProjectDir, { recursive: true, force: true });
+        } else {
+          fs.copyFileSync(outputPath, path.join(repoProjectDir, path.basename(outputPath)));
+        }
       } catch (_) {}
     }
   }
