@@ -1,0 +1,256 @@
+<main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 flex-1 w-full">
+  <!-- Section 1: OpenSpec Journey Overview -->
+  <section id="journey-overview" class="space-y-6">
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 sm:p-6 space-y-4">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="space-y-2 max-w-3xl">
+            <div class="badge badge-primary badge-sm font-mono">OpenSpec Journey &bull; spec-driven</div>
+            <h1 id="journey-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Reveal.js Presentation Support, Fullscreen &amp; Notes, Spacing &amp; Style Guide, Leaflet CSP &amp; Pipeline
+            </h1>
+            <p class="text-sm text-base-content/75">
+              Consolidated presentation epic covering Reveal.js addon &amp; scaffolding, Top-Layer <code>#presentation-shell</code> Fullscreen mode, modeless follow-along Speaker Notes popup modal, multi-mode slide spacing &amp; <code>reveal.css</code> guards, dedicated <code>reveal-presentation-style-guide.md</code>, Leaflet CSP, and pipeline fixes.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs sm:btn-sm btn-outline btn-primary gap-1.5 font-mono">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
+            </button>
+            <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs sm:btn-sm btn-outline btn-secondary gap-1.5 font-mono">
+              <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
+            </button>
+            <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+              <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
+            </button>
+            <button type="button" onclick="openMarkdownViewer('specs/reveal-presentation-fixes/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> spec.md
+            </button>
+            <button type="button" onclick="openMarkdownViewer('skill-review.md')" class="btn btn-xs sm:btn-sm btn-outline btn-accent gap-1.5 font-mono">
+              <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i> skill-review.md
+            </button>
+          </div>
+        </div>
+
+        <!-- Mandatory Journey Phase Stepper -->
+        <div class="w-full overflow-x-auto pt-2">
+          <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+            <li class="step step-primary" data-content="✓">Brainstorming</li>
+            <li class="step step-primary" data-content="✓">Planning</li>
+            <li class="step step-primary" data-content="✓">Implementing</li>
+            <li class="step step-primary" data-content="✓">Verifying</li>
+            <li class="step step-primary" data-content="✓">Shipped / Archived</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Progress Metrics -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-sm p-4">
+        <div class="stat-title text-xs">Total Tasks</div>
+        <div class="stat-value text-2xl font-extrabold">14</div>
+        <div class="stat-desc text-xs font-mono">4 Phases</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-sm p-4">
+        <div class="stat-title text-xs">In Progress</div>
+        <div class="stat-value text-2xl font-extrabold text-warning">0</div>
+        <div class="stat-desc text-xs font-mono">Ready to archive</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-sm p-4">
+        <div class="stat-title text-xs">Completed</div>
+        <div class="stat-value text-2xl font-extrabold text-success">14</div>
+        <div class="stat-desc text-xs font-mono">100% complete</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-sm p-4">
+        <div class="stat-title text-xs">Remaining</div>
+        <div class="stat-value text-2xl font-extrabold text-primary">0</div>
+        <div class="stat-desc text-xs font-mono">All verified</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Consolidated Architecture & Flow -->
+  <section id="architecture-flow" class="space-y-4">
+    <h2 id="target-architecture-flow" class="text-xl font-bold flex items-center gap-2">
+      <i data-lucide="git-branch" class="w-5 h-5 text-primary"></i>
+      Consolidated Reveal.js Architecture &amp; Fixes
+    </h2>
+    <div class="mermaid bg-base-100 border border-base-300 p-4 rounded-box overflow-x-auto text-center">
+flowchart LR
+  S["scaffold-project.mjs --mode presentation"] -->|"Emits #presentation-shell + .slide-body + aside.notes"| F["fragment.html + report.manifest.json (favicon)"]
+  F -->|"ADDON_REGISTRY.reveal + --published safe"| B["build-report.mjs"]
+  B -->|"Fullscreen HUD + Modeless Notes Modal + Spacing Tokens + CSP"| O["index.html (Top-Layer Fullscreen, Live Notes, 0 CSP errors)"]
+  SG["reveal-presentation-style-guide.md"] -->|"Guides"| S
+  P["preflight.mjs (playwright path)"] --> V["verify-report.mjs (padding, overflow, fullscreen, notes, CSP)"]
+    </div>
+  </section>
+
+  <!-- Section 3: OpenSpec Task Checklist -->
+  <section id="task-checklist" class="space-y-4">
+    <h2 id="openspec-task-checklist" class="text-xl font-bold flex items-center gap-2">
+      <i data-lucide="list-checks" class="w-5 h-5 text-secondary"></i>
+      OpenSpec Task Checklist (<a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</a>)
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-4 space-y-2 text-xs">
+          <div class="badge badge-primary font-bold">Phase 1 &bull; Reveal.js &amp; Spacing</div>
+          <ul class="space-y-2">
+            <li>&#9745; <strong>1.1</strong> Register <code>reveal</code> in <code>ADDON_REGISTRY</code> &amp; route <code>--mode presentation</code></li>
+            <li>&#9745; <strong>1.2</strong> Add <code>#presentation-shell</code>, <code>--slide-pad-*</code> tokens, <code>.slide-body</code> &amp; <code>reveal.css</code> guards</li>
+            <li>&#9745; <strong>1.3</strong> Add <code>slidechanged</code> widget resize &amp; TOC jump hooks</li>
+            <li>&#9745; <strong>1.4</strong> Update <code>scaffold-project.mjs</code> starter with <code>#presentation-shell</code>, <code>.slide-body</code> &amp; <code>aside.notes</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-4 space-y-2 text-xs">
+          <div class="badge badge-secondary font-bold">Phase 2 &bull; Fullscreen &amp; Notes</div>
+          <ul class="space-y-2">
+            <li>&#9745; <strong>2.1</strong> Add <code>#presentation-shell</code> Fullscreen CSS (<code>:fullscreen</code> / <code>.is-fullscreen</code>) &amp; HUD</li>
+            <li>&#9745; <strong>2.2</strong> Implement <code>initPresentationShell()</code>, <code>F</code> shortcut &amp; reflow hooks</li>
+            <li>&#9745; <strong>2.3</strong> Build modeless <code>#presentation-notes-modal</code> (rich HTML, Up Next, docking)</li>
+            <li>&#9745; <strong>2.4</strong> Wire <code>N</code> shortcut, <code>slidechanged</code> sync &amp; <code>--published</code> parity</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-4 space-y-2 text-xs">
+          <div class="badge badge-accent font-bold">Phase 3 &bull; Style Guide</div>
+          <ul class="space-y-2">
+            <li>&#9745; <strong>3.1</strong> Author <code>skills/html-report/references/reveal-presentation-style-guide.md</code></li>
+            <li>&#9745; <strong>3.2</strong> Link style guide &amp; <code>.slide-body</code> examples in <code>html-presentation</code> &amp; <code>html-report</code> <code>SKILL.md</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-4 space-y-2 text-xs">
+          <div class="badge badge-info font-bold">Phase 4 &bull; CSP, Preflight &amp; QA</div>
+          <ul class="space-y-2">
+            <li>&#9745; <strong>4.1</strong> Allow <code>unpkg.com</code> in <code>img-src</code> CSP, cap <code>#map</code> z-index &amp; document <code>L.divIcon</code></li>
+            <li>&#9745; <strong>4.2</strong> Resolve Playwright path in <code>preflight.mjs</code></li>
+            <li>&#9745; <strong>4.3</strong> Persist <code>favicon</code> in manifest &amp; avoid title truncation in <code>create.html</code></li>
+            <li>&#9745; <strong>4.4</strong> Test fullscreen, notes sync, padding/overflow, CSP &amp; SSE <code>waitUntil</code> in <code>verify-report.mjs</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Embedded Markdown Artifact Viewer Modal -->
+  <dialog id="markdown-viewer-modal" class="modal">
+    <div class="modal-box max-w-4xl w-11/12 bg-base-100 border border-base-300">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-base-300">
+        <h3 id="markdown-modal-title" class="font-mono font-bold text-sm">proposal.md</h3>
+        <div class="flex flex-wrap gap-1">
+          <button type="button" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')" class="doc-tab-btn btn btn-xs">proposal.md</button>
+          <button type="button" data-doc="design.md" onclick="switchViewerTab('design.md')" class="doc-tab-btn btn btn-xs">design.md</button>
+          <button type="button" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')" class="doc-tab-btn btn btn-xs">tasks.md</button>
+          <button type="button" data-doc="specs/reveal-presentation-fixes/spec.md" onclick="switchViewerTab('specs/reveal-presentation-fixes/spec.md')" class="doc-tab-btn btn btn-xs">spec.md</button>
+          <button type="button" data-doc="skill-review.md" onclick="switchViewerTab('skill-review.md')" class="doc-tab-btn btn btn-xs">skill-review.md</button>
+          <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-ghost">Close</button>
+        </div>
+      </div>
+      <div id="markdown-modal-body" class="prose prose-sm max-w-none py-4 max-h-[65vh] overflow-y-auto text-sm leading-relaxed"></div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button type="submit">close</button>
+    </form>
+  </dialog>
+
+  <script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: First-Class Reveal.js Presentation Support, Fullscreen & Follow-Along Notes, Spacing & Style Guide, Leaflet CSP Fix & Pipeline Ergonomics\n\n## Why\n1. Reveal.js vs. Impress.js mismatch in `build-report.mjs` and `scaffold-project.mjs`.\n2. No Fullscreen presentation mode (`#presentation-shell` Top-Layer container + `.is-fullscreen` fallback).\n3. No modeless follow-along Speaker Notes popup modal (`#presentation-notes-modal`).\n4. Cramped slide spacing & `reveal.css` `(0,2,1)` vs Tailwind `(0,1,0)` specificity collisions.\n5. Missing dedicated Reveal.js style guide (`reveal-presentation-style-guide.md`).\n6. Leaflet default marker CSP block (`unpkg.com` missing from `img-src`).\n7. Hidden-slide widget/TOC sync, `preflight.mjs` Playwright lookup, and `favicon` manifest persistence.\n\n## What Changes\nConsolidates Reveal.js addon support, `#presentation-shell` Fullscreen + modeless Notes modal, multi-mode spacing tokens + `.slide-body` + `reveal.css` guards, dedicated style guide, Leaflet CSP, and verification fixes into one cohesive epic.",
+  "design.md": "# Design: Consolidated Reveal.js Presentation Epic\n\n1. Register `reveal` (`reveal.js@5.1.0`) in `ADDON_REGISTRY` and emit `#presentation-shell` + `.slide-body` + `<aside class='notes'>` starter in `scaffold-project.mjs`.\n2. Root Fullscreen on `#presentation-shell` (native Fullscreen API + `.is-fullscreen` fallback + Fullscreen HUD) with `Reveal.layout()`, `Leaflet.invalidateSize()`, and `Chart.resize()` reflow.\n3. Add modeless `#presentation-notes-modal` (`aria-modal='false'`) synced on `ready`/`slidechanged` across horizontal/vertical slides, rich `<aside class='notes'>` HTML, `data-notes`, Up Next cue, and `--published` parity.\n4. Define `--slide-pad-*` tokens across Embedded, Fullscreen (`max-w-6xl`), Stacked, and Print + `reveal.css` cascade guards + `skills/html-report/references/reveal-presentation-style-guide.md`.\n5. Allow `https://unpkg.com` in `img-src` CSP, cap `#map` z-index, fix `preflight.mjs` Playwright lookup, and persist `favicon` in `report.manifest.json`.",
+  "tasks.md": "# Tasks\n\n## Phase 1: First-Class Reveal.js Addon, Shell & Spacing System\n- [ ] 1.1 Register `reveal` in `ADDON_REGISTRY` & route `--mode presentation`\n- [ ] 1.2 Add `#presentation-shell`, spacing tokens (`--slide-pad-*`), `.slide-body`, `reveal.css` guards & `.is-stacked`/print CSS\n- [ ] 1.3 Add `slidechanged` widget resize & TOC slide jump hooks\n- [ ] 1.4 Update `scaffold-project.mjs` starter with `#presentation-shell`, `.slide-body` & `aside.notes`\n\n## Phase 2: Fullscreen Mode & Follow-Along Speaker Notes Popup Modal\n- [ ] 2.1 Add `#presentation-shell` Fullscreen CSS & compact Fullscreen mini-HUD\n- [ ] 2.2 Implement `initPresentationShell()`, `F` shortcut & `fullscreenchange` reflow\n- [ ] 2.3 Implement modeless `#presentation-notes-modal` with rich notes, Up Next cue & docking\n- [ ] 2.4 Wire `N` shortcut, `slidechanged` listeners & `--published` parity\n\n## Phase 3: Dedicated Style Guide & Skill Alignment\n- [ ] 3.1 Author `skills/html-report/references/reveal-presentation-style-guide.md`\n- [ ] 3.2 Link style guide & `.slide-body` examples in `html-presentation` & `html-report` `SKILL.md`\n\n## Phase 4: Leaflet CSP, Preflight, Favicon & Verification\n- [ ] 4.1 Allow `https://unpkg.com` in `img-src` CSP, cap `#map` z-index & document `L.divIcon`\n- [ ] 4.2 Fix `preflight.mjs` Playwright module path resolution\n- [ ] 4.3 Persist `favicon` in `report.manifest.json` & avoid truncating `--title` in `create.html`\n- [ ] 4.4 Extend `verify-report.mjs` & tests for fullscreen, notes sync, spacing, CSP, preflight & favicon",
+  "specs/reveal-presentation-fixes/spec.md": "# reveal-presentation-fixes Specification\n\n- **First-Class Reveal.js Addon & Scaffolding**: `build-report.mjs` and `scaffold-project.mjs` default `--mode presentation` to Reveal.js (`#presentation-shell` + `.slide-body` + `<aside class='notes'>`).\n- **Fullscreen Presentation Shell & Layout Reflow**: `#presentation-shell` enters native Fullscreen or `.is-fullscreen` via button or `F`, shows compact HUD, and triggers `Reveal.layout()` + Leaflet/Chart resize.\n- **Follow-Along Speaker Notes Popup Modal**: Modeless `#presentation-notes-modal` (`aria-modal='false'`) stays open across transitions, syncs horizontal/vertical `<aside class='notes'>` & `data-notes`, shows Up Next cue, and survives `--published`.\n- **Standardized Multi-Mode Slide Spacing, Cascade Guards & Style Guide**: `--slide-pad-*` tokens (`>= 24px` X, `>= 52px` bottom), `reveal.css` isolation, `reveal-presentation-style-guide.md`, and `verify-report.mjs` padding/overflow/overlap assertions.\n- **Widget/TOC Sync, Leaflet CSP, Preflight & Favicon**: `slidechanged` widget resize, 0 CSP errors on `L.marker()`, `preflight.mjs` Playwright detection, and `favicon` manifest round-trip.",
+  "skill-review.md": "# Skill Execution Review: /html-presentation\n\n- **Worked well:** Fast scaffolding (`scaffold-project.mjs`), `<35ms` assembly (`build-report.mjs`), automatic 32-theme chart syncing (`report-runtime.js`), Playwright verification (`verify-report.mjs`), and fast edit-mode targeting via `report.manifest.json`.\n- **Creation & presenter gaps:** `build-report.mjs` & `scaffold-project.mjs` still wire Impress.js; no `#presentation-shell` Fullscreen mode or follow-along Notes popup modal; `template-shell.html` CSP blocks `unpkg.com` default Leaflet marker PNGs; hidden-slide Leaflet/Chart sizing and TOC jumps need runtime hooks; `preflight.mjs` reports `browser.ready: false`; `report.manifest.json` drops custom `--favicon`.\n- **Spacing & editing gaps:** Reveal.js CSS (`display: block`, `padding`) overrides Tailwind `p-*` and `flex` on `<section>`, collapsing padding to `0px`; `.controls`/`.slide-number` overlap content without `>= 3.75rem` bottom safe-zone; `.is-stacked` needs card framing; `skills/html-report/references/` lacks a dedicated Reveal.js style guide; `verify-report.mjs` missed `0px` padding and vertical slide overflow, while SSE `/events` breaks Playwright `networkidle`."
+}
+  </script>
+
+  <script>
+    let activeDocKey = "proposal.md";
+    let showdownConverter = null;
+
+    function getShowdownConverter() {
+      if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+        showdownConverter = new window.showdown.Converter({
+          tables: true,
+          tasklists: true,
+          strikethrough: true,
+          emoji: true
+        });
+      }
+      return showdownConverter;
+    }
+
+    function getOpenSpecArtifacts() {
+      try {
+        const el = document.getElementById("open-spec-artifacts-data");
+        if (el) return JSON.parse(el.textContent);
+      } catch (_) {}
+      return {};
+    }
+
+    async function openMarkdownViewer(docName) {
+      activeDocKey = docName || "proposal.md";
+      const modal = document.getElementById("markdown-viewer-modal");
+      if (!modal) return;
+      if (typeof modal.showModal === "function") modal.showModal();
+      else modal.setAttribute("open", "true");
+      await renderMarkdownDoc(activeDocKey);
+    }
+
+    function closeMarkdownViewer() {
+      const modal = document.getElementById("markdown-viewer-modal");
+      if (modal && typeof modal.close === "function") modal.close();
+      else if (modal) modal.removeAttribute("open");
+    }
+
+    async function switchViewerTab(docName) {
+      await renderMarkdownDoc(docName);
+    }
+
+    async function renderMarkdownDoc(docName) {
+      activeDocKey = docName;
+      const titleEl = document.getElementById("markdown-modal-title");
+      const bodyEl = document.getElementById("markdown-modal-body");
+      if (titleEl) titleEl.textContent = docName;
+
+      document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+        if (btn.getAttribute("data-doc") === docName) btn.classList.add("btn-active", "btn-primary");
+        else btn.classList.remove("btn-active", "btn-primary");
+      });
+
+      const artifacts = getOpenSpecArtifacts();
+      let md = artifacts[docName];
+      if (!md) {
+        try {
+          const res = await fetch(docName);
+          if (res.ok) md = await res.text();
+        } catch (_) {}
+      }
+
+      if (bodyEl) {
+        if (md) {
+          const conv = getShowdownConverter();
+          bodyEl.innerHTML = conv
+            ? conv.makeHtml(md)
+            : "<pre class='whitespace-pre-wrap font-mono text-xs'>" + md.replace(/</g, "&lt;") + "</pre>";
+        } else {
+          bodyEl.innerHTML = "<div class='alert alert-warning text-xs'>Artifact " + docName + " not loaded.</div>";
+        }
+      }
+    }
+
+    window.openMarkdownViewer = openMarkdownViewer;
+    window.closeMarkdownViewer = closeMarkdownViewer;
+    window.switchViewerTab = switchViewerTab;
+  </script>
+</main>

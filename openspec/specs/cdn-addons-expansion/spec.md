@@ -1,5 +1,8 @@
 # cdn-addons-expansion Specification
 
+## Purpose
+Defines on-demand CDN registration, signature auto-detection, CLI alias resolution, and isolation guards for third-party report libraries (Day.js, Impress.js, Mock.js, Showdown, FullCalendar, and Quill).
+
 ## Requirements
 
 ### Requirement: Day.js CDN Registration and Auto-Detection
@@ -77,3 +80,16 @@ The build pipeline MUST support FullCalendar for interactive calendars and event
 #### Scenario: FullCalendar DaisyUI theme synchronization
 - **WHEN** the user changes the DaisyUI theme via the navbar dropdown
 - **THEN** FullCalendar CSS custom properties and theme borders MUST update to match the active theme's background and text colors.
+
+---
+
+### Requirement: Quill WYSIWYG CDN Registration and Auto-Detection
+The build pipeline MUST support Quill.js v2.0 as an on-demand rich text WYSIWYG editing addon.
+
+#### Scenario: Quill detected via DOM signatures
+- **WHEN** a fragment or document contains `class="ql-editor"`, `id="editor"`, `id="quill-editor"`, `data-quill`, or `new Quill(`
+- **THEN** `build-report.mjs` injects the Quill v2.0 stylesheet (`https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css`) and JavaScript bundle (`https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js`) into the `<head>` of the built report.
+
+#### Scenario: Quill requested via explicit CLI flags
+- **WHEN** `build-report.mjs` is executed with `--quill`, `--wysiwyg`, `--editor`, or `--addons quill`
+- **THEN** the Quill stylesheet and script are injected regardless of content signatures.

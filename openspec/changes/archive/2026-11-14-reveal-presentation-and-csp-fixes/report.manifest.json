@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0.0",
+  "project": "html-report",
+  "title": "Reveal.js Presentation Support & CSP Fixes - Journey & Plan",
+  "mode": "working-report",
+  "theme": "light",
+  "favicon": "📊",
+  "aiBridge": false,
+  "aiConfig": null,
+  "published": false,
+  "pwa": false,
+  "activeAddons": [
+    "mermaid",
+    "leaflet",
+    "showdown"
+  ],
+  "files": {
+    "entry": "projects/html-report/index.html",
+    "fragment": "projects/html-report/fragment.html",
+    "published": "projects/html-report/published.html",
+    "manifest": "projects/html-report/report.manifest.json",
+    "agents": "projects/html-report/AGENTS.md",
+    "packageJson": "projects/html-report/package.json"
+  },
+  "pipeline": {
+    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --project html-report --content projects/html-report/fragment.html --title \"Reveal.js Presentation Support & CSP Fixes - Journey & Plan\" --mode working-report --theme light --addons mermaid,leaflet,showdown",
+    "serveCommand": "node skills/html-report/scripts/serve-report.mjs projects/html-report/index.html --port 3031",
+    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs projects/html-report/index.html",
+    "preflightCommand": "node skills/html-report/scripts/preflight.mjs --json",
+    "authoringGuide": "../../skills/html-report/references/agent-authoring-guide.md"
+  },
+  "sections": [
+    {
+      "agentId": "section-1",
+      "slug": "reveal-js-presentation-support-fullscreen-notes-",
+      "label": "Reveal.js Presentation Support, Fullscreen &amp; Notes, Spacing &amp; Style Guide, Leaflet CSP &amp; Pipeline",
+      "id": "journey-overview",
+      "selector": "#journey-overview"
+    },
+    {
+      "agentId": "section-2",
+      "slug": "consolidated-reveal-js-architecture-fixes",
+      "label": "Consolidated Reveal.js Architecture &amp; Fixes",
+      "id": "architecture-flow",
+      "selector": "#architecture-flow"
+    },
+    {
+      "agentId": "section-3",
+      "slug": "openspec-task-checklist-tasks-md",
+      "label": "OpenSpec Task Checklist ( tasks.md )",
+      "id": "task-checklist",
+      "selector": "#task-checklist"
+    },
+    {
+      "agentId": "section-4",
+      "slug": "section-4",
+      "label": "Section 4",
+      "id": null,
+      "selector": "[data-agent-id=\"section-4\"]"
+    }
+  ],
+  "widgets": [
+    {
+      "agentId": "kpi-1",
+      "type": "kpi",
+      "id": null,
+      "selector": "[data-agent-id=\"kpi-1\"]"
+    },
+    {
+      "agentId": "kpi-2",
+      "type": "kpi",
+      "id": null,
+      "selector": "[data-agent-id=\"kpi-2\"]"
+    },
+    {
+      "agentId": "kpi-3",
+      "type": "kpi",
+      "id": null,
+      "selector": "[data-agent-id=\"kpi-3\"]"
+    },
+    {
+      "agentId": "kpi-4",
+      "type": "kpi",
+      "id": null,
+      "selector": "[data-agent-id=\"kpi-4\"]"
+    },
+    {
+      "agentId": "mermaid-1",
+      "type": "mermaid",
+      "id": null,
+      "selector": "[data-agent-id=\"mermaid-1\"]"
+    }
+  ]
+}

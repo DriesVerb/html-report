@@ -1,0 +1,348 @@
+<section id="journey-overview" class="space-y-6">
+  <div class="card bg-base-200/70 border border-base-300 shadow-sm">
+    <div class="card-body p-5 sm:p-6 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div class="badge badge-primary badge-sm font-mono mb-2">OpenSpec Journey · spec-driven</div>
+          <h1 id="journey-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Studio Fast Assembly &amp; Smart Scaffolding Pipeline</h1>
+          <p class="text-sm text-base-content/75 mt-1">
+            Eliminating setup round-trips, manual fragment rebuilds, and boilerplate widget tokens while preserving &lt;100ms Assembly and Two-Axis classification. Also includes Lucide multi-CDN fallback hydration across <code>create.html</code> and built reports.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline btn-primary gap-1.5 font-mono text-xs">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline btn-secondary gap-1.5 font-mono text-xs">
+            <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 font-mono text-xs">
+            <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('specs/studio-fast-assembly/spec.md')" class="btn btn-sm btn-outline gap-1.5 font-mono text-xs">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> spec.md
+          </button>
+        </div>
+      </div>
+
+      <!-- Mandatory Journey Phase Stepper -->
+      <div class="w-full overflow-x-auto pt-2">
+        <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary">Brainstorming</li>
+          <li class="step step-primary">Planning</li>
+          <li class="step step-primary">Implementing</li>
+          <li class="step step-primary">Verifying</li>
+          <li class="step">Shipped / Archived</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Progress Metrics -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Total Tasks</div>
+      <div class="stat-value text-2xl font-extrabold">10</div>
+      <div class="stat-desc text-xs font-mono">3 Phases</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Completed</div>
+      <div class="stat-value text-2xl font-extrabold text-success">10</div>
+      <div class="stat-desc text-xs font-mono">100% complete</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Remaining</div>
+      <div class="stat-value text-2xl font-extrabold text-success">0</div>
+      <div class="stat-desc text-xs font-mono">Verified</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Codebase Gaps</div>
+      <div class="stat-value text-2xl font-extrabold text-info">6</div>
+      <div class="stat-desc text-xs font-mono">Resolved</div>
+    </div>
+  </div>
+</section>
+
+<section id="architecture-flow" class="space-y-4">
+  <h2 id="fast-assembly-amp-scaffolding-architecture" class="text-xl font-bold flex items-center gap-2">
+    <i data-lucide="git-branch" class="w-5 h-5 text-primary"></i>
+    Fast Assembly &amp; Scaffolding Architecture
+  </h2>
+  <p class="text-sm text-base-content/80">
+    Moving boilerplate scaffolding, reference staging, and fragment-to-index rebuilds into deterministic Node.js handlers keeps LLM agents focused purely on semantic content and data insights.
+  </p>
+  <div class="card bg-base-100 border border-base-300 shadow-xs p-4 overflow-x-auto">
+    <pre class="mermaid">
+flowchart LR
+  U["Creation Studio (create.html)"] -->|"Optional #input-project-slug + Scaffold Now"| S["POST /api/create/scaffold"]
+  S -->|"scaffoldProject() + refs/ copy + CSV/JSON parse"| P["projects/&lt;slug&gt;/fragment.html"]
+  P -->|"fs.watch (~100ms debounce)"| B["buildReport() (&lt;100ms Assembly)"]
+  B -->|"Writes index.html + SSE reload"| L["localhost:3000 Live Board"]
+  U -->|"Active Bridge (/api/agent/preflight)"| A["POST /api/agent/prompt"]
+  A -->|"Semantic content edits only"| P
+  P -->|"--fast lint gate"| H["harness.mjs (lintFragment)"]
+    </pre>
+  </div>
+</section>
+
+<section id="speedup-comparison" class="space-y-4">
+  <h2 id="expected-workflow-speedup" class="text-xl font-bold flex items-center gap-2">
+    <i data-lucide="gauge" class="w-5 h-5 text-secondary"></i>
+    Expected Workflow Speedup
+  </h2>
+  <div class="card bg-base-100 border border-base-300 shadow-xs p-5">
+    <div class="h-72">
+      <canvas id="speedupChart"></canvas>
+    </div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const ctx = document.getElementById("speedupChart");
+      if (!ctx || typeof Chart === "undefined") return;
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Project Setup (s)", "Edit-to-Browser Rebuild (ms/10)", "Widget Boilerplate Tokens (/100)", "Draft Lint Cycle (s)"],
+          datasets: [
+            { label: "Current Studio + Agent", data: [22, 35, 14, 6], backgroundColor: "rgba(148, 163, 184, 0.7)" },
+            { label: "Fast Assembly Pipeline", data: [0.2, 8, 5, 0.1], backgroundColor: "rgba(59, 130, 246, 0.85)" }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "top" } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    });
+  </script>
+</section>
+
+<section id="codebase-gaps" class="space-y-4">
+  <h2 id="audited-codebase-gaps-amp-remediations" class="text-xl font-bold flex items-center gap-2">
+    <i data-lucide="alert-triangle" class="w-5 h-5 text-warning"></i>
+    Audited Codebase Gaps &amp; Remediations
+  </h2>
+  <div class="overflow-x-auto bg-base-100 border border-base-300 rounded-xl shadow-xs">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Gap</th>
+          <th>Current State</th>
+          <th>Planned Fix</th>
+          <th>Artifact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="font-semibold">1. Domain Model Drift</td>
+          <td><code>create.html</code> duplicates prompt builder &amp; uses <code>"lemon"</code> vs <code>"lemonade"</code></td>
+          <td>Align theme list &amp; synthesize via <code>domain-model.mjs</code></td>
+          <td><button type="button" onclick="openMarkdownViewer('design.md')" class="link link-primary font-mono text-xs">design.md</button></td>
+        </tr>
+        <tr>
+          <td class="font-semibold">2. Scaffolder Inputs</td>
+          <td><code>scaffoldProject()</code> lacks Two-Axis fields, <code>widgets</code>, <code>referenceFiles</code>, and collision auto-suffix</td>
+          <td>Extend <code>scaffoldProject()</code> + stage <code>projects/&lt;slug&gt;/refs/</code></td>
+          <td><button type="button" onclick="openMarkdownViewer('specs/studio-fast-assembly/spec.md')" class="link link-primary font-mono text-xs">spec.md</button></td>
+        </tr>
+        <tr>
+          <td class="font-semibold">3. Folder Slug Input</td>
+          <td>Slug always derived from <code>userGoals || heroTitle</code></td>
+          <td>Add optional <code>#input-project-slug</code> independent of AI display title</td>
+          <td><button type="button" onclick="openMarkdownViewer('proposal.md')" class="link link-primary font-mono text-xs">proposal.md</button></td>
+        </tr>
+        <tr>
+          <td class="font-semibold">4. Fragment Watcher</td>
+          <td><code>serve-report.mjs</code> only watches <code>index.html</code></td>
+          <td>Watch <code>fragment.html</code> + read <code>report.manifest.json</code> for auto-rebuild</td>
+          <td><button type="button" onclick="openMarkdownViewer('design.md')" class="link link-primary font-mono text-xs">design.md</button></td>
+        </tr>
+        <tr>
+          <td class="font-semibold">5. Verification Boundary</td>
+          <td><code>preflight.mjs</code> checks env/ports only; Chromium runs on every check</td>
+          <td>Add <code>--fast</code> static gate (<code>lintFragment()</code>) in <code>harness.mjs</code></td>
+          <td><button type="button" onclick="openMarkdownViewer('specs/studio-fast-assembly/spec.md')" class="link link-primary font-mono text-xs">spec.md</button></td>
+        </tr>
+        <tr>
+          <td class="font-semibold">6. Pre-Scaffold Dispatch</td>
+          <td><code>POST /api/agent/prompt</code> assumes a running target board</td>
+          <td>Scaffold first via #1 or gate <strong>Send to Agent</strong> on <code>/api/agent/preflight</code></td>
+          <td><button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono text-xs">tasks.md</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="task-checklist" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h2 id="connected-task-checklist" class="text-xl font-bold flex items-center gap-2">
+      <i data-lucide="list-checks" class="w-5 h-5 text-success"></i>
+      Connected Task Checklist
+    </h2>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-ghost font-mono">Open tasks.md</button>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-4 space-y-2">
+        <h3 id="phase-1-heading" class="font-bold text-sm text-primary">Phase 1: Instant Scaffolding &amp; Live Rebuild</h3>
+        <label class="flex items-start gap-2 text-xs"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled /> <span>1.1 Optional <code>#input-project-slug</code> &amp; <strong>Scaffold Now</strong> in <code>create.html</code></span></label>
+        <label class="flex items-start gap-2 text-xs"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled /> <span>1.2 Collision auto-suffix &amp; <code>refs/</code> copy in <code>scaffold-project.mjs</code></span></label>
+        <label class="flex items-start gap-2 text-xs"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled /> <span>1.3 <code>POST /api/create/scaffold</code> in <code>serve-report.mjs</code></span></label>
+        <label class="flex items-start gap-2 text-xs"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled /> <span>1.4 Watch <code>fragment.html</code> + manifest auto-rebuild</span></label>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-4 space-y-2">
+        <h3 id="phase-2-heading" class="font-bold text-sm text-secondary">Phase 2: Smart Presets &amp; Domain Alignment</h3>
+        <label class="flex items-start gap-2 text-xs"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled /> <span>2.1 Align <code>lemonade</code> &amp; add <code>WIDGET_PRESETS</code> in <code>domain-model.mjs</code></span></label>
+        <label class="flex items-start gap-2 text-xs"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled /> <span>2.2 Support <code>--widgets</code> in <code>scaffold-project.mjs</code> &amp; <code>create.html</code></span></label>
+        <label class="flex items-start gap-2 text-xs"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled /> <span>2.3 CSV/JSON schema introspection for Chart.js &amp; Grid.js starters</span></label>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-4 space-y-2">
+        <h3 id="phase-3-heading" class="font-bold text-sm text-accent">Phase 3: Fast Verification &amp; Dispatch</h3>
+        <label class="flex items-start gap-2 text-xs"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled /> <span>3.1 Add <code>--fast</code> static lint gate to <code>harness.mjs</code></span></label>
+        <label class="flex items-start gap-2 text-xs"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled /> <span>3.2 Add <strong>Send to Agent</strong> dispatch in <code>create.html</code></span></label>
+        <label class="flex items-start gap-2 text-xs"><input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled /> <span>3.3 Unit &amp; Playwright integration test suite</span></label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <div class="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300 shrink-0">
+      <div class="flex items-center gap-2 flex-wrap">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i>
+        <span id="markdown-modal-title" class="font-bold text-sm font-mono text-base-content">proposal.md</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="join" id="markdown-modal-tabs">
+          <button id="tab-btn-proposal" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
+          <button id="tab-btn-design" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
+          <button id="tab-btn-tasks" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
+          <button id="tab-btn-spec" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="specs/studio-fast-assembly/spec.md" onclick="switchViewerTab('specs/studio-fast-assembly/spec.md')">spec.md</button>
+        </div>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost" aria-label="Close modal">✕</button>
+      </div>
+    </div>
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none flex-1 text-base-content bg-base-100">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<script id="open-spec-artifacts-data" type="application/json">{"proposal.md":"# Proposal: Studio Fast Assembly & Smart Scaffolding Pipeline\n\n## Beneficiary & Domain Classification\n- **Primary Beneficiary:** `Hybrid` (Accelerates both the human Creation Studio experience and AI coding agent execution)\n- **Two-Axis Alignment:** Preserves decoupled `Serving Mode` (`Static File` vs `Server-Connected`) and `Behavioral Mode` (`Interactive / Reactive` vs `Passive / Printable`) + `App Packaging` (`browser` | `live-app` | `offline-app`).\n- **Assembly vs. Pipeline Invariant:** Keeps `buildReport()` mechanical Assembly under `<100ms` while upgrading the Pipeline (`create.html` -> `scaffold-project.mjs` -> `serve-report.mjs` -> `harness.mjs`) to eliminate redundant LLM round-trips and token waste.\n\n## Why\nEven with the deterministic `<100ms` Assembly harness, creating a new deliverable still incurs avoidable manual and LLM overhead:\n1. **Setup round-trip:** Users copy a prompt from `create.html` and wait for an AI agent to run `scaffold-project.mjs` before any content work begins.\n2. **Manual rebuild loop:** Editing `projects/<slug>/fragment.html` requires re-running `build-report.mjs` manually before `serve-report.mjs` live-reloads `index.html`.\n3. **Cold-start widget boilerplate:** Agents repeatedly write identical DaisyUI KPI/Chart.js/Grid.js skeletons and re-inspect attached CSV/JSON schemas from scratch.\n4. **Slow draft verification:** Running full headless Chromium checks on every minor fragment tweak slows iteration.\n5. **Prompt copy/paste friction & domain drift:** `create.html` duplicates `domain-model.mjs` prompt logic (including a `\"lemon\"` vs `\"lemonade\"` theme mismatch) and has no direct bridge dispatch or independent project folder input.\n\n## What Changes\n1. **One-Click \"Scaffold & Open\" + Optional Project Folder Name (`#input-project-slug`)**:\n   - Let users specify a short folder slug independent of the AI display title (`heroTitle`), or auto-generate one.\n   - Add `POST /api/create/scaffold` in `serve-report.mjs` to run `scaffoldProject()`, stage `projects/_uploads/*` into `projects/<slug>/refs/`, and open the live board immediately.\n2. **Auto-Rebuild `fragment.html` -> `index.html` on Save**:\n   - Watch `fragment.html` alongside `index.html` in `serve-report.mjs` and invoke `buildReport()` in-process using `report.manifest.json`.\n3. **Layout & Widget Presets (`--widgets`)**:\n   - Define canonical `WIDGET_PRESETS` in `domain-model.mjs` and render theme-safe DaisyUI v4 starter blocks in `scaffold-project.mjs`.\n4. **Data-Driven Starter Widgets (CSV/JSON Introspection)**:\n   - Parse headers/keys of attached `.csv`/`.json` reference files during scaffolding to pre-wire a real **Grid.js** table and **Chart.js** canvas.\n5. **Two-Speed Verification (`--fast` Static Gate vs. Playwright)**:\n   - Expose a sub-second static lint gate in `harness.mjs` (`lintFragment()` + `autoFixFragment()` + `buildReport()`) for rapid drafts, reserving Playwright for final checks.\n6. **Direct \"Send to Bridge\" Dispatch & `domain-model.mjs` Unification**:\n   - Unify `create.html` prompt synthesis with `domain-model.mjs` (`/api/create/synthesize`) and add a **\"Send to Agent\"** action when `/api/agent/preflight` detects a connected bridge listener.\n\n## Capabilities\n\n### New Capabilities\n- `studio-fast-assembly`: One-click project scaffolding, `fragment.html` auto-rebuild watcher, widget presets, CSV/JSON data-bound starters, fast static verification gate, and direct bridge dispatch.\n\n## Impact\n- **Modified:** `skills/html-report/scripts/domain-model.mjs`, `skills/html-report/scripts/scaffold-project.mjs`, `skills/html-report/scripts/serve-report.mjs`, `skills/html-report/scripts/harness.mjs`, `skills/html-report/assets/create.html`, `create.html`.\n- **Tests:** New unit & Playwright integration tests covering `/api/create/scaffold`, `fragment.html` watch-rebuild, `--widgets`, CSV/JSON starter generation, and `--fast` lint gate.\n","design.md":"# Design: Studio Fast Assembly & Smart Scaffolding Pipeline\n\n## Architecture Overview\n\n```\ncreate.html (Studio UI)\n  ├── #input-project-slug (optional folder name, independent of heroTitle)\n  ├── #btn-scaffold-now ──▶ POST /api/create/scaffold (serve-report.mjs)\n  │                             ├── scaffoldProject({ slug, title, widgets, referenceFiles, ... })\n  │                             ├── Copies projects/_uploads/* ──▶ projects/<slug>/refs/\n  │                             └── Returns { ok, slug, entryUrl, fragmentPath }\n  ├── #btn-send-to-agent ──▶ POST /api/agent/prompt (when bridge listener active)\n  │\n  └── serve-report.mjs (Live Dev Server)\n        ├── Watches projects/<slug>/fragment.html (100ms debounce)\n        └── Reads report.manifest.json ──▶ buildReport() ──▶ writes index.html ──▶ SSE live reload\n```\n\n## Key Technical Decisions\n\n### 1. Independent Project Folder Slug vs. AI Display Title\n- `create.html` adds an optional `#input-project-slug` input. When provided, `scaffoldProject()` uses `slugifyProject(projectSlug)` for `projects/<slug>/`; when blank, it falls back to `userGoals || heroTitle || \"${target}-project\"`.\n- Collision guard in `scaffoldProject()`: when called from `/api/create/scaffold` without `force: true`, existing `projects/<slug>/` directories auto-increment (`-2`, `-3`) instead of silently reusing stale `fragment.html` content.\n\n### 2. `fragment.html` Watch & In-Process `buildReport()`\n- `serve-report.mjs` checks for a sibling `fragment.html` and `report.manifest.json` when serving any `projects/<slug>/index.html`.\n- On `fragment.html` change, it calls `buildReport()` in-process with manifest metadata (`mode`, `theme`, `addons`, `ai`, `pwa`, `title`), avoiding subprocess startup overhead and preserving `<100ms` Assembly.\n\n### 3. Canonical `WIDGET_PRESETS` & CSV/JSON Starter Generation\n- `domain-model.mjs` becomes the single source of truth for `DAISYUI_THEMES` (fixing `\"lemon\"` vs `\"lemonade\"` drift) and `WIDGET_PRESETS` (`kpi-row`, `chart-pair`, `grid-table`, `mermaid-flow`, `timeline`).\n- `scaffoldProject()` accepts `widgets` and `referenceFiles`. For `.csv` and `.json` files in `referenceFiles`, a zero-dependency parser reads headers/keys (first 20 rows) to pre-populate a **Grid.js** table and **Chart.js** dataset in `fragment.html`.\n\n### 4. Two-Speed Verification Boundary (`harness.mjs` vs `preflight.mjs`)\n- `preflight.mjs` remains focused on environment readiness (ports `3031`/`3032`, Chrome/Playwright, skill paths).\n- `harness.mjs` adds `--fast` (running `lintFragment()`, `autoFixFragment()`, and `buildReport()` in `<100ms` without launching Chromium), while default/full runs keep Playwright browser checks.\n\n## Identified Codebase Gaps Addressed\n1. **`create.html` vs `domain-model.mjs` drift:** Align theme list (`lemonade`) and route prompt synthesis through `domain-model.mjs` / `/api/create/synthesize`.\n2. **`scaffoldProject()` signature:** Extend with Two-Axis metadata, `widgets`, `referenceFiles`, `refs/` copy, and non-destructive slug collision handling.\n3. **Missing `projectSlug` input in `create.html`:** Add `#input-project-slug` independent of `heroTitle`.\n4. **Single-file watcher in `serve-report.mjs`:** Extend watcher to `fragment.html` + `report.manifest.json`.\n5. **Pre-scaffold bridge dispatch:** Hide **\"Send to Agent\"** (`#btn-send-to-agent`) unless `/api/agent/preflight` confirms `secureBridge: true` with an authenticated/verified provider and ephemeral CSRF token; harden `/api/agent/prompt`, `/api/agent/confirm-action`, `/api/create/scaffold`, `/__agent_edit__`, and `/api/agent/csrf-token` with loopback, Host, local Origin, and CSRF checks.\n\n## Risks & Mitigations\n- **Watch loop (build triggers watch):** Only watch `fragment.html` for rebuilds and write `index.html`; `buildReport()` never writes `fragment.html`, preventing infinite loops.\n- **Large CSV/JSON files during scaffold:** Read only the first 64 KB / 20 rows for schema inference so scaffolding stays sub-second.\n","tasks.md":"# Tasks: Studio Fast Assembly & Smart Scaffolding Pipeline\n\n## Phase 1: Instant Scaffolding & Live Fragment Rebuild\n- [x] 1.1 Add optional `#input-project-slug` field and **\"Scaffold Now\"** button in `skills/html-report/assets/create.html` (and sync `create.html`)\n- [x] 1.2 Extend `scaffoldProject()` in `skills/html-report/scripts/scaffold-project.mjs` with non-destructive slug collision handling (`-2`, `-3`), `referenceFiles` support, and `projects/<slug>/refs/` staging\n- [x] 1.3 Add `POST /api/create/scaffold` endpoint in `skills/html-report/scripts/serve-report.mjs`\n- [x] 1.4 Add `fragment.html` + `report.manifest.json` file watcher in `serve-report.mjs` to auto-run `buildReport()` on save\n\n## Phase 2: Token-Saving Smart Scaffolding & Domain Alignment\n- [x] 2.1 Align `DAISYUI_THEMES` (`lemonade`) and define `WIDGET_PRESETS` in `skills/html-report/scripts/domain-model.mjs`\n- [x] 2.2 Add `--widgets` support to `scaffold-project.mjs` (`generateStarterFragment()`) and expose preset selector in `create.html`\n- [x] 2.3 Add zero-dependency CSV/JSON header/key introspection in `scaffold-project.mjs` to pre-wire Chart.js and Grid.js starters\n\n## Phase 3: Two-Speed Verification & Direct Bridge Dispatch\n- [x] 3.1 Add `--fast` static-only verification mode (`lintFragment()` + `buildReport()`) to `skills/html-report/scripts/harness.mjs`\n- [x] 3.2 Hide **\"Send to Agent\"** in `create.html` unless `/api/agent/preflight` verifies a secure, authenticated two-way bridge, and enforce loopback + local Origin + ephemeral CSRF tokens across bridge endpoints in `serve-report.mjs`\n- [x] 3.3 Add unit & Playwright integration tests for `/api/create/scaffold`, `fragment.html` auto-rebuild, `--widgets`, CSV/JSON starters, `--fast` verification, and two-way bridge security guardrails\n","specs/studio-fast-assembly/spec.md":"# studio-fast-assembly Specification\n\n## Purpose\nDefines one-click project scaffolding, `fragment.html` auto-rebuild, layout widget presets, CSV/JSON data-bound starter generation, fast static verification, and direct bridge dispatch for `html-report`.\n\n## ADDED Requirements\n\n### Requirement: One-Click Studio Scaffolding with Optional Folder Slug\nThe Creation Studio (`create.html`) and local server (`serve-report.mjs`) MUST allow users to scaffold a project immediately without waiting for an AI agent, using an optional user-specified folder slug independent of the AI display title.\n\n#### Scenario: Scaffolding with a custom folder slug and staged reference files\n- **GIVEN** a user enters `q4-sales-audit` in `#input-project-slug` and has staged `projects/_uploads/sales.csv`\n- **WHEN** the user clicks **\"Scaffold Now\"** (`POST /api/create/scaffold`)\n- **THEN** `scaffoldProject()` creates `projects/q4-sales-audit/` with `fragment.html`, `index.html`, `report.manifest.json`, and `AGENTS.md`\n- **AND** copies `projects/_uploads/sales.csv` into `projects/q4-sales-audit/refs/sales.csv`\n- **AND** returns `{ ok: true, slug: \"q4-sales-audit\", entryUrl: \"/projects/q4-sales-audit/index.html\" }`.\n\n#### Scenario: Auto-generating slug and avoiding silent collision\n- **GIVEN** `#input-project-slug` is left blank and `projects/my-report/` already exists\n- **WHEN** `POST /api/create/scaffold` is called without `force: true`\n- **THEN** the server derives the slug from goals/title and auto-increments (`my-report-2`) without overwriting the existing project.\n\n### Requirement: Automatic Fragment-to-Index Rebuild on Save\nWhen `serve-report.mjs` serves a project `index.html` that has a sibling `fragment.html` and `report.manifest.json`, saving `fragment.html` MUST automatically rebuild `index.html` in-process and trigger live reload.\n\n#### Scenario: Saving fragment.html triggers sub-second rebuild and SSE reload\n- **GIVEN** `serve-report.mjs` is serving `projects/q4-sales-audit/index.html`\n- **WHEN** `projects/q4-sales-audit/fragment.html` is modified on disk\n- **THEN** `serve-report.mjs` invokes `buildReport()` using `report.manifest.json` settings\n- **AND** writes the updated `projects/q4-sales-audit/index.html` and broadcasts a live-reload event.\n\n### Requirement: Canonical Widget Presets and Data-Bound Starters\n`domain-model.mjs` and `scaffold-project.mjs` MUST support canonical `--widgets` presets and automatic CSV/JSON schema introspection for starter widgets.\n\n#### Scenario: Scaffolding with CSV reference and widget presets\n- **GIVEN** `scaffoldProject()` is invoked with `widgets: [\"kpi-row\", \"chart-pair\", \"grid-table\"]` and a CSV reference file with headers `region,arr`\n- **WHEN** `generateStarterFragment()` runs\n- **THEN** `fragment.html` includes valid DaisyUI v4 KPI/chart/table markup pre-bound to `region` and `arr`.\n\n### Requirement: Two-Speed Verification Gate\n`harness.mjs` MUST provide a `--fast` static verification mode for rapid fragment iterations without launching Playwright.\n\n#### Scenario: Running fast static lint gate\n- **GIVEN** a modified `projects/q4-sales-audit/fragment.html`\n- **WHEN** `node skills/html-report/scripts/harness.mjs projects/q4-sales-audit/fragment.html --fast` is executed\n- **THEN** `lintFragment()` and `buildReport()` validate the fragment in `<100ms` without launching headless Chromium.\n\n### Requirement: Domain Model Unification and Secure Two-Way Bridge Dispatch\n`create.html` MUST stay aligned with `domain-model.mjs` canonical theme names (`lemonade`) and MUST hide `#btn-send-to-agent` (**\"Send to Agent\"**) unless `/api/agent/preflight` verifies a secure, authenticated two-way bridge (`secureBridge: true`, authenticated/verified provider, loopback host, valid local origin, and ephemeral CSRF token from `/api/agent/csrf-token`).\n\n#### Scenario: Hiding Send to Agent when bridge is offline or unauthenticated\n- **GIVEN** `/api/agent/preflight` is unreachable, reports `secureBridge: false`, or reports an unauthenticated provider (`authenticated: false` and `inferenceVerified: false`)\n- **WHEN** `create.html` runs `checkAgentBridgePreflight()`\n- **THEN** `#btn-send-to-agent` remains hidden (`hidden`) and disabled.\n\n#### Scenario: Dispatching prompt directly to a verified secure two-way bridge\n- **GIVEN** `/api/agent/preflight` reports `secureBridge: true` with an authenticated/verified provider and an ephemeral CSRF token\n- **WHEN** the user clicks **\"Send to Agent\"** in `create.html`\n- **THEN** the studio `POST`s the synthesized prompt, project metadata, and `X-CSRF-Token` header to `/api/agent/prompt`, which enforces loopback, Host, local Origin, and CSRF token validation.\n"}</script>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    await renderMarkdownDoc(docName);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    activeDocKey = docName;
+    const titleEl = document.getElementById("markdown-modal-title");
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (titleEl) titleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-active", "btn-primary");
+      } else {
+        btn.classList.remove("btn-active", "btn-primary");
+      }
+    });
+
+    const artifacts = getOpenSpecArtifacts();
+    let md = artifacts[docName];
+    if (!md) {
+      for (const k of Object.keys(artifacts)) {
+        if (k.endsWith(docName) || docName.endsWith(k)) {
+          md = artifacts[k];
+          break;
+        }
+      }
+    }
+
+    if (!md) {
+      try {
+        const res = await fetch(docName);
+        if (res.ok) md = await res.text();
+      } catch (_) {}
+    }
+
+    if (bodyEl) {
+      if (md) {
+        const conv = getShowdownConverter();
+        if (conv) {
+          bodyEl.innerHTML = conv.makeHtml(md);
+        } else {
+          bodyEl.innerHTML = "<pre class='whitespace-pre-wrap font-mono text-xs'>" + md.replace(/</g, "&lt;") + "</pre>";
+        }
+      } else {
+        bodyEl.innerHTML = "<div class='alert alert-warning text-xs'>Artifact " + docName + " not loaded.</div>";
+      }
+    }
+  }
+
+  window.openMarkdownViewer = openMarkdownViewer;
+  window.closeMarkdownViewer = closeMarkdownViewer;
+  window.switchViewerTab = switchViewerTab;
+</script>

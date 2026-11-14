@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-report-mode="report" lang="en" data-theme="light" class="scroll-smooth">
+<html data-report-mode="working-report" lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <!-- Pre-paint theme restore: apply the saved theme before any CSS renders (prevents light-theme flash on reload) -->
@@ -13,8 +13,8 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Experience Review Remediations - OpenSpec Journey & Plan</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://unpkg.com https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
+  <title>Reveal.js Presentation Support & CSP Fixes - Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -31,84 +31,79 @@
   </style>
 
   <!-- Optional Addon CDNs & Styles -->
-    <!-- Addon: Chart.js -->
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
-
-  <!-- Addon: Mermaid -->
+    <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
+
+  <!-- Addon: Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
 
   <!-- Addon: Showdown -->
   <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
 
-  <!-- Addon: Datastar -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
-
-  <meta name="html-report-source" content="openspec/changes/experience-review-remediations/index.html" />
+  <meta name="html-report-source" content="/home/eta/projects/html-report/openspec/changes/reveal-presentation-and-csp-fixes/index.html" />
 
   <!-- Deterministic Agent Manifest -->
   <script type="application/json" id="agent-manifest">
 {
   "schemaVersion": "1.0.0",
-  "project": null,
-  "title": "Experience Review Remediations - OpenSpec Journey & Plan",
-  "mode": "report",
+  "project": "html-report",
+  "title": "Reveal.js Presentation Support & CSP Fixes - Journey & Plan",
+  "mode": "working-report",
   "theme": "light",
+  "favicon": "📊",
   "aiBridge": false,
   "aiConfig": null,
   "published": false,
   "pwa": false,
   "activeAddons": [
-    "charts",
     "mermaid",
-    "showdown",
-    "datastar"
+    "leaflet",
+    "showdown"
   ],
   "files": {
-    "entry": "openspec/changes/experience-review-remediations/index.html",
-    "fragment": "openspec/changes/experience-review-remediations/fragment.html"
+    "entry": "projects/html-report/index.html",
+    "fragment": "projects/html-report/fragment.html",
+    "published": "projects/html-report/published.html",
+    "manifest": "projects/html-report/report.manifest.json",
+    "agents": "projects/html-report/AGENTS.md",
+    "packageJson": "projects/html-report/package.json"
   },
   "pipeline": {
-    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output openspec/changes/experience-review-remediations/index.html --content openspec/changes/experience-review-remediations/fragment.html --title \"Experience Review Remediations - OpenSpec Journey & Plan\" --mode report --theme light --addons charts,mermaid,showdown,datastar",
-    "serveCommand": "node skills/html-report/scripts/serve-report.mjs openspec/changes/experience-review-remediations/index.html --port 3031",
-    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs openspec/changes/experience-review-remediations/index.html",
+    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --project html-report --content projects/html-report/fragment.html --title \"Reveal.js Presentation Support & CSP Fixes - Journey & Plan\" --mode working-report --theme light --addons mermaid,leaflet,showdown",
+    "serveCommand": "node skills/html-report/scripts/serve-report.mjs projects/html-report/index.html --port 3031",
+    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs projects/html-report/index.html",
     "preflightCommand": "node skills/html-report/scripts/preflight.mjs --json",
     "authoringGuide": "../../skills/html-report/references/agent-authoring-guide.md"
   },
   "sections": [
     {
       "agentId": "section-1",
-      "slug": "experience-review-remediations-reactive-assembly",
-      "label": "Experience Review Remediations — Reactive Assembly, Symlink-Safe Verification, Dedicated Ports &amp; Agent-Agnostic Turnkey AI Bridge",
-      "id": null,
-      "selector": "[data-agent-id=\"section-1\"]"
+      "slug": "reveal-js-presentation-support-fullscreen-notes-",
+      "label": "Reveal.js Presentation Support, Fullscreen &amp; Notes, Spacing &amp; Style Guide, Leaflet CSP &amp; Pipeline",
+      "id": "journey-overview",
+      "selector": "#journey-overview"
     },
     {
       "agentId": "section-2",
-      "slug": "section-2",
-      "label": "Section 2",
-      "id": null,
-      "selector": "[data-agent-id=\"section-2\"]"
+      "slug": "consolidated-reveal-js-architecture-fixes",
+      "label": "Consolidated Reveal.js Architecture &amp; Fixes",
+      "id": "architecture-flow",
+      "selector": "#architecture-flow"
     },
     {
       "agentId": "section-3",
-      "slug": "surgical-defects-bigger-architectural-upgrades",
-      "label": "Surgical Defects &amp; Bigger Architectural Upgrades",
-      "id": null,
-      "selector": "[data-agent-id=\"section-3\"]"
+      "slug": "openspec-task-checklist-tasks-md",
+      "label": "OpenSpec Task Checklist ( tasks.md )",
+      "id": "task-checklist",
+      "selector": "#task-checklist"
     },
     {
       "agentId": "section-4",
-      "slug": "end-to-end-remediation-architecture-ports-3031-3",
-      "label": "End-to-End Remediation Architecture (Ports 3031/3032 &amp; Agent-Agnostic Bridge)",
+      "slug": "section-4",
+      "label": "Section 4",
       "id": null,
       "selector": "[data-agent-id=\"section-4\"]"
-    },
-    {
-      "agentId": "section-5",
-      "slug": "implementation-checklist-15-tasks-across-5-phase",
-      "label": "Implementation Checklist (15 Tasks across 5 Phases)",
-      "id": null,
-      "selector": "[data-agent-id=\"section-5\"]"
     }
   ],
   "widgets": [
@@ -135,12 +130,6 @@
       "type": "kpi",
       "id": null,
       "selector": "[data-agent-id=\"kpi-4\"]"
-    },
-    {
-      "agentId": "chart-1",
-      "type": "chart",
-      "id": "tasks-progress-chart",
-      "selector": "#tasks-progress-chart"
     },
     {
       "agentId": "mermaid-1",
@@ -187,6 +176,7 @@
     .mermaid-wrapper:hover .mermaid-enlarge-btn {
       opacity: 1;
     }
+
     @media print {
       .mermaid-enlarge-btn,
       #mermaid-enlarge-modal {
@@ -346,6 +336,376 @@
       height: 100%;
     }
 
+    /* Leaflet z-index isolation below z-50 sticky navbar & dropdowns */
+    .leaflet-container {
+      z-index: 10 !important;
+    }
+    .leaflet-pane,
+    .leaflet-top,
+    .leaflet-bottom {
+      z-index: 15 !important;
+    }
+    .leaflet-tile {
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    /* Reveal.js Presentation Shell, Multi-Mode Spacing Tokens & Cascade Guards */
+    #presentation-shell {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+    }
+    .reveal-stage {
+      --slide-pad-x: clamp(1.75rem, 3.2vw, 3.25rem);
+      --slide-pad-top: clamp(1.5rem, 2.5vw, 2.5rem);
+      --slide-pad-bottom: clamp(3.75rem, 5.5vw, 4.75rem);
+      --slide-gap: clamp(1rem, 2vw, 1.5rem);
+      position: relative;
+      width: 100%;
+      height: clamp(600px, calc(100vh - 10.5rem), 840px);
+      min-height: 520px;
+      overflow: hidden;
+      border-radius: 1rem;
+      border: 1px solid oklch(var(--bc) / 0.14);
+      background: oklch(var(--b1) / 1);
+      box-shadow: 0 12px 32px -12px oklch(var(--bc) / 0.14);
+    }
+    .reveal-stage .reveal {
+      width: 100%;
+      height: 100%;
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+    .reveal-stage .reveal .slides {
+      width: 100% !important;
+      height: 100% !important;
+      inset: 0 !important;
+      margin: 0 !important;
+      text-align: left;
+      transform: none !important;
+    }
+    .reveal-stage .reveal .slides > section,
+    .reveal-stage .reveal .slides > section > section {
+      width: 100% !important;
+      height: 100% !important;
+      top: 0 !important;
+      left: 0 !important;
+      margin: 0 !important;
+      padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom) var(--slide-pad-x) !important;
+      box-sizing: border-box !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      text-align: left;
+    }
+    .reveal-stage .reveal .slides > section.stack,
+    .reveal-stage .reveal .slides > section:has(> section) {
+      padding: 0 !important;
+      overflow: visible !important;
+    }
+    .reveal-stage .reveal .slides section .slide-body {
+      min-height: 100%;
+      width: 100%;
+      max-width: 72rem;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--slide-gap);
+    }
+    /* Scoped reveal.css normalization guards so DaisyUI cards, alerts, badges, lists & Leaflet stay crisp */
+    .reveal-stage .reveal h1,
+    .reveal-stage .reveal h2,
+    .reveal-stage .reveal h3,
+    .reveal-stage .reveal h4,
+    .reveal-stage .reveal p,
+    .reveal-stage .reveal ul,
+    .reveal-stage .reveal ol {
+      font-family: inherit;
+      color: inherit;
+      text-transform: none;
+      letter-spacing: inherit;
+      text-shadow: none;
+      margin: 0;
+    }
+    .reveal-stage .reveal ul,
+    .reveal-stage .reveal ol {
+      display: block;
+    }
+    .reveal-stage .reveal .card,
+    .reveal-stage .reveal .alert,
+    .reveal-stage .reveal .stat,
+    .reveal-stage .reveal .badge {
+      text-align: left;
+    }
+    .reveal-stage .reveal img:not(.leaflet-tile):not(.leaflet-marker-icon) {
+      max-width: 100%;
+      max-height: 100%;
+      margin: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+    .reveal-stage .reveal .controls {
+      bottom: 12px;
+      right: 12px;
+      color: oklch(var(--p) / 1);
+    }
+    .reveal-stage .reveal .slide-number {
+      bottom: 14px;
+      left: 16px;
+      right: auto;
+      background: oklch(var(--b2) / 0.9);
+      color: oklch(var(--bc) / 0.85);
+      border: 1px solid oklch(var(--bc) / 0.15);
+      border-radius: 9999px;
+      padding: 0.2rem 0.65rem;
+      font-size: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .reveal-stage .reveal .progress {
+      height: 4px;
+      color: oklch(var(--p) / 1);
+      background: oklch(var(--bc) / 0.1);
+    }
+
+    /* Fullscreen Presentation Mode (:fullscreen & .is-fullscreen deterministic fallback) */
+    #presentation-shell:fullscreen,
+    #presentation-shell:-webkit-full-screen,
+    #presentation-shell.is-fullscreen {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 70 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      gap: 0 !important;
+      background: oklch(var(--b2) / 1) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    #presentation-shell:fullscreen .presentation-toolbar,
+    #presentation-shell:-webkit-full-screen .presentation-toolbar,
+    #presentation-shell.is-fullscreen .presentation-toolbar {
+      display: none !important;
+    }
+    #presentation-shell:fullscreen .reveal-stage,
+    #presentation-shell:-webkit-full-screen .reveal-stage,
+    #presentation-shell.is-fullscreen .reveal-stage {
+      --slide-pad-x: clamp(2.5rem, 5vw, 5rem);
+      --slide-pad-top: clamp(2rem, 3.5vw, 3.25rem);
+      --slide-pad-bottom: clamp(4.25rem, 6vw, 5rem);
+      --slide-gap: clamp(1.25rem, 2.2vw, 1.75rem);
+      flex: 1 1 auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      border-radius: 0 !important;
+      border: 0 !important;
+    }
+    #presentation-fullscreen-hud {
+      display: none;
+    }
+    #presentation-shell:fullscreen #presentation-fullscreen-hud,
+    #presentation-shell:-webkit-full-screen #presentation-fullscreen-hud,
+    #presentation-shell.is-fullscreen #presentation-fullscreen-hud {
+      display: flex;
+      position: fixed;
+      top: 0.75rem;
+      right: 1rem;
+      z-index: 75;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 9999px;
+      background: oklch(var(--b1) / 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid oklch(var(--bc) / 0.18);
+      box-shadow: 0 8px 24px -6px oklch(var(--bc) / 0.22);
+    }
+
+    /* Modeless Follow-Along Speaker Notes Popup Modal inside #presentation-shell */
+    #presentation-notes-modal {
+      position: fixed;
+      z-index: 80;
+      width: min(26rem, calc(100vw - 2rem));
+      max-height: min(60vh, 460px);
+      display: flex;
+      flex-direction: column;
+      background: oklch(var(--b1) / 0.97);
+      color: oklch(var(--bc) / 1);
+      border: 1px solid oklch(var(--bc) / 0.2);
+      border-radius: 0.9rem;
+      box-shadow: 0 20px 45px -10px oklch(var(--bc) / 0.32);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    #presentation-notes-modal.hidden {
+      display: none !important;
+    }
+    #presentation-notes-modal[data-dock="bottom-right"] {
+      bottom: 3.75rem;
+      right: 1rem;
+      left: auto;
+      top: auto;
+    }
+    #presentation-notes-modal[data-dock="bottom-left"] {
+      bottom: 3.75rem;
+      left: 1rem;
+      right: auto;
+      top: auto;
+    }
+    #presentation-notes-modal[data-dock="side-right"] {
+      top: 4.5rem;
+      bottom: 4rem;
+      right: 1rem;
+      left: auto;
+      max-height: calc(100dvh - 8.5rem);
+      width: min(24rem, calc(100vw - 2rem));
+    }
+    #presentation-notes-modal[data-notes-size="sm"] #presentation-notes-body {
+      font-size: 0.8125rem;
+    }
+    #presentation-notes-modal[data-notes-size="md"] #presentation-notes-body {
+      font-size: 0.9375rem;
+    }
+    #presentation-notes-modal[data-notes-size="lg"] #presentation-notes-body {
+      font-size: 1.0625rem;
+    }
+    #presentation-notes-body ul,
+    #presentation-notes-body ol {
+      padding-left: 1.25rem;
+      margin: 0.4rem 0;
+    }
+    #presentation-notes-body ul {
+      list-style-type: disc;
+    }
+    #presentation-notes-body ol {
+      list-style-type: decimal;
+    }
+
+    /* Stacked "All Slides" Fallback Mode */
+    #presentation-shell.is-stacked .reveal-stage,
+    .reveal-stage.is-stacked {
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      --slide-pad-x: 2rem;
+      --slide-pad-top: 1.75rem;
+      --slide-pad-bottom: 1.75rem;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal,
+    .reveal-stage.is-stacked .reveal,
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides,
+    .reveal-stage.is-stacked .reveal .slides {
+      position: static !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+      transform: none !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 1.5rem !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides section,
+    .reveal-stage.is-stacked .reveal .slides section {
+      position: relative !important;
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      width: 100% !important;
+      height: auto !important;
+      padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom) var(--slide-pad-x) !important;
+      border: 1px solid oklch(var(--bc) / 0.14) !important;
+      border-radius: 1rem !important;
+      background: oklch(var(--b1) / 1) !important;
+      box-shadow: 0 8px 24px -10px oklch(var(--bc) / 0.12) !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section.stack,
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section:has(> section),
+    .reveal-stage.is-stacked .reveal .slides > section.stack,
+    .reveal-stage.is-stacked .reveal .slides > section:has(> section) {
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section > section,
+    .reveal-stage.is-stacked .reveal .slides > section > section {
+      margin-top: 1rem !important;
+    }
+    #presentation-shell.is-stacked .reveal .controls,
+    #presentation-shell.is-stacked .reveal .progress,
+    #presentation-shell.is-stacked .reveal .slide-number,
+    .reveal-stage.is-stacked .reveal .controls,
+    .reveal-stage.is-stacked .reveal .progress,
+    .reveal-stage.is-stacked .reveal .slide-number {
+      display: none !important;
+    }
+
+    @media print {
+      .presentation-toolbar,
+      #presentation-fullscreen-hud,
+      #presentation-notes-modal,
+      .reveal-stage .reveal .controls,
+      .reveal-stage .reveal .progress,
+      .reveal-stage .reveal .slide-number {
+        display: none !important;
+      }
+      .reveal-stage,
+      .reveal-stage .reveal,
+      .reveal-stage .reveal .slides {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        transform: none !important;
+        display: block !important;
+      }
+      .reveal-stage .reveal .slides section {
+        position: relative !important;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        height: auto !important;
+        padding: 1.5rem 1.75rem !important;
+        margin-bottom: 1.5rem !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.75rem !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+    }
+
+    /* Deterministic Toolbar Dropdown Visibility (prevents DaisyUI :focus-within stuck-open bug) */
+    #toc-dropdown:not(.dropdown-open) > .dropdown-content,
+    #settings-dropdown:not(.dropdown-open) > .dropdown-content {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
     @media print {
       header,
       .navbar,
@@ -363,7 +723,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Experience Review Remediations - OpenSpec Journey & Plan
+          Reveal.js Presentation Support & CSP Fixes - Journey & Plan
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -386,7 +746,7 @@
 
         <!-- 1. TOC Dropdown -->
         <div class="dropdown dropdown-end" id="toc-dropdown">
-          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
+          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents" aria-haspopup="true" aria-expanded="false">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
             </svg>
@@ -812,305 +1172,260 @@
   <!-- html-report:authoring:end agent-reconnect-modal -->
 
   <!-- Main Content Container -->
-  <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full max-w-6xl space-y-8">
-<!-- Header, Journey Phase Stepper & Direct Markdown Artifact Links -->
-  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="experience-review-remediations-reactive-assembly" data-agent-id="section-1">
-    <div class="card-body gap-4">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="badge badge-success badge-sm font-mono uppercase">OpenSpec Journey · Shipped (15/15)</span>
-            <span class="badge badge-outline badge-sm font-mono">experience-review-remediations</span>
+  <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full space-y-8">
+<!-- Section 1: OpenSpec Journey Overview -->
+  <section id="journey-overview" class="space-y-6" data-agent-section="reveal-js-presentation-support-fullscreen-notes-" data-agent-id="section-1">
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 sm:p-6 space-y-4">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="space-y-2 max-w-3xl">
+            <div class="badge badge-primary badge-sm font-mono">OpenSpec Journey &bull; spec-driven</div>
+            <h1 id="journey-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Reveal.js Presentation Support, Fullscreen &amp; Notes, Spacing &amp; Style Guide, Leaflet CSP &amp; Pipeline
+            </h1>
+            <p class="text-sm text-base-content/75">
+              Consolidated presentation epic covering Reveal.js addon &amp; scaffolding, Top-Layer <code>#presentation-shell</code> Fullscreen mode, modeless follow-along Speaker Notes popup modal, multi-mode slide spacing &amp; <code>reveal.css</code> guards, dedicated <code>reveal-presentation-style-guide.md</code>, Leaflet CSP, and pipeline fixes.
+            </p>
           </div>
-          <h1 id="sec-overview" class="text-2xl sm:text-3xl font-bold mt-2">Experience Review Remediations — Reactive Assembly, Symlink-Safe Verification, Dedicated Ports &amp; Agent-Agnostic Turnkey AI Bridge</h1>
-          <p class="text-sm text-base-content/70 mt-1">
-            Comprehensive remediation of the 7 reproduced defects and 6 architectural gaps from the 13 Nov 2026 Stone / Form review: gitignoring <code>projects/</code>, dedicated ports <code>3031</code>/<code>3032</code>, preflight CLI, reactive <code>&lt;main&gt;</code> preservation, symlink &amp; Chrome fallback verification, and an agent-agnostic Turnkey AI Bridge.
-          </p>
+
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs sm:btn-sm btn-outline btn-primary gap-1.5 font-mono">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
+            </button>
+            <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs sm:btn-sm btn-outline btn-secondary gap-1.5 font-mono">
+              <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
+            </button>
+            <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+              <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
+            </button>
+            <button type="button" onclick="openMarkdownViewer('specs/reveal-presentation-fixes/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> spec.md
+            </button>
+            <button type="button" onclick="openMarkdownViewer('skill-review.md')" class="btn btn-xs sm:btn-sm btn-outline btn-accent gap-1.5 font-mono">
+              <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i> skill-review.md
+            </button>
+          </div>
+        </div>
+
+        <!-- Mandatory Journey Phase Stepper -->
+        <div class="w-full overflow-x-auto pt-2">
+          <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+            <li class="step step-primary" data-content="✓">Brainstorming</li>
+            <li class="step step-primary" data-content="✓">Planning</li>
+            <li class="step step-primary" data-content="✓">Implementing</li>
+            <li class="step step-primary" data-content="✓">Verifying</li>
+            <li class="step step-primary" data-content="✓">Shipped / Archived</li>
+          </ul>
         </div>
       </div>
+    </div>
 
-      <!-- Journey Phase Stepper -->
-      <div class="w-full overflow-x-auto pt-2">
-        <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
-          <li class="step step-primary">Brainstorming</li>
-          <li class="step step-primary">Planning</li>
-          <li class="step step-primary">Implementing</li>
-          <li class="step step-primary">Verifying</li>
-          <li class="step step-primary">Shipped / Archived</li>
-        </ul>
+    <!-- Live Progress Metrics -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-sm p-4" data-agent-widget="kpi" data-agent-id="kpi-1">
+        <div class="stat-title text-xs">Total Tasks</div>
+        <div class="stat-value text-2xl font-extrabold">14</div>
+        <div class="stat-desc text-xs font-mono">4 Phases</div>
       </div>
-
-      <!-- Direct Markdown Artifact Links -->
-      <div class="flex flex-wrap gap-2 pt-2 border-t border-base-200">
-        <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
-          <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
-        </button>
-        <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
-          <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
-        </button>
-        <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
-          <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
-        </button>
-        <button type="button" onclick="openMarkdownViewer('specs/skill-packaging/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
-          <i data-lucide="package" class="w-3.5 h-3.5"></i> specs/skill-packaging/spec.md
-        </button>
-        <button type="button" onclick="openMarkdownViewer('specs/deterministic-assembly/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
-          <i data-lucide="layers" class="w-3.5 h-3.5"></i> specs/deterministic-assembly/spec.md
-        </button>
-        <button type="button" onclick="openMarkdownViewer('specs/lean-verification/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
-          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> specs/lean-verification/spec.md
-        </button>
-        <button type="button" onclick="openMarkdownViewer('specs/reactive-data-copilot/spec.md')" class="btn btn-xs sm:btn-sm btn-outline gap-1.5 font-mono">
-          <i data-lucide="radio" class="w-3.5 h-3.5"></i> specs/reactive-data-copilot/spec.md
-        </button>
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-sm p-4" data-agent-widget="kpi" data-agent-id="kpi-2">
+        <div class="stat-title text-xs">In Progress</div>
+        <div class="stat-value text-2xl font-extrabold text-warning">0</div>
+        <div class="stat-desc text-xs font-mono">Ready to archive</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-sm p-4" data-agent-widget="kpi" data-agent-id="kpi-3">
+        <div class="stat-title text-xs">Completed</div>
+        <div class="stat-value text-2xl font-extrabold text-success">14</div>
+        <div class="stat-desc text-xs font-mono">100% complete</div>
+      </div>
+      <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-sm p-4" data-agent-widget="kpi" data-agent-id="kpi-4">
+        <div class="stat-title text-xs">Remaining</div>
+        <div class="stat-value text-2xl font-extrabold text-primary">0</div>
+        <div class="stat-desc text-xs font-mono">All verified</div>
       </div>
     </div>
   </section>
 
-  <!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
-  <dialog id="markdown-viewer-modal" class="modal modal-bottom sm:modal-middle">
-    <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-200/50">
-        <div class="flex items-center gap-2">
-          <i data-lucide="file-code" class="w-4 h-4 text-primary"></i>
-          <h3 id="markdown-modal-title" class="font-mono font-bold text-sm text-base-content">artifact.md</h3>
+  <!-- Section 2: Consolidated Architecture & Flow -->
+  <section id="architecture-flow" class="space-y-4" data-agent-section="consolidated-reveal-js-architecture-fixes" data-agent-id="section-2">
+    <h2 id="target-architecture-flow" class="text-xl font-bold flex items-center gap-2">
+      <i data-lucide="git-branch" class="w-5 h-5 text-primary"></i>
+      Consolidated Reveal.js Architecture &amp; Fixes
+    </h2>
+    <div class="mermaid bg-base-100 border border-base-300 p-4 rounded-box overflow-x-auto text-center" data-agent-widget="mermaid" data-agent-id="mermaid-1">
+flowchart LR
+  S["scaffold-project.mjs --mode presentation"] -->|"Emits #presentation-shell + .slide-body + aside.notes"| F["fragment.html + report.manifest.json (favicon)"]
+  F -->|"ADDON_REGISTRY.reveal + --published safe"| B["build-report.mjs"]
+  B -->|"Fullscreen HUD + Modeless Notes Modal + Spacing Tokens + CSP"| O["index.html (Top-Layer Fullscreen, Live Notes, 0 CSP errors)"]
+  SG["reveal-presentation-style-guide.md"] -->|"Guides"| S
+  P["preflight.mjs (playwright path)"] --> V["verify-report.mjs (padding, overflow, fullscreen, notes, CSP)"]
+    </div>
+  </section>
+
+  <!-- Section 3: OpenSpec Task Checklist -->
+  <section id="task-checklist" class="space-y-4" data-agent-section="openspec-task-checklist-tasks-md" data-agent-id="section-3">
+    <h2 id="openspec-task-checklist" class="text-xl font-bold flex items-center gap-2">
+      <i data-lucide="list-checks" class="w-5 h-5 text-secondary"></i>
+      OpenSpec Task Checklist (<a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</a>)
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-4 space-y-2 text-xs">
+          <div class="badge badge-primary font-bold">Phase 1 &bull; Reveal.js &amp; Spacing</div>
+          <ul class="space-y-2">
+            <li>&#9745; <strong>1.1</strong> Register <code>reveal</code> in <code>ADDON_REGISTRY</code> &amp; route <code>--mode presentation</code></li>
+            <li>&#9745; <strong>1.2</strong> Add <code>#presentation-shell</code>, <code>--slide-pad-*</code> tokens, <code>.slide-body</code> &amp; <code>reveal.css</code> guards</li>
+            <li>&#9745; <strong>1.3</strong> Add <code>slidechanged</code> widget resize &amp; TOC jump hooks</li>
+            <li>&#9745; <strong>1.4</strong> Update <code>scaffold-project.mjs</code> starter with <code>#presentation-shell</code>, <code>.slide-body</code> &amp; <code>aside.notes</code></li>
+          </ul>
         </div>
-        <form method="dialog">
-          <button class="btn btn-sm btn-circle btn-ghost">✕</button>
-        </form>
       </div>
-      <div id="markdown-modal-body" class="p-6 overflow-y-auto font-sans prose prose-sm max-w-none text-base-content">
-        <div class="flex items-center justify-center py-12">
-          <span class="loading loading-spinner loading-md text-primary"></span>
+
+      <div class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-4 space-y-2 text-xs">
+          <div class="badge badge-secondary font-bold">Phase 2 &bull; Fullscreen &amp; Notes</div>
+          <ul class="space-y-2">
+            <li>&#9745; <strong>2.1</strong> Add <code>#presentation-shell</code> Fullscreen CSS (<code>:fullscreen</code> / <code>.is-fullscreen</code>) &amp; HUD</li>
+            <li>&#9745; <strong>2.2</strong> Implement <code>initPresentationShell()</code>, <code>F</code> shortcut &amp; reflow hooks</li>
+            <li>&#9745; <strong>2.3</strong> Build modeless <code>#presentation-notes-modal</code> (rich HTML, Up Next, docking)</li>
+            <li>&#9745; <strong>2.4</strong> Wire <code>N</code> shortcut, <code>slidechanged</code> sync &amp; <code>--published</code> parity</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-4 space-y-2 text-xs">
+          <div class="badge badge-accent font-bold">Phase 3 &bull; Style Guide</div>
+          <ul class="space-y-2">
+            <li>&#9745; <strong>3.1</strong> Author <code>skills/html-report/references/reveal-presentation-style-guide.md</code></li>
+            <li>&#9745; <strong>3.2</strong> Link style guide &amp; <code>.slide-body</code> examples in <code>html-presentation</code> &amp; <code>html-report</code> <code>SKILL.md</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-4 space-y-2 text-xs">
+          <div class="badge badge-info font-bold">Phase 4 &bull; CSP, Preflight &amp; QA</div>
+          <ul class="space-y-2">
+            <li>&#9745; <strong>4.1</strong> Allow <code>unpkg.com</code> in <code>img-src</code> CSP, cap <code>#map</code> z-index &amp; document <code>L.divIcon</code></li>
+            <li>&#9745; <strong>4.2</strong> Resolve Playwright path in <code>preflight.mjs</code></li>
+            <li>&#9745; <strong>4.3</strong> Persist <code>favicon</code> in manifest &amp; avoid title truncation in <code>create.html</code></li>
+            <li>&#9745; <strong>4.4</strong> Test fullscreen, notes sync, padding/overflow, CSP &amp; SSE <code>waitUntil</code> in <code>verify-report.mjs</code></li>
+          </ul>
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- Embedded Markdown Artifact Viewer Modal -->
+  <dialog id="markdown-viewer-modal" class="modal">
+    <div class="modal-box max-w-4xl w-11/12 bg-base-100 border border-base-300">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-base-300">
+        <h3 id="markdown-modal-title" class="font-mono font-bold text-sm">proposal.md</h3>
+        <div class="flex flex-wrap gap-1">
+          <button type="button" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')" class="doc-tab-btn btn btn-xs">proposal.md</button>
+          <button type="button" data-doc="design.md" onclick="switchViewerTab('design.md')" class="doc-tab-btn btn btn-xs">design.md</button>
+          <button type="button" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')" class="doc-tab-btn btn btn-xs">tasks.md</button>
+          <button type="button" data-doc="specs/reveal-presentation-fixes/spec.md" onclick="switchViewerTab('specs/reveal-presentation-fixes/spec.md')" class="doc-tab-btn btn btn-xs">spec.md</button>
+          <button type="button" data-doc="skill-review.md" onclick="switchViewerTab('skill-review.md')" class="doc-tab-btn btn btn-xs">skill-review.md</button>
+          <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-ghost">Close</button>
+        </div>
+      </div>
+      <div id="markdown-modal-body" class="prose prose-sm max-w-none py-4 max-h-[65vh] overflow-y-auto text-sm leading-relaxed"></div>
+    </div>
     <form method="dialog" class="modal-backdrop">
-      <button>close</button>
+      <button type="submit">close</button>
     </form>
   </dialog>
 
-  <!-- Live Progress Metrics & Chart -->
-  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6" data-agent-section="section-2" data-agent-id="section-2">
-    <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4" data-agent-widget="kpi" data-agent-id="kpi-1">
-        <div class="stat-title text-xs">Total Tasks</div>
-        <div class="stat-value text-2xl font-mono">15</div>
-        <div class="stat-desc text-xs">5 phases (4 capabilities)</div>
-      </div>
-      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4" data-agent-widget="kpi" data-agent-id="kpi-2">
-        <div class="stat-title text-xs">Completed</div>
-        <div class="stat-value text-2xl font-mono text-success">15</div>
-        <div class="stat-desc text-xs">100% done</div>
-      </div>
-      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4" data-agent-widget="kpi" data-agent-id="kpi-3">
-        <div class="stat-title text-xs">In Progress</div>
-        <div class="stat-value text-2xl font-mono text-warning">0</div>
-        <div class="stat-desc text-xs">All phases verified</div>
-      </div>
-      <div class="stat bg-base-100 border border-base-300 rounded-2xl p-4" data-agent-widget="kpi" data-agent-id="kpi-4">
-        <div class="stat-title text-xs">Remaining</div>
-        <div class="stat-value text-2xl font-mono text-primary">0</div>
-        <div class="stat-desc text-xs">Ready to ship</div>
-      </div>
-    </div>
-    <div class="card bg-base-100 border border-base-300 p-4 flex items-center justify-center min-w-0">
-      <div class="w-full h-44 relative min-w-0">
-        <canvas id="tasks-progress-chart" data-agent-widget="chart" data-agent-id="chart-1"></canvas>
-      </div>
-    </div>
-  </section>
-
-  <!-- Defect & Architectural Upgrade Matrix (Responsive Cards) -->
-  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="surgical-defects-bigger-architectural-upgrades" data-agent-id="section-3">
-    <div class="card-body space-y-4">
-      <h2 id="sec-findings" class="card-title text-lg">Surgical Defects &amp; Bigger Architectural Upgrades</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
-          <div class="flex items-center justify-between gap-2">
-            <span class="font-bold text-sm">1. Ephemeral projects/ Git Hygiene</span>
-            <span class="badge badge-primary badge-xs font-mono">Arch</span>
-          </div>
-          <p class="text-base-content/70">Gitignore <code>projects/</code> in <code>.gitignore</code> and remove all tracked <code>projects/*</code> files from the git index and working tree so generated reports never pollute repository history.</p>
-        </div>
-        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
-          <div class="flex items-center justify-between gap-2">
-            <span class="font-bold text-sm">2. Dedicated Ports 3031/3032 &amp; Preflight CLI</span>
-            <span class="badge badge-primary badge-xs font-mono">Arch</span>
-          </div>
-          <p class="text-base-content/70">Default project servers &amp; Turnkey AI Bridge to port <code>3031</code> (and <code>3032</code> fallback); add <code>preflight.mjs</code> checking canonical skill paths, ports, Chrome binaries, and AI providers upfront.</p>
-        </div>
-        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
-          <div class="flex items-center justify-between gap-2">
-            <span class="font-bold text-sm">3. Reactive &lt;main&gt; &amp; Conditional AI Chrome</span>
-            <span class="badge badge-error badge-xs font-mono">P1</span>
-          </div>
-          <p class="text-base-content/70">Preserve <code>x-data</code>, <code>x-init</code>, <code>id</code>, <code>data-*</code>, and merged classes via <code>extractMainElement()</code>; omit <code>#agent-dock-container</code> HTML when <code>--ai</code> is disabled.</p>
-        </div>
-        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
-          <div class="flex items-center justify-between gap-2">
-            <span class="font-bold text-sm">4. Symlink-Safe CLI &amp; System Chrome Fallback</span>
-            <span class="badge badge-error badge-xs font-mono">P1</span>
-          </div>
-          <p class="text-base-content/70">Canonicalize CLI direct-execution checks with <code>fs.realpathSync()</code> across all scripts and automatically fall back to system Google Chrome in <code>runner.mjs</code>.</p>
-        </div>
-        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
-          <div class="flex items-center justify-between gap-2">
-            <span class="font-bold text-sm">5. Agent-Agnostic Turnkey AI Bridge + Honest 503</span>
-            <span class="badge badge-error badge-xs font-mono">P1 / Arch</span>
-          </div>
-          <p class="text-base-content/70">Replace hardcoded <code>agy</code> dependency with <code>AgentInferenceRouter</code> (<code>claude</code>, <code>gemini</code>, <code>codex</code>, <code>opencode</code>, <code>agy</code>, <code>ollama</code>, HTTP APIs) and return HTTP <code>503</code> instead of fake <code>"14.2%"</code> claims on failure.</p>
-        </div>
-        <div class="p-4 rounded-xl border border-base-300 bg-base-200/30 space-y-1.5">
-          <div class="flex items-center justify-between gap-2">
-            <span class="font-bold text-sm">6. Turnkey /events SSE, Verifier &amp; Board SDK</span>
-            <span class="badge badge-warning badge-xs font-mono">P2 / Arch</span>
-          </div>
-          <p class="text-base-content/70">Add <code>/events</code> SSE + <code>/api/board/state</code>, manifest-aware startup theme &amp; composite chart checks, <code>--url</code> HTTP verifier mode, <code>HTMLReportBoard</code> SDK, and 7-step Vertical-Slice Workflow docs.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Architecture & Mermaid Flow -->
-  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="end-to-end-remediation-architecture-ports-3031-3" data-agent-id="section-4">
-    <div class="card-body">
-      <h2 id="sec-architecture" class="card-title text-lg">End-to-End Remediation Architecture (Ports 3031/3032 &amp; Agent-Agnostic Bridge)</h2>
-      <p class="text-sm text-base-content/70">
-        Unifying pre-authoring preflight, reactive assembly, agent-agnostic Turnkey AI Bridge routing, Datastar SSE board persistence, and symlink/HTTP Playwright verification.
-      </p>
-      <div class="mermaid bg-base-200/40 rounded-xl p-4 text-center" data-agent-widget="mermaid" data-agent-id="mermaid-1">
-flowchart TD
-    PF["1. Preflight &amp; Scaffolding (Port 3031/3032)\npreflight.mjs + scaffold-project.mjs (projects/ gitignored)"]
-    ASM["2. Deterministic Assembly (build-report.mjs)\nextractMainElement() + Conditional AI Chrome + #agent-manifest"]
-    SRV["3. Agent-Agnostic Live Server (serve-report.mjs :3031)\nAgentInferenceRouter + 503 on failure + /events SSE + /api/board/state"]
-    VER["4. Playwright Verifier (verify-report.mjs)\nfs.realpathSync() + System Chrome Fallback + --url HTTP Mode"]
-    PF --> ASM
-    ASM --> SRV
-    ASM --> VER
-      </div>
-    </div>
-  </section>
-
-  <!-- Connected Task Checklist -->
-  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="implementation-checklist-15-tasks-across-5-phase" data-agent-id="section-5">
-    <div class="card-body space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 id="sec-tasks" class="card-title text-lg">Implementation Checklist (15 Tasks across 5 Phases)</h2>
-        <button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary text-xs font-mono">View tasks.md</button>
-      </div>
-      <div class="space-y-4 text-sm">
-        <div>
-          <h3 id="sec-phase-1" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">1. Ephemeral projects/ Git Hygiene, Dedicated Ports (3031/3032) &amp; Preflight CLI</h3>
-          <ul class="space-y-1.5 pl-1">
-            <li>☑ <strong>1.1</strong> Add <code>projects/</code> to <code>.gitignore</code> and remove all tracked <code>projects/</code> files from git index and disk</li>
-            <li>☑ <strong>1.2</strong> Update default project server and Turnkey AI Bridge ports from <code>3000</code> to <code>3031</code> (and <code>3032</code> secondary)</li>
-            <li>☑ <strong>1.3</strong> Create <code>skills/html-report/scripts/preflight.mjs</code> for skill path, port <code>3031</code>/<code>3032</code>, Chrome &amp; AI provider readiness</li>
-          </ul>
-        </div>
-        <div>
-          <h3 id="sec-phase-2" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">2. Reactive Root Preservation, Conditional AI Chrome &amp; Installation-Aware Scaffolding</h3>
-          <ul class="space-y-1.5 pl-1">
-            <li>☑ <strong>2.1</strong> Preserve <code>&lt;main&gt;</code> attributes (<code>id</code>, <code>x-data</code>, <code>x-init</code>, <code>x-*</code>, <code>@*</code>, <code>data-*</code>, <code>aria-*</code>) and merge custom classes in <code>build-report.mjs</code></li>
-            <li>☑ <strong>2.2</strong> Conditionally omit <code>#agent-dock-container</code> and <code>#agent-reconnect-modal</code> when <code>ai === false</code></li>
-            <li>☑ <strong>2.3</strong> Resolve installation-aware skill paths dynamically and emit project-local <code>package.json</code> runner scripts in <code>scaffold-project.mjs</code></li>
-          </ul>
-        </div>
-        <div>
-          <h3 id="sec-phase-3" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">3. Symlink-Safe CLI Entrypoints, System Chrome Fallback &amp; Verifier Upgrades</h3>
-          <ul class="space-y-1.5 pl-1">
-            <li>☑ <strong>3.1</strong> Canonicalize CLI direct-execution checks with <code>fs.realpathSync()</code> across all CLI scripts</li>
-            <li>☑ <strong>3.2</strong> Add automatic system Chrome/Chromium fallback in <code>runner.mjs</code> when Playwright's bundled browser revision is missing</li>
-            <li>☑ <strong>3.3</strong> Make <code>core:structure</code> read expected startup theme from <code>#agent-manifest</code> or <code>--expected-theme</code></li>
-            <li>☑ <strong>3.4</strong> Update <code>core:theme-switcher</code> to inspect composite chart palette signatures (<code>borderColor</code>, array <code>backgroundColor</code>, scale colors)</li>
-            <li>☑ <strong>3.5</strong> Add first-class <code>--url &lt;http://...&gt;</code> verification mode to <code>verify-report.mjs</code> and <code>runner.mjs</code></li>
-          </ul>
-        </div>
-        <div>
-          <h3 id="sec-phase-4" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">4. Agent-Agnostic Turnkey AI Bridge, Honest 503 Semantics &amp; Preflight API</h3>
-          <ul class="space-y-1.5 pl-1">
-            <li>☑ <strong>4.1</strong> Implement agent-agnostic <code>AgentInferenceRouter</code> (<code>claude</code>, <code>gemini</code>, <code>codex</code>, <code>opencode</code>, <code>agy</code>, <code>ollama</code>, HTTP APIs) + HTTP <code>503</code> on failure</li>
-            <li>☑ <strong>4.2</strong> Add <code>GET /api/agent/preflight</code> (and enrich <code>/api/agent/health</code>) plus accurate <code>--no-open</code> reload logging in <code>serve-report.mjs</code></li>
-          </ul>
-        </div>
-        <div>
-          <h3 id="sec-phase-5" class="font-semibold text-xs uppercase tracking-wider text-base-content/60 mb-1">5. Turnkey /events Datastar SSE, /api/board/state, Client SDK &amp; Authoring Docs</h3>
-          <ul class="space-y-1.5 pl-1">
-            <li>☑ <strong>5.1</strong> Add <code>GET /events</code> Datastar SSE stream (15s heartbeat) and <code>GET</code>/<code>POST /api/board/state</code> (with <code>400</code>/<code>403</code> validation &amp; fragment morphing)</li>
-            <li>☑ <strong>5.2</strong> Expose <code>registerContextProvider</code>, <code>setTransportAdapter</code>, <code>HTMLReportBoard</code>, 3-channel status badges &amp; 7-step Vertical-Slice Workflow docs</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+  <script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: First-Class Reveal.js Presentation Support, Fullscreen & Follow-Along Notes, Spacing & Style Guide, Leaflet CSP Fix & Pipeline Ergonomics\n\n## Why\n1. Reveal.js vs. Impress.js mismatch in `build-report.mjs` and `scaffold-project.mjs`.\n2. No Fullscreen presentation mode (`#presentation-shell` Top-Layer container + `.is-fullscreen` fallback).\n3. No modeless follow-along Speaker Notes popup modal (`#presentation-notes-modal`).\n4. Cramped slide spacing & `reveal.css` `(0,2,1)` vs Tailwind `(0,1,0)` specificity collisions.\n5. Missing dedicated Reveal.js style guide (`reveal-presentation-style-guide.md`).\n6. Leaflet default marker CSP block (`unpkg.com` missing from `img-src`).\n7. Hidden-slide widget/TOC sync, `preflight.mjs` Playwright lookup, and `favicon` manifest persistence.\n\n## What Changes\nConsolidates Reveal.js addon support, `#presentation-shell` Fullscreen + modeless Notes modal, multi-mode spacing tokens + `.slide-body` + `reveal.css` guards, dedicated style guide, Leaflet CSP, and verification fixes into one cohesive epic.",
+  "design.md": "# Design: Consolidated Reveal.js Presentation Epic\n\n1. Register `reveal` (`reveal.js@5.1.0`) in `ADDON_REGISTRY` and emit `#presentation-shell` + `.slide-body` + `<aside class='notes'>` starter in `scaffold-project.mjs`.\n2. Root Fullscreen on `#presentation-shell` (native Fullscreen API + `.is-fullscreen` fallback + Fullscreen HUD) with `Reveal.layout()`, `Leaflet.invalidateSize()`, and `Chart.resize()` reflow.\n3. Add modeless `#presentation-notes-modal` (`aria-modal='false'`) synced on `ready`/`slidechanged` across horizontal/vertical slides, rich `<aside class='notes'>` HTML, `data-notes`, Up Next cue, and `--published` parity.\n4. Define `--slide-pad-*` tokens across Embedded, Fullscreen (`max-w-6xl`), Stacked, and Print + `reveal.css` cascade guards + `skills/html-report/references/reveal-presentation-style-guide.md`.\n5. Allow `https://unpkg.com` in `img-src` CSP, cap `#map` z-index, fix `preflight.mjs` Playwright lookup, and persist `favicon` in `report.manifest.json`.",
+  "tasks.md": "# Tasks\n\n## Phase 1: First-Class Reveal.js Addon, Shell & Spacing System\n- [ ] 1.1 Register `reveal` in `ADDON_REGISTRY` & route `--mode presentation`\n- [ ] 1.2 Add `#presentation-shell`, spacing tokens (`--slide-pad-*`), `.slide-body`, `reveal.css` guards & `.is-stacked`/print CSS\n- [ ] 1.3 Add `slidechanged` widget resize & TOC slide jump hooks\n- [ ] 1.4 Update `scaffold-project.mjs` starter with `#presentation-shell`, `.slide-body` & `aside.notes`\n\n## Phase 2: Fullscreen Mode & Follow-Along Speaker Notes Popup Modal\n- [ ] 2.1 Add `#presentation-shell` Fullscreen CSS & compact Fullscreen mini-HUD\n- [ ] 2.2 Implement `initPresentationShell()`, `F` shortcut & `fullscreenchange` reflow\n- [ ] 2.3 Implement modeless `#presentation-notes-modal` with rich notes, Up Next cue & docking\n- [ ] 2.4 Wire `N` shortcut, `slidechanged` listeners & `--published` parity\n\n## Phase 3: Dedicated Style Guide & Skill Alignment\n- [ ] 3.1 Author `skills/html-report/references/reveal-presentation-style-guide.md`\n- [ ] 3.2 Link style guide & `.slide-body` examples in `html-presentation` & `html-report` `SKILL.md`\n\n## Phase 4: Leaflet CSP, Preflight, Favicon & Verification\n- [ ] 4.1 Allow `https://unpkg.com` in `img-src` CSP, cap `#map` z-index & document `L.divIcon`\n- [ ] 4.2 Fix `preflight.mjs` Playwright module path resolution\n- [ ] 4.3 Persist `favicon` in `report.manifest.json` & avoid truncating `--title` in `create.html`\n- [ ] 4.4 Extend `verify-report.mjs` & tests for fullscreen, notes sync, spacing, CSP, preflight & favicon",
+  "specs/reveal-presentation-fixes/spec.md": "# reveal-presentation-fixes Specification\n\n- **First-Class Reveal.js Addon & Scaffolding**: `build-report.mjs` and `scaffold-project.mjs` default `--mode presentation` to Reveal.js (`#presentation-shell` + `.slide-body` + `<aside class='notes'>`).\n- **Fullscreen Presentation Shell & Layout Reflow**: `#presentation-shell` enters native Fullscreen or `.is-fullscreen` via button or `F`, shows compact HUD, and triggers `Reveal.layout()` + Leaflet/Chart resize.\n- **Follow-Along Speaker Notes Popup Modal**: Modeless `#presentation-notes-modal` (`aria-modal='false'`) stays open across transitions, syncs horizontal/vertical `<aside class='notes'>` & `data-notes`, shows Up Next cue, and survives `--published`.\n- **Standardized Multi-Mode Slide Spacing, Cascade Guards & Style Guide**: `--slide-pad-*` tokens (`>= 24px` X, `>= 52px` bottom), `reveal.css` isolation, `reveal-presentation-style-guide.md`, and `verify-report.mjs` padding/overflow/overlap assertions.\n- **Widget/TOC Sync, Leaflet CSP, Preflight & Favicon**: `slidechanged` widget resize, 0 CSP errors on `L.marker()`, `preflight.mjs` Playwright detection, and `favicon` manifest round-trip.",
+  "skill-review.md": "# Skill Execution Review: /html-presentation\n\n- **Worked well:** Fast scaffolding (`scaffold-project.mjs`), `<35ms` assembly (`build-report.mjs`), automatic 32-theme chart syncing (`report-runtime.js`), Playwright verification (`verify-report.mjs`), and fast edit-mode targeting via `report.manifest.json`.\n- **Creation & presenter gaps:** `build-report.mjs` & `scaffold-project.mjs` still wire Impress.js; no `#presentation-shell` Fullscreen mode or follow-along Notes popup modal; `template-shell.html` CSP blocks `unpkg.com` default Leaflet marker PNGs; hidden-slide Leaflet/Chart sizing and TOC jumps need runtime hooks; `preflight.mjs` reports `browser.ready: false`; `report.manifest.json` drops custom `--favicon`.\n- **Spacing & editing gaps:** Reveal.js CSS (`display: block`, `padding`) overrides Tailwind `p-*` and `flex` on `<section data-agent-section="section-4" data-agent-id="section-4">`, collapsing padding to `0px`; `.controls`/`.slide-number` overlap content without `>= 3.75rem` bottom safe-zone; `.is-stacked` needs card framing; `skills/html-report/references/` lacks a dedicated Reveal.js style guide; `verify-report.mjs` missed `0px` padding and vertical slide overflow, while SSE `/events` breaks Playwright `networkidle`."
+}
+  </script>
 
   <script>
-    window.openMarkdownViewer = async function(filePath) {
-      const modal = document.getElementById("markdown-viewer-modal");
-      const title = document.getElementById("markdown-modal-title");
-      const body = document.getElementById("markdown-modal-body");
-      if (!modal || !body) return;
+    let activeDocKey = "proposal.md";
+    let showdownConverter = null;
 
-      const resolvedPath = filePath.startsWith("openspec/")
-        ? filePath
-        : `openspec/changes/experience-review-remediations/${filePath}`;
-      title.textContent = resolvedPath;
-      body.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
-      modal.showModal();
+    function getShowdownConverter() {
+      if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+        showdownConverter = new window.showdown.Converter({
+          tables: true,
+          tasklists: true,
+          strikethrough: true,
+          emoji: true
+        });
+      }
+      return showdownConverter;
+    }
 
+    function getOpenSpecArtifacts() {
       try {
-        let res = await fetch(resolvedPath);
-        if (!res.ok && resolvedPath !== filePath) {
-          res = await fetch(filePath);
-        }
-        if (!res.ok) {
-          body.innerHTML = `<div class="alert alert-warning text-xs">Could not fetch artifact: <code>${resolvedPath}</code></div>`;
-          return;
-        }
-        const text = await res.text();
-        if (window.showdown) {
-          const conv = new window.showdown.Converter({ tables: true, tasklists: true, strikethrough: true });
-          body.innerHTML = conv.makeHtml(text);
-        } else {
-          body.innerHTML = `<pre class="text-xs font-mono p-4 bg-base-200 rounded">${text.replace(/</g, "&lt;")}</pre>`;
-        }
-      } catch (err) {
-        body.innerHTML = `<div class="alert alert-error text-xs">Error loading markdown: ${err.message}</div>`;
-      }
-    };
+        const el = document.getElementById("open-spec-artifacts-data");
+        if (el) return JSON.parse(el.textContent);
+      } catch (_) {}
+      return {};
+    }
 
-    window.initReportCharts = function () {
-      const ctx = document.getElementById("tasks-progress-chart");
-      if (!ctx || typeof Chart === "undefined") return;
-      window.reportCharts = window.reportCharts || [];
-      if (window.reportCharts.length > 0) {
-        window.reportCharts.forEach((c) => c.destroy());
-        window.reportCharts = [];
-      }
-      const colors = typeof window.getThemePalette === "function"
-        ? window.getThemePalette()
-        : { primary: "#6366f1", success: "#22c55e", text: "#334155" };
-      const chart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-          labels: ["Completed", "Remaining"],
-          datasets: [{
-            data: [15, 0],
-            backgroundColor: [colors.success || "#22c55e", colors.primary || "#6366f1"],
-            borderColor: colors.primary || "#6366f1",
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { position: "bottom", labels: { color: colors.text } } },
-          cutout: "68%"
-        }
+    async function openMarkdownViewer(docName) {
+      activeDocKey = docName || "proposal.md";
+      const modal = document.getElementById("markdown-viewer-modal");
+      if (!modal) return;
+      if (typeof modal.showModal === "function") modal.showModal();
+      else modal.setAttribute("open", "true");
+      await renderMarkdownDoc(activeDocKey);
+    }
+
+    function closeMarkdownViewer() {
+      const modal = document.getElementById("markdown-viewer-modal");
+      if (modal && typeof modal.close === "function") modal.close();
+      else if (modal) modal.removeAttribute("open");
+    }
+
+    async function switchViewerTab(docName) {
+      await renderMarkdownDoc(docName);
+    }
+
+    async function renderMarkdownDoc(docName) {
+      activeDocKey = docName;
+      const titleEl = document.getElementById("markdown-modal-title");
+      const bodyEl = document.getElementById("markdown-modal-body");
+      if (titleEl) titleEl.textContent = docName;
+
+      document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+        if (btn.getAttribute("data-doc") === docName) btn.classList.add("btn-active", "btn-primary");
+        else btn.classList.remove("btn-active", "btn-primary");
       });
-      window.reportCharts.push(chart);
-    };
-    window.addEventListener("load", window.initReportCharts);
+
+      const artifacts = getOpenSpecArtifacts();
+      let md = artifacts[docName];
+      if (!md) {
+        try {
+          const res = await fetch(docName);
+          if (res.ok) md = await res.text();
+        } catch (_) {}
+      }
+
+      if (bodyEl) {
+        if (md) {
+          const conv = getShowdownConverter();
+          bodyEl.innerHTML = conv
+            ? conv.makeHtml(md)
+            : "<pre class='whitespace-pre-wrap font-mono text-xs'>" + md.replace(/</g, "&lt;") + "</pre>";
+        } else {
+          bodyEl.innerHTML = "<div class='alert alert-warning text-xs'>Artifact " + docName + " not loaded.</div>";
+        }
+      }
+    }
+
+    window.openMarkdownViewer = openMarkdownViewer;
+    window.closeMarkdownViewer = closeMarkdownViewer;
+    window.switchViewerTab = switchViewerTab;
   </script>
   </main>
 
@@ -1162,6 +1477,7 @@ flowchart TD
         <div class="flex items-center gap-1 shrink-0">
           <select id="agent-dock-persona" class="select select-bordered select-xs text-[11px] font-sans max-w-[110px]" title="Choose Agent Persona">
             <option value="analyst" selected>Analyst</option>
+            <option value="support">Support</option>
             <option value="debugger">Debugger</option>
             <option value="strategist">Strategist</option>
             <option value="executive">Executive</option>
@@ -1182,11 +1498,42 @@ flowchart TD
         <button id="agent-dock-clear-context-btn" type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.clearTargetElement();" class="btn btn-ghost btn-xs text-[10px] hidden px-1 h-5 min-h-0">Clear</button>
       </div>
 
+      <!-- Turnkey AI Bridge Offline Banner (auto-shown when disconnected) -->
+      <div id="agent-dock-offline-banner" class="hidden px-3 py-2.5 bg-warning/10 border-b border-warning/30 text-xs space-y-2 shrink-0">
+        <div class="flex items-start gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-warning shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="min-w-0 flex-1">
+            <p class="font-bold text-base-content text-[11px]">AI Bridge Offline</p>
+            <p class="text-[11px] text-base-content/70 leading-snug">No local server connection. Use the turnkey prompt to start the AI bridge.</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button
+            id="agent-dock-reconnect-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.openReconnectModal();"
+            class="btn btn-warning btn-xs font-mono text-[10px] h-6 min-h-0"
+          >Restore Bridge</button>
+          <button
+            id="agent-dock-copy-turnkey-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.copyReconnectPrompt(this);"
+            class="btn btn-outline btn-xs font-mono text-[10px] h-6 min-h-0"
+          >Copy Turnkey Prompt</button>
+          <button
+            id="agent-dock-retry-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.checkConnection(this);"
+            class="btn btn-ghost btn-xs font-mono text-[10px] h-6 min-h-0"
+          >Retry</button>
+        </div>
+      </div>
+
       <!-- Messages & Event Stream -->
       <div id="agent-dock-messages" class="flex-1 overflow-y-auto p-3 space-y-3 text-xs leading-relaxed" style="scroll-behavior: smooth;">
         <div class="p-3 rounded-xl bg-base-200/60 border border-base-300 text-base-content/80 space-y-1">
           <p class="font-semibold text-base-content">👋 Welcome to your AI Assistant</p>
-          <p class="text-[11px] text-base-content/70">Ask questions, request live recalculations, or click any card to inspect its telemetry. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.</p>
+          <p id="agent-dock-welcome-copy" class="text-[11px] text-base-content/70">Ask questions, request live recalculations, or click any card to inspect its telemetry. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.</p>
         </div>
       </div>
 
@@ -1289,6 +1636,15 @@ const STANDARD_DAISYUI_THEMES = new Set([
 ]);
 
 const DAISYUI_THEMES = Array.from(STANDARD_DAISYUI_THEMES);
+
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 // Zero-dependency pure JS OKLCH engine & compiler for browser runtime
 function srgbToLinear(c) {
@@ -2068,7 +2424,7 @@ function initTOC() {
   const tocList = document.getElementById("report-toc-list");
   if (!tocList) return;
   const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).filter(
-    (h) => !h.closest(".fc, .katex, .gridjs, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
+    (h) => !h.closest(".fc, .katex, .gridjs, .notes, #presentation-notes-modal, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
   );
   tocList.innerHTML = "";
 
@@ -2083,13 +2439,41 @@ function initTOC() {
     a.href = `#${h.id}`;
     a.textContent = h.textContent.trim();
     a.className = level === 1 ? "font-bold text-xs" : level === 2 ? "pl-3 text-xs" : "pl-6 text-2xs opacity-80";
-    a.addEventListener("click", () => {
-      const dropdown = document.getElementById("toc-dropdown");
-      if (dropdown) dropdown.removeAttribute("open");
+    a.addEventListener("click", (e) => {
+      const targetSlide = h.closest(".reveal .slides section");
+      const shell = document.getElementById("presentation-shell");
+      const isStacked = Boolean(shell?.classList.contains("is-stacked") || h.closest(".reveal-stage.is-stacked"));
+      if (targetSlide && !isStacked && window.revealInstance && typeof window.revealInstance.getIndices === "function") {
+        e.preventDefault();
+        try {
+          const indices = window.revealInstance.getIndices(targetSlide);
+          if (indices && typeof window.revealInstance.slide === "function") {
+            window.revealInstance.slide(indices.h || 0, indices.v || 0);
+          }
+        } catch (_) {}
+      }
+      if (typeof HTMLReportSettings !== "undefined" && typeof HTMLReportSettings.closeToc === "function") {
+        HTMLReportSettings.closeToc();
+      } else {
+        const dropdown = document.getElementById("toc-dropdown");
+        const btn = document.getElementById("toc-dropdown-btn");
+        if (dropdown) {
+          dropdown.classList.remove("dropdown-open");
+          dropdown.removeAttribute("open");
+          if (document.activeElement && dropdown.contains(document.activeElement) && typeof document.activeElement.blur === "function") {
+            document.activeElement.blur();
+          }
+        }
+        if (btn) btn.setAttribute("aria-expanded", "false");
+      }
     });
     li.appendChild(a);
     tocList.appendChild(li);
   });
+
+  if (typeof HTMLReportSettings !== "undefined" && typeof HTMLReportSettings.initGear === "function") {
+    try { HTMLReportSettings.initGear(); } catch (_) {}
+  }
 }
 
 /**
@@ -2147,6 +2531,9 @@ async function buildInlinedHtmlSnapshot(options = {}) {
   );
   if (publishedMode) HTMLReportPublisher.prepare(clone);
   clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
+  clone.querySelectorAll("[data-reveal-initialized]").forEach((el) => el.removeAttribute("data-reveal-initialized"));
+  clone.querySelectorAll("[data-presentation-bound]").forEach((el) => el.removeAttribute("data-presentation-bound"));
+  clone.querySelectorAll("#presentation-shell.is-fullscreen").forEach((el) => el.classList.remove("is-fullscreen"));
 
   // Inline external stylesheets
   const linkEls = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
@@ -2207,9 +2594,7 @@ async function buildInlinedHtmlSnapshot(options = {}) {
  */
 function exportReportPdf() {
   if (typeof window === "undefined") return;
-  if (window.reportCharts && Array.isArray(window.reportCharts)) {
-    window.reportCharts.forEach((c) => c?.resize?.());
-  }
+  resizePresentationWidgets();
   if (window.reportLeafletMap && typeof window.reportLeafletMap.invalidateSize === "function") {
     window.reportLeafletMap.invalidateSize();
   }
@@ -2547,6 +2932,539 @@ function impressGoto(step) {
 }
 
 /**
+ * Sanitizes speaker notes HTML (<aside class="notes">) so rich formatting
+ * (<p>, <ul>, <ol>, <li>, <strong>, <em>, <code>) is preserved safely.
+ */
+function sanitizeSpeakerNotesHtml(rawHtml = "") {
+  if (typeof document === "undefined") return String(rawHtml || "");
+  const tpl = document.createElement("template");
+  tpl.innerHTML = String(rawHtml || "");
+  const blockedTags = tpl.content.querySelectorAll("script, style, iframe, object, embed, link, meta, base, form");
+  blockedTags.forEach((el) => el.remove());
+  const all = tpl.content.querySelectorAll("*");
+  all.forEach((el) => {
+    for (const attr of Array.from(el.attributes)) {
+      const name = attr.name.toLowerCase();
+      const val = String(attr.value || "").trim();
+      if (name.startsWith("on") || name === "srcdoc") {
+        el.removeAttribute(attr.name);
+      } else if ((name === "href" || name === "src" || name === "xlink:href") && /^(?:javascript|vbscript|data\s*:\s*text\/html):/i.test(val)) {
+        el.removeAttribute(attr.name);
+      }
+    }
+  });
+  return tpl.innerHTML.trim();
+}
+
+/**
+ * Re-measures Reveal.js layout, Chart.js canvases, and Leaflet maps after
+ * slide transitions, fullscreen changes, or stacked-view toggles.
+ */
+function resizePresentationWidgets() {
+  if (typeof window === "undefined") return;
+  try {
+    if (window.revealInstance && typeof window.revealInstance.layout === "function") {
+      window.revealInstance.layout();
+    }
+  } catch (_) {}
+  try {
+    if (Array.isArray(window.reportCharts)) {
+      window.reportCharts.forEach((c) => {
+        try { if (c && typeof c.resize === "function") c.resize(); } catch (_) {}
+      });
+    }
+    if (window.Chart && window.Chart.instances) {
+      const list = Array.isArray(window.Chart.instances)
+        ? window.Chart.instances
+        : Object.values(window.Chart.instances);
+      list.forEach((c) => {
+        try { if (c && typeof c.resize === "function") c.resize(); } catch (_) {}
+      });
+    }
+  } catch (_) {}
+  try {
+    if (window.__htmlReportLeafletMaps && typeof window.__htmlReportLeafletMaps.forEach === "function") {
+      window.__htmlReportLeafletMaps.forEach((m) => {
+        try { if (m && typeof m.invalidateSize === "function") m.invalidateSize({ animate: false }); } catch (_) {}
+      });
+    }
+    if (Array.isArray(window.reportMaps)) {
+      window.reportMaps.forEach((m) => {
+        try { if (m && typeof m.invalidateSize === "function") m.invalidateSize({ animate: false }); } catch (_) {}
+      });
+    }
+    if (window.leafletMap && typeof window.leafletMap.invalidateSize === "function") {
+      window.leafletMap.invalidateSize({ animate: false });
+    }
+  } catch (_) {}
+  try {
+    window.dispatchEvent(new Event("resize"));
+  } catch (_) {}
+}
+
+function registerLeafletInitHook() {
+  if (typeof window === "undefined" || window.__htmlReportLeafletHooked) return;
+  if (window.L && window.L.Map && typeof window.L.Map.addInitHook === "function") {
+    window.__htmlReportLeafletHooked = true;
+    window.L.Map.addInitHook(function () {
+      window.__htmlReportLeafletMaps = window.__htmlReportLeafletMaps || new Set();
+      window.__htmlReportLeafletMaps.add(this);
+    });
+  }
+}
+
+function extractSlideLabel(sectionEl, fallbackLabel = "Slide") {
+  if (!sectionEl) return fallbackLabel;
+  const explicit = sectionEl.getAttribute("data-title");
+  if (explicit && explicit.trim()) return explicit.trim();
+  const heading = sectionEl.querySelector("h1, h2, h3, [data-slide-title]");
+  if (heading && heading.textContent && heading.textContent.trim()) {
+    return heading.textContent.trim().replace(/\s+/g, " ");
+  }
+  return fallbackLabel;
+}
+
+function extractSlideNotesHtml(sectionEl) {
+  if (!sectionEl) return { hasNotes: false, html: "" };
+  const asideNotes = Array.from(sectionEl.querySelectorAll(":scope > aside.notes, :scope > .slide-body > aside.notes, aside.notes"))
+    .filter((el) => el.closest("section") === sectionEl);
+  if (asideNotes.length > 0) {
+    const combined = asideNotes
+      .map((el) => sanitizeSpeakerNotesHtml(el.innerHTML))
+      .filter(Boolean)
+      .join("<hr class=\"my-2 border-base-300\" />");
+    if (combined) {
+      return { hasNotes: true, html: combined };
+    }
+  }
+  const attrNotes = sectionEl.getAttribute("data-notes");
+  if (attrNotes && attrNotes.trim()) {
+    return { hasNotes: true, html: `<p>${escapeHtml(attrNotes.trim())}</p>` };
+  }
+  return { hasNotes: false, html: "" };
+}
+
+function getLeafSlides(deckEl) {
+  if (!deckEl) return [];
+  const all = Array.from(deckEl.querySelectorAll(".slides section"));
+  return all.filter((sec) => !sec.querySelector(":scope > section"));
+}
+
+/**
+ * Initializes #presentation-shell, Reveal.js embedded runtime, Fullscreen mode,
+ * modeless Follow-Along Speaker Notes popup (#presentation-notes-modal),
+ * Stacked view toggle, and widget resize hooks.
+ */
+function initPresentationShell(retries = 25) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  registerLeafletInitHook();
+
+  const deckEl = document.querySelector("#report-main .reveal, .reveal#presentation-deck, .reveal");
+  if (!deckEl) return;
+
+  // 1. Ensure #presentation-shell wraps toolbar + .reveal-stage
+  let stageEl = deckEl.closest(".reveal-stage");
+  if (!stageEl) {
+    stageEl = document.createElement("div");
+    stageEl.className = "reveal-stage";
+    deckEl.parentNode.insertBefore(stageEl, deckEl);
+    stageEl.appendChild(deckEl);
+  }
+
+  let shell = stageEl.closest("#presentation-shell");
+  if (!shell) {
+    shell = document.createElement("div");
+    shell.id = "presentation-shell";
+    stageEl.parentNode.insertBefore(shell, stageEl);
+    const maybeToolbar = shell.previousElementSibling;
+    if (maybeToolbar && maybeToolbar.classList.contains("presentation-toolbar")) {
+      shell.appendChild(maybeToolbar);
+    }
+    shell.appendChild(stageEl);
+  }
+
+  // Ensure a presentation toolbar exists if fragment omitted it
+  let toolbar = shell.querySelector(".presentation-toolbar");
+  if (!toolbar) {
+    toolbar = document.createElement("div");
+    toolbar.className = "presentation-toolbar flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-base-100 border border-base-300 rounded-box shadow-sm print:hidden";
+    toolbar.innerHTML = `
+      <div class="flex items-center gap-2 text-xs text-base-content/75 font-mono">
+        <span class="badge badge-primary badge-outline badge-xs font-mono">Slides</span>
+        <span id="presentation-toolbar-counter">1 / 1</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-1.5">
+        <button id="presentation-notes-btn" type="button" class="btn btn-xs btn-ghost border border-base-300 gap-1.5" title="Toggle Follow-Along Speaker Notes (N)" aria-pressed="false">
+          <span>Notes</span>
+          <kbd class="kbd kbd-xs font-mono hidden sm:inline-flex">N</kbd>
+          <span id="presentation-notes-dot" class="hidden w-2 h-2 rounded-full bg-primary" aria-hidden="true"></span>
+        </button>
+        <button id="presentation-stack-btn" type="button" class="btn btn-xs btn-ghost border border-base-300 gap-1.5" title="Toggle Stacked All-Slides View" aria-pressed="false">
+          <span>All Slides</span>
+        </button>
+        <button id="presentation-fullscreen-btn" type="button" class="btn btn-xs btn-primary gap-1.5" title="Enter Fullscreen Presentation (F)" aria-pressed="false">
+          <span>Fullscreen</span>
+          <kbd class="kbd kbd-xs bg-primary-content/20 text-primary-content border-none font-mono hidden sm:inline-flex">F</kbd>
+        </button>
+      </div>
+    `;
+    shell.insertBefore(toolbar, stageEl);
+  }
+
+  // Ensure compact Fullscreen mini-HUD exists inside #presentation-shell
+  let fsHud = document.getElementById("presentation-fullscreen-hud");
+  if (!fsHud) {
+    fsHud = document.createElement("div");
+    fsHud.id = "presentation-fullscreen-hud";
+    fsHud.setAttribute("aria-label", "Fullscreen Presentation Controls");
+    fsHud.innerHTML = `
+      <button id="presentation-hud-prev" type="button" class="btn btn-ghost btn-xs btn-circle" title="Previous slide" aria-label="Previous slide">&larr;</button>
+      <span id="presentation-hud-counter" class="text-xs font-mono font-semibold px-1.5 tabular-nums">1 / 1</span>
+      <button id="presentation-hud-next" type="button" class="btn btn-ghost btn-xs btn-circle" title="Next slide" aria-label="Next slide">&rarr;</button>
+      <button id="presentation-hud-notes" type="button" class="btn btn-ghost btn-xs gap-1" title="Toggle Speaker Notes (N)">Notes</button>
+      <button id="presentation-hud-exit" type="button" class="btn btn-outline btn-xs" title="Exit Fullscreen (F / Esc)">Exit</button>
+    `;
+    shell.appendChild(fsHud);
+  }
+
+  // Ensure modeless Follow-Along Speaker Notes popup modal exists inside #presentation-shell
+  let notesModal = document.getElementById("presentation-notes-modal");
+  if (!notesModal) {
+    notesModal = document.createElement("aside");
+    notesModal.id = "presentation-notes-modal";
+    notesModal.className = "hidden print:hidden";
+    notesModal.setAttribute("role", "dialog");
+    notesModal.setAttribute("aria-modal", "false");
+    notesModal.setAttribute("aria-labelledby", "presentation-notes-title");
+    notesModal.setAttribute("data-dock", "bottom-right");
+    notesModal.setAttribute("data-notes-size", "md");
+    notesModal.innerHTML = `
+      <div class="px-3 py-2 bg-base-200/90 border-b border-base-300 flex items-center justify-between gap-2 shrink-0">
+        <div class="min-w-0 flex items-center gap-2">
+          <span id="presentation-notes-badge" class="badge badge-primary badge-xs font-mono shrink-0">1</span>
+          <h3 id="presentation-notes-title" class="text-xs font-bold truncate">Speaker Notes</h3>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button id="presentation-notes-size-btn" type="button" class="btn btn-ghost btn-xs font-mono px-1.5 h-6 min-h-0" title="Toggle notes text size">Aa</button>
+          <select id="presentation-notes-dock-select" class="select select-bordered select-xs h-6 min-h-0 text-[11px] font-mono" aria-label="Notes popup dock position" title="Dock position">
+            <option value="bottom-right">Bottom Right</option>
+            <option value="bottom-left">Bottom Left</option>
+            <option value="side-right">Side Right</option>
+          </select>
+          <button id="presentation-notes-close-btn" type="button" class="btn btn-ghost btn-xs btn-circle h-6 min-h-0 w-6" aria-label="Close speaker notes" title="Close (N / Esc)">&times;</button>
+        </div>
+      </div>
+      <div id="presentation-notes-body" class="p-3 overflow-y-auto flex-1 leading-relaxed text-base-content/90 space-y-2">
+        <p class="text-xs italic opacity-60">No speaker notes for this slide.</p>
+      </div>
+      <div class="px-3 py-2 bg-base-200/70 border-t border-base-300 flex items-center justify-between gap-2 text-xs shrink-0">
+        <div id="presentation-notes-upnext" class="truncate text-base-content/70 font-medium">Up Next: —</div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button id="presentation-notes-prev" type="button" class="btn btn-ghost btn-xs border border-base-300 h-6 min-h-0 px-2" title="Previous slide">Prev</button>
+          <button id="presentation-notes-next" type="button" class="btn btn-primary btn-xs h-6 min-h-0 px-2" title="Next slide">Next</button>
+        </div>
+      </div>
+    `;
+    shell.appendChild(notesModal);
+  }
+
+  // Wait for Reveal.js CDN if still loading
+  if (!window.Reveal) {
+    if (retries > 0) {
+      setTimeout(() => initPresentationShell(retries - 1), 120);
+    }
+    return;
+  }
+
+  const updatePresenterUI = () => {
+    const deck = window.revealInstance;
+    const leafSlides = getLeafSlides(deckEl);
+    const total = Math.max(1, leafSlides.length);
+    let currentSlide = null;
+    let indices = { h: 0, v: 0 };
+    try {
+      if (deck && typeof deck.getCurrentSlide === "function") {
+        currentSlide = deck.getCurrentSlide();
+      }
+      if (deck && typeof deck.getIndices === "function") {
+        indices = deck.getIndices() || { h: 0, v: 0 };
+      }
+    } catch (_) {}
+    if (!currentSlide && leafSlides.length > 0) {
+      currentSlide = leafSlides[0];
+    }
+
+    const leafIdx = currentSlide ? Math.max(0, leafSlides.indexOf(currentSlide)) : 0;
+    const slideNumberLabel = indices.v > 0 ? `${(indices.h || 0) + 1}.${indices.v + 1}` : `${(indices.h || 0) + 1}`;
+    const counterText = `${leafIdx + 1} / ${total}`;
+
+    const toolbarCounter = document.getElementById("presentation-toolbar-counter");
+    if (toolbarCounter) toolbarCounter.textContent = counterText;
+    const hudCounter = document.getElementById("presentation-hud-counter");
+    if (hudCounter) hudCounter.textContent = counterText;
+
+    const slideTitle = extractSlideLabel(currentSlide, `Slide ${slideNumberLabel}`);
+    const { hasNotes, html: notesHtml } = extractSlideNotesHtml(currentSlide);
+
+    const notesDot = document.getElementById("presentation-notes-dot");
+    if (notesDot) notesDot.classList.toggle("hidden", !hasNotes);
+
+    const notesBadge = document.getElementById("presentation-notes-badge");
+    if (notesBadge) notesBadge.textContent = slideNumberLabel;
+    const notesTitleEl = document.getElementById("presentation-notes-title");
+    if (notesTitleEl) notesTitleEl.textContent = slideTitle;
+
+    const notesBody = document.getElementById("presentation-notes-body");
+    if (notesBody) {
+      notesBody.innerHTML = hasNotes
+        ? notesHtml
+        : `<p class="text-xs italic opacity-60">No speaker notes for this slide.</p>`;
+    }
+
+    const upNextEl = document.getElementById("presentation-notes-upnext");
+    if (upNextEl) {
+      const nextLeaf = leafIdx + 1 < leafSlides.length ? leafSlides[leafIdx + 1] : null;
+      upNextEl.textContent = nextLeaf
+        ? `Up Next: ${extractSlideLabel(nextLeaf, `Slide ${leafIdx + 2}`)}`
+        : "Up Next: End of Deck";
+    }
+  };
+
+  const isNativeFullscreen = () => Boolean(document.fullscreenElement === shell || document.webkitFullscreenElement === shell);
+  const isAnyFullscreen = () => isNativeFullscreen() || shell.classList.contains("is-fullscreen");
+
+  const syncFullscreenButtons = () => {
+    const active = isAnyFullscreen();
+    const fsBtn = document.getElementById("presentation-fullscreen-btn");
+    if (fsBtn) {
+      fsBtn.setAttribute("aria-pressed", active ? "true" : "false");
+      const labelSpan = fsBtn.querySelector("span");
+      if (labelSpan) labelSpan.textContent = active ? "Exit Fullscreen" : "Fullscreen";
+    }
+  };
+
+  const enterFullscreen = async () => {
+    if (shell.classList.contains("is-stacked")) {
+      setStackedMode(false);
+    }
+    const reqFs = shell.requestFullscreen || shell.webkitRequestFullscreen;
+    let enteredNative = false;
+    if (typeof reqFs === "function") {
+      try {
+        await reqFs.call(shell);
+        enteredNative = isNativeFullscreen();
+      } catch (_) {
+        enteredNative = false;
+      }
+    }
+    if (!enteredNative) {
+      shell.classList.add("is-fullscreen");
+    }
+    syncFullscreenButtons();
+    setTimeout(() => resizePresentationWidgets(), 60);
+  };
+
+  const exitFullscreen = async () => {
+    shell.classList.remove("is-fullscreen");
+    if (isNativeFullscreen()) {
+      const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
+      if (typeof exitFs === "function") {
+        try { await exitFs.call(document); } catch (_) {}
+      }
+    }
+    syncFullscreenButtons();
+    setTimeout(() => resizePresentationWidgets(), 60);
+  };
+
+  const toggleFullscreen = async () => {
+    if (isAnyFullscreen()) {
+      await exitFullscreen();
+    } else {
+      await enterFullscreen();
+    }
+  };
+
+  const setNotesOpen = (open) => {
+    notesModal.classList.toggle("hidden", !open);
+    const notesBtn = document.getElementById("presentation-notes-btn");
+    if (notesBtn) notesBtn.setAttribute("aria-pressed", open ? "true" : "false");
+    if (open) updatePresenterUI();
+  };
+
+  const toggleNotes = () => {
+    setNotesOpen(notesModal.classList.contains("hidden"));
+  };
+
+  const setStackedMode = (stacked) => {
+    shell.classList.toggle("is-stacked", Boolean(stacked));
+    stageEl.classList.toggle("is-stacked", Boolean(stacked));
+    const stackBtn = document.getElementById("presentation-stack-btn");
+    if (stackBtn) {
+      stackBtn.setAttribute("aria-pressed", stacked ? "true" : "false");
+      stackBtn.classList.toggle("btn-active", Boolean(stacked));
+    }
+    setTimeout(() => resizePresentationWidgets(), 60);
+  };
+
+  if (!shell.dataset.presentationBound) {
+    shell.dataset.presentationBound = "true";
+
+    document.getElementById("presentation-fullscreen-btn")?.addEventListener("click", () => toggleFullscreen());
+    document.getElementById("presentation-hud-exit")?.addEventListener("click", () => exitFullscreen());
+    document.getElementById("presentation-notes-btn")?.addEventListener("click", () => toggleNotes());
+    document.getElementById("presentation-hud-notes")?.addEventListener("click", () => toggleNotes());
+    document.getElementById("presentation-notes-close-btn")?.addEventListener("click", () => setNotesOpen(false));
+    document.getElementById("presentation-stack-btn")?.addEventListener("click", () => {
+      setStackedMode(!shell.classList.contains("is-stacked"));
+    });
+
+    const goPrev = () => { try { window.revealInstance?.prev?.(); } catch (_) {} };
+    const goNext = () => { try { window.revealInstance?.next?.(); } catch (_) {} };
+    document.getElementById("presentation-hud-prev")?.addEventListener("click", goPrev);
+    document.getElementById("presentation-hud-next")?.addEventListener("click", goNext);
+    document.getElementById("presentation-notes-prev")?.addEventListener("click", goPrev);
+    document.getElementById("presentation-notes-next")?.addEventListener("click", goNext);
+
+    const sizes = ["sm", "md", "lg"];
+    document.getElementById("presentation-notes-size-btn")?.addEventListener("click", () => {
+      const cur = notesModal.getAttribute("data-notes-size") || "md";
+      const next = sizes[(sizes.indexOf(cur) + 1) % sizes.length];
+      notesModal.setAttribute("data-notes-size", next);
+    });
+
+    document.getElementById("presentation-notes-dock-select")?.addEventListener("change", (e) => {
+      notesModal.setAttribute("data-dock", e.target.value || "bottom-right");
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!isNativeFullscreen()) {
+        shell.classList.remove("is-fullscreen");
+      }
+      syncFullscreenButtons();
+      setTimeout(() => resizePresentationWidgets(), 60);
+    });
+    document.addEventListener("webkitfullscreenchange", () => {
+      if (!isNativeFullscreen()) {
+        shell.classList.remove("is-fullscreen");
+      }
+      syncFullscreenButtons();
+      setTimeout(() => resizePresentationWidgets(), 60);
+    });
+
+    if (!window._presentationKeydownBound) {
+      window._presentationKeydownBound = true;
+      document.addEventListener("keydown", (e) => {
+        const active = document.activeElement;
+        const inEditable = Boolean(
+          active &&
+          (active.tagName === "INPUT" ||
+            active.tagName === "TEXTAREA" ||
+            active.tagName === "SELECT" ||
+            active.isContentEditable ||
+            active.closest?.(".ql-editor"))
+        );
+
+        if (e.key === "Escape") {
+          const blockingModalOpen = Boolean(
+            document.getElementById("all-settings-modal")?.open ||
+            document.getElementById("markdown-viewer-modal")?.open ||
+            document.getElementById("mermaid-enlarge-modal")?.open ||
+            document.getElementById("pdf-not-ready-modal")?.open ||
+            document.getElementById("agent-reconnect-modal")?.open
+          );
+          if (blockingModalOpen) return;
+          if (!notesModal.classList.contains("hidden")) {
+            setNotesOpen(false);
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+            return;
+          }
+          if (shell.classList.contains("is-fullscreen")) {
+            exitFullscreen();
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+          }
+          return;
+        }
+
+        if (inEditable || e.ctrlKey || e.metaKey || e.altKey) return;
+        const key = String(e.key || "").toLowerCase();
+        if (key === "f") {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+          toggleFullscreen();
+        } else if (key === "n") {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+          toggleNotes();
+        }
+      }, true);
+    }
+  }
+
+  // Initialize Reveal.js once per deck element
+  if (!deckEl.dataset.revealInitialized) {
+    deckEl.dataset.revealInitialized = "true";
+    const revealConfig = {
+      embedded: true,
+      disableLayout: true,
+      hash: false,
+      keyboard: {
+        70: null,
+        78: null
+      },
+      controls: true,
+      progress: true,
+      slideNumber: "c/t",
+      center: false,
+      transition: "slide"
+    };
+    try {
+      const useSingleton = document.querySelectorAll(".reveal").length <= 1 && typeof window.Reveal.initialize === "function";
+      const deck = useSingleton
+        ? window.Reveal
+        : (typeof window.Reveal === "function" ? new window.Reveal(deckEl, revealConfig) : window.Reveal);
+      window.revealInstance = deck;
+      window.revealDeck = deck;
+
+      if (typeof deck.on === "function") {
+        deck.on("ready", () => {
+          updatePresenterUI();
+          setTimeout(() => resizePresentationWidgets(), 50);
+        });
+        deck.on("slidechanged", () => {
+          updatePresenterUI();
+          setTimeout(() => resizePresentationWidgets(), 50);
+        });
+      }
+
+      const initPromise = typeof deck.initialize === "function"
+        ? deck.initialize(revealConfig)
+        : Promise.resolve();
+      Promise.resolve(initPromise).then(() => {
+        updatePresenterUI();
+        setTimeout(() => resizePresentationWidgets(), 60);
+      }).catch((err) => {
+        console.warn("[html-report] Reveal.js initialization notice:", err);
+      });
+    } catch (err) {
+      console.warn("[html-report] Reveal.js initialization notice:", err);
+    }
+  } else {
+    updatePresenterUI();
+    resizePresentationWidgets();
+  }
+
+  window.presentationToggleFullscreen = toggleFullscreen;
+  window.presentationToggleNotes = toggleNotes;
+  window.presentationToggleStacked = () => setStackedMode(!shell.classList.contains("is-stacked"));
+}
+
+/**
  * Mock.js runtime initialization & data-mock hydration.
  */
 function initMockjs() {
@@ -2703,6 +3621,49 @@ function initFullCalendar(retries = 25) {
 }
 
 /**
+ * Fallback CDN mirrors for Lucide UMD in case primary jsDelivr CDN is blocked or slow.
+ */
+const LUCIDE_FALLBACK_CDNS = [
+  "https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/lucide/0.460.0/umd/lucide.min.js"
+];
+let _lucideFallbackAttempted = false;
+
+/**
+ * Ensures Lucide UMD library is available (loading fallback CDN mirrors if needed)
+ * and rehydrates all [data-lucide] placeholders in the DOM.
+ */
+function ensureLucideIcons(root = null) {
+  if (typeof window === "undefined") return;
+  if (window.lucide && typeof window.lucide.createIcons === "function") {
+    rehydrateLucideIcons(root);
+    return;
+  }
+  if (_lucideFallbackAttempted || typeof document === "undefined" || !document.head) return;
+  const hasIcons = typeof document.querySelector === "function"
+    ? Boolean(document.querySelector(":not(svg)[data-lucide], [data-lucide]"))
+    : false;
+  if (!hasIcons) return;
+
+  _lucideFallbackAttempted = true;
+  const loadMirror = (index) => {
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      rehydrateLucideIcons(root);
+      return;
+    }
+    if (index >= LUCIDE_FALLBACK_CDNS.length) return;
+    const s = document.createElement("script");
+    s.src = LUCIDE_FALLBACK_CDNS[index];
+    s.crossOrigin = "anonymous";
+    s.async = true;
+    s.onload = () => rehydrateLucideIcons(root);
+    s.onerror = () => loadMirror(index + 1);
+    document.head.appendChild(s);
+  };
+  loadMirror(0);
+}
+
+/**
  * Rehydrates Lucide icons in the DOM.
  */
 function rehydrateLucideIcons(root = null) {
@@ -2752,7 +3713,7 @@ function initDatastarObserver() {
     if (needsRehydrate) {
       if (_lucideRehydrationTimer) clearTimeout(_lucideRehydrationTimer);
       _lucideRehydrationTimer = setTimeout(() => {
-        rehydrateLucideIcons();
+        ensureLucideIcons();
       }, 16);
     }
   });
@@ -3157,10 +4118,13 @@ if (typeof window !== "undefined") {
   window.impressNext = impressNext;
   window.impressPrev = impressPrev;
   window.impressGoto = impressGoto;
+  window.initPresentationShell = initPresentationShell;
+  window.resizePresentationWidgets = resizePresentationWidgets;
   window.initMockjs = initMockjs;
   window.initShowdown = initShowdown;
   window.initFullCalendar = initFullCalendar;
   window.rehydrateLucideIcons = rehydrateLucideIcons;
+  window.ensureLucideIcons = ensureLucideIcons;
   window.initDatastarObserver = initDatastarObserver;
   window.syncDatastarTheme = syncDatastarTheme;
   window.autoLinkMarkdownFiles = autoLinkMarkdownFiles;
@@ -3176,7 +4140,7 @@ if (typeof window !== "undefined") {
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
-    try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
+    try { ensureLucideIcons(); } catch (_) {}
     try { initTOC(); } catch (_) {}
     try { initModeBadge(); } catch (_) {}
     try { initThemeDropdown(); } catch (_) {}
@@ -3188,6 +4152,7 @@ if (typeof window !== "undefined") {
     try { initMockjs(); } catch (_) {}
     try { initFullCalendar(); } catch (_) {}
     try { initImpress(); } catch (_) {}
+    try { initPresentationShell(); } catch (_) {}
     try { initDatastarObserver(); } catch (_) {}
     try { autoLinkMarkdownFiles(); } catch (_) {}
     try { initPublicFeeds(); } catch (_) {}
@@ -3199,6 +4164,7 @@ if (typeof window !== "undefined") {
     try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.init(); } catch (_) {}
     try { initAuthoring(); } catch (err) { console.warn("[html-report] authoring init failed:", err); }
     window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.addEventListener("load", () => { try { ensureLucideIcons(); } catch (_) {} });
     window.addEventListener("beforeunload", () => {
       try { cleanupPublicFeeds(); } catch (_) {}
       try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.stopHeartbeat(); } catch (_) {}
@@ -3215,7 +4181,7 @@ if (typeof window !== "undefined") {
 async function reinitReportContent() {
   if (typeof document === "undefined") return;
   try { cleanupPublicFeeds(); } catch (_) {}
-  try { rehydrateLucideIcons(); } catch (_) {}
+  try { ensureLucideIcons(); } catch (_) {}
   try { initTOC(); } catch (_) {}
   try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
   try { initDayjs(); } catch (_) {}
@@ -3223,6 +4189,7 @@ async function reinitReportContent() {
   try { await renderMermaidWithTheme(resolveDaisyUIThemePalette()); } catch (_) {}
   try { if (typeof HTMLReportMermaid !== "undefined") HTMLReportMermaid.initEnlarge(); } catch (_) {}
   try { checkInsufficientHorizontalSpace(); } catch (_) {}
+  try { initPresentationShell(); } catch (_) {}
   try { initPublicFeeds(); } catch (_) {}
 }
 
@@ -3242,6 +4209,27 @@ const HTMLReportAgent = {
   _contextProviders: [],
   _transportAdapter: null,
   _lastPreflight: null,
+  _csrfToken: null,
+  _csrfExpiresAt: 0,
+
+  _getCsrfToken: async function() {
+    if (typeof window === "undefined") return null;
+    if (this._csrfToken && Date.now() < this._csrfExpiresAt - 30000) {
+      return this._csrfToken;
+    }
+    try {
+      const res = await fetch("/api/agent/csrf-token", { method: "GET", cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.csrfToken) {
+          this._csrfToken = data.csrfToken;
+          this._csrfExpiresAt = data.expiresAt || (Date.now() + 300000);
+          return this._csrfToken;
+        }
+      }
+    } catch (_) {}
+    return null;
+  },
 
   registerContextProvider: function(fn) {
     if (typeof fn === "function") {
@@ -3357,12 +4345,24 @@ const HTMLReportAgent = {
         } else if (newState === "disconnected") {
           dockDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-warning-content";
           dockPing.className = "hidden";
-          if (dockStatus) dockStatus.textContent = "Offline • Local Fallback";
+          if (dockStatus) dockStatus.textContent = "Offline • Turnkey Bridge Ready";
         } else {
           dockDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-base-content/40";
           dockPing.className = "hidden";
           if (dockStatus) dockStatus.textContent = "Probing Agent...";
         }
+      }
+
+      const dockOfflineBanner = document.getElementById("agent-dock-offline-banner");
+      if (dockOfflineBanner) {
+        dockOfflineBanner.classList.toggle("hidden", newState !== "disconnected");
+      }
+
+      const dockLauncher = document.getElementById("agent-dock-launcher");
+      if (dockLauncher) {
+        dockLauncher.title = newState === "disconnected"
+          ? "AI Assistant (Offline — click to open or restore bridge)"
+          : "Open AI Assistant (Cmd+K or Ctrl+K)";
       }
     }
 
@@ -3372,7 +4372,7 @@ const HTMLReportAgent = {
   },
 
   getAiConfig: function() {
-    const defaults = { port: 3031, fallbackPort: 3032, model: "Gemini 3.8 Flash (Low)", persona: "analyst" };
+    const defaults = { port: 3031, fallbackPort: 3032, model: "Gemini 3.8 Flash (Low)", persona: "analyst", purpose: null };
     if (typeof document === "undefined") return defaults;
     const readMeta = (name) => {
       const el = document.querySelector(`meta[name="${name}"]`);
@@ -3390,7 +4390,8 @@ const HTMLReportAgent = {
     const port = Number.isFinite(Number(portRaw)) && Number(portRaw) > 0 ? Number(portRaw) : defaults.port;
     const model = readMeta("html-report-ai-model") || (manifestCfg && manifestCfg.model) || defaults.model;
     const persona = readMeta("html-report-ai-persona") || (manifestCfg && manifestCfg.persona) || defaults.persona;
-    return { port, model, persona };
+    const purpose = readMeta("html-report-ai-purpose") || (manifestCfg && manifestCfg.purpose) || defaults.purpose;
+    return { port, model, persona, purpose };
   },
 
   checkConnection: async function(btnEl) {
@@ -3617,12 +4618,28 @@ Prerequisites & Instructions:
     if (dockContainer) {
       dockContainer.classList.toggle("hidden", !showDock);
     }
+    const cfg = this.getAiConfig();
     const personaSel = document.getElementById("agent-dock-persona");
     if (capable && personaSel && !personaSel.dataset.aiConfigInit) {
       personaSel.dataset.aiConfigInit = "1";
-      const cfgPersona = this.getAiConfig().persona;
-      if (cfgPersona && Array.from(personaSel.options).some((o) => o.value === cfgPersona)) {
+      const cfgPersona = cfg.persona;
+      if (cfgPersona) {
+        if (!Array.from(personaSel.options).some((o) => o.value === cfgPersona)) {
+          const opt = document.createElement("option");
+          opt.value = cfgPersona;
+          opt.textContent = cfgPersona.charAt(0).toUpperCase() + cfgPersona.slice(1);
+          personaSel.insertBefore(opt, personaSel.firstChild);
+        }
         personaSel.value = cfgPersona;
+      }
+    }
+    const welcomeCopy = document.getElementById("agent-dock-welcome-copy");
+    if (welcomeCopy && !welcomeCopy.dataset.aiPurposeInit) {
+      welcomeCopy.dataset.aiPurposeInit = "1";
+      if (cfg.purpose) {
+        welcomeCopy.innerHTML = `${typeof escapeHtml === "function" ? escapeHtml(cfg.purpose) : cfg.purpose} Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.`;
+      } else if (cfg.persona && cfg.persona.toLowerCase() === "support") {
+        welcomeCopy.innerHTML = `Ask questions about the documentation, setup steps, or troubleshooting guidance on this page. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.`;
       }
     }
     if (!capable && this._isDockOpen) {
@@ -3923,6 +4940,20 @@ Prerequisites & Instructions:
     `;
   },
 
+  _renderOfflineTurnkeyHtml: function(messageText, promptText = "") {
+    this._lastOfflinePrompt = promptText || "";
+    const safeMsg = typeof escapeHtml === "function" ? escapeHtml(messageText) : String(messageText || "");
+    return `
+      <div class="space-y-2">
+        <p class="text-warning font-semibold">${safeMsg}</p>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.openReconnectModal({ extra: window.HTMLReportAgent._lastOfflinePrompt || '' });" class="btn btn-warning btn-xs font-mono text-[10px] h-6 min-h-0">Restore Bridge</button>
+          <button type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.copyReconnectPrompt(this, { extra: window.HTMLReportAgent._lastOfflinePrompt || '' });" class="btn btn-outline btn-xs font-mono text-[10px] h-6 min-h-0">Copy Turnkey Prompt</button>
+        </div>
+      </div>
+    `;
+  },
+
   submitDockPrompt: function() {
     if (typeof document === "undefined") return;
     const input = document.getElementById("agent-dock-input");
@@ -3989,7 +5020,7 @@ Prerequisites & Instructions:
       const fallbackText = `Agent bridge offline (standalone file:// mode). Start dev server on localhost:${cfg.port || 3031} to enable real-time co-pilot.`;
       if (loadingEl) {
         const contentEl = loadingEl.querySelector(".message-content");
-        if (contentEl) contentEl.innerHTML = `<span class="text-warning">${fallbackText}</span>`;
+        if (contentEl) contentEl.innerHTML = this._renderOfflineTurnkeyHtml(fallbackText, prompt);
       }
       return { ok: false, fallback: true, result: fallbackText };
     }
@@ -3998,13 +5029,16 @@ Prerequisites & Instructions:
       const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
         ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/prompt`
         : "/api/agent/prompt";
+      const csrfToken = await this._getCsrfToken();
+      const headers = {
+        "Content-Type": "application/json",
+        "Accept": "text/event-stream, application/json"
+      };
+      if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
 
       const res = await fetch(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "text/event-stream, application/json"
-        },
+        headers,
         body: JSON.stringify(payload)
       });
 
@@ -4058,10 +5092,16 @@ Prerequisites & Instructions:
             }
 
             const rawData = (dataLines.length > 0 ? dataLines.join("\n") : block.replace(/^data:\s*/m, "")).trim();
-            const isDatastar = eventType === "datastar-merge-fragments" || block.includes("event: datastar-merge-fragments") || rawData.startsWith("fragments ");
+            const isDatastar =
+              eventType === "datastar-merge-fragments" ||
+              eventType === "datastar-fragment" ||
+              block.includes("event: datastar-merge-fragments") ||
+              block.includes("event: datastar-fragment") ||
+              rawData.startsWith("fragments ") ||
+              rawData.startsWith("fragment ");
 
             if (isDatastar) {
-              const fragmentHtml = rawData.replace(/^fragments\s+/, "");
+              const fragmentHtml = rawData.replace(/^fragments?\s+/, "");
               if (targetSelector && typeof document !== "undefined") {
                 const targetEl = document.querySelector(targetSelector);
                 if (targetEl && fragmentHtml.includes(`id="${targetEl.id}"`)) {
@@ -4088,7 +5128,7 @@ Prerequisites & Instructions:
                 }
               }
             } catch (_) {
-              if (rawData && !rawData.startsWith("fragments ") && !rawData.startsWith("{")) {
+              if (rawData && !isDatastar && !rawData.startsWith("fragments ") && !rawData.startsWith("fragment ") && !rawData.startsWith("{")) {
                 fullText = rawData;
               }
             }
@@ -4120,7 +5160,7 @@ Prerequisites & Instructions:
       this._updateState("disconnected");
       if (loadingEl) {
         const contentEl = loadingEl.querySelector(".message-content");
-        if (contentEl) contentEl.innerHTML = `<span class="text-error font-semibold">Error: ${err.message}. Dev server may be offline.</span>`;
+        if (contentEl) contentEl.innerHTML = this._renderOfflineTurnkeyHtml(`AI bridge offline (${err.message}). Use the turnkey prompt to reconnect.`, prompt);
       }
       return { ok: false, error: err.message };
     }
@@ -4140,10 +5180,13 @@ Prerequisites & Instructions:
       const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
         ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/confirm-action`
         : "/api/agent/confirm-action";
+      const csrfToken = await this._getCsrfToken();
+      const headers = { "Content-Type": "application/json" };
+      if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
 
       const res = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           sessionId: this.getSessionId(),
           actionId,
@@ -4482,19 +5525,111 @@ const HTMLReportSettings = {
     if (typeof document === "undefined") return;
     const dd = document.getElementById("settings-dropdown");
     const btn = document.getElementById("settings-gear-btn");
-    if (!dd || !btn || dd.__gearWired) return;
-    dd.__gearWired = true;
-    const setExpanded = (v) => btn.setAttribute("aria-expanded", v ? "true" : "false");
-    dd.addEventListener("focusin", () => setExpanded(true));
-    dd.addEventListener("focusout", (e) => { if (!e.relatedTarget || !dd.contains(e.relatedTarget)) setExpanded(false); });
-    const close = () => {
-      const a = document.activeElement;
-      if (a && dd.contains(a) && typeof a.blur === "function") a.blur();
-      setExpanded(false);
+    const tocDd = document.getElementById("toc-dropdown");
+    const tocBtn = document.getElementById("toc-dropdown-btn");
+
+    const closeDropdown = (dropdownEl, triggerBtn) => {
+      if (!dropdownEl) return;
+      dropdownEl.classList.remove("dropdown-open");
+      dropdownEl.removeAttribute("open");
+      if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "false");
+      const active = document.activeElement;
+      if (active && dropdownEl.contains(active) && typeof active.blur === "function") {
+        active.blur();
+      }
     };
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && dd.contains(document.activeElement)) close(); });
-    document.addEventListener("mousedown", (e) => { if (!dd.contains(e.target)) close(); });
-    this.close = close;
+
+    const openDropdown = (dropdownEl, triggerBtn) => {
+      if (!dropdownEl) return;
+      dropdownEl.classList.add("dropdown-open");
+      if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "true");
+    };
+
+    const closeSettings = () => closeDropdown(dd, btn);
+    const closeToc = () => closeDropdown(tocDd, tocBtn);
+    const closeAll = () => {
+      closeSettings();
+      closeToc();
+    };
+
+    this.close = closeSettings;
+    this.closeToc = closeToc;
+    this.closeAll = closeAll;
+
+    if (tocDd && tocBtn && !tocDd.__tocWired) {
+      tocDd.__tocWired = true;
+      tocBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = tocDd.classList.contains("dropdown-open");
+        if (isOpen) {
+          closeToc();
+        } else {
+          closeSettings();
+          openDropdown(tocDd, tocBtn);
+        }
+      });
+      tocBtn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          tocBtn.click();
+        }
+      });
+    }
+
+    if (dd && btn && !dd.__gearWired) {
+      dd.__gearWired = true;
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = dd.classList.contains("dropdown-open");
+        if (isOpen) {
+          closeSettings();
+        } else {
+          closeToc();
+          openDropdown(dd, btn);
+        }
+      });
+      btn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+
+      const panel = document.getElementById("settings-panel");
+      if (panel) {
+        panel.addEventListener("click", (e) => {
+          const actionBtn = e.target && e.target.closest && e.target.closest("#open-all-settings-btn, #download-html-btn, #download-pdf-btn, #pwa-install-dropdown-btn, #settings-open-editor");
+          if (actionBtn) {
+            setTimeout(() => closeSettings(), 0);
+          }
+        });
+      }
+    }
+
+    if (!document.__toolbarDropdownsGlobalWired) {
+      document.__toolbarDropdownsGlobalWired = true;
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          const gearEl = document.getElementById("settings-dropdown");
+          const tocEl = document.getElementById("toc-dropdown");
+          if ((gearEl && gearEl.classList.contains("dropdown-open")) || (tocEl && tocEl.classList.contains("dropdown-open"))) {
+            closeAll();
+          }
+        }
+      });
+      document.addEventListener("mousedown", (e) => {
+        const gearEl = document.getElementById("settings-dropdown");
+        const tocEl = document.getElementById("toc-dropdown");
+        if (gearEl && gearEl.classList.contains("dropdown-open") && !gearEl.contains(e.target)) {
+          closeDropdown(gearEl, document.getElementById("settings-gear-btn"));
+        }
+        if (tocEl && tocEl.classList.contains("dropdown-open") && !tocEl.contains(e.target)) {
+          closeDropdown(tocEl, document.getElementById("toc-dropdown-btn"));
+        }
+      });
+    }
   }
 };
 
@@ -4809,7 +5944,8 @@ const HTMLReportEdit = {
     lines.push("- Follow the principles and conventions of this project (DaisyUI themes, Tailwind, light default theme).");
     lines.push("- Edit the source content fragment if applicable, or the served report file.");
     lines.push("- Rebuild with skills/html-report/scripts/build-report.mjs after editing when available.");
-    lines.push("- Keep the report live on localhost:3000 so the browser hot-swaps the result.");
+    const cfgPort = (typeof HTMLReportAgent !== "undefined" && HTMLReportAgent.getConfig) ? (HTMLReportAgent.getConfig().port || 3031) : 3031;
+    lines.push(`- Keep the report live on localhost:${cfgPort} so the browser hot-swaps the result.`);
     lines.push("- Follow the task tracking and verification principles of this project.");
     return lines.join("\n");
   },
@@ -5102,9 +6238,12 @@ const HTMLReportEdit = {
       say("Sending to agent...");
       try {
         const info = this.getPageInfo();
+        const csrfToken = await HTMLReportAgent._getCsrfToken();
+        const headers = { "Content-Type": "application/json" };
+        if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
         const res = await fetch("/__agent_edit__", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({ prompt: text, file: info.source || (typeof location !== "undefined" ? location.pathname : "") })
         });
         const data = await res.json().catch(() => ({}));
@@ -5882,6 +7021,9 @@ if (typeof module !== "undefined" && module.exports) {
     impressNext,
     impressPrev,
     impressGoto,
+    initPresentationShell,
+    resizePresentationWidgets,
+    sanitizeSpeakerNotesHtml,
     initMockjs,
     initShowdown,
     initFullCalendar,
