@@ -195,7 +195,15 @@ export async function detectBrowserReadiness() {
   let playwrightExists = false;
 
   try {
-    const pw = await import("playwright");
+    let pw = null;
+    try {
+      pw = await import("playwright");
+    } catch (_) {
+      const bundledPlaywright = path.resolve(__dirname, "../playwright/node_modules/playwright/index.mjs");
+      if (fs.existsSync(bundledPlaywright)) {
+        pw = await import(pathToFileURL(bundledPlaywright).href);
+      }
+    }
     if (pw && pw.chromium && typeof pw.chromium.executablePath === "function") {
       const execPath = pw.chromium.executablePath();
       if (execPath && fs.existsSync(execPath)) {

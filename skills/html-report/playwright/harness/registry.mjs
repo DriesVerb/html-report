@@ -210,7 +210,8 @@ export async function createDefaultRegistry() {
     { MarkedCheck },
     { LucideCheck },
     { AlpineCheck },
-    { FullCalendarCheck }
+    { FullCalendarCheck },
+    { RevealCheck }
   ] = await Promise.all([
     import("./checks/core/console-errors.mjs"),
     import("./checks/core/structure.mjs"),
@@ -227,7 +228,8 @@ export async function createDefaultRegistry() {
     import("./checks/cdns/marked.mjs"),
     import("./checks/cdns/lucide.mjs"),
     import("./checks/cdns/alpine.mjs"),
-    import("./checks/cdns/fullcalendar.mjs")
+    import("./checks/cdns/fullcalendar.mjs"),
+    import("./checks/cdns/reveal.mjs")
   ]);
 
   registry.register(new ConsoleErrorsCheck());
@@ -244,6 +246,7 @@ export async function createDefaultRegistry() {
   registry.register(new LucideCheck());
   registry.register(new AlpineCheck());
   registry.register(new FullCalendarCheck());
+  registry.register(new RevealCheck());
   registry.register(new PrintPdfCheck());
   registry.register(new A11yContrastCheck());
 

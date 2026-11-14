@@ -341,7 +341,7 @@ describe("Domain Model: Ubiquitous Language & Feature Alignment Rubric", () => {
     assert.match(prompt, /Two-Way AI Agent Bridge & Telemetry/);
     assert.match(prompt, /@html-dashboard, @html-report/);
     assert.match(prompt, /Must adhere to SSE token rate thresholds/);
-    assert.match(prompt, /http:\/\/localhost:3000/);
+    assert.match(prompt, /http:\/\/localhost:3031/);
   });
 });
 

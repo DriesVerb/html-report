@@ -68,4 +68,69 @@ test("Turnkey AI Agent Reconnection & Auto-Recovery", async (t) => {
     assert.ok(res.html.includes('id="copy-reconnect-prompt-btn"'), "Shell must include copy prompt action button");
     assert.ok(res.html.includes('id="retry-connection-btn"'), "Shell must include check connection retry button");
   });
+
+  await t.test("buildReport with hovering AI assistant (aiDock: true) includes turnkey offline bridge in dock", () => {
+    const res = buildReport({
+      title: "Hovering AI Assistant Report",
+      content: "<section><h1 id=\"overview\">Overview</h1></section>",
+      ai: true,
+      aiDock: true
+    });
+
+    assert.ok(res.html.includes('id="agent-dock-container"'), "Must include floating AI assistant dock");
+    assert.ok(res.html.includes('id="agent-dock-offline-banner"'), "Dock must include turnkey offline banner");
+    assert.ok(res.html.includes('id="agent-dock-reconnect-btn"'), "Dock must include Restore Bridge button");
+    assert.ok(res.html.includes('id="agent-dock-copy-turnkey-btn"'), "Dock must include Copy Turnkey Prompt button");
+    assert.ok(res.html.includes('id="agent-dock-retry-btn"'), "Dock must include Retry button");
+    assert.ok(res.html.includes('id="agent-reconnect-modal"'), "Must include turnkey reconnection modal");
+  });
+
+  await t.test("HTMLReportAgent toggles dock offline banner on disconnected/connected state and renders offline turnkey actions", () => {
+    const createClassList = (initial = []) => {
+      const set = new Set(initial);
+      return {
+        add: (...cls) => cls.forEach((c) => set.add(c)),
+        remove: (...cls) => cls.forEach((c) => set.delete(c)),
+        toggle: (cls, force) => {
+          if (force === undefined) {
+            if (set.has(cls)) { set.delete(cls); return false; }
+            set.add(cls); return true;
+          }
+          if (force) set.add(cls); else set.delete(cls);
+          return Boolean(force);
+        },
+        contains: (cls) => set.has(cls)
+      };
+    };
+
+    const banner = { classList: createClassList(["hidden"]) };
+    const launcher = { title: "" };
+    const dockStatus = { textContent: "" };
+    const elements = {
+      "agent-dock-offline-banner": banner,
+      "agent-dock-launcher": launcher,
+      "agent-dock-status": dockStatus,
+      "agent-dock-dot": { className: "" },
+      "agent-dock-ping": { className: "" }
+    };
+
+    const prevDocument = globalThis.document;
+    globalThis.document = { getElementById: (id) => elements[id] || null };
+    try {
+      HTMLReportAgent._updateState("disconnected");
+      assert.equal(banner.classList.contains("hidden"), false, "Offline banner must be visible when disconnected");
+      assert.ok(dockStatus.textContent.includes("Turnkey"), "Dock status must indicate turnkey bridge readiness");
+
+      HTMLReportAgent._updateState("connected");
+      assert.equal(banner.classList.contains("hidden"), true, "Offline banner must be hidden when connected");
+    } finally {
+      globalThis.document = prevDocument;
+    }
+
+    const html = HTMLReportAgent._renderOfflineTurnkeyHtml("Offline <script>alert(1)</script>", "Summarize KPIs");
+    assert.equal(HTMLReportAgent._lastOfflinePrompt, "Summarize KPIs");
+    assert.ok(!html.includes("<script>"), "Must escape HTML in offline message");
+    assert.ok(html.includes("Restore Bridge"), "Offline reply must include Restore Bridge button");
+    assert.ok(html.includes("Copy Turnkey Prompt"), "Offline reply must include Copy Turnkey Prompt button");
+  });
 });

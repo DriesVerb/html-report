@@ -110,12 +110,15 @@ export async function runHarness(htmlPath, rawOptions = {}) {
   });
 
   try {
-    if (options.quick || isHttpUrl) {
-      await page.goto(fileUrl, { waitUntil: "domcontentloaded", timeout: options.timeout });
+    if (isHttpUrl) {
+      await page.goto(fileUrl, { waitUntil: "load", timeout: options.timeout });
       await page.waitForFunction(() => window.__REPORT_READY__ === true, null, { timeout: options.quick ? 4000 : 10000 }).catch(() => {});
       if (!options.quick) {
         await page.waitForTimeout(300);
       }
+    } else if (options.quick) {
+      await page.goto(fileUrl, { waitUntil: "domcontentloaded", timeout: options.timeout });
+      await page.waitForFunction(() => window.__REPORT_READY__ === true, null, { timeout: 4000 }).catch(() => {});
     } else {
       await page.goto(fileUrl, { waitUntil: "networkidle", timeout: options.timeout });
       await page.waitForFunction(() => window.__REPORT_READY__ === true, null, { timeout: 15000 }).catch(() => {});
@@ -139,7 +142,8 @@ export async function runHarness(htmlPath, rawOptions = {}) {
     hasMarkdown: Boolean(document.querySelector("#markdown-output, [data-markdown]")),
     hasLucide: Boolean(document.querySelector("[data-lucide], svg.lucide")),
     hasAlpine: Boolean(document.querySelector("[x-data], #alpine-example-card")),
-    hasFullCalendar: Boolean(document.body && document.body.querySelector("#calendar, .fc, [data-fullcalendar]:not(style)"))
+    hasFullCalendar: Boolean(document.body && document.body.querySelector("#calendar, .fc, [data-fullcalendar]:not(style)")),
+    hasReveal: Boolean(document.querySelector(".reveal .slides section, #presentation-deck"))
   }));
 
   const candidateChecks = registry.filter(options);

@@ -45,7 +45,9 @@ export function parseArgs(argv = process.argv) {
     checkReactive: false,
     checkAlpine: false,
     checkCalendar: false,
-    checkFullcalendar: false
+    checkFullcalendar: false,
+    checkPresentation: false,
+    checkReveal: false
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -129,6 +131,9 @@ export function parseArgs(argv = process.argv) {
     } else if (arg === "--check-calendar" || arg === "--check-fullcalendar" || arg === "--cdn-fullcalendar") {
       options.checkCalendar = true;
       options.checkFullcalendar = true;
+    } else if (arg === "--check-reveal" || arg === "--cdn-reveal" || arg === "--check-presentation") {
+      options.checkPresentation = true;
+      options.checkReveal = true;
     } else if (!arg.startsWith("--") && !htmlPath) {
       htmlPath = arg;
       if (/^https?:\/\//i.test(arg) && !options.url) {

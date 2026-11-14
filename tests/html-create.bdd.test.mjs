@@ -469,7 +469,7 @@ describe("Feature Spec: Feature 4 & 4.1 - Interactive html-create Studio & Termi
       let prompt = await page.inputValue("#prompt-output-box");
       assert.match(prompt, /• metrics\.csv \(CSV Dataset\) - Context Note: "Primary ARR cohort retention and regional expansion numbers"/);
       assert.match(prompt, /• unsupported-data\.xyz \(File\)/);
-      assert.match(prompt, /metrics\.csv: Ground on context note \("Primary ARR cohort retention and regional expansion numbers"\)/);
+      assert.match(prompt, /metrics\.csv(?:\s*\(Path:[^)]+\))?: Ground on context note \("Primary ARR cohort retention and regional expansion numbers"\)/);
 
       // 4. Verify simulated DOM wireframe mockup widget is visible
       const refWidget = await page.$("#mockup-references-widget");

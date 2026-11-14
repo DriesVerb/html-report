@@ -13,7 +13,7 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://unpkg.com https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
   <title><!-- {{TITLE}} --></title>
 
   <!-- Content-Aware Favicon Emoticon -->
@@ -226,6 +226,367 @@
       left: 0;
       width: 100%;
       height: 100%;
+    }
+
+    /* Leaflet z-index isolation below z-50 sticky navbar & dropdowns */
+    .leaflet-container {
+      z-index: 10 !important;
+    }
+    .leaflet-pane,
+    .leaflet-top,
+    .leaflet-bottom {
+      z-index: 15 !important;
+    }
+    .leaflet-tile {
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    /* Reveal.js Presentation Shell, Multi-Mode Spacing Tokens & Cascade Guards */
+    #presentation-shell {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+    }
+    .reveal-stage {
+      --slide-pad-x: clamp(1.75rem, 3.2vw, 3.25rem);
+      --slide-pad-top: clamp(1.5rem, 2.5vw, 2.5rem);
+      --slide-pad-bottom: clamp(3.75rem, 5.5vw, 4.75rem);
+      --slide-gap: clamp(1rem, 2vw, 1.5rem);
+      position: relative;
+      width: 100%;
+      height: clamp(600px, calc(100vh - 10.5rem), 840px);
+      min-height: 520px;
+      overflow: hidden;
+      border-radius: 1rem;
+      border: 1px solid oklch(var(--bc) / 0.14);
+      background: oklch(var(--b1) / 1);
+      box-shadow: 0 12px 32px -12px oklch(var(--bc) / 0.14);
+    }
+    .reveal-stage .reveal {
+      width: 100%;
+      height: 100%;
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+    .reveal-stage .reveal .slides {
+      width: 100% !important;
+      height: 100% !important;
+      inset: 0 !important;
+      margin: 0 !important;
+      text-align: left;
+      transform: none !important;
+    }
+    .reveal-stage .reveal .slides > section,
+    .reveal-stage .reveal .slides > section > section {
+      width: 100% !important;
+      height: 100% !important;
+      top: 0 !important;
+      left: 0 !important;
+      margin: 0 !important;
+      padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom) var(--slide-pad-x) !important;
+      box-sizing: border-box !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      text-align: left;
+    }
+    .reveal-stage .reveal .slides > section.stack,
+    .reveal-stage .reveal .slides > section:has(> section) {
+      padding: 0 !important;
+      overflow: visible !important;
+    }
+    .reveal-stage .reveal .slides section .slide-body {
+      min-height: 100%;
+      width: 100%;
+      max-width: 72rem;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--slide-gap);
+    }
+    /* Scoped reveal.css normalization guards so DaisyUI cards, alerts, badges, lists & Leaflet stay crisp */
+    .reveal-stage .reveal h1,
+    .reveal-stage .reveal h2,
+    .reveal-stage .reveal h3,
+    .reveal-stage .reveal h4,
+    .reveal-stage .reveal p,
+    .reveal-stage .reveal ul,
+    .reveal-stage .reveal ol {
+      font-family: inherit;
+      color: inherit;
+      text-transform: none;
+      letter-spacing: inherit;
+      text-shadow: none;
+      margin: 0;
+    }
+    .reveal-stage .reveal ul,
+    .reveal-stage .reveal ol {
+      display: block;
+    }
+    .reveal-stage .reveal .card,
+    .reveal-stage .reveal .alert,
+    .reveal-stage .reveal .stat,
+    .reveal-stage .reveal .badge {
+      text-align: left;
+    }
+    .reveal-stage .reveal img:not(.leaflet-tile):not(.leaflet-marker-icon) {
+      max-width: 100%;
+      max-height: 100%;
+      margin: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+    .reveal-stage .reveal .controls {
+      bottom: 12px;
+      right: 12px;
+      color: oklch(var(--p) / 1);
+    }
+    .reveal-stage .reveal .slide-number {
+      bottom: 14px;
+      left: 16px;
+      right: auto;
+      background: oklch(var(--b2) / 0.9);
+      color: oklch(var(--bc) / 0.85);
+      border: 1px solid oklch(var(--bc) / 0.15);
+      border-radius: 9999px;
+      padding: 0.2rem 0.65rem;
+      font-size: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .reveal-stage .reveal .progress {
+      height: 4px;
+      color: oklch(var(--p) / 1);
+      background: oklch(var(--bc) / 0.1);
+    }
+
+    /* Fullscreen Presentation Mode (:fullscreen & .is-fullscreen deterministic fallback) */
+    #presentation-shell:fullscreen,
+    #presentation-shell:-webkit-full-screen,
+    #presentation-shell.is-fullscreen {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 70 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      gap: 0 !important;
+      background: oklch(var(--b2) / 1) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    #presentation-shell:fullscreen .presentation-toolbar,
+    #presentation-shell:-webkit-full-screen .presentation-toolbar,
+    #presentation-shell.is-fullscreen .presentation-toolbar {
+      display: none !important;
+    }
+    #presentation-shell:fullscreen .reveal-stage,
+    #presentation-shell:-webkit-full-screen .reveal-stage,
+    #presentation-shell.is-fullscreen .reveal-stage {
+      --slide-pad-x: clamp(2.5rem, 5vw, 5rem);
+      --slide-pad-top: clamp(2rem, 3.5vw, 3.25rem);
+      --slide-pad-bottom: clamp(4.25rem, 6vw, 5rem);
+      --slide-gap: clamp(1.25rem, 2.2vw, 1.75rem);
+      flex: 1 1 auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      border-radius: 0 !important;
+      border: 0 !important;
+    }
+    #presentation-fullscreen-hud {
+      display: none;
+    }
+    #presentation-shell:fullscreen #presentation-fullscreen-hud,
+    #presentation-shell:-webkit-full-screen #presentation-fullscreen-hud,
+    #presentation-shell.is-fullscreen #presentation-fullscreen-hud {
+      display: flex;
+      position: fixed;
+      top: 0.75rem;
+      right: 1rem;
+      z-index: 75;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 9999px;
+      background: oklch(var(--b1) / 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid oklch(var(--bc) / 0.18);
+      box-shadow: 0 8px 24px -6px oklch(var(--bc) / 0.22);
+    }
+
+    /* Modeless Follow-Along Speaker Notes Popup Modal inside #presentation-shell */
+    #presentation-notes-modal {
+      position: fixed;
+      z-index: 80;
+      width: min(26rem, calc(100vw - 2rem));
+      max-height: min(60vh, 460px);
+      display: flex;
+      flex-direction: column;
+      background: oklch(var(--b1) / 0.97);
+      color: oklch(var(--bc) / 1);
+      border: 1px solid oklch(var(--bc) / 0.2);
+      border-radius: 0.9rem;
+      box-shadow: 0 20px 45px -10px oklch(var(--bc) / 0.32);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    #presentation-notes-modal.hidden {
+      display: none !important;
+    }
+    #presentation-notes-modal[data-dock="bottom-right"] {
+      bottom: 3.75rem;
+      right: 1rem;
+      left: auto;
+      top: auto;
+    }
+    #presentation-notes-modal[data-dock="bottom-left"] {
+      bottom: 3.75rem;
+      left: 1rem;
+      right: auto;
+      top: auto;
+    }
+    #presentation-notes-modal[data-dock="side-right"] {
+      top: 4.5rem;
+      bottom: 4rem;
+      right: 1rem;
+      left: auto;
+      max-height: calc(100dvh - 8.5rem);
+      width: min(24rem, calc(100vw - 2rem));
+    }
+    #presentation-notes-modal[data-notes-size="sm"] #presentation-notes-body {
+      font-size: 0.8125rem;
+    }
+    #presentation-notes-modal[data-notes-size="md"] #presentation-notes-body {
+      font-size: 0.9375rem;
+    }
+    #presentation-notes-modal[data-notes-size="lg"] #presentation-notes-body {
+      font-size: 1.0625rem;
+    }
+    #presentation-notes-body ul,
+    #presentation-notes-body ol {
+      padding-left: 1.25rem;
+      margin: 0.4rem 0;
+    }
+    #presentation-notes-body ul {
+      list-style-type: disc;
+    }
+    #presentation-notes-body ol {
+      list-style-type: decimal;
+    }
+
+    /* Stacked "All Slides" Fallback Mode */
+    #presentation-shell.is-stacked .reveal-stage,
+    .reveal-stage.is-stacked {
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      --slide-pad-x: 2rem;
+      --slide-pad-top: 1.75rem;
+      --slide-pad-bottom: 1.75rem;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal,
+    .reveal-stage.is-stacked .reveal,
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides,
+    .reveal-stage.is-stacked .reveal .slides {
+      position: static !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+      transform: none !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 1.5rem !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides section,
+    .reveal-stage.is-stacked .reveal .slides section {
+      position: relative !important;
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      width: 100% !important;
+      height: auto !important;
+      padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom) var(--slide-pad-x) !important;
+      border: 1px solid oklch(var(--bc) / 0.14) !important;
+      border-radius: 1rem !important;
+      background: oklch(var(--b1) / 1) !important;
+      box-shadow: 0 8px 24px -10px oklch(var(--bc) / 0.12) !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section.stack,
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section:has(> section),
+    .reveal-stage.is-stacked .reveal .slides > section.stack,
+    .reveal-stage.is-stacked .reveal .slides > section:has(> section) {
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section > section,
+    .reveal-stage.is-stacked .reveal .slides > section > section {
+      margin-top: 1rem !important;
+    }
+    #presentation-shell.is-stacked .reveal .controls,
+    #presentation-shell.is-stacked .reveal .progress,
+    #presentation-shell.is-stacked .reveal .slide-number,
+    .reveal-stage.is-stacked .reveal .controls,
+    .reveal-stage.is-stacked .reveal .progress,
+    .reveal-stage.is-stacked .reveal .slide-number {
+      display: none !important;
+    }
+
+    @media print {
+      .presentation-toolbar,
+      #presentation-fullscreen-hud,
+      #presentation-notes-modal,
+      .reveal-stage .reveal .controls,
+      .reveal-stage .reveal .progress,
+      .reveal-stage .reveal .slide-number {
+        display: none !important;
+      }
+      .reveal-stage,
+      .reveal-stage .reveal,
+      .reveal-stage .reveal .slides {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        transform: none !important;
+        display: block !important;
+      }
+      .reveal-stage .reveal .slides section {
+        position: relative !important;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        height: auto !important;
+        padding: 1.5rem 1.75rem !important;
+        margin-bottom: 1.5rem !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.75rem !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
     }
 
     /* Deterministic Toolbar Dropdown Visibility (prevents DaisyUI :focus-within stuck-open bug) */
@@ -774,6 +1135,37 @@
           <span class="truncate font-mono" id="agent-dock-context-label">Context: Whole Document</span>
         </div>
         <button id="agent-dock-clear-context-btn" type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.clearTargetElement();" class="btn btn-ghost btn-xs text-[10px] hidden px-1 h-5 min-h-0">Clear</button>
+      </div>
+
+      <!-- Turnkey AI Bridge Offline Banner (auto-shown when disconnected) -->
+      <div id="agent-dock-offline-banner" class="hidden px-3 py-2.5 bg-warning/10 border-b border-warning/30 text-xs space-y-2 shrink-0">
+        <div class="flex items-start gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-warning shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="min-w-0 flex-1">
+            <p class="font-bold text-base-content text-[11px]">AI Bridge Offline</p>
+            <p class="text-[11px] text-base-content/70 leading-snug">No local server connection. Use the turnkey prompt to start the AI bridge.</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button
+            id="agent-dock-reconnect-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.openReconnectModal();"
+            class="btn btn-warning btn-xs font-mono text-[10px] h-6 min-h-0"
+          >Restore Bridge</button>
+          <button
+            id="agent-dock-copy-turnkey-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.copyReconnectPrompt(this);"
+            class="btn btn-outline btn-xs font-mono text-[10px] h-6 min-h-0"
+          >Copy Turnkey Prompt</button>
+          <button
+            id="agent-dock-retry-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.checkConnection(this);"
+            class="btn btn-ghost btn-xs font-mono text-[10px] h-6 min-h-0"
+          >Retry</button>
+        </div>
       </div>
 
       <!-- Messages & Event Stream -->

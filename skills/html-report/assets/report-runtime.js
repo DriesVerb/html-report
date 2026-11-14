@@ -802,7 +802,7 @@ function initTOC() {
   const tocList = document.getElementById("report-toc-list");
   if (!tocList) return;
   const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).filter(
-    (h) => !h.closest(".fc, .katex, .gridjs, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
+    (h) => !h.closest(".fc, .katex, .gridjs, .notes, #presentation-notes-modal, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
   );
   tocList.innerHTML = "";
 
@@ -817,7 +817,19 @@ function initTOC() {
     a.href = `#${h.id}`;
     a.textContent = h.textContent.trim();
     a.className = level === 1 ? "font-bold text-xs" : level === 2 ? "pl-3 text-xs" : "pl-6 text-2xs opacity-80";
-    a.addEventListener("click", () => {
+    a.addEventListener("click", (e) => {
+      const targetSlide = h.closest(".reveal .slides section");
+      const shell = document.getElementById("presentation-shell");
+      const isStacked = Boolean(shell?.classList.contains("is-stacked") || h.closest(".reveal-stage.is-stacked"));
+      if (targetSlide && !isStacked && window.revealInstance && typeof window.revealInstance.getIndices === "function") {
+        e.preventDefault();
+        try {
+          const indices = window.revealInstance.getIndices(targetSlide);
+          if (indices && typeof window.revealInstance.slide === "function") {
+            window.revealInstance.slide(indices.h || 0, indices.v || 0);
+          }
+        } catch (_) {}
+      }
       if (typeof HTMLReportSettings !== "undefined" && typeof HTMLReportSettings.closeToc === "function") {
         HTMLReportSettings.closeToc();
       } else {
@@ -897,6 +909,9 @@ async function buildInlinedHtmlSnapshot(options = {}) {
   );
   if (publishedMode) HTMLReportPublisher.prepare(clone);
   clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
+  clone.querySelectorAll("[data-reveal-initialized]").forEach((el) => el.removeAttribute("data-reveal-initialized"));
+  clone.querySelectorAll("[data-presentation-bound]").forEach((el) => el.removeAttribute("data-presentation-bound"));
+  clone.querySelectorAll("#presentation-shell.is-fullscreen").forEach((el) => el.classList.remove("is-fullscreen"));
 
   // Inline external stylesheets
   const linkEls = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
@@ -957,9 +972,7 @@ async function buildInlinedHtmlSnapshot(options = {}) {
  */
 function exportReportPdf() {
   if (typeof window === "undefined") return;
-  if (window.reportCharts && Array.isArray(window.reportCharts)) {
-    window.reportCharts.forEach((c) => c?.resize?.());
-  }
+  resizePresentationWidgets();
   if (window.reportLeafletMap && typeof window.reportLeafletMap.invalidateSize === "function") {
     window.reportLeafletMap.invalidateSize();
   }
@@ -1297,6 +1310,539 @@ function impressGoto(step) {
 }
 
 /**
+ * Sanitizes speaker notes HTML (<aside class="notes">) so rich formatting
+ * (<p>, <ul>, <ol>, <li>, <strong>, <em>, <code>) is preserved safely.
+ */
+function sanitizeSpeakerNotesHtml(rawHtml = "") {
+  if (typeof document === "undefined") return String(rawHtml || "");
+  const tpl = document.createElement("template");
+  tpl.innerHTML = String(rawHtml || "");
+  const blockedTags = tpl.content.querySelectorAll("script, style, iframe, object, embed, link, meta, base, form");
+  blockedTags.forEach((el) => el.remove());
+  const all = tpl.content.querySelectorAll("*");
+  all.forEach((el) => {
+    for (const attr of Array.from(el.attributes)) {
+      const name = attr.name.toLowerCase();
+      const val = String(attr.value || "").trim();
+      if (name.startsWith("on") || name === "srcdoc") {
+        el.removeAttribute(attr.name);
+      } else if ((name === "href" || name === "src" || name === "xlink:href") && /^(?:javascript|vbscript|data\s*:\s*text\/html):/i.test(val)) {
+        el.removeAttribute(attr.name);
+      }
+    }
+  });
+  return tpl.innerHTML.trim();
+}
+
+/**
+ * Re-measures Reveal.js layout, Chart.js canvases, and Leaflet maps after
+ * slide transitions, fullscreen changes, or stacked-view toggles.
+ */
+function resizePresentationWidgets() {
+  if (typeof window === "undefined") return;
+  try {
+    if (window.revealInstance && typeof window.revealInstance.layout === "function") {
+      window.revealInstance.layout();
+    }
+  } catch (_) {}
+  try {
+    if (Array.isArray(window.reportCharts)) {
+      window.reportCharts.forEach((c) => {
+        try { if (c && typeof c.resize === "function") c.resize(); } catch (_) {}
+      });
+    }
+    if (window.Chart && window.Chart.instances) {
+      const list = Array.isArray(window.Chart.instances)
+        ? window.Chart.instances
+        : Object.values(window.Chart.instances);
+      list.forEach((c) => {
+        try { if (c && typeof c.resize === "function") c.resize(); } catch (_) {}
+      });
+    }
+  } catch (_) {}
+  try {
+    if (window.__htmlReportLeafletMaps && typeof window.__htmlReportLeafletMaps.forEach === "function") {
+      window.__htmlReportLeafletMaps.forEach((m) => {
+        try { if (m && typeof m.invalidateSize === "function") m.invalidateSize({ animate: false }); } catch (_) {}
+      });
+    }
+    if (Array.isArray(window.reportMaps)) {
+      window.reportMaps.forEach((m) => {
+        try { if (m && typeof m.invalidateSize === "function") m.invalidateSize({ animate: false }); } catch (_) {}
+      });
+    }
+    if (window.leafletMap && typeof window.leafletMap.invalidateSize === "function") {
+      window.leafletMap.invalidateSize({ animate: false });
+    }
+  } catch (_) {}
+  try {
+    window.dispatchEvent(new Event("resize"));
+  } catch (_) {}
+}
+
+function registerLeafletInitHook() {
+  if (typeof window === "undefined" || window.__htmlReportLeafletHooked) return;
+  if (window.L && window.L.Map && typeof window.L.Map.addInitHook === "function") {
+    window.__htmlReportLeafletHooked = true;
+    window.L.Map.addInitHook(function () {
+      window.__htmlReportLeafletMaps = window.__htmlReportLeafletMaps || new Set();
+      window.__htmlReportLeafletMaps.add(this);
+    });
+  }
+}
+
+function extractSlideLabel(sectionEl, fallbackLabel = "Slide") {
+  if (!sectionEl) return fallbackLabel;
+  const explicit = sectionEl.getAttribute("data-title");
+  if (explicit && explicit.trim()) return explicit.trim();
+  const heading = sectionEl.querySelector("h1, h2, h3, [data-slide-title]");
+  if (heading && heading.textContent && heading.textContent.trim()) {
+    return heading.textContent.trim().replace(/\s+/g, " ");
+  }
+  return fallbackLabel;
+}
+
+function extractSlideNotesHtml(sectionEl) {
+  if (!sectionEl) return { hasNotes: false, html: "" };
+  const asideNotes = Array.from(sectionEl.querySelectorAll(":scope > aside.notes, :scope > .slide-body > aside.notes, aside.notes"))
+    .filter((el) => el.closest("section") === sectionEl);
+  if (asideNotes.length > 0) {
+    const combined = asideNotes
+      .map((el) => sanitizeSpeakerNotesHtml(el.innerHTML))
+      .filter(Boolean)
+      .join("<hr class=\"my-2 border-base-300\" />");
+    if (combined) {
+      return { hasNotes: true, html: combined };
+    }
+  }
+  const attrNotes = sectionEl.getAttribute("data-notes");
+  if (attrNotes && attrNotes.trim()) {
+    return { hasNotes: true, html: `<p>${escapeHtml(attrNotes.trim())}</p>` };
+  }
+  return { hasNotes: false, html: "" };
+}
+
+function getLeafSlides(deckEl) {
+  if (!deckEl) return [];
+  const all = Array.from(deckEl.querySelectorAll(".slides section"));
+  return all.filter((sec) => !sec.querySelector(":scope > section"));
+}
+
+/**
+ * Initializes #presentation-shell, Reveal.js embedded runtime, Fullscreen mode,
+ * modeless Follow-Along Speaker Notes popup (#presentation-notes-modal),
+ * Stacked view toggle, and widget resize hooks.
+ */
+function initPresentationShell(retries = 25) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  registerLeafletInitHook();
+
+  const deckEl = document.querySelector("#report-main .reveal, .reveal#presentation-deck, .reveal");
+  if (!deckEl) return;
+
+  // 1. Ensure #presentation-shell wraps toolbar + .reveal-stage
+  let stageEl = deckEl.closest(".reveal-stage");
+  if (!stageEl) {
+    stageEl = document.createElement("div");
+    stageEl.className = "reveal-stage";
+    deckEl.parentNode.insertBefore(stageEl, deckEl);
+    stageEl.appendChild(deckEl);
+  }
+
+  let shell = stageEl.closest("#presentation-shell");
+  if (!shell) {
+    shell = document.createElement("div");
+    shell.id = "presentation-shell";
+    stageEl.parentNode.insertBefore(shell, stageEl);
+    const maybeToolbar = shell.previousElementSibling;
+    if (maybeToolbar && maybeToolbar.classList.contains("presentation-toolbar")) {
+      shell.appendChild(maybeToolbar);
+    }
+    shell.appendChild(stageEl);
+  }
+
+  // Ensure a presentation toolbar exists if fragment omitted it
+  let toolbar = shell.querySelector(".presentation-toolbar");
+  if (!toolbar) {
+    toolbar = document.createElement("div");
+    toolbar.className = "presentation-toolbar flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-base-100 border border-base-300 rounded-box shadow-sm print:hidden";
+    toolbar.innerHTML = `
+      <div class="flex items-center gap-2 text-xs text-base-content/75 font-mono">
+        <span class="badge badge-primary badge-outline badge-xs font-mono">Slides</span>
+        <span id="presentation-toolbar-counter">1 / 1</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-1.5">
+        <button id="presentation-notes-btn" type="button" class="btn btn-xs btn-ghost border border-base-300 gap-1.5" title="Toggle Follow-Along Speaker Notes (N)" aria-pressed="false">
+          <span>Notes</span>
+          <kbd class="kbd kbd-xs font-mono hidden sm:inline-flex">N</kbd>
+          <span id="presentation-notes-dot" class="hidden w-2 h-2 rounded-full bg-primary" aria-hidden="true"></span>
+        </button>
+        <button id="presentation-stack-btn" type="button" class="btn btn-xs btn-ghost border border-base-300 gap-1.5" title="Toggle Stacked All-Slides View" aria-pressed="false">
+          <span>All Slides</span>
+        </button>
+        <button id="presentation-fullscreen-btn" type="button" class="btn btn-xs btn-primary gap-1.5" title="Enter Fullscreen Presentation (F)" aria-pressed="false">
+          <span>Fullscreen</span>
+          <kbd class="kbd kbd-xs bg-primary-content/20 text-primary-content border-none font-mono hidden sm:inline-flex">F</kbd>
+        </button>
+      </div>
+    `;
+    shell.insertBefore(toolbar, stageEl);
+  }
+
+  // Ensure compact Fullscreen mini-HUD exists inside #presentation-shell
+  let fsHud = document.getElementById("presentation-fullscreen-hud");
+  if (!fsHud) {
+    fsHud = document.createElement("div");
+    fsHud.id = "presentation-fullscreen-hud";
+    fsHud.setAttribute("aria-label", "Fullscreen Presentation Controls");
+    fsHud.innerHTML = `
+      <button id="presentation-hud-prev" type="button" class="btn btn-ghost btn-xs btn-circle" title="Previous slide" aria-label="Previous slide">&larr;</button>
+      <span id="presentation-hud-counter" class="text-xs font-mono font-semibold px-1.5 tabular-nums">1 / 1</span>
+      <button id="presentation-hud-next" type="button" class="btn btn-ghost btn-xs btn-circle" title="Next slide" aria-label="Next slide">&rarr;</button>
+      <button id="presentation-hud-notes" type="button" class="btn btn-ghost btn-xs gap-1" title="Toggle Speaker Notes (N)">Notes</button>
+      <button id="presentation-hud-exit" type="button" class="btn btn-outline btn-xs" title="Exit Fullscreen (F / Esc)">Exit</button>
+    `;
+    shell.appendChild(fsHud);
+  }
+
+  // Ensure modeless Follow-Along Speaker Notes popup modal exists inside #presentation-shell
+  let notesModal = document.getElementById("presentation-notes-modal");
+  if (!notesModal) {
+    notesModal = document.createElement("aside");
+    notesModal.id = "presentation-notes-modal";
+    notesModal.className = "hidden print:hidden";
+    notesModal.setAttribute("role", "dialog");
+    notesModal.setAttribute("aria-modal", "false");
+    notesModal.setAttribute("aria-labelledby", "presentation-notes-title");
+    notesModal.setAttribute("data-dock", "bottom-right");
+    notesModal.setAttribute("data-notes-size", "md");
+    notesModal.innerHTML = `
+      <div class="px-3 py-2 bg-base-200/90 border-b border-base-300 flex items-center justify-between gap-2 shrink-0">
+        <div class="min-w-0 flex items-center gap-2">
+          <span id="presentation-notes-badge" class="badge badge-primary badge-xs font-mono shrink-0">1</span>
+          <h3 id="presentation-notes-title" class="text-xs font-bold truncate">Speaker Notes</h3>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button id="presentation-notes-size-btn" type="button" class="btn btn-ghost btn-xs font-mono px-1.5 h-6 min-h-0" title="Toggle notes text size">Aa</button>
+          <select id="presentation-notes-dock-select" class="select select-bordered select-xs h-6 min-h-0 text-[11px] font-mono" aria-label="Notes popup dock position" title="Dock position">
+            <option value="bottom-right">Bottom Right</option>
+            <option value="bottom-left">Bottom Left</option>
+            <option value="side-right">Side Right</option>
+          </select>
+          <button id="presentation-notes-close-btn" type="button" class="btn btn-ghost btn-xs btn-circle h-6 min-h-0 w-6" aria-label="Close speaker notes" title="Close (N / Esc)">&times;</button>
+        </div>
+      </div>
+      <div id="presentation-notes-body" class="p-3 overflow-y-auto flex-1 leading-relaxed text-base-content/90 space-y-2">
+        <p class="text-xs italic opacity-60">No speaker notes for this slide.</p>
+      </div>
+      <div class="px-3 py-2 bg-base-200/70 border-t border-base-300 flex items-center justify-between gap-2 text-xs shrink-0">
+        <div id="presentation-notes-upnext" class="truncate text-base-content/70 font-medium">Up Next: —</div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button id="presentation-notes-prev" type="button" class="btn btn-ghost btn-xs border border-base-300 h-6 min-h-0 px-2" title="Previous slide">Prev</button>
+          <button id="presentation-notes-next" type="button" class="btn btn-primary btn-xs h-6 min-h-0 px-2" title="Next slide">Next</button>
+        </div>
+      </div>
+    `;
+    shell.appendChild(notesModal);
+  }
+
+  // Wait for Reveal.js CDN if still loading
+  if (!window.Reveal) {
+    if (retries > 0) {
+      setTimeout(() => initPresentationShell(retries - 1), 120);
+    }
+    return;
+  }
+
+  const updatePresenterUI = () => {
+    const deck = window.revealInstance;
+    const leafSlides = getLeafSlides(deckEl);
+    const total = Math.max(1, leafSlides.length);
+    let currentSlide = null;
+    let indices = { h: 0, v: 0 };
+    try {
+      if (deck && typeof deck.getCurrentSlide === "function") {
+        currentSlide = deck.getCurrentSlide();
+      }
+      if (deck && typeof deck.getIndices === "function") {
+        indices = deck.getIndices() || { h: 0, v: 0 };
+      }
+    } catch (_) {}
+    if (!currentSlide && leafSlides.length > 0) {
+      currentSlide = leafSlides[0];
+    }
+
+    const leafIdx = currentSlide ? Math.max(0, leafSlides.indexOf(currentSlide)) : 0;
+    const slideNumberLabel = indices.v > 0 ? `${(indices.h || 0) + 1}.${indices.v + 1}` : `${(indices.h || 0) + 1}`;
+    const counterText = `${leafIdx + 1} / ${total}`;
+
+    const toolbarCounter = document.getElementById("presentation-toolbar-counter");
+    if (toolbarCounter) toolbarCounter.textContent = counterText;
+    const hudCounter = document.getElementById("presentation-hud-counter");
+    if (hudCounter) hudCounter.textContent = counterText;
+
+    const slideTitle = extractSlideLabel(currentSlide, `Slide ${slideNumberLabel}`);
+    const { hasNotes, html: notesHtml } = extractSlideNotesHtml(currentSlide);
+
+    const notesDot = document.getElementById("presentation-notes-dot");
+    if (notesDot) notesDot.classList.toggle("hidden", !hasNotes);
+
+    const notesBadge = document.getElementById("presentation-notes-badge");
+    if (notesBadge) notesBadge.textContent = slideNumberLabel;
+    const notesTitleEl = document.getElementById("presentation-notes-title");
+    if (notesTitleEl) notesTitleEl.textContent = slideTitle;
+
+    const notesBody = document.getElementById("presentation-notes-body");
+    if (notesBody) {
+      notesBody.innerHTML = hasNotes
+        ? notesHtml
+        : `<p class="text-xs italic opacity-60">No speaker notes for this slide.</p>`;
+    }
+
+    const upNextEl = document.getElementById("presentation-notes-upnext");
+    if (upNextEl) {
+      const nextLeaf = leafIdx + 1 < leafSlides.length ? leafSlides[leafIdx + 1] : null;
+      upNextEl.textContent = nextLeaf
+        ? `Up Next: ${extractSlideLabel(nextLeaf, `Slide ${leafIdx + 2}`)}`
+        : "Up Next: End of Deck";
+    }
+  };
+
+  const isNativeFullscreen = () => Boolean(document.fullscreenElement === shell || document.webkitFullscreenElement === shell);
+  const isAnyFullscreen = () => isNativeFullscreen() || shell.classList.contains("is-fullscreen");
+
+  const syncFullscreenButtons = () => {
+    const active = isAnyFullscreen();
+    const fsBtn = document.getElementById("presentation-fullscreen-btn");
+    if (fsBtn) {
+      fsBtn.setAttribute("aria-pressed", active ? "true" : "false");
+      const labelSpan = fsBtn.querySelector("span");
+      if (labelSpan) labelSpan.textContent = active ? "Exit Fullscreen" : "Fullscreen";
+    }
+  };
+
+  const enterFullscreen = async () => {
+    if (shell.classList.contains("is-stacked")) {
+      setStackedMode(false);
+    }
+    const reqFs = shell.requestFullscreen || shell.webkitRequestFullscreen;
+    let enteredNative = false;
+    if (typeof reqFs === "function") {
+      try {
+        await reqFs.call(shell);
+        enteredNative = isNativeFullscreen();
+      } catch (_) {
+        enteredNative = false;
+      }
+    }
+    if (!enteredNative) {
+      shell.classList.add("is-fullscreen");
+    }
+    syncFullscreenButtons();
+    setTimeout(() => resizePresentationWidgets(), 60);
+  };
+
+  const exitFullscreen = async () => {
+    shell.classList.remove("is-fullscreen");
+    if (isNativeFullscreen()) {
+      const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
+      if (typeof exitFs === "function") {
+        try { await exitFs.call(document); } catch (_) {}
+      }
+    }
+    syncFullscreenButtons();
+    setTimeout(() => resizePresentationWidgets(), 60);
+  };
+
+  const toggleFullscreen = async () => {
+    if (isAnyFullscreen()) {
+      await exitFullscreen();
+    } else {
+      await enterFullscreen();
+    }
+  };
+
+  const setNotesOpen = (open) => {
+    notesModal.classList.toggle("hidden", !open);
+    const notesBtn = document.getElementById("presentation-notes-btn");
+    if (notesBtn) notesBtn.setAttribute("aria-pressed", open ? "true" : "false");
+    if (open) updatePresenterUI();
+  };
+
+  const toggleNotes = () => {
+    setNotesOpen(notesModal.classList.contains("hidden"));
+  };
+
+  const setStackedMode = (stacked) => {
+    shell.classList.toggle("is-stacked", Boolean(stacked));
+    stageEl.classList.toggle("is-stacked", Boolean(stacked));
+    const stackBtn = document.getElementById("presentation-stack-btn");
+    if (stackBtn) {
+      stackBtn.setAttribute("aria-pressed", stacked ? "true" : "false");
+      stackBtn.classList.toggle("btn-active", Boolean(stacked));
+    }
+    setTimeout(() => resizePresentationWidgets(), 60);
+  };
+
+  if (!shell.dataset.presentationBound) {
+    shell.dataset.presentationBound = "true";
+
+    document.getElementById("presentation-fullscreen-btn")?.addEventListener("click", () => toggleFullscreen());
+    document.getElementById("presentation-hud-exit")?.addEventListener("click", () => exitFullscreen());
+    document.getElementById("presentation-notes-btn")?.addEventListener("click", () => toggleNotes());
+    document.getElementById("presentation-hud-notes")?.addEventListener("click", () => toggleNotes());
+    document.getElementById("presentation-notes-close-btn")?.addEventListener("click", () => setNotesOpen(false));
+    document.getElementById("presentation-stack-btn")?.addEventListener("click", () => {
+      setStackedMode(!shell.classList.contains("is-stacked"));
+    });
+
+    const goPrev = () => { try { window.revealInstance?.prev?.(); } catch (_) {} };
+    const goNext = () => { try { window.revealInstance?.next?.(); } catch (_) {} };
+    document.getElementById("presentation-hud-prev")?.addEventListener("click", goPrev);
+    document.getElementById("presentation-hud-next")?.addEventListener("click", goNext);
+    document.getElementById("presentation-notes-prev")?.addEventListener("click", goPrev);
+    document.getElementById("presentation-notes-next")?.addEventListener("click", goNext);
+
+    const sizes = ["sm", "md", "lg"];
+    document.getElementById("presentation-notes-size-btn")?.addEventListener("click", () => {
+      const cur = notesModal.getAttribute("data-notes-size") || "md";
+      const next = sizes[(sizes.indexOf(cur) + 1) % sizes.length];
+      notesModal.setAttribute("data-notes-size", next);
+    });
+
+    document.getElementById("presentation-notes-dock-select")?.addEventListener("change", (e) => {
+      notesModal.setAttribute("data-dock", e.target.value || "bottom-right");
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!isNativeFullscreen()) {
+        shell.classList.remove("is-fullscreen");
+      }
+      syncFullscreenButtons();
+      setTimeout(() => resizePresentationWidgets(), 60);
+    });
+    document.addEventListener("webkitfullscreenchange", () => {
+      if (!isNativeFullscreen()) {
+        shell.classList.remove("is-fullscreen");
+      }
+      syncFullscreenButtons();
+      setTimeout(() => resizePresentationWidgets(), 60);
+    });
+
+    if (!window._presentationKeydownBound) {
+      window._presentationKeydownBound = true;
+      document.addEventListener("keydown", (e) => {
+        const active = document.activeElement;
+        const inEditable = Boolean(
+          active &&
+          (active.tagName === "INPUT" ||
+            active.tagName === "TEXTAREA" ||
+            active.tagName === "SELECT" ||
+            active.isContentEditable ||
+            active.closest?.(".ql-editor"))
+        );
+
+        if (e.key === "Escape") {
+          const blockingModalOpen = Boolean(
+            document.getElementById("all-settings-modal")?.open ||
+            document.getElementById("markdown-viewer-modal")?.open ||
+            document.getElementById("mermaid-enlarge-modal")?.open ||
+            document.getElementById("pdf-not-ready-modal")?.open ||
+            document.getElementById("agent-reconnect-modal")?.open
+          );
+          if (blockingModalOpen) return;
+          if (!notesModal.classList.contains("hidden")) {
+            setNotesOpen(false);
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+            return;
+          }
+          if (shell.classList.contains("is-fullscreen")) {
+            exitFullscreen();
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+          }
+          return;
+        }
+
+        if (inEditable || e.ctrlKey || e.metaKey || e.altKey) return;
+        const key = String(e.key || "").toLowerCase();
+        if (key === "f") {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+          toggleFullscreen();
+        } else if (key === "n") {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+          toggleNotes();
+        }
+      }, true);
+    }
+  }
+
+  // Initialize Reveal.js once per deck element
+  if (!deckEl.dataset.revealInitialized) {
+    deckEl.dataset.revealInitialized = "true";
+    const revealConfig = {
+      embedded: true,
+      disableLayout: true,
+      hash: false,
+      keyboard: {
+        70: null,
+        78: null
+      },
+      controls: true,
+      progress: true,
+      slideNumber: "c/t",
+      center: false,
+      transition: "slide"
+    };
+    try {
+      const useSingleton = document.querySelectorAll(".reveal").length <= 1 && typeof window.Reveal.initialize === "function";
+      const deck = useSingleton
+        ? window.Reveal
+        : (typeof window.Reveal === "function" ? new window.Reveal(deckEl, revealConfig) : window.Reveal);
+      window.revealInstance = deck;
+      window.revealDeck = deck;
+
+      if (typeof deck.on === "function") {
+        deck.on("ready", () => {
+          updatePresenterUI();
+          setTimeout(() => resizePresentationWidgets(), 50);
+        });
+        deck.on("slidechanged", () => {
+          updatePresenterUI();
+          setTimeout(() => resizePresentationWidgets(), 50);
+        });
+      }
+
+      const initPromise = typeof deck.initialize === "function"
+        ? deck.initialize(revealConfig)
+        : Promise.resolve();
+      Promise.resolve(initPromise).then(() => {
+        updatePresenterUI();
+        setTimeout(() => resizePresentationWidgets(), 60);
+      }).catch((err) => {
+        console.warn("[html-report] Reveal.js initialization notice:", err);
+      });
+    } catch (err) {
+      console.warn("[html-report] Reveal.js initialization notice:", err);
+    }
+  } else {
+    updatePresenterUI();
+    resizePresentationWidgets();
+  }
+
+  window.presentationToggleFullscreen = toggleFullscreen;
+  window.presentationToggleNotes = toggleNotes;
+  window.presentationToggleStacked = () => setStackedMode(!shell.classList.contains("is-stacked"));
+}
+
+/**
  * Mock.js runtime initialization & data-mock hydration.
  */
 function initMockjs() {
@@ -1453,6 +1999,49 @@ function initFullCalendar(retries = 25) {
 }
 
 /**
+ * Fallback CDN mirrors for Lucide UMD in case primary jsDelivr CDN is blocked or slow.
+ */
+const LUCIDE_FALLBACK_CDNS = [
+  "https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/lucide/0.460.0/umd/lucide.min.js"
+];
+let _lucideFallbackAttempted = false;
+
+/**
+ * Ensures Lucide UMD library is available (loading fallback CDN mirrors if needed)
+ * and rehydrates all [data-lucide] placeholders in the DOM.
+ */
+function ensureLucideIcons(root = null) {
+  if (typeof window === "undefined") return;
+  if (window.lucide && typeof window.lucide.createIcons === "function") {
+    rehydrateLucideIcons(root);
+    return;
+  }
+  if (_lucideFallbackAttempted || typeof document === "undefined" || !document.head) return;
+  const hasIcons = typeof document.querySelector === "function"
+    ? Boolean(document.querySelector(":not(svg)[data-lucide], [data-lucide]"))
+    : false;
+  if (!hasIcons) return;
+
+  _lucideFallbackAttempted = true;
+  const loadMirror = (index) => {
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      rehydrateLucideIcons(root);
+      return;
+    }
+    if (index >= LUCIDE_FALLBACK_CDNS.length) return;
+    const s = document.createElement("script");
+    s.src = LUCIDE_FALLBACK_CDNS[index];
+    s.crossOrigin = "anonymous";
+    s.async = true;
+    s.onload = () => rehydrateLucideIcons(root);
+    s.onerror = () => loadMirror(index + 1);
+    document.head.appendChild(s);
+  };
+  loadMirror(0);
+}
+
+/**
  * Rehydrates Lucide icons in the DOM.
  */
 function rehydrateLucideIcons(root = null) {
@@ -1502,7 +2091,7 @@ function initDatastarObserver() {
     if (needsRehydrate) {
       if (_lucideRehydrationTimer) clearTimeout(_lucideRehydrationTimer);
       _lucideRehydrationTimer = setTimeout(() => {
-        rehydrateLucideIcons();
+        ensureLucideIcons();
       }, 16);
     }
   });
@@ -1907,10 +2496,13 @@ if (typeof window !== "undefined") {
   window.impressNext = impressNext;
   window.impressPrev = impressPrev;
   window.impressGoto = impressGoto;
+  window.initPresentationShell = initPresentationShell;
+  window.resizePresentationWidgets = resizePresentationWidgets;
   window.initMockjs = initMockjs;
   window.initShowdown = initShowdown;
   window.initFullCalendar = initFullCalendar;
   window.rehydrateLucideIcons = rehydrateLucideIcons;
+  window.ensureLucideIcons = ensureLucideIcons;
   window.initDatastarObserver = initDatastarObserver;
   window.syncDatastarTheme = syncDatastarTheme;
   window.autoLinkMarkdownFiles = autoLinkMarkdownFiles;
@@ -1926,7 +2518,7 @@ if (typeof window !== "undefined") {
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
-    try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
+    try { ensureLucideIcons(); } catch (_) {}
     try { initTOC(); } catch (_) {}
     try { initModeBadge(); } catch (_) {}
     try { initThemeDropdown(); } catch (_) {}
@@ -1938,6 +2530,7 @@ if (typeof window !== "undefined") {
     try { initMockjs(); } catch (_) {}
     try { initFullCalendar(); } catch (_) {}
     try { initImpress(); } catch (_) {}
+    try { initPresentationShell(); } catch (_) {}
     try { initDatastarObserver(); } catch (_) {}
     try { autoLinkMarkdownFiles(); } catch (_) {}
     try { initPublicFeeds(); } catch (_) {}
@@ -1949,6 +2542,7 @@ if (typeof window !== "undefined") {
     try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.init(); } catch (_) {}
     try { initAuthoring(); } catch (err) { console.warn("[html-report] authoring init failed:", err); }
     window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.addEventListener("load", () => { try { ensureLucideIcons(); } catch (_) {} });
     window.addEventListener("beforeunload", () => {
       try { cleanupPublicFeeds(); } catch (_) {}
       try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.stopHeartbeat(); } catch (_) {}
@@ -1965,7 +2559,7 @@ if (typeof window !== "undefined") {
 async function reinitReportContent() {
   if (typeof document === "undefined") return;
   try { cleanupPublicFeeds(); } catch (_) {}
-  try { rehydrateLucideIcons(); } catch (_) {}
+  try { ensureLucideIcons(); } catch (_) {}
   try { initTOC(); } catch (_) {}
   try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
   try { initDayjs(); } catch (_) {}
@@ -1973,6 +2567,7 @@ async function reinitReportContent() {
   try { await renderMermaidWithTheme(resolveDaisyUIThemePalette()); } catch (_) {}
   try { if (typeof HTMLReportMermaid !== "undefined") HTMLReportMermaid.initEnlarge(); } catch (_) {}
   try { checkInsufficientHorizontalSpace(); } catch (_) {}
+  try { initPresentationShell(); } catch (_) {}
   try { initPublicFeeds(); } catch (_) {}
 }
 
@@ -1992,6 +2587,27 @@ const HTMLReportAgent = {
   _contextProviders: [],
   _transportAdapter: null,
   _lastPreflight: null,
+  _csrfToken: null,
+  _csrfExpiresAt: 0,
+
+  _getCsrfToken: async function() {
+    if (typeof window === "undefined") return null;
+    if (this._csrfToken && Date.now() < this._csrfExpiresAt - 30000) {
+      return this._csrfToken;
+    }
+    try {
+      const res = await fetch("/api/agent/csrf-token", { method: "GET", cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.csrfToken) {
+          this._csrfToken = data.csrfToken;
+          this._csrfExpiresAt = data.expiresAt || (Date.now() + 300000);
+          return this._csrfToken;
+        }
+      }
+    } catch (_) {}
+    return null;
+  },
 
   registerContextProvider: function(fn) {
     if (typeof fn === "function") {
@@ -2107,12 +2723,24 @@ const HTMLReportAgent = {
         } else if (newState === "disconnected") {
           dockDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-warning-content";
           dockPing.className = "hidden";
-          if (dockStatus) dockStatus.textContent = "Offline • Local Fallback";
+          if (dockStatus) dockStatus.textContent = "Offline • Turnkey Bridge Ready";
         } else {
           dockDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-base-content/40";
           dockPing.className = "hidden";
           if (dockStatus) dockStatus.textContent = "Probing Agent...";
         }
+      }
+
+      const dockOfflineBanner = document.getElementById("agent-dock-offline-banner");
+      if (dockOfflineBanner) {
+        dockOfflineBanner.classList.toggle("hidden", newState !== "disconnected");
+      }
+
+      const dockLauncher = document.getElementById("agent-dock-launcher");
+      if (dockLauncher) {
+        dockLauncher.title = newState === "disconnected"
+          ? "AI Assistant (Offline — click to open or restore bridge)"
+          : "Open AI Assistant (Cmd+K or Ctrl+K)";
       }
     }
 
@@ -2690,6 +3318,20 @@ Prerequisites & Instructions:
     `;
   },
 
+  _renderOfflineTurnkeyHtml: function(messageText, promptText = "") {
+    this._lastOfflinePrompt = promptText || "";
+    const safeMsg = typeof escapeHtml === "function" ? escapeHtml(messageText) : String(messageText || "");
+    return `
+      <div class="space-y-2">
+        <p class="text-warning font-semibold">${safeMsg}</p>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.openReconnectModal({ extra: window.HTMLReportAgent._lastOfflinePrompt || '' });" class="btn btn-warning btn-xs font-mono text-[10px] h-6 min-h-0">Restore Bridge</button>
+          <button type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.copyReconnectPrompt(this, { extra: window.HTMLReportAgent._lastOfflinePrompt || '' });" class="btn btn-outline btn-xs font-mono text-[10px] h-6 min-h-0">Copy Turnkey Prompt</button>
+        </div>
+      </div>
+    `;
+  },
+
   submitDockPrompt: function() {
     if (typeof document === "undefined") return;
     const input = document.getElementById("agent-dock-input");
@@ -2756,7 +3398,7 @@ Prerequisites & Instructions:
       const fallbackText = `Agent bridge offline (standalone file:// mode). Start dev server on localhost:${cfg.port || 3031} to enable real-time co-pilot.`;
       if (loadingEl) {
         const contentEl = loadingEl.querySelector(".message-content");
-        if (contentEl) contentEl.innerHTML = `<span class="text-warning">${fallbackText}</span>`;
+        if (contentEl) contentEl.innerHTML = this._renderOfflineTurnkeyHtml(fallbackText, prompt);
       }
       return { ok: false, fallback: true, result: fallbackText };
     }
@@ -2765,13 +3407,16 @@ Prerequisites & Instructions:
       const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
         ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/prompt`
         : "/api/agent/prompt";
+      const csrfToken = await this._getCsrfToken();
+      const headers = {
+        "Content-Type": "application/json",
+        "Accept": "text/event-stream, application/json"
+      };
+      if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
 
       const res = await fetch(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "text/event-stream, application/json"
-        },
+        headers,
         body: JSON.stringify(payload)
       });
 
@@ -2893,7 +3538,7 @@ Prerequisites & Instructions:
       this._updateState("disconnected");
       if (loadingEl) {
         const contentEl = loadingEl.querySelector(".message-content");
-        if (contentEl) contentEl.innerHTML = `<span class="text-error font-semibold">Error: ${err.message}. Dev server may be offline.</span>`;
+        if (contentEl) contentEl.innerHTML = this._renderOfflineTurnkeyHtml(`AI bridge offline (${err.message}). Use the turnkey prompt to reconnect.`, prompt);
       }
       return { ok: false, error: err.message };
     }
@@ -2913,10 +3558,13 @@ Prerequisites & Instructions:
       const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
         ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/confirm-action`
         : "/api/agent/confirm-action";
+      const csrfToken = await this._getCsrfToken();
+      const headers = { "Content-Type": "application/json" };
+      if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
 
       const res = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           sessionId: this.getSessionId(),
           actionId,
@@ -3674,7 +4322,8 @@ const HTMLReportEdit = {
     lines.push("- Follow the principles and conventions of this project (DaisyUI themes, Tailwind, light default theme).");
     lines.push("- Edit the source content fragment if applicable, or the served report file.");
     lines.push("- Rebuild with skills/html-report/scripts/build-report.mjs after editing when available.");
-    lines.push("- Keep the report live on localhost:3000 so the browser hot-swaps the result.");
+    const cfgPort = (typeof HTMLReportAgent !== "undefined" && HTMLReportAgent.getConfig) ? (HTMLReportAgent.getConfig().port || 3031) : 3031;
+    lines.push(`- Keep the report live on localhost:${cfgPort} so the browser hot-swaps the result.`);
     lines.push("- Follow the task tracking and verification principles of this project.");
     return lines.join("\n");
   },
@@ -3967,9 +4616,12 @@ const HTMLReportEdit = {
       say("Sending to agent...");
       try {
         const info = this.getPageInfo();
+        const csrfToken = await HTMLReportAgent._getCsrfToken();
+        const headers = { "Content-Type": "application/json" };
+        if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
         const res = await fetch("/__agent_edit__", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({ prompt: text, file: info.source || (typeof location !== "undefined" ? location.pathname : "") })
         });
         const data = await res.json().catch(() => ({}));
@@ -4747,6 +5399,9 @@ if (typeof module !== "undefined" && module.exports) {
     impressNext,
     impressPrev,
     impressGoto,
+    initPresentationShell,
+    resizePresentationWidgets,
+    sanitizeSpeakerNotesHtml,
     initMockjs,
     initShowdown,
     initFullCalendar,

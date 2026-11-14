@@ -626,6 +626,7 @@ export async function runLifecycle({
   printable = false,
   autoFix = true,
   verify = true,
+  fast = false,
   quick = true,
   mode = null,
   serve = null,
@@ -646,6 +647,10 @@ export async function runLifecycle({
   let currentState = STATES.IDLE;
   const history = [currentState];
   const stateTransitions = [];
+
+  if (fast) {
+    verify = false;
+  }
 
   function transition(toState) {
     const fromState = currentState;
@@ -683,7 +688,25 @@ export async function runLifecycle({
   }
 
   const serverPolicy = MODE_SERVER_POLICIES[resolvedMode] || { requiresServer: false, defaultAction: "open_static" };
-  const shouldServe = serve !== null ? Boolean(serve) : serverPolicy.requiresServer;
+  const shouldServe = fast ? false : (serve !== null ? Boolean(serve) : serverPolicy.requiresServer);
+
+  // If --fast is used on a project fragment with sibling report.manifest.json, load manifest defaults
+  let siblingManifest = null;
+  if (fast && file && content === null) {
+    const absInput = path.resolve(process.cwd(), file);
+    const candidateManifest = path.join(path.dirname(absInput), "report.manifest.json");
+    if (fs.existsSync(candidateManifest)) {
+      try {
+        siblingManifest = JSON.parse(fs.readFileSync(candidateManifest, "utf-8"));
+        if (!mode && siblingManifest.mode) {
+          const manifestMode = normalizeMode(siblingManifest.mode);
+          if (manifestMode) resolvedMode = manifestMode;
+        }
+      } catch (_) {
+        siblingManifest = null;
+      }
+    }
+  }
 
   // Caller resolution & 3-tier configuration merge (strictly when caller is provided)
   let leafCallerId = null;
@@ -748,11 +771,13 @@ export async function runLifecycle({
   }
 
   // Output deliverable routing:
-  // Standalone mode: defaults to ./report.html
+  // Standalone mode: defaults to ./report.html (or sibling index.html when --fast runs with report.manifest.json)
   // Caller mode: defaults to ./report-<leafCallerId>.html
   const resolvedOutput = output
     ? path.resolve(process.cwd(), output)
-    : (caller ? getOutputPath(caller) : path.resolve(process.cwd(), "./report.html"));
+    : (siblingManifest && file
+        ? path.join(path.dirname(path.resolve(process.cwd(), file)), "index.html")
+        : (caller ? getOutputPath(caller) : path.resolve(process.cwd(), "./report.html")));
 
   const resolvedPdf = pdf
     ? (pdf === true
@@ -891,20 +916,31 @@ export async function runLifecycle({
   let assembledHtml = "";
   try {
     const { buildReport } = await import("./build-report.mjs");
-    const activeTheme = mergedConfig ? mergedConfig.theme : (theme || null);
-    const activeAddons = mergedConfig ? mergedConfig.required_cdns : [];
+    const activeTheme = mergedConfig ? mergedConfig.theme : (theme || siblingManifest?.theme || null);
+    const activeAddons = mergedConfig ? mergedConfig.required_cdns : (Array.isArray(siblingManifest?.activeAddons) ? siblingManifest.activeAddons : []);
     const isPrintable = printable || resolvedMode === "print" || (mergedConfig && mergedConfig.reportMode === "print");
-
-    const isPwa = Boolean(pwa);
+    const effectiveTitle = (title === "HTML Report" && siblingManifest?.title) ? siblingManifest.title : title;
+    const isPwa = Boolean(pwa || siblingManifest?.pwa);
 
     const buildRes = buildReport({
-      title,
+      title: effectiveTitle,
       content: raw,
+      project: siblingManifest?.project || null,
+      contentPath: siblingManifest?.files?.fragment || null,
       mode: resolvedMode,
       printable: isPrintable,
       pwa: isPwa,
       theme: activeTheme,
-      addons: activeAddons
+      customTheme: siblingManifest?.customTheme || null,
+      favicon: siblingManifest?.favicon || "📊",
+      addons: activeAddons,
+      ai: Boolean(siblingManifest?.aiBridge),
+      aiPort: siblingManifest?.aiConfig?.port || 3031,
+      aiModel: siblingManifest?.aiConfig?.model || "Gemini 3.8 Flash (Low)",
+      aiPersona: siblingManifest?.aiConfig?.persona || "analyst",
+      aiPurpose: siblingManifest?.aiConfig?.purpose || "",
+      aiDock: siblingManifest?.aiConfig?.floatingAssistant ?? true,
+      source: siblingManifest?.files?.entry || null
     });
     assembledHtml = typeof buildRes === "string" ? buildRes : buildRes.html;
 
@@ -1035,8 +1071,11 @@ export async function runLifecycle({
     }
   }
 
+  const durationMs = Math.round((performance.now() - startTime) * 100) / 100;
   const successPayload = {
     status: "COMPLETED",
+    fast: Boolean(fast),
+    durationMs,
     output: resolvedOutput,
     pdf: resolvedPdf,
     state: currentState,
@@ -1050,7 +1089,11 @@ export async function runLifecycle({
   if (json) {
     console.log(JSON.stringify(successPayload, null, 2));
   } else {
-    console.log(`\n✔ [HARNESS] Report successfully assembled and verified -> ${resolvedOutput}`);
+    if (fast) {
+      console.log(`\n✔ [HARNESS] Fast static verification passed (${durationMs}ms) -> ${resolvedOutput}`);
+    } else {
+      console.log(`\n✔ [HARNESS] Report successfully assembled and verified -> ${resolvedOutput}`);
+    }
     if (resolvedPdf) {
       console.log(`✔ [HARNESS] PDF deliverable generated -> ${resolvedPdf}`);
     }
@@ -1068,6 +1111,8 @@ export async function runLifecycle({
 
   return {
     success: true,
+    fast: Boolean(fast),
+    durationMs,
     state: currentState,
     history,
     output: resolvedOutput,
@@ -1112,6 +1157,7 @@ OPTIONS:
   --port <number>           Target dev server port (default: 3000)
   --no-auto-fix             Disable mechanical auto-fix transforms during run/validate
   --no-verify               Skip Playwright responsive & console verification
+  --fast                    Run sub-second static gate (lintFragment + Assembly) without Playwright
   --full-verify             Verify across all 5 responsive breakpoints (default: quick 2)
   --attempt <number>        Current retry attempt number (default: 1)
   --max-attempts <number>   Maximum allowed remediation attempts before failure (default: 3)
@@ -1140,6 +1186,7 @@ export function parseArgs(argv = process.argv.slice(2)) {
     printable: false,
     autoFix: true,
     verify: true,
+    fast: false,
     quick: true,
     attempt: 1,
     maxAttempts: 3,
@@ -1170,6 +1217,10 @@ export function parseArgs(argv = process.argv.slice(2)) {
       args.autoFix = false;
     } else if (arg === "--no-verify") {
       args.verify = false;
+    } else if (arg === "--fast") {
+      args.fast = true;
+      args.verify = false;
+      args.serve = false;
     } else if (arg === "--full-verify") {
       args.quick = false;
     } else if (arg === "--print" || arg === "--printable" || arg === "-p") {
@@ -1326,6 +1377,7 @@ export async function main(argv = process.argv.slice(2)) {
       printable: args.printable,
       autoFix: args.autoFix,
       verify: args.verify,
+      fast: args.fast,
       quick: args.quick,
       mode: args.mode,
       serve: args.serve,

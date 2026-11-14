@@ -22,7 +22,7 @@ Whenever we brainstorm, plan, or use **OpenSpec** in this repository, agents and
 * Keep tasks organized in concise, verifiable numbered phases with checkbox syntax (`- [ ]`, `- [x]`).
 * Keep it minimal and focused on actionable milestones without unnecessary filler.
 
-### 3. Living Journey State Dashboard & Live Dev Server (`localhost:3000`)
+### 3. Living Journey State Dashboard & Live Dev Server (`localhost:3031`)
 * The `index.html` acts as the single pane of glass showing the **current state of our journey**:
   * **Journey Phase Stepper**: Clearly highlights the active stage:
     1. `Brainstorming` (exploring problem, concepts, user needs)
@@ -33,10 +33,10 @@ Whenever we brainstorm, plan, or use **OpenSpec** in this repository, agents and
     * *Stepper Formatting Standard:* Always use `<div class="w-full overflow-x-auto"><ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">...</ul></div>`. Never use `steps-vertical sm:steps-horizontal` because Tailwind CDN does not generate responsive variants for DaisyUI component classes.
   * **Live Progress Metrics**: Displays task completion percentages and status counts (Total, In Progress, Completed, Remaining).
   * **Connected Task Checklist**: An interactive or formatted task progress section matching `tasks.md`.
-* **Continuous Updates to `localhost:3000`**:
-  * **MANDATORY**: Whenever a feature is in progress, **always update `localhost:3000`**!
-  * Ensure the active feature's `index.html` is mirrored or linked to the active dev server file (e.g., `implementation-progress.html` at workspace root) served on `http://localhost:3000` via `skills/html-report/scripts/serve-report.mjs`.
-  * As code is written, tests pass, and checklist items in `tasks.md` are marked complete, immediately update the report file so `localhost:3000` automatically live-reloads and reflects the live journey state.
+* **Continuous Updates to `localhost:3031` (fallback `3032`)**:
+  * **MANDATORY**: Whenever a feature is in progress, **always update `localhost:3031`**!
+  * Ensure the active feature's `index.html` is mirrored or linked to the active dev server file (e.g., `implementation-progress.html` at workspace root) served on `http://localhost:3031` via `skills/html-report/scripts/serve-report.mjs`.
+  * As code is written, tests pass, and checklist items in `tasks.md` are marked complete, immediately update the report file so `localhost:3031` automatically live-reloads and reflects the live journey state.
 
 ### 4. Mandatory Markdown Artifact Linking Rule (`*.md`)
 * **Rule**: Whenever any `.md` file (e.g., `proposal.md`, `design.md`, `tasks.md`, `spec.md`, `README.md`, or sub-specs) is mentioned in prose, reports, dashboards, or documentation:
@@ -58,8 +58,8 @@ node skills/html-report/scripts/build-report.mjs \
 cp openspec/changes/<feature-name>/index.html implementation-progress.html
 ```
 
-To serve on `http://localhost:3000`:
+To serve on `http://localhost:3031` (fallback `3032`):
 ```bash
-node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3000
+node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3031
 ```
 

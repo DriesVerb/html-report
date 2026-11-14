@@ -118,6 +118,7 @@ self.addEventListener("fetch", (event) => {
           return networkRes;
         }).catch((err) => {
           console.warn("[PWA-SW] Fetch failed for:", req.url, err.message);
+          return Response.error();
         });
       })
     );

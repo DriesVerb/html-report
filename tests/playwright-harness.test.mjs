@@ -181,10 +181,10 @@ describe("Playwright Extensible Harness Test Suite", () => {
   });
 
   describe("3. CheckRegistry & Pluggable Architecture", () => {
-    it("should initialize default registry with all 16 checks (6 core + 10 CDNs)", async () => {
+    it("should initialize default registry with all 17 checks (6 core + 11 CDNs)", async () => {
       const registry = await createDefaultRegistry();
       const all = registry.getAll();
-      assert.equal(all.length, 16);
+      assert.equal(all.length, 17);
 
       const ids = all.map((c) => c.id);
       assert.ok(ids.includes("core:console-errors"));
@@ -204,6 +204,7 @@ describe("Playwright Extensible Harness Test Suite", () => {
       assert.ok(ids.includes("cdn:lucide"));
       assert.ok(ids.includes("cdn:alpine"));
       assert.ok(ids.includes("cdn:fullcalendar"));
+      assert.ok(ids.includes("cdn:reveal"));
     });
 
     it("should register custom checks dynamically", () => {
@@ -233,7 +234,7 @@ describe("Playwright Extensible Harness Test Suite", () => {
       const registry = await createDefaultRegistry();
 
       const cdnsOnly = registry.filter({ suites: "cdns" });
-      assert.equal(cdnsOnly.length, 10);
+      assert.equal(cdnsOnly.length, 11);
       assert.ok(cdnsOnly.every((c) => c.category === "cdn"));
 
       const themesOnly = registry.filter({ suites: "themes" });
@@ -261,7 +262,7 @@ describe("Playwright Extensible Harness Test Suite", () => {
       const registry = await createDefaultRegistry();
 
       const allCdns = registry.filter({ allCdns: true });
-      assert.equal(allCdns.length, 10);
+      assert.equal(allCdns.length, 11);
 
       const specificCdns = registry.filter({ cdns: "mermaid,charts" });
       assert.equal(specificCdns.length, 2);

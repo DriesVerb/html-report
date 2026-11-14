@@ -121,7 +121,7 @@ describe("Deterministic HTML Mode Stamping & Conditional Ingestion", () => {
     assert.doesNotMatch(html, /datastar@1\.0\.0-beta/);
   });
 
-  it("stamps data-report-mode for presentation mode and includes Impress.js", () => {
+  it("stamps data-report-mode for presentation mode and defaults to Reveal.js", () => {
     const { html } = buildReport({
       title: "Test Presentation",
       content: dummyFragment,
@@ -129,8 +129,16 @@ describe("Deterministic HTML Mode Stamping & Conditional Ingestion", () => {
     });
 
     assert.match(html, /<html[^>]*data-report-mode="presentation"/);
-    assert.match(html, /impress\.js/);
+    assert.match(html, /reveal\.js@5\.1\.0/);
+    assert.doesNotMatch(html, /impress\.js/);
     assert.doesNotMatch(html, /datastar@1\.0\.0-beta/);
+
+    const legacy = buildReport({
+      title: "Legacy 3D Presentation",
+      content: '<div id="impress"><div class="step">Slide 1</div></div>',
+      mode: "presentation"
+    });
+    assert.match(legacy.html, /impress\.js/);
   });
 
   it("stamps data-report-mode for dashboard mode without mandating Datastar", () => {

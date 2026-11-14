@@ -2,7 +2,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
-import { exec, execFile } from "node:child_process";
+import { exec, execFile, spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,11 +11,14 @@ import {
   DAISYUI_THEMES,
   TARGET_DEFINITIONS,
   ADDON_CATALOG,
+  WIDGET_PRESETS,
   normalizeDomainConfig,
   resolveSiblingSkill,
   generateCliCommand,
   generateDeterministicPrompt
 } from "./domain-model.mjs";
+import { buildReport } from "./build-report.mjs";
+import { scaffoldProject, slugifyProject } from "./scaffold-project.mjs";
 import {
   CSRFManager,
   AllowlistManager,
@@ -702,6 +705,18 @@ function injectLiveReload(html) {
       }
 
       const es = new EventSource("/__live_reload__");
+      let sseConnectedOnce = false;
+      let sseDisconnected = false;
+      es.addEventListener("open", () => {
+        if (sseDisconnected) {
+          sseDisconnected = false;
+          window.dispatchEvent(new CustomEvent("html-report:server-reconnected"));
+        }
+        sseConnectedOnce = true;
+      });
+      es.addEventListener("error", () => {
+        if (sseConnectedOnce) sseDisconnected = true;
+      });
       es.addEventListener("reload", onChange);
       es.addEventListener("projects-changed", () => {
         if (typeof window.loadWorkspaceProjects === "function") {
@@ -809,26 +824,69 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
     return boardState;
   }
 
+  function isValidLocalOrigin(originHeader) {
+    if (!originHeader || originHeader === "null") return false;
+    try {
+      const originUrl = new URL(originHeader);
+      if (originUrl.protocol !== "http:" && originUrl.protocol !== "https:") return false;
+      const host = originUrl.hostname.toLowerCase();
+      return host === "localhost" || host === "127.0.0.1" || host === "[::1]" || host === "::1";
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function applyLocalCorsHeaders(req, headers = {}) {
+    const originHeader = req.headers.origin;
+    if (originHeader && isValidLocalOrigin(originHeader)) {
+      return {
+        ...headers,
+        "Access-Control-Allow-Origin": originHeader,
+        Vary: "Origin"
+      };
+    }
+    return headers;
+  }
+
+  function enforceLocalBridgeSecurity(req, res, options = {}) {
+    const { requireCsrf = false, csrfToken = null } = options;
+    const remoteAddr = req.socket?.remoteAddress || "";
+    if (!isLoopbackAddress(remoteAddr)) {
+      res.writeHead(403, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden: Bridge is restricted to localhost loopback." }));
+      return false;
+    }
+    const hostHeader = String(req.headers.host || "");
+    if (hostHeader && !CSRFManager.validateHost(hostHeader)) {
+      res.writeHead(403, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden: Host must be localhost or 127.0.0.1" }));
+      return false;
+    }
+    const originHeader = req.headers.origin;
+    if (originHeader !== undefined && !isValidLocalOrigin(originHeader)) {
+      res.writeHead(403, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" });
+      res.end(JSON.stringify({ ok: false, error: "Forbidden: Cross-origin bridge request rejected." }));
+      return false;
+    }
+    if (requireCsrf && originHeader !== undefined) {
+      const token = csrfToken || req.headers["x-csrf-token"];
+      if (!csrfManager.validateToken(token)) {
+        res.writeHead(401, applyLocalCorsHeaders(req, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" }));
+        res.end(JSON.stringify({ ok: false, code: "invalid_csrf", error: "Unauthorized: Invalid or missing CSRF token." }));
+        return false;
+      }
+    }
+    return true;
+  }
+
   function isSameOriginOrLocalRequest(req) {
     const hostHeader = String(req.headers.host || "");
     if (hostHeader && !CSRFManager.validateHost(hostHeader)) {
       return false;
     }
     const originHeader = req.headers.origin;
-    if (originHeader) {
-      try {
-        const originUrl = new URL(originHeader);
-        const allowedHosts = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
-        if (!allowedHosts.has(originUrl.hostname)) {
-          return false;
-        }
-        const reqHostName = hostHeader.split(":")[0];
-        if (reqHostName && !allowedHosts.has(reqHostName)) {
-          return false;
-        }
-      } catch (_) {
-        return false;
-      }
+    if (originHeader !== undefined && !isValidLocalOrigin(originHeader)) {
+      return false;
     }
     return true;
   }
@@ -1109,21 +1167,45 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
       }
     }
 
+    // 1a-2b. Ephemeral Agent Bridge CSRF Token (GET /api/agent/csrf-token)
+    if (pathname === "/api/agent/csrf-token" && req.method === "GET") {
+      if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+      const tokenData = csrfManager.generateToken();
+      res.writeHead(200, applyLocalCorsHeaders(req, {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache, no-store"
+      }));
+      res.end(JSON.stringify({ ok: true, ...tokenData }));
+      return;
+    }
+
     // 1a-3. Turnkey AI Preflight & Health Endpoint (GET /api/agent/preflight & /api/agent/health)
     if ((pathname === "/api/agent/preflight" || pathname === "/api/agent/health") && req.method === "GET") {
       const shouldVerify = parsedUrl.searchParams.get("verify") === "1" || parsedUrl.searchParams.get("probe") === "1";
+      const isLocalCaller = isLoopbackAddress(req.socket?.remoteAddress || "")
+        && (!req.headers.host || CSRFManager.validateHost(req.headers.host))
+        && (req.headers.origin === undefined || isValidLocalOrigin(req.headers.origin));
       const respondPreflight = (providerStatus, verification = null) => {
         const inferenceVerified = verification ? Boolean(verification.inferenceVerified) : Boolean(providerStatus.inferenceVerified);
-        res.writeHead(200, {
+        const hasVerifiedProvider = Boolean(
+          providerStatus.providerAvailable &&
+          (providerStatus.authenticated || inferenceVerified)
+        );
+        const secureBridge = Boolean(isLocalCaller && hasVerifiedProvider);
+        const csrfToken = secureBridge ? csrfManager.generateToken().csrfToken : null;
+        res.writeHead(200, applyLocalCorsHeaders(req, {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
           "Cache-Control": "no-cache, no-store"
-        });
+        }));
         res.end(JSON.stringify({
           ok: true,
           bridge: "online",
           uiConfigured: true,
           bridgeReachable: true,
+          secureBridge,
+          csrfRequired: true,
+          csrfEndpoint: "/api/agent/csrf-token",
+          ...(csrfToken ? { csrfToken } : {}),
           installed: providerStatus.installed,
           authenticated: providerStatus.authenticated,
           inferenceVerified,
@@ -1369,21 +1451,23 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
     // 1b-3. Bidirectional Agent Loop: Interactive Prompt & Multi-Turn Datastar Streaming
     if (pathname === "/api/agent/prompt") {
       if (req.method === "OPTIONS") {
-        res.writeHead(204, {
-          "Access-Control-Allow-Origin": "*",
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
           "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, X-Report-Agent, datastar-request"
-        });
+          "Access-Control-Allow-Headers": "Content-Type, X-Report-Agent, X-CSRF-Token, datastar-request"
+        }));
         res.end();
         return;
       }
 
       if (req.method === "POST") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
         let body = "";
         req.on("data", (chunk) => { body += chunk; });
         req.on("end", () => {
           let payload = {};
           try { payload = JSON.parse(body); } catch (_) {}
+          if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: true, csrfToken: payload.csrfToken })) return;
 
           const sessionId = payload.sessionId || `sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
           const prompt = payload.prompt || "Analyze current telemetry";
@@ -1427,12 +1511,11 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             sessionStore.addMessage(sessionId, "assistant", responseText, { action });
 
             if (isStreaming) {
-              res.writeHead(200, {
+              res.writeHead(200, applyLocalCorsHeaders(req, {
                 "Content-Type": "text/event-stream; charset=utf-8",
                 "Cache-Control": "no-cache, no-transform",
-                "Connection": "keep-alive",
-                "Access-Control-Allow-Origin": "*"
-              });
+                "Connection": "keep-alive"
+              }));
 
               // 1. If targetSelector provided, push Datastar morph fragment into the page element
               if (targetSelector) {
@@ -1475,10 +1558,9 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             }
 
             // Non-streaming JSON response
-            res.writeHead(200, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            });
+            res.writeHead(200, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
             res.end(JSON.stringify({
               ok: true,
               sessionId,
@@ -1542,11 +1624,10 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             })
             .catch((err) => {
               const preflightInfo = err.preflight || AgentInferenceRouter.detectProviders();
-              res.writeHead(503, {
+              res.writeHead(503, applyLocalCorsHeaders(req, {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
                 "Cache-Control": "no-cache, no-store"
-              });
+              }));
               res.end(JSON.stringify({
                 ok: false,
                 status: "error",
@@ -1565,21 +1646,23 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
 
     if (pathname === "/api/agent/confirm-action" || pathname === "/api/agent/action-confirm") {
       if (req.method === "OPTIONS") {
-        res.writeHead(204, {
-          "Access-Control-Allow-Origin": "*",
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
           "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, X-Report-Agent"
-        });
+          "Access-Control-Allow-Headers": "Content-Type, X-Report-Agent, X-CSRF-Token"
+        }));
         res.end();
         return;
       }
 
       if (req.method === "POST") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
         let body = "";
         req.on("data", (chunk) => { body += chunk; });
         req.on("end", () => {
           let payload = {};
           try { payload = JSON.parse(body); } catch (_) {}
+          if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: true, csrfToken: payload.csrfToken })) return;
 
           const sessionId = payload.sessionId;
           const actionId = payload.actionId;
@@ -1605,10 +1688,9 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             }
           }
 
-          res.writeHead(200, {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-          });
+          res.writeHead(200, applyLocalCorsHeaders(req, {
+            "Content-Type": "application/json"
+          }));
           res.end(JSON.stringify({
             ok: true,
             actionId,
@@ -1631,11 +1713,149 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
       });
       res.end(JSON.stringify({
         ok: true,
+        port: serverPort,
+        supervised: process.env.HTML_REPORT_SUPERVISED === "1",
+        capabilities: [
+          "scaffold",
+          "synthesize",
+          "upload",
+          "workspace-files",
+          ...(process.env.HTML_REPORT_SUPERVISED === "1" ? ["self-restart"] : [])
+        ],
         themes: DAISYUI_THEMES,
         targets: TARGET_DEFINITIONS,
-        addons: ADDON_CATALOG
+        addons: ADDON_CATALOG,
+        widgets: WIDGET_PRESETS
       }));
       return;
+    }
+
+    if (pathname === "/api/server/restart" && req.method === "POST") {
+      const remoteAddr = req.socket?.remoteAddress || "";
+      const origin = req.headers.origin || "";
+      const isLocalOrigin = !origin || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(origin);
+      if (!isLoopbackAddress(remoteAddr) || !isLocalOrigin) {
+        res.writeHead(403, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+        res.end(JSON.stringify({ ok: false, error: "Server restart is restricted to localhost." }));
+        return;
+      }
+      if (process.env.HTML_REPORT_SUPERVISED === "1" && typeof process.send === "function") {
+        res.writeHead(202, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+        res.end(JSON.stringify({ ok: true, restarting: true }));
+        setTimeout(() => {
+          try { process.send({ type: "restart", reason: "api-request" }); } catch (_) {}
+        }, 50);
+      } else {
+        res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+        res.end(JSON.stringify({
+          ok: false,
+          supported: false,
+          error: "Server is not running under supervised auto-restart mode."
+        }));
+      }
+      return;
+    }
+
+    if (pathname === "/api/create/scaffold") {
+      if (req.method === "OPTIONS") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, X-CSRF-Token"
+        }));
+        res.end();
+        return;
+      }
+      if (req.method === "POST") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+        let body = "";
+        req.on("data", (chunk) => { body += chunk; });
+        req.on("end", () => {
+          try {
+            const payload = body ? JSON.parse(body) : {};
+            if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: true, csrfToken: payload.csrfToken })) return;
+            const workspaceRoot = findWorkspaceRoot(rootDir);
+            const target = String(payload.target || "report").trim().toLowerCase();
+            const rawGoals = typeof payload.userGoals === "string"
+              ? payload.userGoals
+              : (typeof payload.goals === "string" ? payload.goals : "");
+            const rawTitle = typeof payload.title === "string"
+              ? payload.title
+              : (typeof payload.heroTitle === "string" ? payload.heroTitle : "");
+            const explicitSlug = slugifyProject(
+              payload.projectSlug || payload.slug || payload.project || ""
+            );
+            const derivedSlug = explicitSlug ||
+              slugifyProject(rawGoals || rawTitle || `${target}-project`) ||
+              `${target || "report"}-project`;
+
+            const opMode = payload.operationalMode === "live" || payload.servingMode === "live" || payload.mode === "live-report" || payload.mode === "dashboard"
+              ? "live"
+              : "static";
+            const scaffoldMode = payload.mode ||
+              (opMode === "live" && target === "report" ? "live-report" : target);
+            const appPkg = payload.appPackaging || payload.app || "browser";
+            const pwaEnabled = Boolean(payload.pwa || (appPkg !== "browser" && appPkg !== "none"));
+            const displayTitle = rawTitle.trim() ||
+              (rawGoals.trim()
+                ? (rawGoals.trim().length > 55 ? rawGoals.trim().slice(0, 52) + "..." : rawGoals.trim())
+                : derivedSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
+
+            const force = Boolean(payload.force);
+            const result = scaffoldProject({
+              project: derivedSlug,
+              title: displayTitle,
+              mode: scaffoldMode,
+              theme: payload.theme || payload.defaultStartupTheme || "light",
+              customTheme: payload.customTheme || payload.customBrandColorHex || null,
+              addons: Array.isArray(payload.addons) ? payload.addons : [],
+              widgets: Array.isArray(payload.widgets) ? payload.widgets : [],
+              referenceFiles: Array.isArray(payload.referenceFiles) ? payload.referenceFiles : [],
+              servingMode: payload.servingMode || opMode,
+              behavioralMode: payload.behavioralMode || (scaffoldMode === "print" ? "passive" : "interactive"),
+              goals: rawGoals.trim(),
+              audience: typeof payload.userAudience === "string" ? payload.userAudience.trim() : (typeof payload.audience === "string" ? payload.audience.trim() : ""),
+              ai: Boolean(payload.ai),
+              aiPort: Number(payload.aiPort) > 0 ? Number(payload.aiPort) : 3031,
+              aiModel: payload.aiModel || "Gemini 3.8 Flash (Low)",
+              aiPersona: payload.aiPersona || "analyst",
+              aiPurpose: payload.aiPurpose || "",
+              aiDock: payload.aiDock !== undefined ? Boolean(payload.aiDock) : true,
+              pwa: pwaEnabled,
+              content: typeof payload.content === "string" ? payload.content : null,
+              force,
+              avoidCollision: !force,
+              rootDir: workspaceRoot,
+              workspaceRoot
+            });
+
+            if (typeof attachProjectsWatcher === "function") attachProjectsWatcher();
+            if (typeof syncProjectSubdirWatchers === "function") syncProjectSubdirWatchers();
+            if (typeof broadcastProjectsChanged === "function") broadcastProjectsChanged();
+
+            res.writeHead(200, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
+            res.end(JSON.stringify({
+              ok: true,
+              slug: result.slug,
+              projectDir: `projects/${result.slug}`,
+              entryUrl: `/projects/${result.slug}/index.html`,
+              fragmentPath: `projects/${result.slug}/fragment.html`,
+              manifestPath: `projects/${result.slug}/report.manifest.json`,
+              stagedRefs: result.stagedRefs,
+              datasets: result.datasets,
+              manifest: result.manifest
+            }));
+          } catch (err) {
+            res.writeHead(400, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
+            res.end(JSON.stringify({ ok: false, error: err.message }));
+          }
+        });
+        return;
+      }
     }
 
     if (pathname === "/api/create/synthesize") {
@@ -1671,6 +1891,156 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             res.end(JSON.stringify({ ok: false, error: err.message }));
           }
         });
+        return;
+      }
+    }
+
+    // 1b-3a. Creation Studio Reference File Upload & Workspace File Discovery
+    if (pathname === "/api/create/upload") {
+      if (req.method === "OPTIONS") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type"
+        }));
+        res.end();
+        return;
+      }
+      if (req.method === "POST") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+        const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
+        const chunks = [];
+        let totalLen = 0;
+        let aborted = false;
+        req.on("data", (chunk) => {
+          if (aborted) return;
+          totalLen += chunk.length;
+          if (totalLen > MAX_UPLOAD_BYTES * 1.4) {
+            aborted = true;
+            res.writeHead(413, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+            res.end(JSON.stringify({ ok: false, error: "File exceeds 25 MB upload limit" }));
+            req.destroy();
+            return;
+          }
+          chunks.push(chunk);
+        });
+        req.on("end", () => {
+          if (aborted) return;
+          try {
+            const rawBody = Buffer.concat(chunks).toString("utf-8");
+            const payload = rawBody ? JSON.parse(rawBody) : {};
+            const rawName = String(payload.name || "").trim();
+            const contentBase64 = typeof payload.contentBase64 === "string" ? payload.contentBase64 : "";
+            if (!rawName) {
+              res.writeHead(400, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+              res.end(JSON.stringify({ ok: false, error: "Missing 'name'" }));
+              return;
+            }
+            const baseName = path.basename(rawName).replace(/[^a-zA-Z0-9._-]/g, "_");
+            const safeName = (!baseName || baseName === "." || baseName === "..") ? `upload-${Date.now()}` : baseName;
+
+            const workspaceRoot = findWorkspaceRoot(rootDir);
+            const uploadsDir = path.join(workspaceRoot, "projects", "_uploads");
+            fs.mkdirSync(uploadsDir, { recursive: true });
+
+            const destPath = path.resolve(uploadsDir, safeName);
+            const relFromUploads = path.relative(uploadsDir, destPath);
+            if (relFromUploads.startsWith("..") || path.isAbsolute(relFromUploads) || relFromUploads === "") {
+              res.writeHead(403, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+              res.end(JSON.stringify({ ok: false, error: "Invalid upload filename" }));
+              return;
+            }
+
+            const buffer = Buffer.from(contentBase64, "base64");
+            if (buffer.length > MAX_UPLOAD_BYTES) {
+              res.writeHead(413, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+              res.end(JSON.stringify({ ok: false, error: "Decoded file exceeds 25 MB upload limit" }));
+              return;
+            }
+            fs.writeFileSync(destPath, buffer);
+            const relPath = path.relative(workspaceRoot, destPath).replace(/\\/g, "/");
+
+            res.writeHead(200, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+            res.end(JSON.stringify({
+              ok: true,
+              name: safeName,
+              path: relPath,
+              sizeBytes: buffer.length
+            }));
+          } catch (err) {
+            res.writeHead(400, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+            res.end(JSON.stringify({ ok: false, error: err.message }));
+          }
+        });
+        return;
+      }
+    }
+
+    if (pathname === "/api/create/workspace-files") {
+      if (req.method === "OPTIONS") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type"
+        }));
+        res.end();
+        return;
+      }
+      if (req.method === "GET") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+        try {
+          const workspaceRoot = findWorkspaceRoot(rootDir);
+          const query = (parsedUrl.searchParams.get("q") || "").trim().toLowerCase();
+          const SKIP_DIRS = new Set([
+            "node_modules", ".git", ".agents", ".gemini", "dist", "build",
+            ".next", "coverage", "playwright-report", "test-results"
+          ]);
+          const MAX_FILES = 300;
+          const files = [];
+
+          const walk = (dir, depth) => {
+            if (depth > 6 || files.length >= MAX_FILES) return;
+            let entries;
+            try {
+              entries = fs.readdirSync(dir, { withFileTypes: true });
+            } catch {
+              return;
+            }
+            entries.sort((a, b) => a.name.localeCompare(b.name));
+            for (const entry of entries) {
+              if (files.length >= MAX_FILES) break;
+              if (entry.isSymbolicLink()) continue;
+              const full = path.join(dir, entry.name);
+              if (entry.isDirectory()) {
+                if (SKIP_DIRS.has(entry.name) || entry.name.startsWith(".")) continue;
+                walk(full, depth + 1);
+              } else if (entry.isFile()) {
+                const rel = path.relative(workspaceRoot, full).replace(/\\/g, "/");
+                if (query && !rel.toLowerCase().includes(query)) continue;
+                let sizeBytes = 0;
+                try {
+                  sizeBytes = fs.statSync(full).size;
+                } catch {}
+                files.push({
+                  name: entry.name,
+                  path: rel,
+                  sizeBytes
+                });
+              }
+            }
+          };
+          walk(workspaceRoot, 0);
+
+          res.writeHead(200, {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-cache, no-store"
+          });
+          res.end(JSON.stringify({ ok: true, workspaceRoot, files }));
+        } catch (err) {
+          res.writeHead(500, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+          res.end(JSON.stringify({ ok: false, error: err.message }));
+        }
         return;
       }
     }
@@ -1853,21 +2223,17 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
     // 1b-1. Page edit hand-off: localhost only, scoped to the served file, POST only
     if (pathname === "/__agent_edit__") {
       const sendJson = (code, obj) => {
-        res.writeHead(code, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" });
+        res.writeHead(code, applyLocalCorsHeaders(req, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" }));
         res.end(JSON.stringify(obj));
       };
-      const remote = req.socket && req.socket.remoteAddress;
-      const isLoopback = remote === "127.0.0.1" || remote === "::1" || remote === "::ffff:127.0.0.1";
-      const hostHeader = String(req.headers.host || "").split(":")[0];
-      if (!isLoopback || !["localhost", "127.0.0.1", "[::1]", "::1"].includes(hostHeader)) {
-        return sendJson(403, { ok: false, error: "Edit hand-off is restricted to localhost." });
-      }
+      if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
       if (req.method !== "POST") return sendJson(405, { ok: false, error: "POST required." });
       let body = "";
       req.on("data", (chunk) => { body += chunk; if (body.length > 256 * 1024) req.destroy(); });
       req.on("end", () => {
         let payload = {};
         try { payload = JSON.parse(body); } catch (_) {}
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: true, csrfToken: payload.csrfToken })) return;
         const prompt = typeof payload.prompt === "string" ? payload.prompt.trim() : "";
         if (!prompt) return sendJson(400, { ok: false, error: "Missing prompt." });
         const requested = typeof payload.file === "string" ? payload.file.trim() : "";
@@ -2381,6 +2747,81 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
   }
 
   const watchers = [];
+  const fragmentMtimes = new Map();
+  const fragmentRebuildTimers = new Map();
+  const watchedProjectSubdirs = new Set();
+
+  function rebuildProjectFromFragment(projectDir) {
+    const resolvedDir = path.resolve(projectDir);
+    const fragmentPath = path.join(resolvedDir, "fragment.html");
+    const manifestPath = path.join(resolvedDir, "report.manifest.json");
+    const entryPath = path.join(resolvedDir, "index.html");
+    if (!fs.existsSync(fragmentPath) || !fs.existsSync(manifestPath)) return false;
+
+    let sig = "";
+    try {
+      const fStat = fs.statSync(fragmentPath);
+      const mStat = fs.statSync(manifestPath);
+      sig = `${fStat.mtimeMs}:${mStat.mtimeMs}`;
+    } catch (_) {
+      return false;
+    }
+
+    if (fragmentMtimes.get(resolvedDir) === sig) return false;
+    fragmentMtimes.set(resolvedDir, sig);
+
+    try {
+      const fragmentHtml = fs.readFileSync(fragmentPath, "utf-8");
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+      const workspaceRootDir = findWorkspaceRoot(rootDir);
+      const built = buildReport({
+        title: manifest.title || "HTML Report",
+        content: fragmentHtml,
+        project: manifest.project || null,
+        contentPath: manifest.files?.fragment || "fragment.html",
+        mode: manifest.mode || "report",
+        theme: manifest.theme || "light",
+        customTheme: manifest.customTheme || null,
+        favicon: manifest.favicon || "📊",
+        addons: Array.isArray(manifest.activeAddons) ? manifest.activeAddons : [],
+        ai: Boolean(manifest.aiBridge),
+        aiPort: manifest.aiConfig?.port || 3031,
+        aiModel: manifest.aiConfig?.model || "Gemini 3.8 Flash (Low)",
+        aiPersona: manifest.aiConfig?.persona || "analyst",
+        aiPurpose: manifest.aiConfig?.purpose || "",
+        aiDock: manifest.aiConfig?.floatingAssistant ?? true,
+        pwa: Boolean(manifest.pwa),
+        source: manifest.files?.entry || "index.html",
+        workspaceRoot: workspaceRootDir
+      });
+      fs.writeFileSync(entryPath, built.html, "utf-8");
+      broadcastReload(entryPath);
+      return true;
+    } catch (err) {
+      console.warn(`[html-report] Auto-rebuild from ${fragmentPath} failed: ${err.message}`);
+      return false;
+    }
+  }
+
+  function scheduleFragmentRebuild(projectDir) {
+    const resolvedDir = path.resolve(projectDir);
+    const prev = fragmentRebuildTimers.get(resolvedDir);
+    if (prev) clearTimeout(prev);
+    const timer = setTimeout(() => {
+      fragmentRebuildTimers.delete(resolvedDir);
+      rebuildProjectFromFragment(resolvedDir);
+    }, 100);
+    fragmentRebuildTimers.set(resolvedDir, timer);
+  }
+
+  // Seed initial fragment/manifest signatures for served directory
+  try {
+    const fPath = path.join(rootDir, "fragment.html");
+    const mPath = path.join(rootDir, "report.manifest.json");
+    if (fs.existsSync(fPath) && fs.existsSync(mPath)) {
+      fragmentMtimes.set(path.resolve(rootDir), `${fs.statSync(fPath).mtimeMs}:${fs.statSync(mPath).mtimeMs}`);
+    }
+  } catch (_) {}
 
   function broadcastReload(updatedFile) {
     clearTimeout(debounceTimer);
@@ -2423,6 +2864,18 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
     watchers.push(mainWatcher);
   } catch (_) {}
 
+  // Watch sibling fragment.html and report.manifest.json in the served report's directory
+  try {
+    const siblingFragment = path.join(rootDir, "fragment.html");
+    const siblingManifest = path.join(rootDir, "report.manifest.json");
+    if (fs.existsSync(siblingFragment)) {
+      watchers.push(fs.watch(siblingFragment, () => scheduleFragmentRebuild(rootDir)));
+    }
+    if (fs.existsSync(siblingManifest)) {
+      watchers.push(fs.watch(siblingManifest, () => scheduleFragmentRebuild(rootDir)));
+    }
+  } catch (_) {}
+
   // Watch current-feature.html specifically
   try {
     if (activeFeaturePath) {
@@ -2431,26 +2884,65 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
     }
   } catch (_) {}
 
-  // Also watch directory for new/updated HTML files
+  // Also watch directory for new/updated HTML and fragment/manifest files
   try {
     const dirWatcher = fs.watch(rootDir, (event, filename) => {
       if (filename && (filename === "current-feature.html" || filename === targetFileName)) {
         const full = path.resolve(rootDir, filename);
         broadcastReload(full);
+      } else if (filename && (filename === "fragment.html" || filename === "report.manifest.json")) {
+        scheduleFragmentRebuild(rootDir);
       }
     });
     watchers.push(dirWatcher);
   } catch (_) {}
 
-  // Watch projects/ directory for additions, deletions, and metadata updates without full page reload
+  // Watch projects/ directory for additions, deletions, fragment saves, and metadata updates
   const workspaceRootForWatch = findWorkspaceRoot(rootDir);
   const watchedProjectsDir = path.join(workspaceRootForWatch, "projects");
   let projectsDirWatched = false;
+
+  const syncProjectSubdirWatchers = () => {
+    if (!fs.existsSync(watchedProjectsDir)) return;
+    try {
+      const entries = fs.readdirSync(watchedProjectsDir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (!entry.isDirectory() || entry.name.startsWith("_") || entry.name.startsWith(".")) continue;
+        const subdir = path.join(watchedProjectsDir, entry.name);
+        if (watchedProjectSubdirs.has(subdir)) continue;
+        watchedProjectSubdirs.add(subdir);
+        try {
+          const fPath = path.join(subdir, "fragment.html");
+          const mPath = path.join(subdir, "report.manifest.json");
+          if (fs.existsSync(fPath) && fs.existsSync(mPath)) {
+            fragmentMtimes.set(path.resolve(subdir), `${fs.statSync(fPath).mtimeMs}:${fs.statSync(mPath).mtimeMs}`);
+          }
+          const subWatcher = fs.watch(subdir, (event, fname) => {
+            if (!fname || fname === "fragment.html" || fname === "report.manifest.json") {
+              scheduleFragmentRebuild(subdir);
+            }
+            broadcastProjectsChanged();
+          });
+          watchers.push(subWatcher);
+        } catch (_) {}
+      }
+    } catch (_) {}
+  };
+
   const attachProjectsWatcher = () => {
     if (projectsDirWatched || !fs.existsSync(watchedProjectsDir)) return;
     projectsDirWatched = true;
     try {
-      const projectsWatcher = fs.watch(watchedProjectsDir, { recursive: true }, () => {
+      const projectsWatcher = fs.watch(watchedProjectsDir, { recursive: true }, (event, filename) => {
+        if (filename) {
+          const relStr = String(filename).replace(/\\/g, "/");
+          const firstSeg = relStr.split("/")[0];
+          const base = path.basename(relStr);
+          if (firstSeg && !firstSeg.startsWith("_") && (base === "fragment.html" || base === "report.manifest.json")) {
+            scheduleFragmentRebuild(path.join(watchedProjectsDir, firstSeg));
+          }
+        }
+        syncProjectSubdirWatchers();
         broadcastProjectsChanged();
       });
       watchers.push(projectsWatcher);
@@ -2458,22 +2950,13 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
       // Fallback for platforms where recursive fs.watch is unavailable
       try {
         const projectsWatcher = fs.watch(watchedProjectsDir, () => {
+          syncProjectSubdirWatchers();
           broadcastProjectsChanged();
         });
         watchers.push(projectsWatcher);
-        const entries = fs.readdirSync(watchedProjectsDir, { withFileTypes: true });
-        for (const entry of entries) {
-          if (entry.isDirectory()) {
-            try {
-              const subWatcher = fs.watch(path.join(watchedProjectsDir, entry.name), () => {
-                broadcastProjectsChanged();
-              });
-              watchers.push(subWatcher);
-            } catch (_) {}
-          }
-        }
       } catch (_) {}
     }
+    syncProjectSubdirWatchers();
   };
   attachProjectsWatcher();
   if (!projectsDirWatched && fs.existsSync(workspaceRootForWatch)) {
@@ -2501,6 +2984,10 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
 
   return new Promise((resolve) => {
     server.listen(serverPort, () => {
+      const addr = server.address();
+      if (addr && typeof addr === "object" && addr.port) {
+        serverPort = addr.port;
+      }
       const serverUrl = `http://localhost:${serverPort}/`;
       let currentMode = "report";
       try {
@@ -2528,30 +3015,175 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
         openBrowser(serverUrl);
       }
 
+      const shutdownResources = () => {
+        clearInterval(heartbeat);
+        clearTimeout(debounceTimer);
+        clearTimeout(projectsDebounceTimer);
+        for (const t of fragmentRebuildTimers.values()) clearTimeout(t);
+        fragmentRebuildTimers.clear();
+        for (const w of watchers) { try { w.close(); } catch (_) {} }
+        for (const c of sseClients) { try { c.end(); } catch (_) {} }
+        for (const c of datastarClients) { try { c.end(); } catch (_) {} }
+      };
+      server.on("close", shutdownResources);
+
       resolve({
         server,
         serverPort,
         close: () => {
-          clearInterval(heartbeat);
-          clearTimeout(debounceTimer);
-          clearTimeout(projectsDebounceTimer);
-          for (const w of watchers) { try { w.close(); } catch (_) {} }
-          for (const c of sseClients) { try { c.end(); } catch (_) {} }
-          for (const c of datastarClients) { try { c.end(); } catch (_) {} }
+          shutdownResources();
           return new Promise((res) => server.close(res));
         }
       });
     });
 
     // Graceful shutdown
+    let closing = false;
     const cleanup = () => {
-      clearInterval(heartbeat);
-      for (const w of watchers) { try { w.close(); } catch (_) {} }
+      if (closing) return;
+      closing = true;
+      shutdownResources();
+      if (typeof server.closeAllConnections === "function") {
+        try { server.closeAllConnections(); } catch (_) {}
+      }
       server.close(() => process.exit(0));
+      setTimeout(() => process.exit(0), 500).unref();
     };
     process.on("SIGINT", cleanup);
     process.on("SIGTERM", cleanup);
+    if (process.env.HTML_REPORT_SUPERVISED === "1") {
+      process.on("disconnect", cleanup);
+    }
   });
+}
+
+/**
+ * Lightweight self-reloading supervisor for CLI usage so non-dev users
+ * never need to manually restart the server after server-script updates.
+ */
+function runSupervisedServer(argv) {
+  const watchedScripts = [
+    __filename,
+    path.join(__dirname, "scaffold-project.mjs"),
+    path.join(__dirname, "domain-model.mjs"),
+    path.join(__dirname, "build-report.mjs")
+  ].filter((p) => fs.existsSync(p));
+
+  const childArgs = [__filename, ...argv.slice(2)];
+  let child = null;
+  let shuttingDown = false;
+  let restarting = false;
+  let pendingRestart = false;
+  let restartTimer = null;
+  let hasStartedOnce = false;
+  const scriptWatchers = [];
+
+  const spawnWorker = (suppressAutoOpen = false) => {
+    const workerArgs = suppressAutoOpen && !childArgs.includes("--no-open")
+      ? [...childArgs, "--no-open"]
+      : childArgs;
+    child = spawn(process.execPath, workerArgs, {
+      stdio: ["inherit", "inherit", "inherit", "ipc"],
+      env: {
+        ...process.env,
+        HTML_REPORT_SUPERVISED: "1",
+        ...(suppressAutoOpen ? { HTML_REPORT_NO_OPEN: "1" } : {})
+      }
+    });
+    hasStartedOnce = true;
+
+    child.on("message", (msg) => {
+      if (msg && msg.type === "restart") {
+        triggerRestart(msg.reason || "api-request");
+      }
+    });
+
+    child.on("exit", (code, signal) => {
+      const wasRestarting = restarting;
+      child = null;
+      if (shuttingDown) {
+        process.exit(code ?? 0);
+        return;
+      }
+      if (wasRestarting) {
+        restarting = false;
+        spawnWorker(true);
+        if (pendingRestart) {
+          pendingRestart = false;
+          triggerRestart("queued-update");
+        }
+        return;
+      }
+      if (signal) {
+        process.exit(0);
+      } else {
+        process.exit(code ?? 0);
+      }
+    });
+  };
+
+  const triggerRestart = (reason) => {
+    if (shuttingDown) return;
+    if (restarting) {
+      pendingRestart = true;
+      return;
+    }
+    if (!child) {
+      spawnWorker(hasStartedOnce);
+      return;
+    }
+    restarting = true;
+    console.log(`\n[html-report] Server update detected (${reason}) — restarting automatically...`);
+    const target = child;
+    try { target.kill("SIGTERM"); } catch (_) {}
+    setTimeout(() => {
+      if (child === target) {
+        try { target.kill("SIGKILL"); } catch (_) {}
+      }
+    }, 2000).unref();
+  };
+
+  for (const scriptPath of watchedScripts) {
+    try {
+      let lastMtime = fs.statSync(scriptPath).mtimeMs;
+      const w = fs.watch(scriptPath, () => {
+        try {
+          const nextMtime = fs.statSync(scriptPath).mtimeMs;
+          if (nextMtime === lastMtime) return;
+          lastMtime = nextMtime;
+        } catch (_) {
+          return;
+        }
+        clearTimeout(restartTimer);
+        restartTimer = setTimeout(() => {
+          triggerRestart(path.basename(scriptPath));
+        }, 250);
+      });
+      scriptWatchers.push(w);
+    } catch (_) {}
+  }
+
+  const shutdownSupervisor = () => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    clearTimeout(restartTimer);
+    for (const w of scriptWatchers) { try { w.close(); } catch (_) {} }
+    if (child) {
+      const target = child;
+      try { target.kill("SIGTERM"); } catch (_) {}
+      setTimeout(() => {
+        try { target.kill("SIGKILL"); } catch (_) {}
+        process.exit(0);
+      }, 1500).unref();
+    } else {
+      process.exit(0);
+    }
+  };
+
+  process.on("SIGINT", shutdownSupervisor);
+  process.on("SIGTERM", shutdownSupervisor);
+
+  spawnWorker(false);
 }
 
 const serveReport = startServer;
@@ -2578,5 +3210,13 @@ if (isMainModule) {
     console.error("Usage: node serve-report.mjs <path-to-report.html> [--port <number>] [--no-open] [--feed-proxy <prefix=targetUrl>]");
     process.exit(1);
   }
-  startServer(filePath, port, autoOpen, feedProxies);
+  const selfWatchEnabled = process.env.HTML_REPORT_SUPERVISED !== "1" &&
+    process.env.NODE_ENV !== "test" &&
+    process.env.HTML_REPORT_NO_SELF_WATCH !== "1" &&
+    !process.argv.includes("--no-self-watch");
+  if (selfWatchEnabled) {
+    runSupervisedServer(process.argv);
+  } else {
+    startServer(filePath, port, autoOpen, feedProxies);
+  }
 }

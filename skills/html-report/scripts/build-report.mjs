@@ -80,6 +80,16 @@ export const ADDON_REGISTRY = {
     signatures: [/id=["']impress["']/i, /class=["'][^"']*\bstep\b[^"']*data-x/i, /\bimpress\s*\(\s*\)/],
     head: `<script defer src="https://cdn.jsdelivr.net/npm/impress.js@1.1.0/js/impress.js" crossorigin="anonymous"></script>`
   },
+  reveal: {
+    name: "Reveal.js",
+    signatures: [
+      /class=["'][^"']*\breveal\b/i,
+      /id=["']presentation-deck["']/i,
+      /\bReveal\.initialize\s*\(/i
+    ],
+    head: `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" integrity="sha384-YgvgKeZJykuztG+iQPoZHNZENTFZvOcOJ/uRzmJTje6GHYN9zAw+y5rx/L8MQKA/" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js" integrity="sha384-M/JtqCVlLcK9lwVnBnMXP0V577CBULkjodKsR/PITOe4MSKNbbwqCemEyluOw0+5" crossorigin="anonymous"></script>`
+  },
   mockjs: {
     name: "Mock.js",
     signatures: [/\bMock\.(?:mock|Random)\b/i, /data-mock/i, /id=["']mock-/i],
@@ -214,6 +224,9 @@ const ADDON_ALIASES = {
   datastar: "datastar",
   live: "datastar",
   impressjs: "impress",
+  reveal: "reveal",
+  revealjs: "reveal",
+  "reveal.js": "reveal",
   mock: "mockjs",
   mockjs: "mockjs",
   showdown: "showdown",
@@ -513,7 +526,6 @@ export function parseArgs(argv) {
       if (normalized === "print") options.printable = true;
       if (normalized === "presentation") {
         options.presentation = true;
-        if (!options.addons.includes("impress")) options.addons.push("impress");
       }
       if (normalized === "live-report") {
         options.live = true;
@@ -525,9 +537,6 @@ export function parseArgs(argv) {
     } else if (arg === "--presentation") {
       options.mode = "presentation";
       options.presentation = true;
-      if (!options.addons.includes("impress")) {
-        options.addons.push("impress");
-      }
     } else if (arg === "--dashboard") {
       options.mode = "dashboard";
     } else if (arg === "--working" || arg === "--working-report") {
@@ -763,6 +772,7 @@ export function buildAgentManifest({
   title = "HTML Report",
   mode = "report",
   theme = "light",
+  favicon = "📊",
   ai = false,
   aiPort = 3031,
   aiModel = "Gemini 3.8 Flash (Low)",
@@ -786,6 +796,7 @@ export function buildAgentManifest({
   const resolvedAiModel = aiModel && String(aiModel).trim() ? String(aiModel).trim() : "Gemini 3.8 Flash (Low)";
   const resolvedAiPersona = aiPersona && String(aiPersona).trim() ? String(aiPersona).trim() : "analyst";
   const resolvedAiPurpose = aiPurpose && String(aiPurpose).trim() ? String(aiPurpose).trim() : "";
+  const resolvedFavicon = favicon && String(favicon).trim() ? String(favicon).trim() : "📊";
 
   const skillPaths = resolveSkillPaths(workspaceRoot);
 
@@ -797,6 +808,9 @@ export function buildAgentManifest({
     `--mode ${mode}`,
     `--theme ${theme}`
   ];
+  if (resolvedFavicon && resolvedFavicon !== "📊") {
+    rebuildArgs.push(`--favicon "${resolvedFavicon.replace(/"/g, '\\"')}"`);
+  }
   if (activeAddons.length > 0) rebuildArgs.push(`--addons ${activeAddons.join(",")}`);
   if (ai) {
     rebuildArgs.push("--ai");
@@ -814,6 +828,7 @@ export function buildAgentManifest({
     title,
     mode,
     theme,
+    favicon: resolvedFavicon,
     aiBridge: Boolean(ai),
     aiConfig: ai ? {
       port: resolvedAiPort,
@@ -1007,8 +1022,9 @@ export function buildReport({
   const activeAddonKeys = detectAddons(cleanBody, addons);
 
   // Auto-inject required addons for specific modes
-  if (isPresentation && !activeAddonKeys.includes("impress")) {
-    activeAddonKeys.push("impress");
+  const hasImpressSignature = ADDON_REGISTRY.impress.signatures.some((p) => p.test(cleanBody));
+  if (isPresentation && !activeAddonKeys.includes("reveal") && !activeAddonKeys.includes("impress") && !hasImpressSignature) {
+    activeAddonKeys.push("reveal");
   }
   if (isLive && !activeAddonKeys.includes("datastar")) {
     activeAddonKeys.push("datastar");
@@ -1090,6 +1106,7 @@ export function buildReport({
     title,
     mode: resolvedMode,
     theme: resolvedTheme || "light",
+    favicon,
     ai,
     aiPort: resolvedAiPort,
     aiModel: resolvedAiModel,
@@ -1285,7 +1302,8 @@ Options:
       --leaflet             Explicitly include Leaflet
       --hljs, --highlight   Explicitly include Highlight.js
       --day, --dayjs        Explicitly include Day.js
-      --impress             Explicitly include Impress.js
+      --reveal              Explicitly include Reveal.js
+      --impress             Explicitly include Impress.js (legacy 3D decks)
       --mock, --mockjs      Explicitly include Mock.js
       --showdown            Explicitly include Showdown
       --quill, --wysiwyg, --editor Explicitly include Quill WYSIWYG editor
@@ -1356,6 +1374,7 @@ if (isDirectCli) {
           if (saved.mode === "live-report") options.live = true;
         }
         if (!hasFlag("--theme") && saved.theme) options.theme = saved.theme;
+        if (!hasFlag("--favicon") && saved.favicon) options.favicon = saved.favicon;
         if (!hasFlag("--addons") && Array.isArray(saved.activeAddons) && saved.activeAddons.length > 0) {
           options.addons = Array.from(new Set([...options.addons, ...saved.activeAddons]));
         }

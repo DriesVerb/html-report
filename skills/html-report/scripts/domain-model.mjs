@@ -74,6 +74,39 @@ export const ADDON_CATALOG = {
   dayjs: { flag: "--dayjs", label: "Date Calculation (Day.js v1.11)" }
 };
 
+export const WIDGET_PRESETS = {
+  "kpi-row": {
+    key: "kpi-row",
+    label: "KPI Scorecard Row",
+    description: "Responsive DaisyUI v4 stats row with primary, secondary, and accent KPI cards.",
+    addons: []
+  },
+  "chart-pair": {
+    key: "chart-pair",
+    label: "Chart.js Dual Analytics",
+    description: "Side-by-side responsive Chart.js bar and trend canvases pre-wired for dataset metrics.",
+    addons: ["charts"]
+  },
+  "grid-table": {
+    key: "grid-table",
+    label: "Sortable Grid.js Table",
+    description: "Searchable, sortable, paginated Grid.js data table pre-bound to attached CSV/JSON records.",
+    addons: ["gridjs"]
+  },
+  "mermaid-flow": {
+    key: "mermaid-flow",
+    label: "Mermaid Process Flow",
+    description: "Theme-adaptive Mermaid flowchart / system architecture diagram block.",
+    addons: ["mermaid"]
+  },
+  "timeline": {
+    key: "timeline",
+    label: "Milestone Timeline",
+    description: "DaisyUI vertical milestone timeline component for roadmaps and audit events.",
+    addons: []
+  }
+};
+
 /**
  * Normalizes user/CLI input target into canonical key.
  * @param {string} rawTarget
@@ -133,12 +166,30 @@ export function normalizeDomainConfig(input = {}) {
   }
 
   // Theme validation: must be one of DaisyUI 32 themes, default 'light'
+  const normalizeThemeName = (val) => {
+    if (!val || typeof val !== "string") return "";
+    const low = val.trim().toLowerCase();
+    return low === "lemon" ? "lemonade" : low;
+  };
   let defaultStartupTheme = "light";
-  if (input.defaultStartupTheme && DAISYUI_THEMES.includes(input.defaultStartupTheme.toLowerCase())) {
-    defaultStartupTheme = input.defaultStartupTheme.toLowerCase();
-  } else if (input.theme && DAISYUI_THEMES.includes(input.theme.toLowerCase())) {
-    defaultStartupTheme = input.theme.toLowerCase();
+  const candidateStartup = normalizeThemeName(input.defaultStartupTheme);
+  const candidateTheme = normalizeThemeName(input.theme);
+  if (candidateStartup && DAISYUI_THEMES.includes(candidateStartup)) {
+    defaultStartupTheme = candidateStartup;
+  } else if (candidateTheme && DAISYUI_THEMES.includes(candidateTheme)) {
+    defaultStartupTheme = candidateTheme;
   }
+
+  // Optional explicit project folder slug (independent of AI display title)
+  const rawSlug = typeof input.projectSlug === "string"
+    ? input.projectSlug
+    : (typeof input.slug === "string" ? input.slug : "");
+  const projectSlug = rawSlug
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || null;
 
   // Custom Brand Color Hex
   let customBrandColorHex = null;
@@ -151,6 +202,21 @@ export function normalizeDomainConfig(input = {}) {
   const rawFeatures = input.features || {};
   let addons = Array.isArray(rawFeatures.addons) ? rawFeatures.addons.map((a) => a.toLowerCase()) : [...targetDef.defaultAddons];
   addons = addons.filter((a) => Object.prototype.hasOwnProperty.call(ADDON_CATALOG, a));
+
+  // Canonical Starter Widget Presets
+  const rawWidgets = Array.isArray(input.widgets)
+    ? input.widgets
+    : (Array.isArray(rawFeatures.widgets) ? rawFeatures.widgets : []);
+  const widgets = [...new Set(
+    rawWidgets
+      .map((w) => String(w || "").trim().toLowerCase())
+      .filter((w) => Object.prototype.hasOwnProperty.call(WIDGET_PRESETS, w))
+  )];
+  for (const wKey of widgets) {
+    for (const reqAddon of WIDGET_PRESETS[wKey].addons || []) {
+      if (!addons.includes(reqAddon)) addons.push(reqAddon);
+    }
+  }
 
   // Gated Live Features: AI Agent Bridge & Enterprise MCP Tools
   let hasAiAgentBridge = Boolean(rawFeatures.hasAiAgentBridge ?? input.hasAiAgentBridge ?? false);
@@ -176,13 +242,17 @@ export function normalizeDomainConfig(input = {}) {
 
   return {
     title,
+    projectSlug,
     target,
     targetDef,
     operationalMode,
+    servingMode: operationalMode === "live" ? "live" : "static",
+    behavioralMode: target === "print" || input.behavioralMode === "passive" ? "passive" : "interactive",
     appPackaging,
     defaultStartupTheme,
     customBrandColorHex,
     referenceFiles,
+    widgets,
     features: {
       addons,
       hasAiAgentBridge,
@@ -216,6 +286,7 @@ export function resolveSiblingSkill(config) {
 export function generateCliCommand(config, options = {}) {
   const norm = normalizeDomainConfig(config);
   const projectSlug = options.project ||
+    norm.projectSlug ||
     String(norm.title || "report")
       .toLowerCase()
       .replace(/[^a-z0-9-]+/g, "-")
@@ -316,7 +387,7 @@ export function generateDeterministicPrompt(config) {
     "",
     "Deliverable Architecture:",
     `- Purpose & Format: ${def.humanName.toUpperCase()}`,
-    `- Operational Mode: ${norm.operationalMode === "static" ? "STATIC_STANDALONE (Zero server required, single self-contained HTML file)" : "LIVE_CONNECTED (Server-backed SSE stream on localhost:3000)"}`,
+    `- Operational Mode: ${norm.operationalMode === "static" ? "STATIC_STANDALONE (Zero server required, single self-contained HTML file)" : `LIVE_CONNECTED (Server-backed SSE stream on localhost:${config.port || 3031})`}`,
     `- App Packaging: ${appDescription}`,
     `- Startup Theme: "${norm.defaultStartupTheme}" (Default on first load; readers can switch between 32 themes via navbar)`
   ];
@@ -330,6 +401,14 @@ export function generateDeterministicPrompt(config) {
     lines.push(...addonDescriptions);
   } else {
     lines.push("  • Minimal Semantic HTML (Zero heavy addons)");
+  }
+
+  if (norm.widgets && norm.widgets.length > 0) {
+    lines.push("- Starter Widget Presets:");
+    norm.widgets.forEach((w) => {
+      const preset = WIDGET_PRESETS[w];
+      lines.push(`  • ${preset ? `${preset.label} (${w})` : w}`);
+    });
   }
 
   if (liveFeatures.length > 0) {
@@ -405,7 +484,7 @@ export const BOUNDED_CONTEXTS = {
   openSpecJourney: {
     key: "openSpecJourney",
     name: "7. OpenSpec Journey: Living Dev Loop",
-    description: "The 5-phase lifecycle connecting brainstorming, planning, implementation, verification, and live mirroring on :3000.",
+    description: "The 5-phase lifecycle connecting brainstorming, planning, implementation, verification, and live mirroring on :3031.",
     primaryArtifacts: ["GEMINI.md", "AGENTS.md", "openspec/changes/*/index.html", "implementation-progress.html"]
   },
 
@@ -492,7 +571,7 @@ export const UBIQUITOUS_GLOSSARY = [
     canonical: "OpenSpec Journey",
     deprecated: ["dev process", "git branch flow", "sprint tracker"],
     boundedContext: "openSpecJourney",
-    rule: "The 5-stage evolution cycle (Brainstorming to Archived) mirrored live on localhost:3000."
+    rule: "The 5-stage evolution cycle (Brainstorming to Archived) mirrored live on localhost:3031."
   },
   {
     canonical: "Semantic Fragment",
@@ -559,7 +638,7 @@ export const SERVING_MODES = {
   serverConnected: {
     key: "serverConnected",
     name: "Server-Connected (Live Backend)",
-    description: "Backed by serve-report.mjs on localhost:3000. Real-time Datastar SSE hypermedia morphs, file-watch hot-reload, agent bridge."
+    description: "Backed by serve-report.mjs on localhost:3031. Real-time Datastar SSE hypermedia morphs, file-watch hot-reload, agent bridge."
   }
 };
 
@@ -584,7 +663,7 @@ export const FEATURE_ALIGNMENT_RUBRIC = [
   { step: 2, name: "Ubiquitous Vocabulary", description: "Uses canonical domain terms and avoids deprecated synonyms." },
   { step: 3, name: "Archetype Impact", description: "Specifies target Delivery Archetype and Serving/Behavioral mode." },
   { step: 4, name: "Bridge & Authoring Invariants", description: "Defines agent bridge, edit mode, and published mode expectations." },
-  { step: 5, name: "Journey & Live Mirror", description: "Links the 4-file Artifact Quad and updates localhost:3000." }
+  { step: 5, name: "Journey & Live Mirror", description: "Links the 4-file Artifact Quad and updates localhost:3031." }
 ];
 
 /**
@@ -641,7 +720,7 @@ export function evaluateFeatureAlignment(proposal = {}) {
   const hasArtifacts = Boolean(proposal.artifacts || proposal.artifactQuad || proposal.changeDir);
   checks.push({ step: 5, name: "Journey & Live Mirror", passed: hasArtifacts });
   if (!hasArtifacts) {
-    violations.push("Proposal must reference OpenSpec Artifact Quad and live mirror on localhost:3000.");
+    violations.push("Proposal must reference OpenSpec Artifact Quad and live mirror on localhost:3031.");
   }
 
   const passedCount = checks.filter(c => c.passed).length;
@@ -695,7 +774,7 @@ export function generateFeatureAlignmentPrompt(input = {}) {
     "- [ ] Maintains zero token waste using Semantic Fragments (<main id=\"report-main\">)",
     "- [ ] Compiles via Deterministic Assembly (<100ms)",
     "- [ ] Distinguishes between In-Flight Draft (Edit Mode) vs Finalized Export (Published Document)",
-    "- [ ] Mirrors live journey state to http://localhost:3000 via implementation-progress.html"
+    "- [ ] Mirrors live journey state to http://localhost:3031 via implementation-progress.html"
   ].join("\n");
 }
 

@@ -11,7 +11,39 @@
   <!-- Core CDNs -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+  <script>
+    (function () {
+      var LUCIDE_MIRRORS = [
+        "https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/lucide/0.460.0/umd/lucide.min.js"
+      ];
+      var fallbackStarted = false;
+      window.__rehydrateCreateIcons = function () {
+        if (window.lucide && typeof window.lucide.createIcons === "function") {
+          try { window.lucide.createIcons(); } catch (_) {}
+          return true;
+        }
+        return false;
+      };
+      window.__loadLucideFallback = function () {
+        if (window.__rehydrateCreateIcons()) return;
+        if (fallbackStarted) return;
+        fallbackStarted = true;
+        function tryMirror(idx) {
+          if (window.__rehydrateCreateIcons() || idx >= LUCIDE_MIRRORS.length) return;
+          var s = document.createElement("script");
+          s.src = LUCIDE_MIRRORS[idx];
+          s.crossOrigin = "anonymous";
+          s.async = true;
+          s.onload = function () { window.__rehydrateCreateIcons(); };
+          s.onerror = function () { tryMirror(idx + 1); };
+          document.head.appendChild(s);
+        }
+        tryMirror(0);
+      };
+    })();
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" crossorigin="anonymous" onload="window.__rehydrateCreateIcons && window.__rehydrateCreateIcons()" onerror="window.__loadLucideFallback && window.__loadLucideFallback()"></script>
 
   <!-- Progressive Web App (PWA) Manifest & Mobile Meta -->
   <link rel="manifest" href="manifest.webmanifest" />
@@ -302,7 +334,7 @@
       <div class="bg-base-100 rounded-2xl border border-base-300 p-6 sm:p-8 space-y-8 shadow-sm">
         
         <!-- Step 1: Purpose & Deliverable -->
-        <div id="step-purpose" class="space-y-3">
+        <div id="step-purpose" class="space-y-3 scroll-mt-20">
           <div class="flex items-center justify-between">
             <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
               <span class="w-5 h-5 rounded-full bg-primary text-primary-content text-2xs font-bold flex items-center justify-center">1</span>
@@ -395,7 +427,7 @@
                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-primary"></i>
                 Describe what you want to build <span class="text-3xs text-base-content/50 font-normal">(Optional)</span>
               </span>
-              <span class="badge badge-ghost badge-xs text-3xs font-mono">For AI Scaffolding</span>
+              <span class="badge badge-ghost badge-xs text-3xs font-mono">Workspace &amp; AI Context</span>
             </div>
             <div class="space-y-3">
               <div>
@@ -418,6 +450,12 @@
                 </div>
               </div>
               <div>
+                <label for="input-project-slug" class="block text-3xs font-semibold text-base-content/80 mb-1">
+                  Project folder name <span class="text-base-content/50 font-normal">(Optional slug, independent of display title)</span>
+                </label>
+                <input type="text" id="input-project-slug" class="input input-bordered input-xs w-full text-xs font-mono placeholder:text-base-content/40 focus:outline-primary" placeholder="e.g., q4-sales-audit (auto-generated if blank)" oninput="updatePromptAndPreview()" />
+              </div>
+              <div>
                 <label for="input-board-audience" class="block text-3xs font-semibold text-base-content/80 mb-1">
                   Who is the audience?
                 </label>
@@ -435,11 +473,31 @@
 
                 <!-- Unified Drop & Browse Zone -->
                 <input type="file" id="file-picker-input" multiple class="hidden" onchange="handleFilePickerSelect(event)" />
-                <div id="file-drop-zone" class="p-2.5 border border-dashed border-base-300 rounded-lg text-center bg-base-100/60 hover:bg-base-200/50 hover:border-primary/60 transition cursor-pointer flex items-center justify-center gap-2 group" onclick="document.getElementById('file-picker-input').click()">
-                  <i data-lucide="paperclip" class="w-3.5 h-3.5 text-primary group-hover:scale-110 transition shrink-0"></i>
-                  <span class="text-3xs text-base-content/70">
-                    <span class="font-semibold text-primary underline underline-offset-2">Choose files</span> or drag &amp; drop here <span class="text-base-content/40">(images, PDF, CSV, JSON, code, etc.)</span>
-                  </span>
+                <div class="flex flex-col sm:flex-row gap-2">
+                  <div id="file-drop-zone" class="flex-1 p-2.5 border border-dashed border-base-300 rounded-lg text-center bg-base-100/60 hover:bg-base-200/50 hover:border-primary/60 transition cursor-pointer flex items-center justify-center gap-2 group" onclick="document.getElementById('file-picker-input').click()">
+                    <i data-lucide="paperclip" class="w-3.5 h-3.5 text-primary group-hover:scale-110 transition shrink-0"></i>
+                    <span class="text-3xs text-base-content/70">
+                      <span class="font-semibold text-primary underline underline-offset-2">Choose files</span> or drag &amp; drop <span class="text-base-content/40">(auto-staged)</span>
+                    </span>
+                  </div>
+                  <button type="button" id="btn-browse-workspace" class="btn btn-sm h-auto py-2 px-3 bg-base-100 hover:bg-base-200 border border-base-300 text-base-content/80 text-3xs font-semibold gap-1.5 shrink-0" onclick="toggleWorkspaceFilePicker()">
+                    <i data-lucide="folder-search" class="w-3.5 h-3.5 text-secondary shrink-0"></i>
+                    <span>From Workspace</span>
+                  </button>
+                </div>
+
+                <!-- Workspace File Picker Panel -->
+                <div id="workspace-files-picker" class="hidden p-2.5 rounded-lg bg-base-100 border border-base-300 shadow-xs space-y-2">
+                  <div class="flex items-center gap-2">
+                    <div class="relative flex-1">
+                      <input type="text" id="workspace-files-search" class="input input-bordered input-xs w-full text-xs pl-7" placeholder="Filter workspace files (e.g. .csv, .json, .md)..." oninput="loadWorkspaceFiles(this.value)" />
+                      <i data-lucide="search" class="w-3 h-3 text-base-content/40 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    </div>
+                    <button type="button" class="btn btn-ghost btn-xs text-3xs" onclick="toggleWorkspaceFilePicker(false)">Close</button>
+                  </div>
+                  <div id="workspace-files-list" class="max-h-40 overflow-y-auto divide-y divide-base-200/70 text-xs">
+                    <div class="py-3 text-center text-3xs text-base-content/50">Loading workspace files...</div>
+                  </div>
                 </div>
 
                 <!-- Collected Files List -->
@@ -452,7 +510,7 @@
         </div>
 
         <!-- Step 2: Two-Axis Runtime Classification -->
-        <div id="step-mode" class="space-y-3 border-t border-base-200 pt-4">
+        <div id="step-mode" class="space-y-3 border-t border-base-200 pt-4 scroll-mt-20">
           <div class="flex items-center justify-between">
             <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
               <span class="w-5 h-5 rounded-full bg-secondary text-secondary-content text-2xs font-bold flex items-center justify-center">2</span>
@@ -495,7 +553,7 @@
                 <span class="mode-check-badge badge badge-ghost badge-xs hidden"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>
               </div>
               <p class="text-3xs text-base-content/75 leading-relaxed">
-                Backed by <code>serve-report.mjs</code> on <code>localhost:3000</code> with Datastar SSE morphs and Agent Bridge.
+                Backed by <code>serve-report.mjs</code> on <code>localhost:3031</code> with Datastar SSE morphs and Agent Bridge.
               </p>
               <div class="badge badge-outline badge-xs text-3xs font-mono text-success">Live SSE &amp; Agent Bridge</div>
             </div>
@@ -503,7 +561,7 @@
         </div>
 
         <!-- Step 3: Content Capabilities & Intelligence (Features!) -->
-        <div id="step-features" class="space-y-4 border-t border-base-200 pt-4">
+        <div id="step-features" class="space-y-4 border-t border-base-200 pt-4 scroll-mt-20">
           <div class="flex items-center justify-between">
             <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
               <span class="w-5 h-5 rounded-full bg-accent text-accent-content text-2xs font-bold flex items-center justify-center">3</span>
@@ -628,6 +686,51 @@
             </div>
           </div>
 
+          <!-- Section A2: Starter Widget Presets (--widgets) -->
+          <div id="widget-presets-selector" class="space-y-2 pt-2 border-t border-base-200">
+            <div class="flex items-center justify-between">
+              <span class="text-3xs font-bold uppercase tracking-wider text-base-content/60">Starter Widget Presets (--widgets):</span>
+              <span class="text-3xs text-base-content/50 font-mono">Pre-wired DaisyUI v4 blocks</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
+              <label class="flex items-start gap-2 p-2 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5 widget-preset-chk" data-widget="kpi-row" onchange="onWidgetPresetToggle(this)" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs text-base-content block">KPI Scorecard Row</span>
+                  <span class="text-3xs text-base-content/60 font-mono">kpi-row</span>
+                </div>
+              </label>
+              <label class="flex items-start gap-2 p-2 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5 widget-preset-chk" data-widget="chart-pair" onchange="onWidgetPresetToggle(this)" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs text-base-content block">Chart.js Dual Analytics</span>
+                  <span class="text-3xs text-base-content/60 font-mono">chart-pair</span>
+                </div>
+              </label>
+              <label class="flex items-start gap-2 p-2 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5 widget-preset-chk" data-widget="grid-table" onchange="onWidgetPresetToggle(this)" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs text-base-content block">Sortable Grid.js Table</span>
+                  <span class="text-3xs text-base-content/60 font-mono">grid-table</span>
+                </div>
+              </label>
+              <label class="flex items-start gap-2 p-2 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5 widget-preset-chk" data-widget="mermaid-flow" onchange="onWidgetPresetToggle(this)" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs text-base-content block">Mermaid Process Flow</span>
+                  <span class="text-3xs text-base-content/60 font-mono">mermaid-flow</span>
+                </div>
+              </label>
+              <label class="flex items-start gap-2 p-2 rounded-lg border border-base-300 hover:bg-base-200/50 cursor-pointer transition">
+                <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5 widget-preset-chk" data-widget="timeline" onchange="onWidgetPresetToggle(this)" />
+                <div class="space-y-0.5">
+                  <span class="font-bold text-xs text-base-content block">Milestone Timeline</span>
+                  <span class="text-3xs text-base-content/60 font-mono">timeline</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
           <!-- Section B: Intelligence & Enterprise Connectivity (Features requiring Live Mode) -->
           <div class="space-y-2 pt-2 border-t border-base-200">
             <div class="flex items-center justify-between">
@@ -724,7 +827,7 @@
         </div>
 
         <!-- Step 4: App Installation & Offline Capabilities (Eliminated in Print Mode!) -->
-        <div id="step-app" class="space-y-3 border-t border-base-200 pt-4">
+        <div id="step-app" class="space-y-3 border-t border-base-200 pt-4 scroll-mt-20">
           <div class="flex items-center justify-between">
             <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
               <span class="w-5 h-5 rounded-full bg-info text-info-content text-2xs font-bold flex items-center justify-center">4</span>
@@ -782,7 +885,7 @@
         </div>
 
         <!-- Step 5: Appearance & Default Startup Theme (Opens to the right!) -->
-        <div id="step-theme" class="space-y-3 border-t border-base-200 pt-4">
+        <div id="step-theme" class="space-y-3 border-t border-base-200 pt-4 scroll-mt-20">
           <div class="flex items-center justify-between">
             <label class="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
               <span class="w-5 h-5 rounded-full bg-neutral text-neutral-content text-2xs font-bold flex items-center justify-center">5</span>
@@ -964,6 +1067,29 @@
               <textarea id="prompt-output-box" readonly class="w-full bg-transparent font-mono text-xs text-base-content resize-none h-80 focus:outline-hidden leading-relaxed"></textarea>
             </div>
 
+            <!-- Project Lifecycle State Indicator -->
+            <div id="workspace-lifecycle-status" class="p-3 rounded-xl border border-base-300 bg-base-200/50 text-xs flex items-start justify-between gap-3">
+              <div class="space-y-0.5 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span id="workspace-state-badge" class="badge badge-ghost badge-xs font-mono font-bold">Draft — Not Created Yet</span>
+                  <span id="workspace-state-slug" class="font-mono text-3xs text-base-content/60 hidden"></span>
+                </div>
+                <p id="workspace-state-detail" class="text-3xs text-base-content/75 leading-relaxed">
+                  Your choices are ready below, but no project folder exists on disk yet. Click <strong>Create Workspace</strong> to start, or copy/save the AI prompt.
+                </p>
+              </div>
+            </div>
+
+            <!-- Fast Assembly & Direct Bridge Actions -->
+            <div id="studio-primary-actions" class="flex flex-col sm:flex-row gap-3">
+              <button id="btn-scaffold-now" type="button" onclick="scaffoldProjectNow(this)" class="btn btn-secondary gap-2 shadow-sm font-semibold flex-1">
+                <i data-lucide="folder-plus" class="w-4 h-4"></i> Create Workspace
+              </button>
+              <button id="btn-send-to-agent" type="button" onclick="sendPromptToAgentBridge(this)" disabled hidden title="Hidden unless a secure, authenticated two-way agent bridge is active" class="btn btn-accent gap-2 shadow-sm font-semibold hidden flex-1">
+                <i data-lucide="send" class="w-4 h-4"></i> Send to Agent
+              </button>
+            </div>
+
             <!-- Primary Prompt Actions -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button id="btn-copy-prompt" type="button" onclick="copyPromptToClipboard(this)" class="btn btn-primary gap-2 shadow-sm font-semibold">
@@ -973,6 +1099,30 @@
                 <i data-lucide="file-down" class="w-4 h-4"></i> Save Prompt (.md)
               </button>
             </div>
+
+            <!-- Workspace Error / Outdated Server Banner -->
+            <div id="scaffold-error-banner" class="hidden p-3 rounded-xl border border-error/40 bg-error/10 text-xs space-y-1">
+              <div class="font-bold text-error flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+                <span id="scaffold-error-title">Workspace not created</span>
+              </div>
+              <p id="scaffold-error-message" class="text-3xs text-base-content/85 leading-relaxed"></p>
+            </div>
+
+            <!-- Scaffold Result & Bridge Dispatch Feedback -->
+            <div id="scaffold-result-banner" class="hidden p-3 rounded-xl border border-success/40 bg-success/10 text-xs flex flex-wrap items-center justify-between gap-2">
+              <div class="space-y-0.5 min-w-0">
+                <div class="font-bold text-success flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
+                  <span id="scaffold-result-title">Workspace created</span>
+                </div>
+                <div id="scaffold-result-path" class="font-mono text-3xs text-base-content/75 truncate"></div>
+              </div>
+              <a id="scaffold-result-open-link" href="#" target="_blank" rel="noopener" class="btn btn-xs btn-success text-success-content gap-1 shrink-0">
+                <i data-lucide="external-link" class="w-3 h-3"></i> Open Report
+              </a>
+            </div>
+            <div id="agent-bridge-dispatch-status" class="hidden text-3xs font-mono px-1 text-base-content/70"></div>
           </div>
 
           <!-- RIGHT: Live Wireframe Mockup Preview (5 Cols) -->
@@ -1432,10 +1582,16 @@
     }
 
     function addCollectedFile(fileName, options = {}) {
-      if (!fileName || !fileName.trim()) return;
+      if (!fileName || !fileName.trim()) return null;
       const cleanName = fileName.trim();
-      const existing = collectedFiles.find((f) => f.name.toLowerCase() === cleanName.toLowerCase());
+      const incomingPath = options.path ? String(options.path).trim() : null;
+      const existing = collectedFiles.find((f) => {
+        if (incomingPath && f.path) return f.path === incomingPath;
+        return !f.path && !incomingPath && f.name.toLowerCase() === cleanName.toLowerCase();
+      });
       if (existing) {
+        if (incomingPath) existing.path = incomingPath;
+        if (options.uploadStatus) existing.uploadStatus = options.uploadStatus;
         existing.isNoteOpen = true;
         renderCollectedFiles();
         updatePromptAndPreview();
@@ -1443,25 +1599,149 @@
           const input = document.getElementById(`note-input-${existing.id}`);
           if (input) input.focus();
         }, 50);
-        return;
+        return existing;
       }
 
       const info = getFileInfo(cleanName);
       const id = "ref-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7);
 
-      collectedFiles.push({
+      const entry = {
         id,
         name: cleanName,
+        path: incomingPath,
+        uploadStatus: options.uploadStatus || (incomingPath ? "workspace" : "local"),
         sizeFormatted: options.sizeFormatted || null,
         icon: options.icon || info.icon,
         category: options.category || info.category,
         colorClass: options.colorClass || info.colorClass,
         note: options.note || "",
         isNoteOpen: false
-      });
+      };
+      collectedFiles.push(entry);
 
       renderCollectedFiles();
       updatePromptAndPreview();
+      return entry;
+    }
+
+    async function stageBrowserFile(browserFile, collectedId) {
+      if (!browserFile || window.location.protocol === "file:") return;
+      const entry = collectedFiles.find((f) => f.id === collectedId);
+      if (!entry) return;
+
+      entry.uploadStatus = "uploading";
+      renderCollectedFiles();
+
+      try {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const res = String(reader.result || "");
+            const idx = res.indexOf(",");
+            resolve(idx >= 0 ? res.slice(idx + 1) : res);
+          };
+          reader.onerror = () => reject(reader.error || new Error("FileReader failed"));
+          reader.readAsDataURL(browserFile);
+        });
+
+        const resp = await fetch("/api/create/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: browserFile.name,
+            contentBase64: base64,
+            sizeBytes: browserFile.size
+          })
+        });
+        const data = await resp.json();
+        const current = collectedFiles.find((f) => f.id === collectedId);
+        if (!current) return;
+        if (resp.ok && data && data.ok && data.path) {
+          current.path = data.path;
+          current.uploadStatus = "staged";
+        } else {
+          current.uploadStatus = "local";
+        }
+      } catch {
+        const current = collectedFiles.find((f) => f.id === collectedId);
+        if (current) current.uploadStatus = "local";
+      }
+      renderCollectedFiles();
+      updatePromptAndPreview();
+    }
+
+    let workspaceFilesCache = null;
+
+    function toggleWorkspaceFilePicker(forceState) {
+      const panel = document.getElementById("workspace-files-picker");
+      if (!panel) return;
+      const shouldOpen = typeof forceState === "boolean" ? forceState : panel.classList.contains("hidden");
+      panel.classList.toggle("hidden", !shouldOpen);
+      if (shouldOpen) {
+        const searchInput = document.getElementById("workspace-files-search");
+        loadWorkspaceFiles(searchInput ? searchInput.value : "");
+        if (searchInput) setTimeout(() => searchInput.focus(), 50);
+      }
+    }
+
+    async function loadWorkspaceFiles(query = "") {
+      const listEl = document.getElementById("workspace-files-list");
+      if (!listEl) return;
+
+      if (window.location.protocol === "file:") {
+        listEl.innerHTML = `<div class="py-3 px-2 text-center text-3xs text-base-content/60">Workspace browsing requires the local server (<code class="font-mono">node skills/html-report/scripts/open-create.mjs</code>).</div>`;
+        return;
+      }
+
+      try {
+        if (!workspaceFilesCache || query) {
+          const url = `/api/create/workspace-files${query ? `?q=${encodeURIComponent(query)}` : ""}`;
+          const resp = await fetch(url);
+          const data = await resp.json();
+          if (!resp.ok || !data || !data.ok) throw new Error(data?.error || "Failed to list workspace files");
+          if (!query) workspaceFilesCache = data.files || [];
+          renderWorkspaceFilesList(data.files || []);
+        } else {
+          renderWorkspaceFilesList(workspaceFilesCache);
+        }
+      } catch {
+        listEl.innerHTML = `<div class="py-3 px-2 text-center text-3xs text-base-content/60">Local server unavailable. Start via <code class="font-mono">open-create.mjs</code> to browse workspace files.</div>`;
+      }
+    }
+
+    function renderWorkspaceFilesList(files) {
+      const listEl = document.getElementById("workspace-files-list");
+      if (!listEl) return;
+      if (!files || files.length === 0) {
+        listEl.innerHTML = `<div class="py-3 text-center text-3xs text-base-content/50">No matching workspace files found.</div>`;
+        return;
+      }
+      listEl.innerHTML = files.slice(0, 80).map((f) => {
+        const info = getFileInfo(f.name);
+        const size = formatFileSize(f.sizeBytes);
+        const safePath = escapeHtml(f.path).replace(/'/g, "&#39;");
+        const safeName = escapeHtml(f.name).replace(/'/g, "&#39;");
+        return `
+          <button type="button" class="workspace-file-option w-full flex items-center justify-between gap-2 px-2 py-1.5 hover:bg-base-200/70 rounded text-left transition" data-file-path="${escapeHtml(f.path)}" onclick="selectWorkspaceFile('${safePath}', '${safeName}', ${Number(f.sizeBytes) || 0})">
+            <div class="flex items-center gap-2 min-w-0">
+              <i data-lucide="${info.icon}" class="w-3.5 h-3.5 shrink-0 ${info.colorClass}"></i>
+              <span class="font-mono text-3xs text-base-content truncate">${escapeHtml(f.path)}</span>
+            </div>
+            ${size ? `<span class="badge badge-ghost badge-2xs text-3xs font-mono text-base-content/50 shrink-0">${size}</span>` : ""}
+          </button>
+        `;
+      }).join("");
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function selectWorkspaceFile(filePath, fileName, sizeBytes) {
+      addCollectedFile(fileName, {
+        path: filePath,
+        uploadStatus: "workspace",
+        sizeFormatted: formatFileSize(sizeBytes),
+        sizeBytes
+      });
+      toggleWorkspaceFilePicker(false);
     }
 
     function handleFilePickerSelect(event) {
@@ -1469,10 +1749,11 @@
       if (!files || files.length === 0) return;
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        addCollectedFile(file.name, {
+        const entry = addCollectedFile(file.name, {
           sizeFormatted: formatFileSize(file.size),
           sizeBytes: file.size
         });
+        if (entry) stageBrowserFile(file, entry.id);
       }
       event.target.value = "";
     }
@@ -1535,9 +1816,13 @@
                 <div class="w-6 h-6 rounded bg-base-200/80 flex items-center justify-center shrink-0 ${file.colorClass}">
                   <i data-lucide="${file.icon}" class="w-3.5 h-3.5"></i>
                 </div>
-                <div class="min-w-0 flex items-center gap-1.5 flex-wrap">
-                  <span class="font-bold text-xs text-base-content font-mono truncate max-w-[220px]" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
-                  ${file.sizeFormatted ? `<span class="badge badge-ghost badge-2xs text-3xs font-mono text-base-content/60">${file.sizeFormatted}</span>` : `<span class="badge badge-ghost badge-2xs text-3xs font-mono text-base-content/60">${file.category}</span>`}
+                <div class="min-w-0 flex flex-col gap-0.5">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="font-bold text-xs text-base-content font-mono truncate max-w-[220px]" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
+                    ${file.sizeFormatted ? `<span class="badge badge-ghost badge-2xs text-3xs font-mono text-base-content/60">${file.sizeFormatted}</span>` : `<span class="badge badge-ghost badge-2xs text-3xs font-mono text-base-content/60">${file.category}</span>`}
+                    ${file.uploadStatus === "uploading" ? `<span class="badge badge-info badge-outline badge-2xs text-3xs font-mono">staging...</span>` : ""}
+                  </div>
+                  ${file.path ? `<span class="text-3xs font-mono text-success truncate max-w-[260px] collected-file-path" title="${escapeHtml(file.path)}">${escapeHtml(file.path)}</span>` : ""}
                 </div>
               </div>
               <div class="flex items-center gap-1 shrink-0">
@@ -1599,10 +1884,11 @@
         if (!dt || !dt.files || dt.files.length === 0) return;
         for (let i = 0; i < dt.files.length; i++) {
           const file = dt.files[i];
-          addCollectedFile(file.name, {
+          const entry = addCollectedFile(file.name, {
             sizeFormatted: formatFileSize(file.size),
             sizeBytes: file.size
           });
+          if (entry) stageBrowserFile(file, entry.id);
         }
       });
     }
@@ -1611,9 +1897,36 @@
       "light", "dark", "cupcake", "bumblebee", "emerald", "corporate", "synthwave",
       "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua",
       "lofi", "pastel", "fantasy", "wireframe", "black", "luxury", "dracula",
-      "cmyk", "autumn", "business", "acid", "lemon", "night", "coffee", "winter",
+      "cmyk", "autumn", "business", "acid", "lemonade", "night", "coffee", "winter",
       "dim", "nord", "sunset"
     ];
+
+    let lastScaffoldedProject = null;
+    let agentBridgePreflightOk = false;
+    let agentBridgeCsrfToken = null;
+
+    function getSelectedWidgets() {
+      return Array.from(document.querySelectorAll(".widget-preset-chk:checked"))
+        .map((el) => el.getAttribute("data-widget"))
+        .filter(Boolean);
+    }
+
+    function onWidgetPresetToggle(chk) {
+      const widgetKey = chk?.getAttribute("data-widget");
+      if (chk?.checked) {
+        if (widgetKey === "chart-pair") {
+          const el = document.getElementById("chk-charts");
+          if (el) el.checked = true;
+        } else if (widgetKey === "grid-table") {
+          const el = document.getElementById("chk-gridjs");
+          if (el) el.checked = true;
+        } else if (widgetKey === "mermaid-flow") {
+          const el = document.getElementById("chk-mermaid");
+          if (el) el.checked = true;
+        }
+      }
+      updatePromptAndPreview();
+    }
 
     function createThemeSwatchItem(theme, currentActive, onSelect) {
       const isCustom = userCustomTheme && theme === userCustomTheme.name;
@@ -2101,7 +2414,17 @@
       }
 
       if (userGoals) {
-        heroTitle = userGoals.length > 55 ? userGoals.substring(0, 52) + "..." : userGoals;
+        const cleanGoal = userGoals.replace(/\s+/g, " ").trim();
+        const firstClause = cleanGoal.split(/[\n.!?;]+/)[0].trim();
+        if (firstClause && firstClause.length <= 80) {
+          heroTitle = firstClause;
+        } else if (cleanGoal.length <= 80) {
+          heroTitle = cleanGoal;
+        } else {
+          const slice = cleanGoal.slice(0, 80);
+          const lastSpace = slice.lastIndexOf(" ");
+          heroTitle = (lastSpace > 40 ? slice.slice(0, lastSpace) : slice).trim();
+        }
       }
 
       // Content Addons list
@@ -2180,15 +2503,18 @@
           if (f.note && f.note.trim()) {
             line += ` - Context Note: "${f.note.trim()}"`;
           }
+          if (f.path) {
+            line += ` [Path: ${f.path}]`;
+          }
           promptText += `${line}\n`;
         });
       }
 
       promptText += `\nDeliverable Architecture:\n`;
       promptText += `- Purpose & Format: ${humanTargetName.toUpperCase()}\n`;
-      promptText += `- Serving Mode: ${currentMode === "static" ? "Static File (Zero Backend, file:/// compatible, no Datastar server hooks)" : "Server-Connected (Live Backend on localhost:3000 with Datastar SSE)"}\n`;
+      promptText += `- Serving Mode: ${currentMode === "static" ? "Static File (Zero Backend, file:/// compatible, no Datastar server hooks)" : "Server-Connected (Live Backend on localhost:3031 with Datastar SSE)"}\n`;
       promptText += `- Behavioral Mode: ${currentBehavioral === "passive" ? "Passive / Printable Document (@page A4/Letter PDF)" : "Interactive / Reactive Application (Alpine.js, Chart.js, client-side fetch)"}\n`;
-      promptText += `- Operational Mode: ${currentMode === "static" ? "STATIC_STANDALONE (Zero server required, single self-contained HTML file)" : "LIVE_CONNECTED (Server-backed SSE stream on localhost:3000)"}\n`;
+      promptText += `- Operational Mode: ${currentMode === "static" ? "STATIC_STANDALONE (Zero server required, single self-contained HTML file)" : "LIVE_CONNECTED (Server-backed SSE stream on localhost:3031)"}\n`;
       promptText += `- App Packaging: ${currentApp === "none" ? "Standard Browser Page" : currentApp === "live-app" ? "Downloadable App (Standalone Window, Live Connected)" : "Downloadable Offline-First App (100% Offline Service Worker Cache)"}\n`;
       promptText += `- Startup Theme: "${currentTheme}"${isCustomThemeActive ? ` (Custom DaisyUI Theme: "${userCustomTheme.name}")` : " (Default on first load; readers can switch between 32 themes via navbar)"}\n`;
 
@@ -2211,7 +2537,13 @@
       }
       if (hasMcpTools) promptText += `\n  • Enterprise Tools Gateway (Proxy widgets to Postgres / GitLab MCP servers)`;
 
-      const projectSlug = (userGoals || heroTitle || `${currentTarget}-project`)
+      const rawExplicitSlug = document.getElementById("input-project-slug")?.value.trim() || "";
+      const sanitizedExplicitSlug = rawExplicitSlug
+        .toLowerCase()
+        .replace(/[^a-z0-9-]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 60);
+      const projectSlug = sanitizedExplicitSlug || (userGoals || heroTitle || `${currentTarget}-project`)
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "")
@@ -2294,6 +2626,7 @@
       if (hasDayjs) scaffoldAddonKeys.push("dayjs");
       if (hasQuill) scaffoldAddonKeys.push("quill");
 
+      const selectedWidgets = getSelectedWidgets();
       const scaffoldMode = currentMode === "live" && currentTarget === "report" ? "live-report" : currentTarget;
       const scaffoldCmdParts = [
         "node skills/html-report/scripts/scaffold-project.mjs",
@@ -2303,6 +2636,7 @@
         `--theme ${currentTheme}`
       ];
       if (scaffoldAddonKeys.length > 0) scaffoldCmdParts.push(`--addons ${scaffoldAddonKeys.join(",")}`);
+      if (selectedWidgets.length > 0) scaffoldCmdParts.push(`--widgets ${selectedWidgets.join(",")}`);
       if (hasAiAgent) {
         scaffoldCmdParts.push("--ai");
         scaffoldCmdParts.push(`--ai-port ${aiPort}`);
@@ -2332,10 +2666,11 @@
       if (collectedFiles.length > 0) {
         promptText += `${userAudience ? 6 : 5}. Ground visualizations, data schemas, and domain terminology directly on the provided reference files:\n`;
         collectedFiles.forEach((f) => {
+          const fileRef = f.path ? `${f.name} (Path: ${f.path})` : f.name;
           if (f.note && f.note.trim()) {
-            promptText += `   • ${f.name}: Ground on context note ("${f.note.trim()}").\n`;
+            promptText += `   • ${fileRef}: Ground on context note ("${f.note.trim()}").\n`;
           } else {
-            promptText += `   • ${f.name}: Ground relevant visualizations/structure on this reference.\n`;
+            promptText += `   • ${fileRef}: Ground relevant visualizations/structure on this reference.\n`;
           }
         });
       }
@@ -2398,6 +2733,422 @@
       URL.revokeObjectURL(url);
     }
 
+    function collectStudioPayload() {
+      const explicitSlug = document.getElementById("input-project-slug")?.value.trim() || "";
+      const userGoals = document.getElementById("input-board-goals")?.value.trim() || "";
+      const userAudience = document.getElementById("input-board-audience")?.value.trim() || "";
+      const heroTitleEl = document.getElementById("mockup-hero-title");
+      const heroTitle = heroTitleEl ? heroTitleEl.textContent.trim() : "";
+
+      const addonMap = [
+        ["chk-charts", "charts"],
+        ["chk-mermaid", "mermaid"],
+        ["chk-gridjs", "gridjs"],
+        ["chk-leaflet", "leaflet"],
+        ["chk-katex", "katex"],
+        ["chk-fullcalendar", "fullcalendar"],
+        ["chk-showdown", "showdown"],
+        ["chk-hljs", "hljs"],
+        ["chk-dayjs", "dayjs"],
+        ["chk-quill", "quill"]
+      ];
+      const addons = addonMap.filter(([id]) => document.getElementById(id)?.checked).map(([, key]) => key);
+      const widgets = getSelectedWidgets();
+      const hasAiAgent = document.getElementById("chk-ai-agent")?.checked ?? false;
+      const aiPortRaw = document.getElementById("ai-bridge-port")?.value?.trim();
+      const aiPort = aiPortRaw && Number(aiPortRaw) > 0 ? Number(aiPortRaw) : 3031;
+      const aiPurpose = document.getElementById("ai-bridge-purpose")?.value?.trim() || "";
+      const aiDock = document.getElementById("ai-floating-assistant")?.checked ?? true;
+      const isCustomThemeActive = userCustomTheme && currentTheme === userCustomTheme.name;
+
+      return {
+        projectSlug: explicitSlug,
+        title: heroTitle,
+        userGoals,
+        userAudience,
+        target: currentTarget,
+        operationalMode: currentMode,
+        servingMode: currentMode,
+        behavioralMode: currentBehavioral,
+        appPackaging: currentApp === "none" ? "browser" : currentApp,
+        theme: currentTheme,
+        customTheme: isCustomThemeActive ? userCustomTheme : null,
+        addons,
+        widgets,
+        referenceFiles: collectedFiles.map((f) => ({
+          name: f.name,
+          path: f.path || "",
+          note: f.note || "",
+          category: f.category || ""
+        })),
+        ai: hasAiAgent,
+        aiPort,
+        aiPurpose,
+        aiDock
+      };
+    }
+
+    async function parseJsonResponseSafe(res) {
+      const contentType = res.headers.get("content-type") || "";
+      const rawText = await res.text();
+      let data = null;
+      if (rawText && (contentType.includes("application/json") || /^\s*[\[{]/.test(rawText))) {
+        try {
+          data = JSON.parse(rawText);
+        } catch (_) {
+          data = null;
+        }
+      }
+      return { data, rawText };
+    }
+
+    function setWorkspaceLifecycleState(state, { slug = "", detail = "" } = {}) {
+      const box = document.getElementById("workspace-lifecycle-status");
+      const badge = document.getElementById("workspace-state-badge");
+      const slugEl = document.getElementById("workspace-state-slug");
+      const detailEl = document.getElementById("workspace-state-detail");
+      if (!box || !badge || !detailEl) return;
+
+      box.className = "p-3 rounded-xl border text-xs flex items-start justify-between gap-3";
+      badge.className = "badge badge-xs font-mono font-bold";
+
+      if (state === "created") {
+        box.classList.add("border-success/40", "bg-success/10");
+        badge.classList.add("badge-success", "text-success-content");
+        badge.textContent = "Workspace Created";
+        if (slugEl) {
+          slugEl.textContent = slug ? `projects/${slug}/` : "";
+          slugEl.classList.toggle("hidden", !slug);
+        }
+        detailEl.innerHTML = detail || (agentBridgePreflightOk
+          ? `Starter files are saved in <code class="font-mono">projects/${escapeHtml(slug)}/</code>. Open the live preview or click <strong>Send to Agent</strong> / <strong>Copy AI Prompt</strong> to build out the content.`
+          : `Starter files are saved in <code class="font-mono">projects/${escapeHtml(slug)}/</code>. Open the live preview or click <strong>Copy AI Prompt</strong> to build out the content.`);
+      } else if (state === "dispatched") {
+        box.classList.add("border-accent/40", "bg-accent/10");
+        badge.classList.add("badge-accent", "text-accent-content");
+        badge.textContent = "Sent to Agent";
+        if (slugEl) {
+          slugEl.textContent = slug ? `projects/${slug}/` : "";
+          slugEl.classList.toggle("hidden", !slug);
+        }
+        detailEl.innerHTML = detail || `Workspace <code class="font-mono">projects/${escapeHtml(slug)}/</code> is live and your instructions were sent to the AI Agent Bridge.`;
+      } else if (state === "error") {
+        box.classList.add("border-error/40", "bg-error/10");
+        badge.classList.add("badge-error", "text-error-content");
+        badge.textContent = "Workspace Not Created";
+        if (slugEl) slugEl.classList.add("hidden");
+        detailEl.textContent = detail || "Could not create the workspace folder yet. Your draft choices are still safe above.";
+      } else if (state === "offline") {
+        box.classList.add("border-warning/40", "bg-warning/10");
+        badge.classList.add("badge-warning", "text-warning-content");
+        badge.textContent = "Local Server Needed for Auto-Create";
+        if (slugEl) slugEl.classList.add("hidden");
+        detailEl.innerHTML = detail || "Automatic workspace creation isn't available right now (offline or outdated server). You can still use <strong>Copy AI Prompt</strong> or <strong>Download Starter HTML</strong> below.";
+      } else {
+        box.classList.add("border-base-300", "bg-base-200/50");
+        badge.classList.add("badge-ghost");
+        badge.textContent = "Draft — Not Created Yet";
+        if (slugEl) slugEl.classList.add("hidden");
+        detailEl.innerHTML = detail || (agentBridgePreflightOk
+          ? "Your choices are ready below, but no project folder exists on disk yet. Click <strong>Create Workspace</strong> to start, or copy/send the prompt."
+          : "Your choices are ready below, but no project folder exists on disk yet. Click <strong>Create Workspace</strong> to start, or copy/save the AI prompt.");
+      }
+    }
+
+    function showScaffoldError(message, title = "Workspace not created") {
+      const errBanner = document.getElementById("scaffold-error-banner");
+      const errTitle = document.getElementById("scaffold-error-title");
+      const errMsg = document.getElementById("scaffold-error-message");
+      if (errTitle) errTitle.textContent = title;
+      if (errMsg) errMsg.textContent = message;
+      if (errBanner) errBanner.classList.remove("hidden");
+    }
+
+    function clearScaffoldError() {
+      const errBanner = document.getElementById("scaffold-error-banner");
+      if (errBanner) errBanner.classList.add("hidden");
+    }
+
+    async function ensureAgentCsrfToken(forceRefresh = false) {
+      if (!forceRefresh && agentBridgeCsrfToken) return agentBridgeCsrfToken;
+      if (window.location.protocol === "file:") return null;
+      try {
+        const res = await fetch("/api/agent/csrf-token", { cache: "no-store" });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data && data.ok && data.csrfToken) {
+          agentBridgeCsrfToken = data.csrfToken;
+          return agentBridgeCsrfToken;
+        }
+      } catch (_) {}
+      return null;
+    }
+
+    async function scaffoldProjectNow(btn) {
+      const payload = collectStudioPayload();
+      const originalHtml = btn ? btn.innerHTML : "";
+      clearScaffoldError();
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading loading-spinner loading-xs"></span> Creating Workspace...';
+      }
+      try {
+        if (window.location.protocol === "file:") {
+          throw new Error("You opened this page directly as a file. Automatic workspace creation requires the local app (port 3031/3032). Use 'Copy AI Prompt' or 'Download Starter HTML' instead.");
+        }
+        const csrfToken = await ensureAgentCsrfToken();
+        const headers = { "Content-Type": "application/json" };
+        if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
+        const res = await fetch("/api/create/scaffold", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(csrfToken ? { ...payload, csrfToken } : payload)
+        });
+        const { data, rawText } = await parseJsonResponseSafe(res);
+        if (res.status === 404) {
+          throw new Error("The running local server doesn't support Create Workspace yet (404). Please refresh in a moment or restart the local server, or use 'Copy AI Prompt' / 'Download Starter HTML'.");
+        }
+        if (!res.ok || !data || !data.ok) {
+          const detail = (data && data.error) || (rawText ? rawText.slice(0, 160).trim() : `HTTP ${res.status}`);
+          throw new Error(detail);
+        }
+        lastScaffoldedProject = data;
+
+        const banner = document.getElementById("scaffold-result-banner");
+        const titleEl = document.getElementById("scaffold-result-title");
+        const pathEl = document.getElementById("scaffold-result-path");
+        const linkEl = document.getElementById("scaffold-result-open-link");
+        if (banner && titleEl && pathEl && linkEl) {
+          const refsCount = Array.isArray(data.stagedRefs) ? data.stagedRefs.filter((r) => r.stagedPath).length : 0;
+          titleEl.textContent = `Workspace created: "${data.slug}"`;
+          pathEl.textContent = `${data.projectDir}/fragment.html${refsCount ? ` · ${refsCount} ref(s) staged in refs/` : ""}`;
+          linkEl.href = data.entryUrl;
+          banner.classList.remove("hidden");
+        }
+        setWorkspaceLifecycleState("created", { slug: data.slug });
+        if (typeof window.loadWorkspaceProjects === "function") {
+          window.loadWorkspaceProjects({ refresh: true });
+        }
+        if (window.lucide) window.lucide.createIcons();
+        return data;
+      } catch (err) {
+        const msg = err && err.name === "TypeError"
+          ? "Could not reach the local server (port 3031/3032). Use 'Copy AI Prompt' or 'Download Starter HTML' below, or start the local server."
+          : (err && err.message ? err.message : "Unknown error");
+        setWorkspaceLifecycleState("error", { detail: "No workspace folder was created on disk. Your configuration above is preserved." });
+        showScaffoldError(msg);
+        const statusEl = document.getElementById("agent-bridge-dispatch-status");
+        if (statusEl) {
+          statusEl.textContent = `Workspace creation error: ${msg}`;
+          statusEl.className = "text-3xs font-mono px-1 text-error";
+          statusEl.classList.remove("hidden");
+        }
+        return null;
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+          if (window.lucide) window.lucide.createIcons();
+        }
+      }
+    }
+
+    function setSendToAgentVisibility(btn, visible) {
+      if (!btn) return;
+      btn.classList.toggle("hidden", !visible);
+      btn.hidden = !visible;
+      btn.disabled = !visible;
+    }
+
+    async function checkAgentBridgePreflight() {
+      const btn = document.getElementById("btn-send-to-agent");
+      const statusEl = document.getElementById("agent-bridge-dispatch-status");
+      if (!btn) return;
+      if (window.location.protocol === "file:") {
+        agentBridgePreflightOk = false;
+        agentBridgeCsrfToken = null;
+        setSendToAgentVisibility(btn, false);
+        return;
+      }
+      try {
+        const res = await fetch("/api/agent/preflight", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const hasVerifiedProvider = Boolean(
+          data &&
+          data.providerAvailable === true &&
+          (data.authenticated === true || data.inferenceVerified === true)
+        );
+        const hasSecureBridgeFlag = Boolean(
+          data &&
+          data.ok &&
+          data.bridgeReachable !== false &&
+          data.secureBridge === true &&
+          hasVerifiedProvider
+        );
+
+        let token = hasSecureBridgeFlag ? (data.csrfToken || null) : null;
+        if (hasSecureBridgeFlag && !token) {
+          token = await ensureAgentCsrfToken();
+        }
+        const secureBridgeReady = Boolean(hasSecureBridgeFlag && token);
+        agentBridgeCsrfToken = secureBridgeReady ? token : null;
+        agentBridgePreflightOk = secureBridgeReady;
+        setSendToAgentVisibility(btn, secureBridgeReady);
+
+        if (secureBridgeReady) {
+          btn.title = "Send synthesized prompt & project metadata to verified local Agent Bridge (/api/agent/prompt)";
+          if (statusEl && statusEl.classList.contains("hidden")) {
+            statusEl.textContent = `Secure two-way bridge active${data.activeProviderName ? ` (${data.activeProviderName})` : ""}`;
+            statusEl.className = "text-3xs font-mono px-1 text-success";
+            statusEl.classList.remove("hidden");
+          }
+        } else {
+          btn.title = "Hidden unless a secure, authenticated two-way agent bridge is active";
+        }
+      } catch (_) {
+        agentBridgePreflightOk = false;
+        agentBridgeCsrfToken = null;
+        setSendToAgentVisibility(btn, false);
+        btn.title = "Hidden unless a secure, authenticated two-way agent bridge is active";
+      }
+    }
+
+    async function sendPromptToAgentBridge(btn) {
+      const box = document.getElementById("prompt-output-box");
+      const statusEl = document.getElementById("agent-bridge-dispatch-status");
+      const prompt = box ? box.value.trim() : "";
+      if (!prompt || !agentBridgePreflightOk) return;
+
+      const originalHtml = btn ? btn.innerHTML : "";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading loading-spinner loading-xs"></span> Sending...';
+      }
+
+      try {
+        const csrfToken = await ensureAgentCsrfToken();
+        if (!csrfToken) {
+          throw new Error("Secure bridge CSRF verification failed.");
+        }
+        if (!lastScaffoldedProject) {
+          await scaffoldProjectNow(null);
+        }
+        const studioPayload = collectStudioPayload();
+        const projectMeta = lastScaffoldedProject
+          ? {
+              slug: lastScaffoldedProject.slug,
+              entryUrl: lastScaffoldedProject.entryUrl,
+              fragmentPath: lastScaffoldedProject.fragmentPath,
+              manifestPath: lastScaffoldedProject.manifestPath,
+              target: studioPayload.target,
+              operationalMode: studioPayload.operationalMode,
+              theme: studioPayload.theme,
+              widgets: studioPayload.widgets,
+              referenceFiles: studioPayload.referenceFiles
+            }
+          : {
+              slug: studioPayload.projectSlug,
+              target: studioPayload.target,
+              operationalMode: studioPayload.operationalMode,
+              theme: studioPayload.theme,
+              widgets: studioPayload.widgets,
+              referenceFiles: studioPayload.referenceFiles
+            };
+
+        const res = await fetch("/api/agent/prompt", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken
+          },
+          body: JSON.stringify({
+            csrfToken,
+            prompt,
+            project: projectMeta,
+            context: {
+              source: "create.html",
+              projectSlug: projectMeta.slug,
+              activeTheme: studioPayload.theme,
+              target: studioPayload.target,
+              widgets: studioPayload.widgets
+            }
+          })
+        });
+        const { data } = await parseJsonResponseSafe(res);
+        if (statusEl) {
+          if (res.ok && (!data || data.ok !== false)) {
+            statusEl.textContent = `Dispatched to Agent Bridge${projectMeta.slug ? ` (project: ${projectMeta.slug})` : ""}`;
+            statusEl.className = "text-3xs font-mono px-1 text-success";
+            setWorkspaceLifecycleState("dispatched", { slug: projectMeta.slug || "" });
+          } else {
+            statusEl.textContent = `Bridge dispatch notice (${res.status}): ${(data && (data.error || data.message)) || "Unavailable"}`;
+            statusEl.className = "text-3xs font-mono px-1 text-warning";
+          }
+          statusEl.classList.remove("hidden");
+        }
+      } catch (err) {
+        if (statusEl) {
+          statusEl.textContent = `Bridge dispatch failed: ${err.message}`;
+          statusEl.className = "text-3xs font-mono px-1 text-error";
+          statusEl.classList.remove("hidden");
+        }
+      } finally {
+        if (btn) {
+          setSendToAgentVisibility(btn, agentBridgePreflightOk);
+          btn.innerHTML = originalHtml;
+          if (window.lucide) window.lucide.createIcons();
+        }
+      }
+    }
+
+    async function syncConfigFromServer() {
+      if (window.location.protocol === "file:") {
+        if (!lastScaffoldedProject) setWorkspaceLifecycleState("offline");
+        return;
+      }
+      try {
+        const res = await fetch("/api/create/config", { cache: "no-store" });
+        if (!res.ok) {
+          if (!lastScaffoldedProject) setWorkspaceLifecycleState("offline");
+          return;
+        }
+        const { data } = await parseJsonResponseSafe(res);
+        if (!data) {
+          if (!lastScaffoldedProject) setWorkspaceLifecycleState("offline");
+          return;
+        }
+        if (Array.isArray(data.capabilities) && data.capabilities.includes("scaffold")) {
+          clearScaffoldError();
+          if (!lastScaffoldedProject) setWorkspaceLifecycleState("draft");
+        } else if (!lastScaffoldedProject) {
+          setWorkspaceLifecycleState("offline", {
+            detail: "The running local server is an older version without Create Workspace support. Refresh after updating or use Copy AI Prompt / Download Starter HTML below."
+          });
+        }
+        if (Array.isArray(data.themes) && data.themes.length > 0) {
+          const customName = userCustomTheme ? userCustomTheme.name : null;
+          DAISYUI_THEMES.length = 0;
+          if (customName) DAISYUI_THEMES.push(customName);
+          for (const t of data.themes) {
+            if (!DAISYUI_THEMES.includes(t)) DAISYUI_THEMES.push(t);
+          }
+          initNavbarThemeDropdown();
+          initInitialThemeDropdown();
+        }
+      } catch (_) {
+        if (!lastScaffoldedProject) setWorkspaceLifecycleState("offline");
+      }
+    }
+
+    window.addEventListener("html-report:server-reconnected", () => {
+      syncConfigFromServer();
+      checkAgentBridgePreflight();
+      if (typeof window.loadWorkspaceProjects === "function") {
+        window.loadWorkspaceProjects({ refresh: true });
+      }
+    });
+
     function resetStudioToDefault(btn) {
       // 1. Reset Step 1: Purpose & Deliverable, Behavioral, Goals, Audience, Reference Files
       const reportCard = document.querySelector('[data-target="report"]');
@@ -2411,6 +3162,14 @@
 
       const noneAppCard = document.getElementById("app-card-none");
       if (noneAppCard) selectWizardApp("none", noneAppCard);
+
+      const slugInput = document.getElementById("input-project-slug");
+      if (slugInput) slugInput.value = "";
+      lastScaffoldedProject = null;
+      const scaffoldBanner = document.getElementById("scaffold-result-banner");
+      if (scaffoldBanner) scaffoldBanner.classList.add("hidden");
+      clearScaffoldError();
+      setWorkspaceLifecycleState("draft");
 
       const goalsInput = document.getElementById("input-board-goals");
       if (goalsInput) {
@@ -2450,6 +3209,7 @@
         const el = document.getElementById(id);
         if (el) el.checked = false;
       });
+      document.querySelectorAll(".widget-preset-chk").forEach((el) => { el.checked = false; });
       const resetPort = document.getElementById("ai-bridge-port");
       if (resetPort) resetPort.value = "3031";
       const resetPurpose = document.getElementById("ai-bridge-purpose");
@@ -2985,6 +3745,7 @@
         window.scrollTo({ top: 0, behavior: "instant" });
         loadWorkspaceProjects();
       } else {
+        const wasProjectsVisible = projectsView && !projectsView.classList.contains("hidden");
         if (wizardView) wizardView.classList.remove("hidden");
         if (projectsView) projectsView.classList.add("hidden");
         if (bottomBar) bottomBar.classList.remove("hidden");
@@ -2997,7 +3758,9 @@
         if (updateHash && window.location.hash === "#projects") {
           history.pushState(null, "", window.location.pathname + window.location.search);
         }
-        window.scrollTo({ top: 0, behavior: "instant" });
+        if (wasProjectsVisible && (!window.location.hash || window.location.hash === "#projects")) {
+          window.scrollTo({ top: 0, behavior: "instant" });
+        }
       }
       if (window.lucide) {
         try { window.lucide.createIcons(); } catch (_) {}
@@ -3322,11 +4085,23 @@
         }
       } catch (_) {}
 
-      initNavbarThemeDropdown();
-      initInitialThemeDropdown();
-      initFileDropZone();
-      renderCollectedFiles();
-      updatePromptAndPreview();
+      const ensureIconsReady = () => {
+        if (window.__rehydrateCreateIcons && window.__rehydrateCreateIcons()) return true;
+        if (window.__loadLucideFallback) window.__loadLucideFallback();
+        return false;
+      };
+      ensureIconsReady();
+
+      const safeCall = (fn) => {
+        try { if (typeof fn === "function") fn(); } catch (err) { console.warn("[create] init notice:", err); }
+      };
+      safeCall(initNavbarThemeDropdown);
+      safeCall(initInitialThemeDropdown);
+      safeCall(initFileDropZone);
+      safeCall(renderCollectedFiles);
+      safeCall(updatePromptAndPreview);
+      safeCall(syncConfigFromServer);
+      safeCall(checkAgentBridgePreflight);
       setTimeout(syncThemeColorMeta, 250);
 
       // Initialize route & preload projects
@@ -3336,7 +4111,28 @@
         window.loadWorkspaceProjects();
       }
 
-      if (window.lucide) window.lucide.createIcons();
+      ensureIconsReady();
+      window.addEventListener("load", ensureIconsReady);
+
+      if (typeof MutationObserver !== "undefined" && document.body) {
+        let iconTimer = null;
+        const iconObserver = new MutationObserver((mutations) => {
+          for (const m of mutations) {
+            if (m.type !== "childList" || m.addedNodes.length === 0) continue;
+            for (const node of m.addedNodes) {
+              if (node.nodeType === 1 && (
+                (node.matches && node.matches(":not(svg)[data-lucide]")) ||
+                (node.querySelector && node.querySelector(":not(svg)[data-lucide]"))
+              )) {
+                if (iconTimer) clearTimeout(iconTimer);
+                iconTimer = setTimeout(ensureIconsReady, 16);
+                return;
+              }
+            }
+          }
+        });
+        iconObserver.observe(document.body, { childList: true, subtree: true });
+      }
     });
   </script>
 </body>

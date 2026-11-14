@@ -71,11 +71,15 @@ describe("Phase 2: build-report.mjs Deterministic Assembly Unit Tests", () => {
       assert.ok(opts.addons.includes("dayjs"));
     });
 
-    it("should handle --presentation flag and auto-include impress addon", () => {
+    it("should handle --presentation flag with reveal default and explicit --impress support", () => {
       const argv = ["node", "build-report.mjs", "-c", "frag.html", "--presentation"];
       const opts = parseArgs(argv);
       assert.equal(opts.presentation, true);
-      assert.ok(opts.addons.includes("impress"));
+      assert.equal(opts.mode, "presentation");
+
+      const legacyOpts = parseArgs(["node", "build-report.mjs", "-c", "frag.html", "--presentation", "--impress"]);
+      assert.equal(legacyOpts.presentation, true);
+      assert.ok(legacyOpts.addons.includes("impress"));
     });
 
     it("should handle --live and -l flags and auto-include datastar addon", () => {

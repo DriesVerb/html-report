@@ -10,83 +10,69 @@ description: >-
 
 > **Domain:** `Delivery Archetype` | **Beneficiary:** `User-Facing` | **Serving:** `Static File` | **Behavior:** `Interactive / Reactive`
 
-Specialized skill producing interactive slide presentations, pitches, and structured decks using **Reveal.js** combined with Tailwind CSS and DaisyUI styling.
+Specialized skill producing interactive slide presentations, pitches, and structured decks using **Reveal.js** (`embedded: true`, `disableLayout: true`) combined with Tailwind CSS and DaisyUI 32-theme styling.
 
-> [!NOTE]
-> **Phase 3 Update**: Transitioned from 3D spatial canvas to **Reveal.js** for simpler authoring ergonomics, predictable 2D grid slides, markdown compatibility, touch support, and speaker notes. Extended features will be expanded in an upcoming sprint.
+> **[Reveal.js Presentation Style Guide](../html-report/references/reveal-presentation-style-guide.md)**: Required reference for `#presentation-shell`, `.slide-body` specificity rules, multi-mode spacing tokens (`--slide-pad-x`, `--slide-pad-top`, `--slide-pad-bottom`), Fullscreen (`F`), follow-along Speaker Notes (`N`), and Chart.js / Leaflet / Mermaid sizing.
 
 ---
 
 ## Reveal.js Presentation Standards
 
 ### 1. Slide Deck Structure
-Slides use standard semantic `<section>` blocks inside `.reveal > .slides`:
+Wrap slides in `#presentation-shell` and `.reveal-stage > .reveal#presentation-deck > .slides > section`, placing flex layout inside `<div class="slide-body">`. Never put `p-10` directly on `<section>`, so multi-mode spacing tokens and safe-zone clearances hold across Embedded, Fullscreen, Stacked, and Print modes:
 ```html
-<main id="report-main" class="presentation-container">
-  <div class="reveal" id="presentation-deck">
-    <div class="slides">
-      <!-- Slide 1: Hero -->
-      <section class="card bg-base-100 shadow-2xl p-10 border border-base-300">
-        <h1 class="text-4xl font-black text-primary mb-4">Autonomous Agent Systems</h1>
-        <p class="text-xl text-base-content/70">Engineering Architecture 2026</p>
-      </section>
-
-      <!-- Slide 2: Strategic Pillars -->
-      <section class="card bg-base-100 shadow-2xl p-10 border border-base-300">
-        <h2 class="text-3xl font-extrabold text-base-content mb-6">Core Pillars</h2>
-        <div class="grid grid-cols-3 gap-4 text-left text-xs">
-          <div class="p-4 bg-base-200/60 rounded-xl border border-base-300">
-            <h3 class="font-bold text-primary mb-1">Deterministic</h3>
-            <p class="text-base-content/70">Predictable CLI compilation.</p>
-          </div>
-          <div class="p-4 bg-base-200/60 rounded-xl border border-base-300">
-            <h3 class="font-bold text-secondary mb-1">Zero-Duplication</h3>
-            <p class="text-base-content/70">Shared runtime assets.</p>
-          </div>
-          <div class="p-4 bg-base-200/60 rounded-xl border border-base-300">
-            <h3 class="font-bold text-accent mb-1">Two-Way Bridge</h3>
-            <p class="text-base-content/70">Datastar SSE &amp; MCP gateway.</p>
-          </div>
-        </div>
-        <aside class="notes">Key speaking notes for presenter.</aside>
-      </section>
-
-      <!-- Slide 3: Vertical Sub-Slide -->
-      <section>
-        <section class="card bg-base-100 shadow-2xl p-10 border border-base-300">
-          <h2 class="text-2xl font-bold">Deep Dive</h2>
-          <p class="text-sm text-base-content/70">Press &darr; for details.</p>
-        </section>
-        <section class="card bg-base-100 shadow-2xl p-10 border border-base-300">
-          <h3 class="text-xl font-bold text-secondary">JSON-RPC over SSE</h3>
-          <p class="text-xs font-mono bg-base-200 p-3 rounded mt-2">POST /mcp/messages &bull; GET /mcp/sse</p>
-        </section>
-      </section>
+<main id="report-main" class="container mx-auto px-4 py-8 space-y-6">
+  <section id="presentation-shell" class="space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Autonomous Agent Systems</h1>
+      <div class="flex items-center gap-2 print:hidden">
+        <button id="presentation-notes-btn" type="button" class="btn btn-outline btn-sm">Notes N</button>
+        <button id="presentation-stack-btn" type="button" class="btn btn-outline btn-sm">All Slides</button>
+        <button id="presentation-fullscreen-btn" type="button" class="btn btn-primary btn-sm">Present F</button>
+      </div>
     </div>
-  </div>
+    <div class="reveal-stage">
+      <div class="reveal" id="presentation-deck">
+        <div class="slides">
+          <section data-notes="Fallback short note cue.">
+            <div class="slide-body justify-center">
+              <h2 class="text-4xl font-black text-primary">Slide 1</h2>
+              <p class="text-lg text-base-content/70">Architecture overview.</p>
+            </div>
+            <aside class="notes"><p>Rich speaker talking points.</p></aside>
+          </section>
+          <section>
+            <section><div class="slide-body"><h2>Deep Dive</h2></div></section>
+            <section><div class="slide-body"><h3>Sub-Slide</h3></div></section>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 ```
 
-### 2. Modes & Styling
-- **Presentation Mode**: `--presentation` flag activates keyboard controls (Arrows, Space, Esc, 's').
-- **Print / PDF Fallback**: Uninitialized slides stack cleanly for static reading or headless PDF printing.
-- **DaisyUI Harmony**: Works out-of-the-box with all 32 DaisyUI themes (`night`, `synthwave`, `luxury`, etc.).
+### 2. Modes & Controls
+- **Presentation Mode**: `--presentation` or `--mode presentation` activates Reveal.js keyboard navigation (`←`/`→`/`↑`/`↓`/`Space`), **`F`** Fullscreen toggle (`#presentation-shell`), **`N`** follow-along Speaker Notes (`#presentation-notes-modal`), and **All Slides** stacked toggle (`.is-stacked`).
+- **Legacy 3D Decks**: Pass `--impress` explicitly only when targeting legacy spatial `#impress` canvases.
+- **Print & DaisyUI**: Slides stack cleanly in print (`break-inside: avoid`) and adapt to all 32 DaisyUI themes.
 
 ---
 
 ## Assembly & Verification Workflow
 
 ```bash
-# 1. Build Reveal.js presentation deck
+# 1. Scaffold or build Reveal.js presentation deck
 node skills/html-report/scripts/build-report.mjs \
   --title "Autonomous Agents 2026" \
   --content slides-fragment.html \
-  --presentation \
-  --theme night \
-  --output deck.html
+  --presentation --theme night --output deck.html
 
-# 2. Preview on local dev server
-node skills/html-report/scripts/serve-report.mjs deck.html --port 3000
+# 2. Verify spacing, safe zones, fullscreen, and notes in Playwright
+node skills/html-report/playwright/verify-report.mjs deck.html --mode presentation --cdn-reveal
+
+# 3. Preview on local dev server (default port 3031, fallback 3032)
+node skills/html-report/scripts/serve-report.mjs deck.html --port 3031 --no-open
 ```
 
 ---

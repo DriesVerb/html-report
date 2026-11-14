@@ -208,7 +208,7 @@ Options:
     } else {
       output.write(`${ANSI.bold}${ANSI.green}[Step 2 of 5] Operational Data Mode${ANSI.reset}\n`);
       output.write(`  ${ANSI.bold}1)${ANSI.reset} Static Standalone ${ANSI.dim}(Zero server needed, 100% portable single HTML file)${ANSI.reset}\n`);
-      output.write(`  ${ANSI.bold}2)${ANSI.reset} Live Connected ${ANSI.dim}(Server-backed SSE stream on localhost:3000)${ANSI.reset}\n`);
+      output.write(`  ${ANSI.bold}2)${ANSI.reset} Live Connected ${ANSI.dim}(Server-backed SSE stream on localhost:3031)${ANSI.reset}\n`);
       const defaultModeChoice = target === "dashboard" ? "2" : "1";
       const modeChoice = await ask(rl, `${ANSI.bold}${ANSI.yellow}Select [1-2] (default: ${defaultModeChoice}): ${ANSI.reset}`) || defaultModeChoice;
       if (modeChoice === "2") operationalMode = "live";
