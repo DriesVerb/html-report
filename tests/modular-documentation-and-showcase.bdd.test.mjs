@@ -8,6 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { bindOpenSpec } from "./harness/openspec-bdd.mjs";
+import { serveReport } from "../skills/html-report/scripts/serve-report.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -141,11 +142,13 @@ bindOpenSpec("modular-documentation-and-showcase", {
   "Previewing documentation via Showdown viewer": async ({ Given, When, Then }) => {
     let browser = null;
     let page = null;
+    let srv = null;
 
     await Given("the landing page documentation hub", async () => {
+      srv = await serveReport({ filePath: "implementation-progress.html", port: 0, autoOpen: false });
       browser = await chromium.launch({ headless: true });
       page = await browser.newPage();
-      await page.goto("http://localhost:3000/", { waitUntil: "domcontentloaded" });
+      await page.goto(`http://127.0.0.1:${srv.serverPort}/`, { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(300);
     });
 
@@ -165,6 +168,7 @@ bindOpenSpec("modular-documentation-and-showcase", {
         assert.equal(isOpen, true, "Modal must be open and visible");
       } finally {
         if (browser) await browser.close();
+        if (srv) await srv.close();
       }
     });
   }

@@ -1,8 +1,9 @@
-import test, { describe, it } from "node:test";
+import test, { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { serveReport } from "../skills/html-report/scripts/serve-report.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,15 +28,31 @@ function fetchUrl(url, { headers = {} } = {}) {
 }
 
 describe("Datastar Live LLM Tracking & Showdown Artifact Viewer", () => {
+  let srv = null;
+  let baseUrl = "";
+
+  before(async () => {
+    srv = await serveReport({
+      filePath: "openspec/changes/archive/2026-11-14-reveal-presentation-and-csp-fixes/index.html",
+      port: 0,
+      autoOpen: false
+    });
+    baseUrl = `http://127.0.0.1:${srv.serverPort}`;
+  });
+
+  after(async () => {
+    if (srv) await srv.close();
+  });
+
   it("should resolve /proposal.md as raw text/markdown when requested via fetch/curl", async () => {
-    const res = await fetchUrl("http://localhost:3000/proposal.md");
+    const res = await fetchUrl(`${baseUrl}/proposal.md`);
     assert.equal(res.statusCode, 200);
     assert.match(res.headers["content-type"], /text\/markdown/);
     assert.match(res.body, /^# Proposal:/m);
   });
 
   it("should resolve /proposal.md as Showdown HTML preview when Accept header contains text/html", async () => {
-    const res = await fetchUrl("http://localhost:3000/proposal.md", {
+    const res = await fetchUrl(`${baseUrl}/proposal.md`, {
       headers: { Accept: "text/html,application/xhtml+xml" }
     });
     assert.equal(res.statusCode, 200);
@@ -45,7 +62,7 @@ describe("Datastar Live LLM Tracking & Showdown Artifact Viewer", () => {
   });
 
   it("should resolve /specs/ as the active capability spec.md", async () => {
-    const res = await fetchUrl("http://localhost:3000/specs");
+    const res = await fetchUrl(`${baseUrl}/specs`);
     assert.equal(res.statusCode, 200);
     assert.match(res.headers["content-type"], /text\/markdown/);
     assert.ok(res.body.length > 50, "Spec body should not be empty");
@@ -63,7 +80,7 @@ describe("Datastar Live LLM Tracking & Showdown Artifact Viewer", () => {
         }
       });
 
-      await page.goto("http://localhost:3000/", { waitUntil: "domcontentloaded" });
+      await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
 
       // Verify main components exist
       const stepper = await page.$("#journey-stepper");

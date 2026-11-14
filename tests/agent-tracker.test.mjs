@@ -1,4 +1,4 @@
-import test, { describe, it } from "node:test";
+import test, { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
 import fs from "node:fs";
@@ -17,6 +17,7 @@ import {
   CanonicalToolCategories,
   sanitizeCanonicalEvent
 } from "../skills/html-report/scripts/agent-tracker.mjs";
+import { serveReport } from "../skills/html-report/scripts/serve-report.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +25,17 @@ const playwrightPath = path.resolve(__dirname, "../skills/html-report/playwright
 const { chromium } = await import(playwrightPath);
 
 describe("Phase 1: Agent Tracker Facade & Strategies", () => {
+  let srv = null;
+  let serverPort = 3031;
+
+  before(async () => {
+    srv = await serveReport({ filePath: "dev/current-feature.html", port: 0, autoOpen: false });
+    serverPort = srv.serverPort;
+  });
+
+  after(async () => {
+    if (srv) await srv.close();
+  });
   it("1. Strategy Normalization: should normalize all 4 agent models without runtime errors", () => {
     const facade = new AgentTrackerFacade();
 
@@ -158,7 +170,7 @@ describe("Phase 1: Agent Tracker Facade & Strategies", () => {
       tool_calls: [{ call: { name: "test_telemetry", args: { CommandLine: "echo test" } } }]
     });
 
-    const pushResult = await facade.pushToDevServer({ port: 3000, host: "127.0.0.1", selector: "#live-feature-observer" });
+    const pushResult = await facade.pushToDevServer({ port: serverPort, host: "127.0.0.1", selector: "#live-feature-observer" });
     assert.ok(pushResult.ok, "Push to dev server should return ok: true");
     assert.ok(typeof pushResult.listeners === "number", "Response should report listener count");
   });
@@ -349,7 +361,7 @@ describe("Phase 1: Agent Tracker Facade & Strategies", () => {
     });
 
     try {
-      await page.goto("http://localhost:3000/current-feature.html", { waitUntil: "domcontentloaded", timeout: 10000 });
+      await page.goto(`http://127.0.0.1:${serverPort}/current-feature.html`, { waitUntil: "domcontentloaded", timeout: 10000 });
 
       // 1. Verify Active Spotlight Banner
       const spotlight = await page.waitForSelector("#active-work-spotlight", { timeout: 5000 });
@@ -482,7 +494,7 @@ describe("Phase 1: Agent Tracker Facade & Strategies", () => {
 
       for (const vp of viewports) {
         const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
-        await page.goto("http://localhost:3000/current-feature.html", { waitUntil: "domcontentloaded", timeout: 10000 });
+        await page.goto(`http://127.0.0.1:${serverPort}/current-feature.html`, { waitUntil: "domcontentloaded", timeout: 10000 });
 
         const spotlight = await page.waitForSelector("#active-work-spotlight");
         const spotlightBox = await spotlight.boundingBox();
@@ -499,7 +511,7 @@ describe("Phase 1: Agent Tracker Facade & Strategies", () => {
 
       // Test theme switching across 5 diverse DaisyUI themes
       const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-      await page.goto("http://localhost:3000/current-feature.html", { waitUntil: "domcontentloaded", timeout: 10000 });
+      await page.goto(`http://127.0.0.1:${serverPort}/current-feature.html`, { waitUntil: "domcontentloaded", timeout: 10000 });
 
       const themes = ["light", "dark", "cyberpunk", "synthwave", "corporate"];
       for (const th of themes) {
