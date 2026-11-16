@@ -1,0 +1,33 @@
+{
+  "name": "@html-report/core",
+  "version": "0.0.0-beta.1",
+  "description": "Deterministic HTML5 report compiler, FSM harness, theme/PWA builders, Playwright verifier, and clean viewer runtime.",
+  "type": "module",
+  "main": "./scripts/harness.mjs",
+  "bin": {
+    "html-report": "./scripts/harness.mjs",
+    "html-report-build": "./scripts/build-report.mjs",
+    "html-report-publish": "./scripts/publish-report.mjs",
+    "html-report-pwa": "./scripts/generate-pwa.mjs",
+    "html-report-verify": "./playwright/verify-report.mjs"
+  },
+  "exports": {
+    ".": "./scripts/harness.mjs",
+    "./build": "./scripts/build-report.mjs",
+    "./harness": "./scripts/harness.mjs",
+    "./theme": "./scripts/theme-compiler.mjs",
+    "./pwa": "./scripts/pwa-builder.mjs",
+    "./generate-pwa": "./scripts/generate-pwa.mjs",
+    "./publish": "./scripts/publish-report.mjs",
+    "./compatibility": "./scripts/compatibility.mjs",
+    "./caller-registry": "./scripts/caller-registry.mjs",
+    "./env": "./scripts/env.mjs",
+    "./verify": "./playwright/verify-report.mjs",
+    "./assets/*": "./assets/*",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}

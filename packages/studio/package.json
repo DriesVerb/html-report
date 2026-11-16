@@ -1,0 +1,41 @@
+{
+  "name": "@html-report/studio",
+  "version": "0.0.0-beta.1",
+  "description": "Creation Studio, live-reload dev server, opt-in authoring plugin, Datastar SSE & Two-Way AI/MCP Bridge for html-report.",
+  "type": "module",
+  "main": "./scripts/server.mjs",
+  "bin": {
+    "html-report-serve": "./scripts/server.mjs",
+    "html-report-scaffold": "./scripts/scaffold-project.mjs",
+    "html-report-install": "./scripts/install-pwa.mjs",
+    "html-report-create": "./scripts/open-create.mjs",
+    "html-report-grill": "./scripts/html-grill.mjs"
+  },
+  "exports": {
+    ".": "./scripts/server.mjs",
+    "./serve": "./scripts/server.mjs",
+    "./scaffold": "./scripts/scaffold-project.mjs",
+    "./domain": "./scripts/domain-model.mjs",
+    "./mcp": "./scripts/mcp-server.mjs",
+    "./preflight": "./scripts/preflight.mjs",
+    "./datastar": "./scripts/datastar-sse.mjs",
+    "./agent-tracker": "./scripts/agent-tracker.mjs",
+    "./telemetry": "./scripts/telemetry-streamer.mjs",
+    "./grill": "./scripts/html-grill.mjs",
+    "./install-pwa": "./scripts/install-pwa.mjs",
+    "./open-create": "./scripts/open-create.mjs",
+    "./authoring": "./scripts/authoring-plugin.mjs",
+    "./assets/create.html": "./assets/create.html",
+    "./assets/authoring-plugin.js": "./assets/authoring-plugin.js",
+    "./assets/edit-dock.html": "./assets/edit-dock.html",
+    "./assets/mcp_allowlist.json": "./assets/mcp_allowlist.json",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@html-report/core": "*"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}

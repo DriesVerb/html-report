@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-report-mode="working-report" lang="en" data-theme="light" class="scroll-smooth">
+<html data-report-mode="report" lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <!-- Pre-paint theme restore: apply the saved theme before any CSS renders (prevents light-theme flash on reload) -->
@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://unpkg.com https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Published Export & Asset Bundle - Journey & Plan</title>
+  <title>Two-Package Core/Studio Split - Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -37,25 +37,15 @@
   <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
 
-  <!-- Addon: Grid.js -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/theme/mermaid.min.css" crossorigin="anonymous" />
-  <script defer src="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/gridjs.umd.js" crossorigin="anonymous"></script>
-
-  <!-- Addon: Showdown -->
-  <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
-
-  <!-- Addon: Datastar -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
-
-  <meta name="html-report-source" content="openspec/changes/2026-11-15-published-export-and-asset-bundle/index.html" />
+  <meta name="html-report-source" content="openspec/changes/2026-11-16-two-package-core-studio-split/index.html" />
 
   <!-- Deterministic Agent Manifest -->
   <script type="application/json" id="agent-manifest">
 {
   "schemaVersion": "1.0.0",
   "project": null,
-  "title": "Published Export & Asset Bundle - Journey & Plan",
-  "mode": "working-report",
+  "title": "Two-Package Core/Studio Split - Journey & Plan",
+  "mode": "report",
   "theme": "light",
   "favicon": "📊",
   "aiBridge": false,
@@ -64,50 +54,40 @@
   "pwa": false,
   "activeAddons": [
     "charts",
-    "mermaid",
-    "gridjs",
-    "showdown",
-    "datastar"
+    "mermaid"
   ],
   "files": {
-    "entry": "openspec/changes/2026-11-15-published-export-and-asset-bundle/index.html",
-    "fragment": "openspec/changes/2026-11-15-published-export-and-asset-bundle/fragment.html"
+    "entry": "openspec/changes/2026-11-16-two-package-core-studio-split/index.html",
+    "fragment": "openspec/changes/2026-11-16-two-package-core-studio-split/fragment.html"
   },
   "pipeline": {
-    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output openspec/changes/2026-11-15-published-export-and-asset-bundle/index.html --content openspec/changes/2026-11-15-published-export-and-asset-bundle/fragment.html --title \"Published Export & Asset Bundle - Journey & Plan\" --mode working-report --theme light --addons charts,mermaid,gridjs,showdown,datastar",
-    "serveCommand": "node skills/html-report/scripts/serve-report.mjs openspec/changes/2026-11-15-published-export-and-asset-bundle/index.html --port 3031",
-    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs openspec/changes/2026-11-15-published-export-and-asset-bundle/index.html",
+    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output openspec/changes/2026-11-16-two-package-core-studio-split/index.html --content openspec/changes/2026-11-16-two-package-core-studio-split/fragment.html --title \"Two-Package Core/Studio Split - Journey & Plan\" --mode report --theme light --addons charts,mermaid",
+    "serveCommand": "node skills/html-report/scripts/serve-report.mjs openspec/changes/2026-11-16-two-package-core-studio-split/index.html --port 3031",
+    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs openspec/changes/2026-11-16-two-package-core-studio-split/index.html",
     "preflightCommand": "node skills/html-report/scripts/preflight.mjs --json",
     "authoringGuide": "../../skills/html-report/references/agent-authoring-guide.md"
   },
   "sections": [
     {
       "agentId": "section-1",
-      "slug": "asset-aware-publish-pipeline-standalone-export-f",
-      "label": "Asset-Aware Publish Pipeline &amp; Standalone Export Fidelity",
+      "slug": "two-package-core-studio-workspace-split-inverted",
+      "label": "Two-Package Core/Studio Workspace Split &amp; Inverted Clean Runtime",
       "id": "journey-overview",
       "selector": "#journey-overview"
     },
     {
       "agentId": "section-2",
-      "slug": "audited-export-failures-conditional-publish-arch",
-      "label": "Audited Export Failures &amp; Conditional Publish Architecture",
+      "slug": "two-package-architecture-inverted-clean-runtime",
+      "label": "Two-Package Architecture &amp; Inverted Clean Runtime",
       "id": "problem-and-architecture",
       "selector": "#problem-and-architecture"
     },
     {
       "agentId": "section-3",
-      "slug": "implementation-phases-task-checklist",
-      "label": "Implementation Phases &amp; Task Checklist",
-      "id": "implementation-checklist",
-      "selector": "#implementation-checklist"
-    },
-    {
-      "agentId": "section-4",
-      "slug": "openspec-planning-artifacts",
-      "label": "OpenSpec Planning Artifacts",
-      "id": "artifacts-index",
-      "selector": "#artifacts-index"
+      "slug": "planned-phases-tasks-tasks-md",
+      "label": "Planned Phases &amp; Tasks ( tasks.md )",
+      "id": "implementation-tasks",
+      "selector": "#implementation-tasks"
     }
   ],
   "widgets": [
@@ -138,20 +118,14 @@
     {
       "agentId": "chart-1",
       "type": "chart",
-      "id": "taskPhaseChart",
-      "selector": "#taskPhaseChart"
+      "id": "monolithFootprintChart",
+      "selector": "#monolithFootprintChart"
     },
     {
       "agentId": "mermaid-1",
       "type": "mermaid",
       "id": null,
       "selector": "[data-agent-id=\"mermaid-1\"]"
-    },
-    {
-      "agentId": "table-1",
-      "type": "table",
-      "id": null,
-      "selector": "[data-agent-id=\"table-1\"]"
     }
   ]
 }
@@ -566,16 +540,6 @@
       overflow: hidden;
     }
     #presentation-notes-modal.hidden,
-    #edit-dock.hidden,
-    #edit-dock-body.hidden,
-    #edit-pane-compose.hidden,
-    #edit-pane-queue.hidden,
-    #edit-pane-styling.hidden,
-    #edit-cancel-edit-btn.hidden,
-    #edit-style-theme-menu.hidden,
-    #edit-selected-target.hidden,
-    #edit-prompt-preview.hidden,
-    #edit-style-offline-actions.hidden {
       display: none !important;
     }
     #presentation-notes-modal[data-dock="bottom-right"] {
@@ -749,7 +713,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Published Export & Asset Bundle - Journey & Plan
+          Two-Package Core/Studio Split - Journey & Plan
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -896,6 +860,344 @@
       </div>
     </nav>
   </header>
+
+  <!-- Interactive PDF Warning Modal -->
+  <dialog id="pdf-not-ready-modal" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg text-warning flex items-center gap-2">
+        <span>⚠ Interactive Report Mode</span>
+      </h3>
+      <p class="py-4 text-xs">
+        This report is in interactive web-first mode. To generate a print-ready version with @media print rules, cover page, and PDF pagination, request:
+      </p>
+      <div class="bg-base-200 p-3 rounded font-mono text-2xs overflow-x-auto">
+        <code id="pdf-conversion-prompt-text">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</code>
+      </div>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-sm">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Reusable Mermaid Diagram Enlarge Modal -->
+  <dialog id="mermaid-enlarge-modal" class="modal modal-bottom sm:modal-middle" aria-label="Enlarged Diagram Preview">
+    <div id="mermaid-modal-box" class="modal-box max-w-6xl w-11/12 max-h-[90vh] flex flex-col p-4 bg-base-100 text-base-content border border-base-300 shadow-2xl transition-all duration-200">
+      <div class="flex items-center justify-between pb-3 border-b border-base-300 gap-2 flex-wrap">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          <h3 class="font-bold text-sm sm:text-base">Diagram Preview</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Zoom & Viewport Toolbar -->
+          <div class="join border border-base-300 bg-base-100 rounded-lg shadow-xs">
+            <button type="button" id="mermaid-zoom-out-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Zoom Out (-)">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>
+            </button>
+            <button type="button" id="mermaid-zoom-reset-btn" class="join-item btn btn-xs btn-ghost font-mono text-3xs px-2" title="Reset Zoom">
+              <span id="mermaid-zoom-level">100%</span>
+            </button>
+            <button type="button" id="mermaid-zoom-in-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Zoom In (+)">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <button type="button" id="mermaid-zoom-fit-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Fit to Viewport">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            </button>
+          </div>
+          <button type="button" id="mermaid-fullscreen-btn" class="btn btn-xs btn-ghost btn-square border border-base-300" title="Toggle Fullscreen Viewport">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+          </button>
+          <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost" aria-label="Close">✕</button>
+          </form>
+        </div>
+      </div>
+      <div id="mermaid-enlarge-viewport" class="overflow-hidden relative flex-1 min-h-[350px] flex items-center justify-center p-4 my-2 bg-base-200/50 rounded-box border border-base-300 select-none cursor-grab active:cursor-grabbing">
+        <div id="mermaid-enlarge-content" class="origin-center will-change-transform flex items-center justify-center w-full h-full">
+          <!-- SVG clone dynamically injected here -->
+        </div>
+      </div>
+      <div class="modal-action mt-0 pt-2 flex items-center justify-between">
+        <span class="text-3xs text-base-content/60">Scroll to zoom &bull; Click &amp; drag to pan &bull; Press ESC or 0 to reset</span>
+        <form method="dialog">
+          <button class="btn btn-xs sm:btn-sm btn-ghost">Close</button>
+        </form>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop bg-neutral/40 backdrop-blur-xs">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- Main Content Container -->
+  <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
+<!-- 1. Journey Overview & Artifact Backlinks -->
+<section id="journey-overview" class="space-y-6" data-agent-section="two-package-core-studio-workspace-split-inverted" data-agent-id="section-1">
+  <div class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body p-5 sm:p-7 space-y-5">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+        <div class="min-w-0 flex-1 space-y-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="badge badge-primary badge-sm font-mono shrink-0 whitespace-nowrap">OpenSpec Journey · spec-driven</span>
+            <span class="badge badge-success badge-outline badge-sm font-mono shrink-0 whitespace-nowrap">Phase 4: Verifying (13/13 Tasks Complete)</span>
+            <span class="badge badge-accent badge-outline badge-sm font-mono shrink-0 whitespace-nowrap">Plan A · Two-Package Monorepo</span>
+          </div>
+          <h1 id="two-package-core-studio-split-plan" class="text-2xl sm:text-3xl font-extrabold tracking-tight scroll-mt-20 break-words">
+            Two-Package Core/Studio Workspace Split &amp; Inverted Clean Runtime
+          </h1>
+          <p class="text-xs sm:text-sm text-base-content/80 leading-relaxed">
+            Architectural split separating <strong>html-report</strong> into two npm workspace packages inside one repository:
+            <code>@html-report/core</code> (deterministic compiler, FSM harness, theme/PWA builders, Playwright verifier, clean viewer shell)
+            and <code>@html-report/studio</code> (Creation Studio, modular <code>serve-report</code> routes, opt-in Authoring Plugin, AI/MCP bridge).
+          </p>
+        </div>
+        <div class="shrink-0 self-start sm:self-center flex flex-wrap gap-2">
+          <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline btn-primary gap-1.5 font-mono text-xs whitespace-nowrap">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline btn-secondary gap-1.5 font-mono text-xs whitespace-nowrap">
+            <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 font-mono text-xs whitespace-nowrap">
+            <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
+          </button>
+        </div>
+      </div>
+
+      <!-- Delta Spec Backlinks -->
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <span class="font-semibold text-base-content/70">Delta Specs:</span>
+        <button type="button" onclick="openMarkdownViewer('specs/skill-packaging/spec.md')" class="btn btn-xs btn-ghost border border-base-300 font-mono">specs/skill-packaging/spec.md</button>
+        <button type="button" onclick="openMarkdownViewer('specs/deterministic-assembly/spec.md')" class="btn btn-xs btn-ghost border border-base-300 font-mono">specs/deterministic-assembly/spec.md</button>
+        <button type="button" onclick="openMarkdownViewer('specs/publish-clean-export/spec.md')" class="btn btn-xs btn-ghost border border-base-300 font-mono">specs/publish-clean-export/spec.md</button>
+        <button type="button" onclick="openMarkdownViewer('specs/semantic-versioning/spec.md')" class="btn btn-xs btn-ghost border border-base-300 font-mono">specs/semantic-versioning/spec.md</button>
+      </div>
+
+      <!-- Mandatory Horizontal Stepper -->
+      <div class="w-full overflow-x-auto pt-3 border-t border-base-200">
+        <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
+          <li class="step step-primary font-medium" data-content="✓">Planning</li>
+          <li class="step step-primary font-medium" data-content="✓">Implementing</li>
+          <li class="step step-primary font-bold text-primary" data-content="4">Verifying</li>
+          <li class="step">Shipped / Archived</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Progress Metrics -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0" data-agent-widget="kpi" data-agent-id="kpi-1">
+      <div class="stat-figure text-primary"><i data-lucide="list-checks" class="w-6 h-6"></i></div>
+      <div class="stat-title text-xs">Total Tasks</div>
+      <div class="stat-value text-2xl font-extrabold text-primary">13</div>
+      <div class="stat-desc text-xs font-mono">Across 4 completed phases</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0" data-agent-widget="kpi" data-agent-id="kpi-2">
+      <div class="stat-figure text-success"><i data-lucide="check-circle-2" class="w-6 h-6"></i></div>
+      <div class="stat-title text-xs">Completed</div>
+      <div class="stat-value text-2xl font-extrabold text-success">13</div>
+      <div class="stat-desc text-xs font-mono">100% · 578/578 unit/int pass</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0" data-agent-widget="kpi" data-agent-id="kpi-3">
+      <div class="stat-figure text-info"><i data-lucide="globe" class="w-6 h-6"></i></div>
+      <div class="stat-title text-xs">Remaining</div>
+      <div class="stat-value text-2xl font-extrabold text-base-content">0</div>
+      <div class="stat-desc text-xs font-mono">Tracked in <a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</a> (E2E CDN needs net)</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0" data-agent-widget="kpi" data-agent-id="kpi-4">
+      <div class="stat-figure text-accent"><i data-lucide="boxes" class="w-6 h-6"></i></div>
+      <div class="stat-title text-xs">Workspace Packages</div>
+      <div class="stat-value text-2xl font-extrabold text-accent">2</div>
+      <div class="stat-desc text-xs font-mono">@html-report/core + studio</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Problem Context & Architectural Vision -->
+<section id="problem-and-architecture" class="space-y-5" data-agent-section="two-package-architecture-inverted-clean-runtime" data-agent-id="section-2">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <h2 id="architecture-blueprint" class="text-xl sm:text-2xl font-bold scroll-mt-20">
+      Two-Package Architecture &amp; Inverted Clean Runtime
+    </h2>
+    <span class="badge badge-primary badge-outline font-mono text-xs shrink-0">One Repo · Two Workspaces</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-error/30 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="current-coupling-pain" class="font-bold text-sm text-error flex items-center gap-2 scroll-mt-20">
+          <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0"></i>
+          Current Bottlenecks Observed
+        </h3>
+        <ul class="text-xs text-base-content/80 space-y-1.5 list-disc pl-4">
+          <li><strong>Bake-then-strip chrome:</strong> Edit dock &amp; modals ship in every report and require 3 overlapping strippers (<code>--published</code>, <code>publish-report.mjs</code>, <code>HTMLReportPublisher</code>).</li>
+          <li><strong>Studio coupling in compiler:</strong> <code>build-report.mjs</code> checks for root <code>create.html</code> to mirror <code>projects/</code>.</li>
+          <li><strong>Monoliths &amp; root sprawl:</strong> 6,414-line <code>report-runtime.js</code>, 4,663-line <code>serve-report.mjs</code>, duplicated 4,434-line <code>create.html</code>, leftover <code>tmp-pwa-bdd/</code>.</li>
+          <li><strong>Offline test fragility:</strong> 21/613 tests fail offline (mostly Playwright CDN fetches + a few non-CDN regressions).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-success/30 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="target-plan-a-state" class="font-bold text-sm text-success flex items-center gap-2 scroll-mt-20">
+          <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
+          Plan A Target State
+        </h3>
+        <ul class="text-xs text-base-content/80 space-y-1.5 list-disc pl-4">
+          <li><strong>Clean-by-default output:</strong> <code>packages/core</code> emits viewer-only HTML; <code>packages/studio</code> injects Edit Mode &amp; AI Bridge via opt-in <code>--editable</code> / server slots.</li>
+          <li><strong>Strict export boundary:</strong> <code>@html-report/studio</code> imports <code>@html-report/core</code> solely through public subpath exports (enforced by boundary test).</li>
+          <li><strong>Modular server &amp; zero duplication:</strong> <code>serve-report.mjs</code> split into 6 route modules; single canonical <code>create.html</code>.</li>
+          <li><strong>Skill compatibility preserved:</strong> Root <code>package.json</code> exports and <code>skills/html-*</code> facades stay intact.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="lg:col-span-7 min-w-0 card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-3 min-w-0">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 id="package-dependency-graph" class="font-bold text-base scroll-mt-20">Package &amp; Plugin Dependency Flow</h3>
+          <span class="badge badge-ghost badge-xs font-mono">Mermaid</span>
+        </div>
+        <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center" data-agent-widget="mermaid" data-agent-id="mermaid-1">
+flowchart LR
+    RootPkg["Root package.json\n(workspaces + compat exports)"] --> Core["packages/core\n(@html-report/core)"]
+    RootPkg --> Studio["packages/studio\n(@html-report/studio)"]
+    Studio -->|"Public Exports Only"| Core
+    Skills["skills/html-*\n(.agents/skills symlinks)"] --> Core
+    Skills --> Studio
+    Core -->|"Default Clean Build"| CleanHTML["Viewer-Only HTML\n(Themes, TOC, Charts, Print)"]
+    Studio -->|"Opt-In --editable / Server"| AuthHTML["Editable Workspace\n(+ Edit Dock &amp; AI Bridge)"]
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 min-w-0 card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-3 min-w-0">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 id="monolith-footprint" class="font-bold text-base scroll-mt-20">Current Monolith Hotspots (Lines)</h3>
+          <span class="badge badge-ghost badge-xs font-mono">Chart.js</span>
+        </div>
+        <div class="relative h-72 sm:h-80 w-full min-w-0">
+          <canvas id="monolithFootprintChart" aria-label="Line counts of major repository files targeted for splitting" role="img" data-agent-widget="chart" data-agent-id="chart-1"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Connected Implementation Checklist -->
+<section id="implementation-tasks" class="space-y-4" data-agent-section="planned-phases-tasks-tasks-md" data-agent-id="section-3">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <h2 id="task-checklist" class="text-xl sm:text-2xl font-bold scroll-mt-20">
+      Planned Phases &amp; Tasks (<a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono text-lg">tasks.md</a>)
+    </h2>
+    <span class="badge badge-success badge-outline font-mono text-xs shrink-0">13 / 13 Complete</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="phase-1-workspace" class="font-bold text-sm text-primary scroll-mt-20">Phase 1: Workspace Scaffold &amp; Boundary</h3>
+        <ul class="text-xs space-y-1.5">
+          <li>✅ <strong>1.1</strong> Root <code>package.json</code> npm workspaces + compatibility forwarding</li>
+          <li>✅ <strong>1.2</strong> Create <code>packages/core</code> and <code>packages/studio</code> manifests</li>
+          <li>✅ <strong>1.3</strong> Automated cross-package import boundary test</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="phase-2-core" class="font-bold text-sm text-secondary scroll-mt-20">Phase 2: Core Compiler &amp; Clean Runtime</h3>
+        <ul class="text-xs space-y-1.5">
+          <li>✅ <strong>2.1</strong> Move compiler, harness, verifier &amp; assets into <code>packages/core</code></li>
+          <li>✅ <strong>2.2</strong> Remove <code>create.html</code> check from <code>build-report.mjs</code>; add <code>--mirror-dir</code></li>
+          <li>✅ <strong>2.3</strong> Slim viewer-only shell/runtime + <code>--editable</code> plugin slots</li>
+          <li>✅ <strong>2.4</strong> Simplify <code>publish-report.mjs</code> around clean-by-default output</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="phase-3-studio" class="font-bold text-sm text-accent scroll-mt-20">Phase 3: Studio, Plugin &amp; Modular Server</h3>
+        <ul class="text-xs space-y-1.5">
+          <li>✅ <strong>3.1</strong> Move Studio/AI/MCP/SSE scripts to <code>packages/studio</code></li>
+          <li>✅ <strong>3.2</strong> Extract <code>authoring-plugin.js</code> + <code>edit-dock.html</code> for live/opt-in edit mode</li>
+          <li>✅ <strong>3.3</strong> Split <code>serve-report.mjs</code> (4,663 lines) into <code>server.mjs</code> + 6 route modules</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="phase-4-hygiene" class="font-bold text-sm text-info scroll-mt-20">Phase 4: Skills, Hygiene &amp; Test Partitioning</h3>
+        <ul class="text-xs space-y-1.5">
+          <li>✅ <strong>4.1</strong> Update <code>skills/html-*</code> facades &amp; <code>skill-router.mjs</code></li>
+          <li>✅ <strong>4.2</strong> Remove duplicate <code>create.html</code> &amp; <code>tmp-pwa-bdd/</code>; relocate Studio PWA public assets</li>
+          <li>✅ <strong>4.3</strong> Partition offline unit (578/578 pass) vs. CDN E2E tests (26/42 offline) &amp; fix non-CDN failures</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const ctx = document.getElementById("monolithFootprintChart");
+    if (ctx && window.Chart) {
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["report-runtime.js", "serve-report.mjs", "create.html (x2)", "build-report.mjs", "harness.mjs"],
+          datasets: [{
+            label: "Lines of Code (Current)",
+            data: [6414, 4663, 8868, 1568, 1408],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+  });
+</script>
+  </main>
+
+  <!-- Minimal Centered Footer with Semantic Versioning -->
+  <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
+    <div class="flex items-center justify-center gap-1.5 flex-wrap">
+      <span>generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a></span>
+      <span class="badge badge-ghost badge-xs font-mono font-semibold" title="Semantic Versioning v0.0.0-beta.1">v0.0.0-beta.1</span>
+    </div>
+  </footer>
+
+  <style id="authoring-plugin-styles">
+    #edit-dock.hidden,
+    #edit-dock-body.hidden,
+    #edit-pane-compose.hidden,
+    #edit-pane-queue.hidden,
+    #edit-pane-styling.hidden,
+    #edit-cancel-edit-btn.hidden,
+    #edit-style-theme-menu.hidden,
+    #edit-selected-target.hidden,
+    #edit-prompt-preview.hidden,
+    #edit-style-offline-actions.hidden { {
+      display: none !important;
+    }
+  </style>
 
   <!-- html-report:authoring:start all-settings -->
   <!-- All Settings Overview Modal -->
@@ -1045,77 +1347,6 @@
   </dialog>
   <!-- html-report:authoring:end all-settings -->
 
-  <!-- Interactive PDF Warning Modal -->
-  <dialog id="pdf-not-ready-modal" class="modal">
-    <div class="modal-box">
-      <h3 class="font-bold text-lg text-warning flex items-center gap-2">
-        <span>⚠ Interactive Report Mode</span>
-      </h3>
-      <p class="py-4 text-xs">
-        This report is in interactive web-first mode. To generate a print-ready version with @media print rules, cover page, and PDF pagination, request:
-      </p>
-      <div class="bg-base-200 p-3 rounded font-mono text-2xs overflow-x-auto">
-        <code id="pdf-conversion-prompt-text">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</code>
-      </div>
-      <div class="modal-action">
-        <form method="dialog">
-          <button class="btn btn-sm">Close</button>
-        </form>
-      </div>
-    </div>
-  </dialog>
-
-  <!-- Reusable Mermaid Diagram Enlarge Modal -->
-  <dialog id="mermaid-enlarge-modal" class="modal modal-bottom sm:modal-middle" aria-label="Enlarged Diagram Preview">
-    <div id="mermaid-modal-box" class="modal-box max-w-6xl w-11/12 max-h-[90vh] flex flex-col p-4 bg-base-100 text-base-content border border-base-300 shadow-2xl transition-all duration-200">
-      <div class="flex items-center justify-between pb-3 border-b border-base-300 gap-2 flex-wrap">
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-          </svg>
-          <h3 class="font-bold text-sm sm:text-base">Diagram Preview</h3>
-        </div>
-        <div class="flex items-center gap-2">
-          <!-- Zoom & Viewport Toolbar -->
-          <div class="join border border-base-300 bg-base-100 rounded-lg shadow-xs">
-            <button type="button" id="mermaid-zoom-out-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Zoom Out (-)">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>
-            </button>
-            <button type="button" id="mermaid-zoom-reset-btn" class="join-item btn btn-xs btn-ghost font-mono text-3xs px-2" title="Reset Zoom">
-              <span id="mermaid-zoom-level">100%</span>
-            </button>
-            <button type="button" id="mermaid-zoom-in-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Zoom In (+)">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-            </button>
-            <button type="button" id="mermaid-zoom-fit-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Fit to Viewport">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-            </button>
-          </div>
-          <button type="button" id="mermaid-fullscreen-btn" class="btn btn-xs btn-ghost btn-square border border-base-300" title="Toggle Fullscreen Viewport">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
-          </button>
-          <form method="dialog">
-            <button class="btn btn-sm btn-circle btn-ghost" aria-label="Close">✕</button>
-          </form>
-        </div>
-      </div>
-      <div id="mermaid-enlarge-viewport" class="overflow-hidden relative flex-1 min-h-[350px] flex items-center justify-center p-4 my-2 bg-base-200/50 rounded-box border border-base-300 select-none cursor-grab active:cursor-grabbing">
-        <div id="mermaid-enlarge-content" class="origin-center will-change-transform flex items-center justify-center w-full h-full">
-          <!-- SVG clone dynamically injected here -->
-        </div>
-      </div>
-      <div class="modal-action mt-0 pt-2 flex items-center justify-between">
-        <span class="text-3xs text-base-content/60">Scroll to zoom &bull; Click &amp; drag to pan &bull; Press ESC or 0 to reset</span>
-        <form method="dialog">
-          <button class="btn btn-xs sm:btn-sm btn-ghost">Close</button>
-        </form>
-      </div>
-    </div>
-    <form method="dialog" class="modal-backdrop bg-neutral/40 backdrop-blur-xs">
-      <button>close</button>
-    </form>
-  </dialog>
-
   <!-- html-report:authoring:start agent-reconnect-modal -->
   <!-- Turnkey AI Agent Reconnection Modal -->
   <dialog id="agent-reconnect-modal" class="modal modal-bottom sm:modal-middle">
@@ -1196,458 +1427,6 @@
     </form>
   </dialog>
   <!-- html-report:authoring:end agent-reconnect-modal -->
-
-  <!-- Main Content Container -->
-  <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
-<!-- 1. Journey Overview & Artifact Backlinks -->
-<section id="journey-overview" class="space-y-6" data-agent-section="asset-aware-publish-pipeline-standalone-export-f" data-agent-id="section-1">
-  <div class="card bg-base-100 border border-base-300 shadow-sm">
-    <div class="card-body p-5 sm:p-7 space-y-5">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
-        <div class="min-w-0 flex-1 space-y-2">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="badge badge-primary badge-sm font-mono shrink-0 whitespace-nowrap">OpenSpec Journey · spec-driven</span>
-            <span class="badge badge-success badge-outline badge-sm font-mono shrink-0 whitespace-nowrap">Phase 5: Shipped / Archived (10/10 Complete)</span>
-            <span class="badge badge-accent badge-outline badge-sm font-mono shrink-0 whitespace-nowrap">Publish Clean Export · Reader-First</span>
-          </div>
-          <h1 id="published-export-and-asset-bundle-plan" class="text-2xl sm:text-3xl font-extrabold tracking-tight scroll-mt-20 break-words">
-            Asset-Aware Publish Pipeline &amp; Standalone Export Fidelity
-          </h1>
-          <p class="text-xs sm:text-sm text-base-content/80 leading-relaxed">
-            OpenSpec plan addressing why exported HTML reports break when downloaded for browser end-readers: preserving
-            ES module (Datastar) and deferred (AlpineJS, Chart.js, Mermaid, Grid.js) execution, eliminating mutated DOM
-            snapshot artifacts, and introducing an asset-aware <code>publish-report.mjs</code> script + <code>/api/publish</code>
-            endpoint that packages a single <code>.html</code> when asset-free or a <code>.zip</code> bundle (<code>index.html</code> + <code>refs/</code>)
-            with offline fallbacks and missing-asset recovery prompts when local assets exist.
-          </p>
-        </div>
-        <div class="shrink-0 self-start sm:self-center flex flex-wrap gap-2">
-          <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline btn-primary gap-1.5 font-mono text-xs whitespace-nowrap">
-            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
-          </button>
-          <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline btn-secondary gap-1.5 font-mono text-xs whitespace-nowrap">
-            <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
-          </button>
-          <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 font-mono text-xs whitespace-nowrap">
-            <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
-          </button>
-          <button type="button" onclick="openMarkdownViewer('specs/publish-clean-export/spec.md')" class="btn btn-sm btn-outline gap-1.5 font-mono text-xs whitespace-nowrap">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> publish spec.md
-          </button>
-        </div>
-      </div>
-
-      <!-- Mandatory Horizontal Stepper -->
-      <div class="w-full overflow-x-auto pt-3 border-t border-base-200">
-        <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
-          <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
-          <li class="step step-primary font-medium" data-content="✓">Planning</li>
-          <li class="step step-primary font-medium" data-content="✓">Implementing</li>
-          <li class="step step-primary font-medium" data-content="✓">Verifying</li>
-          <li class="step step-primary font-bold text-primary" data-content="✓">Shipped / Archived</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- Live Progress Metrics -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0" data-agent-widget="kpi" data-agent-id="kpi-1">
-      <div class="stat-figure text-primary"><i data-lucide="list-checks" class="w-6 h-6"></i></div>
-      <div class="stat-title text-xs">Total Tasks</div>
-      <div class="stat-value text-2xl font-extrabold text-primary">10</div>
-      <div class="stat-desc text-xs font-mono">Across 4 implementation phases</div>
-    </div>
-    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0" data-agent-widget="kpi" data-agent-id="kpi-2">
-      <div class="stat-figure text-success"><i data-lucide="check-circle-2" class="w-6 h-6"></i></div>
-      <div class="stat-title text-xs">Completed</div>
-      <div class="stat-value text-2xl font-extrabold text-success">10</div>
-      <div class="stat-desc text-xs font-mono">100% · Synced &amp; archived</div>
-    </div>
-    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0" data-agent-widget="kpi" data-agent-id="kpi-3">
-      <div class="stat-figure text-warning"><i data-lucide="clock" class="w-6 h-6"></i></div>
-      <div class="stat-title text-xs">Remaining</div>
-      <div class="stat-value text-2xl font-extrabold text-success">0</div>
-      <div class="stat-desc text-xs font-mono">Tracked in <a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</a></div>
-    </div>
-    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0" data-agent-widget="kpi" data-agent-id="kpi-4">
-      <div class="stat-figure text-secondary"><i data-lucide="git-branch" class="w-6 h-6"></i></div>
-      <div class="stat-title text-xs">Delta Specs</div>
-      <div class="stat-value text-2xl font-extrabold text-secondary">1</div>
-      <div class="stat-desc text-xs font-mono"><a href="javascript:void(0)" onclick="openMarkdownViewer('specs/publish-clean-export/spec.md')" class="link link-secondary">publish-clean-export/spec.md</a></div>
-    </div>
-  </div>
-</section>
-
-<!-- 2. Root-Cause Audit & Target Architecture -->
-<section id="problem-and-architecture" class="space-y-4" data-agent-section="audited-export-failures-conditional-publish-arch" data-agent-id="section-2">
-  <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 w-full">
-    <h2 id="root-causes-and-architecture" class="text-xl sm:text-2xl font-bold scroll-mt-20">
-      Audited Export Failures &amp; Conditional Publish Architecture
-    </h2>
-    <span class="text-xs text-base-content/70">
-      Details in <a href="javascript:void(0)" onclick="openMarkdownViewer('proposal.md')" class="link link-primary font-mono">proposal.md</a> &amp;
-      <a href="javascript:void(0)" onclick="openMarkdownViewer('design.md')" class="link link-secondary font-mono">design.md</a>
-    </span>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-    <div class="lg:col-span-6 card bg-base-100 border border-base-300 shadow-sm">
-      <div class="card-body p-5 space-y-3">
-        <div class="flex items-center justify-between">
-          <h3 id="eight-verified-failures" class="font-bold text-base">8 Verified Failure Causes (Quilting 101 Export)</h3>
-          <span class="badge badge-error badge-outline badge-xs font-mono">Audited</span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="table table-xs w-full" data-agent-widget="table" data-agent-id="table-1">
-            <thead>
-              <tr>
-                <th>Area</th>
-                <th>Root Cause in Snapshot</th>
-                <th>Fix Scope</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="font-semibold">AlpineJS</td>
-                <td><code>defer</code> stripped; executes in <code>&lt;head&gt;</code> before <code>&lt;body&gt;</code> + baked <code>x-for</code>/<code>disabled</code></td>
-                <td><span class="badge badge-primary badge-xs">Runtime</span></td>
-              </tr>
-              <tr>
-                <td class="font-semibold">Datastar</td>
-                <td><code>type="module"</code> dropped; <code>export{...}</code> throws SyntaxError</td>
-                <td><span class="badge badge-primary badge-xs">Runtime</span></td>
-              </tr>
-              <tr>
-                <td class="font-semibold">Grid.js</td>
-                <td>Cloned non-empty <code>.gridjs-container</code> causes <code>render()</code> abort</td>
-                <td><span class="badge badge-primary badge-xs">Runtime</span></td>
-              </tr>
-              <tr>
-                <td class="font-semibold">Gear &amp; Button</td>
-                <td><code>htmlBtn.disabled=true</code> before clone; async <code>closeSettings()</code></td>
-                <td><span class="badge badge-primary badge-xs">Runtime</span></td>
-              </tr>
-              <tr>
-                <td class="font-semibold">Mermaid Zoom</td>
-                <td>Cloned <code>.mermaid-enlarge-btn</code> skipped by <code>initEnlarge()</code></td>
-                <td><span class="badge badge-primary badge-xs">Runtime</span></td>
-              </tr>
-              <tr>
-                <td class="font-semibold">AI / Live Chrome</td>
-                <td>Inert <code>[data-agent-prompt]</code>, stale <code>SSE Connected</code>, leaked live-reload</td>
-                <td><span class="badge badge-secondary badge-xs">Runtime + Pub</span></td>
-              </tr>
-              <tr>
-                <td class="font-semibold">Relative <code>refs/</code></td>
-                <td>Unresolved images/PDFs when HTML saved in <code>Downloads</code></td>
-                <td><span class="badge badge-accent badge-xs">Publish Script</span></td>
-              </tr>
-              <tr>
-                <td class="font-semibold"><code>file://</code> &amp; Missing Unzip</td>
-                <td>CORS blocks local <code>fetch()</code>; unextracted zips give silent 404s</td>
-                <td><span class="badge badge-accent badge-xs">Publish Script</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="lg:col-span-6 card bg-base-100 border border-base-300 shadow-sm">
-      <div class="card-body p-5 space-y-3">
-        <div class="flex items-center justify-between">
-          <h3 id="publish-flow-diagram" class="font-bold text-base">Conditional Publish &amp; Fallback Pipeline</h3>
-          <span class="badge badge-info badge-outline badge-xs font-mono">Mermaid Flow</span>
-        </div>
-        <div class="mermaid bg-base-200/50 p-3 rounded-box overflow-x-auto text-center" data-agent-widget="mermaid" data-agent-id="mermaid-1">
-flowchart TD
-    ClickDownload["Reader or Author Clicks Download"] --> CheckServer{"Served via serve-report.mjs?"}
-    CheckServer -->|No offline| ClientSnap["Fixed buildInlinedHtmlSnapshot"]
-    CheckServer -->|Yes HTTP| ApiPublish["GET or POST /api/publish"]
-    ApiPublish --> PublishScript["publish-report.mjs from clean fragment.html"]
-    PublishScript --> AssetScan{"Has local refs/ or relative assets?"}
-    AssetScan -->|No assets| SingleHtml["Emit clean single published.html"]
-    AssetScan -->|Has assets| BuildZip["Pack published.zip with index.html and refs/"]
-    BuildZip --> EmbedFallback["Inject file-CORS data fallback + img onerror + recovery banner"]
-    EmbedFallback --> ReaderOpen{"Opened without refs/ extracted?"}
-    ReaderOpen -->|Yes asset error| ShowPrompt["Show Recovery Banner + webkitdirectory refs/ picker"]
-    ReaderOpen -->|No all loaded| NormalRender["Full interactive browser experience"]
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 3. Implementation Phases & Connected Task Checklist -->
-<section id="implementation-checklist" class="space-y-4" data-agent-section="implementation-phases-task-checklist" data-agent-id="section-3">
-  <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 w-full">
-    <h2 id="phases-and-tasks" class="text-xl sm:text-2xl font-bold scroll-mt-20">
-      Implementation Phases &amp; Task Checklist
-    </h2>
-    <a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline font-mono gap-1">
-      <i data-lucide="external-link" class="w-3 h-3"></i> View tasks.md
-    </a>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-    <div class="lg:col-span-5 card bg-base-100 border border-base-300 shadow-sm">
-      <div class="card-body p-5 space-y-3">
-        <h3 id="phase-workload-chart" class="font-bold text-base scroll-mt-20">Planned Tasks by Phase</h3>
-        <div class="relative h-64 w-full min-w-0">
-          <canvas id="taskPhaseChart" data-agent-widget="chart" data-agent-id="chart-1"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <div class="lg:col-span-7 card bg-base-100 border border-base-300 shadow-sm">
-      <div class="card-body p-5 space-y-3">
-        <h3 id="connected-task-checklist" class="font-bold text-base scroll-mt-20">Connected Checklist (Synced with <a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono">tasks.md</a>)</h3>
-        <div class="space-y-3 text-xs">
-          <div class="space-y-1.5">
-            <div class="font-bold text-primary uppercase tracking-wider text-[11px]">Phase 1: Client-Side Snapshot &amp; Runtime Fixes</div>
-            <label class="flex items-start gap-2 p-2 rounded-lg bg-base-200/40 border border-base-300/60">
-              <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
-              <span><strong>1.1</strong> Preserve <code>type="module"</code> (Datastar) and relocate inlined <code>[defer]</code> classic scripts (AlpineJS, Chart.js, Mermaid, Grid.js, Lucide) to end of <code>&lt;body&gt;</code>.</span>
-            </label>
-            <label class="flex items-start gap-2 p-2 rounded-lg bg-base-200/40 border border-base-300/60">
-              <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
-              <span><strong>1.2</strong> Sanitize cloned state: strip <code>#__html_report_live_reload__</code>, re-enable <code>#download-html-btn</code>, close <code>#settings-dropdown</code>, clear <code>[data-gridjs="true"]</code> &amp; duplicate Alpine <code>x-for</code> clones, neutralize dead <code>[data-agent-prompt]</code> buttons.</span>
-            </label>
-            <label class="flex items-start gap-2 p-2 rounded-lg bg-base-200/40 border border-base-300/60">
-              <input type="checkbox" class="checkbox checkbox-xs checkbox-primary mt-0.5" checked disabled />
-              <span><strong>1.3</strong> Make <code>HTMLReportMermaid.initEnlarge()</code> idempotently wire existing <code>.mermaid-enlarge-btn</code> nodes and transition <code>HTMLReportBoard</code> / <code>#live-board-status</code> cleanly to offline local storage under <code>file://</code>.</span>
-            </label>
-          </div>
-
-          <div class="space-y-1.5">
-            <div class="font-bold text-secondary uppercase tracking-wider text-[11px]">Phase 2: Dedicated Asset-Aware Publish Script</div>
-            <label class="flex items-start gap-2 p-2 rounded-lg bg-base-200/40 border border-base-300/60">
-              <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
-              <span><strong>2.1</strong> Build <code>skills/html-report/scripts/publish-report.mjs</code> with <code>discoverReportAssets()</code> detecting <code>refs/</code> and relative <code>src</code>/<code>href</code>/<code>fetch()</code> dependencies.</span>
-            </label>
-            <label class="flex items-start gap-2 p-2 rounded-lg bg-base-200/40 border border-base-300/60">
-              <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
-              <span><strong>2.2</strong> Implement zero-dependency <code>createZipBuffer()</code> (<code>node:zlib</code> + CRC32): emit single <code>&lt;slug&gt;-published.html</code> when asset-free or <code>&lt;slug&gt;-published.zip</code> (<code>index.html</code> + <code>refs/...</code>) when asset-based.</span>
-            </label>
-            <label class="flex items-start gap-2 p-2 rounded-lg bg-base-200/40 border border-base-300/60">
-              <input type="checkbox" class="checkbox checkbox-xs checkbox-secondary mt-0.5" checked disabled />
-              <span><strong>2.3</strong> Inject asset-only reader fallbacks: embedded JSON data/text map (for <code>file://</code> CORS), broken <code>&lt;img&gt;</code> fallback cards, and a conditional Asset Recovery Banner with <code>webkitdirectory</code> folder picker when relative assets fail.</span>
-            </label>
-          </div>
-
-          <div class="space-y-1.5">
-            <div class="font-bold text-accent uppercase tracking-wider text-[11px]">Phase 3: Server Publish Endpoint &amp; Browser Download</div>
-            <label class="flex items-start gap-2 p-2 rounded-lg bg-base-200/40 border border-base-300/60">
-              <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
-              <span><strong>3.1</strong> Add <code>.zip</code> MIME type and <code>GET/POST /api/publish</code> route in <code>serve-report.mjs</code> delegating to <code>publish-report.mjs</code>.</span>
-            </label>
-            <label class="flex items-start gap-2 p-2 rounded-lg bg-base-200/40 border border-base-300/60">
-              <input type="checkbox" class="checkbox checkbox-xs checkbox-accent mt-0.5" checked disabled />
-              <span><strong>3.2</strong> Route online <strong>Download as HTML</strong> through <code>/api/publish</code> with automatic offline fallback to fixed <code>buildInlinedHtmlSnapshot()</code>.</span>
-            </label>
-          </div>
-
-          <div class="space-y-1.5">
-            <div class="font-bold text-info uppercase tracking-wider text-[11px]">Phase 4: Verification &amp; Test Coverage</div>
-            <label class="flex items-start gap-2 p-2 rounded-lg bg-base-200/40 border border-base-300/60">
-              <input type="checkbox" class="checkbox checkbox-xs checkbox-info mt-0.5" checked disabled />
-              <span><strong>4.1</strong> Add unit + Playwright tests covering Datastar/Alpine/Grid.js/Mermaid/Settings export fidelity, asset-free HTML output, and <code>projects/quilt-101</code> <code>.zip</code> + recovery banner.</span>
-            </label>
-            <label class="flex items-start gap-2 p-2 rounded-lg bg-base-200/40 border border-base-300/60">
-              <input type="checkbox" class="checkbox checkbox-xs checkbox-info mt-0.5" checked disabled />
-              <span><strong>4.2</strong> Run <code>node --test</code> suites and <code>verify-report.mjs</code> on exported deliverables.</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 4. Markdown Artifacts Directory -->
-<section id="artifacts-index" class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="openspec-planning-artifacts" data-agent-id="section-4">
-  <div class="card-body p-5 space-y-3">
-    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
-      <h2 id="openspec-markdown-artifacts" class="text-lg font-bold scroll-mt-20">OpenSpec Planning Artifacts</h2>
-      <span class="badge badge-outline badge-xs font-mono">openspec/changes/2026-11-15-published-export-and-asset-bundle/</span>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-outline btn-sm justify-start gap-2 font-mono">
-        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i> proposal.md
-      </button>
-      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-outline btn-sm justify-start gap-2 font-mono">
-        <i data-lucide="cpu" class="w-4 h-4 text-secondary"></i> design.md
-      </button>
-      <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-outline btn-sm justify-start gap-2 font-mono">
-        <i data-lucide="check-square" class="w-4 h-4 text-accent"></i> tasks.md
-      </button>
-      <button type="button" onclick="openMarkdownViewer('specs/publish-clean-export/spec.md')" class="btn btn-outline btn-sm justify-start gap-2 font-mono">
-        <i data-lucide="shield-check" class="w-4 h-4 text-info"></i> specs/publish-clean-export/spec.md
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- Markdown Preview Modal -->
-<dialog id="markdown-viewer-modal" class="modal">
-  <div class="modal-box max-w-4xl w-11/12 max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300">
-    <div class="flex items-center justify-between px-5 py-3 border-b border-base-300 bg-base-200/60">
-      <div class="flex items-center gap-2 min-w-0">
-        <i data-lucide="file-text" class="w-4 h-4 text-primary shrink-0"></i>
-        <span id="markdown-modal-title" class="font-mono text-sm font-bold truncate">Artifact</span>
-      </div>
-      <form method="dialog">
-        <button class="btn btn-xs btn-ghost btn-square" aria-label="Close">✕</button>
-      </form>
-    </div>
-    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none text-sm leading-relaxed space-y-3"></div>
-  </div>
-  <form method="dialog" class="modal-backdrop"><button>close</button></form>
-</dialog>
-
-<script>
-  (function () {
-    window.openMarkdownViewer = async function (filePath) {
-      const modal = document.getElementById("markdown-viewer-modal");
-      const title = document.getElementById("markdown-modal-title");
-      const body = document.getElementById("markdown-modal-body");
-      if (!modal || !body) return;
-      if (title) title.textContent = filePath;
-      body.innerHTML = '<div class="flex items-center justify-center py-12"><span class="loading loading-spinner loading-md text-primary"></span></div>';
-      if (typeof modal.showModal === "function") modal.showModal();
-
-      const candidates = [
-        `openspec/changes/2026-11-15-published-export-and-asset-bundle/${filePath}`,
-        filePath
-      ];
-      let text = null;
-      for (const p of candidates) {
-        try {
-          const res = await fetch(p);
-          if (res.ok) {
-            text = await res.text();
-            break;
-          }
-        } catch (_) {}
-      }
-
-      if (!text) {
-        body.innerHTML = `<div class="alert alert-warning text-xs">Could not load artifact <code>${filePath}</code> in offline/preview mode. Open it directly from <code>openspec/changes/2026-11-15-published-export-and-asset-bundle/${filePath}</code>.</div>`;
-        return;
-      }
-
-      if (window.showdown) {
-        const conv = new window.showdown.Converter({ tables: true, tasklists: true, strikethrough: true });
-        body.innerHTML = conv.makeHtml(text);
-      } else {
-        body.innerHTML = `<pre class="text-xs font-mono p-4 bg-base-200 rounded overflow-x-auto whitespace-pre-wrap">${text.replace(/</g, "&lt;")}</pre>`;
-      }
-    };
-
-    let attempts = 0;
-    function initPlanVisuals() {
-      if (typeof Chart === "undefined" || typeof mermaid === "undefined") {
-        if (++attempts < 80) setTimeout(initPlanVisuals, 60);
-        return;
-      }
-      const palette = (typeof resolveDaisyUIThemePalette === "function")
-        ? resolveDaisyUIThemePalette()
-        : {
-            primary: { hex: "#570df8", rgba: (a) => `rgba(87, 13, 248, ${a})` },
-            secondary: { hex: "#f000b8", rgba: (a) => `rgba(240, 0, 184, ${a})` },
-            base100: { hex: "#ffffff" },
-            base200: { hex: "#f2f2f2" },
-            base300: { hex: "#e5e6e6" },
-            content: { hex: "#1f2937", rgba: (a) => `rgba(31, 41, 55, ${a})` }
-          };
-
-      const canvas = document.getElementById("taskPhaseChart");
-      window.reportCharts = window.reportCharts || [];
-      if (canvas && !canvas.__init) {
-        canvas.__init = true;
-        const chart = new Chart(canvas, {
-          type: "bar",
-          data: {
-            labels: ["Phase 1: Runtime", "Phase 2: Publish Script", "Phase 3: Server/UI", "Phase 4: Tests"],
-            datasets: [
-              {
-                label: "Planned Tasks",
-                data: [3, 3, 2, 2],
-                backgroundColor: palette.primary.rgba(0.82),
-                borderColor: palette.primary.hex,
-                borderWidth: 1.5,
-                borderRadius: 6
-              },
-              {
-                label: "Completed Tasks",
-                data: [3, 3, 2, 2],
-                backgroundColor: palette.secondary.rgba(0.82),
-                borderColor: palette.secondary.hex,
-                borderWidth: 1.5,
-                borderRadius: 6
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: palette.content.hex } } },
-            scales: {
-              x: { ticks: { color: palette.content.rgba(0.82) }, grid: { color: palette.content.rgba(0.12) } },
-              y: { beginAtZero: true, ticks: { stepSize: 1, color: palette.content.rgba(0.82) }, grid: { color: palette.content.rgba(0.12) } }
-            }
-          }
-        });
-        window.reportCharts.push(chart);
-      }
-
-      if (!window.__planMermaidInit) {
-        window.__planMermaidInit = true;
-        const renderM = async (p) => {
-          document.querySelectorAll(".mermaid").forEach((n) => {
-            if (!n.dataset.mermaidSource) n.dataset.mermaidSource = n.textContent.trim();
-            n.removeAttribute("data-processed");
-            n.textContent = n.dataset.mermaidSource;
-          });
-          mermaid.initialize({
-            startOnLoad: false,
-            theme: "base",
-            themeVariables: {
-              background: p.base100.hex,
-              primaryColor: p.base200.hex,
-              primaryTextColor: p.content.hex,
-              primaryBorderColor: p.primary.hex,
-              secondaryColor: p.base300.hex,
-              lineColor: p.primary.hex,
-              textColor: p.content.hex,
-              mainBkg: p.base200.hex,
-              nodeBorder: p.primary.hex
-            }
-          });
-          await mermaid.run({ querySelector: ".mermaid" });
-        };
-        renderM(palette);
-      }
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initPlanVisuals);
-    } else {
-      initPlanVisuals();
-    }
-    window.addEventListener("load", initPlanVisuals);
-  })();
-</script>
-  </main>
-
-  <!-- Minimal Centered Footer with Semantic Versioning -->
-  <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
-    <div class="flex items-center justify-center gap-1.5 flex-wrap">
-      <span>generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a></span>
-      <span class="badge badge-ghost badge-xs font-mono font-semibold" title="Semantic Versioning v0.0.0-beta.1">v0.0.0-beta.1</span>
-    </div>
-  </footer>
 
   <!-- html-report:authoring:start agent-dock -->
   <!-- HTMLReportAgentDock: Floating & Collapsible Two-Way AI Assistant Dock -->
@@ -4635,9 +4414,10 @@ if (typeof window !== "undefined") {
     try { await renderMermaidWithTheme(palette); } catch (_) {}
     try { if (typeof HTMLReportMermaid !== "undefined") HTMLReportMermaid.initEnlarge(); } catch (_) {}
     try { checkInsufficientHorizontalSpace(); } catch (_) {}
+    try { if (typeof HTMLReportSettings !== "undefined") HTMLReportSettings.initGear(); } catch (_) {}
     try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.init(); } catch (_) {}
     try { if (typeof HTMLReportBoard !== "undefined") HTMLReportBoard.syncOfflineStatus(); } catch (_) {}
-    try { initAuthoring(); } catch (err) { console.warn("[html-report] authoring init failed:", err); }
+    try { if (typeof initAuthoring === "function") initAuthoring(); } catch (err) { console.warn("[html-report] authoring init failed:", err); }
     window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
     window.addEventListener("load", () => { try { ensureLucideIcons(); } catch (_) {} });
     window.addEventListener("beforeunload", () => {
@@ -4667,6 +4447,884 @@ async function reinitReportContent() {
   try { initPresentationShell(); } catch (_) {}
   try { initPublicFeeds(); } catch (_) {}
 }
+
+
+const _authoringMemStore = {};
+
+function _authoringStorage() {
+  try {
+    if (typeof localStorage !== "undefined" && localStorage) return localStorage;
+  } catch (_) {}
+  return {
+    getItem: (k) => (Object.prototype.hasOwnProperty.call(_authoringMemStore, k) ? _authoringMemStore[k] : null),
+    setItem: (k, v) => { _authoringMemStore[k] = String(v); },
+    removeItem: (k) => { delete _authoringMemStore[k]; }
+  };
+}
+
+/** Stable per-board key: html-report-source meta, else location.pathname. */
+function getPageKey() {
+  try {
+    if (typeof document !== "undefined") {
+      const meta = document.querySelector('meta[name="html-report-source"]');
+      if (meta && meta.getAttribute("content")) return meta.getAttribute("content");
+    }
+    if (typeof window !== "undefined" && window.location && window.location.pathname) return window.location.pathname;
+  } catch (_) {}
+  return "page";
+}
+
+function isPublishedDocument() {
+  if (typeof document === "undefined") return false;
+  const meta = document.querySelector('meta[name="html-report-published"]');
+  return Boolean(meta && meta.getAttribute("content") === "true");
+}
+
+/**
+ * Settings gear section registry. Built-in sections (Appearance, Export) are
+ * static markup; other features register sections that render by `order`.
+ */
+const HTMLReportSettings = {
+  _sections: [],
+
+  registerSection(section) {
+    if (!section || !section.id || typeof section.render !== "function") return false;
+    const next = { title: section.id, icon: null, order: 100, ...section };
+    const idx = this._sections.findIndex((s) => s.id === next.id);
+    if (idx >= 0) this._sections[idx] = next; else this._sections.push(next);
+    this.renderAll();
+    return true;
+  },
+
+  getSections() {
+    return this._sections.slice().sort((a, b) => (a.order - b.order) || String(a.id).localeCompare(String(b.id)));
+  },
+
+  renderAll() {
+    if (typeof document === "undefined") return;
+    const host = document.getElementById("settings-extra-sections");
+    if (!host) return;
+    host.innerHTML = "";
+    for (const s of this.getSections()) {
+      const wrap = document.createElement("details");
+      wrap.className = "collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box";
+      wrap.id = `settings-section-${s.id}`;
+      wrap.setAttribute("data-settings-section", s.id);
+      const summary = document.createElement("summary");
+      summary.className = "collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none";
+      summary.innerHTML = `<span>${s.title}</span>`;
+      const content = document.createElement("div");
+      content.className = "collapse-content px-3 pb-3 pt-2";
+      const body = document.createElement("div");
+      body.className = "mt-1.5";
+      content.appendChild(body);
+      wrap.appendChild(summary);
+      wrap.appendChild(content);
+      host.appendChild(wrap);
+      try { s.render(body); } catch (err) { console.warn("[html-report] settings section failed:", s.id, err); }
+    }
+  },
+
+    initGear() {
+    if (typeof document === "undefined") return;
+    const dd = document.getElementById("settings-dropdown");
+    const btn = document.getElementById("settings-gear-btn");
+    const tocDd = document.getElementById("toc-dropdown");
+    const tocBtn = document.getElementById("toc-dropdown-btn");
+
+    const closeDropdown = (dropdownEl, triggerBtn) => {
+      if (!dropdownEl) return;
+      dropdownEl.classList.remove("dropdown-open");
+      dropdownEl.removeAttribute("open");
+      if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "false");
+      const active = document.activeElement;
+      if (active && dropdownEl.contains(active) && typeof active.blur === "function") {
+        active.blur();
+      }
+    };
+
+    const openDropdown = (dropdownEl, triggerBtn) => {
+      if (!dropdownEl) return;
+      dropdownEl.classList.add("dropdown-open");
+      if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "true");
+    };
+
+    const closeSettings = () => closeDropdown(dd, btn);
+    const closeToc = () => closeDropdown(tocDd, tocBtn);
+    const closeAll = () => {
+      closeSettings();
+      closeToc();
+    };
+
+    this.close = closeSettings;
+    this.closeToc = closeToc;
+    this.closeAll = closeAll;
+
+    if (tocDd && tocBtn && !tocDd.__tocWired) {
+      tocDd.__tocWired = true;
+      tocBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = tocDd.classList.contains("dropdown-open");
+        if (isOpen) {
+          closeToc();
+        } else {
+          closeSettings();
+          openDropdown(tocDd, tocBtn);
+        }
+      });
+      tocBtn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          tocBtn.click();
+        }
+      });
+    }
+
+    if (dd && btn && !dd.__gearWired) {
+      dd.__gearWired = true;
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = dd.classList.contains("dropdown-open");
+        if (isOpen) {
+          closeSettings();
+        } else {
+          closeToc();
+          openDropdown(dd, btn);
+        }
+      });
+      btn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+
+      const panel = document.getElementById("settings-panel");
+      if (panel) {
+        panel.addEventListener("click", (e) => {
+          const actionBtn = e.target && e.target.closest && e.target.closest("#open-all-settings-btn, #download-html-btn, #download-pdf-btn, #pwa-install-dropdown-btn, #settings-open-editor");
+          if (actionBtn) {
+            setTimeout(() => closeSettings(), 0);
+          }
+        });
+      }
+    }
+
+    if (!document.__toolbarDropdownsGlobalWired) {
+      document.__toolbarDropdownsGlobalWired = true;
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          const gearEl = document.getElementById("settings-dropdown");
+          const tocEl = document.getElementById("toc-dropdown");
+          if ((gearEl && gearEl.classList.contains("dropdown-open")) || (tocEl && tocEl.classList.contains("dropdown-open"))) {
+            closeAll();
+          }
+        }
+      });
+      document.addEventListener("mousedown", (e) => {
+        const gearEl = document.getElementById("settings-dropdown");
+        const tocEl = document.getElementById("toc-dropdown");
+        if (gearEl && gearEl.classList.contains("dropdown-open") && !gearEl.contains(e.target)) {
+          closeDropdown(gearEl, document.getElementById("settings-gear-btn"));
+        }
+        if (tocEl && tocEl.classList.contains("dropdown-open") && !tocEl.contains(e.target)) {
+          closeDropdown(tocEl, document.getElementById("toc-dropdown-btn"));
+        }
+      });
+    }
+  }
+};
+
+/* -------------------------------- Mermaid Enlarge -------------------------------- */
+
+const HTMLReportMermaid = {
+  _scale: 1.0,
+  _panX: 0,
+  _panY: 0,
+  _isDragging: false,
+  _startX: 0,
+  _startY: 0,
+  _isFullscreen: false,
+  _controlsBound: false,
+
+  /**
+   * Initializes or updates enlarge buttons on all .mermaid diagram containers.
+   */
+  initEnlarge() {
+    if (typeof document === "undefined") return;
+    this._bindControls();
+    const mermaidNodes = document.querySelectorAll(".mermaid");
+    mermaidNodes.forEach((node) => {
+      let wrapper = node.closest(".mermaid-wrapper");
+      if (!wrapper) {
+        wrapper = document.createElement("div");
+        wrapper.className = "mermaid-wrapper relative group";
+        node.parentNode.insertBefore(wrapper, node);
+        wrapper.appendChild(node);
+      }
+
+      let btn = wrapper.querySelector(".mermaid-enlarge-btn");
+      if (!btn) {
+        btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn btn-xs btn-ghost bg-base-100/90 backdrop-blur border border-base-300 hover:bg-base-200 shadow-xs gap-1 text-3xs font-medium mermaid-enlarge-btn";
+        btn.title = "Enlarge diagram";
+        btn.setAttribute("aria-label", "Enlarge diagram");
+        btn.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg><span>Enlarge</span>';
+        wrapper.appendChild(btn);
+      }
+      if (!btn.__enlargeWired) {
+        btn.__enlargeWired = true;
+        btn.addEventListener("click", () => this.openModal(node));
+      }
+    });
+  },
+
+  _bindControls() {
+    if (this._controlsBound || typeof document === "undefined") return;
+    this._controlsBound = true;
+
+    const zoomInBtn = document.getElementById("mermaid-zoom-in-btn");
+    const zoomOutBtn = document.getElementById("mermaid-zoom-out-btn");
+    const zoomResetBtn = document.getElementById("mermaid-zoom-reset-btn");
+    const zoomFitBtn = document.getElementById("mermaid-zoom-fit-btn");
+    const fullscreenBtn = document.getElementById("mermaid-fullscreen-btn");
+    const viewport = document.getElementById("mermaid-enlarge-viewport");
+    const modal = document.getElementById("mermaid-enlarge-modal");
+
+    if (zoomInBtn) zoomInBtn.addEventListener("click", () => this.zoomIn());
+    if (zoomOutBtn) zoomOutBtn.addEventListener("click", () => this.zoomOut());
+    if (zoomResetBtn) zoomResetBtn.addEventListener("click", () => this.resetZoom());
+    if (zoomFitBtn) zoomFitBtn.addEventListener("click", () => this.fitToViewport());
+    if (fullscreenBtn) fullscreenBtn.addEventListener("click", () => this.toggleFullscreen());
+
+    if (viewport) {
+      viewport.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.15 : -0.15;
+        this.setScale(this._scale + delta);
+      }, { passive: false });
+
+      viewport.addEventListener("mousedown", (e) => {
+        if (e.button !== 0) return;
+        this._isDragging = true;
+        this._startX = e.clientX - this._panX;
+        this._startY = e.clientY - this._panY;
+        viewport.classList.add("cursor-grabbing");
+        viewport.classList.remove("cursor-grab");
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!this._isDragging) return;
+        this._panX = e.clientX - this._startX;
+        this._panY = e.clientY - this._startY;
+        this.updateTransform();
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (this._isDragging) {
+          this._isDragging = false;
+          if (viewport) {
+            viewport.classList.remove("cursor-grabbing");
+            viewport.classList.add("cursor-grab");
+          }
+        }
+      });
+    }
+
+    if (modal) {
+      window.addEventListener("keydown", (e) => {
+        if (!modal.open && !modal.hasAttribute("open")) return;
+        if (e.key === "+" || e.key === "=") {
+          e.preventDefault();
+          this.zoomIn();
+        } else if (e.key === "-" || e.key === "_") {
+          e.preventDefault();
+          this.zoomOut();
+        } else if (e.key === "0") {
+          e.preventDefault();
+          this.resetZoom();
+        }
+      });
+    }
+  },
+
+  setScale(scale) {
+    this._scale = Math.min(Math.max(scale, 0.25), 4.0);
+    this.updateTransform();
+  },
+
+  zoomIn(step = 0.2) {
+    this.setScale(this._scale + step);
+  },
+
+  zoomOut(step = 0.2) {
+    this.setScale(this._scale - step);
+  },
+
+  resetZoom() {
+    this._scale = 1.0;
+    this._panX = 0;
+    this._panY = 0;
+    this.updateTransform();
+  },
+
+  fitToViewport() {
+    const viewport = document.getElementById("mermaid-enlarge-viewport");
+    const content = document.getElementById("mermaid-enlarge-content");
+    const svg = content?.querySelector("svg");
+    if (!viewport || !svg) {
+      this.resetZoom();
+      return;
+    }
+    const vpRect = viewport.getBoundingClientRect();
+    let svgW = 800;
+    let svgH = 500;
+    const vb = svg.getAttribute("viewBox");
+    if (vb) {
+      const parts = vb.split(/[\s,]+/).map(Number);
+      if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+        svgW = parts[2];
+        svgH = parts[3];
+      }
+    } else {
+      svgW = svg.clientWidth || 800;
+      svgH = svg.clientHeight || 500;
+    }
+    const scaleX = (vpRect.width - 40) / svgW;
+    const scaleY = (vpRect.height - 40) / svgH;
+    const fitScale = Math.min(scaleX, scaleY, 1.5);
+    this._panX = 0;
+    this._panY = 0;
+    this.setScale(fitScale);
+  },
+
+  toggleFullscreen() {
+    this._isFullscreen = !this._isFullscreen;
+    if (typeof document === "undefined") return;
+    const box = document.getElementById("mermaid-modal-box");
+    if (!box) return;
+    if (this._isFullscreen) {
+      box.classList.remove("max-w-6xl", "w-11/12", "max-h-[90vh]");
+      box.classList.add("max-w-none", "w-[98vw]", "h-[96vh]", "max-h-[96vh]");
+    } else {
+      box.classList.remove("max-w-none", "w-[98vw]", "h-[96vh]", "max-h-[96vh]");
+      box.classList.add("max-w-6xl", "w-11/12", "max-h-[90vh]");
+    }
+  },
+
+  updateTransform() {
+    if (typeof document === "undefined") return;
+    const content = document.getElementById("mermaid-enlarge-content");
+    const zoomLevelEl = document.getElementById("mermaid-zoom-level");
+    if (content) {
+      content.style.transform = `translate(${this._panX}px, ${this._panY}px) scale(${this._scale})`;
+    }
+    if (zoomLevelEl) {
+      zoomLevelEl.textContent = `${Math.round(this._scale * 100)}%`;
+    }
+  },
+
+  /**
+   * Opens the enlarged diagram modal displaying a readable clone of the SVG.
+   */
+  openModal(mermaidNode) {
+    if (typeof document === "undefined" || !mermaidNode) return;
+    this._bindControls();
+    const modal = document.getElementById("mermaid-enlarge-modal");
+    const container = document.getElementById("mermaid-enlarge-content");
+    if (!modal || !container) return;
+
+    this._scale = 1.0;
+    this._panX = 0;
+    this._panY = 0;
+
+    const svg = mermaidNode.querySelector("svg");
+    container.innerHTML = "";
+    if (svg) {
+      const clone = svg.cloneNode(true);
+      clone.removeAttribute("height");
+      clone.removeAttribute("width");
+      clone.style.width = "100%";
+      clone.style.height = "auto";
+      clone.style.maxWidth = "none";
+
+      // Detect SVG viewBox / aspect ratio
+      let isWide = false;
+      const vb = clone.getAttribute("viewBox");
+      if (vb) {
+        const parts = vb.split(/[\s,]+/).map(Number);
+        if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+          const aspect = parts[2] / parts[3];
+          if (aspect > 1.8) {
+            isWide = true;
+          }
+        }
+      }
+
+      if (isWide) {
+        clone.style.minWidth = "min(160%, 1100px)";
+      } else {
+        clone.style.minWidth = "min(100%, 750px)";
+      }
+      container.appendChild(clone);
+    } else {
+      const pre = document.createElement("pre");
+      pre.className = "text-xs font-mono p-4 overflow-auto";
+      pre.textContent = mermaidNode.textContent;
+      container.appendChild(pre);
+    }
+
+    this.updateTransform();
+
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+  }
+};
+
+/* -------------------------------- Publisher -------------------------------- */
+
+const HTMLReportPublisher = {
+  AUTHORING_SELECTORS: [
+    "#open-all-settings-btn",
+    "#settings-publish-toggle-wrapper",
+    "#settings-extra-sections",
+    "#all-settings-modal",
+    "#edit-dock",
+    "#agent-dock-container",
+    "#agent-reconnect-modal",
+    "#agent-bridge-status-container",
+    "#published-badge",
+    "script[data-authoring]",
+    "[data-agent-authoring-only]"
+  ],
+
+  /** Prunes authoring chrome from a cloned document tree and returns it. */
+  stripAuthoringElements(docClone) {
+    if (!docClone || typeof docClone.querySelectorAll !== "function") return docClone;
+    this.AUTHORING_SELECTORS.forEach((sel) => docClone.querySelectorAll(sel).forEach((el) => el.remove()));
+    const pubToggle = docClone.querySelector("#settings-publish-toggle");
+    if (pubToggle) {
+      const wrap = pubToggle.closest("#settings-publish-toggle-wrapper") || pubToggle.closest("div.p-2") || pubToggle;
+      wrap.remove();
+    }
+    docClone.querySelectorAll(".divider").forEach((d) => {
+      if (d.textContent && d.textContent.includes("Quick Controls")) d.remove();
+    });
+    docClone.querySelectorAll('meta[name="html-report-ai"]').forEach((el) => el.remove());
+    docClone.querySelectorAll("#html-report-verify-styles").forEach((el) => el.remove());
+    docClone.querySelectorAll("[data-agent-authoring], [data-session-id], [data-insufficient-space]").forEach((el) => {
+      el.removeAttribute("data-agent-authoring");
+      el.removeAttribute("data-session-id");
+      el.removeAttribute("data-insufficient-space");
+    });
+    docClone.querySelectorAll("*").forEach((el) => {
+      if (el.attributes) {
+        Array.from(el.attributes).forEach((attr) => {
+          if (attr.name.startsWith("data-verify-")) el.removeAttribute(attr.name);
+        });
+      }
+      if (
+        (typeof el.hasAttribute === "function" &&
+          (el.hasAttribute("data-agent-prompt") ||
+            el.hasAttribute("data-agent-inspect") ||
+            el.hasAttribute(":data-agent-prompt") ||
+            el.hasAttribute("x-bind:data-agent-prompt")))
+      ) {
+        if (el.classList && typeof el.classList.add === "function") {
+          el.classList.add("hidden", "print:hidden");
+        }
+        el.setAttribute("aria-hidden", "true");
+        el.setAttribute("data-agent-prompt-hidden", "true");
+      }
+      if (el.classList && el.classList.length > 0) {
+        const toRemove = Array.from(el.classList).filter((cls) => cls.startsWith("verify-"));
+        if (toRemove.length > 0) {
+          toRemove.forEach((cls) => el.classList.remove(cls));
+          if (el.classList.length === 0) el.removeAttribute("class");
+        }
+      }
+    });
+    const body = docClone.querySelector("body");
+    if (body && body.style) {
+      body.style.removeProperty("padding-bottom");
+      if (!body.getAttribute("style")) body.removeAttribute("style");
+    }
+    return docClone;
+  },
+
+  /** Rewrites attributes in sorted order on every element for stable serialization. */
+  normalizeAttributes(docClone) {
+    if (!docClone || typeof docClone.querySelectorAll !== "function") return docClone;
+    const all = [docClone, ...Array.from(docClone.querySelectorAll("*"))];
+    all.forEach((el) => {
+      const attrs = Array.from(el.attributes || []).map((a) => [a.name, a.value]);
+      if (attrs.length < 2) return;
+      attrs.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+      attrs.forEach(([n]) => el.removeAttribute(n));
+      attrs.forEach(([n, v]) => el.setAttribute(n, v));
+    });
+    return docClone;
+  },
+
+  /** Full published prep: strip, mark, normalize. */
+  prepare(docClone) {
+    this.stripAuthoringElements(docClone);
+    const head = docClone.querySelector("head");
+    if (head && !head.querySelector('meta[name="html-report-published"]')) {
+      const m = (head.ownerDocument || document).createElement("meta");
+      m.setAttribute("name", "html-report-published");
+      m.setAttribute("content", "true");
+      head.appendChild(m);
+    }
+    return this.normalizeAttributes(docClone);
+  },
+
+  /** Normalizes serialized output: LF newlines, trimmed trailing whitespace, single trailing newline. */
+  normalizeSerialized(html) {
+    return String(html).replace(/\r\n?/g, "\n").replace(/[ \t]+$/gm, "").replace(/\n*$/, "\n");
+  },
+
+  isPublishedFlagOn() {
+    try { return _authoringStorage().getItem("html_report_published:" + getPageKey()) === "true"; } catch (_) { return false; }
+  },
+
+  setPublishedFlag(on) {
+    try {
+      const s = _authoringStorage();
+      if (on) s.setItem("html_report_published:" + getPageKey(), "true"); else s.removeItem("html_report_published:" + getPageKey());
+    } catch (_) {}
+    if (typeof document !== "undefined") {
+      const badge = document.getElementById("published-badge");
+      if (badge) badge.classList.toggle("hidden", !on);
+      const t1 = document.getElementById("settings-publish-toggle");
+      if (t1 && t1.checked !== on) t1.checked = on;
+      const t2 = document.getElementById("modal-publish-toggle");
+      if (t2 && t2.checked !== on) t2.checked = on;
+      const mb = document.getElementById("modal-publish-badge");
+      if (mb) mb.classList.toggle("hidden", !on);
+    }
+  },
+
+  async tryServerPublishDownload() {
+    if (typeof window === "undefined" || typeof fetch !== "function") return null;
+    if (!window.location || (window.location.protocol !== "http:" && window.location.protocol !== "https:")) {
+      return null;
+    }
+    try {
+      let projectSlug = null;
+      const manifestEl = typeof document !== "undefined" ? document.getElementById("agent-manifest") : null;
+      if (manifestEl && manifestEl.textContent) {
+        try {
+          const parsed = JSON.parse(manifestEl.textContent);
+          if (parsed && parsed.project) projectSlug = parsed.project;
+        } catch (_) {}
+      }
+      if (!projectSlug && window.location.pathname) {
+        const m = window.location.pathname.match(/^\/projects\/([^/]+)\//);
+        if (m) projectSlug = decodeURIComponent(m[1]);
+      }
+      const theme = typeof document !== "undefined"
+        ? (document.documentElement.getAttribute("data-theme") || "light")
+        : "light";
+      const res = await fetch("/api/publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ project: projectSlug, theme })
+      });
+      if (!res.ok) return null;
+      const contentType = (res.headers.get("Content-Type") || "").toLowerCase();
+      const publishedKind = (res.headers.get("X-Published-Kind") || "").toLowerCase();
+      if (!publishedKind && !contentType.includes("application/zip") && !res.headers.get("Content-Disposition")) {
+        return null;
+      }
+      const disp = res.headers.get("Content-Disposition") || "";
+      const fnMatch = disp.match(/filename="?([^";\n]+)"?/i);
+      const baseTitle = ((typeof document !== "undefined" && document.title) || "html-report")
+        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "html-report";
+      const fallbackName = contentType.includes("application/zip")
+        ? `${projectSlug || baseTitle}-published.zip`
+        : `${projectSlug || baseTitle}-published.html`;
+      const filename = fnMatch && fnMatch[1] ? fnMatch[1].trim() : fallbackName;
+      const blob = await res.blob();
+      _triggerBlobDownload(blob, filename);
+      return { ok: true, filename, kind: publishedKind || (contentType.includes("application/zip") ? "zip" : "html") };
+    } catch (_) {
+      return null;
+    }
+  },
+
+  async downloadPublished(btn) {
+    if (typeof document === "undefined") return null;
+    if (btn) btn.disabled = true;
+    try {
+      const serverRes = await this.tryServerPublishDownload();
+      if (serverRes && serverRes.ok) {
+        return serverRes;
+      }
+      const html = await buildInlinedHtmlSnapshot({ mode: "published" });
+      const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+      const baseName = (document.title || "html-report").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "html-report";
+      _triggerBlobDownload(blob, `${baseName}-published.html`);
+      return html;
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+};
+
+
+/**
+ * Turnkey Live Board State & SSE Helper
+ * Provides persistence (/api/board/state) and reactive SSE (/events) with file:// guards.
+ */
+const HTMLReportBoard = {
+  _activeStream: null,
+
+  isFileProtocol: function() {
+    return typeof window !== "undefined" && Boolean(window.location && window.location.protocol === "file:");
+  },
+
+  _localStorageKey: function(key) {
+    return `html_report_board_state:${key || getPageKey()}`;
+  },
+
+  saveLocalState: function(stateObj, key) {
+    if (!stateObj || typeof stateObj !== "object" || Array.isArray(stateObj)) return false;
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem(this._localStorageKey(key), JSON.stringify(stateObj));
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  },
+
+  loadLocalState: function(key) {
+    try {
+      if (typeof localStorage !== "undefined") {
+        const raw = localStorage.getItem(this._localStorageKey(key));
+        if (raw) return JSON.parse(raw);
+      }
+    } catch (_) {}
+    return {};
+  },
+
+  syncOfflineStatus: function() {
+    if (typeof document === "undefined") return;
+    const statusEl = document.getElementById("live-board-status");
+    if (!statusEl) return;
+    if (this.isFileProtocol() || (isPublishedDocument() && !this._activeStream)) {
+      statusEl.textContent = "Offline (Local Save)";
+      statusEl.className = "badge badge-info badge-outline badge-xs font-mono shrink-0 whitespace-nowrap";
+    }
+  },
+
+  _resolveEndpoint: function(path) {
+    if (typeof window === "undefined" && typeof process !== "undefined") {
+      const cfg = typeof HTMLReportAgent !== "undefined" ? HTMLReportAgent.getAiConfig() : { port: 3031 };
+      const port = process.env.REPORT_PORT || cfg.port || 3031;
+      return `http://127.0.0.1:${port}${path}`;
+    }
+    return path;
+  },
+
+  saveState: async function(stateObj, options = {}) {
+    if (!stateObj || typeof stateObj !== "object" || Array.isArray(stateObj)) {
+      return { ok: false, error: "State payload must be a JSON object" };
+    }
+    if (this.isFileProtocol()) {
+      const localSaved = this.saveLocalState(stateObj, options.key);
+      this.syncOfflineStatus();
+      return { ok: false, offline: true, localSaved, reason: "Standalone file:// mode - saved locally in browser storage" };
+    }
+    try {
+      const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(stateObj)
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  },
+
+  loadState: async function(options = {}) {
+    if (this.isFileProtocol()) {
+      this.syncOfflineStatus();
+      return { ok: false, offline: true, state: this.loadLocalState(options.key) };
+    }
+    try {
+      const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
+      const res = await fetch(endpoint, { method: "GET" });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return { ok: false, error: err.message, state: {} };
+    }
+  },
+
+  connectStream: function(path = "/events", handlers = {}) {
+    if (this.isFileProtocol()) {
+      this.syncOfflineStatus();
+      return { ok: false, offline: true, reason: "Standalone file:// mode - SSE disabled", close() {} };
+    }
+    if (typeof EventSource === "undefined") {
+      return { ok: false, unsupported: true, reason: "EventSource unavailable in this environment", close() {} };
+    }
+    try {
+      if (this._activeStream && typeof this._activeStream.close === "function") {
+        this._activeStream.close();
+      }
+      const source = new EventSource(path);
+      this._activeStream = source;
+      if (typeof handlers.onOpen === "function") {
+        source.addEventListener("open", (e) => handlers.onOpen(e));
+      }
+      if (typeof handlers.onMessage === "function") {
+        source.addEventListener("message", (e) => handlers.onMessage(e));
+      }
+      if (typeof handlers.onState === "function") {
+        source.addEventListener("board-state", (e) => {
+          try { handlers.onState(JSON.parse(e.data), e); } catch (_) {}
+        });
+      }
+      if (typeof handlers.onError === "function") {
+        source.addEventListener("error", (e) => handlers.onError(e));
+      }
+      return {
+        ok: true,
+        source,
+        close: () => {
+          try { source.close(); } catch (_) {}
+          if (this._activeStream === source) this._activeStream = null;
+        }
+      };
+    } catch (err) {
+      return { ok: false, error: err.message, close() {} };
+    }
+  }
+};
+
+if (typeof window !== "undefined") {
+  window.escapeHtml = escapeHtml;
+  window.createThemeSwatchButton = createThemeSwatchButton;
+  window._triggerBlobDownload = _triggerBlobDownload;
+  window._authoringStorage = _authoringStorage;
+  window.getPageKey = getPageKey;
+  window.isPublishedDocument = isPublishedDocument;
+  window.HTMLReportBoard = HTMLReportBoard;
+  window.HTMLReportSettings = HTMLReportSettings;
+  window.HTMLReportMermaid = HTMLReportMermaid;
+  window.HTMLReportPublisher = HTMLReportPublisher;
+  window.HTMLReport = window.HTMLReport || {};
+  window.HTMLReport.board = HTMLReportBoard;
+}
+
+// Node.js CommonJS exports for unit testing and opt-in authoring plugins
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    STANDARD_DAISYUI_THEMES,
+    DAISYUI_THEMES,
+    escapeHtml,
+    registerCustomTheme,
+    scanAndRegisterExistingCustomThemes,
+    srgbToLinear,
+    linearToSrgb,
+    hexToRgb,
+    hslToRgb,
+    parseColor,
+    rgbToOklch,
+    autoContrastContent,
+    compileTheme,
+    tailwindConfigSnippet,
+    cssColorToHexAndRgba,
+    resolveDaisyUIThemePalette,
+    sanitizeMermaidSource,
+    renderMermaidWithTheme,
+    createThemeSwatchButton,
+    initThemeDropdown,
+    setReportTheme,
+    initTOC,
+    checkInsufficientHorizontalSpace,
+    buildInlinedHtmlSnapshot,
+    exportReportPdf,
+    _triggerBlobDownload,
+    _authoringStorage,
+    initModeBadge,
+    initDownloadButton,
+    initDayjs,
+    initImpress,
+    impressNext,
+    impressPrev,
+    impressGoto,
+    initPresentationShell,
+    resizePresentationWidgets,
+    sanitizeSpeakerNotesHtml,
+    initMockjs,
+    initShowdown,
+    initFullCalendar,
+    rehydrateLucideIcons,
+    initDatastarObserver,
+    syncDatastarTheme,
+    autoLinkMarkdownFiles,
+    reinitReportContent,
+    initPublicFeeds,
+    cleanupPublicFeeds,
+    resolveFeedUrl,
+    getFeedRegistry,
+    extractFeedFields,
+    updateFeedCharts,
+    mergeFeedSignals,
+    syncPwaThemeColor,
+    initPwa,
+    HTMLReportBoard,
+    HTMLReportSettings,
+    HTMLReportMermaid,
+    HTMLReportPublisher,
+    getPageKey,
+    isPublishedDocument,
+    _getActiveFeedPollers: () => _activeFeedPollers
+  };
+}
+
+  </script>
+  <script data-authoring="true">
+/**
+ * @html-report/studio Authoring Plugin (authoring-plugin.js)
+ * Opt-in Edit Mode (#edit-dock), Element Selection, OKLCH Style Editor,
+ * All Settings Modal, and Two-Way AI Agent Bridge (HTMLReportAgent).
+ */
+
+(function () {
+const _coreEnv = (typeof require === "function" && typeof window === "undefined")
+  ? require("@html-report/core/assets/report-runtime.js")
+  : (typeof window !== "undefined" ? window : globalThis);
+
+const {
+  STANDARD_DAISYUI_THEMES,
+  DAISYUI_THEMES,
+  escapeHtml,
+  compileTheme,
+  tailwindConfigSnippet,
+  registerCustomTheme,
+  setReportTheme,
+  createThemeSwatchButton,
+  _triggerBlobDownload,
+  _authoringStorage,
+  getPageKey,
+  isPublishedDocument,
+  HTMLReportSettings,
+  HTMLReportPublisher
+} = _coreEnv;
 
 /**
  * Universal Two-Way Agent Bridge Client
@@ -5831,87 +6489,9 @@ Prerequisites & Instructions:
   }
 };
 
-/* ==========================================================================
- * Authoring layer: Settings gear registry, page edit queue, AI activation,
- * and deterministic publishing. Everything below is inert on published pages.
- * ========================================================================== */
-
-const _authoringMemStore = {};
-
-function _authoringStorage() {
-  try {
-    if (typeof localStorage !== "undefined" && localStorage) return localStorage;
-  } catch (_) {}
-  return {
-    getItem: (k) => (Object.prototype.hasOwnProperty.call(_authoringMemStore, k) ? _authoringMemStore[k] : null),
-    setItem: (k, v) => { _authoringMemStore[k] = String(v); },
-    removeItem: (k) => { delete _authoringMemStore[k]; }
-  };
-}
-
-/** Stable per-board key: html-report-source meta, else location.pathname. */
-function getPageKey() {
-  try {
-    if (typeof document !== "undefined") {
-      const meta = document.querySelector('meta[name="html-report-source"]');
-      if (meta && meta.getAttribute("content")) return meta.getAttribute("content");
-    }
-    if (typeof window !== "undefined" && window.location && window.location.pathname) return window.location.pathname;
-  } catch (_) {}
-  return "page";
-}
-
-function isPublishedDocument() {
-  if (typeof document === "undefined") return false;
-  const meta = document.querySelector('meta[name="html-report-published"]');
-  return Boolean(meta && meta.getAttribute("content") === "true");
-}
-
-/**
- * Settings gear section registry. Built-in sections (Appearance, Export) are
- * static markup; other features register sections that render by `order`.
- */
-const HTMLReportSettings = {
-  _sections: [],
-
-  registerSection(section) {
-    if (!section || !section.id || typeof section.render !== "function") return false;
-    const next = { title: section.id, icon: null, order: 100, ...section };
-    const idx = this._sections.findIndex((s) => s.id === next.id);
-    if (idx >= 0) this._sections[idx] = next; else this._sections.push(next);
-    this.renderAll();
-    return true;
-  },
-
-  getSections() {
-    return this._sections.slice().sort((a, b) => (a.order - b.order) || String(a.id).localeCompare(String(b.id)));
-  },
-
-  renderAll() {
-    if (typeof document === "undefined") return;
-    const host = document.getElementById("settings-extra-sections");
-    if (!host) return;
-    host.innerHTML = "";
-    for (const s of this.getSections()) {
-      const wrap = document.createElement("details");
-      wrap.className = "collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box";
-      wrap.id = `settings-section-${s.id}`;
-      wrap.setAttribute("data-settings-section", s.id);
-      const summary = document.createElement("summary");
-      summary.className = "collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none";
-      summary.innerHTML = `<span>${s.title}</span>`;
-      const content = document.createElement("div");
-      content.className = "collapse-content px-3 pb-3 pt-2";
-      const body = document.createElement("div");
-      body.className = "mt-1.5";
-      content.appendChild(body);
-      wrap.appendChild(summary);
-      wrap.appendChild(content);
-      host.appendChild(wrap);
-      try { s.render(body); } catch (err) { console.warn("[html-report] settings section failed:", s.id, err); }
-    }
-  },
-
+// Extend HTMLReportSettings with All Settings Modal controls
+if (HTMLReportSettings) {
+  Object.assign(HTMLReportSettings, {
   initAllSettingsModal() {
     if (typeof document === "undefined") return;
     const modal = document.getElementById("all-settings-modal");
@@ -6088,118 +6668,8 @@ const HTMLReportSettings = {
       if (pre) pre.textContent = HTMLReportAgent.getReconnectPrompt();
     }
   },
-
-  initGear() {
-    if (typeof document === "undefined") return;
-    const dd = document.getElementById("settings-dropdown");
-    const btn = document.getElementById("settings-gear-btn");
-    const tocDd = document.getElementById("toc-dropdown");
-    const tocBtn = document.getElementById("toc-dropdown-btn");
-
-    const closeDropdown = (dropdownEl, triggerBtn) => {
-      if (!dropdownEl) return;
-      dropdownEl.classList.remove("dropdown-open");
-      dropdownEl.removeAttribute("open");
-      if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "false");
-      const active = document.activeElement;
-      if (active && dropdownEl.contains(active) && typeof active.blur === "function") {
-        active.blur();
-      }
-    };
-
-    const openDropdown = (dropdownEl, triggerBtn) => {
-      if (!dropdownEl) return;
-      dropdownEl.classList.add("dropdown-open");
-      if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "true");
-    };
-
-    const closeSettings = () => closeDropdown(dd, btn);
-    const closeToc = () => closeDropdown(tocDd, tocBtn);
-    const closeAll = () => {
-      closeSettings();
-      closeToc();
-    };
-
-    this.close = closeSettings;
-    this.closeToc = closeToc;
-    this.closeAll = closeAll;
-
-    if (tocDd && tocBtn && !tocDd.__tocWired) {
-      tocDd.__tocWired = true;
-      tocBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const isOpen = tocDd.classList.contains("dropdown-open");
-        if (isOpen) {
-          closeToc();
-        } else {
-          closeSettings();
-          openDropdown(tocDd, tocBtn);
-        }
-      });
-      tocBtn.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          tocBtn.click();
-        }
-      });
-    }
-
-    if (dd && btn && !dd.__gearWired) {
-      dd.__gearWired = true;
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const isOpen = dd.classList.contains("dropdown-open");
-        if (isOpen) {
-          closeSettings();
-        } else {
-          closeToc();
-          openDropdown(dd, btn);
-        }
-      });
-      btn.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          btn.click();
-        }
-      });
-
-      const panel = document.getElementById("settings-panel");
-      if (panel) {
-        panel.addEventListener("click", (e) => {
-          const actionBtn = e.target && e.target.closest && e.target.closest("#open-all-settings-btn, #download-html-btn, #download-pdf-btn, #pwa-install-dropdown-btn, #settings-open-editor");
-          if (actionBtn) {
-            setTimeout(() => closeSettings(), 0);
-          }
-        });
-      }
-    }
-
-    if (!document.__toolbarDropdownsGlobalWired) {
-      document.__toolbarDropdownsGlobalWired = true;
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          const gearEl = document.getElementById("settings-dropdown");
-          const tocEl = document.getElementById("toc-dropdown");
-          if ((gearEl && gearEl.classList.contains("dropdown-open")) || (tocEl && tocEl.classList.contains("dropdown-open"))) {
-            closeAll();
-          }
-        }
-      });
-      document.addEventListener("mousedown", (e) => {
-        const gearEl = document.getElementById("settings-dropdown");
-        const tocEl = document.getElementById("toc-dropdown");
-        if (gearEl && gearEl.classList.contains("dropdown-open") && !gearEl.contains(e.target)) {
-          closeDropdown(gearEl, document.getElementById("settings-gear-btn"));
-        }
-        if (tocEl && tocEl.classList.contains("dropdown-open") && !tocEl.contains(e.target)) {
-          closeDropdown(tocEl, document.getElementById("toc-dropdown-btn"));
-        }
-      });
-    }
-  }
-};
+  });
+}
 
 /* ----------------------------- Edit queue ----------------------------- */
 
@@ -7615,447 +8085,6 @@ HTMLReportAgent.setAiActive = function(on) {
   return this.isAiCapable();
 };
 
-/* -------------------------------- Mermaid Enlarge -------------------------------- */
-
-const HTMLReportMermaid = {
-  _scale: 1.0,
-  _panX: 0,
-  _panY: 0,
-  _isDragging: false,
-  _startX: 0,
-  _startY: 0,
-  _isFullscreen: false,
-  _controlsBound: false,
-
-  /**
-   * Initializes or updates enlarge buttons on all .mermaid diagram containers.
-   */
-  initEnlarge() {
-    if (typeof document === "undefined") return;
-    this._bindControls();
-    const mermaidNodes = document.querySelectorAll(".mermaid");
-    mermaidNodes.forEach((node) => {
-      let wrapper = node.closest(".mermaid-wrapper");
-      if (!wrapper) {
-        wrapper = document.createElement("div");
-        wrapper.className = "mermaid-wrapper relative group";
-        node.parentNode.insertBefore(wrapper, node);
-        wrapper.appendChild(node);
-      }
-
-      let btn = wrapper.querySelector(".mermaid-enlarge-btn");
-      if (!btn) {
-        btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "btn btn-xs btn-ghost bg-base-100/90 backdrop-blur border border-base-300 hover:bg-base-200 shadow-xs gap-1 text-3xs font-medium mermaid-enlarge-btn";
-        btn.title = "Enlarge diagram";
-        btn.setAttribute("aria-label", "Enlarge diagram");
-        btn.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg><span>Enlarge</span>';
-        wrapper.appendChild(btn);
-      }
-      if (!btn.__enlargeWired) {
-        btn.__enlargeWired = true;
-        btn.addEventListener("click", () => this.openModal(node));
-      }
-    });
-  },
-
-  _bindControls() {
-    if (this._controlsBound || typeof document === "undefined") return;
-    this._controlsBound = true;
-
-    const zoomInBtn = document.getElementById("mermaid-zoom-in-btn");
-    const zoomOutBtn = document.getElementById("mermaid-zoom-out-btn");
-    const zoomResetBtn = document.getElementById("mermaid-zoom-reset-btn");
-    const zoomFitBtn = document.getElementById("mermaid-zoom-fit-btn");
-    const fullscreenBtn = document.getElementById("mermaid-fullscreen-btn");
-    const viewport = document.getElementById("mermaid-enlarge-viewport");
-    const modal = document.getElementById("mermaid-enlarge-modal");
-
-    if (zoomInBtn) zoomInBtn.addEventListener("click", () => this.zoomIn());
-    if (zoomOutBtn) zoomOutBtn.addEventListener("click", () => this.zoomOut());
-    if (zoomResetBtn) zoomResetBtn.addEventListener("click", () => this.resetZoom());
-    if (zoomFitBtn) zoomFitBtn.addEventListener("click", () => this.fitToViewport());
-    if (fullscreenBtn) fullscreenBtn.addEventListener("click", () => this.toggleFullscreen());
-
-    if (viewport) {
-      viewport.addEventListener("wheel", (e) => {
-        e.preventDefault();
-        const delta = e.deltaY < 0 ? 0.15 : -0.15;
-        this.setScale(this._scale + delta);
-      }, { passive: false });
-
-      viewport.addEventListener("mousedown", (e) => {
-        if (e.button !== 0) return;
-        this._isDragging = true;
-        this._startX = e.clientX - this._panX;
-        this._startY = e.clientY - this._panY;
-        viewport.classList.add("cursor-grabbing");
-        viewport.classList.remove("cursor-grab");
-      });
-
-      window.addEventListener("mousemove", (e) => {
-        if (!this._isDragging) return;
-        this._panX = e.clientX - this._startX;
-        this._panY = e.clientY - this._startY;
-        this.updateTransform();
-      });
-
-      window.addEventListener("mouseup", () => {
-        if (this._isDragging) {
-          this._isDragging = false;
-          if (viewport) {
-            viewport.classList.remove("cursor-grabbing");
-            viewport.classList.add("cursor-grab");
-          }
-        }
-      });
-    }
-
-    if (modal) {
-      window.addEventListener("keydown", (e) => {
-        if (!modal.open && !modal.hasAttribute("open")) return;
-        if (e.key === "+" || e.key === "=") {
-          e.preventDefault();
-          this.zoomIn();
-        } else if (e.key === "-" || e.key === "_") {
-          e.preventDefault();
-          this.zoomOut();
-        } else if (e.key === "0") {
-          e.preventDefault();
-          this.resetZoom();
-        }
-      });
-    }
-  },
-
-  setScale(scale) {
-    this._scale = Math.min(Math.max(scale, 0.25), 4.0);
-    this.updateTransform();
-  },
-
-  zoomIn(step = 0.2) {
-    this.setScale(this._scale + step);
-  },
-
-  zoomOut(step = 0.2) {
-    this.setScale(this._scale - step);
-  },
-
-  resetZoom() {
-    this._scale = 1.0;
-    this._panX = 0;
-    this._panY = 0;
-    this.updateTransform();
-  },
-
-  fitToViewport() {
-    const viewport = document.getElementById("mermaid-enlarge-viewport");
-    const content = document.getElementById("mermaid-enlarge-content");
-    const svg = content?.querySelector("svg");
-    if (!viewport || !svg) {
-      this.resetZoom();
-      return;
-    }
-    const vpRect = viewport.getBoundingClientRect();
-    let svgW = 800;
-    let svgH = 500;
-    const vb = svg.getAttribute("viewBox");
-    if (vb) {
-      const parts = vb.split(/[\s,]+/).map(Number);
-      if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
-        svgW = parts[2];
-        svgH = parts[3];
-      }
-    } else {
-      svgW = svg.clientWidth || 800;
-      svgH = svg.clientHeight || 500;
-    }
-    const scaleX = (vpRect.width - 40) / svgW;
-    const scaleY = (vpRect.height - 40) / svgH;
-    const fitScale = Math.min(scaleX, scaleY, 1.5);
-    this._panX = 0;
-    this._panY = 0;
-    this.setScale(fitScale);
-  },
-
-  toggleFullscreen() {
-    this._isFullscreen = !this._isFullscreen;
-    if (typeof document === "undefined") return;
-    const box = document.getElementById("mermaid-modal-box");
-    if (!box) return;
-    if (this._isFullscreen) {
-      box.classList.remove("max-w-6xl", "w-11/12", "max-h-[90vh]");
-      box.classList.add("max-w-none", "w-[98vw]", "h-[96vh]", "max-h-[96vh]");
-    } else {
-      box.classList.remove("max-w-none", "w-[98vw]", "h-[96vh]", "max-h-[96vh]");
-      box.classList.add("max-w-6xl", "w-11/12", "max-h-[90vh]");
-    }
-  },
-
-  updateTransform() {
-    if (typeof document === "undefined") return;
-    const content = document.getElementById("mermaid-enlarge-content");
-    const zoomLevelEl = document.getElementById("mermaid-zoom-level");
-    if (content) {
-      content.style.transform = `translate(${this._panX}px, ${this._panY}px) scale(${this._scale})`;
-    }
-    if (zoomLevelEl) {
-      zoomLevelEl.textContent = `${Math.round(this._scale * 100)}%`;
-    }
-  },
-
-  /**
-   * Opens the enlarged diagram modal displaying a readable clone of the SVG.
-   */
-  openModal(mermaidNode) {
-    if (typeof document === "undefined" || !mermaidNode) return;
-    this._bindControls();
-    const modal = document.getElementById("mermaid-enlarge-modal");
-    const container = document.getElementById("mermaid-enlarge-content");
-    if (!modal || !container) return;
-
-    this._scale = 1.0;
-    this._panX = 0;
-    this._panY = 0;
-
-    const svg = mermaidNode.querySelector("svg");
-    container.innerHTML = "";
-    if (svg) {
-      const clone = svg.cloneNode(true);
-      clone.removeAttribute("height");
-      clone.removeAttribute("width");
-      clone.style.width = "100%";
-      clone.style.height = "auto";
-      clone.style.maxWidth = "none";
-
-      // Detect SVG viewBox / aspect ratio
-      let isWide = false;
-      const vb = clone.getAttribute("viewBox");
-      if (vb) {
-        const parts = vb.split(/[\s,]+/).map(Number);
-        if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
-          const aspect = parts[2] / parts[3];
-          if (aspect > 1.8) {
-            isWide = true;
-          }
-        }
-      }
-
-      if (isWide) {
-        clone.style.minWidth = "min(160%, 1100px)";
-      } else {
-        clone.style.minWidth = "min(100%, 750px)";
-      }
-      container.appendChild(clone);
-    } else {
-      const pre = document.createElement("pre");
-      pre.className = "text-xs font-mono p-4 overflow-auto";
-      pre.textContent = mermaidNode.textContent;
-      container.appendChild(pre);
-    }
-
-    this.updateTransform();
-
-    if (typeof modal.showModal === "function") {
-      modal.showModal();
-    } else {
-      modal.setAttribute("open", "true");
-    }
-  }
-};
-
-/* -------------------------------- Publisher -------------------------------- */
-
-const HTMLReportPublisher = {
-  AUTHORING_SELECTORS: [
-    "#open-all-settings-btn",
-    "#settings-publish-toggle-wrapper",
-    "#settings-extra-sections",
-    "#all-settings-modal",
-    "#edit-dock",
-    "#agent-dock-container",
-    "#agent-reconnect-modal",
-    "#agent-bridge-status-container",
-    "#published-badge",
-    "script[data-authoring]",
-    "[data-agent-authoring-only]"
-  ],
-
-  /** Prunes authoring chrome from a cloned document tree and returns it. */
-  stripAuthoringElements(docClone) {
-    if (!docClone || typeof docClone.querySelectorAll !== "function") return docClone;
-    this.AUTHORING_SELECTORS.forEach((sel) => docClone.querySelectorAll(sel).forEach((el) => el.remove()));
-    const pubToggle = docClone.querySelector("#settings-publish-toggle");
-    if (pubToggle) {
-      const wrap = pubToggle.closest("#settings-publish-toggle-wrapper") || pubToggle.closest("div.p-2") || pubToggle;
-      wrap.remove();
-    }
-    docClone.querySelectorAll(".divider").forEach((d) => {
-      if (d.textContent && d.textContent.includes("Quick Controls")) d.remove();
-    });
-    docClone.querySelectorAll('meta[name="html-report-ai"]').forEach((el) => el.remove());
-    docClone.querySelectorAll("#html-report-verify-styles").forEach((el) => el.remove());
-    docClone.querySelectorAll("[data-agent-authoring], [data-session-id], [data-insufficient-space]").forEach((el) => {
-      el.removeAttribute("data-agent-authoring");
-      el.removeAttribute("data-session-id");
-      el.removeAttribute("data-insufficient-space");
-    });
-    docClone.querySelectorAll("*").forEach((el) => {
-      if (el.attributes) {
-        Array.from(el.attributes).forEach((attr) => {
-          if (attr.name.startsWith("data-verify-")) el.removeAttribute(attr.name);
-        });
-      }
-      if (
-        (typeof el.hasAttribute === "function" &&
-          (el.hasAttribute("data-agent-prompt") ||
-            el.hasAttribute("data-agent-inspect") ||
-            el.hasAttribute(":data-agent-prompt") ||
-            el.hasAttribute("x-bind:data-agent-prompt")))
-      ) {
-        if (el.classList && typeof el.classList.add === "function") {
-          el.classList.add("hidden", "print:hidden");
-        }
-        el.setAttribute("aria-hidden", "true");
-        el.setAttribute("data-agent-prompt-hidden", "true");
-      }
-      if (el.classList && el.classList.length > 0) {
-        const toRemove = Array.from(el.classList).filter((cls) => cls.startsWith("verify-"));
-        if (toRemove.length > 0) {
-          toRemove.forEach((cls) => el.classList.remove(cls));
-          if (el.classList.length === 0) el.removeAttribute("class");
-        }
-      }
-    });
-    const body = docClone.querySelector("body");
-    if (body && body.style) {
-      body.style.removeProperty("padding-bottom");
-      if (!body.getAttribute("style")) body.removeAttribute("style");
-    }
-    return docClone;
-  },
-
-  /** Rewrites attributes in sorted order on every element for stable serialization. */
-  normalizeAttributes(docClone) {
-    if (!docClone || typeof docClone.querySelectorAll !== "function") return docClone;
-    const all = [docClone, ...Array.from(docClone.querySelectorAll("*"))];
-    all.forEach((el) => {
-      const attrs = Array.from(el.attributes || []).map((a) => [a.name, a.value]);
-      if (attrs.length < 2) return;
-      attrs.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
-      attrs.forEach(([n]) => el.removeAttribute(n));
-      attrs.forEach(([n, v]) => el.setAttribute(n, v));
-    });
-    return docClone;
-  },
-
-  /** Full published prep: strip, mark, normalize. */
-  prepare(docClone) {
-    this.stripAuthoringElements(docClone);
-    const head = docClone.querySelector("head");
-    if (head && !head.querySelector('meta[name="html-report-published"]')) {
-      const m = (head.ownerDocument || document).createElement("meta");
-      m.setAttribute("name", "html-report-published");
-      m.setAttribute("content", "true");
-      head.appendChild(m);
-    }
-    return this.normalizeAttributes(docClone);
-  },
-
-  /** Normalizes serialized output: LF newlines, trimmed trailing whitespace, single trailing newline. */
-  normalizeSerialized(html) {
-    return String(html).replace(/\r\n?/g, "\n").replace(/[ \t]+$/gm, "").replace(/\n*$/, "\n");
-  },
-
-  isPublishedFlagOn() {
-    try { return _authoringStorage().getItem("html_report_published:" + getPageKey()) === "true"; } catch (_) { return false; }
-  },
-
-  setPublishedFlag(on) {
-    try {
-      const s = _authoringStorage();
-      if (on) s.setItem("html_report_published:" + getPageKey(), "true"); else s.removeItem("html_report_published:" + getPageKey());
-    } catch (_) {}
-    if (typeof document !== "undefined") {
-      const badge = document.getElementById("published-badge");
-      if (badge) badge.classList.toggle("hidden", !on);
-      const t1 = document.getElementById("settings-publish-toggle");
-      if (t1 && t1.checked !== on) t1.checked = on;
-      const t2 = document.getElementById("modal-publish-toggle");
-      if (t2 && t2.checked !== on) t2.checked = on;
-      const mb = document.getElementById("modal-publish-badge");
-      if (mb) mb.classList.toggle("hidden", !on);
-    }
-  },
-
-  async tryServerPublishDownload() {
-    if (typeof window === "undefined" || typeof fetch !== "function") return null;
-    if (!window.location || (window.location.protocol !== "http:" && window.location.protocol !== "https:")) {
-      return null;
-    }
-    try {
-      let projectSlug = null;
-      const manifestEl = typeof document !== "undefined" ? document.getElementById("agent-manifest") : null;
-      if (manifestEl && manifestEl.textContent) {
-        try {
-          const parsed = JSON.parse(manifestEl.textContent);
-          if (parsed && parsed.project) projectSlug = parsed.project;
-        } catch (_) {}
-      }
-      if (!projectSlug && window.location.pathname) {
-        const m = window.location.pathname.match(/^\/projects\/([^/]+)\//);
-        if (m) projectSlug = decodeURIComponent(m[1]);
-      }
-      const theme = typeof document !== "undefined"
-        ? (document.documentElement.getAttribute("data-theme") || "light")
-        : "light";
-      const res = await fetch("/api/publish", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ project: projectSlug, theme })
-      });
-      if (!res.ok) return null;
-      const contentType = (res.headers.get("Content-Type") || "").toLowerCase();
-      const publishedKind = (res.headers.get("X-Published-Kind") || "").toLowerCase();
-      if (!publishedKind && !contentType.includes("application/zip") && !res.headers.get("Content-Disposition")) {
-        return null;
-      }
-      const disp = res.headers.get("Content-Disposition") || "";
-      const fnMatch = disp.match(/filename="?([^";\n]+)"?/i);
-      const baseTitle = ((typeof document !== "undefined" && document.title) || "html-report")
-        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "html-report";
-      const fallbackName = contentType.includes("application/zip")
-        ? `${projectSlug || baseTitle}-published.zip`
-        : `${projectSlug || baseTitle}-published.html`;
-      const filename = fnMatch && fnMatch[1] ? fnMatch[1].trim() : fallbackName;
-      const blob = await res.blob();
-      _triggerBlobDownload(blob, filename);
-      return { ok: true, filename, kind: publishedKind || (contentType.includes("application/zip") ? "zip" : "html") };
-    } catch (_) {
-      return null;
-    }
-  },
-
-  async downloadPublished(btn) {
-    if (typeof document === "undefined") return null;
-    if (btn) btn.disabled = true;
-    try {
-      const serverRes = await this.tryServerPublishDownload();
-      if (serverRes && serverRes.ok) {
-        return serverRes;
-      }
-      const html = await buildInlinedHtmlSnapshot({ mode: "published" });
-      const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-      const baseName = (document.title || "html-report").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "html-report";
-      _triggerBlobDownload(blob, `${baseName}-published.html`);
-      return html;
-    } finally {
-      if (btn) btn.disabled = false;
-    }
-  }
-};
-
 /* ------------------------------ Authoring init ------------------------------ */
 
 function _mkEl(html) {
@@ -8159,217 +8188,29 @@ function initAuthoring() {
   HTMLReportEdit.initDock();
 }
 
-/**
- * Turnkey Live Board State & SSE Helper
- * Provides persistence (/api/board/state) and reactive SSE (/events) with file:// guards.
- */
-const HTMLReportBoard = {
-  _activeStream: null,
-
-  isFileProtocol: function() {
-    return typeof window !== "undefined" && Boolean(window.location && window.location.protocol === "file:");
-  },
-
-  _localStorageKey: function(key) {
-    return `html_report_board_state:${key || getPageKey()}`;
-  },
-
-  saveLocalState: function(stateObj, key) {
-    if (!stateObj || typeof stateObj !== "object" || Array.isArray(stateObj)) return false;
-    try {
-      if (typeof localStorage !== "undefined") {
-        localStorage.setItem(this._localStorageKey(key), JSON.stringify(stateObj));
-        return true;
-      }
-    } catch (_) {}
-    return false;
-  },
-
-  loadLocalState: function(key) {
-    try {
-      if (typeof localStorage !== "undefined") {
-        const raw = localStorage.getItem(this._localStorageKey(key));
-        if (raw) return JSON.parse(raw);
-      }
-    } catch (_) {}
-    return {};
-  },
-
-  syncOfflineStatus: function() {
-    if (typeof document === "undefined") return;
-    const statusEl = document.getElementById("live-board-status");
-    if (!statusEl) return;
-    if (this.isFileProtocol() || (isPublishedDocument() && !this._activeStream)) {
-      statusEl.textContent = "Offline (Local Save)";
-      statusEl.className = "badge badge-info badge-outline badge-xs font-mono shrink-0 whitespace-nowrap";
-    }
-  },
-
-  _resolveEndpoint: function(path) {
-    if (typeof window === "undefined" && typeof process !== "undefined") {
-      const cfg = HTMLReportAgent.getAiConfig();
-      const port = process.env.REPORT_PORT || cfg.port || 3031;
-      return `http://127.0.0.1:${port}${path}`;
-    }
-    return path;
-  },
-
-  saveState: async function(stateObj, options = {}) {
-    if (!stateObj || typeof stateObj !== "object" || Array.isArray(stateObj)) {
-      return { ok: false, error: "State payload must be a JSON object" };
-    }
-    if (this.isFileProtocol()) {
-      const localSaved = this.saveLocalState(stateObj, options.key);
-      this.syncOfflineStatus();
-      return { ok: false, offline: true, localSaved, reason: "Standalone file:// mode - saved locally in browser storage" };
-    }
-    try {
-      const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(stateObj)
-      });
-      const data = await res.json();
-      return data;
-    } catch (err) {
-      return { ok: false, error: err.message };
-    }
-  },
-
-  loadState: async function(options = {}) {
-    if (this.isFileProtocol()) {
-      this.syncOfflineStatus();
-      return { ok: false, offline: true, state: this.loadLocalState(options.key) };
-    }
-    try {
-      const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
-      const res = await fetch(endpoint, { method: "GET" });
-      const data = await res.json();
-      return data;
-    } catch (err) {
-      return { ok: false, error: err.message, state: {} };
-    }
-  },
-
-  connectStream: function(path = "/events", handlers = {}) {
-    if (this.isFileProtocol()) {
-      this.syncOfflineStatus();
-      return { ok: false, offline: true, reason: "Standalone file:// mode - SSE disabled", close() {} };
-    }
-    if (typeof EventSource === "undefined") {
-      return { ok: false, unsupported: true, reason: "EventSource unavailable in this environment", close() {} };
-    }
-    try {
-      if (this._activeStream && typeof this._activeStream.close === "function") {
-        this._activeStream.close();
-      }
-      const source = new EventSource(path);
-      this._activeStream = source;
-      if (typeof handlers.onOpen === "function") {
-        source.addEventListener("open", (e) => handlers.onOpen(e));
-      }
-      if (typeof handlers.onMessage === "function") {
-        source.addEventListener("message", (e) => handlers.onMessage(e));
-      }
-      if (typeof handlers.onState === "function") {
-        source.addEventListener("board-state", (e) => {
-          try { handlers.onState(JSON.parse(e.data), e); } catch (_) {}
-        });
-      }
-      if (typeof handlers.onError === "function") {
-        source.addEventListener("error", (e) => handlers.onError(e));
-      }
-      return {
-        ok: true,
-        source,
-        close: () => {
-          try { source.close(); } catch (_) {}
-          if (this._activeStream === source) this._activeStream = null;
-        }
-      };
-    } catch (err) {
-      return { ok: false, error: err.message, close() {} };
-    }
-  }
-};
-
 if (typeof window !== "undefined") {
   window.HTMLReportAgent = HTMLReportAgent;
-  window.HTMLReportBoard = HTMLReportBoard;
-  window.HTMLReportSettings = HTMLReportSettings;
   window.HTMLReportEdit = HTMLReportEdit;
-  window.HTMLReportPublisher = HTMLReportPublisher;
   window.initAuthoring = initAuthoring;
   window.HTMLReport = window.HTMLReport || {};
   window.HTMLReport.agent = HTMLReportAgent;
-  window.HTMLReport.board = HTMLReportBoard;
+
+  if (document.readyState !== "loading") {
+    try { HTMLReportAgent.init(); } catch (_) {}
+    try { initAuthoring(); } catch (err) { console.warn("[html-report] authoring init failed:", err); }
+  }
 }
 
-// Node.js CommonJS exports for unit testing
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
-    STANDARD_DAISYUI_THEMES,
-    DAISYUI_THEMES,
-    registerCustomTheme,
-    scanAndRegisterExistingCustomThemes,
-    srgbToLinear,
-    linearToSrgb,
-    hexToRgb,
-    hslToRgb,
-    parseColor,
-    rgbToOklch,
-    autoContrastContent,
-    compileTheme,
-    tailwindConfigSnippet,
-    cssColorToHexAndRgba,
-    resolveDaisyUIThemePalette,
-    sanitizeMermaidSource,
-    renderMermaidWithTheme,
-    initThemeDropdown,
-    setReportTheme,
-    initTOC,
-    checkInsufficientHorizontalSpace,
-    buildInlinedHtmlSnapshot,
-    exportReportPdf,
-    initModeBadge,
-    initDownloadButton,
-    initDayjs,
-    initImpress,
-    impressNext,
-    impressPrev,
-    impressGoto,
-    initPresentationShell,
-    resizePresentationWidgets,
-    sanitizeSpeakerNotesHtml,
-    initMockjs,
-    initShowdown,
-    initFullCalendar,
-    rehydrateLucideIcons,
-    initDatastarObserver,
-    syncDatastarTheme,
-    autoLinkMarkdownFiles,
-    reinitReportContent,
-    initPublicFeeds,
-    cleanupPublicFeeds,
-    resolveFeedUrl,
-    getFeedRegistry,
-    extractFeedFields,
-    updateFeedCharts,
-    mergeFeedSignals,
-    syncPwaThemeColor,
-    initPwa,
     HTMLReportAgent,
-    HTMLReportBoard,
-    HTMLReportSettings,
     HTMLReportEdit,
-    HTMLReportMermaid,
+    HTMLReportSettings,
     HTMLReportPublisher,
-    initAuthoring,
-    getPageKey,
-    _getActiveFeedPollers: () => _activeFeedPollers
+    initAuthoring
   };
 }
+})();
 
   </script>
 </body>

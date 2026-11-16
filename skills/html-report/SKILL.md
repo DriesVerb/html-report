@@ -50,7 +50,7 @@ node skills/html-report/playwright/verify-report.mjs --url http://localhost:3031
 # Visual review packet (Round 1 / Round 2+ edits)
 node skills/html-report/playwright/verify-report.mjs report.html --quick --review-packet review-packet.json --screenshots ./screenshots
 
-# Clean published export (strips verify-* and authoring chrome)
+# Clean viewer-only build is default; add --editable for Edit Mode & All Settings
 node skills/html-report/scripts/build-report.mjs --content report-fragment.html --published --output published.html
 ```
 

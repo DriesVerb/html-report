@@ -31,7 +31,7 @@ node skills/html-report/scripts/open-create.mjs
 
 Or start the server manually:
 ```bash
-node skills/html-report/scripts/serve-report.mjs create.html --port 3000
+node skills/html-report/scripts/serve-report.mjs packages/studio/assets/create.html --port 3031
 ```
 - **Streamlined Navbar & Projects Hub**: Header with Sections TOC, Projects dropdown & directory launcher (`#navbar-projects-btn`), and consolidated Settings Gear.
 - **Auto Workspace Discovery (`GET /api/projects`)**: Scans workspace up to 4 levels with TTL cache, SemVer tags, and offline zero-node fallback.
@@ -39,8 +39,8 @@ node skills/html-report/scripts/serve-report.mjs create.html --port 3000
 
 #### Agent Capabilities Fallback (No Node.js on Machine)
 If Node.js is not executable, the agent leverages its native capabilities:
-1. **Agent Browser Capabilities**: Open `create.html` directly via `file:///path/to/html-report/create.html`.
-2. **System Desktop Opener**: Run `xdg-open create.html` (Linux), `open create.html` (macOS), or `cmd.exe /c start create.html`.
+1. **Agent Browser Capabilities**: Open `packages/studio/assets/create.html` directly via `file:///path/to/html-report/packages/studio/assets/create.html`.
+2. **System Desktop Opener**: Run `xdg-open packages/studio/assets/create.html` (Linux), `open packages/studio/assets/create.html` (macOS), or `cmd.exe /c start packages/studio/assets/create.html`.
 3. **Interactive Decision Interview**: If headless, conduct the 4-step interview directly via multiple-choice questions.
 
 ### 2. `/html-create:cli` (Terminal Grill Interview)

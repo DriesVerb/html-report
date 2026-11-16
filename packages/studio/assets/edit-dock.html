@@ -1,0 +1,602 @@
+<!-- html-report:slot:navbar -->
+        <!-- 0. Two-Way Agent Bridge Status Badge (Auto-updates via HTMLReportAgent) -->
+        <div id="agent-bridge-status-container" class="hidden items-center">
+          <button
+            id="agent-bridge-status-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.openReconnectModal();"
+            class="badge badge-xs sm:badge-sm font-mono gap-1 transition shadow-sm cursor-pointer border border-base-300"
+            title="Two-Way Agent Bridge Status"
+          >
+            <span id="agent-bridge-status-indicator" class="inline-block w-1.5 h-1.5 rounded-full bg-base-content/40"></span>
+            <span id="agent-bridge-status-text">Checking Agent...</span>
+          </button>
+        </div>
+<!-- /html-report:slot:navbar -->
+
+<!-- html-report:slot:settings-top -->
+            <!-- html-report:authoring:start all-settings-btn -->
+            <!-- 1. All Settings button (First option) -->
+            <button id="open-all-settings-btn" type="button" class="btn btn-xs sm:btn-sm btn-primary w-full flex items-center justify-center gap-2 font-semibold shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              <span>All Settings</span>
+            </button>
+            <div class="divider my-0.5 text-3xs opacity-40">Quick Controls</div>
+            <!-- html-report:authoring:end all-settings-btn -->
+<!-- /html-report:slot:settings-top -->
+
+<!-- html-report:slot:download-top -->
+                  <!-- html-report:authoring:start publish-toggle -->
+                  <!-- First option: Switch with publish -->
+                  <div id="settings-publish-toggle-wrapper" class="p-2 rounded-lg bg-base-200 border border-base-300/60">
+                    <label class="flex items-center justify-between cursor-pointer">
+                      <div class="flex flex-col">
+                        <span class="text-xs font-semibold">Publish</span>
+                        <span class="text-3xs text-base-content/60">Clean export</span>
+                      </div>
+                      <input id="settings-publish-toggle" type="checkbox" class="toggle toggle-success toggle-sm" />
+                    </label>
+                  </div>
+                  <!-- html-report:authoring:end publish-toggle -->
+<!-- /html-report:slot:download-top -->
+
+<!-- html-report:slot:settings-extra -->
+            <!-- html-report:authoring:start extra-sections -->
+            <div id="settings-extra-sections" class="space-y-2.5"></div>
+            <!-- html-report:authoring:end extra-sections -->
+<!-- /html-report:slot:settings-extra -->
+
+<!-- html-report:slot:body -->
+  <style id="authoring-plugin-styles">
+    #edit-dock.hidden,
+    #edit-dock-body.hidden,
+    #edit-pane-compose.hidden,
+    #edit-pane-queue.hidden,
+    #edit-pane-styling.hidden,
+    #edit-cancel-edit-btn.hidden,
+    #edit-style-theme-menu.hidden,
+    #edit-selected-target.hidden,
+    #edit-prompt-preview.hidden,
+    #edit-style-offline-actions.hidden { {
+      display: none !important;
+    }
+  </style>
+
+  <!-- html-report:authoring:start all-settings -->
+  <!-- All Settings Overview Modal -->
+  <dialog id="all-settings-modal" class="modal" role="dialog" aria-label="All Settings Overview">
+    <div class="modal-box w-11/12 max-w-3xl p-4 sm:p-6 bg-base-100 text-base-content border border-base-300 shadow-2xl">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-base-300">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 bg-primary/10 text-primary rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold">All Settings</h3>
+            <p class="text-3xs sm:text-xs text-base-content/60">Configure report appearance, download options, AI agent, and authoring tools</p>
+          </div>
+        </div>
+        <form method="dialog">
+          <button id="close-all-settings-btn" class="btn btn-sm btn-circle btn-ghost" aria-label="Close settings modal">✕</button>
+        </form>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div role="tablist" class="tabs tabs-boxed bg-base-200 p-1 my-4 grid grid-cols-2 sm:grid-cols-4 gap-1">
+        <button role="tab" id="tab-btn-appearance" class="tab tab-active text-xs font-semibold gap-1.5" data-tab-target="panel-appearance">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+          <span>Appearance</span>
+        </button>
+        <button role="tab" id="tab-btn-download" class="tab text-xs font-semibold gap-1.5" data-tab-target="panel-download">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5 5-5m-5 5V3"/></svg>
+          <span>Download</span>
+        </button>
+        <button role="tab" id="tab-btn-ai" class="tab text-xs font-semibold gap-1.5" data-tab-target="panel-ai">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <span>AI Bridge</span>
+        </button>
+        <button role="tab" id="tab-btn-editor" class="tab text-xs font-semibold gap-1.5" data-tab-target="panel-editor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          <span>Page Editor</span>
+        </button>
+      </div>
+
+      <!-- Tab Panels -->
+      <div id="settings-tab-panels" class="py-2">
+        <!-- Panel 1: Appearance -->
+        <div id="panel-appearance" class="settings-tab-panel space-y-4">
+          <div class="flex items-center justify-between p-3 rounded-box bg-base-200">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-wider text-base-content/60">Current Active Theme</div>
+              <div class="text-sm font-semibold capitalize flex items-center gap-2 mt-0.5">
+                <span id="modal-active-theme-label">light</span>
+                <span class="flex items-center gap-1">
+                  <span class="bg-primary rounded-badge w-2 h-4"></span>
+                  <span class="bg-secondary rounded-badge w-2 h-4"></span>
+                  <span class="bg-accent rounded-badge w-2 h-4"></span>
+                  <span class="bg-neutral rounded-badge w-2 h-4"></span>
+                </span>
+              </div>
+            </div>
+            <span class="text-xs text-base-content/60 font-mono">32 DaisyUI Themes</span>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold uppercase tracking-wider text-base-content/60">Select Theme Palette</label>
+            <div id="modal-theme-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-64 overflow-y-auto p-1 bg-base-200/50 rounded-box border border-base-300">
+              <!-- Populated dynamically via initAllSettingsModal() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Download & Publishing -->
+        <div id="panel-download" class="settings-tab-panel hidden space-y-4">
+          <div class="p-4 rounded-box bg-base-200 border border-base-300 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold flex items-center gap-2">
+                  <span>Publish Mode</span>
+                  <span id="modal-publish-badge" class="badge badge-success badge-xs hidden font-mono">Active</span>
+                </h4>
+                <p class="text-xs text-base-content/70 mt-0.5">When active, HTML export automatically strips developer chrome, edit dock, and gear menu for production release.</p>
+              </div>
+              <input id="modal-publish-toggle" type="checkbox" class="toggle toggle-success toggle-md" />
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="p-3.5 rounded-box bg-base-200/60 border border-base-300 space-y-2">
+              <div class="font-bold text-xs uppercase text-base-content/70">HTML Bundle</div>
+              <p class="text-xs text-base-content/60">Download self-contained single-file HTML snapshot with inlined stylesheets.</p>
+              <button id="modal-download-html-btn" type="button" class="btn btn-sm btn-primary w-full gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                <span>Download HTML</span>
+              </button>
+            </div>
+            <div class="p-3.5 rounded-box bg-base-200/60 border border-base-300 space-y-2">
+              <div class="font-bold text-xs uppercase text-base-content/70">Printable PDF</div>
+              <p class="text-xs text-base-content/60">Export via browser print stylesheet with page-break optimizations.</p>
+              <button id="modal-download-pdf-btn" type="button" class="btn btn-sm btn-secondary w-full gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                <span>Download PDF</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3: AI Bridge -->
+        <div id="panel-ai" class="settings-tab-panel hidden space-y-4">
+          <div class="p-4 rounded-box bg-base-200 border border-base-300 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold">Activate AI for this board</h4>
+                <p class="text-xs text-base-content/70 mt-0.5">Enables bidirectional agent bridge, live prompt editing, and background SSE telemetry.</p>
+              </div>
+              <input id="modal-ai-toggle" type="checkbox" class="toggle toggle-primary toggle-md" />
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-box bg-base-200/60 border border-base-300 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase text-base-content/70">Turnkey Reconnection Prompt</span>
+              <button id="modal-copy-reconnect-btn" type="button" class="btn btn-xs btn-outline font-mono">Copy Prompt</button>
+            </div>
+            <pre id="modal-reconnect-prompt" class="p-2.5 rounded bg-base-300 text-3xs font-mono overflow-x-auto whitespace-pre-wrap max-h-32 text-base-content/80 select-all"></pre>
+          </div>
+        </div>
+
+        <!-- Panel 4: Page Editor -->
+        <div id="panel-editor" class="settings-tab-panel hidden space-y-4">
+          <div class="p-4 rounded-box bg-base-200 border border-base-300 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-bold">In-Browser Page Editor Dock</h4>
+                <p class="text-xs text-base-content/70 mt-0.5">Collect structured editing tasks and synthesize them into deterministic agent prompts.</p>
+              </div>
+              <button id="modal-open-editor-btn" type="button" class="btn btn-sm btn-primary gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span>Launch Editor Dock</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+  <!-- html-report:authoring:end all-settings -->
+
+<!-- html-report:slot:ai-dock -->
+  <!-- html-report:authoring:start agent-reconnect-modal -->
+  <!-- Turnkey AI Agent Reconnection Modal -->
+  <dialog id="agent-reconnect-modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box bg-base-100 border border-base-300 shadow-2xl max-w-2xl text-left">
+      <div class="flex items-center justify-between pb-3 border-b border-base-200">
+        <div class="flex items-center gap-2.5">
+          <span class="p-2 rounded-xl bg-warning/20 text-warning">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </span>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-base-content">Restore Two-Way Agent Bridge</h3>
+            <p class="text-xs text-base-content/60">Local dev server is offline or unreachable</p>
+          </div>
+        </div>
+        <button type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.closeReconnectModal();" class="btn btn-sm btn-circle btn-ghost">✕</button>
+      </div>
+
+      <div class="space-y-4 pt-4 text-xs sm:text-sm text-base-content/80">
+        <p>
+          This report features an interactive <strong>Two-Way AI Agent Co-Pilot</strong> with Datastar live streaming. Because it was shared or opened without an active local server on <code>localhost:3031</code>, the agent bridge is currently disconnected.
+        </p>
+
+        <div class="flex items-start gap-2.5 p-2.5 rounded-lg bg-info/10 border border-info/20 text-xs text-base-content/80">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-info shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <div>
+            <span class="font-semibold text-info">Node.js Requirement:</span>
+            <span> <span class="font-mono font-semibold">Node.js (v18+)</span> is only needed to run the local dev server bridge (zero <code>npm install</code> needed). If you don't have Node, you can continue viewing and interacting with the report offline with zero dependencies.</span>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-base-200/60 border border-base-300 space-y-2.5">
+          <div class="flex items-center justify-between text-xs font-semibold text-base-content flex-wrap gap-2">
+            <span class="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              Turnkey AI Agent Prompt (Copy &amp; Paste into Your Agent)
+            </span>
+            <span class="badge badge-xs badge-outline font-mono">Antigravity / Claude Code / Codex</span>
+          </div>
+
+          <pre id="agent-reconnect-prompt-preview" class="p-3.5 bg-neutral text-neutral-content rounded-lg font-mono text-xs overflow-x-auto whitespace-pre-wrap select-all leading-relaxed"></pre>
+
+          <div class="flex items-center justify-between gap-2 pt-1 flex-wrap">
+            <button
+              id="copy-reconnect-prompt-btn"
+              type="button"
+              onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.copyReconnectPrompt(this);"
+              class="btn btn-primary btn-sm gap-2 font-mono"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span>Copy Agent Prompt</span>
+            </button>
+            <span class="text-[11px] text-base-content/50">Paste directly into your AI agent terminal</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-base-200 pt-3 flex-wrap gap-2">
+          <button
+            id="retry-connection-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.checkConnection(this);"
+            class="btn btn-outline btn-sm gap-2 font-mono"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+            <span>Check Connection Now</span>
+          </button>
+          <button
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.closeReconnectModal();"
+            class="btn btn-ghost btn-sm"
+          >
+            Continue in Offline Mode
+          </button>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+  <!-- html-report:authoring:end agent-reconnect-modal -->
+
+  <!-- html-report:authoring:start agent-dock -->
+  <!-- HTMLReportAgentDock: Floating & Collapsible Two-Way AI Assistant Dock -->
+  <aside id="agent-dock-container" aria-label="AI Assistant Dock" class="print:hidden hidden">
+    <!-- Floating Launcher Toggle (bottom-right) -->
+    <button
+      id="agent-dock-launcher"
+      type="button"
+      onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.toggleDock();"
+      class="fixed bottom-5 right-5 z-40 btn btn-primary shadow-2xl rounded-full gap-2 border border-primary-content/20 hover:scale-105 transition-transform"
+      title="Open AI Assistant (Cmd+K or Ctrl+K)"
+      aria-label="Open AI Assistant Dock"
+    >
+      <span class="relative flex h-2.5 w-2.5">
+        <span id="agent-dock-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-content opacity-75"></span>
+        <span id="agent-dock-dot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-success-content"></span>
+      </span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10a9.96 9.96 0 0 1-4.587-1.112l-3.826 1.074a1 1 0 0 1-1.238-1.238l1.074-3.826A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2z"/><circle cx="8" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="16" cy="12" r="1"/></svg>
+      <span class="font-bold text-xs tracking-wide">AI Assistant</span>
+      <kbd class="kbd kbd-xs bg-primary-content/20 text-primary-content border-none font-mono text-[10px]">⌘K</kbd>
+    </button>
+
+    <!-- Floating Dock Panel -->
+    <div
+      id="agent-dock-panel"
+      class="fixed bottom-5 right-5 z-50 w-96 max-w-[calc(100vw-2rem)] h-[540px] max-h-[85vh] bg-base-100 border border-base-300 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ease-in-out hidden"
+    >
+      <!-- Dock Header -->
+      <div id="agent-dock-header" class="px-4 py-3 bg-base-200/80 border-b border-base-300 flex items-center justify-between gap-2 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="p-1.5 rounded-lg bg-primary/10 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10a9.96 9.96 0 0 1-4.587-1.112l-3.826 1.074a1 1 0 0 1-1.238-1.238l1.074-3.826A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2z"/></svg>
+          </span>
+          <div class="min-w-0">
+            <h3 class="text-xs font-bold text-base-content truncate">AI Assistant</h3>
+            <span id="agent-dock-status" class="text-[10px] text-base-content/60 font-mono block truncate">Online &bull; Datastar SSE</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <select id="agent-dock-persona" class="select select-bordered select-xs text-[11px] font-sans max-w-[110px]" title="Choose Agent Persona">
+            <option value="analyst" selected>Analyst</option>
+            <option value="support">Support</option>
+            <option value="debugger">Debugger</option>
+            <option value="strategist">Strategist</option>
+            <option value="executive">Executive</option>
+            <option value="sarcastic">Critic</option>
+          </select>
+          <button type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.closeDock();" class="btn btn-ghost btn-xs btn-circle" title="Minimize Dock">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Context Target Indicator Bar -->
+      <div id="agent-dock-context-bar" class="px-3 py-1.5 bg-base-200/40 border-b border-base-300 flex items-center justify-between text-[11px] text-base-content/70 shrink-0">
+        <div class="flex items-center gap-1.5 truncate">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+          <span class="truncate font-mono" id="agent-dock-context-label">Context: Whole Document</span>
+        </div>
+        <button id="agent-dock-clear-context-btn" type="button" onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.clearTargetElement();" class="btn btn-ghost btn-xs text-[10px] hidden px-1 h-5 min-h-0">Clear</button>
+      </div>
+
+      <!-- Turnkey AI Bridge Offline Banner (auto-shown when disconnected) -->
+      <div id="agent-dock-offline-banner" class="hidden px-3 py-2.5 bg-warning/10 border-b border-warning/30 text-xs space-y-2 shrink-0">
+        <div class="flex items-start gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-warning shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="min-w-0 flex-1">
+            <p class="font-bold text-base-content text-[11px]">AI Bridge Offline</p>
+            <p class="text-[11px] text-base-content/70 leading-snug">No local server connection. Use the turnkey prompt to start the AI bridge.</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button
+            id="agent-dock-reconnect-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.openReconnectModal();"
+            class="btn btn-warning btn-xs font-mono text-[10px] h-6 min-h-0"
+          >Restore Bridge</button>
+          <button
+            id="agent-dock-copy-turnkey-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.copyReconnectPrompt(this);"
+            class="btn btn-outline btn-xs font-mono text-[10px] h-6 min-h-0"
+          >Copy Turnkey Prompt</button>
+          <button
+            id="agent-dock-retry-btn"
+            type="button"
+            onclick="if(window.HTMLReportAgent) window.HTMLReportAgent.checkConnection(this);"
+            class="btn btn-ghost btn-xs font-mono text-[10px] h-6 min-h-0"
+          >Retry</button>
+        </div>
+      </div>
+
+      <!-- Messages & Event Stream -->
+      <div id="agent-dock-messages" class="flex-1 overflow-y-auto p-3 space-y-3 text-xs leading-relaxed" style="scroll-behavior: smooth;">
+        <div class="p-3 rounded-xl bg-base-200/60 border border-base-300 text-base-content/80 space-y-1">
+          <p class="font-semibold text-base-content">👋 Welcome to your AI Assistant</p>
+          <p id="agent-dock-welcome-copy" class="text-[11px] text-base-content/70">Ask questions, request live recalculations, or click any card to inspect its telemetry. Press <kbd class="kbd kbd-xs font-mono">⌘K</kbd> to toggle.</p>
+        </div>
+      </div>
+
+      <!-- Pending Action Confirmation Zone -->
+      <div id="agent-dock-action-zone" class="hidden px-3 py-2 bg-warning/10 border-t border-warning/30 text-xs">
+      </div>
+
+      <!-- Prompt Input Form -->
+      <form id="agent-dock-form" onsubmit="event.preventDefault(); if(window.HTMLReportAgent) window.HTMLReportAgent.submitDockPrompt();" class="p-2.5 bg-base-200/50 border-t border-base-300 shrink-0">
+        <div class="join w-full">
+          <input
+            id="agent-dock-input"
+            type="text"
+            autocomplete="off"
+            placeholder="Ask agent or press Cmd+K..."
+            class="input input-bordered input-sm join-item flex-1 text-xs focus:outline-none"
+          />
+          <button id="agent-dock-send-btn" type="submit" class="btn btn-primary btn-sm join-item gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            <span class="hidden sm:inline">Send</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </aside>
+  <!-- html-report:authoring:end agent-dock -->
+<!-- /html-report:slot:ai-dock -->
+
+  <!-- html-report:authoring:start edit-dock -->
+  <!-- Edit Mode (#edit-dock): bottom-docked, scroll-following prompt editor & Target Element selector (pruned in Published Document via --published) -->
+  <aside id="edit-dock" aria-label="Page edit queue" class="print:hidden hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl z-40 bg-base-100 text-base-content border-t-2 border-x border-primary/70 border-b-0 rounded-t-2xl shadow-[0_-10px_35px_-5px_rgba(0,0,0,0.5)] ring-1 ring-base-content/15 text-xs">
+    <div id="edit-dock-bar" class="flex items-center gap-2 px-3 h-10 bg-base-200/90 rounded-t-2xl border-b border-base-300">
+      <button id="edit-dock-toggle" type="button" class="btn btn-ghost btn-xs gap-1.5 font-bold hover:bg-base-300/60" aria-expanded="false" aria-controls="edit-dock-body">
+        <span class="font-bold">Edit</span>
+        <span id="edit-task-count" class="badge badge-primary badge-xs font-mono">0</span>
+      </button>
+      <span id="edit-section-chip" class="badge badge-outline badge-sm truncate max-w-[45%] sm:max-w-[55%] border-base-content/30 text-base-content font-medium" title="Section in view">Top of page</span>
+      <span class="flex-1"></span>
+      <button id="edit-dock-select" type="button" class="btn btn-ghost btn-xs gap-1 hover:bg-base-300/60" aria-label="Toggle element selection mode" title="Select element on page to target">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+        <span class="hidden sm:inline font-semibold">Select</span>
+      </button>
+      <button id="edit-dock-add" type="button" class="btn btn-primary btn-xs" aria-label="New edit task">+ Task</button>
+      <button id="edit-dock-close" type="button" class="btn btn-ghost btn-xs btn-circle" aria-label="Close edit dock">✕</button>
+    </div>
+    <div id="edit-dock-body" class="hidden border-t border-base-300 max-h-[min(38vh,320px)] overflow-y-auto p-3 space-y-2">
+      <div class="flex items-center justify-between gap-2">
+        <div role="tablist" class="tabs tabs-boxed tabs-xs w-fit">
+          <button id="edit-tab-compose" type="button" role="tab" class="tab tab-active" data-edit-tab="compose">Compose</button>
+          <button id="edit-tab-queue" type="button" role="tab" class="tab" data-edit-tab="queue">Queue</button>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button id="edit-tab-styling" type="button" role="tab" class="btn btn-xs btn-outline btn-primary gap-1" data-edit-tab="styling" aria-selected="false" title="Document default theme & live OKLCH Style Editor">🎨 Styling</button>
+          <button id="edit-dock-reset-btn" type="button" class="btn btn-xs btn-outline btn-error gap-1" title="Reset queued tasks, Compose draft, and custom styling overrides">↺ Reset</button>
+        </div>
+      </div>
+      <div id="edit-pane-compose" class="space-y-2">
+        <div id="edit-selected-target" class="hidden flex items-center gap-1.5 p-1.5 bg-base-200/90 rounded border border-accent/40 text-xs font-mono">
+          <span class="badge badge-accent badge-xs font-bold uppercase">Target</span>
+          <span id="edit-target-id" class="text-accent font-semibold truncate max-w-[200px] sm:max-w-[320px]">#id</span>
+          <span id="edit-target-tag" class="text-base-content/50 text-3xs font-mono">&lt;tag&gt;</span>
+          <button id="edit-clear-target" type="button" class="btn btn-ghost btn-xs btn-circle ml-auto hover:bg-base-300/60" aria-label="Clear selected target" title="Clear selection">✕</button>
+        </div>
+        <input id="edit-task-title" type="text" class="input input-bordered input-sm w-full" placeholder="Task title (e.g. Reword KPI heading)" maxlength="120" />
+        <textarea id="edit-task-content" rows="3" class="textarea textarea-bordered w-full text-xs" placeholder="Describe the change... (Ctrl/Cmd+Enter to add)"></textarea>
+        <div class="flex items-center gap-2 flex-wrap">
+          <select id="edit-task-priority" class="select select-bordered select-xs shrink-0" aria-label="Priority">
+            <option value="1">P1 High</option><option value="2" selected>P2 Medium</option><option value="3">P3 Low</option>
+          </select>
+          <span id="edit-task-anchor" class="badge badge-outline badge-sm truncate max-w-full sm:max-w-[65%] border-base-content/30 text-base-content font-medium" title="Section anchor">Anchor: none</span>
+          <span class="flex-1"></span>
+          <button id="edit-cancel-edit-btn" type="button" class="btn btn-ghost btn-sm hidden">Cancel</button>
+          <button id="edit-add-btn" type="button" class="btn btn-primary btn-sm">Add</button>
+        </div>
+      </div>
+      <div id="edit-pane-queue" class="hidden space-y-2">
+        <ul id="edit-queue-list" class="space-y-1.5"></ul>
+        <div class="flex items-center gap-2 flex-wrap pt-1">
+          <button id="edit-generate-btn" type="button" class="btn btn-outline btn-sm">Generate prompt</button>
+          <button id="edit-send-btn" type="button" class="btn btn-primary btn-sm btn-disabled opacity-50 cursor-not-allowed" data-send-state="copy" disabled title="Generate a prompt first to copy or send">Copy prompt</button>
+          <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs ml-auto sm:ml-0" title="When enabled, instructs the AI agent to determine its own execution priority order">
+            <input id="edit-auto-priority-toggle" type="checkbox" class="toggle toggle-primary toggle-xs" />
+            <span class="text-3xs font-semibold">Auto-priority</span>
+          </label>
+          <span id="edit-send-status" class="text-3xs font-mono text-base-content/70 w-full sm:w-auto"></span>
+        </div>
+        <pre id="edit-prompt-preview" class="hidden p-2 bg-neutral text-neutral-content rounded font-mono text-3xs whitespace-pre-wrap overflow-x-auto select-all"></pre>
+      </div>
+      <div id="edit-pane-styling" class="hidden space-y-2.5">
+        <div class="flex flex-wrap items-center gap-2 p-2 rounded-lg bg-base-200/80 border border-base-300">
+          <label for="edit-style-theme-btn" class="text-3xs font-semibold uppercase tracking-wide text-base-content/70">Theme</label>
+          <div id="edit-style-theme-dropdown" class="relative">
+            <button type="button" id="edit-style-theme-btn" class="btn btn-xs bg-base-100 border border-base-300 hover:border-primary gap-2 shadow-2xs" aria-label="Preview or select document theme" aria-haspopup="true" aria-expanded="false" aria-controls="edit-style-theme-menu">
+              <span class="text-xs font-semibold capitalize" id="edit-style-theme-label">light</span>
+              <span class="flex items-center gap-0.5" id="edit-style-theme-swatches" data-theme="light">
+                <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+                <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+                <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+                <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <select id="edit-style-theme-select" class="hidden" aria-hidden="true" tabindex="-1" aria-label="Preview or select document theme"></select>
+          </div>
+          <span id="edit-style-default-badge" class="badge badge-outline badge-xs font-mono">Default: light</span>
+          <span class="flex-1"></span>
+          <button id="edit-style-set-default-btn" type="button" class="btn btn-primary btn-xs">Set as Default</button>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 text-3xs">
+          <span id="edit-style-status" class="font-mono text-base-content/70"></span>
+          <div id="edit-style-offline-actions" class="hidden flex items-center gap-1.5 ml-auto">
+            <button id="edit-style-offline-copy-btn" type="button" class="btn btn-ghost btn-xs">Copy CSS</button>
+            <button id="edit-style-offline-download-btn" type="button" class="btn btn-ghost btn-xs">Download HTML</button>
+          </div>
+        </div>
+        <div class="p-2 rounded-lg bg-base-200/50 border border-base-300 space-y-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-3xs font-bold uppercase tracking-wide text-base-content/80">OKLCH Style Editor</span>
+            <label class="flex items-center gap-1 text-3xs">
+              <span class="text-base-content/60">Name</span>
+              <input id="edit-style-name" type="text" class="input input-bordered input-xs w-28 font-mono" value="custom" placeholder="custom" maxlength="64" />
+            </label>
+            <label class="flex items-center gap-1 text-3xs">
+              <span class="text-base-content/60">Extends</span>
+              <select id="edit-style-extends" class="select select-bordered select-xs font-mono" aria-label="Base theme inheritance">
+                <option value="light" selected>light</option>
+                <option value="dark">dark</option>
+                <option value="none">none</option>
+              </select>
+            </label>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+            <label class="flex flex-col gap-1 text-3xs">
+              <span class="font-semibold text-base-content/75">primary</span>
+              <div class="flex items-center gap-1">
+                <input id="edit-style-primary-picker" type="color" value="#570df8" class="w-6 h-6 p-0 border border-base-300 rounded cursor-pointer shrink-0 bg-transparent" aria-label="Primary color picker" />
+                <input id="edit-style-primary-hex" type="text" value="#570df8" class="input input-bordered input-xs w-full font-mono text-3xs" aria-label="Primary hex color" />
+              </div>
+            </label>
+            <label class="flex flex-col gap-1 text-3xs">
+              <span class="font-semibold text-base-content/75">secondary</span>
+              <div class="flex items-center gap-1">
+                <input id="edit-style-secondary-picker" type="color" value="#f000b8" class="w-6 h-6 p-0 border border-base-300 rounded cursor-pointer shrink-0 bg-transparent" aria-label="Secondary color picker" />
+                <input id="edit-style-secondary-hex" type="text" value="#f000b8" class="input input-bordered input-xs w-full font-mono text-3xs" aria-label="Secondary hex color" />
+              </div>
+            </label>
+            <label class="flex flex-col gap-1 text-3xs">
+              <span class="font-semibold text-base-content/75">accent</span>
+              <div class="flex items-center gap-1">
+                <input id="edit-style-accent-picker" type="color" value="#37cdbe" class="w-6 h-6 p-0 border border-base-300 rounded cursor-pointer shrink-0 bg-transparent" aria-label="Accent color picker" />
+                <input id="edit-style-accent-hex" type="text" value="#37cdbe" class="input input-bordered input-xs w-full font-mono text-3xs" aria-label="Accent hex color" />
+              </div>
+            </label>
+            <label class="flex flex-col gap-1 text-3xs">
+              <span class="font-semibold text-base-content/75">neutral</span>
+              <div class="flex items-center gap-1">
+                <input id="edit-style-neutral-picker" type="color" value="#3d4451" class="w-6 h-6 p-0 border border-base-300 rounded cursor-pointer shrink-0 bg-transparent" aria-label="Neutral color picker" />
+                <input id="edit-style-neutral-hex" type="text" value="#3d4451" class="input input-bordered input-xs w-full font-mono text-3xs" aria-label="Neutral hex color" />
+              </div>
+            </label>
+            <label class="flex flex-col gap-1 text-3xs">
+              <span class="font-semibold text-base-content/75">base-100</span>
+              <div class="flex items-center gap-1">
+                <input id="edit-style-base-100-picker" type="color" value="#ffffff" class="w-6 h-6 p-0 border border-base-300 rounded cursor-pointer shrink-0 bg-transparent" aria-label="Base-100 color picker" />
+                <input id="edit-style-base-100-hex" type="text" value="#ffffff" class="input input-bordered input-xs w-full font-mono text-3xs" aria-label="Base-100 hex color" />
+              </div>
+            </label>
+          </div>
+          <details id="edit-style-geometry-details" class="text-3xs">
+            <summary class="cursor-pointer font-semibold text-base-content/70 select-none">Geometry &amp; Tailwind Config</summary>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-mono text-base-content/70">--rounded-box</span>
+                <select id="edit-style-rounded-box" class="select select-bordered select-xs font-mono">
+                  <option value="0rem">0rem (Sharp)</option>
+                  <option value="0.5rem">0.5rem (Compact)</option>
+                  <option value="1rem" selected>1rem (Default)</option>
+                  <option value="1.5rem">1.5rem (Soft)</option>
+                </select>
+              </label>
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-mono text-base-content/70">--rounded-btn</span>
+                <select id="edit-style-rounded-btn" class="select select-bordered select-xs font-mono">
+                  <option value="0rem">0rem (Sharp)</option>
+                  <option value="0.25rem">0.25rem (Subtle)</option>
+                  <option value="0.5rem" selected>0.5rem (Default)</option>
+                  <option value="9999px">9999px (Pill)</option>
+                </select>
+              </label>
+            </div>
+            <pre id="edit-style-tailwind-preview" class="mt-2 p-2 bg-neutral text-neutral-content rounded font-mono text-3xs whitespace-pre-wrap overflow-x-auto max-h-24"></pre>
+          </details>
+          <div class="flex items-center gap-2 flex-wrap pt-1">
+            <button id="edit-style-save-btn" type="button" class="btn btn-secondary btn-xs">Save Custom</button>
+            <button id="edit-style-copy-css-btn" type="button" class="btn btn-outline btn-xs">Copy CSS</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="edit-style-theme-menu" role="menu" aria-label="Document theme palette selector" class="hidden absolute z-50 bg-base-200 text-base-content rounded-box w-64 max-h-60 overflow-y-auto p-2 shadow-2xl border border-base-300">
+      <div id="edit-style-theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+        <!-- Populated via HTMLReportEdit.refreshStyleThemeSelect() -->
+      </div>
+    </div>
+  </aside>
+  <!-- html-report:authoring:end edit-dock -->
+<!-- /html-report:slot:body -->

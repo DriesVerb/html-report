@@ -1,0 +1,240 @@
+<!-- 1. Journey Overview & Artifact Backlinks -->
+<section id="journey-overview" class="space-y-6">
+  <div class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body p-5 sm:p-7 space-y-5">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+        <div class="min-w-0 flex-1 space-y-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="badge badge-primary badge-sm font-mono shrink-0 whitespace-nowrap">OpenSpec Journey · spec-driven</span>
+            <span class="badge badge-success badge-outline badge-sm font-mono shrink-0 whitespace-nowrap">Phase 4: Verifying (13/13 Tasks Complete)</span>
+            <span class="badge badge-accent badge-outline badge-sm font-mono shrink-0 whitespace-nowrap">Plan A · Two-Package Monorepo</span>
+          </div>
+          <h1 id="two-package-core-studio-split-plan" class="text-2xl sm:text-3xl font-extrabold tracking-tight scroll-mt-20 break-words">
+            Two-Package Core/Studio Workspace Split &amp; Inverted Clean Runtime
+          </h1>
+          <p class="text-xs sm:text-sm text-base-content/80 leading-relaxed">
+            Architectural split separating <strong>html-report</strong> into two npm workspace packages inside one repository:
+            <code>@html-report/core</code> (deterministic compiler, FSM harness, theme/PWA builders, Playwright verifier, clean viewer shell)
+            and <code>@html-report/studio</code> (Creation Studio, modular <code>serve-report</code> routes, opt-in Authoring Plugin, AI/MCP bridge).
+          </p>
+        </div>
+        <div class="shrink-0 self-start sm:self-center flex flex-wrap gap-2">
+          <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline btn-primary gap-1.5 font-mono text-xs whitespace-nowrap">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline btn-secondary gap-1.5 font-mono text-xs whitespace-nowrap">
+            <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 font-mono text-xs whitespace-nowrap">
+            <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
+          </button>
+        </div>
+      </div>
+
+      <!-- Delta Spec Backlinks -->
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <span class="font-semibold text-base-content/70">Delta Specs:</span>
+        <button type="button" onclick="openMarkdownViewer('specs/skill-packaging/spec.md')" class="btn btn-xs btn-ghost border border-base-300 font-mono">specs/skill-packaging/spec.md</button>
+        <button type="button" onclick="openMarkdownViewer('specs/deterministic-assembly/spec.md')" class="btn btn-xs btn-ghost border border-base-300 font-mono">specs/deterministic-assembly/spec.md</button>
+        <button type="button" onclick="openMarkdownViewer('specs/publish-clean-export/spec.md')" class="btn btn-xs btn-ghost border border-base-300 font-mono">specs/publish-clean-export/spec.md</button>
+        <button type="button" onclick="openMarkdownViewer('specs/semantic-versioning/spec.md')" class="btn btn-xs btn-ghost border border-base-300 font-mono">specs/semantic-versioning/spec.md</button>
+      </div>
+
+      <!-- Mandatory Horizontal Stepper -->
+      <div class="w-full overflow-x-auto pt-3 border-t border-base-200">
+        <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary font-medium" data-content="✓">Brainstorming</li>
+          <li class="step step-primary font-medium" data-content="✓">Planning</li>
+          <li class="step step-primary font-medium" data-content="✓">Implementing</li>
+          <li class="step step-primary font-bold text-primary" data-content="4">Verifying</li>
+          <li class="step">Shipped / Archived</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Progress Metrics -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0">
+      <div class="stat-figure text-primary"><i data-lucide="list-checks" class="w-6 h-6"></i></div>
+      <div class="stat-title text-xs">Total Tasks</div>
+      <div class="stat-value text-2xl font-extrabold text-primary">13</div>
+      <div class="stat-desc text-xs font-mono">Across 4 completed phases</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0">
+      <div class="stat-figure text-success"><i data-lucide="check-circle-2" class="w-6 h-6"></i></div>
+      <div class="stat-title text-xs">Completed</div>
+      <div class="stat-value text-2xl font-extrabold text-success">13</div>
+      <div class="stat-desc text-xs font-mono">100% · 578/578 unit/int pass</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0">
+      <div class="stat-figure text-info"><i data-lucide="globe" class="w-6 h-6"></i></div>
+      <div class="stat-title text-xs">Remaining</div>
+      <div class="stat-value text-2xl font-extrabold text-base-content">0</div>
+      <div class="stat-desc text-xs font-mono">Tracked in <a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</a> (E2E CDN needs net)</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0">
+      <div class="stat-figure text-accent"><i data-lucide="boxes" class="w-6 h-6"></i></div>
+      <div class="stat-title text-xs">Workspace Packages</div>
+      <div class="stat-value text-2xl font-extrabold text-accent">2</div>
+      <div class="stat-desc text-xs font-mono">@html-report/core + studio</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Problem Context & Architectural Vision -->
+<section id="problem-and-architecture" class="space-y-5">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <h2 id="architecture-blueprint" class="text-xl sm:text-2xl font-bold scroll-mt-20">
+      Two-Package Architecture &amp; Inverted Clean Runtime
+    </h2>
+    <span class="badge badge-primary badge-outline font-mono text-xs shrink-0">One Repo · Two Workspaces</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-error/30 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="current-coupling-pain" class="font-bold text-sm text-error flex items-center gap-2 scroll-mt-20">
+          <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0"></i>
+          Current Bottlenecks Observed
+        </h3>
+        <ul class="text-xs text-base-content/80 space-y-1.5 list-disc pl-4">
+          <li><strong>Bake-then-strip chrome:</strong> Edit dock &amp; modals ship in every report and require 3 overlapping strippers (<code>--published</code>, <code>publish-report.mjs</code>, <code>HTMLReportPublisher</code>).</li>
+          <li><strong>Studio coupling in compiler:</strong> <code>build-report.mjs</code> checks for root <code>create.html</code> to mirror <code>projects/</code>.</li>
+          <li><strong>Monoliths &amp; root sprawl:</strong> 6,414-line <code>report-runtime.js</code>, 4,663-line <code>serve-report.mjs</code>, duplicated 4,434-line <code>create.html</code>, leftover <code>tmp-pwa-bdd/</code>.</li>
+          <li><strong>Offline test fragility:</strong> 21/613 tests fail offline (mostly Playwright CDN fetches + a few non-CDN regressions).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-success/30 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="target-plan-a-state" class="font-bold text-sm text-success flex items-center gap-2 scroll-mt-20">
+          <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
+          Plan A Target State
+        </h3>
+        <ul class="text-xs text-base-content/80 space-y-1.5 list-disc pl-4">
+          <li><strong>Clean-by-default output:</strong> <code>packages/core</code> emits viewer-only HTML; <code>packages/studio</code> injects Edit Mode &amp; AI Bridge via opt-in <code>--editable</code> / server slots.</li>
+          <li><strong>Strict export boundary:</strong> <code>@html-report/studio</code> imports <code>@html-report/core</code> solely through public subpath exports (enforced by boundary test).</li>
+          <li><strong>Modular server &amp; zero duplication:</strong> <code>serve-report.mjs</code> split into 6 route modules; single canonical <code>create.html</code>.</li>
+          <li><strong>Skill compatibility preserved:</strong> Root <code>package.json</code> exports and <code>skills/html-*</code> facades stay intact.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="lg:col-span-7 min-w-0 card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-3 min-w-0">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 id="package-dependency-graph" class="font-bold text-base scroll-mt-20">Package &amp; Plugin Dependency Flow</h3>
+          <span class="badge badge-ghost badge-xs font-mono">Mermaid</span>
+        </div>
+        <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">
+flowchart LR
+    RootPkg["Root package.json\n(workspaces + compat exports)"] --> Core["packages/core\n(@html-report/core)"]
+    RootPkg --> Studio["packages/studio\n(@html-report/studio)"]
+    Studio -->|"Public Exports Only"| Core
+    Skills["skills/html-*\n(.agents/skills symlinks)"] --> Core
+    Skills --> Studio
+    Core -->|"Default Clean Build"| CleanHTML["Viewer-Only HTML\n(Themes, TOC, Charts, Print)"]
+    Studio -->|"Opt-In --editable / Server"| AuthHTML["Editable Workspace\n(+ Edit Dock &amp; AI Bridge)"]
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 min-w-0 card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-3 min-w-0">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 id="monolith-footprint" class="font-bold text-base scroll-mt-20">Current Monolith Hotspots (Lines)</h3>
+          <span class="badge badge-ghost badge-xs font-mono">Chart.js</span>
+        </div>
+        <div class="relative h-72 sm:h-80 w-full min-w-0">
+          <canvas id="monolithFootprintChart" aria-label="Line counts of major repository files targeted for splitting" role="img"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Connected Implementation Checklist -->
+<section id="implementation-tasks" class="space-y-4">
+  <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+    <h2 id="task-checklist" class="text-xl sm:text-2xl font-bold scroll-mt-20">
+      Planned Phases &amp; Tasks (<a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono text-lg">tasks.md</a>)
+    </h2>
+    <span class="badge badge-success badge-outline font-mono text-xs shrink-0">13 / 13 Complete</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="phase-1-workspace" class="font-bold text-sm text-primary scroll-mt-20">Phase 1: Workspace Scaffold &amp; Boundary</h3>
+        <ul class="text-xs space-y-1.5">
+          <li>✅ <strong>1.1</strong> Root <code>package.json</code> npm workspaces + compatibility forwarding</li>
+          <li>✅ <strong>1.2</strong> Create <code>packages/core</code> and <code>packages/studio</code> manifests</li>
+          <li>✅ <strong>1.3</strong> Automated cross-package import boundary test</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="phase-2-core" class="font-bold text-sm text-secondary scroll-mt-20">Phase 2: Core Compiler &amp; Clean Runtime</h3>
+        <ul class="text-xs space-y-1.5">
+          <li>✅ <strong>2.1</strong> Move compiler, harness, verifier &amp; assets into <code>packages/core</code></li>
+          <li>✅ <strong>2.2</strong> Remove <code>create.html</code> check from <code>build-report.mjs</code>; add <code>--mirror-dir</code></li>
+          <li>✅ <strong>2.3</strong> Slim viewer-only shell/runtime + <code>--editable</code> plugin slots</li>
+          <li>✅ <strong>2.4</strong> Simplify <code>publish-report.mjs</code> around clean-by-default output</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="phase-3-studio" class="font-bold text-sm text-accent scroll-mt-20">Phase 3: Studio, Plugin &amp; Modular Server</h3>
+        <ul class="text-xs space-y-1.5">
+          <li>✅ <strong>3.1</strong> Move Studio/AI/MCP/SSE scripts to <code>packages/studio</code></li>
+          <li>✅ <strong>3.2</strong> Extract <code>authoring-plugin.js</code> + <code>edit-dock.html</code> for live/opt-in edit mode</li>
+          <li>✅ <strong>3.3</strong> Split <code>serve-report.mjs</code> (4,663 lines) into <code>server.mjs</code> + 6 route modules</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 space-y-2">
+        <h3 id="phase-4-hygiene" class="font-bold text-sm text-info scroll-mt-20">Phase 4: Skills, Hygiene &amp; Test Partitioning</h3>
+        <ul class="text-xs space-y-1.5">
+          <li>✅ <strong>4.1</strong> Update <code>skills/html-*</code> facades &amp; <code>skill-router.mjs</code></li>
+          <li>✅ <strong>4.2</strong> Remove duplicate <code>create.html</code> &amp; <code>tmp-pwa-bdd/</code>; relocate Studio PWA public assets</li>
+          <li>✅ <strong>4.3</strong> Partition offline unit (578/578 pass) vs. CDN E2E tests (26/42 offline) &amp; fix non-CDN failures</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const ctx = document.getElementById("monolithFootprintChart");
+    if (ctx && window.Chart) {
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["report-runtime.js", "serve-report.mjs", "create.html (x2)", "build-report.mjs", "harness.mjs"],
+          datasets: [{
+            label: "Lines of Code (Current)",
+            data: [6414, 4663, 8868, 1568, 1408],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+  });
+</script>

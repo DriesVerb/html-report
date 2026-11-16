@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Pre-paint theme restore: apply the saved theme before any CSS renders (prevents light-theme flash on reload) -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("html_report_active_theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch (_) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="no-referrer" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://unpkg.com https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
+  <title><!-- {{TITLE}} --></title>
+
+  <!-- Content-Aware Favicon Emoticon -->
+  <!-- {{FAVICON}} -->
+
+  <!-- Core CDNs with Cryptographic SRI & Anonymous Cross-Origin -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" integrity="sha384-iMbeRReqpIEp0z+cPe0FZxnbV/GbGyGjDfou8Rjcr6KSJIptc245QXNVjLMtu5TR" crossorigin="anonymous" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" integrity="sha384-ieG+IKD0d/ZPXyCBTMVAbqsQdns8QGJR/e26WMw7M4fkaI/rHcS/YIoi+ah9WGge" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" integrity="sha384-iZD2X8o1Zdq0HR5H/7oa8W30WS4No+zWCKUPD7fHRay9I1Gf+C4F8sVmw7zec1wW" crossorigin="anonymous"></script>
+
+  <!-- DaisyUI Custom Themes (Injected at build or runtime) -->
+  <style id="daisyui-custom-themes">
+<!-- {{CUSTOM_THEMES}} -->
+  </style>
+
+  <!-- Optional Addon CDNs & Styles -->
+  <!-- {{HEAD_EXTRAS}} -->
+
+  <style>
+    :root {
+      --grid-bg-1: #ffffff;
+      --grid-bg-2: #f3f4f6;
+      --grid-border: #d1d5db;
+      --grid-text: #111827;
+      --grid-muted: #4b5563;
+      --grid-primary: #2563eb;
+    }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    .mermaid {
+      color: inherit;
+    }
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+      background-color: transparent !important;
+    }
+    .mermaid-wrapper {
+      position: relative;
+    }
+    .mermaid-wrapper .mermaid-enlarge-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 10;
+      opacity: 0.75;
+      transition: opacity 0.15s ease;
+    }
+    .mermaid-wrapper:hover .mermaid-enlarge-btn {
+      opacity: 1;
+    }
+
+    @media print {
+      .mermaid-enlarge-btn,
+      #mermaid-enlarge-modal {
+        display: none !important;
+      }
+    }
+    /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping, oversized spinners, and vertical pill overflow */
+    .badge {
+      white-space: nowrap !important;
+      flex-shrink: 0;
+    }
+    .badge .loading,
+    .badge .loading-spinner,
+    .badge .loading-xs,
+    .badge .loading-3xs,
+    .loading-3xs {
+      width: 0.65rem !important;
+      height: 0.65rem !important;
+      min-width: 0.65rem !important;
+      min-height: 0.65rem !important;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    [data-insufficient-space="true"] {
+      outline: 2px dashed #f59e0b !important;
+      position: relative;
+    }
+    [data-insufficient-space="true"]::before {
+      content: "⚠ Insufficient horizontal space";
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      background: #f59e0b;
+      color: #111827;
+      border-radius: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+    /* Grid.js Full Light & Dark Mode DaisyUI Theme Integration */
+    .gridjs-container {
+      color: var(--grid-text) !important;
+      background-color: transparent !important;
+      font-size: 0.8125rem;
+      padding: 0 !important;
+    }
+    .gridjs-wrapper {
+      border-radius: 0.5rem;
+      border: 1px solid var(--grid-border) !important;
+      background-color: var(--grid-bg-1) !important;
+      box-shadow: none !important;
+    }
+    .gridjs-table {
+      width: 100% !important;
+      table-layout: fixed !important;
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    .gridjs-tbody,
+    tr.gridjs-tr {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+    }
+    th.gridjs-th {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    th.gridjs-th:hover,
+    th.gridjs-th-sort:hover {
+      background-color: var(--grid-bg-2) !important;
+      filter: brightness(0.95);
+    }
+    td.gridjs-td {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+      min-width: 0 !important;
+      width: auto !important;
+      word-break: break-word;
+      white-space: normal !important;
+    }
+    .gridjs-footer {
+      background-color: var(--grid-bg-2) !important;
+      color: var(--grid-text) !important;
+      border-color: var(--grid-border) !important;
+      padding: 8px 10px !important;
+    }
+    .gridjs-pages button {
+      background-color: var(--grid-bg-1) !important;
+      color: var(--grid-text) !important;
+      border: 1px solid var(--grid-border) !important;
+    }
+    .gridjs-pages button.gridjs-currentPage {
+      background-color: var(--grid-primary) !important;
+      color: #ffffff !important;
+      border-color: var(--grid-primary) !important;
+      font-weight: 700 !important;
+    }
+
+    /* FullCalendar DaisyUI Theme Integration */
+    :root {
+      --fc-page-bg-color: transparent;
+      --fc-neutral-bg-color: hsl(var(--b2, 0 0% 95%));
+      --fc-list-event-hover-bg-color: hsl(var(--b3, 0 0% 90%));
+      --fc-theme-standard-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
+      --fc-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
+      --fc-button-bg-color: hsl(var(--p, 259 94% 51%));
+      --fc-button-border-color: hsl(var(--p, 259 94% 51%));
+      --fc-button-text-color: hsl(var(--pc, 0 0% 100%));
+    }
+    .fc {
+      max-width: 100%;
+    }
+    .fc .fc-toolbar-title {
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
+    }
+    .fc .fc-button {
+      padding: 0.35rem 0.65rem !important;
+      font-size: 0.8125rem !important;
+      border-radius: 0.375rem !important;
+      text-transform: capitalize !important;
+    }
+
+    /* Impress.js Presentation Guard & Print-Equivalent Treatment */
+    html:not([data-presentation="true"]) .step,
+    .impress-static-fallback .step {
+      position: relative !important;
+      opacity: 1 !important;
+      transform: none !important;
+      display: block !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      margin-bottom: 1.5rem !important;
+    }
+    .impress-wrapper {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      border-radius: 0.75rem;
+    }
+    html[data-presentation="true"] .impress-wrapper {
+      min-height: 420px;
+      height: 420px;
+    }
+    html[data-presentation="true"] .impress-wrapper #impress:not(.impress-static-fallback) {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Leaflet z-index isolation below z-50 sticky navbar & dropdowns */
+    .leaflet-container {
+      z-index: 10 !important;
+    }
+    .leaflet-pane,
+    .leaflet-top,
+    .leaflet-bottom {
+      z-index: 15 !important;
+    }
+    .leaflet-tile {
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    /* Reveal.js Presentation Shell, Multi-Mode Spacing Tokens & Cascade Guards */
+    #presentation-shell {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+    }
+    .reveal-stage {
+      --slide-pad-x: clamp(1.75rem, 3.2vw, 3.25rem);
+      --slide-pad-top: clamp(1.5rem, 2.5vw, 2.5rem);
+      --slide-pad-bottom: clamp(3.75rem, 5.5vw, 4.75rem);
+      --slide-gap: clamp(1rem, 2vw, 1.5rem);
+      position: relative;
+      width: 100%;
+      height: clamp(600px, calc(100vh - 10.5rem), 840px);
+      min-height: 520px;
+      overflow: hidden;
+      border-radius: 1rem;
+      border: 1px solid oklch(var(--bc) / 0.14);
+      background: oklch(var(--b1) / 1);
+      box-shadow: 0 12px 32px -12px oklch(var(--bc) / 0.14);
+    }
+    .reveal-stage .reveal {
+      width: 100%;
+      height: 100%;
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+    .reveal-stage .reveal .slides {
+      width: 100% !important;
+      height: 100% !important;
+      inset: 0 !important;
+      margin: 0 !important;
+      text-align: left;
+      transform: none !important;
+    }
+    .reveal-stage .reveal .slides > section,
+    .reveal-stage .reveal .slides > section > section {
+      width: 100% !important;
+      height: 100% !important;
+      top: 0 !important;
+      left: 0 !important;
+      margin: 0 !important;
+      padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom) var(--slide-pad-x) !important;
+      box-sizing: border-box !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      text-align: left;
+    }
+    .reveal-stage .reveal .slides > section.stack,
+    .reveal-stage .reveal .slides > section:has(> section) {
+      padding: 0 !important;
+      overflow: visible !important;
+    }
+    .reveal-stage .reveal .slides section .slide-body {
+      min-height: 100%;
+      width: 100%;
+      max-width: 72rem;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--slide-gap);
+    }
+    /* Scoped reveal.css normalization guards so DaisyUI cards, alerts, badges, lists & Leaflet stay crisp */
+    .reveal-stage .reveal h1,
+    .reveal-stage .reveal h2,
+    .reveal-stage .reveal h3,
+    .reveal-stage .reveal h4,
+    .reveal-stage .reveal p,
+    .reveal-stage .reveal ul,
+    .reveal-stage .reveal ol {
+      font-family: inherit;
+      color: inherit;
+      text-transform: none;
+      letter-spacing: inherit;
+      text-shadow: none;
+      margin: 0;
+    }
+    .reveal-stage .reveal ul,
+    .reveal-stage .reveal ol {
+      display: block;
+    }
+    .reveal-stage .reveal .card,
+    .reveal-stage .reveal .alert,
+    .reveal-stage .reveal .stat,
+    .reveal-stage .reveal .badge {
+      text-align: left;
+    }
+    .reveal-stage .reveal img:not(.leaflet-tile):not(.leaflet-marker-icon) {
+      max-width: 100%;
+      max-height: 100%;
+      margin: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+    .reveal-stage .reveal .controls {
+      bottom: 12px;
+      right: 12px;
+      color: oklch(var(--p) / 1);
+    }
+    .reveal-stage .reveal .slide-number {
+      bottom: 14px;
+      left: 16px;
+      right: auto;
+      background: oklch(var(--b2) / 0.9);
+      color: oklch(var(--bc) / 0.85);
+      border: 1px solid oklch(var(--bc) / 0.15);
+      border-radius: 9999px;
+      padding: 0.2rem 0.65rem;
+      font-size: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .reveal-stage .reveal .progress {
+      height: 4px;
+      color: oklch(var(--p) / 1);
+      background: oklch(var(--bc) / 0.1);
+    }
+
+    /* Fullscreen Presentation Mode (:fullscreen & .is-fullscreen deterministic fallback) */
+    #presentation-shell:fullscreen,
+    #presentation-shell:-webkit-full-screen,
+    #presentation-shell.is-fullscreen {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 70 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      gap: 0 !important;
+      background: oklch(var(--b2) / 1) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    #presentation-shell:fullscreen .presentation-toolbar,
+    #presentation-shell:-webkit-full-screen .presentation-toolbar,
+    #presentation-shell.is-fullscreen .presentation-toolbar {
+      display: none !important;
+    }
+    #presentation-shell:fullscreen .reveal-stage,
+    #presentation-shell:-webkit-full-screen .reveal-stage,
+    #presentation-shell.is-fullscreen .reveal-stage {
+      --slide-pad-x: clamp(2.5rem, 5vw, 5rem);
+      --slide-pad-top: clamp(2rem, 3.5vw, 3.25rem);
+      --slide-pad-bottom: clamp(4.25rem, 6vw, 5rem);
+      --slide-gap: clamp(1.25rem, 2.2vw, 1.75rem);
+      flex: 1 1 auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      border-radius: 0 !important;
+      border: 0 !important;
+    }
+    #presentation-fullscreen-hud {
+      display: none;
+    }
+    #presentation-shell:fullscreen #presentation-fullscreen-hud,
+    #presentation-shell:-webkit-full-screen #presentation-fullscreen-hud,
+    #presentation-shell.is-fullscreen #presentation-fullscreen-hud {
+      display: flex;
+      position: fixed;
+      top: 0.75rem;
+      right: 1rem;
+      z-index: 75;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 9999px;
+      background: oklch(var(--b1) / 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid oklch(var(--bc) / 0.18);
+      box-shadow: 0 8px 24px -6px oklch(var(--bc) / 0.22);
+    }
+
+    /* Modeless Follow-Along Speaker Notes Popup Modal inside #presentation-shell */
+    #presentation-notes-modal {
+      position: fixed;
+      z-index: 80;
+      width: min(26rem, calc(100vw - 2rem));
+      max-height: min(60vh, 460px);
+      display: flex;
+      flex-direction: column;
+      background: oklch(var(--b1) / 0.97);
+      color: oklch(var(--bc) / 1);
+      border: 1px solid oklch(var(--bc) / 0.2);
+      border-radius: 0.9rem;
+      box-shadow: 0 20px 45px -10px oklch(var(--bc) / 0.32);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    #presentation-notes-modal.hidden,
+      display: none !important;
+    }
+    #presentation-notes-modal[data-dock="bottom-right"] {
+      bottom: 3.75rem;
+      right: 1rem;
+      left: auto;
+      top: auto;
+    }
+    #presentation-notes-modal[data-dock="bottom-left"] {
+      bottom: 3.75rem;
+      left: 1rem;
+      right: auto;
+      top: auto;
+    }
+    #presentation-notes-modal[data-dock="side-right"] {
+      top: 4.5rem;
+      bottom: 4rem;
+      right: 1rem;
+      left: auto;
+      max-height: calc(100dvh - 8.5rem);
+      width: min(24rem, calc(100vw - 2rem));
+    }
+    #presentation-notes-modal[data-notes-size="sm"] #presentation-notes-body {
+      font-size: 0.8125rem;
+    }
+    #presentation-notes-modal[data-notes-size="md"] #presentation-notes-body {
+      font-size: 0.9375rem;
+    }
+    #presentation-notes-modal[data-notes-size="lg"] #presentation-notes-body {
+      font-size: 1.0625rem;
+    }
+    #presentation-notes-body ul,
+    #presentation-notes-body ol {
+      padding-left: 1.25rem;
+      margin: 0.4rem 0;
+    }
+    #presentation-notes-body ul {
+      list-style-type: disc;
+    }
+    #presentation-notes-body ol {
+      list-style-type: decimal;
+    }
+
+    /* Stacked "All Slides" Fallback Mode */
+    #presentation-shell.is-stacked .reveal-stage,
+    .reveal-stage.is-stacked {
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      --slide-pad-x: 2rem;
+      --slide-pad-top: 1.75rem;
+      --slide-pad-bottom: 1.75rem;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal,
+    .reveal-stage.is-stacked .reveal,
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides,
+    .reveal-stage.is-stacked .reveal .slides {
+      position: static !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+      transform: none !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 1.5rem !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides section,
+    .reveal-stage.is-stacked .reveal .slides section {
+      position: relative !important;
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      width: 100% !important;
+      height: auto !important;
+      padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom) var(--slide-pad-x) !important;
+      border: 1px solid oklch(var(--bc) / 0.14) !important;
+      border-radius: 1rem !important;
+      background: oklch(var(--b1) / 1) !important;
+      box-shadow: 0 8px 24px -10px oklch(var(--bc) / 0.12) !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section.stack,
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section:has(> section),
+    .reveal-stage.is-stacked .reveal .slides > section.stack,
+    .reveal-stage.is-stacked .reveal .slides > section:has(> section) {
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section > section,
+    .reveal-stage.is-stacked .reveal .slides > section > section {
+      margin-top: 1rem !important;
+    }
+    #presentation-shell.is-stacked .reveal .controls,
+    #presentation-shell.is-stacked .reveal .progress,
+    #presentation-shell.is-stacked .reveal .slide-number,
+    .reveal-stage.is-stacked .reveal .controls,
+    .reveal-stage.is-stacked .reveal .progress,
+    .reveal-stage.is-stacked .reveal .slide-number {
+      display: none !important;
+    }
+
+    @media print {
+      .presentation-toolbar,
+      #presentation-fullscreen-hud,
+      #presentation-notes-modal,
+      .reveal-stage .reveal .controls,
+      .reveal-stage .reveal .progress,
+      .reveal-stage .reveal .slide-number {
+        display: none !important;
+      }
+      .reveal-stage,
+      .reveal-stage .reveal,
+      .reveal-stage .reveal .slides {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        transform: none !important;
+        display: block !important;
+      }
+      .reveal-stage .reveal .slides section {
+        position: relative !important;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        height: auto !important;
+        padding: 1.5rem 1.75rem !important;
+        margin-bottom: 1.5rem !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.75rem !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+    }
+
+    /* Deterministic Toolbar Dropdown Visibility (prevents DaisyUI :focus-within stuck-open bug) */
+    #toc-dropdown:not(.dropdown-open) > .dropdown-content,
+    #settings-dropdown:not(.dropdown-open) > .dropdown-content {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    @media print {
+      header,
+      .navbar,
+      nav {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-base-200 text-base-content min-h-screen flex flex-col font-sans antialiased selection:bg-primary selection:text-primary-content">
+
+  <!-- Sticky DaisyUI Navbar -->
+  <header class="sticky top-0 z-50 bg-base-100/95 backdrop-blur border-b border-base-300 print:hidden">
+    <nav class="navbar max-w-7xl mx-auto px-3 sm:px-6 gap-2 min-h-14" aria-label="Report Navigation">
+      <!-- Left: Title & Mode Badge -->
+      <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
+        <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
+          <!-- {{TITLE}} -->
+        </span>
+        <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
+      </div>
+
+      <!-- Right: TOC + Theme Picker + Download Menu -->
+      <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
+        <!-- {{AUTHORING_NAVBAR}} -->
+
+        <!-- 1. TOC Dropdown -->
+        <div class="dropdown dropdown-end" id="toc-dropdown">
+          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents" aria-haspopup="true" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            <span>Contents</span>
+          </div>
+          <ul id="report-toc-list" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[60] mt-2 w-72 sm:w-80 max-h-[70vh] overflow-y-auto p-2 shadow-xl border border-base-300 flex-nowrap">
+            <!-- Populated via initTOC() -->
+          </ul>
+        </div>
+
+        <!-- 2. Settings Gear (Appearance, Download & Authoring controls) -->
+        <div class="dropdown dropdown-end" id="settings-dropdown">
+          <div id="settings-gear-btn" tabindex="0" role="button" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 btn-square" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div id="settings-panel" tabindex="0" role="dialog" aria-label="Settings" class="dropdown-content bg-base-100 text-base-content rounded-box z-[60] mt-2 w-80 max-w-[calc(100vw-1.5rem)] max-h-[70vh] overflow-y-auto p-3 shadow-2xl border border-base-300 space-y-2.5">
+            <!-- {{AUTHORING_SETTINGS_TOP}} -->
+
+            <!-- 2. Appearance (Unexpanded with live color palette) -->
+            <details class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box" id="settings-section-appearance" data-settings-section="appearance">
+              <summary class="collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none">
+                <span>Appearance</span>
+                <span class="flex items-center gap-1 normal-case tracking-normal mr-3 font-normal">
+                  <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
+                  <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+                  <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+                  <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+                  <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+                </span>
+              </summary>
+              <div class="collapse-content px-3 pb-3 pt-2">
+                <div id="theme-dropdown" class="max-h-48 overflow-y-auto rounded-box bg-base-200 p-1.5 mt-1">
+                  <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+                    <!-- Populated via initThemeDropdown() -->
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <!-- 3. Download (Unexpanded, Renamed from Export) -->
+            <details class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box" id="settings-section-download" data-settings-section="download">
+              <summary class="collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none">
+                <span>Download</span>
+              </summary>
+              <div class="collapse-content px-3 pb-3 pt-2">
+                <div id="download-dropdown" class="mt-1 space-y-1.5">
+                  <!-- {{AUTHORING_DOWNLOAD_TOP}} -->
+                  <!-- Download options -->
+                  <ul id="download-dropdown-menu" class="menu menu-sm p-0 w-full space-y-0.5">
+                    <li>
+                      <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                        <span>Download as HTML</span>
+                      </button>
+                    </li>
+                    <li>
+                      <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                        <div class="flex items-center gap-2.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                          </svg>
+                          <span>Download as PDF</span>
+                        </div>
+                        <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
+                      </button>
+                    </li>
+                    <li id="pwa-install-menu-item" class="hidden">
+                      <button id="pwa-install-dropdown-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                        <div class="flex items-center gap-2.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                          </svg>
+                          <span>Install as App (PWA)</span>
+                        </div>
+                        <span id="pwa-install-status-badge" class="badge badge-accent badge-xs font-mono">Installable</span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </details>
+            <!-- {{AUTHORING_SETTINGS_EXTRA}} -->
+          </div>
+        </div>
+
+        <!-- 4. PWA Install & Offline Indicators -->
+        <button id="pwa-install-btn" type="button" class="btn btn-xs sm:btn-sm btn-outline btn-accent hidden gap-1.5 shrink-0" aria-label="Install Report as App" title="Install as Desktop/Mobile App">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v6m0 0l-3-3m3 3l3-3M12 4v4" />
+          </svg>
+          <span class="hidden md:inline">Install App</span>
+        </button>
+        <span id="pwa-offline-badge" class="badge badge-warning badge-sm hidden gap-1 font-mono text-3xs shrink-0" title="Report is operating offline from local Service Worker cache">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-warning-content animate-pulse"></span>
+          <span>Offline</span>
+        </span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Interactive PDF Warning Modal -->
+  <dialog id="pdf-not-ready-modal" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg text-warning flex items-center gap-2">
+        <span>⚠ Interactive Report Mode</span>
+      </h3>
+      <p class="py-4 text-xs">
+        This report is in interactive web-first mode. To generate a print-ready version with @media print rules, cover page, and PDF pagination, request:
+      </p>
+      <div class="bg-base-200 p-3 rounded font-mono text-2xs overflow-x-auto">
+        <code id="pdf-conversion-prompt-text">Convert this interactive HTML report into a print/PDF-ready publication report with @media print queries, static fallbacks, and Page 1 TOC</code>
+      </div>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-sm">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Reusable Mermaid Diagram Enlarge Modal -->
+  <dialog id="mermaid-enlarge-modal" class="modal modal-bottom sm:modal-middle" aria-label="Enlarged Diagram Preview">
+    <div id="mermaid-modal-box" class="modal-box max-w-6xl w-11/12 max-h-[90vh] flex flex-col p-4 bg-base-100 text-base-content border border-base-300 shadow-2xl transition-all duration-200">
+      <div class="flex items-center justify-between pb-3 border-b border-base-300 gap-2 flex-wrap">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          <h3 class="font-bold text-sm sm:text-base">Diagram Preview</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Zoom & Viewport Toolbar -->
+          <div class="join border border-base-300 bg-base-100 rounded-lg shadow-xs">
+            <button type="button" id="mermaid-zoom-out-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Zoom Out (-)">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>
+            </button>
+            <button type="button" id="mermaid-zoom-reset-btn" class="join-item btn btn-xs btn-ghost font-mono text-3xs px-2" title="Reset Zoom">
+              <span id="mermaid-zoom-level">100%</span>
+            </button>
+            <button type="button" id="mermaid-zoom-in-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Zoom In (+)">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <button type="button" id="mermaid-zoom-fit-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Fit to Viewport">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            </button>
+          </div>
+          <button type="button" id="mermaid-fullscreen-btn" class="btn btn-xs btn-ghost btn-square border border-base-300" title="Toggle Fullscreen Viewport">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+          </button>
+          <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost" aria-label="Close">✕</button>
+          </form>
+        </div>
+      </div>
+      <div id="mermaid-enlarge-viewport" class="overflow-hidden relative flex-1 min-h-[350px] flex items-center justify-center p-4 my-2 bg-base-200/50 rounded-box border border-base-300 select-none cursor-grab active:cursor-grabbing">
+        <div id="mermaid-enlarge-content" class="origin-center will-change-transform flex items-center justify-center w-full h-full">
+          <!-- SVG clone dynamically injected here -->
+        </div>
+      </div>
+      <div class="modal-action mt-0 pt-2 flex items-center justify-between">
+        <span class="text-3xs text-base-content/60">Scroll to zoom &bull; Click &amp; drag to pan &bull; Press ESC or 0 to reset</span>
+        <form method="dialog">
+          <button class="btn btn-xs sm:btn-sm btn-ghost">Close</button>
+        </form>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop bg-neutral/40 backdrop-blur-xs">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- Main Content Container -->
+  <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
+<!-- {{CONTENT}} -->
+  </main>
+
+  <!-- Minimal Centered Footer with Semantic Versioning -->
+  <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
+    <div class="flex items-center justify-center gap-1.5 flex-wrap">
+      <span>generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a></span>
+      <span class="badge badge-ghost badge-xs font-mono font-semibold" title="Semantic Versioning v<!-- {{VERSION}} -->">v<!-- {{VERSION}} --></span>
+    </div>
+  </footer>
+
+  <!-- {{AUTHORING_MARKUP}} -->
+
+  <!-- Runtime Scripts -->
+  <!-- {{RUNTIME_SCRIPT}} -->
+  <!-- {{AUTHORING_SCRIPT}} -->
+</body>
+</html>
