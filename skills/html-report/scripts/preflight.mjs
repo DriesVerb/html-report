@@ -8,6 +8,7 @@
 
 import fs from "node:fs";
 import net from "node:net";
+import os from "node:os";
 import path from "node:path";
 import { execFile, spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -300,13 +301,74 @@ export const SUPPORTED_CLI_PROVIDERS = [
 ];
 
 /**
+ * Sanitizes raw CLI stderr / Node.js child_process errors into concise,
+ * actionable single-sentence guidance without exposing stack traces.
+ */
+export function sanitizeCliError(stderr = "", err = null, providerId = null) {
+  const raw = [stderr ? String(stderr) : "", err?.message ? String(err.message) : (typeof err === "string" ? err : "")]
+    .filter(Boolean)
+    .join("\n")
+    .replace(/\x1b\[[0-9;]*m/g, "");
+  const label = providerId ? `AI provider '${providerId}'` : "AI provider";
+
+  if (/EROFS|read-only file system/i.test(raw)) {
+    return `${label} cannot write to its home state directory (read-only filesystem / EROFS). Run outside a read-only sandbox or enable --ai-local mode.`;
+  }
+  if (/Please set an Auth method|not authenticated|missing.*api.?key|unauthorized|\b401\b/i.test(raw)) {
+    return `${label} is not authenticated. Configure valid credentials or enable --ai-local mode.`;
+  }
+  if (/ENOENT|command not found|not found/i.test(raw)) {
+    return `${label} executable was not found on PATH.`;
+  }
+  if (/ETIMEDOUT|timed out|AbortError/i.test(raw) || err?.killed) {
+    return `${label} timed out before returning a response.`;
+  }
+
+  const cleaned = raw
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !/^at\s+/.test(line) && !/^Node\.js v\d+/i.test(line))
+    .join(" ")
+    .replace(/^Command failed:\s*[^\n]+?(?=\s+[A-Z]|$)/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!cleaned) return `${label} failed to respond.`;
+  return cleaned.length > 220 ? cleaned.slice(0, 217) + "..." : cleaned;
+}
+
+function isTruthyEnvFlag(val) {
+  if (val === undefined || val === null) return false;
+  const norm = String(val).trim().toLowerCase();
+  return Boolean(norm && norm !== "0" && norm !== "false" && norm !== "no");
+}
+
+function hasGeminiSettingsAuth(home) {
+  const settingsPath = path.join(home, ".gemini", "settings.json");
+  if (fs.existsSync(settingsPath)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(settingsPath, "utf-8"));
+      const authType =
+        parsed?.security?.auth?.selectedType ||
+        parsed?.selectedAuthType ||
+        parsed?.auth?.selectedType;
+      if (typeof authType === "string" && authType.trim().length > 0) {
+        return true;
+      }
+    } catch (_) {}
+  }
+  const oauthCredsPath = path.join(home, ".gemini", "oauth_creds.json");
+  return fs.existsSync(oauthCredsPath);
+}
+
+/**
  * AgentInferenceRouter
  * Agent-agnostic Turnkey AI Bridge router supporting CLI harnesses and HTTP LLM APIs.
  */
 export class AgentInferenceRouter {
   static _checkProviderAuthenticated(id, env = process.env) {
     try {
-      const home = os.homedir();
+      const home = env.HOME || env.USERPROFILE || os.homedir();
       switch (id) {
         case "custom-cmd":
         case "http-custom":
@@ -333,8 +395,9 @@ export class AgentInferenceRouter {
         case "gemini":
           return Boolean(
             env.GEMINI_API_KEY ||
-            fs.existsSync(path.join(home, ".gemini")) ||
-            fs.existsSync(path.join(home, ".config", "gcloud"))
+            isTruthyEnvFlag(env.GOOGLE_GENAI_USE_VERTEXAI) ||
+            isTruthyEnvFlag(env.GOOGLE_GENAI_USE_GCA) ||
+            hasGeminiSettingsAuth(home)
           );
         case "agy":
           return Boolean(
@@ -524,9 +587,13 @@ export class AgentInferenceRouter {
       timeoutMs = 20000,
       env = process.env,
       envPath = undefined,
+      allowUnauthenticated = false,
       throwOnError = false
     } = merged;
-    const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : String(prompt || "");
+    const normPrompt = String(prompt || "");
+    const normSys = String(systemPrompt || "").trim();
+    const effectiveSystemPrompt = normSys && normSys !== normPrompt.trim() ? normSys : "";
+    const fullPrompt = effectiveSystemPrompt ? `${effectiveSystemPrompt}\n\n${normPrompt}` : normPrompt;
     const detection = AgentInferenceRouter.detectProviders({ provider, aiCmd, env, envPath });
     const target = detection._resolvedActive;
 
@@ -561,9 +628,10 @@ export class AgentInferenceRouter {
           const baseArgs = tokens.slice(1);
           const child = execFile(cmd, [...baseArgs, fullPrompt], { timeout: timeoutMs, env }, (err, stdout, stderr) => {
             if (err) {
-              const wrapped = new Error(`Custom AI command '${cmd}' failed: ${err.message}`);
+              const cleanMsg = sanitizeCliError(stderr, err, target.id);
+              const wrapped = new Error(cleanMsg);
               wrapped.code = "inference_unavailable";
-              wrapped.reason = stderr ? String(stderr).trim() || err.message : err.message;
+              wrapped.reason = cleanMsg;
               wrapped.provider = target.id;
               wrapped.preflight = detection;
               return reject(wrapped);
@@ -589,14 +657,25 @@ export class AgentInferenceRouter {
     }
 
     if (target.type === "cli") {
+      if (!target.authenticated && !allowUnauthenticated) {
+        const unauthErr = new Error(
+          `AI CLI provider '${target.id}' is installed but not authenticated. Configure valid credentials or enable --ai-local mode.`
+        );
+        unauthErr.code = "inference_unavailable";
+        unauthErr.reason = unauthErr.message;
+        unauthErr.provider = target.id;
+        unauthErr.preflight = detection;
+        return fail(unauthErr);
+      }
       try {
         const res = await new Promise((resolve, reject) => {
           const args = target.buildArgs({ prompt: fullPrompt, model });
           const child = execFile(target.binPath || target.bin, args, { timeout: timeoutMs, env }, (err, stdout, stderr) => {
             if (err) {
-              const wrapped = new Error(`AI CLI provider '${target.id}' failed: ${err.message}`);
+              const cleanMsg = sanitizeCliError(stderr, err, target.id);
+              const wrapped = new Error(cleanMsg);
               wrapped.code = "inference_unavailable";
-              wrapped.reason = stderr ? String(stderr).trim() || err.message : err.message;
+              wrapped.reason = cleanMsg;
               wrapped.provider = target.id;
               wrapped.preflight = detection;
               return reject(wrapped);
@@ -635,8 +714,8 @@ export class AgentInferenceRouter {
             body: JSON.stringify({
               model: model && !model.includes(" ") ? model : "gpt-4o-mini",
               messages: [
-                ...(systemPrompt ? [{ role: "system", content: systemPrompt }] : []),
-                { role: "user", content: String(prompt || "") }
+                ...(effectiveSystemPrompt ? [{ role: "system", content: effectiveSystemPrompt }] : []),
+                { role: "user", content: normPrompt }
               ]
             }),
             signal: controller.signal
@@ -652,8 +731,8 @@ export class AgentInferenceRouter {
             body: JSON.stringify({
               model: "claude-3-5-haiku-latest",
               max_tokens: 512,
-              system: systemPrompt || undefined,
-              messages: [{ role: "user", content: String(prompt || "") }]
+              system: effectiveSystemPrompt || undefined,
+              messages: [{ role: "user", content: normPrompt }]
             }),
             signal: controller.signal
           });

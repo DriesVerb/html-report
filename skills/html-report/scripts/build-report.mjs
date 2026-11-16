@@ -482,6 +482,7 @@ export function parseArgs(argv) {
     pwaIcon: null,
     noPwaAssets: false,
     ai: false,
+    aiLocal: false,
     aiPort: 3031,
     aiModel: "Gemini 3.8 Flash (Low)",
     aiPersona: "analyst",
@@ -548,6 +549,9 @@ export function parseArgs(argv) {
         options.addons.push("datastar");
       }
     } else if (arg === "--ai") {
+      options.ai = true;
+    } else if (arg === "--ai-local") {
+      options.aiLocal = true;
       options.ai = true;
     } else if (arg === "--ai-port" && args[i + 1]) {
       const parsedPort = Number(args[++i]);
@@ -774,6 +778,7 @@ export function buildAgentManifest({
   theme = "light",
   favicon = "📊",
   ai = false,
+  aiLocal = false,
   aiPort = 3031,
   aiModel = "Gemini 3.8 Flash (Low)",
   aiPersona = "analyst",
@@ -814,9 +819,10 @@ export function buildAgentManifest({
   if (activeAddons.length > 0) rebuildArgs.push(`--addons ${activeAddons.join(",")}`);
   if (ai) {
     rebuildArgs.push("--ai");
-    if (resolvedAiPort !== 3031) rebuildArgs.push(`--ai-port ${resolvedAiPort}`);
+    if (aiLocal) rebuildArgs.push("--ai-local");
+    rebuildArgs.push(`--ai-port ${resolvedAiPort}`);
     if (resolvedAiModel !== "Gemini 3.8 Flash (Low)") rebuildArgs.push(`--ai-model "${resolvedAiModel.replace(/"/g, '\\"')}"`);
-    if (resolvedAiPersona !== "analyst") rebuildArgs.push(`--ai-persona ${resolvedAiPersona}`);
+    rebuildArgs.push(`--ai-persona ${resolvedAiPersona}`);
     if (resolvedAiPurpose) rebuildArgs.push(`--ai-purpose "${resolvedAiPurpose.replace(/"/g, '\\"')}"`);
     if (!aiDock) rebuildArgs.push("--no-ai-dock");
   }
@@ -835,6 +841,7 @@ export function buildAgentManifest({
       model: resolvedAiModel,
       persona: resolvedAiPersona,
       floatingAssistant: Boolean(aiDock),
+      ...(aiLocal ? { local: true } : {}),
       ...(resolvedAiPurpose ? { purpose: resolvedAiPurpose } : {})
     } : null,
     published: Boolean(published),
@@ -852,7 +859,7 @@ export function buildAgentManifest({
     },
     pipeline: {
       rebuildCommand: rebuildArgs.join(" "),
-      serveCommand: `node ${skillPaths.serveScript} ${entryPath} --port ${resolvedAiPort}`,
+      serveCommand: `node ${skillPaths.serveScript} ${entryPath} --port ${resolvedAiPort}${aiLocal ? " --ai-local" : ""}`,
       verifyCommand: `node ${skillPaths.verifyScript} ${entryPath}`,
       preflightCommand: `node ${skillPaths.preflightScript} --json`,
       authoringGuide: skillPaths.authoringGuide
@@ -895,6 +902,7 @@ export function buildReport({
   pwaBgColor = null,
   pwaIcon = null,
   ai = false,
+  aiLocal = false,
   aiPort = 3031,
   aiModel = "Gemini 3.8 Flash (Low)",
   aiPersona = "analyst",
@@ -1093,6 +1101,9 @@ export function buildReport({
       headExtraParts.push(`  <meta name="html-report-ai-purpose" content="${escapeAttr(resolvedAiPurpose)}" />`);
     }
     headExtraParts.push(`  <meta name="html-report-ai-dock" content="${aiDock ? "on" : "off"}" />`);
+    if (aiLocal) {
+      headExtraParts.push('  <meta name="html-report-ai-mode" content="local" />');
+    }
   }
   if (published) {
     headExtraParts.push('  <meta name="html-report-published" content="true" />');
@@ -1108,6 +1119,7 @@ export function buildReport({
     theme: resolvedTheme || "light",
     favicon,
     ai,
+    aiLocal,
     aiPort: resolvedAiPort,
     aiModel: resolvedAiModel,
     aiPersona: resolvedAiPersona,
@@ -1287,6 +1299,7 @@ Options:
       --pwa-icon <emoji>    Custom PWA icon emoji glyph (default: favicon or 📊)
       --no-pwa-assets       Skip writing companion PWA files to disk
       --ai                  Enable Two-Way AI Agent Bridge controls in Settings
+      --ai-local            Enable zero-API-key local context bridge mode
       --published           Emit a Published Document with Edit Mode authoring chrome pruned
       --verify              Run deterministic Playwright verification (verify-report.mjs --quick) after assembly
       --json                Output machine-readable JSON Assembly summary (Agent-Facing)
@@ -1385,6 +1398,7 @@ if (isDirectCli) {
             if (!hasFlag("--ai-port") && saved.aiConfig.port) options.aiPort = saved.aiConfig.port;
             if (!hasFlag("--ai-model") && saved.aiConfig.model) options.aiModel = saved.aiConfig.model;
             if (!hasFlag("--ai-persona") && saved.aiConfig.persona) options.aiPersona = saved.aiConfig.persona;
+            if (!hasFlag("--ai-local") && saved.aiConfig.local) options.aiLocal = true;
             if (!hasFlag("--ai-purpose") && saved.aiConfig.purpose) options.aiPurpose = saved.aiConfig.purpose;
             if (!hasFlag("--ai-dock", "--no-ai-dock") && typeof saved.aiConfig.floatingAssistant === "boolean") {
               options.aiDock = saved.aiConfig.floatingAssistant;
@@ -1443,6 +1457,7 @@ if (isDirectCli) {
     freezeFeeds: options.freezeFeeds,
     feedInterval: options.feedInterval,
     ai: options.ai,
+    aiLocal: options.aiLocal,
     aiPort: options.aiPort,
     aiModel: options.aiModel,
     aiPersona: options.aiPersona,

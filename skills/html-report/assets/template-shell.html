@@ -441,7 +441,17 @@
       backdrop-filter: blur(10px);
       overflow: hidden;
     }
-    #presentation-notes-modal.hidden {
+    #presentation-notes-modal.hidden,
+    #edit-dock.hidden,
+    #edit-dock-body.hidden,
+    #edit-pane-compose.hidden,
+    #edit-pane-queue.hidden,
+    #edit-pane-styling.hidden,
+    #edit-cancel-edit-btn.hidden,
+    #edit-style-theme-menu.hidden,
+    #edit-selected-target.hidden,
+    #edit-prompt-preview.hidden,
+    #edit-style-offline-actions.hidden {
       display: none !important;
     }
     #presentation-notes-modal[data-dock="bottom-right"] {
@@ -1218,9 +1228,15 @@
       <button id="edit-dock-close" type="button" class="btn btn-ghost btn-xs btn-circle" aria-label="Close edit dock">✕</button>
     </div>
     <div id="edit-dock-body" class="hidden border-t border-base-300 max-h-[min(38vh,320px)] overflow-y-auto p-3 space-y-2">
-      <div role="tablist" class="tabs tabs-boxed tabs-xs w-fit">
-        <button id="edit-tab-compose" type="button" role="tab" class="tab tab-active" data-edit-tab="compose">Compose</button>
-        <button id="edit-tab-queue" type="button" role="tab" class="tab" data-edit-tab="queue">Queue</button>
+      <div class="flex items-center justify-between gap-2">
+        <div role="tablist" class="tabs tabs-boxed tabs-xs w-fit">
+          <button id="edit-tab-compose" type="button" role="tab" class="tab tab-active" data-edit-tab="compose">Compose</button>
+          <button id="edit-tab-queue" type="button" role="tab" class="tab" data-edit-tab="queue">Queue</button>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button id="edit-tab-styling" type="button" role="tab" class="btn btn-xs btn-outline btn-primary gap-1" data-edit-tab="styling" aria-selected="false" title="Document default theme & live OKLCH Style Editor">🎨 Styling</button>
+          <button id="edit-dock-reset-btn" type="button" class="btn btn-xs btn-outline btn-error gap-1" title="Reset queued tasks, Compose draft, and custom styling overrides">↺ Reset</button>
+        </div>
       </div>
       <div id="edit-pane-compose" class="space-y-2">
         <div id="edit-selected-target" class="hidden flex items-center gap-1.5 p-1.5 bg-base-200/90 rounded border border-accent/40 text-xs font-mono">
@@ -1237,6 +1253,7 @@
           </select>
           <span id="edit-task-anchor" class="badge badge-outline badge-sm truncate max-w-full sm:max-w-[65%] border-base-content/30 text-base-content font-medium" title="Section anchor">Anchor: none</span>
           <span class="flex-1"></span>
+          <button id="edit-cancel-edit-btn" type="button" class="btn btn-ghost btn-sm hidden">Cancel</button>
           <button id="edit-add-btn" type="button" class="btn btn-primary btn-sm">Add</button>
         </div>
       </div>
@@ -1252,6 +1269,123 @@
           <span id="edit-send-status" class="text-3xs font-mono text-base-content/70 w-full sm:w-auto"></span>
         </div>
         <pre id="edit-prompt-preview" class="hidden p-2 bg-neutral text-neutral-content rounded font-mono text-3xs whitespace-pre-wrap overflow-x-auto select-all"></pre>
+      </div>
+      <div id="edit-pane-styling" class="hidden space-y-2.5">
+        <div class="flex flex-wrap items-center gap-2 p-2 rounded-lg bg-base-200/80 border border-base-300">
+          <label for="edit-style-theme-btn" class="text-3xs font-semibold uppercase tracking-wide text-base-content/70">Theme</label>
+          <div id="edit-style-theme-dropdown" class="relative">
+            <button type="button" id="edit-style-theme-btn" class="btn btn-xs bg-base-100 border border-base-300 hover:border-primary gap-2 shadow-2xs" aria-label="Preview or select document theme" aria-haspopup="true" aria-expanded="false" aria-controls="edit-style-theme-menu">
+              <span class="text-xs font-semibold capitalize" id="edit-style-theme-label">light</span>
+              <span class="flex items-center gap-0.5" id="edit-style-theme-swatches" data-theme="light">
+                <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+                <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+                <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+                <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <select id="edit-style-theme-select" class="hidden" aria-hidden="true" tabindex="-1" aria-label="Preview or select document theme"></select>
+          </div>
+          <span id="edit-style-default-badge" class="badge badge-outline badge-xs font-mono">Default: light</span>
+          <span class="flex-1"></span>
+          <button id="edit-style-set-default-btn" type="button" class="btn btn-primary btn-xs">Set as Default</button>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 text-3xs">
+          <span id="edit-style-status" class="font-mono text-base-content/70"></span>
+          <div id="edit-style-offline-actions" class="hidden flex items-center gap-1.5 ml-auto">
+            <button id="edit-style-offline-copy-btn" type="button" class="btn btn-ghost btn-xs">Copy CSS</button>
+            <button id="edit-style-offline-download-btn" type="button" class="btn btn-ghost btn-xs">Download HTML</button>
+          </div>
+        </div>
+        <div class="p-2 rounded-lg bg-base-200/50 border border-base-300 space-y-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-3xs font-bold uppercase tracking-wide text-base-content/80">OKLCH Style Editor</span>
+            <label class="flex items-center gap-1 text-3xs">
+              <span class="text-base-content/60">Name</span>
+              <input id="edit-style-name" type="text" class="input input-bordered input-xs w-28 font-mono" value="custom" placeholder="custom" maxlength="64" />
+            </label>
+            <label class="flex items-center gap-1 text-3xs">
+              <span class="text-base-content/60">Extends</span>
+              <select id="edit-style-extends" class="select select-bordered select-xs font-mono" aria-label="Base theme inheritance">
+                <option value="light" selected>light</option>
+                <option value="dark">dark</option>
+                <option value="none">none</option>
+              </select>
+            </label>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+            <label class="flex flex-col gap-1 text-3xs">
+              <span class="font-semibold text-base-content/75">primary</span>
+              <div class="flex items-center gap-1">
+                <input id="edit-style-primary-picker" type="color" value="#570df8" class="w-6 h-6 p-0 border border-base-300 rounded cursor-pointer shrink-0 bg-transparent" aria-label="Primary color picker" />
+                <input id="edit-style-primary-hex" type="text" value="#570df8" class="input input-bordered input-xs w-full font-mono text-3xs" aria-label="Primary hex color" />
+              </div>
+            </label>
+            <label class="flex flex-col gap-1 text-3xs">
+              <span class="font-semibold text-base-content/75">secondary</span>
+              <div class="flex items-center gap-1">
+                <input id="edit-style-secondary-picker" type="color" value="#f000b8" class="w-6 h-6 p-0 border border-base-300 rounded cursor-pointer shrink-0 bg-transparent" aria-label="Secondary color picker" />
+                <input id="edit-style-secondary-hex" type="text" value="#f000b8" class="input input-bordered input-xs w-full font-mono text-3xs" aria-label="Secondary hex color" />
+              </div>
+            </label>
+            <label class="flex flex-col gap-1 text-3xs">
+              <span class="font-semibold text-base-content/75">accent</span>
+              <div class="flex items-center gap-1">
+                <input id="edit-style-accent-picker" type="color" value="#37cdbe" class="w-6 h-6 p-0 border border-base-300 rounded cursor-pointer shrink-0 bg-transparent" aria-label="Accent color picker" />
+                <input id="edit-style-accent-hex" type="text" value="#37cdbe" class="input input-bordered input-xs w-full font-mono text-3xs" aria-label="Accent hex color" />
+              </div>
+            </label>
+            <label class="flex flex-col gap-1 text-3xs">
+              <span class="font-semibold text-base-content/75">neutral</span>
+              <div class="flex items-center gap-1">
+                <input id="edit-style-neutral-picker" type="color" value="#3d4451" class="w-6 h-6 p-0 border border-base-300 rounded cursor-pointer shrink-0 bg-transparent" aria-label="Neutral color picker" />
+                <input id="edit-style-neutral-hex" type="text" value="#3d4451" class="input input-bordered input-xs w-full font-mono text-3xs" aria-label="Neutral hex color" />
+              </div>
+            </label>
+            <label class="flex flex-col gap-1 text-3xs">
+              <span class="font-semibold text-base-content/75">base-100</span>
+              <div class="flex items-center gap-1">
+                <input id="edit-style-base-100-picker" type="color" value="#ffffff" class="w-6 h-6 p-0 border border-base-300 rounded cursor-pointer shrink-0 bg-transparent" aria-label="Base-100 color picker" />
+                <input id="edit-style-base-100-hex" type="text" value="#ffffff" class="input input-bordered input-xs w-full font-mono text-3xs" aria-label="Base-100 hex color" />
+              </div>
+            </label>
+          </div>
+          <details id="edit-style-geometry-details" class="text-3xs">
+            <summary class="cursor-pointer font-semibold text-base-content/70 select-none">Geometry &amp; Tailwind Config</summary>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-mono text-base-content/70">--rounded-box</span>
+                <select id="edit-style-rounded-box" class="select select-bordered select-xs font-mono">
+                  <option value="0rem">0rem (Sharp)</option>
+                  <option value="0.5rem">0.5rem (Compact)</option>
+                  <option value="1rem" selected>1rem (Default)</option>
+                  <option value="1.5rem">1.5rem (Soft)</option>
+                </select>
+              </label>
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-mono text-base-content/70">--rounded-btn</span>
+                <select id="edit-style-rounded-btn" class="select select-bordered select-xs font-mono">
+                  <option value="0rem">0rem (Sharp)</option>
+                  <option value="0.25rem">0.25rem (Subtle)</option>
+                  <option value="0.5rem" selected>0.5rem (Default)</option>
+                  <option value="9999px">9999px (Pill)</option>
+                </select>
+              </label>
+            </div>
+            <pre id="edit-style-tailwind-preview" class="mt-2 p-2 bg-neutral text-neutral-content rounded font-mono text-3xs whitespace-pre-wrap overflow-x-auto max-h-24"></pre>
+          </details>
+          <div class="flex items-center gap-2 flex-wrap pt-1">
+            <button id="edit-style-save-btn" type="button" class="btn btn-secondary btn-xs">Save Custom</button>
+            <button id="edit-style-copy-css-btn" type="button" class="btn btn-outline btn-xs">Copy CSS</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="edit-style-theme-menu" role="menu" aria-label="Document theme palette selector" class="hidden absolute z-50 bg-base-200 text-base-content rounded-box w-64 max-h-60 overflow-y-auto p-2 shadow-2xl border border-base-300">
+      <div id="edit-style-theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+        <!-- Populated via HTMLReportEdit.refreshStyleThemeSelect() -->
       </div>
     </div>
   </aside>

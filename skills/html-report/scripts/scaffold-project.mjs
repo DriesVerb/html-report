@@ -12,6 +12,7 @@
  * Zero external npm dependencies.
  */
 
+import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -47,10 +48,59 @@ function safeJsonEmbed(value) {
   return JSON.stringify(value).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
 }
 
+function hashStarterFragment(html = "") {
+  return crypto.createHash("sha256").update(String(html), "utf-8").digest("hex");
+}
+
+function collectDiskWorkspaceRefs(projectDir, slug, existingStaged = []) {
+  const refsDir = path.join(projectDir, "refs");
+  if (!fs.existsSync(refsDir)) return [];
+  const seen = new Set(existingStaged.map((r) => r.stagedPath).filter(Boolean));
+  const discovered = [];
+  const walkRefs = (dir) => {
+    let entries = [];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+    for (const entry of entries) {
+      if (entry.isSymbolicLink()) continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walkRefs(full);
+      } else if (entry.isFile()) {
+        const relInsideRefs = path.relative(refsDir, full).replace(/\\/g, "/");
+        const stagedPath = `projects/${slug}/refs/${relInsideRefs}`;
+        if (seen.has(stagedPath)) continue;
+        seen.add(stagedPath);
+        discovered.push({
+          name: entry.name,
+          originalPath: stagedPath,
+          stagedPath,
+          note: "",
+          diskPath: full
+        });
+      }
+    }
+  };
+  walkRefs(refsDir);
+  return discovered;
+}
+
 export function resolveUniqueSlug(baseSlug, workspaceRoot, { avoidCollision = false } = {}) {
   if (!avoidCollision) return baseSlug;
   const projectsRoot = path.resolve(workspaceRoot, "projects");
-  if (!fs.existsSync(path.join(projectsRoot, baseSlug))) {
+  const hasScaffoldedProject = (candidateSlug) => {
+    const dir = path.join(projectsRoot, candidateSlug);
+    return (
+      fs.existsSync(path.join(dir, "index.html")) ||
+      fs.existsSync(path.join(dir, "fragment.html")) ||
+      fs.existsSync(path.join(dir, "report.manifest.json"))
+    );
+  };
+  if (!hasScaffoldedProject(baseSlug)) {
     return baseSlug;
   }
   let counter = 2;
@@ -58,7 +108,7 @@ export function resolveUniqueSlug(baseSlug, workspaceRoot, { avoidCollision = fa
     const suffix = `-${counter}`;
     const trimmedBase = baseSlug.slice(0, Math.max(1, 60 - suffix.length)).replace(/-+$/, "");
     const candidate = `${trimmedBase}${suffix}`;
-    if (!fs.existsSync(path.join(projectsRoot, candidate))) {
+    if (!hasScaffoldedProject(candidate)) {
       return candidate;
     }
     counter++;
@@ -355,18 +405,18 @@ function renderKpiRowWidget({ isDashboard = false, dataset = null } = {}) {
     return `  <!-- Preset: kpi-row -->
   <section id="kpi-overview" class="space-y-4">
     <h2 id="key-metrics" class="text-xl font-bold">Key Metrics</h2>
-    <div class="stats stats-vertical lg:stats-horizontal shadow-sm w-full border border-base-300 bg-base-100">
-      <div class="stat">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
+      <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0">
         <div class="stat-title">${primaryTitle}</div>
         <div class="stat-value text-primary">${primaryDisplay}</div>
         <div class="stat-desc">${primaryDesc}</div>
       </div>
-      <div class="stat">
+      <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0">
         <div class="stat-title">${secondaryTitle}</div>
         <div class="stat-value text-secondary">${secondaryDisplay}</div>
         <div class="stat-desc">${secondaryDesc}</div>
       </div>
-      <div class="stat">
+      <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0">
         <div class="stat-title">Records Loaded</div>
         <div class="stat-value text-accent">${dataset.rows.length}</div>
         <div class="stat-desc">${escapeHtml(dataset.fileName)} (${dataset.columns.length} cols)</div>
@@ -378,18 +428,18 @@ function renderKpiRowWidget({ isDashboard = false, dataset = null } = {}) {
   return `  <!-- Preset: kpi-row -->
   <section id="kpi-overview" class="space-y-4">
     <h2 id="key-metrics" class="text-xl font-bold">Key Metrics</h2>
-    <div class="stats stats-vertical lg:stats-horizontal shadow-sm w-full border border-base-300 bg-base-100">
-      <div class="stat">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
+      <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0">
         <div class="stat-title">Primary KPI</div>
         <div class="stat-value text-primary">--</div>
         <div class="stat-desc">Replace with domain metric</div>
       </div>
-      <div class="stat">
+      <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0">
         <div class="stat-title">Secondary KPI</div>
         <div class="stat-value text-secondary">--</div>
         <div class="stat-desc">Replace with domain metric</div>
       </div>
-      <div class="stat">
+      <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm min-w-0">
         <div class="stat-title">Status</div>
         <div class="stat-value text-accent">${isDashboard ? "Live" : "Ready"}</div>
         <div class="stat-desc">Deterministic scaffold</div>
@@ -851,6 +901,7 @@ export function scaffoldProject({
   goals = "",
   audience = "",
   ai = false,
+  aiLocal = false,
   aiPort = 3031,
   aiModel = "Gemini 3.8 Flash (Low)",
   aiPersona = "analyst",
@@ -859,6 +910,8 @@ export function scaffoldProject({
   pwa = false,
   content = null,
   force = false,
+  updateExisting = false,
+  regenerateFragment = false,
   avoidCollision = false,
   rootDir = null,
   workspaceRoot = rootDir || process.cwd()
@@ -868,7 +921,9 @@ export function scaffoldProject({
     throw new Error("A valid --project <slug> is required (letters, numbers, hyphens).");
   }
 
-  const slug = resolveUniqueSlug(baseSlug, workspaceRoot, { avoidCollision: Boolean(avoidCollision && !force) });
+  const slug = resolveUniqueSlug(baseSlug, workspaceRoot, {
+    avoidCollision: Boolean(avoidCollision && !force && !updateExisting)
+  });
   const resolvedMode = normalizeMode(mode) || "report";
   const resolvedTitle = (title || topic) && String(title || topic).trim()
     ? String(title || topic).trim()
@@ -876,8 +931,15 @@ export function scaffoldProject({
 
   const projectDir = path.resolve(workspaceRoot, "projects", slug);
   fs.mkdirSync(projectDir, { recursive: true });
+  fs.mkdirSync(path.join(projectDir, "refs"), { recursive: true });
 
   const stagedRefs = stageReferenceFiles(referenceFiles, projectDir, workspaceRoot, slug);
+  if (updateExisting) {
+    const existingDiskRefs = collectDiskWorkspaceRefs(projectDir, slug, stagedRefs);
+    if (existingDiskRefs.length > 0) {
+      stagedRefs.push(...existingDiskRefs);
+    }
+  }
   const datasets = introspectReferenceDatasets(stagedRefs);
 
   const normalizedWidgets = Array.isArray(widgets)
@@ -906,7 +968,17 @@ export function scaffoldProject({
   const agentsPath = path.join(projectDir, "AGENTS.md");
   const packageJsonPath = path.join(projectDir, "package.json");
 
+  let existingManifest = null;
+  if (fs.existsSync(manifestPath)) {
+    try {
+      existingManifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+    } catch (_) {
+      existingManifest = null;
+    }
+  }
+
   let fragmentHtml;
+  let starterFragmentHash = null;
   if (content) {
     fragmentHtml = content;
     fs.writeFileSync(fragmentPath, fragmentHtml, "utf-8");
@@ -922,9 +994,35 @@ export function scaffoldProject({
       goals,
       audience
     });
+    starterFragmentHash = hashStarterFragment(fragmentHtml);
     fs.writeFileSync(fragmentPath, fragmentHtml, "utf-8");
   } else {
-    fragmentHtml = fs.readFileSync(fragmentPath, "utf-8");
+    const currentFrag = fs.readFileSync(fragmentPath, "utf-8");
+    const isUntouchedStarter = Boolean(
+      existingManifest &&
+      existingManifest.starterFragmentHash &&
+      hashStarterFragment(currentFrag) === existingManifest.starterFragmentHash
+    );
+    if (updateExisting && (regenerateFragment || isUntouchedStarter)) {
+      fragmentHtml = generateStarterFragment({
+        title: resolvedTitle,
+        mode: resolvedMode,
+        slug,
+        ai,
+        widgets: normalizedWidgets,
+        datasets,
+        stagedRefs,
+        goals,
+        audience
+      });
+      starterFragmentHash = hashStarterFragment(fragmentHtml);
+      fs.writeFileSync(fragmentPath, fragmentHtml, "utf-8");
+    } else {
+      fragmentHtml = currentFrag;
+      if (existingManifest && existingManifest.starterFragmentHash) {
+        starterFragmentHash = existingManifest.starterFragmentHash;
+      }
+    }
   }
 
   const resolvedTheme = theme === "lemon" ? "lemonade" : theme;
@@ -939,6 +1037,7 @@ export function scaffoldProject({
     favicon,
     addons: resolvedAddons,
     ai,
+    aiLocal,
     aiPort,
     aiModel,
     aiPersona,
@@ -954,6 +1053,7 @@ export function scaffoldProject({
     ...built.agentManifest,
     servingMode: servingMode || (resolvedMode === "dashboard" || resolvedMode === "live-report" ? "live" : "static"),
     behavioralMode: behavioralMode || (resolvedMode === "print" ? "passive" : "interactive"),
+    ...(starterFragmentHash ? { starterFragmentHash } : {}),
     ...(normalizedWidgets.length > 0 ? { presetWidgets: normalizedWidgets } : {}),
     ...(stagedRefs.length > 0 ? {
       referenceFiles: stagedRefs.map(({ diskPath, ...rest }) => rest)
@@ -1027,6 +1127,7 @@ function parseCliArgs(argv) {
     widgets: [],
     referenceFiles: [],
     ai: false,
+    aiLocal: false,
     aiPort: 3031,
     aiModel: "Gemini 3.8 Flash (Low)",
     aiPersona: "analyst",
@@ -1069,6 +1170,10 @@ function parseCliArgs(argv) {
     else if (arg === "--quill" || arg === "--editor") opts.addons.push("quill");
     else if (arg === "--fullcalendar") opts.addons.push("fullcalendar");
     else if (arg === "--ai" || arg === "--bridge") opts.ai = true;
+    else if (arg === "--ai-local") {
+      opts.aiLocal = true;
+      opts.ai = true;
+    }
     else if (arg === "--ai-port" && args[i + 1]) {
       const parsedPort = Number(args[++i]);
       if (Number.isFinite(parsedPort) && parsedPort > 0) opts.aiPort = parsedPort;
@@ -1121,6 +1226,7 @@ Options:
       --widgets <list>   Comma-separated presets (${Object.keys(WIDGET_PRESETS).join(",")})
       --ref <path>       Reference file to stage into refs/ and introspect (repeatable)
       --ai, --bridge     Pre-bake Two-Way AI Agent Bridge controls (--ai)
+      --ai-local         Enable zero-API-key local context bridge mode (--ai-local)
       --ai-port <port>   Turnkey AI bridge server port (default: 3031)
       --ai-model <name>  Turnkey AI default model (default: "Gemini 3.8 Flash (Low)")
       --ai-persona <id>  Turnkey AI default persona (default: analyst)
@@ -1155,6 +1261,7 @@ Options:
     widgets: [...new Set(opts.widgets)],
     referenceFiles: opts.referenceFiles,
     ai: opts.ai,
+    aiLocal: opts.aiLocal,
     aiPort: opts.aiPort,
     aiModel: opts.aiModel,
     aiPersona: opts.aiPersona,

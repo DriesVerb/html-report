@@ -110,6 +110,50 @@ export const NATIVE_MCP_TOOLS = [
         }
       }
     }
+  },
+  {
+    name: "report_build",
+    description: "Validates a Semantic Fragment with lintFragment() and compiles it into a workspace-contained Output Deliverable (<100ms), refreshing connected Target Element tabs.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        fragmentHtml: {
+          type: "string",
+          description: "Semantic Fragment HTML markup to validate and assemble into the Output Deliverable"
+        },
+        title: {
+          type: "string",
+          description: "Document title for the assembled Output Deliverable"
+        },
+        outputPath: {
+          type: "string",
+          description: "Workspace-relative path for the Output Deliverable (defaults to the currently served Output Deliverable)"
+        },
+        mode: {
+          type: "string",
+          enum: ["report", "dashboard", "presentation", "print", "slides", "app"],
+          description: "Delivery archetype mode (default: 'report')"
+        },
+        theme: {
+          type: "string",
+          description: "DaisyUI theme name (default: 'light')"
+        },
+        addons: {
+          type: "array",
+          items: { type: "string" },
+          description: "Optional addon keys (e.g. 'charts', 'mermaid', 'gridjs')"
+        },
+        published: {
+          type: "boolean",
+          description: "Compile as a static Published Document with authoring chrome stripped (default: false)"
+        },
+        saveFragment: {
+          type: "boolean",
+          description: "Persist the Semantic Fragment alongside the Output Deliverable when true"
+        }
+      },
+      required: ["fragmentHtml"]
+    }
   }
 ];
 
@@ -151,7 +195,10 @@ export class CSRFManager {
 
   static validateHost(hostHeader) {
     if (!hostHeader || typeof hostHeader !== "string") return false;
-    const clean = hostHeader.toLowerCase().split(":")[0];
+    const lower = hostHeader.trim().toLowerCase();
+    const clean = lower.startsWith("[")
+      ? lower.replace(/^(\[[^\]]+\])(?::\d+)?$/, "$1")
+      : lower.split(":")[0];
     return clean === "localhost" || clean === "127.0.0.1" || clean === "[::1]";
   }
 
@@ -193,6 +240,7 @@ export class AllowlistManager {
         "report_set_theme",
         "report_append_alert",
         "report_export_pdf",
+        "report_build",
         "execute_query",
         "read_query",
         "list_issues",
@@ -292,11 +340,14 @@ export async function handleMCPRequest(reqObj, context = {}) {
         let result = null;
 
         if (toolName === "report_get_state") {
+          const metadata = context.getMetadata ? context.getMetadata() : {};
           result = {
             title: context.getTitle ? context.getTitle() : "HTML Report",
             theme: context.getTheme ? context.getTheme() : "light",
+            mode: metadata.mode || "report",
             tabCount: context.getClientCount ? context.getClientCount() : 1,
             activeCards: context.getActiveCards ? context.getActiveCards() : [],
+            ...metadata,
             serverTime: new Date().toISOString()
           };
         } else if (toolName === "report_update_fragment") {
@@ -355,6 +406,25 @@ export async function handleMCPRequest(reqObj, context = {}) {
               status: "ready"
             };
           }
+        } else if (toolName === "report_build") {
+          if (!toolArgs.fragmentHtml || typeof toolArgs.fragmentHtml !== "string" || !toolArgs.fragmentHtml.trim()) {
+            return formatJsonRpcError(id, JSON_RPC_ERRORS.INVALID_PARAMS, "report_build requires non-empty 'fragmentHtml' string argument");
+          }
+          if (!context.buildReport) {
+            throw new Error("report_build is unavailable in this execution context");
+          }
+          result = await context.buildReport(toolArgs);
+          if (result && result.ok === false) {
+            return formatJsonRpcResult(id, {
+              content: [
+                {
+                  type: "text",
+                  text: JSON.stringify(result, null, 2)
+                }
+              ],
+              isError: true
+            });
+          }
         }
 
         return formatJsonRpcResult(id, {
@@ -383,6 +453,54 @@ export async function handleMCPRequest(reqObj, context = {}) {
       return formatJsonRpcError(id, JSON_RPC_ERRORS.METHOD_NOT_FOUND, `Method not supported: '${method}'`);
     }
   }
+}
+
+function isJsonRpcNotification(reqObj) {
+  return Boolean(
+    reqObj &&
+    typeof reqObj === "object" &&
+    !Array.isArray(reqObj) &&
+    reqObj.jsonrpc === "2.0" &&
+    typeof reqObj.method === "string" &&
+    reqObj.id === undefined
+  );
+}
+
+/**
+ * Handles Streamable HTTP MCP payloads (single requests, notifications, and JSON-RPC batches)
+ * without altering direct handleMCPRequest() return shapes for unit callers.
+ * @param {object|Array} rawPayload - Parsed JSON body from POST /mcp
+ * @param {object} context - Dev server execution context
+ * @returns {Promise<{ statusCode: number, body: object|Array|null }>}
+ */
+export async function handleMCPHttpPayload(rawPayload, context = {}) {
+  if (Array.isArray(rawPayload)) {
+    if (rawPayload.length === 0) {
+      return {
+        statusCode: 400,
+        body: formatJsonRpcError(null, JSON_RPC_ERRORS.INVALID_REQUEST, "Invalid Request: empty JSON-RPC batch")
+      };
+    }
+
+    const responses = [];
+    for (const item of rawPayload) {
+      const response = await handleMCPRequest(item, context);
+      if (!isJsonRpcNotification(item)) {
+        responses.push(response);
+      }
+    }
+
+    if (responses.length === 0) {
+      return { statusCode: 202, body: null };
+    }
+    return { statusCode: 200, body: responses };
+  }
+
+  const response = await handleMCPRequest(rawPayload, context);
+  if (isJsonRpcNotification(rawPayload)) {
+    return { statusCode: 202, body: null };
+  }
+  return { statusCode: 200, body: response };
 }
 
 /**

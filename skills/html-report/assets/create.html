@@ -420,14 +420,77 @@
             </div>
           </div>
 
-          <!-- Step 1.1: Optional User Context & Audience -->
-          <div class="mt-4 p-3.5 bg-base-200/40 rounded-xl border border-base-300/70 space-y-2.5">
+          <!-- Step 1.1: Dedicated Project Workspace Setup -->
+          <div id="workspace-setup-section" class="mt-4 p-3.5 bg-base-200/40 rounded-xl border border-base-300/70 space-y-2.5 scroll-mt-20">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <span class="text-xs font-bold text-base-content flex items-center gap-1.5">
+                <i data-lucide="folder-plus" class="w-3.5 h-3.5 text-secondary"></i>
+                Project Workspace
+              </span>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span id="workspace-state-slug" class="font-mono text-3xs text-base-content/60 hidden"></span>
+                <span id="workspace-state-badge" class="badge badge-ghost badge-xs font-mono font-bold">Draft — Not Created Yet</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-end gap-2.5">
+              <div class="flex-1 min-w-0">
+                <label for="input-project-slug" class="block text-3xs font-semibold text-base-content/80 mb-1">
+                  Project folder name <span class="text-base-content/50 font-normal">(Optional slug, independent of display title)</span>
+                </label>
+                <input type="text" id="input-project-slug" class="input input-bordered input-xs w-full h-8 text-xs font-mono placeholder:text-base-content/40 focus:outline-primary" placeholder="e.g., q4-sales-audit (auto-generated if blank)" oninput="onProjectSlugInput()" onblur="onProjectSlugBlur()" />
+              </div>
+              <div class="shrink-0 flex items-center gap-2">
+                <button id="btn-scaffold-now" type="button" onclick="scaffoldProjectNow(this)" class="btn btn-secondary btn-sm gap-1.5 shadow-sm font-semibold whitespace-nowrap">
+                  <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i> Create Workspace
+                </button>
+                <button id="btn-update-workspace" type="button" onclick="scaffoldProjectNow(this, { updateExisting: true })" class="btn btn-primary btn-sm gap-1.5 shadow-sm font-semibold whitespace-nowrap hidden">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Update Workspace
+                </button>
+              </div>
+            </div>
+
+            <!-- Inline Project Lifecycle State Indicator -->
+            <div id="workspace-lifecycle-status" class="p-2.5 rounded-lg border border-base-300 bg-base-100/70 text-xs flex items-start justify-between gap-3">
+              <div class="space-y-0.5 min-w-0">
+                <p id="workspace-state-detail" class="text-3xs text-base-content/75 leading-relaxed">
+                  Name your project folder and click <strong>Create Workspace</strong> now so attached files stage straight into <code class="font-mono">projects/&lt;slug&gt;/refs/</code>.
+                </p>
+              </div>
+            </div>
+
+            <!-- Workspace Error / Outdated Server Banner -->
+            <div id="scaffold-error-banner" class="hidden p-2.5 rounded-lg border border-error/40 bg-error/10 text-xs space-y-1">
+              <div class="font-bold text-error flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+                <span id="scaffold-error-title">Workspace not created</span>
+              </div>
+              <p id="scaffold-error-message" class="text-3xs text-base-content/85 leading-relaxed"></p>
+            </div>
+
+            <!-- Scaffold Result Feedback -->
+            <div id="scaffold-result-banner" class="hidden p-2.5 rounded-lg border border-success/40 bg-success/10 text-xs flex flex-wrap items-center justify-between gap-2">
+              <div class="space-y-0.5 min-w-0">
+                <div class="font-bold text-success flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
+                  <span id="scaffold-result-title">Workspace created</span>
+                </div>
+                <div id="scaffold-result-path" class="font-mono text-3xs text-base-content/75 truncate"></div>
+              </div>
+              <a id="scaffold-result-open-link" href="#" target="_blank" rel="noopener" class="btn btn-xs btn-success text-success-content gap-1 shrink-0">
+                <i data-lucide="external-link" class="w-3 h-3"></i> Open Report
+              </a>
+            </div>
+          </div>
+
+          <!-- Step 1.2: Optional User Context & Audience -->
+          <div id="describe-build-section" class="mt-4 p-3.5 bg-base-200/40 rounded-xl border border-base-300/70 space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-base-content flex items-center gap-1.5">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-primary"></i>
                 Describe what you want to build <span class="text-3xs text-base-content/50 font-normal">(Optional)</span>
               </span>
-              <span class="badge badge-ghost badge-xs text-3xs font-mono">Workspace &amp; AI Context</span>
+              <span class="badge badge-ghost badge-xs text-3xs font-mono">AI &amp; Content Context</span>
             </div>
             <div class="space-y-3">
               <div>
@@ -448,12 +511,6 @@
                   <span class="inline-flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3 text-success"></i> Rich formatting active</span>
                   <button type="button" onclick="openRichEditorModal()" class="link link-primary hover:underline text-3xs">Edit Rich</button>
                 </div>
-              </div>
-              <div>
-                <label for="input-project-slug" class="block text-3xs font-semibold text-base-content/80 mb-1">
-                  Project folder name <span class="text-base-content/50 font-normal">(Optional slug, independent of display title)</span>
-                </label>
-                <input type="text" id="input-project-slug" class="input input-bordered input-xs w-full text-xs font-mono placeholder:text-base-content/40 focus:outline-primary" placeholder="e.g., q4-sales-audit (auto-generated if blank)" oninput="updatePromptAndPreview()" />
               </div>
               <div>
                 <label for="input-board-audience" class="block text-3xs font-semibold text-base-content/80 mb-1">
@@ -735,7 +792,7 @@
           <div class="space-y-2 pt-2 border-t border-base-200">
             <div class="flex items-center justify-between">
               <span class="text-3xs font-bold uppercase tracking-wider text-base-content/60">B. Intelligence &amp; Enterprise Connectivity (Features):</span>
-              <span id="intel-notice-badge" class="badge badge-xs badge-ghost text-3xs font-mono">Requires Live Mode</span>
+              <span id="intel-notice-badge" class="badge badge-xs badge-ghost text-3xs font-mono whitespace-nowrap shrink-0">Requires Live Mode</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <!-- Feature: Two-Way Agent Bridge & AI Dock -->
@@ -1048,14 +1105,14 @@
             <div>
               <div class="flex items-center gap-2">
                 <h3 class="font-bold text-base sm:text-lg text-base-content">Final Step: AI Prompt</h3>
-                <span id="prompt-ready-badge" class="badge badge-success badge-xs font-mono font-bold text-success-content gap-1">
+                <span id="prompt-ready-badge" class="badge badge-success badge-sm font-mono font-bold text-success-content text-3xs gap-1 whitespace-nowrap shrink-0">
                   <i data-lucide="check" class="w-2.5 h-2.5"></i> Live &amp; Ready
                 </span>
               </div>
               <p class="text-xs text-base-content/60 font-mono">This prompt updates live with your choices above &bull; Hand it to Antigravity to build your report</p>
             </div>
           </div>
-          <span class="badge badge-primary badge-outline font-mono text-xs uppercase font-bold">Last Step &bull; Step 6 of 6</span>
+          <span class="badge badge-primary badge-outline font-mono text-xs uppercase font-bold whitespace-nowrap shrink-0">Last Step &bull; Step 6 of 6</span>
         </div>
 
         <!-- Desktop Grid Inside Final Step 6: 7 Cols Prompt Textarea + 5 Cols Live Mockup -->
@@ -1067,24 +1124,29 @@
               <textarea id="prompt-output-box" readonly class="w-full bg-transparent font-mono text-xs text-base-content resize-none h-80 focus:outline-hidden leading-relaxed"></textarea>
             </div>
 
-            <!-- Project Lifecycle State Indicator -->
-            <div id="workspace-lifecycle-status" class="p-3 rounded-xl border border-base-300 bg-base-200/50 text-xs flex items-start justify-between gap-3">
-              <div class="space-y-0.5 min-w-0">
+            <!-- Synchronized Workspace Summary (mirrors #workspace-setup-section in Step 1) -->
+            <div id="step-output-workspace-summary" class="p-3 rounded-xl border border-base-300 bg-base-200/50 text-xs flex flex-wrap items-center justify-between gap-2.5">
+              <div class="space-y-0.5 min-w-0 flex-1">
                 <div class="flex items-center gap-2 flex-wrap">
-                  <span id="workspace-state-badge" class="badge badge-ghost badge-xs font-mono font-bold">Draft — Not Created Yet</span>
-                  <span id="workspace-state-slug" class="font-mono text-3xs text-base-content/60 hidden"></span>
+                  <span id="step-output-workspace-badge" class="badge badge-ghost badge-xs font-mono font-bold">Draft — Not Created Yet</span>
+                  <span id="step-output-workspace-slug" class="font-mono text-3xs text-base-content/60 hidden"></span>
                 </div>
-                <p id="workspace-state-detail" class="text-3xs text-base-content/75 leading-relaxed">
-                  Your choices are ready below, but no project folder exists on disk yet. Click <strong>Create Workspace</strong> to start, or copy/save the AI prompt.
+                <p id="step-output-workspace-detail" class="text-3xs text-base-content/75 leading-relaxed">
+                  Create your workspace in <a href="#workspace-setup-section" class="link link-primary font-semibold">Step 1: Project Workspace</a>, or copy/save the AI prompt below.
                 </p>
+              </div>
+              <div class="shrink-0 flex items-center gap-2">
+                <a id="step-output-workspace-jump" href="#workspace-setup-section" class="btn btn-xs btn-outline btn-secondary gap-1">
+                  <i data-lucide="arrow-up" class="w-3 h-3"></i> Go to Workspace
+                </a>
+                <button id="btn-update-workspace-step6" type="button" onclick="scaffoldProjectNow(this, { updateExisting: true })" class="btn btn-xs btn-primary gap-1 hidden">
+                  <i data-lucide="refresh-cw" class="w-3 h-3"></i> Update Workspace
+                </button>
               </div>
             </div>
 
             <!-- Fast Assembly & Direct Bridge Actions -->
             <div id="studio-primary-actions" class="flex flex-col sm:flex-row gap-3">
-              <button id="btn-scaffold-now" type="button" onclick="scaffoldProjectNow(this)" class="btn btn-secondary gap-2 shadow-sm font-semibold flex-1">
-                <i data-lucide="folder-plus" class="w-4 h-4"></i> Create Workspace
-              </button>
               <button id="btn-send-to-agent" type="button" onclick="sendPromptToAgentBridge(this)" disabled hidden title="Hidden unless a secure, authenticated two-way agent bridge is active" class="btn btn-accent gap-2 shadow-sm font-semibold hidden flex-1">
                 <i data-lucide="send" class="w-4 h-4"></i> Send to Agent
               </button>
@@ -1100,28 +1162,6 @@
               </button>
             </div>
 
-            <!-- Workspace Error / Outdated Server Banner -->
-            <div id="scaffold-error-banner" class="hidden p-3 rounded-xl border border-error/40 bg-error/10 text-xs space-y-1">
-              <div class="font-bold text-error flex items-center gap-1.5">
-                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
-                <span id="scaffold-error-title">Workspace not created</span>
-              </div>
-              <p id="scaffold-error-message" class="text-3xs text-base-content/85 leading-relaxed"></p>
-            </div>
-
-            <!-- Scaffold Result & Bridge Dispatch Feedback -->
-            <div id="scaffold-result-banner" class="hidden p-3 rounded-xl border border-success/40 bg-success/10 text-xs flex flex-wrap items-center justify-between gap-2">
-              <div class="space-y-0.5 min-w-0">
-                <div class="font-bold text-success flex items-center gap-1.5">
-                  <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
-                  <span id="scaffold-result-title">Workspace created</span>
-                </div>
-                <div id="scaffold-result-path" class="font-mono text-3xs text-base-content/75 truncate"></div>
-              </div>
-              <a id="scaffold-result-open-link" href="#" target="_blank" rel="noopener" class="btn btn-xs btn-success text-success-content gap-1 shrink-0">
-                <i data-lucide="external-link" class="w-3 h-3"></i> Open Report
-              </a>
-            </div>
             <div id="agent-bridge-dispatch-status" class="hidden text-3xs font-mono px-1 text-base-content/70"></div>
           </div>
 
@@ -1133,7 +1173,7 @@
                 <span class="flex items-center gap-2">
                   <i data-lucide="layout" class="w-4 h-4 text-secondary"></i>
                   <span>Live Wireframe Mockup</span>
-                  <span class="badge badge-ghost badge-xs text-3xs font-mono">Simulated DOM</span>
+                  <span class="badge badge-ghost badge-xs text-3xs font-mono whitespace-nowrap shrink-0">Simulated DOM</span>
                 </span>
                 <span class="text-3xs font-mono text-primary flex items-center gap-1 group-open:hidden">
                   <span>Preview</span> <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
@@ -1234,7 +1274,7 @@
                     <div id="mockup-editor-widget" class="p-2 bg-base-200/30 rounded border border-base-300/60 space-y-1 hidden">
                       <div class="text-3xs font-bold text-base-content/70 flex items-center justify-between">
                         <span class="flex items-center gap-1"><i data-lucide="edit-3" class="w-3 h-3 text-secondary"></i> Rich Text WYSIWYG Editor</span>
-                        <span class="badge badge-secondary badge-xs">Quill v2.0</span>
+                        <span class="badge badge-secondary badge-xs whitespace-nowrap shrink-0">Quill v2.0</span>
                       </div>
                       <div class="text-3xs font-mono bg-base-100 rounded border border-base-300 p-1.5 space-y-1">
                         <div class="h-2 w-3/4 bg-base-content/20 rounded"></div>
@@ -1408,7 +1448,7 @@
           <div>
             <h3 class="font-bold text-base sm:text-lg flex items-center gap-2">
               Rich Document &amp; Board Goals Editor
-              <span class="badge badge-primary badge-xs text-3xs font-mono">Quill v2.0</span>
+              <span class="badge badge-primary badge-xs text-3xs font-mono whitespace-nowrap shrink-0">Quill v2.0</span>
             </h3>
             <p class="text-xs text-base-content/60">Compose structured goals, formatting, and executive directives with WYSIWYG styling</p>
           </div>
@@ -1644,21 +1684,28 @@
           reader.readAsDataURL(browserFile);
         });
 
+        const targetSlug = typeof getActiveOrTypedSlug === "function" ? getActiveOrTypedSlug() : "";
+        const uploadPayload = {
+          name: browserFile.name,
+          contentBase64: base64,
+          sizeBytes: browserFile.size
+        };
+        if (targetSlug) {
+          uploadPayload.projectSlug = targetSlug;
+        }
+
         const resp = await fetch("/api/create/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: browserFile.name,
-            contentBase64: base64,
-            sizeBytes: browserFile.size
-          })
+          body: JSON.stringify(uploadPayload)
         });
         const data = await resp.json();
         const current = collectedFiles.find((f) => f.id === collectedId);
         if (!current) return;
         if (resp.ok && data && data.ok && data.path) {
           current.path = data.path;
-          current.uploadStatus = "staged";
+          current.uploadStatus = data.scope === "workspace" ? "workspace" : "staged";
+          workspaceFilesCache = null;
         } else {
           current.uploadStatus = "local";
         }
@@ -1671,6 +1718,62 @@
     }
 
     let workspaceFilesCache = null;
+    let workspaceFilesCacheProject = null;
+
+    async function syncProjectWorkspaceFiles(slug, { silent = false } = {}) {
+      const cleanSlug = typeof slugifyClient === "function" ? slugifyClient(slug || "") : String(slug || "").trim();
+      if (!cleanSlug || window.location.protocol === "file:") return [];
+      try {
+        const resp = await fetch(`/api/create/workspace-files?project=${encodeURIComponent(cleanSlug)}`, { cache: "no-store" });
+        const data = await resp.json();
+        if (!resp.ok || !data || !data.ok || !Array.isArray(data.projectFiles)) return [];
+
+        let changed = false;
+        const prevSyncFlag = isSyncingWorkspaceState;
+        if (silent) isSyncingWorkspaceState = true;
+        try {
+          data.projectFiles.forEach((pf) => {
+            if (!pf || !pf.path) return;
+            const existing = collectedFiles.find((f) =>
+              f.path === pf.path ||
+              (f.name.toLowerCase() === String(pf.name || "").toLowerCase() && (!f.path || f.path.startsWith("projects/_uploads/")))
+            );
+            if (existing) {
+              if (existing.path !== pf.path || existing.uploadStatus !== "workspace") {
+                existing.path = pf.path;
+                existing.uploadStatus = "workspace";
+                changed = true;
+              }
+            } else {
+              const info = getFileInfo(pf.name);
+              collectedFiles.push({
+                id: "ref-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7),
+                name: pf.name,
+                path: pf.path,
+                uploadStatus: "workspace",
+                sizeFormatted: formatFileSize(pf.sizeBytes),
+                icon: info.icon,
+                category: info.category,
+                colorClass: info.colorClass,
+                note: "",
+                isNoteOpen: false
+              });
+              changed = true;
+            }
+          });
+
+          if (changed) {
+            renderCollectedFiles();
+            updatePromptAndPreview();
+          }
+        } finally {
+          isSyncingWorkspaceState = prevSyncFlag;
+        }
+        return data.projectFiles;
+      } catch {
+        return [];
+      }
+    }
 
     function toggleWorkspaceFilePicker(forceState) {
       const panel = document.getElementById("workspace-files-picker");
@@ -1693,13 +1796,21 @@
         return;
       }
 
+      const targetSlug = typeof getActiveOrTypedSlug === "function" ? getActiveOrTypedSlug() : "";
       try {
-        if (!workspaceFilesCache || query) {
-          const url = `/api/create/workspace-files${query ? `?q=${encodeURIComponent(query)}` : ""}`;
-          const resp = await fetch(url);
+        if (!workspaceFilesCache || query || workspaceFilesCacheProject !== targetSlug) {
+          const params = new URLSearchParams();
+          if (query) params.set("q", query);
+          if (targetSlug) params.set("project", targetSlug);
+          const qs = params.toString();
+          const url = `/api/create/workspace-files${qs ? `?${qs}` : ""}`;
+          const resp = await fetch(url, { cache: "no-store" });
           const data = await resp.json();
           if (!resp.ok || !data || !data.ok) throw new Error(data?.error || "Failed to list workspace files");
-          if (!query) workspaceFilesCache = data.files || [];
+          if (!query) {
+            workspaceFilesCache = data.files || [];
+            workspaceFilesCacheProject = targetSlug;
+          }
           renderWorkspaceFilesList(data.files || []);
         } else {
           renderWorkspaceFilesList(workspaceFilesCache);
@@ -1726,6 +1837,7 @@
             <div class="flex items-center gap-2 min-w-0">
               <i data-lucide="${info.icon}" class="w-3.5 h-3.5 shrink-0 ${info.colorClass}"></i>
               <span class="font-mono text-3xs text-base-content truncate">${escapeHtml(f.path)}</span>
+              ${f.inProjectWorkspace ? `<span class="badge badge-success badge-outline badge-2xs text-3xs font-mono shrink-0">In Project</span>` : ""}
             </div>
             ${size ? `<span class="badge badge-ghost badge-2xs text-3xs font-mono text-base-content/50 shrink-0">${size}</span>` : ""}
           </button>
@@ -1821,6 +1933,7 @@
                     <span class="font-bold text-xs text-base-content font-mono truncate max-w-[220px]" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
                     ${file.sizeFormatted ? `<span class="badge badge-ghost badge-2xs text-3xs font-mono text-base-content/60">${file.sizeFormatted}</span>` : `<span class="badge badge-ghost badge-2xs text-3xs font-mono text-base-content/60">${file.category}</span>`}
                     ${file.uploadStatus === "uploading" ? `<span class="badge badge-info badge-outline badge-2xs text-3xs font-mono">staging...</span>` : ""}
+                    ${file.path && file.path.includes("/refs/") ? `<span class="badge badge-success badge-outline badge-2xs text-3xs font-mono">workspace</span>` : (file.path && file.path.startsWith("projects/_uploads/") ? `<span class="badge badge-warning badge-outline badge-2xs text-3xs font-mono">pre-workspace staging</span>` : "")}
                   </div>
                   ${file.path ? `<span class="text-3xs font-mono text-success truncate max-w-[260px] collected-file-path" title="${escapeHtml(file.path)}">${escapeHtml(file.path)}</span>` : ""}
                 </div>
@@ -1902,8 +2015,88 @@
     ];
 
     let lastScaffoldedProject = null;
+    let activeWorkspaceSlug = null;
+    let workspaceDirty = false;
+    let lastSyncedWorkspaceSnapshot = null;
+    let isSyncingWorkspaceState = false;
+    let studioInitialized = false;
     let agentBridgePreflightOk = false;
     let agentBridgeCsrfToken = null;
+
+    function slugifyClient(raw = "") {
+      return String(raw || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9-]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 60);
+    }
+
+    function getActiveOrTypedSlug() {
+      if (activeWorkspaceSlug) return activeWorkspaceSlug;
+      return slugifyClient(document.getElementById("input-project-slug")?.value || "");
+    }
+
+    function getWorkspaceConfigSnapshot() {
+      const payload = collectStudioPayload();
+      return JSON.stringify({
+        target: payload.target,
+        operationalMode: payload.operationalMode,
+        behavioralMode: payload.behavioralMode,
+        appPackaging: payload.appPackaging,
+        theme: payload.theme,
+        customTheme: payload.customTheme,
+        userGoals: payload.userGoals,
+        userAudience: payload.userAudience,
+        addons: payload.addons,
+        widgets: payload.widgets,
+        referenceFiles: payload.referenceFiles,
+        ai: payload.ai,
+        aiPort: payload.aiPort,
+        aiPurpose: payload.aiPurpose,
+        aiDock: payload.aiDock
+      });
+    }
+
+    function updateWorkspaceActionButtons() {
+      const updateBtn = document.getElementById("btn-update-workspace");
+      const step6UpdateBtn = document.getElementById("btn-update-workspace-step6");
+      const step6JumpLink = document.getElementById("step-output-workspace-jump");
+      const hasActive = Boolean(activeWorkspaceSlug);
+      if (updateBtn) {
+        updateBtn.classList.toggle("hidden", !(hasActive && workspaceDirty));
+      }
+      if (step6UpdateBtn) {
+        step6UpdateBtn.classList.toggle("hidden", !hasActive);
+        step6UpdateBtn.classList.toggle("btn-warning", Boolean(hasActive && workspaceDirty));
+        step6UpdateBtn.classList.toggle("btn-primary", !(hasActive && workspaceDirty));
+      }
+      if (step6JumpLink) {
+        step6JumpLink.classList.toggle("hidden", hasActive);
+      }
+    }
+
+    function onProjectSlugInput() {
+      const rawVal = document.getElementById("input-project-slug")?.value || "";
+      const typedSlug = slugifyClient(rawVal);
+      if (activeWorkspaceSlug && typedSlug !== activeWorkspaceSlug) {
+        activeWorkspaceSlug = null;
+        workspaceDirty = false;
+        lastScaffoldedProject = null;
+        lastSyncedWorkspaceSnapshot = null;
+        const banner = document.getElementById("scaffold-result-banner");
+        if (banner) banner.classList.add("hidden");
+        clearScaffoldError();
+        setWorkspaceLifecycleState("draft");
+      }
+      updatePromptAndPreview();
+    }
+
+    function onProjectSlugBlur() {
+      const typedSlug = slugifyClient(document.getElementById("input-project-slug")?.value || "");
+      if (typedSlug && window.location.protocol !== "file:" && typeof syncProjectWorkspaceFiles === "function") {
+        syncProjectWorkspaceFiles(typedSlug);
+      }
+    }
 
     function getSelectedWidgets() {
       return Array.from(document.querySelectorAll(".widget-preset-chk:checked"))
@@ -2599,10 +2792,10 @@
       if (promptReadyBadge) {
         if (isHandshakeLocked) {
           promptReadyBadge.innerHTML = '<i data-lucide="lock" class="w-2.5 h-2.5"></i> Locked — Complete AI Handshake';
-          promptReadyBadge.className = "badge badge-warning badge-xs font-mono font-bold gap-1";
+          promptReadyBadge.className = "badge badge-warning badge-sm text-3xs font-mono font-bold gap-1 whitespace-nowrap shrink-0";
         } else {
           promptReadyBadge.innerHTML = '<i data-lucide="check" class="w-2.5 h-2.5"></i> Live &amp; Ready';
-          promptReadyBadge.className = "badge badge-success badge-xs font-mono font-bold text-success-content gap-1";
+          promptReadyBadge.className = "badge badge-success badge-sm text-3xs font-mono font-bold text-success-content gap-1 whitespace-nowrap shrink-0";
         }
       }
       if (btnCopyPrompt) {
@@ -2682,6 +2875,17 @@
 
       const promptBox = document.getElementById("prompt-output-box");
       if (promptBox) promptBox.value = promptText;
+
+      if (studioInitialized && !isSyncingWorkspaceState && activeWorkspaceSlug && lastSyncedWorkspaceSnapshot !== null) {
+        const nextSnap = getWorkspaceConfigSnapshot();
+        const isNowDirty = nextSnap !== lastSyncedWorkspaceSnapshot;
+        if (isNowDirty !== workspaceDirty) {
+          workspaceDirty = isNowDirty;
+          setWorkspaceLifecycleState(isNowDirty ? "dirty" : "created", { slug: activeWorkspaceSlug });
+        } else {
+          updateWorkspaceActionButtons();
+        }
+      }
 
       if (window.lucide) window.lucide.createIcons();
     }
@@ -2807,52 +3011,92 @@
       const badge = document.getElementById("workspace-state-badge");
       const slugEl = document.getElementById("workspace-state-slug");
       const detailEl = document.getElementById("workspace-state-detail");
-      if (!box || !badge || !detailEl) return;
 
-      box.className = "p-3 rounded-xl border text-xs flex items-start justify-between gap-3";
-      badge.className = "badge badge-xs font-mono font-bold";
+      const step6Box = document.getElementById("step-output-workspace-summary");
+      const step6Badge = document.getElementById("step-output-workspace-badge");
+      const step6SlugEl = document.getElementById("step-output-workspace-slug");
+      const step6DetailEl = document.getElementById("step-output-workspace-detail");
+
+      if (box) box.className = "p-2.5 rounded-lg border text-xs flex items-start justify-between gap-3";
+      if (badge) badge.className = "badge badge-xs font-mono font-bold";
+      if (step6Box) step6Box.className = "p-3 rounded-xl border text-xs flex flex-wrap items-center justify-between gap-2.5";
+      if (step6Badge) step6Badge.className = "badge badge-xs font-mono font-bold";
+
+      let boxClasses = ["border-base-300", "bg-base-100/70"];
+      let step6BoxClasses = ["border-base-300", "bg-base-200/50"];
+      let badgeClasses = ["badge-ghost"];
+      let badgeText = "Draft — Not Created Yet";
+      let showSlug = false;
+      let resolvedDetailHtml = detail || (agentBridgePreflightOk
+        ? "Name your project folder and click <strong>Create Workspace</strong> above so attached files stage straight into <code class=\"font-mono\">projects/&lt;slug&gt;/refs/</code>, or copy/send the prompt."
+        : "Name your project folder and click <strong>Create Workspace</strong> above so attached files stage straight into <code class=\"font-mono\">projects/&lt;slug&gt;/refs/</code>, or copy/save the AI prompt.");
+      let resolvedStep6Html = detail || "Create your workspace in <a href=\"#workspace-setup-section\" class=\"link link-primary font-semibold\">Step 1: Project Workspace</a>, or copy/save the AI prompt below.";
 
       if (state === "created") {
-        box.classList.add("border-success/40", "bg-success/10");
-        badge.classList.add("badge-success", "text-success-content");
-        badge.textContent = "Workspace Created";
-        if (slugEl) {
-          slugEl.textContent = slug ? `projects/${slug}/` : "";
-          slugEl.classList.toggle("hidden", !slug);
-        }
-        detailEl.innerHTML = detail || (agentBridgePreflightOk
-          ? `Starter files are saved in <code class="font-mono">projects/${escapeHtml(slug)}/</code>. Open the live preview or click <strong>Send to Agent</strong> / <strong>Copy AI Prompt</strong> to build out the content.`
-          : `Starter files are saved in <code class="font-mono">projects/${escapeHtml(slug)}/</code>. Open the live preview or click <strong>Copy AI Prompt</strong> to build out the content.`);
+        boxClasses = ["border-success/40", "bg-success/10"];
+        step6BoxClasses = ["border-success/40", "bg-success/10"];
+        badgeClasses = ["badge-success", "text-success-content"];
+        badgeText = "Workspace Created";
+        showSlug = Boolean(slug);
+        resolvedDetailHtml = detail || (agentBridgePreflightOk
+          ? `Starter files are saved in <code class="font-mono">projects/${escapeHtml(slug)}/</code>. Attached files stage straight into <code class="font-mono">refs/</code>, and you can click <strong>Send to Agent</strong> or <strong>Copy AI Prompt</strong> below.`
+          : `Starter files are saved in <code class="font-mono">projects/${escapeHtml(slug)}/</code>. Attached files stage straight into <code class="font-mono">refs/</code>. Open the live preview or click <strong>Copy AI Prompt</strong> below.`);
+        resolvedStep6Html = `Synced with <code class="font-mono">projects/${escapeHtml(slug)}/</code>. All Steps 1–5 choices are up to date.`;
+      } else if (state === "dirty") {
+        boxClasses = ["border-warning/40", "bg-warning/10"];
+        step6BoxClasses = ["border-warning/40", "bg-warning/10"];
+        badgeClasses = ["badge-warning", "text-warning-content"];
+        badgeText = "Unsaved Changes";
+        showSlug = Boolean(slug);
+        resolvedDetailHtml = detail || `Configuration changed since last sync. Click <strong>Update Workspace</strong> to sync <code class="font-mono">projects/${escapeHtml(slug)}/</code> in-place without creating a duplicate folder.`;
+        resolvedStep6Html = `Configuration changed since last sync for <code class="font-mono">projects/${escapeHtml(slug)}/</code>. Click <strong>Update Workspace</strong> to sync in-place.`;
       } else if (state === "dispatched") {
-        box.classList.add("border-accent/40", "bg-accent/10");
-        badge.classList.add("badge-accent", "text-accent-content");
-        badge.textContent = "Sent to Agent";
-        if (slugEl) {
-          slugEl.textContent = slug ? `projects/${slug}/` : "";
-          slugEl.classList.toggle("hidden", !slug);
-        }
-        detailEl.innerHTML = detail || `Workspace <code class="font-mono">projects/${escapeHtml(slug)}/</code> is live and your instructions were sent to the AI Agent Bridge.`;
+        boxClasses = ["border-accent/40", "bg-accent/10"];
+        step6BoxClasses = ["border-accent/40", "bg-accent/10"];
+        badgeClasses = ["badge-accent", "text-accent-content"];
+        badgeText = "Sent to Agent";
+        showSlug = Boolean(slug);
+        resolvedDetailHtml = detail || `Workspace <code class="font-mono">projects/${escapeHtml(slug)}/</code> is live and your instructions were sent to the AI Agent Bridge.`;
+        resolvedStep6Html = resolvedDetailHtml;
       } else if (state === "error") {
-        box.classList.add("border-error/40", "bg-error/10");
-        badge.classList.add("badge-error", "text-error-content");
-        badge.textContent = "Workspace Not Created";
-        if (slugEl) slugEl.classList.add("hidden");
-        detailEl.textContent = detail || "Could not create the workspace folder yet. Your draft choices are still safe above.";
+        boxClasses = ["border-error/40", "bg-error/10"];
+        step6BoxClasses = ["border-error/40", "bg-error/10"];
+        badgeClasses = ["badge-error", "text-error-content"];
+        badgeText = "Workspace Not Created";
+        resolvedDetailHtml = escapeHtml(detail || "Could not create the workspace folder yet. Your draft choices are still safe.");
+        resolvedStep6Html = resolvedDetailHtml;
       } else if (state === "offline") {
-        box.classList.add("border-warning/40", "bg-warning/10");
-        badge.classList.add("badge-warning", "text-warning-content");
-        badge.textContent = "Local Server Needed for Auto-Create";
-        if (slugEl) slugEl.classList.add("hidden");
-        detailEl.innerHTML = detail || "Automatic workspace creation isn't available right now (offline or outdated server). You can still use <strong>Copy AI Prompt</strong> or <strong>Download Starter HTML</strong> below.";
-      } else {
-        box.classList.add("border-base-300", "bg-base-200/50");
-        badge.classList.add("badge-ghost");
-        badge.textContent = "Draft — Not Created Yet";
-        if (slugEl) slugEl.classList.add("hidden");
-        detailEl.innerHTML = detail || (agentBridgePreflightOk
-          ? "Your choices are ready below, but no project folder exists on disk yet. Click <strong>Create Workspace</strong> to start, or copy/send the prompt."
-          : "Your choices are ready below, but no project folder exists on disk yet. Click <strong>Create Workspace</strong> to start, or copy/save the AI prompt.");
+        boxClasses = ["border-warning/40", "bg-warning/10"];
+        step6BoxClasses = ["border-warning/40", "bg-warning/10"];
+        badgeClasses = ["badge-warning", "text-warning-content"];
+        badgeText = "Local Server Needed for Auto-Create";
+        resolvedDetailHtml = detail || "Automatic workspace creation isn't available right now (offline or outdated server). You can still use <strong>Copy AI Prompt</strong> or <strong>Download Starter HTML</strong> below.";
+        resolvedStep6Html = resolvedDetailHtml;
       }
+
+      if (box) box.classList.add(...boxClasses);
+      if (badge) {
+        badge.classList.add(...badgeClasses);
+        badge.textContent = badgeText;
+      }
+      if (slugEl) {
+        slugEl.textContent = slug ? `projects/${slug}/` : "";
+        slugEl.classList.toggle("hidden", !showSlug);
+      }
+      if (detailEl) detailEl.innerHTML = resolvedDetailHtml;
+
+      if (step6Box) step6Box.classList.add(...step6BoxClasses);
+      if (step6Badge) {
+        step6Badge.classList.add(...badgeClasses);
+        step6Badge.textContent = badgeText;
+      }
+      if (step6SlugEl) {
+        step6SlugEl.textContent = slug ? `projects/${slug}/` : "";
+        step6SlugEl.classList.toggle("hidden", !showSlug);
+      }
+      if (step6DetailEl) step6DetailEl.innerHTML = resolvedStep6Html;
+
+      updateWorkspaceActionButtons();
     }
 
     function showScaffoldError(message, title = "Workspace not created") {
@@ -2884,13 +3128,24 @@
       return null;
     }
 
-    async function scaffoldProjectNow(btn) {
+    async function scaffoldProjectNow(btn, { updateExisting = false } = {}) {
       const payload = collectStudioPayload();
+      const typedSlug = slugifyClient(payload.projectSlug || "");
+      const isUpdate = Boolean(
+        updateExisting ||
+        (activeWorkspaceSlug && (!typedSlug || typedSlug === activeWorkspaceSlug))
+      );
+      if (isUpdate && activeWorkspaceSlug) {
+        payload.projectSlug = activeWorkspaceSlug;
+        payload.updateExisting = true;
+      }
       const originalHtml = btn ? btn.innerHTML : "";
       clearScaffoldError();
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '<span class="loading loading-spinner loading-xs"></span> Creating Workspace...';
+        btn.innerHTML = isUpdate
+          ? '<span class="loading loading-spinner loading-xs"></span> Updating Workspace...'
+          : '<span class="loading loading-spinner loading-xs"></span> Creating Workspace...';
       }
       try {
         if (window.location.protocol === "file:") {
@@ -2913,6 +3168,38 @@
           throw new Error(detail);
         }
         lastScaffoldedProject = data;
+        activeWorkspaceSlug = data.slug;
+        workspaceDirty = false;
+        isSyncingWorkspaceState = true;
+        try {
+          const slugInput = document.getElementById("input-project-slug");
+          if (slugInput && !slugInput.value.trim()) {
+            slugInput.value = data.slug;
+          }
+          // Update collectedFiles paths if pre-workspace uploads were staged into projects/<slug>/refs/
+          if (Array.isArray(data.stagedRefs) && data.stagedRefs.length > 0) {
+            data.stagedRefs.forEach((ref) => {
+              if (!ref || !ref.stagedPath) return;
+              const match = collectedFiles.find((f) =>
+                (ref.originalPath && f.path === ref.originalPath) ||
+                (!f.path && f.name === ref.name) ||
+                (f.name === ref.name && f.path && f.path.startsWith("projects/_uploads/"))
+              );
+              if (match) {
+                match.path = ref.stagedPath;
+                match.uploadStatus = "workspace";
+              }
+            });
+            renderCollectedFiles();
+          }
+          if (typeof syncProjectWorkspaceFiles === "function") {
+            await syncProjectWorkspaceFiles(data.slug, { silent: true });
+          }
+          updatePromptAndPreview();
+        } finally {
+          isSyncingWorkspaceState = false;
+        }
+        lastSyncedWorkspaceSnapshot = getWorkspaceConfigSnapshot();
 
         const banner = document.getElementById("scaffold-result-banner");
         const titleEl = document.getElementById("scaffold-result-title");
@@ -2920,7 +3207,7 @@
         const linkEl = document.getElementById("scaffold-result-open-link");
         if (banner && titleEl && pathEl && linkEl) {
           const refsCount = Array.isArray(data.stagedRefs) ? data.stagedRefs.filter((r) => r.stagedPath).length : 0;
-          titleEl.textContent = `Workspace created: "${data.slug}"`;
+          titleEl.textContent = isUpdate ? `Workspace updated: "${data.slug}"` : `Workspace created: "${data.slug}"`;
           pathEl.textContent = `${data.projectDir}/fragment.html${refsCount ? ` · ${refsCount} ref(s) staged in refs/` : ""}`;
           linkEl.href = data.entryUrl;
           banner.classList.remove("hidden");
@@ -3166,6 +3453,10 @@
       const slugInput = document.getElementById("input-project-slug");
       if (slugInput) slugInput.value = "";
       lastScaffoldedProject = null;
+      activeWorkspaceSlug = null;
+      workspaceDirty = false;
+      lastSyncedWorkspaceSnapshot = null;
+      workspaceFilesCache = null;
       const scaffoldBanner = document.getElementById("scaffold-result-banner");
       if (scaffoldBanner) scaffoldBanner.classList.add("hidden");
       clearScaffoldError();
@@ -3777,6 +4068,9 @@
       const offlineBanner = document.getElementById("projects-offline-banner");
       const url = options && options.refresh ? "/api/projects?refresh=1" : "/api/projects";
       try {
+        if (window.location.protocol === "file:") {
+          throw new Error("Offline file mode");
+        }
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error("HTTP " + res.status);
         const data = await res.json();
@@ -4100,6 +4394,7 @@
       safeCall(initFileDropZone);
       safeCall(renderCollectedFiles);
       safeCall(updatePromptAndPreview);
+      studioInitialized = true;
       safeCall(syncConfigFromServer);
       safeCall(checkAgentBridgePreflight);
       setTimeout(syncThemeColorMeta, 250);

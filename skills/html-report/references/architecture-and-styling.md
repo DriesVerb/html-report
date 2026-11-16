@@ -450,4 +450,37 @@ Always use `.steps-horizontal` directly, wrapped in an `overflow-x-auto` contain
 </div>
 ```
 
+---
+
+## 12. Alpine.js `<template x-for>` Inside `<svg>` Namespace Restriction
+
+> [!CAUTION]
+> **Never place Alpine.js `<template x-for>` (or `<template x-if>`) directly inside an `<svg>` element.**
+
+### The Cause
+HTML `<template>` elements belong to the HTML namespace (`http://www.w3.org/1999/xhtml`), whereas child shapes inside `<svg>` (`<g>`, `<rect>`, `<path>`, `<text>`) require the SVG namespace (`http://www.w3.org/2000/svg`). When Alpine clones `<template x-for>` content inside `<svg>`, browsers either fail to parse the nested `<template>` cleanly or instantiate child nodes in the wrong namespace—causing SVG geometry to render invisibly or break across Chromium, Firefox, and Safari.
+
+### Safe Alternatives
+1. **Explicit SVG Elements with `x-show` / `:fill` / `:stroke`:** Render fixed `<g>` or `<rect>` SVG elements directly inside `<svg>` and toggle attributes or visibility declaratively with Alpine bindings (`:class`, `:fill`, `x-show`).
+2. **HTML Grid / Flex Containers with `x-for`:** For repeating diagrams, block steps, or color swatches, use `<template x-for>` inside a standard HTML container (`<div class="grid ...">`) and optionally render inline `<svg>` icons inside each HTML item.
+
+```html
+<!-- ❌ BROKEN: <template x-for> inside <svg> -->
+<svg viewBox="0 0 200 100">
+  <template x-for="ring in rings" :key="ring.id">
+    <rect :x="ring.x" :y="ring.y" width="20" height="20"></rect>
+  </template>
+</svg>
+
+<!-- ✅ SAFE: <template x-for> in HTML container with per-item <svg> or explicit SVG <g> nodes -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+  <template x-for="ring in rings" :key="ring.id">
+    <div class="p-3 rounded-box border border-base-300 bg-base-100">
+      <svg viewBox="0 0 24 24" class="w-6 h-6"><rect x="2" y="2" width="20" height="20" rx="4" :fill="ring.color" /></svg>
+    </div>
+  </template>
+</div>
+```
+
+
 

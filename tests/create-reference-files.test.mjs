@@ -66,6 +66,110 @@ describe("Creation Studio Reference File Auto-Staging & Workspace Picker", () =>
     assert.equal(fs.readFileSync(stagedOnDisk, "utf-8"), "col\n1\n");
   });
 
+  it("POST /api/create/upload with projectSlug writes directly to projects/<slug>/refs/ and blocks traversal", async () => {
+    const projectDir = path.join(tmpRoot, "projects", "q4-sales-audit");
+    fs.mkdirSync(path.join(projectDir, "refs"), { recursive: true });
+    fs.writeFileSync(
+      path.join(projectDir, "report.manifest.json"),
+      JSON.stringify({ project: "q4-sales-audit", referenceFiles: [] }, null, 2)
+    );
+
+    const res = await fetch(`${baseUrl}/api/create/upload`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        projectSlug: "q4-sales-audit",
+        name: "../../etc/passwd-notes.csv",
+        contentBase64: Buffer.from("region,arr\nNA,500000\n").toString("base64")
+      })
+    });
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.ok, true);
+    assert.equal(data.scope, "workspace");
+    assert.equal(data.projectSlug, "q4-sales-audit");
+    assert.equal(data.name, "passwd-notes.csv");
+    assert.equal(data.path, "projects/q4-sales-audit/refs/passwd-notes.csv");
+
+    const onDisk = path.join(projectDir, "refs", "passwd-notes.csv");
+    assert.equal(fs.existsSync(onDisk), true);
+    assert.equal(fs.readFileSync(onDisk, "utf-8"), "region,arr\nNA,500000\n");
+
+    const updatedManifest = JSON.parse(fs.readFileSync(path.join(projectDir, "report.manifest.json"), "utf-8"));
+    assert.ok(updatedManifest.referenceFiles.some((r) => r.stagedPath === "projects/q4-sales-audit/refs/passwd-notes.csv"));
+
+    // Path traversal inside projectSlug must be rejected with 403
+    const traversalRes = await fetch(`${baseUrl}/api/create/upload`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        projectSlug: "../../etc",
+        name: "bad.txt",
+        contentBase64: Buffer.from("nope").toString("base64")
+      })
+    });
+    assert.equal(traversalRes.status, 403);
+  });
+
+  it("GET /api/create/workspace-files?project=<slug> prioritizes projectFiles and excludes boilerplate", async () => {
+    const projectDir = path.join(tmpRoot, "projects", "q4-sales-audit");
+    fs.mkdirSync(path.join(projectDir, "refs"), { recursive: true });
+    fs.writeFileSync(path.join(projectDir, "refs", "existing-notes.md"), "# Q4 Notes\n");
+    fs.writeFileSync(path.join(projectDir, "index.html"), "<html></html>");
+    fs.writeFileSync(path.join(projectDir, "fragment.html"), "<main id='report-main'></main>");
+    fs.writeFileSync(path.join(projectDir, "AGENTS.md"), "# Agents\n");
+
+    const res = await fetch(`${baseUrl}/api/create/workspace-files?project=q4-sales-audit`);
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.ok, true);
+    assert.equal(data.project, "q4-sales-audit");
+    assert.ok(Array.isArray(data.projectFiles));
+    assert.ok(data.projectFiles.some((f) => f.path === "projects/q4-sales-audit/refs/existing-notes.md" && f.inProjectWorkspace === true));
+    assert.ok(!data.projectFiles.some((f) => f.name === "index.html" || f.name === "fragment.html" || f.name === "AGENTS.md" || f.name === "report.manifest.json"));
+    // projectFiles should appear at the front of files
+    assert.equal(data.files[0].inProjectWorkspace, true);
+  });
+
+  it("Browser: active workspace auto-includes existing project files and uploads new files directly to projects/<slug>/refs/", async () => {
+    const projectDir = path.join(tmpRoot, "projects", "alpha-audit");
+    fs.mkdirSync(path.join(projectDir, "refs"), { recursive: true });
+    fs.writeFileSync(path.join(projectDir, "refs", "preexisting-brief.md"), "# Preexisting Brief\n");
+
+    const page = await browser.newPage();
+    await page.goto(`${baseUrl}/create.html`, { waitUntil: "domcontentloaded" });
+
+    // Enter workspace slug and click Create Workspace
+    await page.fill("#input-project-slug", "alpha-audit");
+    await page.click("#btn-scaffold-now");
+    await page.waitForFunction(() => {
+      const b = document.getElementById("scaffold-result-banner");
+      return b && !b.classList.contains("hidden");
+    });
+
+    // Existing file in projects/alpha-audit/refs/ must auto-populate in #collected-files-list and prompt
+    await page.waitForFunction(() => {
+      const list = document.getElementById("collected-files-list");
+      return list && list.textContent && list.textContent.includes("preexisting-brief.md");
+    });
+
+    // Upload a new file -> must go straight to projects/alpha-audit/refs/revenue.csv (NOT _uploads)
+    await page.setInputFiles("#file-picker-input", [
+      { name: "revenue.csv", mimeType: "text/csv", buffer: Buffer.from("region,arr\nEMEA,300\n") }
+    ]);
+    await page.waitForFunction(() => {
+      const list = document.getElementById("collected-files-list");
+      return list && list.textContent && list.textContent.includes("projects/alpha-audit/refs/revenue.csv");
+    });
+
+    assert.equal(fs.existsSync(path.join(projectDir, "refs", "revenue.csv")), true);
+    const prompt = await page.inputValue("#prompt-output-box");
+    assert.match(prompt, /projects\/alpha-audit\/refs\/preexisting-brief\.md/);
+    assert.match(prompt, /projects\/alpha-audit\/refs\/revenue\.csv/);
+
+    await page.close();
+  });
+
   it("GET /api/create/workspace-files lists workspace files and skips node_modules", async () => {
     const res = await fetch(`${baseUrl}/api/create/workspace-files?q=revenue`);
     assert.equal(res.status, 200);

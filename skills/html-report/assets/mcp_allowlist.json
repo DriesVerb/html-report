@@ -14,6 +14,7 @@
     "report_set_theme",
     "report_append_alert",
     "report_export_pdf",
+    "report_build",
     "execute_query",
     "read_query",
     "list_issues",
@@ -26,6 +27,10 @@
       "maxExecutionTimeMs": 5000
     },
     "report_set_theme": {
+      "requireApproval": false,
+      "maxExecutionTimeMs": 5000
+    },
+    "report_build": {
       "requireApproval": false,
       "maxExecutionTimeMs": 5000
     },

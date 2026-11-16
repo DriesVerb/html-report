@@ -9,6 +9,7 @@
     "html-report-build": "./skills/html-report/scripts/build-report.mjs",
     "html-report-scaffold": "./skills/html-report/scripts/scaffold-project.mjs",
     "html-report-serve": "./skills/html-report/scripts/serve-report.mjs",
+    "html-report-publish": "./skills/html-report/scripts/publish-report.mjs",
     "html-report-pwa": "./skills/html-report/scripts/generate-pwa.mjs",
     "html-report-install": "./skills/html-report/scripts/install-pwa.mjs"
   },
@@ -18,6 +19,7 @@
     "./scaffold": "./skills/html-report/scripts/scaffold-project.mjs",
     "./harness": "./skills/html-report/scripts/harness.mjs",
     "./serve": "./skills/html-report/scripts/serve-report.mjs",
+    "./publish": "./skills/html-report/scripts/publish-report.mjs",
     "./pwa": "./skills/html-report/scripts/pwa-builder.mjs",
     "./generate-pwa": "./skills/html-report/scripts/generate-pwa.mjs",
     "./theme": "./skills/html-report/scripts/theme-compiler.mjs",

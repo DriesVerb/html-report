@@ -199,7 +199,7 @@ describe("Studio Fast Assembly & Smart Scaffolding Pipeline", () => {
       assert.ok(fragContent.includes("new Chart("));
       assert.ok(fragContent.includes("new gridjs.Grid("));
 
-      // Second POST with same slug must auto-suffix -2 without overwriting
+      // Second POST with same slug without updateExisting must auto-suffix -2 without overwriting
       const res2 = await fetch(`${baseUrl}/api/create/scaffold`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -209,6 +209,32 @@ describe("Studio Fast Assembly & Smart Scaffolding Pipeline", () => {
       const body2 = await res2.json();
       assert.equal(body2.ok, true);
       assert.equal(body2.slug, "exec-q3-board-2");
+
+      // Third POST with updateExisting: true updates exec-q3-board in-place and preserves refs/ and custom fragment edits
+      const customMarker = "<!-- CUSTOM_AGENT_FRAGMENT_EDIT -->";
+      fs.writeFileSync(absFragPath, `${fragContent}\n${customMarker}\n`, "utf8");
+      fs.writeFileSync(path.join(absProjDir, "refs", "extra-notes.md"), "# Keep me\n", "utf8");
+
+      const res3 = await fetch(`${baseUrl}/api/create/scaffold`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...payload,
+          theme: "dark",
+          userGoals: "Updated executive goals",
+          updateExisting: true
+        })
+      });
+      assert.equal(res3.status, 200);
+      const body3 = await res3.json();
+      assert.equal(body3.ok, true);
+      assert.equal(body3.updated, true);
+      assert.equal(body3.slug, "exec-q3-board");
+      assert.equal(fs.existsSync(path.join(absProjDir, "refs", "extra-notes.md")), true, "Existing refs/ must be preserved");
+      assert.ok(fs.readFileSync(absFragPath, "utf8").includes(customMarker), "Customized fragment.html must be preserved on updateExisting");
+      const updatedManifest = JSON.parse(fs.readFileSync(absManifestPath, "utf8"));
+      assert.equal(updatedManifest.theme, "dark");
+      assert.equal(updatedManifest.goals, "Updated executive goals");
     });
   });
 
@@ -379,7 +405,36 @@ describe("Studio Fast Assembly & Smart Scaffolding Pipeline", () => {
 
         await page.goto(`${baseUrl}/create`, { waitUntil: "load" });
 
-        // 0. Verify initial project lifecycle state & user-facing button label
+        // 0. Verify workspace-first DOM section order & initial project lifecycle state
+        const layoutCheck = await page.evaluate(() => {
+          const stepPurpose = document.getElementById("step-purpose");
+          const cards = stepPurpose?.querySelector(".wizard-target-card");
+          const wsSection = document.getElementById("workspace-setup-section");
+          const descSection = document.getElementById("describe-build-section");
+          const slugInput = document.getElementById("input-project-slug");
+          const scaffoldBtn = document.getElementById("btn-scaffold-now");
+          const cardsRect = cards?.getBoundingClientRect();
+          const wsRect = wsSection?.getBoundingClientRect();
+          const descRect = descSection?.getBoundingClientRect();
+          const slugRect = slugInput?.getBoundingClientRect();
+          const btnRect = scaffoldBtn?.getBoundingClientRect();
+          return {
+            hasWsSection: Boolean(wsSection),
+            hasDescSection: Boolean(descSection),
+            slugInWs: Boolean(wsSection && slugInput && wsSection.contains(slugInput)),
+            btnInWs: Boolean(wsSection && scaffoldBtn && wsSection.contains(scaffoldBtn)),
+            cardsBeforeWs: Boolean(cardsRect && wsRect && cardsRect.bottom <= wsRect.top + 4),
+            wsBeforeDesc: Boolean(wsRect && descRect && wsRect.bottom <= descRect.top + 4),
+            sideBySide: Boolean(slugRect && btnRect && slugRect.right <= btnRect.left + 4 && Math.abs(slugRect.bottom - btnRect.bottom) < 20)
+          };
+        });
+        assert.equal(layoutCheck.hasWsSection, true, "#workspace-setup-section must exist");
+        assert.equal(layoutCheck.slugInWs, true, "#input-project-slug must reside inside #workspace-setup-section");
+        assert.equal(layoutCheck.btnInWs, true, "#btn-scaffold-now must reside inside #workspace-setup-section");
+        assert.equal(layoutCheck.cardsBeforeWs, true, "Deliverable cards must precede #workspace-setup-section");
+        assert.equal(layoutCheck.wsBeforeDesc, true, "#workspace-setup-section must precede #describe-build-section");
+        assert.equal(layoutCheck.sideBySide, true, "#input-project-slug and #btn-scaffold-now must sit side-by-side on desktop");
+
         const initialBadge = await page.textContent("#workspace-state-badge");
         assert.ok(initialBadge.includes("Draft"), `Expected initial Draft state badge, got: ${initialBadge}`);
         const scaffoldBtnText = await page.textContent("#btn-scaffold-now");
@@ -432,6 +487,22 @@ describe("Studio Fast Assembly & Smart Scaffolding Pipeline", () => {
         const pwFrag = fs.readFileSync(path.join(tmpRoot, "projects", "pw-fast-demo", "fragment.html"), "utf8");
         assert.ok(pwFrag.includes("timeline"), "Scaffolded fragment should include checked timeline preset");
         assert.ok(!pwFrag.includes('id="kpi-overview"'), "Unchecked kpi-row preset should be omitted");
+
+        // 5b. Editing Step 1-5 after creation marks workspace dirty and Update Workspace syncs in-place without -2
+        await page.fill("#input-board-goals", "In-place updated goals");
+        await page.waitForFunction(() => {
+          const badge = document.getElementById("workspace-state-badge");
+          const updateBtn = document.getElementById("btn-update-workspace");
+          return badge && badge.textContent.includes("Unsaved Changes") && updateBtn && !updateBtn.classList.contains("hidden");
+        });
+        await page.click("#btn-update-workspace");
+        await page.waitForFunction(() => {
+          const badge = document.getElementById("workspace-state-badge");
+          return badge && badge.textContent.includes("Workspace Created");
+        });
+        assert.equal(fs.existsSync(path.join(tmpRoot, "projects", "pw-fast-demo-2")), false, "In-place Update Workspace must not create -2 folder");
+        const updatedDemoManifest = JSON.parse(fs.readFileSync(path.join(tmpRoot, "projects", "pw-fast-demo", "report.manifest.json"), "utf8"));
+        assert.equal(updatedDemoManifest.goals, "In-place updated goals");
 
         // 6. Click #btn-send-to-agent -> posts prompt payload with CSRF token to /api/agent/prompt and updates lifecycle badge
         await page.click("#btn-send-to-agent");

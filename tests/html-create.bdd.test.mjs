@@ -529,6 +529,42 @@ describe("Feature Spec: Feature 4 & 4.1 - Interactive html-create Studio & Termi
 
       await page.close();
     });
+
+    it("Scenario: Workspace-first section renders between target cards and Describe what you want to build with side-by-side controls", async () => {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      await page.goto("http://localhost:3000/create", { waitUntil: "domcontentloaded" });
+
+      const domOrder = await page.evaluate(() => {
+        const ws = document.getElementById("workspace-setup-section");
+        const desc = document.getElementById("describe-build-section");
+        const lastCard = Array.from(document.querySelectorAll("#step-purpose .wizard-target-card")).pop();
+        const slugInput = document.getElementById("input-project-slug");
+        const scaffoldBtn = document.getElementById("btn-scaffold-now");
+        const step6Summary = document.getElementById("step-output-workspace-summary");
+
+        const cardAfterWs = lastCard && ws ? Boolean(lastCard.compareDocumentPosition(ws) & Node.DOCUMENT_POSITION_FOLLOWING) : false;
+        const wsBeforeDesc = ws && desc ? Boolean(ws.compareDocumentPosition(desc) & Node.DOCUMENT_POSITION_FOLLOWING) : false;
+        return {
+          hasWs: Boolean(ws),
+          hasDesc: Boolean(desc),
+          hasStep6Summary: Boolean(step6Summary),
+          slugInsideWs: Boolean(ws && slugInput && ws.contains(slugInput)),
+          btnInsideWs: Boolean(ws && scaffoldBtn && ws.contains(scaffoldBtn)),
+          cardAfterWs,
+          wsBeforeDesc
+        };
+      });
+
+      assert.equal(domOrder.hasWs, true);
+      assert.equal(domOrder.hasDesc, true);
+      assert.equal(domOrder.hasStep6Summary, true);
+      assert.equal(domOrder.slugInsideWs, true);
+      assert.equal(domOrder.btnInsideWs, true);
+      assert.equal(domOrder.cardAfterWs, true, "#workspace-setup-section must appear after deliverable cards");
+      assert.equal(domOrder.wsBeforeDesc, true, "#workspace-setup-section must appear before Describe what you want to build");
+
+      await page.close();
+    });
   });
 
   describe("Requirement: Modular Skill Router Intent Handoff", () => {

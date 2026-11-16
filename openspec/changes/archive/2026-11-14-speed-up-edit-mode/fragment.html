@@ -1,0 +1,383 @@
+<section id="journey-overview" class="space-y-6">
+  <div class="card bg-base-200/70 border border-base-300 shadow-sm">
+    <div class="card-body p-5 sm:p-6 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <span class="badge badge-primary badge-sm font-mono">OpenSpec Journey · spec-driven</span>
+            <span class="badge badge-outline badge-sm font-mono">Beneficiary: Hybrid</span>
+            <span class="badge badge-outline badge-sm font-mono">Server-Connected · Interactive</span>
+          </div>
+          <h1 id="journey-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Speed Up Edit Mode: Workspace Prompting &amp; Surgical Fast-Patch</h1>
+          <p class="text-sm text-base-content/75 mt-1">
+            Eliminating multi-turn cold-start CLI loops, duplicated prompts, and multi-project routing blocks in <code>Edit Mode</code> by enriching <code>buildEditPrompt()</code> via <code>#agent-manifest</code> and adding a <code>&lt;100ms</code>-validated surgical <code>Semantic Fragment</code> fast-path on <code>POST /__agent_edit__</code>.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline btn-primary gap-1.5 font-mono text-xs">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline btn-secondary gap-1.5 font-mono text-xs">
+            <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 font-mono text-xs">
+            <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('specs/page-edit-queue/spec.md')" class="btn btn-sm btn-outline gap-1.5 font-mono text-xs">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> spec.md
+          </button>
+        </div>
+      </div>
+
+      <!-- Mandatory Journey Phase Stepper -->
+      <div class="w-full overflow-x-auto pt-2">
+        <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary">Brainstorming</li>
+          <li class="step step-primary">Planning</li>
+          <li class="step step-primary">Implementing</li>
+          <li class="step step-primary">Verifying</li>
+          <li class="step step-primary">Shipped / Archived</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Progress Metrics -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Total Tasks</div>
+      <div class="stat-value text-2xl font-extrabold">7</div>
+      <div class="stat-desc text-xs font-mono">3 Phases</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Completed</div>
+      <div class="stat-value text-2xl font-extrabold text-success">7</div>
+      <div class="stat-desc text-xs font-mono">100% complete</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Remaining</div>
+      <div class="stat-value text-2xl font-extrabold text-success">0</div>
+      <div class="stat-desc text-xs font-mono">Verified</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Bottlenecks Targeted</div>
+      <div class="stat-value text-2xl font-extrabold text-info">5</div>
+      <div class="stat-desc text-xs font-mono">Resolved</div>
+    </div>
+  </div>
+</section>
+
+<section id="architecture-flow" class="space-y-4">
+  <h2 id="edit-mode-two-tier-pipeline" class="text-xl font-bold flex items-center gap-2">
+    <i data-lucide="git-branch" class="w-5 h-5 text-primary"></i>
+    Edit Mode Two-Tier Fast-Patch Architecture
+  </h2>
+  <p class="text-sm text-base-content/80">
+    Because <code>Assembly</code> (<code>buildReport()</code>) and <code>Idiomorph</code> hot-swap already run in under 100 ms, speeding up <code>Edit Mode</code> focuses on the upstream hand-off: enriching the prompt from <code>#agent-manifest</code>, fixing multi-project path resolution on <code>POST /__agent_edit__</code>, and executing surgical <code>fragment.html</code> patches in-process with seamless CLI fallback.
+  </p>
+  <div class="card bg-base-100 border border-base-300 shadow-xs p-4 overflow-x-auto">
+    <pre class="mermaid">
+flowchart LR
+  D["#edit-dock (Target Element + #agent-manifest)"] -->|"buildEditPrompt() + POST /__agent_edit__"| R["Workspace Path &amp; Fragment Resolver"]
+  R -->|"Extract #target / section slice"| T1["Tier 1: Fast-Model JSON Patch"]
+  T1 -->|"lintFragment() + buildReport() (&lt;100ms)"| V{"Valid &amp; Unique?"}
+  V -->|"Yes"| W["Write fragment.html atomically"]
+  V -->|"No / Complex task"| T2["Tier 2: Fragment-Scoped CLI Fallback"]
+  T2 --> W
+  W -->|"fs.watch (100ms) -&gt; buildReport()"| H["SSE reload -&gt; Idiomorph &lt;main&gt; Hot-Swap"]
+    </pre>
+  </div>
+</section>
+
+<section id="bottleneck-analysis" class="space-y-4">
+  <h2 id="identified-bottlenecks-and-remedies" class="text-xl font-bold flex items-center gap-2">
+    <i data-lucide="zap" class="w-5 h-5 text-warning"></i>
+    Identified Bottlenecks &amp; Pipeline Remedies
+  </h2>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-5 space-y-3">
+        <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+          <h3 id="bottleneck-comparison-chart" class="font-bold text-base">Edit Turn &amp; Payload Overhead Comparison</h3>
+          <span class="badge badge-info badge-sm font-mono">Architectural Model</span>
+        </div>
+        <div class="relative h-72 w-full min-w-0">
+          <canvas id="editBottleneckChart"></canvas>
+        </div>
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const ctx = document.getElementById("editBottleneckChart");
+            if (!ctx || typeof Chart === "undefined") return;
+            new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: ["Agent Turns (File Discovery + Edit + Build)", "Prompt Payload Multiplier", "Reload Scope (1=Full, 0.2=Hot-Swap)"],
+                datasets: [
+                  {
+                    label: "Current Edit Mode",
+                    data: [4, 2, 1],
+                    backgroundColor: "rgba(239, 68, 68, 0.72)",
+                    borderRadius: 6
+                  },
+                  {
+                    label: "Tier 1 Surgical Fast-Patch",
+                    data: [1, 1, 0.2],
+                    backgroundColor: "rgba(34, 197, 94, 0.78)",
+                    borderRadius: 6
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { position: "bottom" }
+                },
+                scales: {
+                  y: { beginAtZero: true }
+                }
+              }
+            });
+          });
+        </script>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-5 space-y-3">
+        <h3 id="five-fixes-summary" class="font-bold text-base">Five Root Causes Resolved</h3>
+        <div class="space-y-2.5 text-sm">
+          <div class="p-2.5 rounded-lg bg-base-200/70 border border-base-300">
+            <span class="font-semibold text-primary">1. Manifest-Enriched Prompt:</span> <code>buildEditPrompt()</code> reads <code>#agent-manifest</code> for <code>files.fragment</code>, <code>files.entry</code>, <code>mode</code>, and <code>theme</code>, skipping manual <code>build-report.mjs</code> rebuild hints when live-watched.
+          </div>
+          <div class="p-2.5 rounded-lg bg-base-200/70 border border-base-300">
+            <span class="font-semibold text-primary">2. Multi-Project <code>/__agent_edit__</code> Routing:</span> Replaces single-file <code>targetFileName</code> check with workspace-root containment so <code>/projects/&lt;slug&gt;/index.html</code> works even when the server started on <code>create.html</code>.
+          </div>
+          <div class="p-2.5 rounded-lg bg-base-200/70 border border-base-300">
+            <span class="font-semibold text-primary">3. Deduplicated Dispatch + Fast Model:</span> Fixes <code>{ prompt: scoped, systemPrompt: scoped }</code> double-concatenation in <code>AgentInferenceRouter</code> and routes via <code>aiConfig.model</code>.
+          </div>
+          <div class="p-2.5 rounded-lg bg-base-200/70 border border-base-300">
+            <span class="font-semibold text-primary">4. Surgical Fragment Fast-Patch:</span> Slices the targeted <code>#target.id</code> / <code>&lt;section&gt;</code>, validates patches with <code>lintFragment()</code> + <code>buildReport()</code>, and falls back to CLI on mismatch.
+          </div>
+          <div class="p-2.5 rounded-lg bg-base-200/70 border border-base-300">
+            <span class="font-semibold text-primary">5. Hot-Swap Preservation:</span> Separates <code>&lt;head&gt;</code>/runtime signatures from <code>&lt;main&gt;</code> widget scripts to avoid unnecessary full browser reloads.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="domain-alignment" class="space-y-4">
+  <h2 id="ubiquitous-domain-language-alignment" class="text-xl font-bold flex items-center gap-2">
+    <i data-lucide="book-open" class="w-5 h-5 text-secondary"></i>
+    Ubiquitous Domain Language &amp; Bounded Contexts
+  </h2>
+  <div class="overflow-x-auto bg-base-100 border border-base-300 rounded-xl shadow-xs">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Canonical Term</th>
+          <th>Bounded Context</th>
+          <th>Role in Speed-Up Edit Mode</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="font-mono font-semibold">Edit Mode</td>
+          <td><span class="badge badge-ghost badge-xs font-mono">editMode</span></td>
+          <td>In-flight <code>#edit-dock</code> workspace where users select <code>Target Element</code> nodes and dispatch tasks via <code>/__agent_edit__</code>.</td>
+        </tr>
+        <tr>
+          <td class="font-mono font-semibold">Semantic Fragment</td>
+          <td><span class="badge badge-ghost badge-xs font-mono">assembly</span></td>
+          <td>Compact <code>projects/&lt;slug&gt;/fragment.html</code> edited directly by Tier 1 patches or Tier 2 CLI instead of 100–300 KB+ compiled HTML.</td>
+        </tr>
+        <tr>
+          <td class="font-mono font-semibold">Output Deliverable</td>
+          <td><span class="badge badge-ghost badge-xs font-mono">assembly</span></td>
+          <td><code>projects/&lt;slug&gt;/index.html</code>, automatically rebuilt in <code>&lt;100ms</code> by <code>rebuildProjectFromFragment()</code> with preserved workspace <code>source</code>.</td>
+        </tr>
+        <tr>
+          <td class="font-mono font-semibold">Two-Way Agent Bridge</td>
+          <td><span class="badge badge-ghost badge-xs font-mono">editMode</span></td>
+          <td>Localhost + CSRF-authenticated bridge routing deduplicated prompts and fast-model preferences through <code>AgentInferenceRouter</code>.</td>
+        </tr>
+        <tr>
+          <td class="font-mono font-semibold">Pipeline</td>
+          <td><span class="badge badge-ghost badge-xs font-mono">pipeline</span></td>
+          <td>Orchestrates target slicing, <code>lintFragment()</code> pre-write verification, <code>buildReport()</code> assembly, and Idiomorph hot-swap.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="task-checklist" class="space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <h2 id="implementation-checklist" class="text-xl font-bold flex items-center gap-2">
+      <i data-lucide="list-checks" class="w-5 h-5 text-primary"></i>
+      Connected Implementation Checklist
+    </h2>
+    <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-outline font-mono">
+      Open tasks.md
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-4 space-y-2">
+        <h3 id="phase-1-workspace-prompt" class="font-bold text-sm text-primary">1. Workspace-Aware Edit Prompt &amp; Manifest Source Fix</h3>
+        <label class="flex items-start gap-2.5 text-sm">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled />
+          <span><strong>1.1</strong> Update <code>getPageInfo()</code>, <code>buildEditPrompt()</code>, and <code>handleSend()</code> in <code>report-runtime.js</code> to read <code>#agent-manifest</code>, emit workspace-relative paths, preserve determinism, and verify via unit tests.</span>
+        </label>
+        <label class="flex items-start gap-2.5 text-sm">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled />
+          <span><strong>1.2</strong> Fix <code>rebuildProjectFromFragment()</code> in <code>serve-report.mjs</code> to preserve <code>projects/&lt;slug&gt;/index.html</code> as <code>source</code> and verify via automated test.</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-4 space-y-2">
+        <h3 id="phase-2-routing-dispatch" class="font-bold text-sm text-primary">2. Multi-Project <code>/__agent_edit__</code> Routing &amp; Deduplicated Dispatch</h3>
+        <label class="flex items-start gap-2.5 text-sm">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled />
+          <span><strong>2.1</strong> Update <code>POST /__agent_edit__</code> to resolve root and <code>/projects/&lt;slug&gt;/index.html</code> paths safely inside <code>workspaceRoot</code> (rejecting traversal with HTTP 403) and resolve sibling <code>fragment.html</code>.</span>
+        </label>
+        <label class="flex items-start gap-2.5 text-sm">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled />
+          <span><strong>2.2</strong> Eliminate duplicate prompt wrapping in <code>POST /__agent_edit__</code> + <code>AgentInferenceRouter.dispatch()</code> and forward fast-model routing.</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-4 space-y-2">
+        <h3 id="phase-3-fast-patch" class="font-bold text-sm text-primary">3. Surgical Fragment Fast-Patch &amp; Hot-Swap Preservation</h3>
+        <label class="flex items-start gap-2.5 text-sm">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled />
+          <span><strong>3.1</strong> Implement fragment slicing, Tier 1 surgical JSON patch with <code>lintFragment()</code> + <code>buildReport()</code> validation, and Tier 2 CLI fallback; verify via mock-provider tests.</span>
+        </label>
+        <label class="flex items-start gap-2.5 text-sm">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled />
+          <span><strong>3.2</strong> Update <code>injectLiveReload()</code> to separate <code>&lt;head&gt;</code>/runtime scripts from <code>&lt;main&gt;</code> inline scripts so edits preserve Idiomorph hot-swap.</span>
+        </label>
+        <label class="flex items-start gap-2.5 text-sm">
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-1" checked disabled />
+          <span><strong>3.3</strong> Document the workflow in <a href="skills/html-report/references/two-way-agent-bridge.md" onclick="openMarkdownViewer('skills/html-report/references/two-way-agent-bridge.md');return false;" class="link link-primary font-mono">two-way-agent-bridge.md</a> and run <code>harness.mjs --fast</code> + Edit Mode tests.</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWDOWN MARKDOWN MODAL VIEWER -->
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-base-100 border border-base-300 shadow-2xl">
+    <div class="flex items-center justify-between px-4 py-3 bg-base-200 border-b border-base-300 shrink-0">
+      <div class="flex items-center gap-2 flex-wrap">
+        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i>
+        <span id="markdown-modal-title" class="font-bold text-sm font-mono text-base-content">proposal.md</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="join" id="markdown-modal-tabs">
+          <button id="tab-btn-proposal" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')">proposal.md</button>
+          <button id="tab-btn-design" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="design.md" onclick="switchViewerTab('design.md')">design.md</button>
+          <button id="tab-btn-tasks" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')">tasks.md</button>
+          <button id="tab-btn-spec" class="btn btn-xs join-item doc-tab-btn md-tab-btn" data-doc="specs/page-edit-queue/spec.md" onclick="switchViewerTab('specs/page-edit-queue/spec.md')">spec.md</button>
+        </div>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-circle btn-ghost" aria-label="Close modal">✕</button>
+      </div>
+    </div>
+    <div id="markdown-modal-body" class="p-6 overflow-y-auto prose prose-sm max-w-none flex-1 text-base-content bg-base-100">
+      <div class="flex items-center justify-center py-12">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") {
+      modal.close();
+    } else if (modal) {
+      modal.removeAttribute("open");
+    }
+  }
+
+  async function switchViewerTab(docName) {
+    await renderMarkdownDoc(docName);
+  }
+
+  async function renderMarkdownDoc(docName) {
+    activeDocKey = docName;
+    const titleEl = document.getElementById("markdown-modal-title");
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (titleEl) titleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) {
+        btn.classList.add("btn-active", "btn-primary");
+      } else {
+        btn.classList.remove("btn-active", "btn-primary");
+      }
+    });
+
+    let md = "";
+    try {
+      const res = await fetch(docName + "?raw=true", { cache: "no-store" });
+      if (res.ok) md = await res.text();
+    } catch (_) {}
+
+    if (bodyEl) {
+      if (md) {
+        const conv = getShowdownConverter();
+        if (conv) {
+          bodyEl.innerHTML = conv.makeHtml(md);
+        } else {
+          bodyEl.innerHTML = "<pre class='whitespace-pre-wrap font-mono text-xs'>" + md.replace(/</g, "&lt;") + "</pre>";
+        }
+      } else {
+        bodyEl.innerHTML = "<div class='alert alert-warning text-xs'>Artifact " + docName + " could not be fetched.</div>";
+      }
+    }
+  }
+
+  window.openMarkdownViewer = openMarkdownViewer;
+  window.closeMarkdownViewer = closeMarkdownViewer;
+  window.switchViewerTab = switchViewerTab;
+</script>

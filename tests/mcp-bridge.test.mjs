@@ -13,6 +13,7 @@ import {
   CSRFManager,
   AllowlistManager,
   handleMCPRequest,
+  handleMCPHttpPayload,
   handleGatewayCallTool,
   formatJsonRpcResult,
   formatJsonRpcError
@@ -46,7 +47,7 @@ describe("MCP Protocol Handler & Specification Compliance", () => {
     assert.equal(initNotifRes.result.ok, true);
   });
 
-  it("should expose all five native MCP tools in tools/list", async () => {
+  it("should expose all six native MCP tools in tools/list", async () => {
     const req = {
       jsonrpc: "2.0",
       id: 4,
@@ -57,7 +58,7 @@ describe("MCP Protocol Handler & Specification Compliance", () => {
     const res = await handleMCPRequest(req);
     assert.equal(res.jsonrpc, "2.0");
     assert.equal(res.id, 4);
-    assert.equal(res.result.tools.length, 5);
+    assert.equal(res.result.tools.length, 6);
 
     const toolNames = res.result.tools.map((t) => t.name);
     assert.ok(toolNames.includes("report_get_state"));
@@ -65,6 +66,36 @@ describe("MCP Protocol Handler & Specification Compliance", () => {
     assert.ok(toolNames.includes("report_set_theme"));
     assert.ok(toolNames.includes("report_append_alert"));
     assert.ok(toolNames.includes("report_export_pdf"));
+    assert.ok(toolNames.includes("report_build"));
+  });
+
+  it("should handle Streamable HTTP notifications (202) and JSON-RPC batches via handleMCPHttpPayload", async () => {
+    const notifRes = await handleMCPHttpPayload({
+      jsonrpc: "2.0",
+      method: "notifications/initialized"
+    });
+    assert.equal(notifRes.statusCode, 202);
+    assert.equal(notifRes.body, null);
+
+    const batchRes = await handleMCPHttpPayload([
+      { jsonrpc: "2.0", id: 10, method: "ping" },
+      { jsonrpc: "2.0", method: "notifications/initialized" },
+      { jsonrpc: "2.0", id: 11, method: "tools/list" }
+    ]);
+    assert.equal(batchRes.statusCode, 200);
+    assert.equal(batchRes.body.length, 2);
+    assert.equal(batchRes.body[0].id, 10);
+    assert.equal(batchRes.body[1].id, 11);
+
+    const allNotifBatch = await handleMCPHttpPayload([
+      { jsonrpc: "2.0", method: "notifications/initialized" }
+    ]);
+    assert.equal(allNotifBatch.statusCode, 202);
+    assert.equal(allNotifBatch.body, null);
+
+    const emptyBatch = await handleMCPHttpPayload([]);
+    assert.equal(emptyBatch.statusCode, 400);
+    assert.equal(emptyBatch.body.error.code, JSON_RPC_ERRORS.INVALID_REQUEST);
   });
 
   it("should return JSON-RPC -32601 for unknown methods", async () => {
@@ -219,6 +250,66 @@ describe("Native MCP Tools Execution in Report Context", () => {
     assert.equal(res.error.code, JSON_RPC_ERRORS.INVALID_PARAMS);
     assert.match(res.error.message, /requires 'selector' and 'html'/);
   });
+
+  it("should execute report_build and reject invalid or traversing paths cleanly", async () => {
+    const validRes = await handleMCPRequest({
+      jsonrpc: "2.0",
+      id: 15,
+      method: "tools/call",
+      params: {
+        name: "report_build",
+        arguments: {
+          fragmentHtml: '<section id="sec-1"><h2 id="h-1">Hello</h2></section>',
+          title: "Built Report",
+          outputPath: "dev/sample.html"
+        }
+      }
+    }, {
+      buildReport: async (args) => ({
+        ok: true,
+        outputPath: args.outputPath,
+        mode: "report",
+        theme: "light",
+        detectedAddons: [],
+        warnings: [],
+        lintErrors: []
+      })
+    });
+    assert.equal(validRes.result.isError, false);
+    const parsed = JSON.parse(validRes.result.content[0].text);
+    assert.equal(parsed.ok, true);
+    assert.equal(parsed.outputPath, "dev/sample.html");
+
+    const invalidArgsRes = await handleMCPRequest({
+      jsonrpc: "2.0",
+      id: 16,
+      method: "tools/call",
+      params: {
+        name: "report_build",
+        arguments: { fragmentHtml: "   " }
+      }
+    });
+    assert.equal(invalidArgsRes.error.code, JSON_RPC_ERRORS.INVALID_PARAMS);
+
+    const traversalRes = await handleMCPRequest({
+      jsonrpc: "2.0",
+      id: 17,
+      method: "tools/call",
+      params: {
+        name: "report_build",
+        arguments: {
+          fragmentHtml: '<section id="s"><h2 id="h">T</h2></section>',
+          outputPath: "../outside.html"
+        }
+      }
+    }, {
+      buildReport: async () => {
+        throw new Error("Forbidden: outputPath '../outside.html' resolves outside the workspace root.");
+      }
+    });
+    assert.equal(traversalRes.result.isError, true);
+    assert.match(traversalRes.result.content[0].text, /outside the workspace root/);
+  });
 });
 
 describe("Security Boundaries: CSRF, Host & Allowlist Validation", () => {
@@ -236,6 +327,8 @@ describe("Security Boundaries: CSRF, Host & Allowlist Validation", () => {
   it("should enforce Host and Origin validation for localhost only", () => {
     assert.equal(CSRFManager.validateHost("localhost:3000"), true);
     assert.equal(CSRFManager.validateHost("127.0.0.1:8080"), true);
+    assert.equal(CSRFManager.validateHost("[::1]:3031"), true);
+    assert.equal(CSRFManager.validateHost("[::1]"), true);
     assert.equal(CSRFManager.validateHost("malicious-site.com"), false);
     assert.equal(CSRFManager.validateHost("evil.internal.corp"), false);
 

@@ -407,6 +407,9 @@ function registerCustomTheme(themeName, css = null) {
   if (typeof document !== "undefined" && document.getElementById("theme-swatch-list")) {
     initThemeDropdown();
   }
+  if (typeof HTMLReportEdit !== "undefined" && typeof HTMLReportEdit.refreshStyleThemeSelect === "function") {
+    HTMLReportEdit.refreshStyleThemeSelect();
+  }
   return true;
 }
 
@@ -496,7 +499,7 @@ function cssColorToHexAndRgba(colorStr, customCtx = null) {
  * into deterministic hex/rgba colors.
  */
 function resolveDaisyUIThemePalette(doc = (typeof document !== "undefined" ? document : null)) {
-  if (!doc) return {};
+  if (!doc || !doc.body || typeof doc.body.appendChild !== "function") return {};
 
   const probeContainer = doc.createElement("div");
   probeContainer.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none;";
@@ -629,6 +632,44 @@ async function renderMermaidWithTheme(palette) {
 }
 
 /**
+ * Builds a single DaisyUI theme swatch row button matching the navbar picker.
+ */
+function createThemeSwatchButton(theme, currentTheme, { attrName = "data-set-theme", onSelect } = {}) {
+  const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.setAttribute("data-theme", theme);
+  btn.setAttribute(attrName, theme);
+  btn.className = "theme-swatch-item outline-base-content text-start outline-offset-4 rounded-btn w-full cursor-pointer font-sans";
+  btn.innerHTML = `
+    <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
+      <span class="grid grid-cols-5 grid-rows-3">
+        <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
+            <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
+          </svg>
+          <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
+            <span>${theme}</span>
+            ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
+          </span>
+          <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
+            <span class="bg-primary rounded-badge w-2 h-4"></span>
+            <span class="bg-secondary rounded-badge w-2 h-4"></span>
+            <span class="bg-accent rounded-badge w-2 h-4"></span>
+            <span class="bg-neutral rounded-badge w-2 h-4"></span>
+          </span>
+        </span>
+      </span>
+    </span>
+  `;
+  btn.addEventListener("click", () => {
+    if (typeof onSelect === "function") onSelect(theme);
+    else setReportTheme(theme);
+  });
+  return btn;
+}
+
+/**
  * Initializes the 32 DaisyUI theme color swatch picker dropdown.
  */
 function initThemeDropdown() {
@@ -643,35 +684,10 @@ function initThemeDropdown() {
   listEl.innerHTML = "";
 
   DAISYUI_THEMES.forEach((theme) => {
-    const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.setAttribute("data-theme", theme);
-    btn.setAttribute("data-set-theme", theme);
-    btn.className = "theme-swatch-item outline-base-content text-start outline-offset-4 rounded-btn w-full cursor-pointer font-sans";
-    btn.innerHTML = `
-      <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
-        <span class="grid grid-cols-5 grid-rows-3">
-          <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
-              <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
-            </svg>
-            <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
-              <span>${theme}</span>
-              ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
-            </span>
-            <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
-              <span class="bg-primary rounded-badge w-2 h-4"></span>
-              <span class="bg-secondary rounded-badge w-2 h-4"></span>
-              <span class="bg-accent rounded-badge w-2 h-4"></span>
-              <span class="bg-neutral rounded-badge w-2 h-4"></span>
-            </span>
-          </span>
-        </span>
-      </span>
-    `;
-    btn.addEventListener("click", () => setReportTheme(theme));
-    listEl.appendChild(btn);
+    listEl.appendChild(createThemeSwatchButton(theme, currentTheme, {
+      attrName: "data-set-theme",
+      onSelect: (t) => setReportTheme(t)
+    }));
   });
 }
 
@@ -687,6 +703,12 @@ async function setReportTheme(themeName) {
   if (activeLabel) activeLabel.textContent = themeName;
   const modalActiveLabel = document.getElementById("modal-active-theme-label");
   if (modalActiveLabel) modalActiveLabel.textContent = themeName;
+  const styleSelect = document.getElementById("edit-style-theme-select");
+  if (styleSelect && styleSelect.value !== themeName) styleSelect.value = themeName;
+  const editStyleLabel = document.getElementById("edit-style-theme-label");
+  if (editStyleLabel) editStyleLabel.textContent = themeName;
+  const editStyleSwatches = document.getElementById("edit-style-theme-swatches");
+  if (editStyleSwatches) editStyleSwatches.setAttribute("data-theme", themeName);
   if (typeof HTMLReportSettings !== "undefined" && typeof HTMLReportSettings.refreshModalState === "function") {
     HTMLReportSettings.refreshModalState();
   }
@@ -697,14 +719,17 @@ async function setReportTheme(themeName) {
     }
   } catch (_) {}
 
-  document.querySelectorAll("#theme-swatch-list .theme-swatch-item").forEach((btn) => {
-    const check = btn.querySelector(".theme-check");
-    if (check) {
-      const isCurrent = btn.getAttribute("data-set-theme") === themeName;
-      check.classList.toggle("opacity-100", isCurrent);
-      check.classList.toggle("opacity-0", !isCurrent);
-    }
-  });
+  if (typeof document.querySelectorAll === "function") {
+    document.querySelectorAll("#theme-swatch-list .theme-swatch-item, #edit-style-theme-swatch-list .theme-swatch-item").forEach((btn) => {
+      const check = btn.querySelector(".theme-check");
+      if (check) {
+        const themeKey = btn.getAttribute("data-set-theme") || btn.getAttribute("data-edit-set-theme");
+        const isCurrent = themeKey === themeName;
+        check.classList.toggle("opacity-100", isCurrent);
+        check.classList.toggle("opacity-0", !isCurrent);
+      }
+    });
+  }
 
   const palette = resolveDaisyUIThemePalette();
 
@@ -907,6 +932,74 @@ async function buildInlinedHtmlSnapshot(options = {}) {
     (options && options.mode === "published") ||
     (typeof HTMLReportPublisher !== "undefined" && typeof HTMLReportPublisher.isPublishedFlagOn === "function" && HTMLReportPublisher.isPublishedFlagOn())
   );
+
+  // Strip dev-server live reload scripts, tooltips, and transient dropdown/accordion/button state
+  clone.querySelectorAll("#__html_report_live_reload__, .mermaidTooltip, script[src*='idiomorph']").forEach((el) => el.remove());
+  clone.querySelectorAll("#download-html-btn, #modal-download-html-btn").forEach((btn) => {
+    btn.removeAttribute("disabled");
+    btn.disabled = false;
+  });
+  clone.querySelectorAll("#settings-dropdown, #toc-dropdown").forEach((dd) => {
+    dd.classList.remove("dropdown-open");
+    dd.removeAttribute("open");
+  });
+  clone.querySelectorAll("#settings-gear-btn, #toc-dropdown-btn").forEach((btn) => {
+    btn.setAttribute("aria-expanded", "false");
+  });
+  clone.querySelectorAll("#settings-section-appearance, #settings-section-download").forEach((det) => {
+    det.removeAttribute("open");
+  });
+
+  // Reset pre-rendered Grid.js containers so Grid.js can mount cleanly into an empty host
+  clone.querySelectorAll('[data-gridjs="true"]').forEach((el) => {
+    if (el.querySelector(".gridjs-container") || el.classList.contains("gridjs-container")) {
+      el.innerHTML = "";
+    }
+  });
+  clone.querySelectorAll(".gridjs-container").forEach((container) => {
+    const parent = container.parentElement;
+    container.remove();
+    if (parent && parent.children.length === 0 && !parent.textContent.trim()) {
+      parent.innerHTML = "";
+    }
+  });
+
+  // Strip pre-expanded Alpine x-for sibling nodes so Alpine does not render duplicates on re-init
+  const liveXForTemplates = Array.from(document.querySelectorAll("template[x-for]"));
+  const cloneXForTemplates = Array.from(clone.querySelectorAll("template[x-for]"));
+  if (liveXForTemplates.length === cloneXForTemplates.length) {
+    liveXForTemplates.forEach((liveTpl, idx) => {
+      const cloneTpl = cloneXForTemplates[idx];
+      const liveParent = liveTpl.parentElement;
+      const cloneParent = cloneTpl.parentElement;
+      if (!liveParent || !cloneParent) return;
+      const lookupVals = liveTpl._x_lookup && typeof liveTpl._x_lookup === "object"
+        ? new Set(Object.values(liveTpl._x_lookup))
+        : null;
+      const liveChildren = Array.from(liveParent.children);
+      const cloneChildren = Array.from(cloneParent.children);
+      if (liveChildren.length !== cloneChildren.length) return;
+      const tplPos = liveChildren.indexOf(liveTpl);
+      for (let i = tplPos + 1; i < liveChildren.length; i++) {
+        const liveChild = liveChildren[i];
+        if (
+          (lookupVals && lookupVals.has(liveChild)) ||
+          liveChild._x_dataStack ||
+          liveChild.hasAttribute("data-x-for-rendered")
+        ) {
+          cloneChildren[i].remove();
+        }
+      }
+    });
+  }
+
+  // Transition live board status badge to offline mode inside standalone snapshots
+  clone.querySelectorAll("#live-board-status").forEach((el) => {
+    el.textContent = "Offline (Local Save)";
+    el.classList.remove("badge-success", "badge-warning", "badge-ghost");
+    el.classList.add("badge-info", "badge-outline");
+  });
+
   if (publishedMode) HTMLReportPublisher.prepare(clone);
   clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
   clone.querySelectorAll("[data-reveal-initialized]").forEach((el) => el.removeAttribute("data-reveal-initialized"));
@@ -938,30 +1031,67 @@ async function buildInlinedHtmlSnapshot(options = {}) {
     })
   );
 
-  // Inline external scripts
+  // Inline external scripts while preserving type="module" and [defer] execution order
   const scriptEls = Array.from(clone.querySelectorAll("script[src]"));
-  await Promise.allSettled(
+  const cloneHead = clone.querySelector("head");
+  const cloneBody = clone.querySelector("body");
+  let tailwindStripped = false;
+  const scriptResults = await Promise.all(
     scriptEls.map(async (scriptEl) => {
       const src = scriptEl.getAttribute("src");
-      if (!src || (!src.startsWith("http://") && !src.startsWith("https://"))) return;
+      if (!src || (!src.startsWith("http://") && !src.startsWith("https://"))) return null;
       if (src.includes("cdn.tailwindcss.com")) {
+        tailwindStripped = true;
         const marker = document.createElement("script");
         marker.setAttribute("data-inlined-src", src);
         marker.textContent = "/* Tailwind CSS styles pre-compiled inline in <head> */";
-        scriptEl.replaceWith(marker);
-        return;
+        return { scriptEl, inlineScript: marker, relocateToBody: false };
       }
       try {
         const res = await fetch(src);
-        if (!res.ok) return;
+        if (!res.ok) return null;
         const jsText = await res.text();
+        const origType = (scriptEl.getAttribute("type") || "").trim();
+        const hasDefer = scriptEl.hasAttribute("defer");
         const inlineScript = document.createElement("script");
         inlineScript.setAttribute("data-inlined-src", src);
+        if (origType) {
+          inlineScript.setAttribute("type", origType);
+        }
         inlineScript.textContent = jsText.replace(/<\/script>/gi, "<\\/script>");
-        scriptEl.replaceWith(inlineScript);
-      } catch (_) {}
+        const isModule = origType.toLowerCase() === "module";
+        const inHead = Boolean(cloneHead && cloneHead.contains(scriptEl));
+        const relocateToBody = Boolean(!isModule && hasDefer && inHead && cloneBody);
+        return { scriptEl, inlineScript, relocateToBody };
+      } catch (_) {
+        return null;
+      }
     })
   );
+
+  for (const entry of scriptResults) {
+    if (!entry) continue;
+    if (entry.relocateToBody && cloneBody) {
+      entry.scriptEl.remove();
+      cloneBody.appendChild(entry.inlineScript);
+    } else {
+      entry.scriptEl.replaceWith(entry.inlineScript);
+    }
+  }
+
+  if (tailwindStripped && cloneHead && !cloneHead.querySelector('style[data-inlined-tailwind-fallbacks]')) {
+    const fallbackStyle = document.createElement("style");
+    fallbackStyle.setAttribute("data-inlined-tailwind-fallbacks", "true");
+    fallbackStyle.textContent = [
+      ".hidden { display: none; }",
+      ".line-through { text-decoration-line: line-through; }",
+      ".opacity-0 { opacity: 0; }",
+      ".opacity-50 { opacity: 0.5; }",
+      ".opacity-60 { opacity: 0.6; }",
+      ".opacity-100 { opacity: 1; }"
+    ].join("\n");
+    cloneHead.appendChild(fallbackStyle);
+  }
 
   const serialized = "<!DOCTYPE html>\n" + clone.outerHTML;
   return publishedMode ? HTMLReportPublisher.normalizeSerialized(serialized) : serialized;
@@ -1151,6 +1281,17 @@ function initPwa() {
   setTimeout(() => syncPwaThemeColor(), 100);
 }
 
+function _triggerBlobDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 /**
  * Initializes the download menu actions (HTML & PDF).
  */
@@ -1166,18 +1307,15 @@ function initDownloadButton() {
       try {
         htmlBtn.disabled = true;
         const isPub = typeof HTMLReportPublisher !== "undefined" && typeof HTMLReportPublisher.isPublishedFlagOn === "function" && HTMLReportPublisher.isPublishedFlagOn();
+        if (isPub && typeof HTMLReportPublisher !== "undefined" && typeof HTMLReportPublisher.tryServerPublishDownload === "function") {
+          const serverRes = await HTMLReportPublisher.tryServerPublishDownload();
+          if (serverRes && serverRes.ok) return;
+        }
         const htmlContent = await buildInlinedHtmlSnapshot(isPub ? { mode: "published" } : {});
         const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
         const docTitle = document.title || "html-report";
-        const baseName = docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-        a.download = isPub ? `${baseName}-published.html` : `${baseName}-standalone.html`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
+        const baseName = docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "html-report";
+        _triggerBlobDownload(blob, isPub ? `${baseName}-published.html` : `${baseName}-standalone.html`);
       } catch (err) {
         console.error("[html-report] Failed to bundle inlined HTML snapshot:", err);
       } finally {
@@ -2540,6 +2678,7 @@ if (typeof window !== "undefined") {
     try { if (typeof HTMLReportMermaid !== "undefined") HTMLReportMermaid.initEnlarge(); } catch (_) {}
     try { checkInsufficientHorizontalSpace(); } catch (_) {}
     try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.init(); } catch (_) {}
+    try { if (typeof HTMLReportBoard !== "undefined") HTMLReportBoard.syncOfflineStatus(); } catch (_) {}
     try { initAuthoring(); } catch (err) { console.warn("[html-report] authoring init failed:", err); }
     window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
     window.addEventListener("load", () => { try { ensureLucideIcons(); } catch (_) {} });
@@ -2703,6 +2842,9 @@ const HTMLReportAgent = {
           if (modal && typeof modal.close === "function" && modal.open) {
             modal.close();
           }
+          if (typeof this.hydratePersonas === "function") {
+            this.hydratePersonas();
+          }
         } else if (newState === "disconnected") {
           btn.className = "badge badge-warning badge-xs sm:badge-sm font-mono gap-1 transition shadow-sm cursor-pointer border border-warning/40 text-warning-content animate-pulse";
           indicator.className = "inline-block w-1.5 h-1.5 rounded-full bg-warning-content";
@@ -2836,10 +2978,16 @@ const HTMLReportAgent = {
 
   getPersonas: async function() {
     try {
-      const res = await fetch("/api/agent/personas", { method: "GET" });
+      const cfg = this.getAiConfig();
+      const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
+        ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/personas`
+        : "/api/agent/personas";
+      const res = await fetch(endpoint, { method: "GET" });
       if (res.ok) {
         const data = await res.json();
-        return data.personas || [];
+        if (Array.isArray(data.personas) && data.personas.length > 0) {
+          return data.personas;
+        }
       }
     } catch (_) {}
     return [
@@ -2851,6 +2999,62 @@ const HTMLReportAgent = {
       { id: "oak", name: "Professor Oak", badgeColor: "badge-accent", icon: "book-open" },
       { id: "hype", name: "Esports Shoutcaster", badgeColor: "badge-info", icon: "zap" }
     ];
+  },
+
+  hydratePersonas: async function(options = {}) {
+    if (typeof document === "undefined") return [];
+    const personaSel = document.getElementById("agent-dock-persona");
+    if (!personaSel) return [];
+    if (this._hydratingPersonasPromise && !options.force) {
+      return this._hydratingPersonasPromise;
+    }
+
+    this._hydratingPersonasPromise = (async () => {
+      try {
+        const cfg = this.getAiConfig();
+        const endpoint = (typeof window === "undefined" && typeof process !== "undefined")
+          ? `http://127.0.0.1:${process.env.REPORT_PORT || cfg.port || 3031}/api/agent/personas`
+          : "/api/agent/personas";
+        const res = await fetch(endpoint, { method: "GET" });
+        if (!res.ok) return [];
+        const data = await res.json();
+        const personas = Array.isArray(data?.personas) ? data.personas : [];
+        if (personas.length === 0) return [];
+
+        const userChosen = personaSel.dataset.userSelected === "1" ? personaSel.value : null;
+        const desiredPersona = userChosen || cfg.persona || personaSel.value || "analyst";
+
+        personaSel.innerHTML = "";
+        const seen = new Set();
+        for (const p of personas) {
+          if (!p || !p.id || seen.has(p.id)) continue;
+          seen.add(p.id);
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.name || p.id;
+          personaSel.appendChild(opt);
+        }
+
+        if (desiredPersona && !seen.has(desiredPersona)) {
+          const fallbackOpt = document.createElement("option");
+          fallbackOpt.value = desiredPersona;
+          fallbackOpt.textContent = desiredPersona.charAt(0).toUpperCase() + desiredPersona.slice(1);
+          personaSel.insertBefore(fallbackOpt, personaSel.firstChild);
+        }
+
+        if (desiredPersona) {
+          personaSel.value = desiredPersona;
+        }
+        personaSel.dataset.personasHydrated = "1";
+        return personas;
+      } catch (_) {
+        return [];
+      } finally {
+        this._hydratingPersonasPromise = null;
+      }
+    })();
+
+    return this._hydratingPersonasPromise;
   },
 
   getReconnectPrompt: function(options = {}) {
@@ -2985,6 +3189,22 @@ Prerequisites & Instructions:
     }
 
     this._updateDockVisibility();
+
+    if (isPublishedDocument()) {
+      document.querySelectorAll("*").forEach((el) => {
+        if (
+          typeof el.hasAttribute === "function" &&
+          (el.hasAttribute("data-agent-prompt") ||
+            el.hasAttribute("data-agent-inspect") ||
+            el.hasAttribute(":data-agent-prompt") ||
+            el.hasAttribute("x-bind:data-agent-prompt"))
+        ) {
+          el.classList.add("hidden", "print:hidden");
+          el.setAttribute("aria-hidden", "true");
+          el.setAttribute("data-agent-prompt-hidden", "true");
+        }
+      });
+    }
   },
 
   _updateDockVisibility: function() {
@@ -2998,6 +3218,12 @@ Prerequisites & Instructions:
     }
     const cfg = this.getAiConfig();
     const personaSel = document.getElementById("agent-dock-persona");
+    if (capable && personaSel && !personaSel.dataset.changeBound) {
+      personaSel.dataset.changeBound = "1";
+      personaSel.addEventListener("change", () => {
+        personaSel.dataset.userSelected = "1";
+      });
+    }
     if (capable && personaSel && !personaSel.dataset.aiConfigInit) {
       personaSel.dataset.aiConfigInit = "1";
       const cfgPersona = cfg.persona;
@@ -3138,6 +3364,12 @@ Prerequisites & Instructions:
     }
     if (options.prompt && input) {
       input.value = options.prompt;
+    }
+    if (this._connectionState === "connected" && typeof this.hydratePersonas === "function") {
+      const personaSel = document.getElementById("agent-dock-persona");
+      if (personaSel && personaSel.dataset.personasHydrated !== "1") {
+        this.hydratePersonas();
+      }
     }
 
     if (input) {
@@ -4026,6 +4258,9 @@ const HTMLReportEdit = {
   _selectMode: false,
   _hoveredEl: null,
   _selectListenersAttached: false,
+  _editingTaskId: null,
+  _setDockTab: null,
+  _setDockExpanded: null,
 
   getSelectedTarget() {
     return this._selectedTarget;
@@ -4265,7 +4500,79 @@ const HTMLReportEdit = {
   removeTask(id, pageKey) {
     const tasks = this.getTasks(pageKey).filter((t) => t.id !== id);
     this.saveTasks(tasks, pageKey);
+    if (this._editingTaskId === id && typeof this.cancelEdit === "function") {
+      this.cancelEdit();
+    }
     return tasks;
+  },
+
+  editTaskInCompose(id, pageKey) {
+    const t = this.getTasks(pageKey).find((x) => x.id === id);
+    if (!t) return null;
+    this._editingTaskId = t.id;
+    if (typeof document !== "undefined") {
+      const dock = document.getElementById("edit-dock");
+      if (dock && dock.classList) dock.classList.remove("hidden");
+      if (typeof this._setDockExpanded === "function") this._setDockExpanded(true);
+      if (typeof this._setDockTab === "function") this._setDockTab("compose");
+      else if (typeof this.openDock === "function") this.openDock({ expand: true, tab: "compose", focus: false });
+
+      const titleEl = document.getElementById("edit-task-title");
+      const contentEl = document.getElementById("edit-task-content");
+      const priorityEl = document.getElementById("edit-task-priority");
+      const anchorEl = document.getElementById("edit-task-anchor");
+      const addBtn = document.getElementById("edit-add-btn");
+      const cancelBtn = document.getElementById("edit-cancel-edit-btn");
+
+      if (titleEl) titleEl.value = t.title || "";
+      if (contentEl) {
+        contentEl.value = t.content || "";
+        if (contentEl.style) {
+          contentEl.style.height = "auto";
+          if (contentEl.scrollHeight) {
+            contentEl.style.height = `${Math.min(contentEl.scrollHeight, 96)}px`;
+          }
+        }
+      }
+      if (priorityEl) {
+        const pr = Number(t.priority);
+        priorityEl.value = String(pr === 1 || pr === 3 ? pr : 2);
+      }
+      this.setSelectedTarget(t.target || null);
+      if (anchorEl) {
+        const label = t.anchor ? (t.anchor.label || t.anchor.id) : (this._currentSection ? this._currentSection.label : "none");
+        anchorEl.textContent = `Anchor: ${label}`;
+      }
+      if (addBtn) addBtn.textContent = "Save";
+      if (cancelBtn && cancelBtn.classList) cancelBtn.classList.remove("hidden");
+      if (titleEl && typeof titleEl.focus === "function") titleEl.focus();
+    }
+    return t;
+  },
+
+  cancelEdit() {
+    this._editingTaskId = null;
+    if (typeof document !== "undefined") {
+      const titleEl = document.getElementById("edit-task-title");
+      const contentEl = document.getElementById("edit-task-content");
+      const priorityEl = document.getElementById("edit-task-priority");
+      const anchorEl = document.getElementById("edit-task-anchor");
+      const addBtn = document.getElementById("edit-add-btn");
+      const cancelBtn = document.getElementById("edit-cancel-edit-btn");
+
+      if (titleEl) titleEl.value = "";
+      if (contentEl) {
+        contentEl.value = "";
+        if (contentEl.style) contentEl.style.height = "";
+      }
+      if (priorityEl) priorityEl.value = "2";
+      this.setSelectedTarget(null);
+      if (anchorEl) {
+        anchorEl.textContent = this._currentSection ? `Anchor: ${this._currentSection.label}` : "Anchor: none";
+      }
+      if (addBtn) addBtn.textContent = "Add";
+      if (cancelBtn && cancelBtn.classList) cancelBtn.classList.add("hidden");
+    }
   },
 
   /** Moves a task up (-1) or down (+1) among tasks of the same priority. */
@@ -4293,12 +4600,25 @@ const HTMLReportEdit = {
   buildEditPrompt(tasks, page = {}, options = {}) {
     const autoPriority = Boolean(options.autoPriority ?? page.autoPriority);
     const open = _sortTasks((tasks || []).filter((t) => !t.done));
+    const fragmentPath = page.fragment ? String(page.fragment).trim() : "";
+    const hasFragment = Boolean(fragmentPath);
     const lines = [];
     lines.push(`Edit request for html-report page: "${page.title || "Untitled report"}"`);
     lines.push("Generated by: /html-report skill (https://github.com/DriesVerb/html-report)");
-    lines.push("Agent instructions: Use available workspace tools (file editing, terminal commands) and refer to skills/html-report/references/agent-authoring-guide.md if needed.");
-    lines.push(`Source: ${page.source || "(unknown source; edit the file served at this page)"}`);
-    lines.push(`Report mode: ${page.mode || "report"}`);
+    if (hasFragment) {
+      lines.push(`Semantic Fragment: ${fragmentPath}`);
+      if (page.source) lines.push(`Output Deliverable: ${page.source}`);
+      if (page.manifestPath) lines.push(`Manifest: ${page.manifestPath}`);
+      lines.push(`Report mode: ${page.mode || "report"}${page.theme ? ` | Theme: ${page.theme}` : ""}`);
+      if (Array.isArray(page.activeAddons) && page.activeAddons.length > 0) {
+        lines.push(`Active addons: ${page.activeAddons.join(", ")}`);
+      }
+      lines.push(`Agent instructions: Edit only ${fragmentPath} in the workspace; the local dev server auto-rebuilds ${page.source || "the Output Deliverable"} on save.`);
+    } else {
+      lines.push("Agent instructions: Use available workspace tools (file editing, terminal commands) and refer to skills/html-report/references/agent-authoring-guide.md if needed.");
+      lines.push(`Source: ${page.source || "(unknown source; edit the file served at this page)"}`);
+      lines.push(`Report mode: ${page.mode || "report"}`);
+    }
     lines.push("");
     if (open.length === 0) {
       lines.push("No open tasks.");
@@ -4320,24 +4640,42 @@ const HTMLReportEdit = {
       lines.push("- Auto-priority: The AI agent must assess all tasks, identify dependencies, and create/determine its own optimal execution priority order.");
     }
     lines.push("- Follow the principles and conventions of this project (DaisyUI themes, Tailwind, light default theme).");
-    lines.push("- Edit the source content fragment if applicable, or the served report file.");
-    lines.push("- Rebuild with skills/html-report/scripts/build-report.mjs after editing when available.");
     const cfgPort = (typeof HTMLReportAgent !== "undefined" && HTMLReportAgent.getConfig) ? (HTMLReportAgent.getConfig().port || 3031) : 3031;
-    lines.push(`- Keep the report live on localhost:${cfgPort} so the browser hot-swaps the result.`);
+    if (hasFragment) {
+      lines.push(`- Edit only ${fragmentPath}; do NOT hand-edit ${page.source || "index.html"} directly.`);
+      lines.push(`- Keep the report live on localhost:${cfgPort}; saving ${fragmentPath} triggers automatic rebuild and hot-swap (no manual build-report.mjs run needed).`);
+    } else {
+      lines.push("- Edit the source content fragment if applicable, or the served report file.");
+      lines.push("- Rebuild with skills/html-report/scripts/build-report.mjs after editing when available.");
+      lines.push(`- Keep the report live on localhost:${cfgPort} so the browser hot-swaps the result.`);
+    }
     lines.push("- Follow the task tracking and verification principles of this project.");
     return lines.join("\n");
   },
 
   getPageInfo() {
-    let source = null;
+    let metaSource = null;
     if (typeof document !== "undefined") {
       const m = document.querySelector('meta[name="html-report-source"]');
-      source = m ? m.getAttribute("content") : null;
+      metaSource = m ? m.getAttribute("content") : null;
     }
+    const manifest = (typeof HTMLReportAgent !== "undefined" && typeof HTMLReportAgent.getManifest === "function")
+      ? HTMLReportAgent.getManifest()
+      : null;
+    const files = (manifest && manifest.files && typeof manifest.files === "object") ? manifest.files : {};
+    const project = (manifest && manifest.project) ? String(manifest.project) : null;
+    const activeAddons = (manifest && Array.isArray(manifest.activeAddons)) ? manifest.activeAddons.slice() : [];
+    const htmlEl = typeof document !== "undefined" ? document.documentElement : null;
     return {
-      title: (typeof document !== "undefined" && document.title) || "Untitled report",
-      source,
-      mode: (typeof document !== "undefined" && document.documentElement.getAttribute("data-report-mode")) || "report"
+      title: (typeof document !== "undefined" && document.title) || (manifest && manifest.title) || "Untitled report",
+      source: files.entry || metaSource || null,
+      fragment: files.fragment || null,
+      project,
+      manifestPath: project ? `projects/${project}/report.manifest.json` : null,
+      mode: (htmlEl && htmlEl.getAttribute("data-report-mode")) || (manifest && manifest.mode) || "report",
+      theme: (manifest && manifest.theme) || (htmlEl && htmlEl.getAttribute("data-theme")) || null,
+      activeAddons,
+      aiModel: (manifest && manifest.aiConfig && manifest.aiConfig.model) || null
     };
   },
 
@@ -4359,6 +4697,7 @@ const HTMLReportEdit = {
     const body = $("edit-dock-body");
     const toggle = $("edit-dock-toggle");
     let activeTab = "compose";
+    let lastPrimaryTab = "compose";
 
     const applyPadding = () => {
       document.body.style.paddingBottom = dock.classList.contains("hidden") ? "" : `${Math.ceil(dock.getBoundingClientRect().height)}px`;
@@ -4368,16 +4707,34 @@ const HTMLReportEdit = {
     const setExpanded = (v) => {
       body.classList.toggle("hidden", !v);
       toggle.setAttribute("aria-expanded", v ? "true" : "false");
+      if (!v) self.closeStyleThemeDropdown();
       applyPadding();
     };
     const setTab = (tab) => {
       activeTab = tab;
-      $("edit-pane-compose").classList.toggle("hidden", tab !== "compose");
-      $("edit-pane-queue").classList.toggle("hidden", tab !== "queue");
-      $("edit-tab-compose").classList.toggle("tab-active", tab === "compose");
-      $("edit-tab-queue").classList.toggle("tab-active", tab === "queue");
+      if (tab === "compose" || tab === "queue") lastPrimaryTab = tab;
+      if (tab !== "styling") self.closeStyleThemeDropdown();
+      const composePane = $("edit-pane-compose");
+      const queuePane = $("edit-pane-queue");
+      const stylingPane = $("edit-pane-styling");
+      if (composePane) composePane.classList.toggle("hidden", tab !== "compose");
+      if (queuePane) queuePane.classList.toggle("hidden", tab !== "queue");
+      if (stylingPane) stylingPane.classList.toggle("hidden", tab !== "styling");
+      const composeTab = $("edit-tab-compose");
+      const queueTab = $("edit-tab-queue");
+      const stylingTab = $("edit-tab-styling");
+      if (composeTab) composeTab.classList.toggle("tab-active", tab === "compose");
+      if (queueTab) queueTab.classList.toggle("tab-active", tab === "queue");
+      if (stylingTab && stylingTab.classList) {
+        stylingTab.classList.toggle("btn-active", tab === "styling");
+        stylingTab.classList.toggle("btn-outline", tab !== "styling");
+        stylingTab.setAttribute("aria-selected", tab === "styling" ? "true" : "false");
+      }
       if (tab === "queue") self.renderQueue();
+      if (tab === "styling") self.refreshStylePane();
     };
+    this._setDockExpanded = setExpanded;
+    this._setDockTab = setTab;
     this.openDock = (opts = {}) => {
       dock.classList.remove("hidden");
       setExpanded(opts.expand !== false);
@@ -4386,7 +4743,7 @@ const HTMLReportEdit = {
       self.renderQueue();
       if (opts.focus !== false && activeTab === "compose") { const t = $("edit-task-title"); if (t) t.focus(); }
     };
-    this.closeDock = () => { dock.classList.add("hidden"); applyPadding(); };
+    this.closeDock = () => { this.closeStyleThemeDropdown(); dock.classList.add("hidden"); applyPadding(); };
 
     toggle.addEventListener("click", () => setExpanded(body.classList.contains("hidden")));
     $("edit-dock-close").addEventListener("click", () => this.closeDock());
@@ -4394,22 +4751,58 @@ const HTMLReportEdit = {
     if (selectBtn) selectBtn.addEventListener("click", () => self.toggleSelectMode());
     const clearTargetBtn = $("edit-clear-target");
     if (clearTargetBtn) clearTargetBtn.addEventListener("click", () => self.setSelectedTarget(null));
-    $("edit-dock-add").addEventListener("click", () => { setExpanded(true); setTab("compose"); $("edit-task-title").focus(); });
+    const cancelEditBtn = $("edit-cancel-edit-btn");
+    if (cancelEditBtn) cancelEditBtn.addEventListener("click", () => self.cancelEdit());
+    $("edit-dock-add").addEventListener("click", () => {
+      self.cancelEdit();
+      setExpanded(true);
+      setTab("compose");
+      $("edit-task-title").focus();
+    });
     $("edit-tab-compose").addEventListener("click", () => setTab("compose"));
     $("edit-tab-queue").addEventListener("click", () => setTab("queue"));
+    const stylingTabBtn = $("edit-tab-styling");
+    if (stylingTabBtn) {
+      stylingTabBtn.addEventListener("click", () => {
+        setExpanded(true);
+        setTab(activeTab === "styling" ? lastPrimaryTab : "styling");
+      });
+    }
+    const resetDockBtn = $("edit-dock-reset-btn");
+    if (resetDockBtn) {
+      resetDockBtn.addEventListener("click", () => { self.resetAll(); });
+    }
 
     const addFromForm = () => {
+      const rawTitle = $("edit-task-title").value;
+      const rawContent = $("edit-task-content").value;
+      const rawPriority = $("edit-task-priority").value;
+      if (self._editingTaskId) {
+        const trimmedTitle = String(rawTitle || "").trim();
+        const trimmedContent = String(rawContent || "").trim();
+        if (!trimmedTitle && !trimmedContent) return null;
+        const updated = self.updateTask(self._editingTaskId, {
+          title: trimmedTitle,
+          content: trimmedContent,
+          priority: rawPriority,
+          target: self._selectedTarget
+        });
+        self.cancelEdit();
+        setTab("queue");
+        return updated;
+      }
       const anchor = self._currentSection;
       const task = self.addTask({
-        title: $("edit-task-title").value,
-        content: $("edit-task-content").value,
-        priority: $("edit-task-priority").value,
+        title: rawTitle,
+        content: rawContent,
+        priority: rawPriority,
         target: self._selectedTarget,
         anchor
       });
       if (!task) return null;
       $("edit-task-title").value = "";
       $("edit-task-content").value = "";
+      if ($("edit-task-content").style) $("edit-task-content").style.height = "";
       self.setSelectedTarget(null);
       self.renderQueue();
       return task;
@@ -4448,6 +4841,7 @@ const HTMLReportEdit = {
     });
 
     this.initScrollFollowing();
+    this.initStyleEditor();
     if (HTMLReportAgent && HTMLReportAgent.onStateChange) HTMLReportAgent.onStateChange(() => self.refreshSendState());
     this.renderQueue();
   },
@@ -4515,12 +4909,13 @@ const HTMLReportEdit = {
     };
     _sortTasks(tasks).forEach((t) => {
       const li = document.createElement("li");
-      li.className = "flex items-center gap-2 p-1.5 sm:p-2 rounded-lg bg-base-200/90 border border-base-300 hover:border-primary/50 text-base-content transition-colors";
+      li.className = "flex items-center gap-2 p-1.5 sm:p-2 rounded-lg bg-base-200/90 border border-base-300 hover:border-primary/50 text-base-content transition-colors cursor-pointer";
       li.setAttribute("data-task-id", t.id);
       if (t.anchor) li.setAttribute("data-anchor-id", t.anchor.id);
       const cb = document.createElement("input");
       cb.type = "checkbox"; cb.className = "checkbox checkbox-xs shrink-0"; cb.checked = t.done;
       cb.setAttribute("aria-label", "Mark done");
+      cb.addEventListener("click", (e) => e.stopPropagation());
       cb.addEventListener("change", () => { this.updateTask(t.id, { done: cb.checked }); this.renderQueue(); });
       const chip = document.createElement("span");
       chip.className = `badge badge-xs font-mono shrink-0 ${t.priority === 1 ? "badge-error" : t.priority === 2 ? "badge-warning" : "badge-ghost"}`;
@@ -4535,14 +4930,27 @@ const HTMLReportEdit = {
         targetChip.textContent = `#${t.target.id}`;
         targetChip.title = `Target: #${t.target.id}${t.target.tag ? ` (<${t.target.tag}>)` : ""}`;
       }
+      let anchorChip = null;
+      if (t.anchor && t.anchor.id) {
+        anchorChip = document.createElement("button");
+        anchorChip.type = "button";
+        anchorChip.className = "badge badge-outline badge-xs font-mono shrink-0 hover:badge-primary cursor-pointer";
+        anchorChip.setAttribute("data-anchor-jump", t.anchor.id);
+        anchorChip.textContent = `§ ${t.anchor.label || t.anchor.id}`;
+        anchorChip.title = `Jump to section: ${t.anchor.label || t.anchor.id}`;
+        anchorChip.setAttribute("aria-label", `Jump to section ${t.anchor.label || t.anchor.id}`);
+        anchorChip.addEventListener("click", (e) => { e.stopPropagation(); this.scrollToAnchor(t); });
+      }
       const title = document.createElement("span");
       title.className = `min-w-0 flex-1 truncate text-xs font-medium text-base-content ${t.done ? "line-through opacity-50" : ""}`;
       title.textContent = t.title || t.content;
-      title.title = t.title ? (t.anchor ? `${t.title} (Section: ${t.anchor.label})` : t.title) : (t.anchor ? `Section: ${t.anchor.label}` : "");
-      li.addEventListener("click", () => this.scrollToAnchor(t));
+      title.title = `${t.title || t.content || "Task"} — click to edit in Compose`;
+      li.addEventListener("click", () => this.editTaskInCompose(t.id));
       const itemsToAppend = [cb, chip];
       if (targetChip) itemsToAppend.push(targetChip);
+      if (anchorChip) itemsToAppend.push(anchorChip);
       itemsToAppend.push(title,
+        mk("btn btn-ghost btn-xs px-1.5 shrink-0", "✎", "Edit task", () => { this.editTaskInCompose(t.id); }),
         mk("btn btn-ghost btn-xs px-1.5 shrink-0", "↑", "Move up", () => { this.moveTask(t.id, -1); this.renderQueue(); }),
         mk("btn btn-ghost btn-xs px-1.5 shrink-0", "↓", "Move down", () => { this.moveTask(t.id, 1); this.renderQueue(); }),
         mk("btn btn-ghost btn-xs px-1.5 shrink-0 text-error hover:bg-error/20", "🗑", "Delete task", () => { this.removeTask(t.id); this.renderQueue(); }));
@@ -4616,16 +5024,34 @@ const HTMLReportEdit = {
       say("Sending to agent...");
       try {
         const info = this.getPageInfo();
+        const openTasks = _sortTasks(this.getTasks().filter((t) => !t.done));
+        const targetIds = Array.from(new Set(openTasks.map((t) => t.target && t.target.id).filter(Boolean)));
+        const anchorIds = Array.from(new Set(openTasks.map((t) => t.anchor && t.anchor.id).filter(Boolean)));
+        const locPath = typeof location !== "undefined" ? location.pathname : "";
+        const resolvedFile = (locPath && locPath.startsWith("/projects/"))
+          ? locPath
+          : (info.source || locPath || "");
         const csrfToken = await HTMLReportAgent._getCsrfToken();
         const headers = { "Content-Type": "application/json" };
         if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
         const res = await fetch("/__agent_edit__", {
           method: "POST",
           headers,
-          body: JSON.stringify({ prompt: text, file: info.source || (typeof location !== "undefined" ? location.pathname : "") })
+          body: JSON.stringify({
+            prompt: text,
+            file: resolvedFile,
+            fragment: info.fragment || undefined,
+            model: info.aiModel || undefined,
+            targetIds,
+            anchorIds
+          })
         });
         const data = await res.json().catch(() => ({}));
-        say(res.ok && data.ok ? "Agent finished; page will hot-swap." : `Agent error: ${data.error || res.status}`);
+        if (res.ok && data.ok) {
+          say(data.mode === "fast-patch" ? "Fast-patched fragment; page will hot-swap." : "Agent finished; page will hot-swap.");
+        } else {
+          say(`Agent error: ${data.error || res.status}`);
+        }
       } catch (err) {
         say(`Send failed: ${err.message}`);
       }
@@ -4639,6 +5065,460 @@ const HTMLReportEdit = {
       } catch (_) { say("Select the prompt above and copy it manually."); }
     }
     return state;
+  },
+
+  _documentDefaultTheme: null,
+  _lastCustomTheme: null,
+  _styleEditorDefaults: {
+    name: "custom",
+    extends: "light",
+    primary: "#570df8",
+    secondary: "#f000b8",
+    accent: "#37cdbe",
+    neutral: "#3d4451",
+    "base-100": "#ffffff",
+    "--rounded-box": "1rem",
+    "--rounded-btn": "0.5rem"
+  },
+
+  getDocumentDefaultTheme() {
+    if (this._documentDefaultTheme) return this._documentDefaultTheme;
+    const manifest = (typeof HTMLReportAgent !== "undefined" && typeof HTMLReportAgent.getManifest === "function")
+      ? HTMLReportAgent.getManifest()
+      : null;
+    const fromManifest = manifest && manifest.theme ? String(manifest.theme) : null;
+    const fromDom = (typeof document !== "undefined" && document.documentElement)
+      ? (document.documentElement.getAttribute("data-theme") || "light")
+      : "light";
+    this._documentDefaultTheme = fromManifest || fromDom || "light";
+    return this._documentDefaultTheme;
+  },
+
+  _sanitizeThemeName(raw) {
+    const cleaned = String(raw || "").trim().toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+    return cleaned || "custom";
+  },
+
+  _getCustomThemePayload(themeName) {
+    if (!themeName || STANDARD_DAISYUI_THEMES.has(themeName)) return null;
+    if (this._lastCustomTheme && this._lastCustomTheme.name === themeName) {
+      return this._lastCustomTheme.definition || this._lastCustomTheme.css;
+    }
+    try {
+      if (typeof localStorage !== "undefined") {
+        const saved = JSON.parse(localStorage.getItem("html_report_custom_themes") || "{}");
+        if (saved && saved[themeName]) {
+          const entry = saved[themeName];
+          return typeof entry === "string" ? entry : (entry.definition || entry.css || null);
+        }
+      }
+    } catch (_) {}
+    if (typeof document !== "undefined") {
+      const styleEl = document.getElementById("daisyui-custom-themes");
+      if (styleEl && styleEl.textContent) {
+        const escaped = themeName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const m = styleEl.textContent.match(new RegExp(`\\[data-theme=["']?${escaped}["']?\\]\\s*\\{[^}]*\\}`));
+        if (m) return m[0];
+      }
+    }
+    return null;
+  },
+
+  closeStyleThemeDropdown() {
+    if (typeof document === "undefined") return;
+    const menu = document.getElementById("edit-style-theme-menu");
+    const btn = document.getElementById("edit-style-theme-btn");
+    if (menu && menu.classList) menu.classList.add("hidden");
+    if (btn && typeof btn.setAttribute === "function") btn.setAttribute("aria-expanded", "false");
+  },
+
+  toggleStyleThemeDropdown(forceState) {
+    if (typeof document === "undefined") return;
+    const menu = document.getElementById("edit-style-theme-menu");
+    const btn = document.getElementById("edit-style-theme-btn");
+    if (!menu || !btn) return;
+    const isHidden = menu.classList ? menu.classList.contains("hidden") : true;
+    const shouldOpen = typeof forceState === "boolean" ? forceState : isHidden;
+    if (!shouldOpen) {
+      this.closeStyleThemeDropdown();
+      return;
+    }
+    this.refreshStyleThemeSelect();
+    const dock = document.getElementById("edit-dock");
+    if (dock && typeof dock.getBoundingClientRect === "function" && typeof btn.getBoundingClientRect === "function") {
+      const dockRect = dock.getBoundingClientRect();
+      const btnRect = btn.getBoundingClientRect();
+      const bottomOffset = Math.max(8, Math.round(dockRect.bottom - btnRect.top + 6));
+      const leftOffset = Math.max(8, Math.min(Math.round(btnRect.left - dockRect.left), Math.max(8, Math.round(dockRect.width - 264))));
+      menu.style.bottom = `${bottomOffset}px`;
+      menu.style.left = `${leftOffset}px`;
+    }
+    if (menu.classList) menu.classList.remove("hidden");
+    if (typeof btn.setAttribute === "function") btn.setAttribute("aria-expanded", "true");
+  },
+
+  refreshStyleThemeSelect() {
+    if (typeof document === "undefined") return;
+    const active = document.documentElement ? (document.documentElement.getAttribute("data-theme") || "light") : "light";
+    const select = document.getElementById("edit-style-theme-select");
+    if (select) {
+      select.innerHTML = "";
+      DAISYUI_THEMES.forEach((t) => {
+        const opt = document.createElement("option");
+        opt.value = t;
+        opt.textContent = STANDARD_DAISYUI_THEMES.has(t) ? t : `${t} (custom)`;
+        if (t === active) opt.selected = true;
+        select.appendChild(opt);
+      });
+      if (DAISYUI_THEMES.includes(active)) select.value = active;
+    }
+    const labelEl = document.getElementById("edit-style-theme-label");
+    if (labelEl) labelEl.textContent = active;
+    const swatchesEl = document.getElementById("edit-style-theme-swatches");
+    if (swatchesEl && typeof swatchesEl.setAttribute === "function") swatchesEl.setAttribute("data-theme", active);
+    const swatchList = document.getElementById("edit-style-theme-swatch-list");
+    if (swatchList) {
+      swatchList.innerHTML = "";
+      DAISYUI_THEMES.forEach((theme) => {
+        swatchList.appendChild(createThemeSwatchButton(theme, active, {
+          attrName: "data-edit-set-theme",
+          onSelect: (t) => {
+            setReportTheme(t);
+            HTMLReportEdit.closeStyleThemeDropdown();
+          }
+        }));
+      });
+    }
+  },
+
+  refreshStylePane() {
+    if (typeof document === "undefined") return;
+    this.refreshStyleThemeSelect();
+    const badge = document.getElementById("edit-style-default-badge");
+    if (badge) badge.textContent = `Default: ${this.getDocumentDefaultTheme()}`;
+  },
+
+  readStyleEditorConfig() {
+    const defaults = this._styleEditorDefaults;
+    const val = (id, fb) => {
+      const el = typeof document !== "undefined" ? document.getElementById(id) : null;
+      return el && el.value !== undefined && String(el.value).trim() !== "" ? String(el.value).trim() : fb;
+    };
+    const name = this._sanitizeThemeName(val("edit-style-name", defaults.name));
+    const ext = val("edit-style-extends", defaults.extends);
+    const themeDef = {
+      primary: val("edit-style-primary-hex", defaults.primary),
+      secondary: val("edit-style-secondary-hex", defaults.secondary),
+      accent: val("edit-style-accent-hex", defaults.accent),
+      neutral: val("edit-style-neutral-hex", defaults.neutral),
+      "base-100": val("edit-style-base-100-hex", defaults["base-100"]),
+      "--rounded-box": val("edit-style-rounded-box", defaults["--rounded-box"]),
+      "--rounded-btn": val("edit-style-rounded-btn", defaults["--rounded-btn"])
+    };
+    if (ext && ext !== "none") themeDef.extends = ext;
+    return { name, definition: { [name]: themeDef } };
+  },
+
+  _resetStyleEditorInputs() {
+    if (typeof document === "undefined") return;
+    const d = this._styleEditorDefaults;
+    const setVal = (id, v) => {
+      const el = document.getElementById(id);
+      if (el) el.value = v;
+    };
+    setVal("edit-style-name", d.name);
+    setVal("edit-style-extends", d.extends);
+    for (const token of ["primary", "secondary", "accent", "neutral", "base-100"]) {
+      setVal(`edit-style-${token}-picker`, d[token]);
+      setVal(`edit-style-${token}-hex`, d[token]);
+    }
+    setVal("edit-style-rounded-box", d["--rounded-box"]);
+    setVal("edit-style-rounded-btn", d["--rounded-btn"]);
+    const twPre = document.getElementById("edit-style-tailwind-preview");
+    if (twPre) twPre.textContent = "";
+    const status = document.getElementById("edit-style-status");
+    if (status) status.textContent = "";
+    const offlineActions = document.getElementById("edit-style-offline-actions");
+    if (offlineActions && offlineActions.classList) offlineActions.classList.add("hidden");
+  },
+
+  async applyStyleEditorLive({ saveToStorage = false } = {}) {
+    const { name, definition } = this.readStyleEditorConfig();
+    const compiled = compileTheme(definition, { defaultThemeName: name });
+    this._lastCustomTheme = { name: compiled.themeName, definition, css: compiled.css, variables: compiled.variables };
+
+    if (typeof document !== "undefined") {
+      const twPre = document.getElementById("edit-style-tailwind-preview");
+      if (twPre) twPre.textContent = tailwindConfigSnippet(compiled.themeName, compiled.variables);
+    }
+
+    registerCustomTheme(compiled.themeName, compiled.css);
+    await setReportTheme(compiled.themeName);
+    this.refreshStyleThemeSelect();
+
+    if (saveToStorage) {
+      try {
+        if (typeof localStorage !== "undefined") {
+          const existing = JSON.parse(localStorage.getItem("html_report_custom_themes") || "{}");
+          const next = (existing && typeof existing === "object") ? existing : {};
+          next[compiled.themeName] = { definition, css: compiled.css };
+          localStorage.setItem("html_report_custom_themes", JSON.stringify(next));
+        }
+      } catch (_) {}
+    }
+    return compiled;
+  },
+
+  async copyEditorCss() {
+    const compiled = this._lastCustomTheme && this._lastCustomTheme.css
+      ? this._lastCustomTheme
+      : compileTheme(this.readStyleEditorConfig().definition);
+    const status = typeof document !== "undefined" ? document.getElementById("edit-style-status") : null;
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(compiled.css);
+        if (status) status.textContent = `Copied [data-theme="${compiled.themeName}"] CSS to clipboard.`;
+        return compiled.css;
+      }
+    } catch (_) {}
+    if (status) status.textContent = "Clipboard unavailable; inspect Tailwind Config & CSS preview.";
+    return compiled.css;
+  },
+
+  async persistDocumentStyle({ theme, customTheme = null } = {}) {
+    const targetTheme = theme || (typeof document !== "undefined" && document.documentElement
+      ? (document.documentElement.getAttribute("data-theme") || "light")
+      : "light");
+    const status = typeof document !== "undefined" ? document.getElementById("edit-style-status") : null;
+    const offlineActions = typeof document !== "undefined" ? document.getElementById("edit-style-offline-actions") : null;
+    const badge = typeof document !== "undefined" ? document.getElementById("edit-style-default-badge") : null;
+    const say = (msg, isOffline = false) => {
+      if (status) status.textContent = msg;
+      if (offlineActions && offlineActions.classList) offlineActions.classList.toggle("hidden", !isOffline);
+    };
+
+    const isFileProto = typeof location !== "undefined" && location.protocol === "file:";
+    if (isFileProto || typeof fetch !== "function") {
+      try {
+        if (typeof localStorage !== "undefined") {
+          localStorage.setItem("html_report_active_theme", targetTheme);
+          if (customTheme && !STANDARD_DAISYUI_THEMES.has(targetTheme)) {
+            const compiled = compileTheme(customTheme, { defaultThemeName: targetTheme });
+            const existing = JSON.parse(localStorage.getItem("html_report_custom_themes") || "{}");
+            const next = (existing && typeof existing === "object") ? existing : {};
+            next[targetTheme] = { definition: customTheme, css: compiled.css };
+            localStorage.setItem("html_report_custom_themes", JSON.stringify(next));
+          }
+        }
+      } catch (_) {}
+      say(`Applied '${targetTheme}' locally (offline/static). Use Copy CSS or Download HTML to persist.`, true);
+      return { ok: true, persisted: "local", theme: targetTheme };
+    }
+
+    try {
+      const info = this.getPageInfo();
+      const locPath = typeof location !== "undefined" ? location.pathname : "";
+      const resolvedFile = (locPath && locPath.startsWith("/projects/"))
+        ? locPath
+        : (info.source || locPath || "");
+      const csrfToken = await HTMLReportAgent._getCsrfToken();
+      const headers = { "Content-Type": "application/json" };
+      if (csrfToken) headers["X-CSRF-Token"] = csrfToken;
+      const res = await fetch("/__agent_style__", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          file: resolvedFile,
+          theme: targetTheme,
+          customTheme: customTheme ?? null
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        const persistedTheme = data.theme || targetTheme;
+        this._documentDefaultTheme = persistedTheme;
+        if (badge) badge.textContent = `Default: ${persistedTheme}`;
+        if (typeof document !== "undefined") {
+          const mEl = document.getElementById("agent-manifest");
+          if (mEl && mEl.textContent) {
+            try {
+              const m = JSON.parse(mEl.textContent);
+              m.theme = persistedTheme;
+              mEl.textContent = JSON.stringify(m, null, 2);
+            } catch (_) {}
+          }
+        }
+        say(`Saved '${persistedTheme}' as document default.`, false);
+        return { ok: true, persisted: "server", theme: persistedTheme };
+      }
+      say(`Applied '${targetTheme}' locally (server unavailable: ${data.error || res.status}). Copy CSS or Download HTML to persist.`, true);
+      return { ok: true, persisted: "local", theme: targetTheme };
+    } catch (_) {
+      say(`Applied '${targetTheme}' locally (offline). Copy CSS or Download HTML to persist.`, true);
+      return { ok: true, persisted: "local", theme: targetTheme };
+    }
+  },
+
+  async setCurrentThemeAsDefault() {
+    const select = typeof document !== "undefined" ? document.getElementById("edit-style-theme-select") : null;
+    const selected = (select && select.value) || (typeof document !== "undefined" && document.documentElement
+      ? (document.documentElement.getAttribute("data-theme") || "light")
+      : "light");
+    const customTheme = this._getCustomThemePayload(selected);
+    await setReportTheme(selected);
+    return this.persistDocumentStyle({ theme: selected, customTheme });
+  },
+
+  initStyleEditor() {
+    if (typeof document === "undefined") return;
+    const $ = (id) => document.getElementById(id);
+    if (this._styleEditorWired) return;
+    const pane = $("edit-pane-styling");
+    if (!pane) return;
+    this._styleEditorWired = true;
+    const self = this;
+
+    this.refreshStylePane();
+
+    const themeBtn = $("edit-style-theme-btn");
+    if (themeBtn) {
+      themeBtn.addEventListener("click", (e) => {
+        if (e && typeof e.stopPropagation === "function") e.stopPropagation();
+        self.toggleStyleThemeDropdown();
+      });
+    }
+
+    if (typeof document.addEventListener === "function") {
+      document.addEventListener("click", (e) => {
+        const menu = $("edit-style-theme-menu");
+        const dd = $("edit-style-theme-dropdown");
+        if (!menu || (menu.classList && menu.classList.contains("hidden"))) return;
+        const t = e && e.target;
+        if ((menu.contains && menu.contains(t)) || (dd && dd.contains && dd.contains(t))) return;
+        self.closeStyleThemeDropdown();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e && e.key === "Escape") self.closeStyleThemeDropdown();
+      });
+    }
+
+    const themeSelect = $("edit-style-theme-select");
+    if (themeSelect) {
+      themeSelect.addEventListener("change", (e) => {
+        setReportTheme(e.target.value);
+      });
+    }
+
+    const setDefaultBtn = $("edit-style-set-default-btn");
+    if (setDefaultBtn) {
+      setDefaultBtn.addEventListener("click", () => {
+        self.setCurrentThemeAsDefault();
+      });
+    }
+
+    const tokens = ["primary", "secondary", "accent", "neutral", "base-100"];
+    tokens.forEach((token) => {
+      const picker = $(`edit-style-${token}-picker`);
+      const hex = $(`edit-style-${token}-hex`);
+      if (picker && hex) {
+        picker.addEventListener("input", () => {
+          hex.value = picker.value;
+          self.applyStyleEditorLive();
+        });
+        hex.addEventListener("input", () => {
+          if (/^#[0-9a-fA-F]{6}$/.test(hex.value.trim())) {
+            picker.value = hex.value.trim();
+          }
+          self.applyStyleEditorLive();
+        });
+      }
+    });
+
+    ["edit-style-name", "edit-style-extends", "edit-style-rounded-box", "edit-style-rounded-btn"].forEach((id) => {
+      const el = $(id);
+      if (el) el.addEventListener("change", () => self.applyStyleEditorLive());
+    });
+
+    const saveBtn = $("edit-style-save-btn");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", async () => {
+        const compiled = await self.applyStyleEditorLive({ saveToStorage: true });
+        const status = $("edit-style-status");
+        if (status) status.textContent = `Saved custom theme '${compiled.themeName}' locally.`;
+      });
+    }
+
+    const copyBtn = $("edit-style-copy-css-btn");
+    if (copyBtn) copyBtn.addEventListener("click", () => self.copyEditorCss());
+    const offlineCopyBtn = $("edit-style-offline-copy-btn");
+    if (offlineCopyBtn) offlineCopyBtn.addEventListener("click", () => self.copyEditorCss());
+    const offlineDownloadBtn = $("edit-style-offline-download-btn");
+    if (offlineDownloadBtn) {
+      offlineDownloadBtn.addEventListener("click", () => {
+        if (typeof HTMLReportPublisher !== "undefined" && typeof HTMLReportPublisher.downloadPublished === "function") {
+          HTMLReportPublisher.downloadPublished(offlineDownloadBtn);
+        }
+      });
+    }
+  },
+
+  async resetAll(options = {}) {
+    const skipConfirm = Boolean(options && options.skipConfirm);
+    if (!skipConfirm && typeof window !== "undefined" && typeof window.confirm === "function") {
+      const confirmed = window.confirm("Reset all Edit Mode tasks, Compose draft, and custom styling overrides back to baseline (light)?");
+      if (!confirmed) return false;
+    }
+
+    const pageKey = options.pageKey;
+    this.saveTasks([], pageKey);
+    this.setAutoPriority(false, pageKey);
+    if (typeof document !== "undefined") {
+      const autoToggle = document.getElementById("edit-auto-priority-toggle");
+      if (autoToggle) autoToggle.checked = false;
+    }
+    this.cancelEdit();
+    this.toggleSelectMode(false);
+    this.closeStyleThemeDropdown();
+
+    this._lastCustomTheme = null;
+    this._documentDefaultTheme = "light";
+
+    if (typeof document !== "undefined") {
+      const styleEl = document.getElementById("daisyui-custom-themes");
+      if (styleEl) styleEl.textContent = "";
+    }
+    for (let i = DAISYUI_THEMES.length - 1; i >= 0; i--) {
+      if (!STANDARD_DAISYUI_THEMES.has(DAISYUI_THEMES[i])) {
+        DAISYUI_THEMES.splice(i, 1);
+      }
+    }
+    if (typeof document !== "undefined" && document.getElementById("theme-swatch-list")) {
+      initThemeDropdown();
+    }
+
+    this._resetStyleEditorInputs();
+    await setReportTheme("light");
+
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.removeItem("html_report_custom_themes");
+        localStorage.removeItem("html_report_active_theme");
+      }
+    } catch (_) {}
+
+    if (typeof document !== "undefined") {
+      const badge = document.getElementById("edit-style-default-badge");
+      if (badge) badge.textContent = "Default: light";
+      this.refreshStyleThemeSelect();
+    }
+
+    if (typeof fetch === "function" && typeof location !== "undefined" && location.protocol !== "file:") {
+      await this.persistDocumentStyle({ theme: "light", customTheme: null });
+    }
+
+    if (typeof this._setDockTab === "function") this._setDockTab("compose");
+    this.renderQueue();
+    return true;
   }
 };
 
@@ -4805,15 +5685,19 @@ const HTMLReportMermaid = {
         wrapper.appendChild(node);
       }
 
-      if (!wrapper.querySelector(".mermaid-enlarge-btn")) {
-        const btn = document.createElement("button");
+      let btn = wrapper.querySelector(".mermaid-enlarge-btn");
+      if (!btn) {
+        btn = document.createElement("button");
         btn.type = "button";
         btn.className = "btn btn-xs btn-ghost bg-base-100/90 backdrop-blur border border-base-300 hover:bg-base-200 shadow-xs gap-1 text-3xs font-medium mermaid-enlarge-btn";
         btn.title = "Enlarge diagram";
         btn.setAttribute("aria-label", "Enlarge diagram");
         btn.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg><span>Enlarge</span>';
-        btn.addEventListener("click", () => this.openModal(node));
         wrapper.appendChild(btn);
+      }
+      if (!btn.__enlargeWired) {
+        btn.__enlargeWired = true;
+        btn.addEventListener("click", () => this.openModal(node));
       }
     });
   },
@@ -5065,6 +5949,19 @@ const HTMLReportPublisher = {
           if (attr.name.startsWith("data-verify-")) el.removeAttribute(attr.name);
         });
       }
+      if (
+        (typeof el.hasAttribute === "function" &&
+          (el.hasAttribute("data-agent-prompt") ||
+            el.hasAttribute("data-agent-inspect") ||
+            el.hasAttribute(":data-agent-prompt") ||
+            el.hasAttribute("x-bind:data-agent-prompt")))
+      ) {
+        if (el.classList && typeof el.classList.add === "function") {
+          el.classList.add("hidden", "print:hidden");
+        }
+        el.setAttribute("aria-hidden", "true");
+        el.setAttribute("data-agent-prompt-hidden", "true");
+      }
       if (el.classList && el.classList.length > 0) {
         const toRemove = Array.from(el.classList).filter((cls) => cls.startsWith("verify-"));
         if (toRemove.length > 0) {
@@ -5134,20 +6031,66 @@ const HTMLReportPublisher = {
     }
   },
 
+  async tryServerPublishDownload() {
+    if (typeof window === "undefined" || typeof fetch !== "function") return null;
+    if (!window.location || (window.location.protocol !== "http:" && window.location.protocol !== "https:")) {
+      return null;
+    }
+    try {
+      let projectSlug = null;
+      const manifestEl = typeof document !== "undefined" ? document.getElementById("agent-manifest") : null;
+      if (manifestEl && manifestEl.textContent) {
+        try {
+          const parsed = JSON.parse(manifestEl.textContent);
+          if (parsed && parsed.project) projectSlug = parsed.project;
+        } catch (_) {}
+      }
+      if (!projectSlug && window.location.pathname) {
+        const m = window.location.pathname.match(/^\/projects\/([^/]+)\//);
+        if (m) projectSlug = decodeURIComponent(m[1]);
+      }
+      const theme = typeof document !== "undefined"
+        ? (document.documentElement.getAttribute("data-theme") || "light")
+        : "light";
+      const res = await fetch("/api/publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ project: projectSlug, theme })
+      });
+      if (!res.ok) return null;
+      const contentType = (res.headers.get("Content-Type") || "").toLowerCase();
+      const publishedKind = (res.headers.get("X-Published-Kind") || "").toLowerCase();
+      if (!publishedKind && !contentType.includes("application/zip") && !res.headers.get("Content-Disposition")) {
+        return null;
+      }
+      const disp = res.headers.get("Content-Disposition") || "";
+      const fnMatch = disp.match(/filename="?([^";\n]+)"?/i);
+      const baseTitle = ((typeof document !== "undefined" && document.title) || "html-report")
+        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "html-report";
+      const fallbackName = contentType.includes("application/zip")
+        ? `${projectSlug || baseTitle}-published.zip`
+        : `${projectSlug || baseTitle}-published.html`;
+      const filename = fnMatch && fnMatch[1] ? fnMatch[1].trim() : fallbackName;
+      const blob = await res.blob();
+      _triggerBlobDownload(blob, filename);
+      return { ok: true, filename, kind: publishedKind || (contentType.includes("application/zip") ? "zip" : "html") };
+    } catch (_) {
+      return null;
+    }
+  },
+
   async downloadPublished(btn) {
     if (typeof document === "undefined") return null;
     if (btn) btn.disabled = true;
     try {
+      const serverRes = await this.tryServerPublishDownload();
+      if (serverRes && serverRes.ok) {
+        return serverRes;
+      }
       const html = await buildInlinedHtmlSnapshot({ mode: "published" });
       const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${(document.title || "html-report").toLowerCase().replace(/[^a-z0-9]+/g, "-")}-published.html`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      const baseName = (document.title || "html-report").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "html-report";
+      _triggerBlobDownload(blob, `${baseName}-published.html`);
       return html;
     } finally {
       if (btn) btn.disabled = false;
@@ -5269,6 +6212,41 @@ const HTMLReportBoard = {
     return typeof window !== "undefined" && Boolean(window.location && window.location.protocol === "file:");
   },
 
+  _localStorageKey: function(key) {
+    return `html_report_board_state:${key || getPageKey()}`;
+  },
+
+  saveLocalState: function(stateObj, key) {
+    if (!stateObj || typeof stateObj !== "object" || Array.isArray(stateObj)) return false;
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem(this._localStorageKey(key), JSON.stringify(stateObj));
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  },
+
+  loadLocalState: function(key) {
+    try {
+      if (typeof localStorage !== "undefined") {
+        const raw = localStorage.getItem(this._localStorageKey(key));
+        if (raw) return JSON.parse(raw);
+      }
+    } catch (_) {}
+    return {};
+  },
+
+  syncOfflineStatus: function() {
+    if (typeof document === "undefined") return;
+    const statusEl = document.getElementById("live-board-status");
+    if (!statusEl) return;
+    if (this.isFileProtocol() || (isPublishedDocument() && !this._activeStream)) {
+      statusEl.textContent = "Offline (Local Save)";
+      statusEl.className = "badge badge-info badge-outline badge-xs font-mono shrink-0 whitespace-nowrap";
+    }
+  },
+
   _resolveEndpoint: function(path) {
     if (typeof window === "undefined" && typeof process !== "undefined") {
       const cfg = HTMLReportAgent.getAiConfig();
@@ -5283,7 +6261,9 @@ const HTMLReportBoard = {
       return { ok: false, error: "State payload must be a JSON object" };
     }
     if (this.isFileProtocol()) {
-      return { ok: false, offline: true, reason: "Standalone file:// mode - board persistence requires dev server" };
+      const localSaved = this.saveLocalState(stateObj, options.key);
+      this.syncOfflineStatus();
+      return { ok: false, offline: true, localSaved, reason: "Standalone file:// mode - saved locally in browser storage" };
     }
     try {
       const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
@@ -5301,7 +6281,8 @@ const HTMLReportBoard = {
 
   loadState: async function(options = {}) {
     if (this.isFileProtocol()) {
-      return { ok: false, offline: true, state: {} };
+      this.syncOfflineStatus();
+      return { ok: false, offline: true, state: this.loadLocalState(options.key) };
     }
     try {
       const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
@@ -5315,6 +6296,7 @@ const HTMLReportBoard = {
 
   connectStream: function(path = "/events", handlers = {}) {
     if (this.isFileProtocol()) {
+      this.syncOfflineStatus();
       return { ok: false, offline: true, reason: "Standalone file:// mode - SSE disabled", close() {} };
     }
     if (typeof EventSource === "undefined") {

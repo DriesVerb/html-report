@@ -18,11 +18,15 @@ import {
   generateDeterministicPrompt
 } from "./domain-model.mjs";
 import { buildReport } from "./build-report.mjs";
+import { publishProject } from "./publish-report.mjs";
+import { compileTheme } from "./theme-compiler.mjs";
+import { lintFragment } from "./harness.mjs";
 import { scaffoldProject, slugifyProject } from "./scaffold-project.mjs";
 import {
   CSRFManager,
   AllowlistManager,
   handleMCPRequest,
+  handleMCPHttpPayload,
   handleGatewayCallTool,
   formatJsonRpcError,
   formatJsonRpcResult,
@@ -50,7 +54,8 @@ const MIME_TYPES = {
   ".ico": "image/x-icon",
   ".txt": "text/plain; charset=utf-8",
   ".md": "text/markdown; charset=utf-8",
-  ".webmanifest": "application/manifest+json"
+  ".webmanifest": "application/manifest+json",
+  ".zip": "application/zip"
 };
 
 /**
@@ -358,6 +363,293 @@ function findWorkspaceRoot(startDir) {
   return path.resolve(startDir);
 }
 
+/**
+ * Resolves an Edit Mode target HTML file safely inside workspaceRoot and locates
+ * any sibling Semantic Fragment (fragment.html) and report.manifest.json.
+ */
+function resolveEditTarget(requestedFile, servedFilePath, rootDir) {
+  const workspaceRoot = findWorkspaceRoot(rootDir);
+  const raw = typeof requestedFile === "string" ? requestedFile.split(/[?#]/)[0].trim() : "";
+
+  let targetHtmlPath = path.resolve(servedFilePath);
+  if (raw && raw !== "/") {
+    if (path.isAbsolute(raw) && fs.existsSync(raw) && !isPathInside(workspaceRoot, raw) && !isPathInside(rootDir, raw)) {
+      return { ok: false, status: 403, error: "Edit target must stay inside workspace root." };
+    }
+    const normalized = raw.replace(/\\/g, "/");
+    const rel = normalized.replace(/^\/+/, "");
+    const wsCandidate = path.resolve(workspaceRoot, rel);
+    const rootCandidate = path.resolve(rootDir, rel);
+
+    const insideWs = isPathInside(workspaceRoot, wsCandidate);
+    const insideRoot = isPathInside(rootDir, rootCandidate);
+    if (!insideWs && !insideRoot) {
+      return { ok: false, status: 403, error: "Edit target must stay inside workspace root." };
+    }
+
+    if (insideWs && fs.existsSync(wsCandidate) && fs.statSync(wsCandidate).isFile()) {
+      targetHtmlPath = wsCandidate;
+    } else if (insideRoot && fs.existsSync(rootCandidate) && fs.statSync(rootCandidate).isFile()) {
+      targetHtmlPath = rootCandidate;
+    } else if (path.basename(rel) === path.basename(servedFilePath) && !rel.includes("/")) {
+      targetHtmlPath = path.resolve(servedFilePath);
+    } else {
+      const extCheck = path.extname(rel).toLowerCase();
+      if (extCheck && extCheck !== ".html" && extCheck !== ".htm") {
+        return { ok: false, status: 403, error: "Edits are restricted to HTML report deliverables." };
+      }
+      return { ok: false, status: 404, error: `Target report not found: ${rel}` };
+    }
+  }
+
+  const ext = path.extname(targetHtmlPath).toLowerCase();
+  if (ext !== ".html" && ext !== ".htm") {
+    return { ok: false, status: 403, error: "Edits are restricted to HTML report deliverables." };
+  }
+
+  const targetDir = path.dirname(targetHtmlPath);
+  const manifestCandidate = path.join(targetDir, "report.manifest.json");
+  let manifest = null;
+  let manifestPath = null;
+  if (fs.existsSync(manifestCandidate) && fs.statSync(manifestCandidate).isFile()) {
+    manifestPath = manifestCandidate;
+    try {
+      manifest = JSON.parse(fs.readFileSync(manifestCandidate, "utf-8"));
+    } catch (_) {
+      manifest = null;
+    }
+  }
+
+  let fragmentPath = null;
+  const manifestFrag = manifest?.files?.fragment;
+  if (manifestFrag) {
+    const cand = path.resolve(targetDir, manifestFrag);
+    if (isPathInside(workspaceRoot, cand) && fs.existsSync(cand) && fs.statSync(cand).isFile()) {
+      fragmentPath = cand;
+    }
+  }
+  if (!fragmentPath) {
+    const siblingFrag = path.join(targetDir, "fragment.html");
+    if (fs.existsSync(siblingFrag) && fs.statSync(siblingFrag).isFile()) {
+      fragmentPath = siblingFrag;
+    }
+  }
+
+  return {
+    ok: true,
+    workspaceRoot,
+    targetHtmlPath,
+    targetDir,
+    targetRel: path.relative(workspaceRoot, targetHtmlPath).replace(/\\/g, "/"),
+    fragmentPath,
+    fragmentRel: fragmentPath ? path.relative(workspaceRoot, fragmentPath).replace(/\\/g, "/") : null,
+    manifestPath,
+    manifest
+  };
+}
+
+/**
+ * Updates theme, custom theme <style>, and #agent-manifest inside a standalone HTML report.
+ */
+function applyStyleToStandaloneHtml(rawHtml, { theme = "light", compiledCustomCss = "" } = {}) {
+  let html = String(rawHtml || "");
+  const safeTheme = String(theme || "light").replace(/[^a-zA-Z0-9_-]/g, "") || "light";
+
+  if (/<html\b[^>]*\bdata-theme=["'][^"']*["']/i.test(html)) {
+    html = html.replace(/(<html\b[^>]*\bdata-theme=["'])[^"']*(["'])/i, `$1${safeTheme}$2`);
+  } else {
+    html = html.replace(/<html\b([^>]*)>/i, `<html$1 data-theme="${safeTheme}">`);
+  }
+
+  html = html.replace(/(<span\b[^>]*\bid=["']active-theme-label["'][^>]*>)[^<]*(<\/span>)/i, `$1${safeTheme}$2`);
+  html = html.replace(/(<span\b[^>]*\bid=["']modal-active-theme-label["'][^>]*>)[^<]*(<\/span>)/i, `$1${safeTheme}$2`);
+
+  const styleBlockRegex = /(<style\b[^>]*\bid=["']daisyui-custom-themes["'][^>]*>)[\s\S]*?(<\/style>)/i;
+  if (styleBlockRegex.test(html)) {
+    const inner = compiledCustomCss ? `\n${compiledCustomCss}\n  ` : "\n  ";
+    html = html.replace(styleBlockRegex, `$1${inner}$2`);
+  } else if (compiledCustomCss) {
+    const styleTag = `  <style id="daisyui-custom-themes">\n${compiledCustomCss}\n  </style>\n`;
+    html = /<\/head>/i.test(html) ? html.replace(/<\/head>/i, `${styleTag}</head>`) : `${styleTag}${html}`;
+  }
+
+  const manifestRegex = /(<script\b[^>]*\bid=["']agent-manifest["'][^>]*>)([\s\S]*?)(<\/script>)/i;
+  const mMatch = html.match(manifestRegex);
+  if (mMatch) {
+    try {
+      const parsed = JSON.parse(mMatch[2]);
+      parsed.theme = safeTheme;
+      if (parsed.pipeline && typeof parsed.pipeline.rebuildCommand === "string") {
+        parsed.pipeline.rebuildCommand = parsed.pipeline.rebuildCommand.replace(/--theme\s+[^\s"']+/, `--theme ${safeTheme}`);
+      }
+      const safeJson = JSON.stringify(parsed, null, 2).replace(/<\//g, "<\\/");
+      html = html.replace(manifestRegex, `$1\n${safeJson}\n  $3`);
+    } catch (_) {}
+  }
+
+  return html;
+}
+
+/**
+ * Extracts bounded outerHTML element/section slices matching target/anchor IDs
+ * plus a compact section outline from fragment.html to eliminate discovery turns.
+ */
+function extractFragmentContext(fragmentHtml, { targetIds = [], anchorIds = [], prompt = "" } = {}) {
+  const html = String(fragmentHtml || "");
+  const ids = [];
+  const pushId = (id) => {
+    const clean = String(id || "").replace(/^#/, "").trim();
+    if (clean && !ids.includes(clean)) ids.push(clean);
+  };
+
+  for (const id of targetIds || []) pushId(id);
+  for (const id of anchorIds || []) pushId(id);
+
+  const targetMatches = prompt.matchAll(/Target Element:\s*#([a-zA-Z0-9_-]+)/g);
+  for (const m of targetMatches) pushId(m[1]);
+  const sectionMatches = prompt.matchAll(/Section:\s*[^\n(]*\(#([a-zA-Z0-9_-]+)\)/g);
+  for (const m of sectionMatches) pushId(m[1]);
+
+  const outline = [];
+  const outlineRegex = /<(section|h[1-3])\b([^>]*\bid=["']([^"']+)["'][^>]*)>/gi;
+  let oMatch;
+  while ((oMatch = outlineRegex.exec(html)) !== null && outline.length < 30) {
+    outline.push({ tag: oMatch[1].toLowerCase(), id: oMatch[3] });
+  }
+
+  const voidTags = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"]);
+  const slices = [];
+
+  for (const id of ids) {
+    const escapedId = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const attrRegex = new RegExp(`<(?:[a-zA-Z][\\w:-]*)\\b[^>]*(?:id|data-agent-id)=["']${escapedId}["'][^>]*>`, "i");
+    const m = attrRegex.exec(html);
+    if (!m) continue;
+
+    const startIdx = m.index;
+    const tagMatch = m[0].match(/^<([a-zA-Z][\w:-]*)/);
+    const tagName = tagMatch ? tagMatch[1].toLowerCase() : "";
+    let endIdx = Math.min(html.length, startIdx + 6000);
+
+    if (tagName && !voidTags.has(tagName) && !m[0].endsWith("/>")) {
+      const openCloseRegex = new RegExp(`<(\\/)?${tagName}\\b[^>]*>`, "gi");
+      openCloseRegex.lastIndex = startIdx;
+      let depth = 0;
+      let tMatch;
+      while ((tMatch = openCloseRegex.exec(html)) !== null) {
+        if (tMatch[1]) {
+          depth -= 1;
+          if (depth <= 0) {
+            endIdx = tMatch.index + tMatch[0].length;
+            break;
+          }
+        } else if (!tMatch[0].endsWith("/>")) {
+          depth += 1;
+        }
+        if (tMatch.index - startIdx > 12000) break;
+      }
+    } else if (tagName) {
+      endIdx = startIdx + m[0].length;
+    }
+
+    const sliceHtml = html.slice(startIdx, endIdx);
+    slices.push({
+      id,
+      html: sliceHtml.length > 8000 ? sliceHtml.slice(0, 8000) + "\n<!-- ...truncated... -->" : sliceHtml
+    });
+  }
+
+  return { requestedIds: ids, outline, slices };
+}
+
+/**
+ * Parses a JSON surgical patch payload ({ patches: [{ find, replace }] }) from model output.
+ */
+function parseSurgicalPatchPayload(rawText) {
+  const text = String(rawText || "").trim();
+  if (!text) return null;
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const candidate = fenced ? fenced[1].trim() : text;
+  const start = candidate.indexOf("{");
+  const end = candidate.lastIndexOf("}");
+  if (start === -1 || end === -1 || end <= start) return null;
+  try {
+    const parsed = JSON.parse(candidate.slice(start, end + 1));
+    if (!parsed || !Array.isArray(parsed.patches) || parsed.patches.length === 0) return null;
+    return parsed.patches;
+  } catch (_) {
+    return null;
+  }
+}
+
+/**
+ * Applies exact search-and-replace patches in memory, checks for lint regressions
+ * relative to baseline, and verifies <100ms buildReport() assembly before disk write.
+ */
+function applySurgicalFragmentPatches(fragmentHtml, patches, { buildOptions = null } = {}) {
+  const original = String(fragmentHtml || "");
+  if (!Array.isArray(patches) || patches.length === 0) {
+    return { ok: false, reason: "No patches provided." };
+  }
+
+  let working = original;
+  for (let i = 0; i < patches.length; i += 1) {
+    const p = patches[i];
+    if (!p || typeof p.find !== "string" || !p.find.length || typeof p.replace !== "string") {
+      return { ok: false, reason: `Patch #${i + 1} is missing valid 'find' and 'replace' strings.` };
+    }
+    const first = working.indexOf(p.find);
+    if (first === -1) {
+      return { ok: false, reason: `Patch #${i + 1} 'find' substring did not match fragment.html.` };
+    }
+    const second = working.indexOf(p.find, first + p.find.length);
+    if (second !== -1) {
+      return { ok: false, reason: `Patch #${i + 1} 'find' substring matched multiple locations.` };
+    }
+    working = working.slice(0, first) + p.replace + working.slice(first + p.find.length);
+  }
+
+  if (!working.trim()) {
+    return { ok: false, reason: "Patched fragment is empty." };
+  }
+  if (/<!DOCTYPE\b|<html\b|<head\b|<body\b/i.test(working)) {
+    return { ok: false, reason: "Patched fragment introduced forbidden document boilerplate tags." };
+  }
+  const origHasMain = /<main\b/i.test(original);
+  const newHasMain = /<main\b/i.test(working);
+  if (!origHasMain && newHasMain) {
+    return { ok: false, reason: "Patched fragment unexpectedly introduced <main> wrapper." };
+  }
+  if (origHasMain && (!/<main\b/i.test(working) || !/<\/main>/i.test(working))) {
+    return { ok: false, reason: "Patched fragment broke <main> wrapper balance." };
+  }
+
+  const baseLint = lintFragment(original);
+  const nextLint = lintFragment(working);
+  const countType = (res, type) => res.issues.filter((iss) => iss.type === type).length;
+  for (const issueType of ["MISSING_HEADING_ID", "BARE_TABLE"]) {
+    if (countType(nextLint, issueType) > countType(baseLint, issueType)) {
+      return { ok: false, reason: `Patched fragment introduced new ${issueType} lint regression.` };
+    }
+  }
+
+  try {
+    buildReport({
+      title: buildOptions?.title || "HTML Report",
+      content: working,
+      mode: buildOptions?.mode || "report",
+      theme: buildOptions?.theme || "light",
+      addons: Array.isArray(buildOptions?.addons) ? buildOptions.addons : [],
+      ai: Boolean(buildOptions?.ai),
+      pwa: Boolean(buildOptions?.pwa)
+    });
+  } catch (err) {
+    return { ok: false, reason: `Assembly validation failed: ${err.message}` };
+  }
+
+  return { ok: true, html: working, patchesApplied: patches.length };
+}
+
 function extractProjectMetadata(fullPath, relPath, workspaceRoot) {
   let title = path.basename(relPath, ".html");
   let version = "0.0.0-beta.1";
@@ -543,6 +835,7 @@ function parseArgs(argv) {
   let filePath = null;
   let port = 3031;
   let autoOpen = process.env.HTML_REPORT_NO_OPEN !== "1";
+  let aiLocal = false;
   const feedProxies = [];
 
   for (let i = 0; i < args.length; i++) {
@@ -550,6 +843,8 @@ function parseArgs(argv) {
       port = parseInt(args[++i], 10) || 3031;
     } else if (args[i] === "--no-open") {
       autoOpen = false;
+    } else if (args[i] === "--ai-local") {
+      aiLocal = true;
     } else if (args[i] === "--feed-proxy" && args[i + 1]) {
       const pair = args[++i];
       const eqIdx = pair.indexOf("=");
@@ -566,7 +861,7 @@ function parseArgs(argv) {
     }
   }
 
-  return { filePath, port, autoOpen, feedProxies };
+  return { filePath, port, autoOpen, feedProxies, aiLocal };
 }
 
 function openBrowser(url) {
@@ -639,15 +934,32 @@ function injectLiveReload(html) {
         return idiomorphPromise;
       }
 
-      // Anything that would need re-execution to be correct: head assets + every inline script.
-      // Always computed from raw server HTML (never the live DOM, which Tailwind/Mermaid mutate).
+      // Head assets and non-<main> executable runtime scripts.
+      // Excludes JSON metadata blocks (#agent-manifest, #feed-registry) and <main> widget scripts
+      // so fragment edits hot-swap <main> in place instead of triggering full browser reloads.
       function signature(doc) {
         const head = Array.from(doc.head.querySelectorAll("link[rel=stylesheet], script[src], style"))
           .map((el) => el.outerHTML).join("\\n");
         const scripts = Array.from(doc.querySelectorAll("script:not([src])"))
-          .filter((el) => el.id !== "__html_report_live_reload__")
+          .filter((el) => {
+            if (el.id === "__html_report_live_reload__") return false;
+            const t = (el.getAttribute("type") || "").trim().toLowerCase();
+            if (t === "application/json" || t === "application/ld+json" || t === "importmap") return false;
+            if (el.closest && el.closest("main")) return false;
+            return true;
+          })
           .map((el) => el.textContent).join("\\n");
         return head + "\\n---\\n" + scripts;
+      }
+
+      function mainScriptSources(mainEl) {
+        if (!mainEl) return [];
+        return Array.from(mainEl.querySelectorAll("script:not([src])"))
+          .filter((el) => {
+            const t = (el.getAttribute("type") || "").trim().toLowerCase();
+            return !t || t === "text/javascript" || t === "application/javascript";
+          })
+          .map((el) => el.textContent || "");
       }
 
       async function fetchDoc() {
@@ -682,6 +994,13 @@ function injectLiveReload(html) {
         const nextSig = signature(nextDoc);
         if (baselineSig === null || nextSig !== baselineSig) return fullReload("scripts or <head> assets changed");
 
+        const prevScripts = mainScriptSources(curMain);
+        const nextScripts = mainScriptSources(nextMain);
+        const changedScripts = nextScripts.filter((code, idx) => code !== prevScripts[idx]);
+        if (changedScripts.some((code) => /DOMContentLoaded/.test(code))) {
+          return fullReload("<main> DOMContentLoaded script changed");
+        }
+
         let Idiomorph;
         try { Idiomorph = await loadIdiomorph(); } catch (err) { return fullReload(err.message); }
 
@@ -690,6 +1009,20 @@ function injectLiveReload(html) {
           morphStyle: "outerHTML",
           callbacks: { beforeNodeMorphed: (oldNode) => !keepNode(oldNode) }
         });
+        for (const jsonId of ["agent-manifest", "feed-registry"]) {
+          const nextJson = nextDoc.getElementById(jsonId);
+          const curJson = document.getElementById(jsonId);
+          if (nextJson && curJson) curJson.textContent = nextJson.textContent;
+        }
+        if (changedScripts.length > 0) {
+          for (const code of changedScripts) {
+            try {
+              (new Function(code))();
+            } catch (err) {
+              return fullReload("main script re-exec error: " + (err && err.message));
+            }
+          }
+        }
         if (nextDoc.title && nextDoc.title !== document.title) document.title = nextDoc.title;
         if (typeof window.reinitReportContent === "function") await window.reinitReportContent();
         window.scrollTo({ top: y, behavior: "instant" });
@@ -704,7 +1037,7 @@ function injectLiveReload(html) {
         if (pending) { pending = false; onChange(); }
       }
 
-      const es = new EventSource("/__live_reload__");
+      const es = new EventSource("/__live_reload__?page=" + encodeURIComponent(window.location.pathname || "/"));
       let sseConnectedOnce = false;
       let sseDisconnected = false;
       es.addEventListener("open", () => {
@@ -718,6 +1051,97 @@ function injectLiveReload(html) {
         if (sseConnectedOnce) sseDisconnected = true;
       });
       es.addEventListener("reload", onChange);
+      es.addEventListener("mcp-fragment", async (ev) => {
+        try {
+          const payload = JSON.parse(ev.data || "{}");
+          if (!payload.selector || typeof payload.html !== "string") return;
+          let target = null;
+          try {
+            target = document.querySelector(payload.selector);
+          } catch (_) {
+            return;
+          }
+          if (!target) return;
+          const mergeMode = payload.merge || "morph";
+          if (mergeMode === "prepend") {
+            target.insertAdjacentHTML("afterbegin", payload.html);
+          } else if (mergeMode === "append") {
+            target.insertAdjacentHTML("beforeend", payload.html);
+          } else {
+            let Idiomorph = null;
+            try { Idiomorph = await loadIdiomorph(); } catch (_) {}
+            if (Idiomorph) {
+              Idiomorph.morph(target, payload.html, {
+                morphStyle: mergeMode === "inner" ? "innerHTML" : "outerHTML",
+                callbacks: { beforeNodeMorphed: (oldNode) => !keepNode(oldNode) }
+              });
+            } else if (mergeMode === "inner") {
+              target.innerHTML = payload.html;
+            } else {
+              target.outerHTML = payload.html;
+            }
+          }
+          if (typeof window.reinitReportContent === "function") {
+            await window.reinitReportContent();
+          }
+        } catch (err) {
+          console.warn("[html-report] mcp-fragment error:", err && err.message);
+        }
+      });
+      es.addEventListener("mcp-theme", (ev) => {
+        try {
+          const payload = JSON.parse(ev.data || "{}");
+          const theme = payload && payload.theme ? String(payload.theme) : "";
+          if (!theme) return;
+          if (typeof window.setReportTheme === "function") {
+            window.setReportTheme(theme);
+          } else {
+            document.documentElement.setAttribute("data-theme", theme);
+            try { localStorage.setItem("html_report_active_theme", theme); } catch (_) {}
+          }
+        } catch (err) {
+          console.warn("[html-report] mcp-theme error:", err && err.message);
+        }
+      });
+      es.addEventListener("mcp-alert", (ev) => {
+        try {
+          const payload = JSON.parse(ev.data || "{}");
+          if (!payload || (!payload.text && !payload.message)) return;
+          const allowed = { info: "alert-info", success: "alert-success", warning: "alert-warning", error: "alert-error" };
+          const alertClass = allowed[payload.type] || "alert-info";
+          const alertId = String(payload.id || ("mcp-alert-" + Date.now())).replace(/[^a-zA-Z0-9_-]/g, "");
+          const container =
+            document.getElementById("agent-reaction-bubble") ||
+            document.getElementById("report-main") ||
+            document.querySelector("main") ||
+            document.body;
+          if (!container) return;
+
+          const existing = document.getElementById(alertId);
+          if (existing) existing.remove();
+
+          const banner = document.createElement("div");
+          banner.id = alertId;
+          banner.setAttribute("role", "alert");
+          banner.className = "alert " + alertClass + " shadow-lg mb-4 flex items-center justify-between text-xs";
+
+          const textSpan = document.createElement("span");
+          textSpan.textContent = typeof payload.text === "string" ? payload.text : payload.message;
+
+          const closeBtn = document.createElement("button");
+          closeBtn.type = "button";
+          closeBtn.className = "btn btn-xs btn-ghost";
+          closeBtn.setAttribute("aria-label", "Dismiss alert");
+          closeBtn.textContent = "×";
+          closeBtn.addEventListener("click", () => banner.remove());
+
+          banner.appendChild(textSpan);
+          banner.appendChild(closeBtn);
+          container.prepend(banner);
+        } catch (err) {
+          console.warn("[html-report] mcp-alert error:", err && err.message);
+        }
+      });
       es.addEventListener("projects-changed", () => {
         if (typeof window.loadWorkspaceProjects === "function") {
           window.loadWorkspaceProjects({ refresh: true });
@@ -747,13 +1171,101 @@ function detectReportMode(htmlContent) {
   return match ? match[1].toLowerCase() : "report";
 }
 
+/**
+ * Generates a context-grounded Markdown response for zero-API-key local bridge mode
+ * (`--ai-local` / `HTML_REPORT_AI_MODE=local`) using report headings, DOM/dataset context,
+ * and manifest metadata without external LLM calls or $HOME filesystem writes.
+ */
+function buildLocalBridgeReply({ prompt, persona, context = {}, targetSelector = "", resolvedPath, rootDir }) {
+  const cleanPrompt = String(prompt || "").trim();
+  const promptLower = cleanPrompt.toLowerCase();
+
+  let title = "Interactive HTML Report";
+  const headings = [];
+  let manifest = null;
+
+  try {
+    const htmlPath = fs.existsSync(path.join(rootDir, "fragment.html"))
+      ? path.join(rootDir, "fragment.html")
+      : resolvedPath;
+    const rawHtml = fs.readFileSync(htmlPath, "utf-8");
+    const titleMatch = rawHtml.match(/<title>([^<]+)<\/title>/i);
+    if (titleMatch) title = titleMatch[1].trim();
+    const headingMatches = [...rawHtml.matchAll(/<h([1-3])\b[^>]*>([\s\S]*?)<\/h\1>/gi)];
+    for (const m of headingMatches) {
+      const txt = m[2].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      if (txt) headings.push(txt);
+    }
+  } catch (_) {}
+
+  try {
+    const manifestPath = path.join(rootDir, "report.manifest.json");
+    if (fs.existsSync(manifestPath)) {
+      manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+      if (manifest.title) title = manifest.title;
+    }
+  } catch (_) {}
+
+  const lines = [`**${persona?.name || "Assistant"} (Local Context Bridge — \`${persona?.id || "analyst"}\`):**`];
+
+  if (context.elementId || targetSelector) {
+    lines.push(`- **Focused Target:** \`${targetSelector || context.elementId}\``);
+  } else {
+    lines.push(`- **Report Context:** *${title}*${manifest?.mode ? ` (\`${manifest.mode}\`)` : ""}`);
+  }
+
+  if (context.datasetState) {
+    if (Array.isArray(context.datasetState.datasets) && context.datasetState.datasets.length > 0) {
+      const summary = context.datasetState.datasets
+        .slice(0, 3)
+        .map((ds) => `${ds.label || "Series"}: [${(ds.data || []).slice(0, 5).join(", ")}${(ds.data || []).length > 5 ? ", ..." : ""}]`)
+        .join("; ");
+      lines.push(`- **Chart Telemetry:** ${summary}`);
+    } else if (Array.isArray(context.datasetState.headers) && context.datasetState.headers.length > 0) {
+      lines.push(`- **Table Columns:** \`${context.datasetState.headers.join("`, `")}\` (${(context.datasetState.sampleRows || []).length} sample rows visible)`);
+    }
+  } else if (context.domSnippet) {
+    const plainSnippet = String(context.domSnippet)
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 220);
+    if (plainSnippet) {
+      lines.push(`- **Visible Context:** ${plainSnippet}${plainSnippet.length >= 220 ? "..." : ""}`);
+    }
+  }
+
+  const promptWords = promptLower.split(/\W+/).filter((w) => w.length >= 3);
+  const matchedHeadings = headings.filter((h) => {
+    const hl = h.toLowerCase();
+    return promptWords.some((w) => hl.includes(w));
+  });
+  const displayHeadings = (matchedHeadings.length > 0 ? matchedHeadings : headings).slice(0, 4);
+  if (displayHeadings.length > 0) {
+    lines.push(`- **Relevant Sections:** ${displayHeadings.map((h) => `*${h}*`).join(" · ")}`);
+  }
+
+  if (Array.isArray(manifest?.referenceFiles) && manifest.referenceFiles.length > 0) {
+    const refNames = manifest.referenceFiles
+      .slice(0, 4)
+      .map((r) => `\`${r.fileName || r.relPath || r.name || "reference"}\``)
+      .join(", ");
+    lines.push(`- **Attached References:** ${refNames}`);
+  }
+
+  lines.push(`- **Answer Summary:** Processed *"${cleanPrompt.slice(0, 140)}"* locally with zero external API keys.`);
+  return lines.join("\n");
+}
+
 async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen = true, feedProxies = []) {
   let targetFilePath = targetFilePathOrOptions;
+  let aiLocal = false;
   if (targetFilePathOrOptions && typeof targetFilePathOrOptions === "object" && !Array.isArray(targetFilePathOrOptions)) {
     targetFilePath = targetFilePathOrOptions.file || targetFilePathOrOptions.filePath || targetFilePathOrOptions.targetFilePath;
     initialPort = targetFilePathOrOptions.port !== undefined ? targetFilePathOrOptions.port : 3031;
     autoOpen = targetFilePathOrOptions.autoOpen !== undefined ? targetFilePathOrOptions.autoOpen : false;
     feedProxies = targetFilePathOrOptions.feedProxies || [];
+    aiLocal = Boolean(targetFilePathOrOptions.aiLocal);
   }
   const resolvedPath = path.resolve(process.cwd(), targetFilePath);
   if (!fs.existsSync(resolvedPath)) {
@@ -766,8 +1278,84 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
   const sseClients = new Set();
   const datastarClients = new Set();
   const mcpSseClients = new Map();
-  let serverPort = initialPort;
+  const parsedInitialPort = Number(initialPort);
+  const requestedPort = Number.isFinite(parsedInitialPort) && parsedInitialPort >= 0 ? parsedInitialPort : 3031;
+  let serverPort = requestedPort;
   let activeReportTheme = "light";
+  let themeOverriddenByMcp = false;
+  let htmlHasLocalModeMeta = false;
+  try {
+    const initialHtml = fs.readFileSync(resolvedPath, "utf-8");
+    const themeMatch = initialHtml.match(/<html[^>]*\bdata-theme=["']([^"']+)["']/i);
+    if (themeMatch && themeMatch[1]) {
+      activeReportTheme = themeMatch[1].trim();
+    }
+    htmlHasLocalModeMeta = /<meta\s+name=["']html-report-ai-mode["']\s+content=["']local["']/i.test(initialHtml);
+  } catch (_) {}
+
+  const resolveSiblingLocalCmd = () => {
+    if (process.env.HTML_REPORT_AI_CMD && process.env.HTML_REPORT_AI_CMD.trim()) {
+      return null;
+    }
+    const localScript = path.join(rootDir, "local-assistant.mjs");
+    if (fs.existsSync(localScript) && fs.statSync(localScript).isFile()) {
+      return `"${process.execPath}" "${localScript}"`;
+    }
+    return null;
+  };
+
+  const isLocalBridgeModeActive = () => {
+    if (aiLocal) return true;
+    if (String(process.env.HTML_REPORT_AI_MODE || "").trim().toLowerCase() === "local") return true;
+    if (htmlHasLocalModeMeta) return true;
+    try {
+      const manifestPath = path.join(rootDir, "report.manifest.json");
+      if (fs.existsSync(manifestPath)) {
+        const m = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+        if (m?.aiConfig?.local === true || m?.aiConfig?.mode === "local") return true;
+      }
+    } catch (_) {}
+    return false;
+  };
+
+  const resolveInferenceStatus = (detectOptions = {}) => {
+    const siblingCmd = resolveSiblingLocalCmd();
+    const status = AgentInferenceRouter.detectProviders({
+      ...(siblingCmd ? { aiCmd: siblingCmd } : {}),
+      ...detectOptions
+    });
+    const hasAuthenticatedProvider = Boolean(status.providerAvailable && status.authenticated);
+    const localBridgeEnabled = isLocalBridgeModeActive();
+
+    if (!hasAuthenticatedProvider && localBridgeEnabled) {
+      const localProvider = {
+        id: "local-bridge",
+        type: "local",
+        name: "Local Context Bridge (Zero-Key)",
+        installed: true,
+        authenticated: true
+      };
+      return {
+        ...status,
+        installed: true,
+        authenticated: true,
+        providerAvailable: true,
+        activeProvider: "local-bridge",
+        activeProviderName: "Local Context Bridge (Zero-Key)",
+        localMode: true,
+        availableProviders: [localProvider, ...(status.availableProviders || [])],
+        _useBuiltInLocalBridge: true,
+        _siblingCmd: siblingCmd
+      };
+    }
+
+    return {
+      ...status,
+      localMode: Boolean(localBridgeEnabled || siblingCmd),
+      _useBuiltInLocalBridge: false,
+      _siblingCmd: siblingCmd
+    };
+  };
   let projectsCache = { timestamp: 0, data: null };
   let projectsDebounceTimer = null;
 
@@ -906,36 +1494,116 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
     return datastarClients.size;
   }
 
-  const mcpContext = {
-    getTitle: () => {
-      try {
-        const content = fs.readFileSync(resolvedPath, "utf-8");
-        const match = content.match(/<title[^>]*>([^<]+)<\/title>/i);
-        return match ? match[1].trim() : targetFileName;
-      } catch (_) {
-        return targetFileName;
+  function broadcastLiveReloadEvent(eventName, payload) {
+    const dataStr = typeof payload === "string" ? payload : JSON.stringify(payload);
+    const sseMessage = `event: ${eventName}\ndata: ${dataStr}\n\n`;
+    for (const client of sseClients) {
+      try { client.write(sseMessage); } catch (_) { sseClients.delete(client); }
+    }
+    return sseClients.size;
+  }
+
+  function inspectServedReport() {
+    let title = targetFileName;
+    let theme = activeReportTheme;
+    let mode = "report";
+    const targetElements = [];
+
+    try {
+      const content = fs.readFileSync(resolvedPath, "utf-8");
+      const titleMatch = content.match(/<title[^>]*>([^<]+)<\/title>/i);
+      if (titleMatch && titleMatch[1].trim()) {
+        title = titleMatch[1].trim();
       }
+      if (!themeOverriddenByMcp) {
+        const themeMatch = content.match(/<html[^>]*\bdata-theme=["']([^"']+)["']/i);
+        if (themeMatch && themeMatch[1].trim()) {
+          theme = themeMatch[1].trim();
+          activeReportTheme = theme;
+        }
+      }
+      mode = detectReportMode(content);
+
+      const mainMatch = content.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
+      const scanHtml = mainMatch ? mainMatch[1] : content;
+      const seenIds = new Set();
+      const idRegex = /<(section|h[1-3])\b[^>]*\bid=["']([^"']+)["'][^>]*>/gi;
+      let idMatch;
+      while ((idMatch = idRegex.exec(scanHtml)) !== null && targetElements.length < 60) {
+        const elId = idMatch[2].trim();
+        if (elId && !seenIds.has(elId)) {
+          seenIds.add(elId);
+          targetElements.push(elId);
+        }
+      }
+    } catch (_) {}
+
+    let fragmentPath = null;
+    try {
+      const manifestPath = path.join(rootDir, "report.manifest.json");
+      let fragCandidate = null;
+      if (fs.existsSync(manifestPath) && fs.statSync(manifestPath).isFile()) {
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+        if (manifest?.files?.fragment) {
+          fragCandidate = path.resolve(rootDir, manifest.files.fragment);
+        }
+      }
+      if (!fragCandidate) {
+        const siblingFrag = path.join(rootDir, "fragment.html");
+        if (fs.existsSync(siblingFrag) && fs.statSync(siblingFrag).isFile()) {
+          fragCandidate = siblingFrag;
+        }
+      }
+      if (fragCandidate && isPathInside(workspaceRootForState, fragCandidate) && fs.existsSync(fragCandidate)) {
+        fragmentPath = path.relative(workspaceRootForState, fragCandidate).replace(/\\/g, "/");
+      }
+    } catch (_) {}
+
+    const outputPath = path.relative(workspaceRootForState, resolvedPath).replace(/\\/g, "/");
+    return { title, theme, mode, targetElements, fragmentPath, outputPath };
+  }
+
+  const mcpContext = {
+    getTitle: () => inspectServedReport().title,
+    getTheme: () => inspectServedReport().theme,
+    getClientCount: () => sseClients.size + datastarClients.size,
+    getActiveCards: () => inspectServedReport().targetElements,
+    getMetadata: () => {
+      const info = inspectServedReport();
+      return {
+        mode: info.mode,
+        outputPath: info.outputPath,
+        fragmentPath: info.fragmentPath,
+        targetElements: info.targetElements,
+        liveReloadClients: sseClients.size,
+        datastarClients: datastarClients.size
+      };
     },
-    getTheme: () => activeReportTheme,
-    getClientCount: () => datastarClients.size,
-    getActiveCards: () => ["kpi-card", "chart-container", "gridjs-table"],
     broadcastFragment: ({ selector, html, merge }) => {
-      broadcastDatastarFragment({ selector, html, merge: merge || "morph" });
+      const resolvedMerge = merge || "morph";
+      broadcastDatastarFragment({ selector, html, merge: resolvedMerge });
+      broadcastLiveReloadEvent("mcp-fragment", { selector, html, merge: resolvedMerge });
     },
     setTheme: (theme) => {
-      activeReportTheme = theme;
-      const themeScript = `<script>document.documentElement.setAttribute('data-theme', '${escapeHtml(theme)}'); try { localStorage.setItem('html_report_active_theme', '${escapeHtml(theme)}'); } catch(_){} if (typeof setReportTheme === 'function') setReportTheme('${escapeHtml(theme)}');</script>`;
+      const safeTheme = String(theme || "light").replace(/[^a-zA-Z0-9_-]/g, "") || "light";
+      activeReportTheme = safeTheme;
+      themeOverriddenByMcp = true;
+      const themeScript = `<script>document.documentElement.setAttribute('data-theme', '${escapeHtml(safeTheme)}'); try { localStorage.setItem('html_report_active_theme', '${escapeHtml(safeTheme)}'); } catch(_){} if (typeof setReportTheme === 'function') setReportTheme('${escapeHtml(safeTheme)}');</script>`;
       broadcastDatastarFragment({
         selector: "#theme-runtime-hook",
         html: `<div id="theme-runtime-hook">${themeScript}</div>`,
         merge: "inner"
       });
+      broadcastLiveReloadEvent("mcp-theme", { theme: safeTheme });
     },
     appendAlert: ({ message, type = "info" }) => {
+      const allowedTypes = new Set(["info", "success", "warning", "error"]);
+      const safeType = allowedTypes.has(String(type).toLowerCase()) ? String(type).toLowerCase() : "info";
       const alertId = `mcp-alert-${Date.now()}`;
+      const escapedMessage = escapeHtml(message);
       const alertHtml = `
-        <div id="${alertId}" class="alert alert-${type} shadow-lg mb-4 flex items-center justify-between text-xs">
-          <span>${escapeHtml(message)}</span>
+        <div id="${alertId}" role="alert" class="alert alert-${safeType} shadow-lg mb-4 flex items-center justify-between text-xs">
+          <span>${escapedMessage}</span>
           <button onclick="document.getElementById('${alertId}')?.remove()" class="btn btn-xs btn-ghost">&times;</button>
         </div>
       `;
@@ -944,6 +1612,95 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
         html: `<div id="agent-reaction-bubble">${alertHtml}</div>`,
         merge: "inner"
       });
+      broadcastLiveReloadEvent("mcp-alert", {
+        id: alertId,
+        message: escapedMessage,
+        text: String(message),
+        type: safeType
+      });
+    },
+    buildReport: async ({
+      fragmentHtml,
+      title,
+      outputPath,
+      mode,
+      theme,
+      addons,
+      published = false,
+      saveFragment = false
+    } = {}) => {
+      const workspaceRoot = workspaceRootForState;
+      let targetOutPath = resolvedPath;
+      if (outputPath !== undefined && outputPath !== null && String(outputPath).trim() !== "") {
+        const rawOut = String(outputPath).trim();
+        const candidate = path.isAbsolute(rawOut)
+          ? path.resolve(rawOut)
+          : path.resolve(workspaceRoot, rawOut);
+        if (!isPathInside(workspaceRoot, candidate)) {
+          throw new Error(`Forbidden: outputPath '${rawOut}' resolves outside the workspace root.`);
+        }
+        const ext = path.extname(candidate).toLowerCase();
+        if (ext !== ".html" && ext !== ".htm") {
+          throw new Error("Invalid outputPath: Output Deliverable must have .html or .htm extension.");
+        }
+        targetOutPath = candidate;
+      }
+
+      const lintResult = lintFragment(fragmentHtml);
+      const lintErrors = lintResult.issues.filter((i) => i.type === "OUTER_BOILERPLATE");
+      const warnings = lintResult.issues.map((i) => ({
+        type: i.type,
+        line: i.line,
+        message: i.message,
+        suggestedFix: i.suggestedFix
+      }));
+
+      const currentInfo = inspectServedReport();
+      const resolvedTitle = title && String(title).trim() ? String(title).trim() : currentInfo.title;
+      const resolvedMode = mode || currentInfo.mode || "report";
+      const resolvedTheme = theme ? String(theme).toLowerCase().trim() : currentInfo.theme || "light";
+
+      const t0 = performance.now();
+      const built = buildReport({
+        title: resolvedTitle,
+        content: fragmentHtml,
+        mode: resolvedMode,
+        theme: resolvedTheme,
+        addons: Array.isArray(addons) ? addons : [],
+        published: Boolean(published),
+        workspaceRoot
+      });
+      const buildTimeMs = Number((performance.now() - t0).toFixed(2));
+
+      const targetDir = path.dirname(targetOutPath);
+      fs.mkdirSync(targetDir, { recursive: true });
+      const tmpOut = path.join(targetDir, `.${path.basename(targetOutPath)}.tmp-${process.pid}-${Date.now()}`);
+      fs.writeFileSync(tmpOut, built.html, "utf-8");
+      fs.renameSync(tmpOut, targetOutPath);
+
+      if (saveFragment === true) {
+        const fragTarget = path.join(targetDir, "fragment.html");
+        const tmpFrag = path.join(targetDir, `.fragment.html.tmp-${process.pid}-${Date.now()}`);
+        fs.writeFileSync(tmpFrag, fragmentHtml, "utf-8");
+        fs.renameSync(tmpFrag, fragTarget);
+      }
+
+      if (path.resolve(targetOutPath) === path.resolve(resolvedPath)) {
+        activeReportTheme = built.theme;
+        themeOverriddenByMcp = Boolean(theme);
+      }
+      broadcastReload(targetOutPath);
+
+      return {
+        ok: true,
+        outputPath: path.relative(workspaceRoot, targetOutPath).replace(/\\/g, "/"),
+        mode: built.mode,
+        theme: built.theme,
+        detectedAddons: built.activeAddons,
+        warnings,
+        lintErrors,
+        buildTimeMs
+      };
     },
     exportPdf: async ({ outputPath }) => {
       const targetPdf = outputPath || path.join(rootDir, `${path.parse(targetFileName).name}.pdf`);
@@ -1167,6 +1924,121 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
       }
     }
 
+    // 1a-2a. Asset-Aware Publish Endpoint (GET/POST /api/publish)
+    if (pathname === "/api/publish") {
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, applyLocalCorsHeaders(req, {
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type"
+        }));
+        res.end();
+        return;
+      }
+
+      if (!isSameOriginOrLocalRequest(req)) {
+        res.writeHead(403, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" });
+        res.end(JSON.stringify({ ok: false, error: "Forbidden: Cross-origin publish request rejected." }));
+        return;
+      }
+
+      if (req.method !== "GET" && req.method !== "POST") {
+        res.writeHead(405, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "Method not allowed" }));
+        return;
+      }
+
+      const handlePublishRequest = async (bodyParams = {}) => {
+        try {
+          const queryProject = parsedUrl.searchParams.get("project");
+          const reqProject = queryProject || bodyParams.project || null;
+          const reqTheme = parsedUrl.searchParams.get("theme") || bodyParams.theme || null;
+          const inlineFlag = parsedUrl.searchParams.get("inline") === "1" ||
+            parsedUrl.searchParams.get("inline") === "true" ||
+            Boolean(bodyParams.inline || bodyParams.inlineCdn);
+
+          let targetProjectDir = rootDir;
+          let targetInputPath = resolvedPath;
+          let targetProjectSlug = null;
+
+          if (reqProject && typeof reqProject === "string" && reqProject.trim()) {
+            const cleanSlug = slugifyProject(reqProject.trim());
+            const candidate = path.resolve(workspaceRootForState, "projects", cleanSlug);
+            if (isPathInside(workspaceRootForState, candidate) && fs.existsSync(candidate)) {
+              targetProjectDir = candidate;
+              targetInputPath = null;
+              targetProjectSlug = cleanSlug;
+            } else if (queryProject) {
+              res.writeHead(404, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ ok: false, error: `Project not found: ${cleanSlug}` }));
+              return;
+            }
+          } else if (req.headers.referer) {
+            try {
+              const refPath = new URL(req.headers.referer).pathname || "";
+              const refMatch = refPath.match(/^\/projects\/([^/]+)\//);
+              if (refMatch) {
+                const refSlug = decodeURIComponent(refMatch[1]);
+                const candidate = path.resolve(workspaceRootForState, "projects", refSlug);
+                if (isPathInside(workspaceRootForState, candidate) && fs.existsSync(candidate)) {
+                  targetProjectDir = candidate;
+                  targetInputPath = null;
+                  targetProjectSlug = refSlug;
+                }
+              }
+            } catch (_) {}
+          }
+
+          const result = await publishProject({
+            project: targetProjectSlug,
+            projectDir: targetProjectDir,
+            inputPath: targetInputPath,
+            theme: reqTheme || activeReportTheme || null,
+            inlineCdn: inlineFlag,
+            writeOutput: false,
+            workspaceRoot: workspaceRootForState
+          });
+
+          const contentType = result.kind === "zip" ? "application/zip" : "text/html; charset=utf-8";
+          res.writeHead(200, applyLocalCorsHeaders(req, {
+            "Content-Type": contentType,
+            "Content-Disposition": `attachment; filename="${result.filename}"`,
+            "Content-Length": String(result.buffer.length),
+            "Cache-Control": "no-cache, no-store",
+            "X-Published-Kind": result.kind,
+            "X-Published-Assets": String(result.assets.length)
+          }));
+          res.end(result.buffer);
+        } catch (err) {
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ ok: false, error: err.message }));
+        }
+      };
+
+      if (req.method === "POST") {
+        let body = "";
+        let tooLarge = false;
+        req.on("data", (chunk) => {
+          body += chunk;
+          if (body.length > 1024 * 1024) {
+            tooLarge = true;
+            req.destroy();
+          }
+        });
+        req.on("end", () => {
+          if (tooLarge) return;
+          let parsed = {};
+          try {
+            if (body.trim()) parsed = JSON.parse(body);
+          } catch (_) {}
+          handlePublishRequest(parsed);
+        });
+        return;
+      }
+
+      handlePublishRequest({});
+      return;
+    }
+
     // 1a-2b. Ephemeral Agent Bridge CSRF Token (GET /api/agent/csrf-token)
     if (pathname === "/api/agent/csrf-token" && req.method === "GET") {
       if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
@@ -1212,6 +2084,7 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
           providerAvailable: providerStatus.providerAvailable,
           activeProvider: providerStatus.activeProvider,
           activeProviderName: providerStatus.activeProviderName,
+          localMode: Boolean(providerStatus.localMode),
           availableProviders: providerStatus.availableProviders,
           authenticatedProviders: providerStatus.authenticatedProviders,
           checkedProviders: providerStatus.checkedProviders,
@@ -1224,20 +2097,24 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             providerAvailable: providerStatus.providerAvailable,
             activeProvider: providerStatus.activeProvider,
             activeProviderName: providerStatus.activeProviderName,
+            localMode: Boolean(providerStatus.localMode),
             availableProviders: providerStatus.availableProviders,
             authenticatedProviders: providerStatus.authenticatedProviders,
             checkedProviders: providerStatus.checkedProviders
           },
           streamConnected: datastarClients.size > 0,
           streamListeners: datastarClients.size,
+          mcpEndpoint: "/mcp",
           modelConfigured: true,
           defaultModel: "Gemini 3.8 Flash (Low)",
+          requestedPort,
           port: serverPort,
+          portMismatch: requestedPort > 0 && serverPort !== requestedPort,
           version: getPackageVersion()
         }));
       };
 
-      const providerStatus = AgentInferenceRouter.detectProviders();
+      const providerStatus = resolveInferenceStatus();
       if (shouldVerify) {
         const remoteAddr = req.socket?.remoteAddress || "";
         const origin = req.headers.origin || "";
@@ -1250,12 +2127,24 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
           });
           return;
         }
+        if (providerStatus._useBuiltInLocalBridge) {
+          respondPreflight(providerStatus, {
+            ok: true,
+            inferenceVerified: true,
+            latencyMs: 0,
+            sampleOutput: "Local Context Bridge Ready"
+          });
+          return;
+        }
         const now = Date.now();
         if (cachedVerifyResult && now < cachedVerifyExpiresAt) {
           respondPreflight(providerStatus, cachedVerifyResult);
           return;
         }
-        AgentInferenceRouter.verifyInference({ timeoutMs: 12000 })
+        AgentInferenceRouter.verifyInference({
+          timeoutMs: 12000,
+          ...(providerStatus._siblingCmd ? { aiCmd: providerStatus._siblingCmd } : {})
+        })
           .then((verification) => {
             cachedVerifyResult = verification;
             cachedVerifyExpiresAt = Date.now() + 30000;
@@ -1269,6 +2158,99 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
     }
 
     // 1b-MCP. Model Context Protocol (MCP) Server & Client Bridge Endpoints
+    // 1b-MCP-0. Streamable HTTP MCP Endpoint (POST /mcp, DELETE /mcp, OPTIONS /mcp)
+    if (pathname === "/mcp") {
+      const remoteAddr = req.socket?.remoteAddress || "";
+      if (!isLoopbackAddress(remoteAddr)) {
+        res.writeHead(403, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" });
+        res.end(JSON.stringify({ ok: false, error: "Forbidden: MCP endpoint is restricted to localhost loopback." }));
+        return;
+      }
+      const hostHeader = String(req.headers.host || "");
+      if (!CSRFManager.validateHost(hostHeader)) {
+        res.writeHead(403, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" });
+        res.end(JSON.stringify({ ok: false, error: "Forbidden: Host must be localhost, 127.0.0.1, or [::1]." }));
+        return;
+      }
+      const originHeader = req.headers.origin;
+      if (originHeader !== undefined && !isValidLocalOrigin(originHeader)) {
+        res.writeHead(403, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" });
+        res.end(JSON.stringify({ ok: false, error: "Forbidden: Cross-origin MCP request rejected." }));
+        return;
+      }
+
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, applyLocalCorsHeaders(req, {
+          "Access-Control-Allow-Methods": "POST, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Accept, Mcp-Session-Id",
+          "Cache-Control": "no-cache, no-store"
+        }));
+        res.end();
+        return;
+      }
+
+      if (req.method === "DELETE") {
+        res.writeHead(204, applyLocalCorsHeaders(req, { "Cache-Control": "no-cache, no-store" }));
+        res.end();
+        return;
+      }
+
+      if (req.method === "POST") {
+        const MAX_MCP_BODY_BYTES = 4 * 1024 * 1024;
+        let totalBytes = 0;
+        let aborted = false;
+        const chunks = [];
+        req.on("data", (chunk) => {
+          if (aborted) return;
+          totalBytes += chunk.length;
+          if (totalBytes > MAX_MCP_BODY_BYTES) {
+            aborted = true;
+            res.writeHead(413, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache, no-store"
+            }));
+            res.end(JSON.stringify(formatJsonRpcError(null, JSON_RPC_ERRORS.INVALID_REQUEST, "Payload too large")));
+            req.destroy();
+            return;
+          }
+          chunks.push(chunk);
+        });
+        req.on("end", async () => {
+          if (aborted) return;
+          try {
+            const rawBody = Buffer.concat(chunks).toString("utf-8");
+            const rawPayload = JSON.parse(rawBody);
+            const mcpResult = await handleMCPHttpPayload(rawPayload, mcpContext);
+            if (mcpResult.statusCode === 202) {
+              res.writeHead(202, applyLocalCorsHeaders(req, { "Cache-Control": "no-cache, no-store" }));
+              res.end();
+              return;
+            }
+            res.writeHead(mcpResult.statusCode, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache, no-store"
+            }));
+            res.end(JSON.stringify(mcpResult.body));
+          } catch (err) {
+            res.writeHead(400, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json",
+              "Cache-Control": "no-cache, no-store"
+            }));
+            res.end(JSON.stringify(formatJsonRpcError(null, JSON_RPC_ERRORS.PARSE_ERROR, `Parse error: ${err.message}`)));
+          }
+        });
+        return;
+      }
+
+      res.writeHead(405, applyLocalCorsHeaders(req, {
+        Allow: "POST, DELETE, OPTIONS",
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache, no-store"
+      }));
+      res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed on /mcp. Use POST.` }));
+      return;
+    }
+
     // 1b-MCP-1. MCP SSE Transport (GET /mcp/sse)
     if (pathname === "/mcp/sse" || pathname === "/__mcp_sse__") {
       const sessionId = crypto.randomUUID();
@@ -1478,6 +2460,8 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
           const model = payload.model || persona.defaultModel || "Gemini 3.8 Flash (Low)";
 
           const session = sessionStore.getOrCreate(sessionId);
+          // Build historySnippet from prior turns BEFORE appending the current user prompt (avoids duplication)
+          const historySnippet = session.history.slice(-6).map((h) => `${h.role === 'user' ? 'User' : 'Assistant'}: ${h.content}`).join("\n");
           sessionStore.addMessage(sessionId, "user", prompt, { context, targetSelector });
 
           const isStreaming = (req.headers.accept || "").includes("text/event-stream") ||
@@ -1485,8 +2469,6 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
                               payload.format === "datastar" ||
                               payload.stream === true;
 
-          // Format prompt with Persona, History & DOM/Dataset Context
-          const historySnippet = session.history.slice(-6).map((h) => `${h.role === 'user' ? 'User' : 'Assistant'}: ${h.content}`).join("\n");
           let contextSnippet = "";
           if (context.elementId || context.domSnippet || context.datasetState) {
             contextSnippet = `\nActive Element Context:\n- Element ID: ${context.elementId || "none"}\n- Theme: ${context.activeTheme || "light"}`;
@@ -1498,7 +2480,7 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             }
           }
 
-          const systemPrompt = `${persona.systemPrompt}\nYou are interacting with a live HTML publication report.\n${historySnippet ? `\nConversation History:\n${historySnippet}\n` : ""}${contextSnippet}\nUser Prompt: ${prompt}\n\nCRITICAL INSTRUCTION: If user asks to adjust, recalculate, filter, or re-run an analysis, propose a concrete structured action. Always return a concise, high-signal response.`;
+          const systemPrompt = `${persona.systemPrompt}\nYou are interacting with a live HTML publication report.\n${historySnippet ? `\nConversation History:\n${historySnippet}\n` : ""}${contextSnippet}\nCRITICAL INSTRUCTION: If user asks to adjust, recalculate, filter, or re-run an analysis, propose a concrete structured action. Always return a concise, high-signal response.`;
 
           const promptLower = prompt.toLowerCase();
           const isMutatingPrompt = promptLower.includes("recalculate") ||
@@ -1593,11 +2575,37 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             return;
           }
 
+          const inferenceStatus = resolveInferenceStatus({ provider: payload.provider || null });
+          if (inferenceStatus._useBuiltInLocalBridge && !payload.provider) {
+            activeProvider = "local-bridge";
+            const responseText = buildLocalBridgeReply({
+              prompt,
+              persona,
+              context,
+              targetSelector,
+              resolvedPath,
+              rootDir
+            });
+            let action = null;
+            if (isMutatingPrompt) {
+              action = {
+                id: `act_${Date.now().toString(36)}`,
+                type: "recalculate_metric",
+                description: `Apply filter and recalculate metrics for ${targetSelector || "selected element"}`,
+                preview: JSON.stringify({ target: targetSelector || "document", status: "ready", mode: "local-bridge" }, null, 2)
+              };
+              sessionStore.storePendingAction(sessionId, action);
+            }
+            handleDispatch(responseText, action);
+            return;
+          }
+
           AgentInferenceRouter.dispatch({
             prompt,
             systemPrompt,
             model,
             provider: payload.provider || null,
+            ...(inferenceStatus._siblingCmd ? { aiCmd: inferenceStatus._siblingCmd } : {}),
             timeoutMs: 25000,
             throwOnError: true
           })
@@ -1802,6 +2810,8 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
                 : derivedSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
 
             const force = Boolean(payload.force);
+            const updateExisting = Boolean(payload.updateExisting);
+            const regenerateFragment = Boolean(payload.regenerateFragment);
             const result = scaffoldProject({
               project: derivedSlug,
               title: displayTitle,
@@ -1824,11 +2834,16 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
               pwa: pwaEnabled,
               content: typeof payload.content === "string" ? payload.content : null,
               force,
-              avoidCollision: !force,
+              updateExisting,
+              regenerateFragment,
+              avoidCollision: !force && !updateExisting,
               rootDir: workspaceRoot,
               workspaceRoot
             });
 
+            if (typeof markProjectScaffolded === "function") {
+              markProjectScaffolded(result.projectDir);
+            }
             if (typeof attachProjectsWatcher === "function") attachProjectsWatcher();
             if (typeof syncProjectSubdirWatchers === "function") syncProjectSubdirWatchers();
             if (typeof broadcastProjectsChanged === "function") broadcastProjectsChanged();
@@ -1838,6 +2853,7 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             }));
             res.end(JSON.stringify({
               ok: true,
+              updated: updateExisting,
               slug: result.slug,
               projectDir: `projects/${result.slug}`,
               entryUrl: `/projects/${result.slug}/index.html`,
@@ -1936,16 +2952,43 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
               res.end(JSON.stringify({ ok: false, error: "Missing 'name'" }));
               return;
             }
+            const rawSlug = payload.projectSlug !== undefined
+              ? String(payload.projectSlug || "").trim()
+              : (payload.slug !== undefined
+                  ? String(payload.slug || "").trim()
+                  : (payload.project !== undefined ? String(payload.project || "").trim() : ""));
+
+            if (rawSlug && (rawSlug.includes("..") || rawSlug.includes("/") || rawSlug.includes("\\"))) {
+              res.writeHead(403, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+              res.end(JSON.stringify({ ok: false, error: "Invalid projectSlug path" }));
+              return;
+            }
+            const safeSlug = rawSlug ? slugifyProject(rawSlug) : "";
+            if (rawSlug && !safeSlug) {
+              res.writeHead(400, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+              res.end(JSON.stringify({ ok: false, error: "Invalid projectSlug" }));
+              return;
+            }
+
             const baseName = path.basename(rawName).replace(/[^a-zA-Z0-9._-]/g, "_");
             const safeName = (!baseName || baseName === "." || baseName === "..") ? `upload-${Date.now()}` : baseName;
 
             const workspaceRoot = findWorkspaceRoot(rootDir);
-            const uploadsDir = path.join(workspaceRoot, "projects", "_uploads");
-            fs.mkdirSync(uploadsDir, { recursive: true });
+            const projectsRoot = path.resolve(workspaceRoot, "projects");
+            const targetDir = safeSlug
+              ? path.resolve(projectsRoot, safeSlug, "refs")
+              : path.resolve(projectsRoot, "_uploads");
+            const relDirCheck = path.relative(projectsRoot, targetDir);
+            if (relDirCheck.startsWith("..") || path.isAbsolute(relDirCheck) || relDirCheck === "") {
+              res.writeHead(403, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+              res.end(JSON.stringify({ ok: false, error: "Upload directory escapes projects root" }));
+              return;
+            }
+            fs.mkdirSync(targetDir, { recursive: true });
 
-            const destPath = path.resolve(uploadsDir, safeName);
-            const relFromUploads = path.relative(uploadsDir, destPath);
-            if (relFromUploads.startsWith("..") || path.isAbsolute(relFromUploads) || relFromUploads === "") {
+            const destPath = path.resolve(targetDir, safeName);
+            const relFromTarget = path.relative(targetDir, destPath);
+            if (relFromTarget.startsWith("..") || path.isAbsolute(relFromTarget) || relFromTarget === "") {
               res.writeHead(403, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
               res.end(JSON.stringify({ ok: false, error: "Invalid upload filename" }));
               return;
@@ -1960,11 +3003,37 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             fs.writeFileSync(destPath, buffer);
             const relPath = path.relative(workspaceRoot, destPath).replace(/\\/g, "/");
 
+            if (safeSlug) {
+              const manifestPath = path.join(projectsRoot, safeSlug, "report.manifest.json");
+              if (fs.existsSync(manifestPath)) {
+                try {
+                  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+                  const existingRefs = Array.isArray(manifest.referenceFiles) ? manifest.referenceFiles : [];
+                  const alreadyIdx = existingRefs.findIndex((r) => r && (r.stagedPath === relPath || r.originalPath === relPath));
+                  const nextEntry = {
+                    name: safeName,
+                    originalPath: relPath,
+                    stagedPath: relPath,
+                    note: alreadyIdx >= 0 ? (existingRefs[alreadyIdx].note || "") : ""
+                  };
+                  if (alreadyIdx >= 0) {
+                    existingRefs[alreadyIdx] = { ...existingRefs[alreadyIdx], ...nextEntry };
+                  } else {
+                    existingRefs.push(nextEntry);
+                  }
+                  manifest.referenceFiles = existingRefs;
+                  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf-8");
+                } catch (_) {}
+              }
+            }
+
             res.writeHead(200, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
             res.end(JSON.stringify({
               ok: true,
               name: safeName,
               path: relPath,
+              scope: safeSlug ? "workspace" : "staging",
+              ...(safeSlug ? { projectSlug: safeSlug } : {}),
               sizeBytes: buffer.length
             }));
           } catch (err) {
@@ -1991,15 +3060,80 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
         try {
           const workspaceRoot = findWorkspaceRoot(rootDir);
           const query = (parsedUrl.searchParams.get("q") || "").trim().toLowerCase();
+          const rawProject = (parsedUrl.searchParams.get("project") || "").trim();
+          if (rawProject && (rawProject.includes("..") || rawProject.includes("/") || rawProject.includes("\\"))) {
+            res.writeHead(403, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+            res.end(JSON.stringify({ ok: false, error: "Invalid project path" }));
+            return;
+          }
+          const safeProject = rawProject ? slugifyProject(rawProject) : "";
           const SKIP_DIRS = new Set([
             "node_modules", ".git", ".agents", ".gemini", "dist", "build",
             ".next", "coverage", "playwright-report", "test-results"
           ]);
+          const PROJECT_BOILERPLATE = new Set([
+            "index.html", "fragment.html", "report.manifest.json",
+            "agents.md", "package.json", "sw.js", "manifest.webmanifest", "offline.html"
+          ]);
           const MAX_FILES = 300;
-          const files = [];
+          const projectFiles = [];
+          const projectFilePaths = new Set();
+
+          if (safeProject) {
+            const projectsRoot = path.resolve(workspaceRoot, "projects");
+            const projectDir = path.resolve(projectsRoot, safeProject);
+            const relCheck = path.relative(projectsRoot, projectDir);
+            if (!relCheck.startsWith("..") && !path.isAbsolute(relCheck) && fs.existsSync(projectDir)) {
+              const walkProject = (dir, depth) => {
+                if (depth > 6 || projectFiles.length >= MAX_FILES) return;
+                let entries;
+                try {
+                  entries = fs.readdirSync(dir, { withFileTypes: true });
+                } catch {
+                  return;
+                }
+                // Prioritize refs/ directory ahead of other subdirectories, then alphabetical
+                entries.sort((a, b) => {
+                  if (dir === projectDir) {
+                    if (a.isDirectory() && a.name === "refs") return -1;
+                    if (b.isDirectory() && b.name === "refs") return 1;
+                  }
+                  return a.name.localeCompare(b.name);
+                });
+                for (const entry of entries) {
+                  if (projectFiles.length >= MAX_FILES) break;
+                  if (entry.isSymbolicLink()) continue;
+                  const full = path.join(dir, entry.name);
+                  if (entry.isDirectory()) {
+                    if (SKIP_DIRS.has(entry.name) || entry.name.startsWith(".")) continue;
+                    walkProject(full, depth + 1);
+                  } else if (entry.isFile()) {
+                    if (dir === projectDir && PROJECT_BOILERPLATE.has(entry.name.toLowerCase())) continue;
+                    const rel = path.relative(workspaceRoot, full).replace(/\\/g, "/");
+                    if (query && !rel.toLowerCase().includes(query)) continue;
+                    let sizeBytes = 0;
+                    try {
+                      sizeBytes = fs.statSync(full).size;
+                    } catch {}
+                    projectFilePaths.add(rel);
+                    projectFiles.push({
+                      name: entry.name,
+                      path: rel,
+                      sizeBytes,
+                      inProjectWorkspace: true
+                    });
+                  }
+                }
+              };
+              walkProject(projectDir, 0);
+            }
+          }
+
+          const generalFiles = [];
+          const uploadsRelPrefix = "projects/_uploads/";
 
           const walk = (dir, depth) => {
-            if (depth > 6 || files.length >= MAX_FILES) return;
+            if (depth > 6 || (projectFiles.length + generalFiles.length) >= MAX_FILES) return;
             let entries;
             try {
               entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -2008,7 +3142,7 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             }
             entries.sort((a, b) => a.name.localeCompare(b.name));
             for (const entry of entries) {
-              if (files.length >= MAX_FILES) break;
+              if ((projectFiles.length + generalFiles.length) >= MAX_FILES) break;
               if (entry.isSymbolicLink()) continue;
               const full = path.join(dir, entry.name);
               if (entry.isDirectory()) {
@@ -2016,12 +3150,14 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
                 walk(full, depth + 1);
               } else if (entry.isFile()) {
                 const rel = path.relative(workspaceRoot, full).replace(/\\/g, "/");
+                if (rel.startsWith(uploadsRelPrefix)) continue;
+                if (projectFilePaths.has(rel)) continue;
                 if (query && !rel.toLowerCase().includes(query)) continue;
                 let sizeBytes = 0;
                 try {
                   sizeBytes = fs.statSync(full).size;
                 } catch {}
-                files.push({
+                generalFiles.push({
                   name: entry.name,
                   path: rel,
                   sizeBytes
@@ -2030,13 +3166,20 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
             }
           };
           walk(workspaceRoot, 0);
+          const files = [...projectFiles, ...generalFiles].slice(0, MAX_FILES);
 
           res.writeHead(200, {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
             "Cache-Control": "no-cache, no-store"
           });
-          res.end(JSON.stringify({ ok: true, workspaceRoot, files }));
+          res.end(JSON.stringify({
+            ok: true,
+            workspaceRoot,
+            project: safeProject || null,
+            projectFiles,
+            files
+          }));
         } catch (err) {
           res.writeHead(500, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
           res.end(JSON.stringify({ ok: false, error: err.message }));
@@ -2220,33 +3363,168 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
       return;
     }
 
-    // 1b-1. Page edit hand-off: localhost only, scoped to the served file, POST only
+    // 1b-1. Page edit hand-off: localhost only, workspace-scoped, Tier 1 fast-patch + Tier 2 CLI fallback
     if (pathname === "/__agent_edit__") {
       const sendJson = (code, obj) => {
         res.writeHead(code, applyLocalCorsHeaders(req, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" }));
         res.end(JSON.stringify(obj));
       };
+      if (req.method === "OPTIONS") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, X-CSRF-Token"
+        }));
+        res.end();
+        return;
+      }
       if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
       if (req.method !== "POST") return sendJson(405, { ok: false, error: "POST required." });
       let body = "";
       req.on("data", (chunk) => { body += chunk; if (body.length > 256 * 1024) req.destroy(); });
-      req.on("end", () => {
+      req.on("end", async () => {
         let payload = {};
         try { payload = JSON.parse(body); } catch (_) {}
         if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: true, csrfToken: payload.csrfToken })) return;
         const prompt = typeof payload.prompt === "string" ? payload.prompt.trim() : "";
         if (!prompt) return sendJson(400, { ok: false, error: "Missing prompt." });
-        const requested = typeof payload.file === "string" ? payload.file.trim() : "";
-        if (requested && requested !== "/" && path.basename(requested) !== targetFileName) {
-          return sendJson(403, { ok: false, error: `Edits are scoped to the served file (${targetFileName}).` });
+
+        const target = resolveEditTarget(payload.file, resolvedPath, rootDir);
+        if (!target.ok) {
+          return sendJson(target.status || 403, { ok: false, error: target.error });
         }
-        const scoped = `You are editing the html-report page served from ${resolvedPath}. Only modify that report's source content and rebuild it; do not touch other files.\n\n${prompt}`;
-        console.log(`[html-report] Agent edit requested for ${targetFileName}`);
-        AgentInferenceRouter.dispatch({ prompt: scoped, systemPrompt: scoped, timeoutMs: 300000 })
+
+        const effectiveModel = (typeof payload.model === "string" && payload.model.trim())
+          ? payload.model.trim()
+          : (target.manifest?.aiConfig?.model || "Gemini 3.8 Flash (Low)");
+        const targetIds = Array.isArray(payload.targetIds) ? payload.targetIds : [];
+        const anchorIds = Array.isArray(payload.anchorIds) ? payload.anchorIds : [];
+        const forceCli = payload.mode === "cli" || payload.fastPatch === false;
+
+        let fragmentHtml = "";
+        let ctx = { requestedIds: [], outline: [], slices: [] };
+        if (target.fragmentPath) {
+          try {
+            fragmentHtml = fs.readFileSync(target.fragmentPath, "utf-8");
+            ctx = extractFragmentContext(fragmentHtml, { targetIds, anchorIds, prompt });
+          } catch (_) {
+            fragmentHtml = "";
+          }
+        }
+
+        console.log(`[html-report] Agent edit requested for ${target.targetRel}${target.fragmentRel ? ` (fragment: ${target.fragmentRel})` : ""}`);
+
+        // Tier 1: Surgical Fragment Fast-Patch when fragment.html is available with bounded context
+        const canFastPatch = Boolean(
+          target.fragmentPath &&
+          !forceCli &&
+          fragmentHtml &&
+          (ctx.slices.length > 0 || fragmentHtml.length <= 24000)
+        );
+
+        let fallbackReason = null;
+        if (canFastPatch) {
+          const sliceSection = ctx.slices.length > 0
+            ? ctx.slices.map((s) => `--- Slice #${s.id} ---\n${s.html}`).join("\n\n")
+            : `--- Full fragment.html ---\n${fragmentHtml}`;
+          const outlineNote = ctx.outline.length > 0
+            ? `Section outline: ${ctx.outline.map((o) => `<${o.tag} id="${o.id}">`).join(", ")}`
+            : "";
+
+          const tier1System = [
+            `You are a surgical HTML fragment patcher editing ${target.fragmentRel}.`,
+            "Return ONLY a JSON object matching {\"patches\":[{\"find\":\"exact substring from fragment.html\",\"replace\":\"replacement HTML\"}]} with no markdown prose outside JSON.",
+            "Rules: keep every 'find' unique and verbatim; preserve heading id attributes and <div class=\"overflow-x-auto\"> wrappers around <table>; never emit <html>, <head>, or <body>."
+          ].join(" ");
+          const tier1Prompt = [
+            prompt,
+            outlineNote,
+            "Current Semantic Fragment context:",
+            sliceSection
+          ].filter(Boolean).join("\n\n");
+
+          try {
+            const t1Res = await AgentInferenceRouter.dispatch({
+              systemPrompt: tier1System,
+              prompt: tier1Prompt,
+              model: effectiveModel,
+              provider: payload.provider || null,
+              timeoutMs: 45000,
+              throwOnError: true
+            });
+            const patches = parseSurgicalPatchPayload(t1Res.text);
+            if (patches) {
+              const buildOpts = target.manifest ? {
+                title: target.manifest.title,
+                mode: target.manifest.mode,
+                theme: target.manifest.theme,
+                addons: target.manifest.activeAddons,
+                ai: Boolean(target.manifest.aiBridge),
+                pwa: Boolean(target.manifest.pwa)
+              } : null;
+              const applied = applySurgicalFragmentPatches(fragmentHtml, patches, { buildOptions: buildOpts });
+              if (applied.ok) {
+                const tmpFrag = `${target.fragmentPath}.tmp-${process.pid}-${Date.now()}`;
+                fs.writeFileSync(tmpFrag, applied.html, "utf-8");
+                fs.renameSync(tmpFrag, target.fragmentPath);
+                rebuildProjectFromFragment(target.targetDir);
+                return sendJson(200, {
+                  ok: true,
+                  mode: "fast-patch",
+                  patchesApplied: applied.patchesApplied,
+                  file: target.targetRel,
+                  fragment: target.fragmentRel,
+                  provider: t1Res.provider,
+                  result: `Applied ${applied.patchesApplied} surgical patch(es) to ${target.fragmentRel}.`
+                });
+              }
+              fallbackReason = applied.reason;
+            } else {
+              fallbackReason = "Tier 1 response did not contain valid JSON patches.";
+            }
+          } catch (err) {
+            if (err.code === "inference_unavailable" && !/empty|JSON|patch/i.test(err.message || "")) {
+              console.warn(`[html-report] Agent edit failed: ${err.message}`);
+              return sendJson(502, {
+                ok: false,
+                code: err.code || "inference_unavailable",
+                error: err.message || "Agent unavailable or timed out.",
+                preflight: err.preflight || AgentInferenceRouter.detectProviders()
+              });
+            }
+            fallbackReason = err.message;
+          }
+          if (fallbackReason) {
+            console.log(`[html-report] Fast-patch fallback -> CLI (${fallbackReason})`);
+          }
+        }
+
+        // Tier 2: Fragment-scoped full workspace-tool agent fallback (distinct systemPrompt & prompt)
+        const editTargetPath = target.fragmentPath || target.targetHtmlPath;
+        const tier2System = target.fragmentPath
+          ? `Edit only the Semantic Fragment at ${editTargetPath}. Do not modify unrelated files. Local dev server auto-rebuilds ${target.targetRel} on save; no manual build-report.mjs run is needed.`
+          : `Edit only the html-report page at ${editTargetPath}. Do not modify unrelated files.`;
+
+        const preSlicedHint = ctx.slices.length > 0
+          ? `\n\nPre-sliced target context from ${target.fragmentRel}:\n${ctx.slices.map((s) => `<!-- #${s.id} -->\n${s.html}`).join("\n\n")}`
+          : "";
+        const tier2Prompt = `${prompt}${preSlicedHint}`;
+
+        AgentInferenceRouter.dispatch({
+          systemPrompt: tier2System,
+          prompt: tier2Prompt,
+          model: effectiveModel,
+          provider: payload.provider || null,
+          timeoutMs: 300000,
+          throwOnError: true
+        })
           .then((dispatchResult) => {
             sendJson(200, {
               ok: true,
-              file: targetFileName,
+              mode: "cli",
+              fallbackReason: fallbackReason || undefined,
+              file: target.targetRel,
+              fragment: target.fragmentRel,
               provider: dispatchResult.provider,
               result: String(dispatchResult.text || "").trim()
             });
@@ -2260,6 +3538,107 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
               preflight: err.preflight || AgentInferenceRouter.detectProviders()
             });
           });
+      });
+      return;
+    }
+
+    // 1b-1b. Document Default Styling persistence: localhost only, workspace-scoped
+    if (pathname === "/__agent_style__") {
+      const sendJson = (code, obj) => {
+        res.writeHead(code, applyLocalCorsHeaders(req, { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" }));
+        res.end(JSON.stringify(obj));
+      };
+      if (req.method === "OPTIONS") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, X-CSRF-Token"
+        }));
+        res.end();
+        return;
+      }
+      if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return;
+      if (req.method !== "POST") return sendJson(405, { ok: false, error: "POST required." });
+
+      let body = "";
+      req.on("data", (chunk) => { body += chunk; if (body.length > 256 * 1024) req.destroy(); });
+      req.on("end", () => {
+        let payload = {};
+        try { payload = JSON.parse(body); } catch (_) {
+          return sendJson(400, { ok: false, error: "Invalid JSON payload." });
+        }
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: true, csrfToken: payload.csrfToken })) return;
+
+        let compiledCss = "";
+        let compiledThemeName = null;
+        if (payload.customTheme !== undefined && payload.customTheme !== null) {
+          const serializedCheck = typeof payload.customTheme === "string"
+            ? payload.customTheme
+            : JSON.stringify(payload.customTheme);
+          if (/<\/?\s*(style|script)\b/i.test(serializedCheck)) {
+            return sendJson(400, { ok: false, error: "Unsafe tag detected in customTheme payload." });
+          }
+          try {
+            const compiled = compileTheme(payload.customTheme);
+            if (!compiled || !compiled.css || /<\/?\s*(style|script)\b/i.test(compiled.css)) {
+              return sendJson(400, { ok: false, error: "Invalid compiled customTheme CSS." });
+            }
+            compiledCss = compiled.css;
+            compiledThemeName = compiled.themeName;
+          } catch (err) {
+            return sendJson(400, { ok: false, error: `Invalid customTheme: ${err.message}` });
+          }
+        }
+
+        const rawTheme = typeof payload.theme === "string" && payload.theme.trim()
+          ? payload.theme.trim()
+          : (compiledThemeName || "");
+        if (!/^[a-zA-Z0-9_-]{1,64}$/.test(rawTheme)) {
+          return sendJson(400, { ok: false, error: "Invalid or missing theme name." });
+        }
+
+        const target = resolveEditTarget(payload.file, resolvedPath, rootDir);
+        if (!target.ok) {
+          return sendJson(target.status || 403, { ok: false, error: target.error });
+        }
+
+        try {
+          if (target.manifestPath && target.fragmentPath) {
+            const manifestObj = JSON.parse(fs.readFileSync(target.manifestPath, "utf-8"));
+            manifestObj.theme = rawTheme;
+            manifestObj.customTheme = payload.customTheme ? payload.customTheme : null;
+            const tmpManifest = `${target.manifestPath}.tmp-${process.pid}-${Date.now()}`;
+            fs.writeFileSync(tmpManifest, JSON.stringify(manifestObj, null, 2) + "\n", "utf-8");
+            fs.renameSync(tmpManifest, target.manifestPath);
+            rebuildProjectFromFragment(target.targetDir, { force: true });
+            return sendJson(200, {
+              ok: true,
+              mode: "project",
+              file: target.targetRel,
+              theme: rawTheme,
+              customTheme: Boolean(compiledCss)
+            });
+          }
+
+          const currentHtml = fs.readFileSync(target.targetHtmlPath, "utf-8");
+          const updatedHtml = applyStyleToStandaloneHtml(currentHtml, {
+            theme: rawTheme,
+            compiledCustomCss: compiledCss
+          });
+          const tmpHtml = `${target.targetHtmlPath}.tmp-${process.pid}-${Date.now()}`;
+          fs.writeFileSync(tmpHtml, updatedHtml, "utf-8");
+          fs.renameSync(tmpHtml, target.targetHtmlPath);
+          broadcastReload(target.targetHtmlPath);
+          return sendJson(200, {
+            ok: true,
+            mode: "standalone",
+            file: target.targetRel,
+            theme: rawTheme,
+            customTheme: Boolean(compiledCss)
+          });
+        } catch (err) {
+          return sendJson(500, { ok: false, error: `Failed to persist style: ${err.message}` });
+        }
       });
       return;
     }
@@ -2309,6 +3688,7 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
           checkedProviders: providerStatus.checkedProviders,
           streamConnected: datastarClients.size > 0,
           streamListeners: datastarClients.size,
+          mcpEndpoint: "/mcp",
           modelConfigured: true,
           defaultModel: "Gemini 3.8 Flash (Low)",
           personas: personaRegistry.list().map((p) => p.id),
@@ -2465,6 +3845,14 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
 
     // 1c. SSE Live-Reload Endpoint
     if (pathname === "/__live_reload__") {
+      let pagePath = parsedUrl.searchParams.get("page") || "";
+      if (!pagePath && req.headers.referer) {
+        try {
+          pagePath = new URL(req.headers.referer).pathname || "";
+        } catch (_) {}
+      }
+      res._pagePath = pagePath;
+
       res.writeHead(200, {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache, no-transform",
@@ -2751,7 +4139,7 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
   const fragmentRebuildTimers = new Map();
   const watchedProjectSubdirs = new Set();
 
-  function rebuildProjectFromFragment(projectDir) {
+  function rebuildProjectFromFragment(projectDir, { force = false } = {}) {
     const resolvedDir = path.resolve(projectDir);
     const fragmentPath = path.join(resolvedDir, "fragment.html");
     const manifestPath = path.join(resolvedDir, "report.manifest.json");
@@ -2767,7 +4155,7 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
       return false;
     }
 
-    if (fragmentMtimes.get(resolvedDir) === sig) return false;
+    if (!force && fragmentMtimes.get(resolvedDir) === sig) return false;
     fragmentMtimes.set(resolvedDir, sig);
 
     try {
@@ -2791,7 +4179,9 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
         aiPurpose: manifest.aiConfig?.purpose || "",
         aiDock: manifest.aiConfig?.floatingAssistant ?? true,
         pwa: Boolean(manifest.pwa),
-        source: manifest.files?.entry || "index.html",
+        source: manifest.project
+          ? `projects/${manifest.project}/index.html`
+          : (manifest.files?.entry || "index.html"),
         workspaceRoot: workspaceRootDir
       });
       fs.writeFileSync(entryPath, built.html, "utf-8");
@@ -2823,6 +4213,36 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
     }
   } catch (_) {}
 
+  function markProjectScaffolded(projectDir) {
+    try {
+      const resolvedDir = path.resolve(projectDir);
+      const fPath = path.join(resolvedDir, "fragment.html");
+      const mPath = path.join(resolvedDir, "report.manifest.json");
+      const ePath = path.join(resolvedDir, "index.html");
+      if (fs.existsSync(fPath) && fs.existsSync(mPath)) {
+        fragmentMtimes.set(resolvedDir, `${fs.statSync(fPath).mtimeMs}:${fs.statSync(mPath).mtimeMs}`);
+      }
+      if (fs.existsSync(ePath)) {
+        mtimes.set(ePath, fs.statSync(ePath).mtimeMs);
+      }
+    } catch (_) {}
+  }
+
+  function shouldReloadSseClient(client, updatedFile) {
+    const pagePath = client && client._pagePath ? String(client._pagePath) : "";
+    const resolvedUpdated = path.resolve(updatedFile);
+    const updatedBase = path.basename(resolvedUpdated).toLowerCase();
+    const isCreateStudioPage = pagePath === "/create" || pagePath === "/create.html" || pagePath === "/html-create";
+    if (isCreateStudioPage) {
+      return updatedBase === "create.html";
+    }
+    if (pagePath.startsWith("/projects/")) {
+      const targetRel = "/" + path.relative(workspaceRootForWatch, resolvedUpdated).replace(/\\/g, "/");
+      return targetRel === pagePath || resolvedUpdated === resolvedPath;
+    }
+    return true;
+  }
+
   function broadcastReload(updatedFile) {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
@@ -2834,25 +4254,31 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
         return;
       }
 
-      const activeCount = sseClients.size;
+      const matchingClients = [];
+      for (const client of sseClients) {
+        if (shouldReloadSseClient(client, updatedFile)) {
+          matchingClients.push(client);
+        }
+      }
+      const activeCount = matchingClients.length;
       const fileName = path.basename(updatedFile);
       const targetUrl = `http://localhost:${serverPort}/`;
 
       if (activeCount > 0) {
         console.log(`\n[html-report] File updated: ${fileName}`);
         console.log(`[html-report] -> Refreshing ${activeCount} active tab(s) in place without opening new tabs.`);
-        for (const client of sseClients) {
+        for (const client of matchingClients) {
           try {
             client.write("event: reload\ndata: {}\n\n");
           } catch (_) {
             sseClients.delete(client);
           }
         }
-      } else if (autoOpen) {
+      } else if (autoOpen && path.resolve(updatedFile) === resolvedPath) {
         console.log(`\n[html-report] File updated: ${fileName}`);
         console.log(`[html-report] -> No active tabs detected. Reopening in browser: ${targetUrl}`);
         openBrowser(targetUrl);
-      } else {
+      } else if (sseClients.size === 0) {
         console.log(`\n[html-report] File updated: ${fileName}`);
         console.log(`[html-report] -> No active tabs detected (--no-open active; waiting for browser connection at ${targetUrl}).`);
       }
@@ -2995,11 +4421,16 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
         currentMode = detectReportMode(raw);
       } catch (_) {}
 
+      const portMismatch = requestedPort > 0 && serverPort !== requestedPort;
       if (process.env.NODE_ENV !== "test") {
         console.log(`\n======================================================`);
         console.log(` 🚀 html-report Live-Reload Dev Server`);
         console.log(` Serving: ${resolvedPath} [mode: ${currentMode}]`);
         console.log(` URL:     ${serverUrl}`);
+        if (portMismatch) {
+          console.warn(` ⚠️  PORT FALLBACK WARNING: Requested port ${requestedPort} was occupied!`);
+          console.warn(` ⚠️  Bound to fallback port ${serverPort} instead. Update --port or free :${requestedPort}.`);
+        }
         console.log(` Status:  Watching for updates...`);
         console.log(`\n  • When updated while tab is open: refreshes existing tab in place.`);
         console.log(
@@ -3008,6 +4439,8 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
             : `  • Browser auto-open disabled (--no-open).`
         );
         console.log(`======================================================\n`);
+      } else if (portMismatch) {
+        console.warn(`[html-report] PORT FALLBACK WARNING: Requested port ${requestedPort} was busy; bound to ${serverPort}.`);
       }
 
       if (autoOpen) {
@@ -3032,6 +4465,9 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
         serverPort,
         close: () => {
           shutdownResources();
+          if (typeof server.closeAllConnections === "function") {
+            try { server.closeAllConnections(); } catch (_) {}
+          }
           return new Promise((res) => server.close(res));
         }
       });
@@ -3199,15 +4635,20 @@ export {
   MIME_TYPES,
   findWorkspaceRoot,
   extractProjectMetadata,
-  scanWorkspaceProjects
+  scanWorkspaceProjects,
+  resolveEditTarget,
+  applyStyleToStandaloneHtml,
+  extractFragmentContext,
+  parseSurgicalPatchPayload,
+  applySurgicalFragmentPatches
 };
 
 const isMainModule = isDirectCliExecution(process.argv[1], import.meta.url);
 
 if (isMainModule) {
-  const { filePath, port, autoOpen, feedProxies } = parseArgs(process.argv);
+  const { filePath, port, autoOpen, feedProxies, aiLocal } = parseArgs(process.argv);
   if (!filePath) {
-    console.error("Usage: node serve-report.mjs <path-to-report.html> [--port <number>] [--no-open] [--feed-proxy <prefix=targetUrl>]");
+    console.error("Usage: node serve-report.mjs <path-to-report.html> [--port <number>] [--no-open] [--ai-local] [--feed-proxy <prefix=targetUrl>]");
     process.exit(1);
   }
   const selfWatchEnabled = process.env.HTML_REPORT_SUPERVISED !== "1" &&
@@ -3217,6 +4658,6 @@ if (isMainModule) {
   if (selfWatchEnabled) {
     runSupervisedServer(process.argv);
   } else {
-    startServer(filePath, port, autoOpen, feedProxies);
+    startServer({ filePath, port, autoOpen, feedProxies, aiLocal });
   }
 }

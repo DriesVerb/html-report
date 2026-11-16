@@ -1,0 +1,320 @@
+<section id="journey-overview" class="space-y-6">
+  <div class="card bg-base-200/70 border border-base-300 shadow-sm">
+    <div class="card-body p-5 sm:p-6 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <span class="badge badge-primary badge-sm font-mono">OpenSpec Journey · spec-driven</span>
+            <span class="badge badge-outline badge-sm font-mono">Beneficiary: Agent-Facing / Hybrid</span>
+            <span class="badge badge-outline badge-sm font-mono">Server-Connected · Interactive</span>
+          </div>
+          <h1 id="journey-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Minimal Streamable Companion MCP on <code>serve-report.mjs</code></h1>
+          <p class="text-sm text-base-content/75 mt-1">
+            Upgrading the existing Node dev server on <code>:3031</code> with a localhost-secured Streamable HTTP <code>POST /mcp</code> endpoint, universal <code>Idiomorph</code> + Datastar live-DOM propagation, real state inspection, and 1-call <code>report_build</code> assembly—without spawning a separate <code>stdio</code> daemon or bloating <code>SKILL.md</code>.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline btn-primary gap-1.5 font-mono text-xs">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> proposal.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline btn-secondary gap-1.5 font-mono text-xs">
+            <i data-lucide="cpu" class="w-3.5 h-3.5"></i> design.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5 font-mono text-xs">
+            <i data-lucide="check-square" class="w-3.5 h-3.5"></i> tasks.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('specs/companion-mcp/spec.md')" class="btn btn-sm btn-outline gap-1.5 font-mono text-xs">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> spec.md
+          </button>
+        </div>
+      </div>
+
+      <!-- Mandatory Journey Phase Stepper -->
+      <div class="w-full overflow-x-auto pt-2">
+        <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary">Brainstorming</li>
+          <li class="step step-primary">Planning</li>
+          <li class="step step-primary">Implementing</li>
+          <li class="step step-primary">Verifying</li>
+          <li class="step step-primary">Shipped / Archived</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Progress Metrics -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Total Tasks</div>
+      <div class="stat-value text-2xl font-extrabold">6</div>
+      <div class="stat-desc text-xs font-mono">3 Phases · Implemented</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Completed</div>
+      <div class="stat-value text-2xl font-extrabold text-success">6</div>
+      <div class="stat-desc text-xs font-mono">100% complete (Verified)</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Remaining</div>
+      <div class="stat-value text-2xl font-extrabold text-success">0</div>
+      <div class="stat-desc text-xs font-mono">Shipped &amp; Archived</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-xs p-4">
+      <div class="stat-title text-xs">Lean MCP Tool Surface</div>
+      <div class="stat-value text-2xl font-extrabold text-primary">6</div>
+      <div class="stat-desc text-xs font-mono">5 existing + report_build</div>
+    </div>
+  </div>
+</section>
+
+<section id="code-dive-findings" class="space-y-4">
+  <h2 id="code-dive-and-philosophy-fit" class="text-xl font-bold flex items-center gap-2">
+    <i data-lucide="search-code" class="w-5 h-5 text-primary"></i>
+    Code Dive Findings &amp; Philosophy Alignment
+  </h2>
+  <p class="text-sm text-base-content/80">
+    Inspecting <code>serve-report.mjs</code>, <code>mcp-server.mjs</code>, <code>domain-model.mjs</code>, and <code>template-shell.html</code> revealed why a minimal Streamable HTTP upgrade on the existing server fits the platform's <code>Pipeline</code> + <code>Two-Way Agent Bridge</code> architecture cleanly without touching mechanical <code>Assembly</code> or <code>Published Document</code> invariants (see <a href="javascript:void(0)" onclick="openMarkdownViewer('proposal.md')" class="link link-primary font-mono">proposal.md</a> and <a href="javascript:void(0)" onclick="openMarkdownViewer('design.md')" class="link link-secondary font-mono">design.md</a>).
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-5 space-y-2">
+        <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2 w-full">
+          <h3 id="finding-transport-security" class="font-bold text-base">1. Legacy SSE Transport &amp; Wildcard CORS</h3>
+          <span class="badge badge-warning badge-sm font-mono">serve-report.mjs</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          <code>serve-report.mjs</code> only exposes the two-endpoint <code>2024-11-05</code> transport (<code>/mcp/sse</code> + <code>/mcp/messages</code>) with <code>Access-Control-Allow-Origin: *</code> and no loopback/Host/Origin checks, while <code>handleMCPRequest()</code> always emits a JSON-RPC body even for notifications lacking an <code>id</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-5 space-y-2">
+        <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2 w-full">
+          <h3 id="finding-sse-gap" class="font-bold text-base">2. Disconnected Live Hooks &amp; Stubbed State</h3>
+          <span class="badge badge-error badge-sm font-mono">mcpContext</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          <code>mcpContext.getActiveCards()</code> returns hardcoded placeholders, and <code>setTheme</code>/<code>appendAlert</code> only broadcast to <code>datastarClients</code> targeting <code>#theme-runtime-hook</code> (absent in <code>template-shell.html</code>), missing standard reports connected to <code>/__live_reload__</code> (<code>sseClients</code> + Idiomorph).
+        </p>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-5 space-y-2">
+        <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2 w-full">
+          <h3 id="finding-domain-fit" class="font-bold text-base">3. Bounded Context &amp; Two-Axis Fit</h3>
+          <span class="badge badge-success badge-sm font-mono">domain-model.mjs</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          Lives squarely in <code>Pipeline</code> + <code>Two-Way Agent Bridge</code> (<code>Server-Connected</code> &times; <code>Interactive / Reactive</code>). <code>Assembly</code> (<code>&lt;100ms</code>) stays mechanical, <code>Published Document</code> stays static, and <a href="javascript:void(0)" onclick="openMarkdownViewer('../../skills/html-report/SKILL.md')" class="link link-primary font-mono">SKILL.md</a> stays <code>&lt;5KB</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-5 space-y-2">
+        <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2 w-full">
+          <h3 id="finding-turnkey-compat" class="font-bold text-base">4. Zero Breakage to AI Bridge &amp; Turnkey</h3>
+          <span class="badge badge-info badge-sm font-mono">Additive</span>
+        </div>
+        <p class="text-xs text-base-content/80">
+          <code>HTMLReportAgent</code>, <code>getReconnectPrompt()</code>, <code>/__agent_action__</code>, and <code>/__agent_edit__</code> handle browser-to-agent requests and remain unchanged; <code>POST /mcp</code> handles agent-to-browser requests on the same <code>:3031</code> process.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="architecture-flow" class="space-y-4">
+  <h2 id="streamable-mcp-architecture" class="text-xl font-bold flex items-center gap-2">
+    <i data-lucide="git-branch" class="w-5 h-5 text-primary"></i>
+    Streamable HTTP <code>/mcp</code> &amp; Dual-SSE Propagation Flow
+  </h2>
+  <div class="card bg-base-100 border border-base-300 shadow-xs p-4 overflow-x-auto">
+    <pre class="mermaid">
+flowchart LR
+  A["External AI Agent (Claude / Cursor / Codex / Antigravity)"] -->|"POST /mcp (JSON-RPC 2.0)"| G{"Loopback + Host + Origin Guard"}
+  G -->|"Non-local Origin"| X["403 Forbidden"]
+  G -->|"Notification (no id)"| N["202 Accepted"]
+  G -->|"Request / Batch"| H["handleMCPRequest() + 6 Canonical Tools"]
+  H -->|"report_build"| B["lintFragment() + buildReport() (&lt;100ms)"]
+  B -->|"Write Output Deliverable"| R["broadcastReload()"]
+  H -->|"report_update_fragment / set_theme / append_alert"| P["Dual SSE Broadcaster"]
+  P -->|"mcp-fragment / mcp-theme / mcp-alert"| LR["/__live_reload__ (Idiomorph + setReportTheme)"]
+  P -->|"datastar-merge-fragments"| DS["/events (datastarClients)"]
+  H -->|"report_get_state"| S["Live Title, Theme, Mode, Fragment Path &amp; Target Element IDs"]
+    </pre>
+  </div>
+</section>
+
+<section id="tradeoff-metrics" class="space-y-4">
+  <h2 id="architecture-tradeoff-comparison" class="text-xl font-bold flex items-center gap-2">
+    <i data-lucide="bar-chart-3" class="w-5 h-5 text-secondary"></i>
+    Minimal <code>/mcp</code> vs. Heavy <code>stdio</code> Daemon Trade-Off
+  </h2>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-5 space-y-3">
+        <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+          <h3 id="mcp-footprint-chart-heading" class="font-bold text-base">Footprint &amp; Coverage Comparison</h3>
+          <span class="badge badge-info badge-sm font-mono">Design Trade-Off</span>
+        </div>
+        <div class="relative h-72 sm:h-80 w-full min-w-0">
+          <canvas id="mcpTradeoffChart"></canvas>
+        </div>
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const ctx = document.getElementById("mcpTradeoffChart");
+            if (!ctx || typeof Chart === "undefined") return;
+            new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: ["Exposed Tools", "Extra IDE Subprocesses", "Live Tab Coverage (1=All Reports)"],
+                datasets: [
+                  {
+                    label: "Heavy 12-Tool stdio MCP",
+                    data: [12, 1, 0],
+                    backgroundColor: "rgba(239, 68, 68, 0.72)",
+                    borderRadius: 6
+                  },
+                  {
+                    label: "Current /mcp/sse",
+                    data: [5, 0, 0.25],
+                    backgroundColor: "rgba(245, 158, 11, 0.72)",
+                    borderRadius: 6
+                  },
+                  {
+                    label: "Minimal Streamable /mcp",
+                    data: [6, 0, 1],
+                    backgroundColor: "rgba(16, 185, 129, 0.78)",
+                    borderRadius: 6
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: "bottom" } },
+                scales: { y: { beginAtZero: true } }
+              }
+            });
+          });
+        </script>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-5 space-y-3">
+        <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+          <h3 id="canonical-tool-surface" class="font-bold text-base">Lean 6-Tool Canonical Surface</h3>
+          <span class="badge badge-success badge-sm font-mono">NATIVE_MCP_TOOLS</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="table table-xs">
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Role</th>
+                <th>Status in Plan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-mono font-semibold">report_get_state</td>
+                <td>Inspects title, theme, mode, fragment path, Target Element IDs</td>
+                <td><span class="badge badge-success badge-xs">Done</span></td>
+              </tr>
+              <tr>
+                <td class="font-mono font-semibold">report_update_fragment</td>
+                <td>Morphs Target Element across live-reload &amp; Datastar tabs</td>
+                <td><span class="badge badge-success badge-xs">Done</span></td>
+              </tr>
+              <tr>
+                <td class="font-mono font-semibold">report_set_theme</td>
+                <td>Synchronizes DaisyUI theme via <code>setReportTheme()</code></td>
+                <td><span class="badge badge-success badge-xs">Done</span></td>
+              </tr>
+              <tr>
+                <td class="font-mono font-semibold">report_append_alert</td>
+                <td>Injects dismissible DaisyUI toast into <code>#report-main</code></td>
+                <td><span class="badge badge-success badge-xs">Done</span></td>
+              </tr>
+              <tr>
+                <td class="font-mono font-semibold">report_export_pdf</td>
+                <td>Returns Playwright PDF export readiness/output metadata</td>
+                <td><span class="badge badge-ghost badge-xs">Keep</span></td>
+              </tr>
+              <tr>
+                <td class="font-mono font-semibold">report_build</td>
+                <td>Validates &amp; compiles Semantic Fragment in <code>&lt;100ms</code></td>
+                <td><span class="badge badge-success badge-xs">Done</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="task-checklist" class="space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <h2 id="implementation-checklist" class="text-xl font-bold flex items-center gap-2">
+      <i data-lucide="list-checks" class="w-5 h-5 text-primary"></i>
+      Connected Task Checklist (<a href="javascript:void(0)" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono text-base">tasks.md</a>)
+    </h2>
+    <span class="badge badge-success font-mono text-xs">6 / 6 Completed · Verified</span>
+  </div>
+
+  <div class="space-y-3">
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-4 space-y-2">
+        <h3 id="phase-1-transport" class="font-bold text-sm">1. Streamable HTTP <code>/mcp</code> Transport &amp; Localhost Security</h3>
+        <ul class="space-y-1.5 text-xs">
+          <li class="flex items-start gap-2">
+            <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled />
+            <span><strong>1.1</strong> Add Streamable HTTP batch/notification handling in <code>mcp-server.mjs</code> and wire <code>POST /mcp</code> in <code>serve-report.mjs</code> with loopback, Host, and Origin enforcement; verify via BDD tests in <code>tests/mcp-bridge.bdd.test.mjs</code>.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled />
+            <span><strong>1.2</strong> Surface additive <code>mcpEndpoint: "/mcp"</code> metadata on <code>GET /__agent_status__</code> and <code>GET /api/agent/preflight</code> while keeping legacy <code>/mcp/sse</code> + <code>/mcp/messages</code> functional.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-4 space-y-2">
+        <h3 id="phase-2-live-dom" class="font-bold text-sm">2. Live Report State &amp; Universal DOM/Theme Propagation</h3>
+        <ul class="space-y-1.5 text-xs">
+          <li class="flex items-start gap-2">
+            <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled />
+            <span><strong>2.1</strong> Upgrade <code>mcpContext</code> to inspect real Output Deliverable metadata (title, mode, sibling Semantic Fragment path, Target Element IDs) and combined listener counts; verify via <code>report_get_state</code> tests.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled />
+            <span><strong>2.2</strong> Extend <code>injectLiveReload()</code> (<code>/__live_reload__</code>) and <code>mcpContext</code> mutators to emit <code>mcp-fragment</code>, <code>mcp-theme</code>, and <code>mcp-alert</code> to both <code>sseClients</code> and <code>datastarClients</code>.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-xs">
+      <div class="card-body p-4 space-y-2">
+        <h3 id="phase-3-build-tool" class="font-bold text-sm">3. Single-Call <code>report_build</code> Tool &amp; Domain Alignment</h3>
+        <ul class="space-y-1.5 text-xs">
+          <li class="flex items-start gap-2">
+            <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled />
+            <span><strong>3.1</strong> Add <code>report_build</code> to <code>NATIVE_MCP_TOOLS</code> and <code>mcp_allowlist.json</code> with canonical domain terminology, workspace containment, <code>lintFragment()</code> + <code>buildReport()</code>, and reload broadcast; update unit, BDD, and domain-alignment tests.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <input type="checkbox" class="checkbox checkbox-xs checkbox-success mt-0.5" checked disabled />
+            <span><strong>3.2</strong> Document <code>http://localhost:3031/mcp</code> concisely in <a href="javascript:void(0)" onclick="openMarkdownViewer('../../skills/html-report/references/two-way-agent-bridge.md')" class="link link-primary font-mono">two-way-agent-bridge.md</a> and verify all test suites plus <code>openspec validate streamable-companion-mcp</code> pass.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
