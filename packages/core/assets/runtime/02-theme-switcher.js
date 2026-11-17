@@ -235,6 +235,28 @@ function initThemeDropdown() {
 }
 
 /**
+ * Computes WCAG-compliant active button foreground contrast for FullCalendar 6
+ * against the active DaisyUI primary surface and triggers layout sync.
+ */
+function syncFullCalendarTheme(palette) {
+  if (typeof document !== "undefined" && document.documentElement?.style && typeof document.documentElement.style.setProperty === "function") {
+    const pLum = palette?.primary
+      ? (0.2126 * srgbToLinear(palette.primary.r) + 0.7152 * srgbToLinear(palette.primary.g) + 0.0722 * srgbToLinear(palette.primary.b))
+      : 0;
+    const activeTextHex = pLum > 0.179 ? "#020617" : "#ffffff";
+    document.documentElement.style.setProperty("--fc-button-active-text-color", activeTextHex);
+  }
+  if (typeof window !== "undefined" && window.reportCalendars && Array.isArray(window.reportCalendars)) {
+    window.reportCalendars.forEach((cal) => {
+      try {
+        if (typeof cal?.updateSize === "function") cal.updateSize();
+        if (typeof cal?.render === "function") cal.render();
+      } catch (_) {}
+    });
+  }
+}
+
+/**
  * Sets active DaisyUI theme dynamically and updates charts/Mermaid.
  */
 async function setReportTheme(themeName) {
@@ -347,13 +369,7 @@ async function setReportTheme(themeName) {
   await renderMermaidWithTheme(palette);
 
   // Dynamic FullCalendar sync
-  if (typeof window !== "undefined" && window.reportCalendars && Array.isArray(window.reportCalendars)) {
-    window.reportCalendars.forEach((cal) => {
-      try {
-        cal.render();
-      } catch (_) {}
-    });
-  }
+  syncFullCalendarTheme(palette);
 
   // Dynamic Datastar reactive $theme signal sync
   syncDatastarTheme(themeName);

@@ -179,29 +179,140 @@
       font-weight: 700 !important;
     }
 
-    /* FullCalendar DaisyUI Theme Integration */
-    :root {
-      --fc-page-bg-color: transparent;
-      --fc-neutral-bg-color: hsl(var(--b2, 0 0% 95%));
-      --fc-list-event-hover-bg-color: hsl(var(--b3, 0 0% 90%));
-      --fc-theme-standard-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
-      --fc-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
-      --fc-button-bg-color: hsl(var(--p, 259 94% 51%));
-      --fc-button-border-color: hsl(var(--p, 259 94% 51%));
-      --fc-button-text-color: hsl(var(--pc, 0 0% 100%));
+    /* FullCalendar 6 DaisyUI v4 OKLCH Theme Integration */
+    :root,
+    [data-theme] {
+      --fc-button-active-text-color: oklch(var(--pc, 89.82% 0.062 275.75));
+    }
+    :root,
+    [data-theme],
+    .fc {
+      --fc-page-bg-color: oklch(var(--b1, 100% 0 0));
+      --fc-neutral-bg-color: oklch(var(--b2, 96.12% 0 0));
+      --fc-neutral-text-color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.75);
+      --fc-list-event-hover-bg-color: oklch(var(--b2, 96.12% 0 0));
+      --fc-theme-standard-border-color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.14);
+      --fc-border-color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.14);
+      --fc-button-bg-color: oklch(var(--b2, 96.12% 0 0));
+      --fc-button-border-color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.18);
+      --fc-button-text-color: oklch(var(--bc, 27.81% 0.03 256.85));
+      --fc-button-hover-bg-color: oklch(var(--b3, 92.42% 0.001 197.14));
+      --fc-button-hover-border-color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.28);
+      --fc-button-active-bg-color: oklch(var(--p, 49.12% 0.31 275.75));
+      --fc-button-active-border-color: oklch(var(--p, 49.12% 0.31 275.75));
+      --fc-today-bg-color: oklch(var(--p, 49.12% 0.31 275.75) / 0.08);
+      --fc-highlight-color: oklch(var(--p, 49.12% 0.31 275.75) / 0.12);
+      --fc-event-bg-color: oklch(var(--p, 49.12% 0.31 275.75));
+      --fc-event-border-color: transparent;
+      --fc-event-text-color: oklch(var(--pc, 89.82% 0.062 275.75));
     }
     .fc {
       max-width: 100%;
+      color: oklch(var(--bc, 27.81% 0.03 256.85));
+    }
+    .fc .fc-toolbar.fc-header-toolbar {
+      margin-bottom: 0.75rem !important;
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
     .fc .fc-toolbar-title {
-      font-size: 1.15rem !important;
+      font-size: 1.05rem !important;
       font-weight: 700 !important;
+      letter-spacing: -0.015em;
+      color: oklch(var(--bc, 27.81% 0.03 256.85));
     }
     .fc .fc-button {
-      padding: 0.35rem 0.65rem !important;
-      font-size: 0.8125rem !important;
+      padding: 0.3rem 0.65rem !important;
+      font-size: 0.75rem !important;
+      font-weight: 600 !important;
+      line-height: 1.25rem !important;
       border-radius: 0.375rem !important;
       text-transform: capitalize !important;
+      box-shadow: none !important;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .fc .fc-button-group > .fc-button:not(:first-child) {
+      border-top-left-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+    }
+    .fc .fc-button-group > .fc-button:not(:last-child) {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+    .fc .fc-button-primary:not(:disabled).fc-button-active,
+    .fc .fc-button-primary:not(:disabled):active {
+      background-color: var(--fc-button-active-bg-color) !important;
+      border-color: var(--fc-button-active-border-color) !important;
+      color: var(--fc-button-active-text-color) !important;
+      box-shadow: none !important;
+    }
+    .fc .fc-button-primary:focus {
+      box-shadow: none !important;
+    }
+    .fc-theme-standard .fc-scrollgrid {
+      border-radius: 0.5rem;
+      overflow: hidden;
+      border: 1px solid var(--fc-border-color) !important;
+    }
+    .fc-theme-standard td,
+    .fc-theme-standard th {
+      border-color: var(--fc-border-color) !important;
+    }
+    .fc .fc-col-header-cell {
+      background-color: oklch(var(--b2, 96.12% 0 0) / 0.65);
+      padding: 0.35rem 0 !important;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .fc .fc-col-header-cell-cushion {
+      color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.75);
+      padding: 2px 4px !important;
+      text-decoration: none !important;
+    }
+    .fc .fc-daygrid-day-number {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.4rem !important;
+      color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.85);
+      text-decoration: none !important;
+    }
+    .fc .fc-day-today .fc-daygrid-day-number {
+      background-color: oklch(var(--p, 49.12% 0.31 275.75));
+      color: var(--fc-button-active-text-color);
+      border-radius: 9999px;
+      min-width: 1.4rem;
+      height: 1.4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0.2rem;
+      padding: 0 0.35rem !important;
+    }
+    .fc .fc-day-other .fc-daygrid-day-top {
+      opacity: 0.4;
+    }
+    .fc .fc-daygrid-event,
+    .fc .fc-h-event,
+    .fc .fc-v-event {
+      border-radius: 0.3rem !important;
+      padding: 1px 5px !important;
+      font-size: 0.7rem !important;
+      font-weight: 600 !important;
+      border: none !important;
+      margin: 1px 2px !important;
+    }
+    .fc .fc-list {
+      border-radius: 0.5rem;
+      overflow: hidden;
+      border-color: var(--fc-border-color) !important;
+    }
+    .fc-theme-standard .fc-list-day-cushion {
+      background-color: oklch(var(--b2, 96.12% 0 0)) !important;
+    }
+    .fc .fc-col-header .fc-scroller {
+      overflow: hidden !important;
     }
 
     /* Impress.js Presentation Guard & Print-Equivalent Treatment */

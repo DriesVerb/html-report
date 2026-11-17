@@ -13,7 +13,7 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://unpkg.com https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
   <title>HTML Report Showcase</title>
 
   <!-- Content-Aware Favicon Emoticon -->
@@ -62,8 +62,89 @@
   <!-- Addon: FullCalendar -->
   <script defer src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js" crossorigin="anonymous"></script>
 
-  <!-- Addon: Datastar -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.9/dist/datastar.js"></script>
+  <meta name="html-report-source" content="report.html" />
+
+  <!-- Deterministic Agent Manifest -->
+  <script type="application/json" id="agent-manifest">
+{
+  "schemaVersion": "1.0.0",
+  "project": null,
+  "title": "HTML Report Showcase",
+  "mode": "report",
+  "theme": "light",
+  "favicon": "📊",
+  "aiBridge": false,
+  "aiConfig": null,
+  "published": false,
+  "pwa": false,
+  "activeAddons": [
+    "charts",
+    "mermaid",
+    "katex",
+    "leaflet",
+    "hljs",
+    "dayjs",
+    "mockjs",
+    "fullcalendar"
+  ],
+  "files": {
+    "entry": "report.html",
+    "fragment": "examples/dev/landing-fragment.html"
+  },
+  "pipeline": {
+    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output report.html --content examples/dev/landing-fragment.html --title \"HTML Report Showcase\" --mode report --theme light --addons charts,mermaid,katex,leaflet,hljs,dayjs,mockjs,fullcalendar",
+    "serveCommand": "node skills/html-report/scripts/serve-report.mjs report.html --port 3031",
+    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs report.html",
+    "preflightCommand": "node skills/html-report/scripts/preflight.mjs --json",
+    "authoringGuide": "../../skills/html-report/references/agent-authoring-guide.md"
+  },
+  "sections": [
+    {
+      "agentId": "section-1",
+      "slug": "publication-grade-html5-reports-for-ai-coding-ag",
+      "label": "Publication-Grade HTML5 Reports for AI Coding Agents",
+      "id": null,
+      "selector": "[data-agent-id=\"section-1\"]"
+    },
+    {
+      "agentId": "section-2",
+      "slug": "why-leading-agent-workflows-rely-on-html-report",
+      "label": "Why Leading Agent Workflows Rely on html-report",
+      "id": null,
+      "selector": "[data-agent-id=\"section-2\"]"
+    },
+    {
+      "agentId": "section-3",
+      "slug": "explore-the-17-library-cdn-power-stack",
+      "label": "Explore the 17-Library CDN Power Stack",
+      "id": "capability-explorer",
+      "selector": "#capability-explorer"
+    },
+    {
+      "agentId": "section-4",
+      "slug": "comprehensive-engineering-guides",
+      "label": "Comprehensive Engineering Guides",
+      "id": "documentation-hub",
+      "selector": "#documentation-hub"
+    },
+    {
+      "agentId": "section-5",
+      "slug": "standalone-reports-live-verification-views",
+      "label": "Standalone Reports &amp; Live Verification Views",
+      "id": null,
+      "selector": "[data-agent-id=\"section-5\"]"
+    }
+  ],
+  "widgets": [
+    {
+      "agentId": "chart-1",
+      "type": "chart",
+      "id": "showcaseChart",
+      "selector": "#showcaseChart"
+    }
+  ]
+}
+  </script>
 
   <style>
     :root {
@@ -85,6 +166,32 @@
       max-width: 100% !important;
       height: auto !important;
       background-color: transparent !important;
+    }
+    .mermaid-wrapper {
+      position: relative;
+    }
+    .mermaid-wrapper .mermaid-enlarge-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 10;
+      opacity: 0.75;
+      transition: opacity 0.15s ease;
+    }
+    .mermaid-wrapper:hover .mermaid-enlarge-btn {
+      opacity: 1;
+    }
+
+    #print-cover-page,
+    .print-only-summary {
+      display: none;
+    }
+
+    @media print {
+      .mermaid-enlarge-btn,
+      #mermaid-enlarge-modal {
+        display: none !important;
+      }
     }
     /* DaisyUI Badge Safeguard: Prevent multi-line text wrapping, oversized spinners, and vertical pill overflow */
     .badge {
@@ -185,29 +292,140 @@
       font-weight: 700 !important;
     }
 
-    /* FullCalendar DaisyUI Theme Integration */
-    :root {
-      --fc-page-bg-color: transparent;
-      --fc-neutral-bg-color: hsl(var(--b2, 0 0% 95%));
-      --fc-list-event-hover-bg-color: hsl(var(--b3, 0 0% 90%));
-      --fc-theme-standard-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
-      --fc-border-color: hsl(var(--bc, 0 0% 20%) / 0.15);
-      --fc-button-bg-color: hsl(var(--p, 259 94% 51%));
-      --fc-button-border-color: hsl(var(--p, 259 94% 51%));
-      --fc-button-text-color: hsl(var(--pc, 0 0% 100%));
+    /* FullCalendar 6 DaisyUI v4 OKLCH Theme Integration */
+    :root,
+    [data-theme] {
+      --fc-button-active-text-color: oklch(var(--pc, 89.82% 0.062 275.75));
+    }
+    :root,
+    [data-theme],
+    .fc {
+      --fc-page-bg-color: oklch(var(--b1, 100% 0 0));
+      --fc-neutral-bg-color: oklch(var(--b2, 96.12% 0 0));
+      --fc-neutral-text-color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.75);
+      --fc-list-event-hover-bg-color: oklch(var(--b2, 96.12% 0 0));
+      --fc-theme-standard-border-color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.14);
+      --fc-border-color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.14);
+      --fc-button-bg-color: oklch(var(--b2, 96.12% 0 0));
+      --fc-button-border-color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.18);
+      --fc-button-text-color: oklch(var(--bc, 27.81% 0.03 256.85));
+      --fc-button-hover-bg-color: oklch(var(--b3, 92.42% 0.001 197.14));
+      --fc-button-hover-border-color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.28);
+      --fc-button-active-bg-color: oklch(var(--p, 49.12% 0.31 275.75));
+      --fc-button-active-border-color: oklch(var(--p, 49.12% 0.31 275.75));
+      --fc-today-bg-color: oklch(var(--p, 49.12% 0.31 275.75) / 0.08);
+      --fc-highlight-color: oklch(var(--p, 49.12% 0.31 275.75) / 0.12);
+      --fc-event-bg-color: oklch(var(--p, 49.12% 0.31 275.75));
+      --fc-event-border-color: transparent;
+      --fc-event-text-color: oklch(var(--pc, 89.82% 0.062 275.75));
     }
     .fc {
       max-width: 100%;
+      color: oklch(var(--bc, 27.81% 0.03 256.85));
+    }
+    .fc .fc-toolbar.fc-header-toolbar {
+      margin-bottom: 0.75rem !important;
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
     .fc .fc-toolbar-title {
-      font-size: 1.15rem !important;
+      font-size: 1.05rem !important;
       font-weight: 700 !important;
+      letter-spacing: -0.015em;
+      color: oklch(var(--bc, 27.81% 0.03 256.85));
     }
     .fc .fc-button {
-      padding: 0.35rem 0.65rem !important;
-      font-size: 0.8125rem !important;
+      padding: 0.3rem 0.65rem !important;
+      font-size: 0.75rem !important;
+      font-weight: 600 !important;
+      line-height: 1.25rem !important;
       border-radius: 0.375rem !important;
       text-transform: capitalize !important;
+      box-shadow: none !important;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .fc .fc-button-group > .fc-button:not(:first-child) {
+      border-top-left-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+    }
+    .fc .fc-button-group > .fc-button:not(:last-child) {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+    .fc .fc-button-primary:not(:disabled).fc-button-active,
+    .fc .fc-button-primary:not(:disabled):active {
+      background-color: var(--fc-button-active-bg-color) !important;
+      border-color: var(--fc-button-active-border-color) !important;
+      color: var(--fc-button-active-text-color) !important;
+      box-shadow: none !important;
+    }
+    .fc .fc-button-primary:focus {
+      box-shadow: none !important;
+    }
+    .fc-theme-standard .fc-scrollgrid {
+      border-radius: 0.5rem;
+      overflow: hidden;
+      border: 1px solid var(--fc-border-color) !important;
+    }
+    .fc-theme-standard td,
+    .fc-theme-standard th {
+      border-color: var(--fc-border-color) !important;
+    }
+    .fc .fc-col-header-cell {
+      background-color: oklch(var(--b2, 96.12% 0 0) / 0.65);
+      padding: 0.35rem 0 !important;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .fc .fc-col-header-cell-cushion {
+      color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.75);
+      padding: 2px 4px !important;
+      text-decoration: none !important;
+    }
+    .fc .fc-daygrid-day-number {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.4rem !important;
+      color: oklch(var(--bc, 27.81% 0.03 256.85) / 0.85);
+      text-decoration: none !important;
+    }
+    .fc .fc-day-today .fc-daygrid-day-number {
+      background-color: oklch(var(--p, 49.12% 0.31 275.75));
+      color: var(--fc-button-active-text-color);
+      border-radius: 9999px;
+      min-width: 1.4rem;
+      height: 1.4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0.2rem;
+      padding: 0 0.35rem !important;
+    }
+    .fc .fc-day-other .fc-daygrid-day-top {
+      opacity: 0.4;
+    }
+    .fc .fc-daygrid-event,
+    .fc .fc-h-event,
+    .fc .fc-v-event {
+      border-radius: 0.3rem !important;
+      padding: 1px 5px !important;
+      font-size: 0.7rem !important;
+      font-weight: 600 !important;
+      border: none !important;
+      margin: 1px 2px !important;
+    }
+    .fc .fc-list {
+      border-radius: 0.5rem;
+      overflow: hidden;
+      border-color: var(--fc-border-color) !important;
+    }
+    .fc-theme-standard .fc-list-day-cushion {
+      background-color: oklch(var(--b2, 96.12% 0 0)) !important;
+    }
+    .fc .fc-col-header .fc-scroller {
+      overflow: hidden !important;
     }
 
     /* Impress.js Presentation Guard & Print-Equivalent Treatment */
@@ -239,6 +457,376 @@
       height: 100%;
     }
 
+    /* Leaflet z-index isolation below z-50 sticky navbar & dropdowns */
+    .leaflet-container {
+      z-index: 10 !important;
+    }
+    .leaflet-pane,
+    .leaflet-top,
+    .leaflet-bottom {
+      z-index: 15 !important;
+    }
+    .leaflet-tile {
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    /* Reveal.js Presentation Shell, Multi-Mode Spacing Tokens & Cascade Guards */
+    #presentation-shell {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+    }
+    .reveal-stage {
+      --slide-pad-x: clamp(1.75rem, 3.2vw, 3.25rem);
+      --slide-pad-top: clamp(1.5rem, 2.5vw, 2.5rem);
+      --slide-pad-bottom: clamp(3.75rem, 5.5vw, 4.75rem);
+      --slide-gap: clamp(1rem, 2vw, 1.5rem);
+      position: relative;
+      width: 100%;
+      height: clamp(600px, calc(100vh - 10.5rem), 840px);
+      min-height: 520px;
+      overflow: hidden;
+      border-radius: 1rem;
+      border: 1px solid oklch(var(--bc) / 0.14);
+      background: oklch(var(--b1) / 1);
+      box-shadow: 0 12px 32px -12px oklch(var(--bc) / 0.14);
+    }
+    .reveal-stage .reveal {
+      width: 100%;
+      height: 100%;
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+    .reveal-stage .reveal .slides {
+      width: 100% !important;
+      height: 100% !important;
+      inset: 0 !important;
+      margin: 0 !important;
+      text-align: left;
+      transform: none !important;
+    }
+    .reveal-stage .reveal .slides > section,
+    .reveal-stage .reveal .slides > section > section {
+      width: 100% !important;
+      height: 100% !important;
+      top: 0 !important;
+      left: 0 !important;
+      margin: 0 !important;
+      padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom) var(--slide-pad-x) !important;
+      box-sizing: border-box !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      text-align: left;
+    }
+    .reveal-stage .reveal .slides > section.stack,
+    .reveal-stage .reveal .slides > section:has(> section) {
+      padding: 0 !important;
+      overflow: visible !important;
+    }
+    .reveal-stage .reveal .slides section .slide-body {
+      min-height: 100%;
+      width: 100%;
+      max-width: 72rem;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--slide-gap);
+    }
+    /* Scoped reveal.css normalization guards so DaisyUI cards, alerts, badges, lists & Leaflet stay crisp */
+    .reveal-stage .reveal h1,
+    .reveal-stage .reveal h2,
+    .reveal-stage .reveal h3,
+    .reveal-stage .reveal h4,
+    .reveal-stage .reveal p,
+    .reveal-stage .reveal ul,
+    .reveal-stage .reveal ol {
+      font-family: inherit;
+      color: inherit;
+      text-transform: none;
+      letter-spacing: inherit;
+      text-shadow: none;
+      margin: 0;
+    }
+    .reveal-stage .reveal ul,
+    .reveal-stage .reveal ol {
+      display: block;
+    }
+    .reveal-stage .reveal .card,
+    .reveal-stage .reveal .alert,
+    .reveal-stage .reveal .stat,
+    .reveal-stage .reveal .badge {
+      text-align: left;
+    }
+    .reveal-stage .reveal img:not(.leaflet-tile):not(.leaflet-marker-icon) {
+      max-width: 100%;
+      max-height: 100%;
+      margin: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+    .reveal-stage .reveal .controls {
+      bottom: 12px;
+      right: 12px;
+      color: oklch(var(--p) / 1);
+    }
+    .reveal-stage .reveal .slide-number {
+      bottom: 14px;
+      left: 16px;
+      right: auto;
+      background: oklch(var(--b2) / 0.9);
+      color: oklch(var(--bc) / 0.85);
+      border: 1px solid oklch(var(--bc) / 0.15);
+      border-radius: 9999px;
+      padding: 0.2rem 0.65rem;
+      font-size: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .reveal-stage .reveal .progress {
+      height: 4px;
+      color: oklch(var(--p) / 1);
+      background: oklch(var(--bc) / 0.1);
+    }
+
+    /* Fullscreen Presentation Mode (:fullscreen & .is-fullscreen deterministic fallback) */
+    #presentation-shell:fullscreen,
+    #presentation-shell:-webkit-full-screen,
+    #presentation-shell.is-fullscreen {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 70 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      gap: 0 !important;
+      background: oklch(var(--b2) / 1) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    #presentation-shell:fullscreen .presentation-toolbar,
+    #presentation-shell:-webkit-full-screen .presentation-toolbar,
+    #presentation-shell.is-fullscreen .presentation-toolbar {
+      display: none !important;
+    }
+    #presentation-shell:fullscreen .reveal-stage,
+    #presentation-shell:-webkit-full-screen .reveal-stage,
+    #presentation-shell.is-fullscreen .reveal-stage {
+      --slide-pad-x: clamp(2.5rem, 5vw, 5rem);
+      --slide-pad-top: clamp(2rem, 3.5vw, 3.25rem);
+      --slide-pad-bottom: clamp(4.25rem, 6vw, 5rem);
+      --slide-gap: clamp(1.25rem, 2.2vw, 1.75rem);
+      flex: 1 1 auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      border-radius: 0 !important;
+      border: 0 !important;
+    }
+    #presentation-fullscreen-hud {
+      display: none;
+    }
+    #presentation-shell:fullscreen #presentation-fullscreen-hud,
+    #presentation-shell:-webkit-full-screen #presentation-fullscreen-hud,
+    #presentation-shell.is-fullscreen #presentation-fullscreen-hud {
+      display: flex;
+      position: fixed;
+      top: 0.75rem;
+      right: 1rem;
+      z-index: 75;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 9999px;
+      background: oklch(var(--b1) / 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid oklch(var(--bc) / 0.18);
+      box-shadow: 0 8px 24px -6px oklch(var(--bc) / 0.22);
+    }
+
+    /* Modeless Follow-Along Speaker Notes Popup Modal inside #presentation-shell */
+    #presentation-notes-modal {
+      position: fixed;
+      z-index: 80;
+      width: min(26rem, calc(100vw - 2rem));
+      max-height: min(60vh, 460px);
+      display: flex;
+      flex-direction: column;
+      background: oklch(var(--b1) / 0.97);
+      color: oklch(var(--bc) / 1);
+      border: 1px solid oklch(var(--bc) / 0.2);
+      border-radius: 0.9rem;
+      box-shadow: 0 20px 45px -10px oklch(var(--bc) / 0.32);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    #presentation-notes-modal.hidden,
+      display: none !important;
+    }
+    #presentation-notes-modal[data-dock="bottom-right"] {
+      bottom: 3.75rem;
+      right: 1rem;
+      left: auto;
+      top: auto;
+    }
+    #presentation-notes-modal[data-dock="bottom-left"] {
+      bottom: 3.75rem;
+      left: 1rem;
+      right: auto;
+      top: auto;
+    }
+    #presentation-notes-modal[data-dock="side-right"] {
+      top: 4.5rem;
+      bottom: 4rem;
+      right: 1rem;
+      left: auto;
+      max-height: calc(100dvh - 8.5rem);
+      width: min(24rem, calc(100vw - 2rem));
+    }
+    #presentation-notes-modal[data-notes-size="sm"] #presentation-notes-body {
+      font-size: 0.8125rem;
+    }
+    #presentation-notes-modal[data-notes-size="md"] #presentation-notes-body {
+      font-size: 0.9375rem;
+    }
+    #presentation-notes-modal[data-notes-size="lg"] #presentation-notes-body {
+      font-size: 1.0625rem;
+    }
+    #presentation-notes-body ul,
+    #presentation-notes-body ol {
+      padding-left: 1.25rem;
+      margin: 0.4rem 0;
+    }
+    #presentation-notes-body ul {
+      list-style-type: disc;
+    }
+    #presentation-notes-body ol {
+      list-style-type: decimal;
+    }
+
+    /* Stacked "All Slides" Fallback Mode */
+    #presentation-shell.is-stacked .reveal-stage,
+    .reveal-stage.is-stacked {
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      --slide-pad-x: 2rem;
+      --slide-pad-top: 1.75rem;
+      --slide-pad-bottom: 1.75rem;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal,
+    .reveal-stage.is-stacked .reveal,
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides,
+    .reveal-stage.is-stacked .reveal .slides {
+      position: static !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+      transform: none !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 1.5rem !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides section,
+    .reveal-stage.is-stacked .reveal .slides section {
+      position: relative !important;
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      width: 100% !important;
+      height: auto !important;
+      padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom) var(--slide-pad-x) !important;
+      border: 1px solid oklch(var(--bc) / 0.14) !important;
+      border-radius: 1rem !important;
+      background: oklch(var(--b1) / 1) !important;
+      box-shadow: 0 8px 24px -10px oklch(var(--bc) / 0.12) !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section.stack,
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section:has(> section),
+    .reveal-stage.is-stacked .reveal .slides > section.stack,
+    .reveal-stage.is-stacked .reveal .slides > section:has(> section) {
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    #presentation-shell.is-stacked .reveal-stage .reveal .slides > section > section,
+    .reveal-stage.is-stacked .reveal .slides > section > section {
+      margin-top: 1rem !important;
+    }
+    #presentation-shell.is-stacked .reveal .controls,
+    #presentation-shell.is-stacked .reveal .progress,
+    #presentation-shell.is-stacked .reveal .slide-number,
+    .reveal-stage.is-stacked .reveal .controls,
+    .reveal-stage.is-stacked .reveal .progress,
+    .reveal-stage.is-stacked .reveal .slide-number {
+      display: none !important;
+    }
+
+    @media print {
+      .presentation-toolbar,
+      #presentation-fullscreen-hud,
+      #presentation-notes-modal,
+      .reveal-stage .reveal .controls,
+      .reveal-stage .reveal .progress,
+      .reveal-stage .reveal .slide-number {
+        display: none !important;
+      }
+      .reveal-stage,
+      .reveal-stage .reveal,
+      .reveal-stage .reveal .slides {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        transform: none !important;
+        display: block !important;
+      }
+      .reveal-stage .reveal .slides section {
+        position: relative !important;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        height: auto !important;
+        padding: 1.5rem 1.75rem !important;
+        margin-bottom: 1.5rem !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.75rem !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+    }
+
+    /* Deterministic Toolbar Dropdown Visibility (prevents DaisyUI :focus-within stuck-open bug) */
+    #toc-dropdown:not(.dropdown-open) > .dropdown-content,
+    #settings-dropdown:not(.dropdown-open) > .dropdown-content {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
     @media print {
       header,
       .navbar,
@@ -263,9 +851,11 @@
 
       <!-- Right: TOC + Theme Picker + Download Menu -->
       <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
+        
+
         <!-- 1. TOC Dropdown -->
         <div class="dropdown dropdown-end" id="toc-dropdown">
-          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
+          <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents" aria-haspopup="true" aria-expanded="false">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
             </svg>
@@ -276,63 +866,81 @@
           </ul>
         </div>
 
-        <!-- 2. DaisyUI 32-Themes Dropdown -->
-        <div class="dropdown dropdown-end" id="theme-dropdown">
-          <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
-            <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
-            <div class="flex items-center gap-0.5">
-              <span class="bg-primary rounded-badge w-1.5 h-3"></span>
-              <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
-              <span class="bg-accent rounded-badge w-1.5 h-3"></span>
-              <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
-            </div>
+        <!-- 2. Settings Gear (Appearance, Download & Authoring controls) -->
+        <div class="dropdown dropdown-end" id="settings-dropdown">
+          <div id="settings-gear-btn" tabindex="0" role="button" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 btn-square" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
           </div>
-          <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
-            <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
-              <!-- Populated via initThemeDropdown() -->
-            </div>
-          </div>
-        </div>
+          <div id="settings-panel" tabindex="0" role="dialog" aria-label="Settings" class="dropdown-content bg-base-100 text-base-content rounded-box z-[60] mt-2 w-80 max-w-[calc(100vw-1.5rem)] max-h-[70vh] overflow-y-auto p-3 shadow-2xl border border-base-300 space-y-2.5">
+            
 
-        <!-- 3. Icon-Only Download Dropdown -->
-        <div class="dropdown dropdown-end" id="download-dropdown">
-          <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Report" title="Download Report">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
-            </svg>
+            <!-- 2. Appearance (Unexpanded with live color palette) -->
+            <details class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box" id="settings-section-appearance" data-settings-section="appearance">
+              <summary class="collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none">
+                <span>Appearance</span>
+                <span class="flex items-center gap-1 normal-case tracking-normal mr-3 font-normal">
+                  <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
+                  <span class="bg-primary rounded-badge w-1.5 h-3"></span>
+                  <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
+                  <span class="bg-accent rounded-badge w-1.5 h-3"></span>
+                  <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
+                </span>
+              </summary>
+              <div class="collapse-content px-3 pb-3 pt-2">
+                <div id="theme-dropdown" class="max-h-48 overflow-y-auto rounded-box bg-base-200 p-1.5 mt-1">
+                  <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
+                    <!-- Populated via initThemeDropdown() -->
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <!-- 3. Download (Unexpanded, Renamed from Export) -->
+            <details class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box" id="settings-section-download" data-settings-section="download">
+              <summary class="collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none">
+                <span>Download</span>
+              </summary>
+              <div class="collapse-content px-3 pb-3 pt-2">
+                <div id="download-dropdown" class="mt-1 space-y-1.5">
+                  
+                  <!-- Download options -->
+                  <ul id="download-dropdown-menu" class="menu menu-sm p-0 w-full space-y-0.5">
+                    <li>
+                      <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                        <span>Download as HTML</span>
+                      </button>
+                    </li>
+                    <li>
+                      <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                        <div class="flex items-center gap-2.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                          </svg>
+                          <span>Download as PDF</span>
+                        </div>
+                        <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
+                      </button>
+                    </li>
+                    <li id="pwa-install-menu-item" class="hidden">
+                      <button id="pwa-install-dropdown-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
+                        <div class="flex items-center gap-2.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                          </svg>
+                          <span>Install as App (PWA)</span>
+                        </div>
+                        <span id="pwa-install-status-badge" class="badge badge-accent badge-xs font-mono">Installable</span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </details>
+            
           </div>
-          <ul id="download-dropdown-menu" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-64 p-2 shadow-2xl border border-base-300">
-            <li>
-              <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-                <span>Download as HTML</span>
-              </button>
-            </li>
-            <li>
-              <button id="download-pdf-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
-                <div class="flex items-center gap-2.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                  </svg>
-                  <span>Download as PDF</span>
-                </div>
-                <span class="badge badge-warning badge-xs font-mono">Not PDF-Ready</span>
-              </button>
-            </li>
-            <li id="pwa-install-menu-item" class="hidden">
-              <button id="pwa-install-dropdown-btn" type="button" class="flex items-center justify-between py-2 text-xs font-semibold">
-                <div class="flex items-center gap-2.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  <span>Install as App (PWA)</span>
-                </div>
-                <span id="pwa-install-status-badge" class="badge badge-accent badge-xs font-mono">Installable</span>
-              </button>
-            </li>
-          </ul>
         </div>
 
         <!-- 4. PWA Install & Offline Indicators -->
@@ -370,12 +978,63 @@
     </div>
   </dialog>
 
+  <!-- Reusable Mermaid Diagram Enlarge Modal -->
+  <dialog id="mermaid-enlarge-modal" class="modal modal-bottom sm:modal-middle" aria-label="Enlarged Diagram Preview">
+    <div id="mermaid-modal-box" class="modal-box max-w-6xl w-11/12 max-h-[90vh] flex flex-col p-4 bg-base-100 text-base-content border border-base-300 shadow-2xl transition-all duration-200">
+      <div class="flex items-center justify-between pb-3 border-b border-base-300 gap-2 flex-wrap">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          <h3 class="font-bold text-sm sm:text-base">Diagram Preview</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Zoom & Viewport Toolbar -->
+          <div class="join border border-base-300 bg-base-100 rounded-lg shadow-xs">
+            <button type="button" id="mermaid-zoom-out-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Zoom Out (-)">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>
+            </button>
+            <button type="button" id="mermaid-zoom-reset-btn" class="join-item btn btn-xs btn-ghost font-mono text-3xs px-2" title="Reset Zoom">
+              <span id="mermaid-zoom-level">100%</span>
+            </button>
+            <button type="button" id="mermaid-zoom-in-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Zoom In (+)">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <button type="button" id="mermaid-zoom-fit-btn" class="join-item btn btn-xs btn-ghost gap-1" title="Fit to Viewport">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            </button>
+          </div>
+          <button type="button" id="mermaid-fullscreen-btn" class="btn btn-xs btn-ghost btn-square border border-base-300" title="Toggle Fullscreen Viewport">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+          </button>
+          <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost" aria-label="Close">✕</button>
+          </form>
+        </div>
+      </div>
+      <div id="mermaid-enlarge-viewport" class="overflow-hidden relative flex-1 min-h-[350px] flex items-center justify-center p-4 my-2 bg-base-200/50 rounded-box border border-base-300 select-none cursor-grab active:cursor-grabbing">
+        <div id="mermaid-enlarge-content" class="origin-center will-change-transform flex items-center justify-center w-full h-full">
+          <!-- SVG clone dynamically injected here -->
+        </div>
+      </div>
+      <div class="modal-action mt-0 pt-2 flex items-center justify-between">
+        <span class="text-3xs text-base-content/60">Scroll to zoom &bull; Click &amp; drag to pan &bull; Press ESC or 0 to reset</span>
+        <form method="dialog">
+          <button class="btn btn-xs sm:btn-sm btn-ghost">Close</button>
+        </form>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop bg-neutral/40 backdrop-blur-xs">
+      <button>close</button>
+    </form>
+  </dialog>
+
   <!-- Main Content Container -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
+  <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
 <!-- ========================================== -->
 <!-- HERO SECTION                               -->
 <!-- ========================================== -->
-<section class="py-12 sm:py-16 lg:py-20 text-center space-y-6">
+<section class="py-12 sm:py-16 lg:py-20 text-center space-y-6" data-agent-section="publication-grade-html5-reports-for-ai-coding-ag" data-agent-id="section-1">
   <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-base-100 border border-base-300 text-xs font-semibold shadow-sm">
     <span class="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
     <span class="text-base-content/80">v2.0 • 17 Non-Blocking CDNs • Deterministic FSM</span>
@@ -428,7 +1087,7 @@
 <!-- ========================================== -->
 <!-- VALUE PROPOSITION PILLARS (6-CARD GRID)    -->
 <!-- ========================================== -->
-<section class="space-y-6">
+<section class="space-y-6" data-agent-section="why-leading-agent-workflows-rely-on-html-report" data-agent-id="section-2">
   <div class="text-center max-w-2xl mx-auto space-y-2">
     <h2 id="core-pillars" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
       Why Leading Agent Workflows Rely on html-report
@@ -510,7 +1169,7 @@
 <!-- ========================================== -->
 <!-- INTERACTIVE CAPABILITY EXPLORER (TABBED)   -->
 <!-- ========================================== -->
-<section id="capability-explorer" class="space-y-6 pt-6">
+<section id="capability-explorer" class="space-y-6 pt-6" data-agent-section="explore-the-17-library-cdn-power-stack" data-agent-id="section-3">
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
     <div>
       <div class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider mb-2">Interactive Showcase</div>
@@ -571,7 +1230,7 @@
           <span class="badge badge-sm badge-outline font-mono">Chart.js UMD</span>
         </div>
         <div class="h-64 sm:h-72 w-full max-w-full">
-          <canvas id="showcaseChart" class="w-full h-full"></canvas>
+          <canvas id="showcaseChart" class="w-full h-full" data-agent-widget="chart" data-agent-id="chart-1"></canvas>
         </div>
       </div>
 
@@ -742,7 +1401,7 @@ console.log(`Assembled in ${durationMs.toFixed(2)}ms`);</code></pre>
 <!-- ========================================== -->
 <!-- DOCUMENTATION HUB (MODULAR GUIDES)         -->
 <!-- ========================================== -->
-<section id="documentation-hub" class="space-y-6 pt-6">
+<section id="documentation-hub" class="space-y-6 pt-6" data-agent-section="comprehensive-engineering-guides" data-agent-id="section-4">
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
     <div>
       <div class="badge badge-secondary font-mono text-xs font-bold uppercase tracking-wider mb-2">Documentation Hub</div>
@@ -888,7 +1547,7 @@ console.log(`Assembled in ${durationMs.toFixed(2)}ms`);</code></pre>
 <!-- ========================================== -->
 <!-- STANDALONE LIVE DEMOS & SHOWCASES          -->
 <!-- ========================================== -->
-<section class="card bg-base-100 border border-base-300 p-6 sm:p-8 shadow-sm space-y-4">
+<section class="card bg-base-100 border border-base-300 p-6 sm:p-8 shadow-sm space-y-4" data-agent-section="standalone-reports-live-verification-views" data-agent-id="section-5">
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
       <h2 id="deep-dive-reports" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
@@ -961,7 +1620,10 @@ function switchShowcaseTab(tabId) {
     setTimeout(() => { showcaseMapInstance.invalidateSize(); }, 50);
   }
   if (tabId === "widgets" && showcaseCalendarInstance) {
-    setTimeout(() => { showcaseCalendarInstance.render(); }, 50);
+    setTimeout(() => {
+      if (typeof showcaseCalendarInstance.updateSize === "function") showcaseCalendarInstance.updateSize();
+      showcaseCalendarInstance.render();
+    }, 50);
   }
 }
 
@@ -1063,7 +1725,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (calEl && typeof window.FullCalendar !== "undefined") {
       showcaseCalendarInstance = new window.FullCalendar.Calendar(calEl, {
         initialView: "dayGridMonth",
-        height: 280,
+        height: "auto",
+        contentHeight: "auto",
+        dayMaxEvents: true,
+        handleWindowResize: true,
         headerToolbar: { left: "prev,next", center: "title", right: "dayGridMonth,listWeek" },
         events: [
           { title: "Sprint Release v2.0", start: new Date().toISOString().slice(0, 10), color: "#3b82f6" },
@@ -1071,6 +1736,8 @@ document.addEventListener("DOMContentLoaded", function () {
         ]
       });
       showcaseCalendarInstance.render();
+      window.reportCalendars = window.reportCalendars || [];
+      window.reportCalendars.push(showcaseCalendarInstance);
     }
   } catch (e) {}
 
@@ -1144,17 +1811,19 @@ function simulateTelemetryStep() {
   <footer class="border-t border-base-300 bg-base-100 py-6 mt-12 text-center text-xs opacity-75 print:hidden">
     <div class="flex items-center justify-center gap-1.5 flex-wrap">
       <span>generated by <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="link link-hover font-semibold">html-report</a></span>
-      <span class="badge badge-ghost badge-xs font-mono font-semibold" title="Semantic Versioning v0.1.0-beta.1">v0.1.0-beta.1</span>
+      <span class="badge badge-ghost badge-xs font-mono font-semibold" title="Semantic Versioning v0.0.0-beta.1">v0.0.0-beta.1</span>
     </div>
   </footer>
+
+  
 
   <!-- Runtime Scripts -->
   <script>
 /**
  * html-report client runtime (report-runtime.js)
  * Pre-bundled runtime for 32 DaisyUI themes, canvas 2D OKLCH palette resolution,
- * Mermaid list syntax defense, dynamic TOC generation, snapshot bundler,
- * and horizontal space detection.
+ * Mermaid list syntax defense, dynamic TOC generation, Published Document snapshot exporter,
+ * Edit Mode (#edit-dock & Target Element selection), and horizontal space detection.
  */
 
 const STANDARD_DAISYUI_THEMES = new Set([
@@ -1166,6 +1835,15 @@ const STANDARD_DAISYUI_THEMES = new Set([
 ]);
 
 const DAISYUI_THEMES = Array.from(STANDARD_DAISYUI_THEMES);
+
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 // Zero-dependency pure JS OKLCH engine & compiler for browser runtime
 function srgbToLinear(c) {
@@ -1550,6 +2228,9 @@ function registerCustomTheme(themeName, css = null) {
   if (typeof document !== "undefined" && document.getElementById("theme-swatch-list")) {
     initThemeDropdown();
   }
+  if (typeof HTMLReportEdit !== "undefined" && typeof HTMLReportEdit.refreshStyleThemeSelect === "function") {
+    HTMLReportEdit.refreshStyleThemeSelect();
+  }
   return true;
 }
 
@@ -1595,6 +2276,8 @@ function scanAndRegisterExistingCustomThemes() {
   } catch (_) {}
 }
 
+
+
 /**
  * Resolves any valid CSS color string (including oklch, color-mix, rgb, hsl, hex)
  * into a strict 8-bit hex string and rgba generator via an offscreen 2D canvas.
@@ -1639,7 +2322,7 @@ function cssColorToHexAndRgba(colorStr, customCtx = null) {
  * into deterministic hex/rgba colors.
  */
 function resolveDaisyUIThemePalette(doc = (typeof document !== "undefined" ? document : null)) {
-  if (!doc) return {};
+  if (!doc || !doc.body || typeof doc.body.appendChild !== "function") return {};
 
   const probeContainer = doc.createElement("div");
   probeContainer.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none;";
@@ -1766,6 +2449,47 @@ async function renderMermaidWithTheme(palette) {
   } catch (err) {
     console.warn("[html-report] Mermaid render notice:", err);
   }
+  try {
+    if (typeof HTMLReportMermaid !== "undefined") HTMLReportMermaid.initEnlarge();
+  } catch (_) {}
+}
+
+/**
+ * Builds a single DaisyUI theme swatch row button matching the navbar picker.
+ */
+function createThemeSwatchButton(theme, currentTheme, { attrName = "data-set-theme", onSelect } = {}) {
+  const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.setAttribute("data-theme", theme);
+  btn.setAttribute(attrName, theme);
+  btn.className = "theme-swatch-item outline-base-content text-start outline-offset-4 rounded-btn w-full cursor-pointer font-sans";
+  btn.innerHTML = `
+    <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
+      <span class="grid grid-cols-5 grid-rows-3">
+        <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
+            <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
+          </svg>
+          <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
+            <span>${theme}</span>
+            ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
+          </span>
+          <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
+            <span class="bg-primary rounded-badge w-2 h-4"></span>
+            <span class="bg-secondary rounded-badge w-2 h-4"></span>
+            <span class="bg-accent rounded-badge w-2 h-4"></span>
+            <span class="bg-neutral rounded-badge w-2 h-4"></span>
+          </span>
+        </span>
+      </span>
+    </span>
+  `;
+  btn.addEventListener("click", () => {
+    if (typeof onSelect === "function") onSelect(theme);
+    else setReportTheme(theme);
+  });
+  return btn;
 }
 
 /**
@@ -1776,39 +2500,40 @@ function initThemeDropdown() {
   const listEl = document.getElementById("theme-swatch-list");
   if (!listEl) return;
   const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  const activeLabel = document.getElementById("active-theme-label");
+  if (activeLabel) activeLabel.textContent = currentTheme;
+  const modalActiveLabel = document.getElementById("modal-active-theme-label");
+  if (modalActiveLabel) modalActiveLabel.textContent = currentTheme;
   listEl.innerHTML = "";
 
   DAISYUI_THEMES.forEach((theme) => {
-    const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.setAttribute("data-theme", theme);
-    btn.setAttribute("data-set-theme", theme);
-    btn.className = "theme-swatch-item outline-base-content text-start outline-offset-4 rounded-btn w-full cursor-pointer font-sans";
-    btn.innerHTML = `
-      <span class="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans border border-base-300 hover:border-primary transition">
-        <span class="grid grid-cols-5 grid-rows-3">
-          <span class="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-3 py-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="theme-check h-3.5 w-3.5 shrink-0 ${theme === currentTheme ? "opacity-100" : "opacity-0"}">
-              <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
-            </svg>
-            <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
-              <span>${theme}</span>
-              ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
-            </span>
-            <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
-              <span class="bg-primary rounded-badge w-2 h-4"></span>
-              <span class="bg-secondary rounded-badge w-2 h-4"></span>
-              <span class="bg-accent rounded-badge w-2 h-4"></span>
-              <span class="bg-neutral rounded-badge w-2 h-4"></span>
-            </span>
-          </span>
-        </span>
-      </span>
-    `;
-    btn.addEventListener("click", () => setReportTheme(theme));
-    listEl.appendChild(btn);
+    listEl.appendChild(createThemeSwatchButton(theme, currentTheme, {
+      attrName: "data-set-theme",
+      onSelect: (t) => setReportTheme(t)
+    }));
   });
+}
+
+/**
+ * Computes WCAG-compliant active button foreground contrast for FullCalendar 6
+ * against the active DaisyUI primary surface and triggers layout sync.
+ */
+function syncFullCalendarTheme(palette) {
+  if (typeof document !== "undefined" && document.documentElement?.style && typeof document.documentElement.style.setProperty === "function") {
+    const pLum = palette?.primary
+      ? (0.2126 * srgbToLinear(palette.primary.r) + 0.7152 * srgbToLinear(palette.primary.g) + 0.0722 * srgbToLinear(palette.primary.b))
+      : 0;
+    const activeTextHex = pLum > 0.179 ? "#020617" : "#ffffff";
+    document.documentElement.style.setProperty("--fc-button-active-text-color", activeTextHex);
+  }
+  if (typeof window !== "undefined" && window.reportCalendars && Array.isArray(window.reportCalendars)) {
+    window.reportCalendars.forEach((cal) => {
+      try {
+        if (typeof cal?.updateSize === "function") cal.updateSize();
+        if (typeof cal?.render === "function") cal.render();
+      } catch (_) {}
+    });
+  }
 }
 
 /**
@@ -1821,6 +2546,17 @@ async function setReportTheme(themeName) {
   document.documentElement.setAttribute("data-theme", themeName);
   const activeLabel = document.getElementById("active-theme-label");
   if (activeLabel) activeLabel.textContent = themeName;
+  const modalActiveLabel = document.getElementById("modal-active-theme-label");
+  if (modalActiveLabel) modalActiveLabel.textContent = themeName;
+  const styleSelect = document.getElementById("edit-style-theme-select");
+  if (styleSelect && styleSelect.value !== themeName) styleSelect.value = themeName;
+  const editStyleLabel = document.getElementById("edit-style-theme-label");
+  if (editStyleLabel) editStyleLabel.textContent = themeName;
+  const editStyleSwatches = document.getElementById("edit-style-theme-swatches");
+  if (editStyleSwatches) editStyleSwatches.setAttribute("data-theme", themeName);
+  if (typeof HTMLReportSettings !== "undefined" && typeof HTMLReportSettings.refreshModalState === "function") {
+    HTMLReportSettings.refreshModalState();
+  }
 
   try {
     if (typeof localStorage !== "undefined") {
@@ -1828,45 +2564,92 @@ async function setReportTheme(themeName) {
     }
   } catch (_) {}
 
-  document.querySelectorAll("#theme-swatch-list .theme-swatch-item").forEach((btn) => {
-    const check = btn.querySelector(".theme-check");
-    if (check) {
-      const isCurrent = btn.getAttribute("data-set-theme") === themeName;
-      check.classList.toggle("opacity-100", isCurrent);
-      check.classList.toggle("opacity-0", !isCurrent);
-    }
-  });
+  if (typeof document.querySelectorAll === "function") {
+    document.querySelectorAll("#theme-swatch-list .theme-swatch-item, #edit-style-theme-swatch-list .theme-swatch-item").forEach((btn) => {
+      const check = btn.querySelector(".theme-check");
+      if (check) {
+        const themeKey = btn.getAttribute("data-set-theme") || btn.getAttribute("data-edit-set-theme");
+        const isCurrent = themeKey === themeName;
+        check.classList.toggle("opacity-100", isCurrent);
+        check.classList.toggle("opacity-0", !isCurrent);
+      }
+    });
+  }
 
   const palette = resolveDaisyUIThemePalette();
 
-  // Dynamic Chart.js color sync
-  if (typeof window !== "undefined" && window.reportCharts && Array.isArray(window.reportCharts)) {
-    window.reportCharts.forEach((chart, idx) => {
+  // Dynamic Chart.js color sync (scalar & array datasets, scales, and legend)
+  const paletteSequence = ["primary", "secondary", "accent", "info", "success", "warning", "error"];
+  const activeCharts = (typeof window !== "undefined" && Array.isArray(window.reportCharts) && window.reportCharts.length > 0)
+    ? window.reportCharts
+    : (typeof document !== "undefined" && typeof Chart !== "undefined" && typeof Chart.getChart === "function"
+        ? Array.from(document.querySelectorAll("canvas")).map((c) => Chart.getChart(c)).filter(Boolean)
+        : []);
+  if (activeCharts.length > 0) {
+    activeCharts.forEach((chart) => {
       if (chart?.data?.datasets) {
         chart.data.datasets.forEach((ds, dsIdx) => {
-          const colorKey = dsIdx % 3 === 0 ? "primary" : dsIdx % 3 === 1 ? "secondary" : "accent";
-          const chosen = palette[colorKey] ? palette[colorKey].hex : "#3b82f6";
-          if (ds.borderColor) ds.borderColor = chosen;
-          if (ds.backgroundColor && typeof ds.backgroundColor === "string" && ds.backgroundColor.includes("rgba")) {
-            ds.backgroundColor = palette[colorKey] ? palette[colorKey].rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+          const colorKey = paletteSequence[dsIdx % paletteSequence.length];
+          const chosenEntry = palette[colorKey] || palette.primary || { hex: "#3b82f6", rgba: (a) => `rgba(59, 130, 246, ${a})` };
+
+          if (Array.isArray(ds.borderColor)) {
+            ds.borderColor = ds.borderColor.map((_, i) => {
+              const k = paletteSequence[i % paletteSequence.length];
+              return palette[k] ? palette[k].hex : chosenEntry.hex;
+            });
+          } else if (ds.borderColor) {
+            ds.borderColor = chosenEntry.hex;
+          }
+
+          if (Array.isArray(ds.backgroundColor)) {
+            ds.backgroundColor = ds.backgroundColor.map((orig, i) => {
+              const k = paletteSequence[i % paletteSequence.length];
+              const entry = palette[k] || chosenEntry;
+              if (typeof orig === "string" && orig.includes("rgba")) {
+                return entry.rgba ? entry.rgba(0.75) : entry.hex;
+              }
+              return entry.hex;
+            });
+          } else if (ds.backgroundColor && typeof ds.backgroundColor === "string") {
+            if (ds.backgroundColor.includes("rgba")) {
+              ds.backgroundColor = chosenEntry.rgba ? chosenEntry.rgba(0.2) : "rgba(59, 130, 246, 0.2)";
+            } else {
+              ds.backgroundColor = chosenEntry.hex;
+            }
           }
         });
+      }
+
+      if (chart?.options?.scales && typeof chart.options.scales === "object") {
+        const textHex = palette.text ? palette.text.hex : "#64748b";
+        const gridColor = palette.grid ? palette.grid.rgba(0.25) : "rgba(148, 163, 184, 0.2)";
+        for (const scale of Object.values(chart.options.scales)) {
+          if (!scale || typeof scale !== "object") continue;
+          if (scale.ticks && typeof scale.ticks === "object") scale.ticks.color = textHex;
+          if (scale.grid && typeof scale.grid === "object") scale.grid.color = gridColor;
+          if (scale.pointLabels && typeof scale.pointLabels === "object") scale.pointLabels.color = textHex;
+          if (scale.angleLines && typeof scale.angleLines === "object") scale.angleLines.color = gridColor;
+        }
+      }
+
+      if (chart?.options?.plugins?.legend?.labels && typeof chart.options.plugins.legend.labels === "object") {
+        chart.options.plugins.legend.labels.color = palette.text ? palette.text.hex : "#64748b";
+      }
+
+      if (typeof chart?.update === "function") {
         chart.update();
       }
     });
+  }
+  if (typeof window !== "undefined" && typeof window.onReportThemeChange === "function") {
+    try { window.onReportThemeChange(themeName, palette); } catch (_) {}
   }
 
   // Dynamic Mermaid sync
   await renderMermaidWithTheme(palette);
 
   // Dynamic FullCalendar sync
-  if (typeof window !== "undefined" && window.reportCalendars && Array.isArray(window.reportCalendars)) {
-    window.reportCalendars.forEach((cal) => {
-      try {
-        cal.render();
-      } catch (_) {}
-    });
-  }
+  syncFullCalendarTheme(palette);
 
   // Dynamic Datastar reactive $theme signal sync
   syncDatastarTheme(themeName);
@@ -1874,6 +2657,8 @@ async function setReportTheme(themeName) {
   // Dynamic PWA meta theme-color sync
   syncPwaThemeColor(palette);
 }
+
+
 
 /**
  * Builds Table of Contents from main h1, h2, h3 elements.
@@ -1883,7 +2668,7 @@ function initTOC() {
   const tocList = document.getElementById("report-toc-list");
   if (!tocList) return;
   const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).filter(
-    (h) => !h.closest(".fc, .katex, .gridjs, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
+    (h) => !h.closest(".fc, .katex, .gridjs, .notes, #presentation-notes-modal, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
   );
   tocList.innerHTML = "";
 
@@ -1898,13 +2683,41 @@ function initTOC() {
     a.href = `#${h.id}`;
     a.textContent = h.textContent.trim();
     a.className = level === 1 ? "font-bold text-xs" : level === 2 ? "pl-3 text-xs" : "pl-6 text-2xs opacity-80";
-    a.addEventListener("click", () => {
-      const dropdown = document.getElementById("toc-dropdown");
-      if (dropdown) dropdown.removeAttribute("open");
+    a.addEventListener("click", (e) => {
+      const targetSlide = h.closest(".reveal .slides section");
+      const shell = document.getElementById("presentation-shell");
+      const isStacked = Boolean(shell?.classList.contains("is-stacked") || h.closest(".reveal-stage.is-stacked"));
+      if (targetSlide && !isStacked && window.revealInstance && typeof window.revealInstance.getIndices === "function") {
+        e.preventDefault();
+        try {
+          const indices = window.revealInstance.getIndices(targetSlide);
+          if (indices && typeof window.revealInstance.slide === "function") {
+            window.revealInstance.slide(indices.h || 0, indices.v || 0);
+          }
+        } catch (_) {}
+      }
+      if (typeof HTMLReportSettings !== "undefined" && typeof HTMLReportSettings.closeToc === "function") {
+        HTMLReportSettings.closeToc();
+      } else {
+        const dropdown = document.getElementById("toc-dropdown");
+        const btn = document.getElementById("toc-dropdown-btn");
+        if (dropdown) {
+          dropdown.classList.remove("dropdown-open");
+          dropdown.removeAttribute("open");
+          if (document.activeElement && dropdown.contains(document.activeElement) && typeof document.activeElement.blur === "function") {
+            document.activeElement.blur();
+          }
+        }
+        if (btn) btn.setAttribute("aria-expanded", "false");
+      }
     });
     li.appendChild(a);
     tocList.appendChild(li);
   });
+
+  if (typeof HTMLReportSettings !== "undefined" && typeof HTMLReportSettings.initGear === "function") {
+    try { HTMLReportSettings.initGear(); } catch (_) {}
+  }
 }
 
 /**
@@ -1923,6 +2736,7 @@ function checkInsufficientHorizontalSpace() {
     const style = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle(el) : el.style;
     if (style.display === "none" || style.visibility === "hidden" || el.clientWidth === 0) {
       el.removeAttribute("data-insufficient-space");
+      if (el.classList) el.classList.remove("verify-insufficient-space");
       return;
     }
     const hasHorizontalScrollbar =
@@ -1931,6 +2745,7 @@ function checkInsufficientHorizontalSpace() {
 
     if (hasHorizontalScrollbar) {
       el.setAttribute("data-insufficient-space", "true");
+      if (el.classList) el.classList.add("verify-insufficient-space");
       insufficient.push({
         tag: el.tagName.toLowerCase(),
         id: el.id || null,
@@ -1941,6 +2756,7 @@ function checkInsufficientHorizontalSpace() {
       });
     } else {
       el.removeAttribute("data-insufficient-space");
+      if (el.classList) el.classList.remove("verify-insufficient-space");
     }
   });
 
@@ -1950,10 +2766,86 @@ function checkInsufficientHorizontalSpace() {
 /**
  * Builds a standalone, inlined HTML snapshot with fetched CSS and JS bundled directly.
  */
-async function buildInlinedHtmlSnapshot() {
+async function buildInlinedHtmlSnapshot(options = {}) {
   if (typeof document === "undefined") return "";
   const clone = document.documentElement.cloneNode(true);
+  const publishedMode = Boolean(
+    (options && options.mode === "published") ||
+    (typeof HTMLReportPublisher !== "undefined" && typeof HTMLReportPublisher.isPublishedFlagOn === "function" && HTMLReportPublisher.isPublishedFlagOn())
+  );
+
+  // Strip dev-server live reload scripts, tooltips, and transient dropdown/accordion/button state
+  clone.querySelectorAll("#__html_report_live_reload__, .mermaidTooltip, script[src*='idiomorph']").forEach((el) => el.remove());
+  clone.querySelectorAll("#download-html-btn, #modal-download-html-btn").forEach((btn) => {
+    btn.removeAttribute("disabled");
+    btn.disabled = false;
+  });
+  clone.querySelectorAll("#settings-dropdown, #toc-dropdown").forEach((dd) => {
+    dd.classList.remove("dropdown-open");
+    dd.removeAttribute("open");
+  });
+  clone.querySelectorAll("#settings-gear-btn, #toc-dropdown-btn").forEach((btn) => {
+    btn.setAttribute("aria-expanded", "false");
+  });
+  clone.querySelectorAll("#settings-section-appearance, #settings-section-download").forEach((det) => {
+    det.removeAttribute("open");
+  });
+
+  // Reset pre-rendered Grid.js containers so Grid.js can mount cleanly into an empty host
+  clone.querySelectorAll('[data-gridjs="true"]').forEach((el) => {
+    if (el.querySelector(".gridjs-container") || el.classList.contains("gridjs-container")) {
+      el.innerHTML = "";
+    }
+  });
+  clone.querySelectorAll(".gridjs-container").forEach((container) => {
+    const parent = container.parentElement;
+    container.remove();
+    if (parent && parent.children.length === 0 && !parent.textContent.trim()) {
+      parent.innerHTML = "";
+    }
+  });
+
+  // Strip pre-expanded Alpine x-for sibling nodes so Alpine does not render duplicates on re-init
+  const liveXForTemplates = Array.from(document.querySelectorAll("template[x-for]"));
+  const cloneXForTemplates = Array.from(clone.querySelectorAll("template[x-for]"));
+  if (liveXForTemplates.length === cloneXForTemplates.length) {
+    liveXForTemplates.forEach((liveTpl, idx) => {
+      const cloneTpl = cloneXForTemplates[idx];
+      const liveParent = liveTpl.parentElement;
+      const cloneParent = cloneTpl.parentElement;
+      if (!liveParent || !cloneParent) return;
+      const lookupVals = liveTpl._x_lookup && typeof liveTpl._x_lookup === "object"
+        ? new Set(Object.values(liveTpl._x_lookup))
+        : null;
+      const liveChildren = Array.from(liveParent.children);
+      const cloneChildren = Array.from(cloneParent.children);
+      if (liveChildren.length !== cloneChildren.length) return;
+      const tplPos = liveChildren.indexOf(liveTpl);
+      for (let i = tplPos + 1; i < liveChildren.length; i++) {
+        const liveChild = liveChildren[i];
+        if (
+          (lookupVals && lookupVals.has(liveChild)) ||
+          liveChild._x_dataStack ||
+          liveChild.hasAttribute("data-x-for-rendered")
+        ) {
+          cloneChildren[i].remove();
+        }
+      }
+    });
+  }
+
+  // Transition live board status badge to offline mode inside standalone snapshots
+  clone.querySelectorAll("#live-board-status").forEach((el) => {
+    el.textContent = "Offline (Local Save)";
+    el.classList.remove("badge-success", "badge-warning", "badge-ghost");
+    el.classList.add("badge-info", "badge-outline");
+  });
+
+  if (publishedMode) HTMLReportPublisher.prepare(clone);
   clone.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") || "light");
+  clone.querySelectorAll("[data-reveal-initialized]").forEach((el) => el.removeAttribute("data-reveal-initialized"));
+  clone.querySelectorAll("[data-presentation-bound]").forEach((el) => el.removeAttribute("data-presentation-bound"));
+  clone.querySelectorAll("#presentation-shell.is-fullscreen").forEach((el) => el.classList.remove("is-fullscreen"));
 
   // Inline external stylesheets
   const linkEls = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
@@ -1980,32 +2872,70 @@ async function buildInlinedHtmlSnapshot() {
     })
   );
 
-  // Inline external scripts
+  // Inline external scripts while preserving type="module" and [defer] execution order
   const scriptEls = Array.from(clone.querySelectorAll("script[src]"));
-  await Promise.allSettled(
+  const cloneHead = clone.querySelector("head");
+  const cloneBody = clone.querySelector("body");
+  let tailwindStripped = false;
+  const scriptResults = await Promise.all(
     scriptEls.map(async (scriptEl) => {
       const src = scriptEl.getAttribute("src");
-      if (!src || (!src.startsWith("http://") && !src.startsWith("https://"))) return;
+      if (!src || (!src.startsWith("http://") && !src.startsWith("https://"))) return null;
       if (src.includes("cdn.tailwindcss.com")) {
+        tailwindStripped = true;
         const marker = document.createElement("script");
         marker.setAttribute("data-inlined-src", src);
         marker.textContent = "/* Tailwind CSS styles pre-compiled inline in <head> */";
-        scriptEl.replaceWith(marker);
-        return;
+        return { scriptEl, inlineScript: marker, relocateToBody: false };
       }
       try {
         const res = await fetch(src);
-        if (!res.ok) return;
+        if (!res.ok) return null;
         const jsText = await res.text();
+        const origType = (scriptEl.getAttribute("type") || "").trim();
+        const hasDefer = scriptEl.hasAttribute("defer");
         const inlineScript = document.createElement("script");
         inlineScript.setAttribute("data-inlined-src", src);
+        if (origType) {
+          inlineScript.setAttribute("type", origType);
+        }
         inlineScript.textContent = jsText.replace(/<\/script>/gi, "<\\/script>");
-        scriptEl.replaceWith(inlineScript);
-      } catch (_) {}
+        const isModule = origType.toLowerCase() === "module";
+        const inHead = Boolean(cloneHead && cloneHead.contains(scriptEl));
+        const relocateToBody = Boolean(!isModule && hasDefer && inHead && cloneBody);
+        return { scriptEl, inlineScript, relocateToBody };
+      } catch (_) {
+        return null;
+      }
     })
   );
 
-  return "<!DOCTYPE html>\n" + clone.outerHTML;
+  for (const entry of scriptResults) {
+    if (!entry) continue;
+    if (entry.relocateToBody && cloneBody) {
+      entry.scriptEl.remove();
+      cloneBody.appendChild(entry.inlineScript);
+    } else {
+      entry.scriptEl.replaceWith(entry.inlineScript);
+    }
+  }
+
+  if (tailwindStripped && cloneHead && !cloneHead.querySelector('style[data-inlined-tailwind-fallbacks]')) {
+    const fallbackStyle = document.createElement("style");
+    fallbackStyle.setAttribute("data-inlined-tailwind-fallbacks", "true");
+    fallbackStyle.textContent = [
+      ".hidden { display: none; }",
+      ".line-through { text-decoration-line: line-through; }",
+      ".opacity-0 { opacity: 0; }",
+      ".opacity-50 { opacity: 0.5; }",
+      ".opacity-60 { opacity: 0.6; }",
+      ".opacity-100 { opacity: 1; }"
+    ].join("\n");
+    cloneHead.appendChild(fallbackStyle);
+  }
+
+  const serialized = "<!DOCTYPE html>\n" + clone.outerHTML;
+  return publishedMode ? HTMLReportPublisher.normalizeSerialized(serialized) : serialized;
 }
 
 /**
@@ -2013,9 +2943,7 @@ async function buildInlinedHtmlSnapshot() {
  */
 function exportReportPdf() {
   if (typeof window === "undefined") return;
-  if (window.reportCharts && Array.isArray(window.reportCharts)) {
-    window.reportCharts.forEach((c) => c?.resize?.());
-  }
+  resizePresentationWidgets();
   if (window.reportLeafletMap && typeof window.reportLeafletMap.invalidateSize === "function") {
     window.reportLeafletMap.invalidateSize();
   }
@@ -2194,6 +3122,17 @@ function initPwa() {
   setTimeout(() => syncPwaThemeColor(), 100);
 }
 
+function _triggerBlobDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 /**
  * Initializes the download menu actions (HTML & PDF).
  */
@@ -2208,17 +3147,16 @@ function initDownloadButton() {
     htmlBtn.addEventListener("click", async () => {
       try {
         htmlBtn.disabled = true;
-        const htmlContent = await buildInlinedHtmlSnapshot();
+        const isPub = typeof HTMLReportPublisher !== "undefined" && typeof HTMLReportPublisher.isPublishedFlagOn === "function" && HTMLReportPublisher.isPublishedFlagOn();
+        if (isPub && typeof HTMLReportPublisher !== "undefined" && typeof HTMLReportPublisher.tryServerPublishDownload === "function") {
+          const serverRes = await HTMLReportPublisher.tryServerPublishDownload();
+          if (serverRes && serverRes.ok) return;
+        }
+        const htmlContent = await buildInlinedHtmlSnapshot(isPub ? { mode: "published" } : {});
         const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
         const docTitle = document.title || "html-report";
-        a.download = `${docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-standalone.html`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
+        const baseName = docTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "html-report";
+        _triggerBlobDownload(blob, isPub ? `${baseName}-published.html` : `${baseName}-standalone.html`);
       } catch (err) {
         console.error("[html-report] Failed to bundle inlined HTML snapshot:", err);
       } finally {
@@ -2242,38 +3180,7 @@ function initDownloadButton() {
   }
 }
 
-/**
- * Day.js runtime initialization & data-dayjs hydration.
- */
-function initDayjs() {
-  if (typeof window === "undefined" || !window.dayjs) return;
-  try {
-    if (window.dayjs_plugin_relativeTime) {
-      window.dayjs.extend(window.dayjs_plugin_relativeTime);
-    }
-    if (window.dayjs_plugin_customParseFormat) {
-      window.dayjs.extend(window.dayjs_plugin_customParseFormat);
-    }
-  } catch (err) {
-    console.warn("[html-report] Day.js plugin registration notice:", err);
-  }
 
-  try {
-    document.querySelectorAll("[data-dayjs]").forEach((el) => {
-      const raw = el.getAttribute("data-dayjs");
-      const format = el.getAttribute("data-dayjs-format") || "YYYY-MM-DD HH:mm:ss";
-      const fromNow = el.hasAttribute("data-dayjs-from-now") || el.getAttribute("data-dayjs-relative") === "true";
-      const d = (raw && raw !== "now" && raw !== "true") ? window.dayjs(raw) : window.dayjs();
-      if (fromNow && typeof d.fromNow === "function") {
-        el.textContent = d.fromNow();
-      } else {
-        el.textContent = d.format(format);
-      }
-    });
-  } catch (err) {
-    console.warn("[html-report] Day.js DOM hydration notice:", err);
-  }
-}
 
 /**
  * Impress.js runtime initialization with strict presentation guard.
@@ -2349,6 +3256,577 @@ function impressGoto(step) {
     return window.impressApi.goto(step);
   }
 }
+
+
+
+/**
+ * Sanitizes speaker notes HTML (<aside class="notes">) so rich formatting
+ * (<p>, <ul>, <ol>, <li>, <strong>, <em>, <code>) is preserved safely.
+ */
+function sanitizeSpeakerNotesHtml(rawHtml = "") {
+  if (typeof document === "undefined") return String(rawHtml || "");
+  const tpl = document.createElement("template");
+  tpl.innerHTML = String(rawHtml || "");
+  const blockedTags = tpl.content.querySelectorAll("script, style, iframe, object, embed, link, meta, base, form");
+  blockedTags.forEach((el) => el.remove());
+  const all = tpl.content.querySelectorAll("*");
+  all.forEach((el) => {
+    for (const attr of Array.from(el.attributes)) {
+      const name = attr.name.toLowerCase();
+      const val = String(attr.value || "").trim();
+      if (name.startsWith("on") || name === "srcdoc") {
+        el.removeAttribute(attr.name);
+      } else if ((name === "href" || name === "src" || name === "xlink:href") && /^(?:javascript|vbscript|data\s*:\s*text\/html):/i.test(val)) {
+        el.removeAttribute(attr.name);
+      }
+    }
+  });
+  return tpl.innerHTML.trim();
+}
+
+/**
+ * Re-measures Reveal.js layout, Chart.js canvases, and Leaflet maps after
+ * slide transitions, fullscreen changes, or stacked-view toggles.
+ */
+function resizePresentationWidgets() {
+  if (typeof window === "undefined") return;
+  try {
+    if (window.revealInstance && typeof window.revealInstance.layout === "function") {
+      window.revealInstance.layout();
+    }
+  } catch (_) {}
+  try {
+    if (Array.isArray(window.reportCharts)) {
+      window.reportCharts.forEach((c) => {
+        try { if (c && typeof c.resize === "function") c.resize(); } catch (_) {}
+      });
+    }
+    if (window.Chart && window.Chart.instances) {
+      const list = Array.isArray(window.Chart.instances)
+        ? window.Chart.instances
+        : Object.values(window.Chart.instances);
+      list.forEach((c) => {
+        try { if (c && typeof c.resize === "function") c.resize(); } catch (_) {}
+      });
+    }
+  } catch (_) {}
+  try {
+    if (window.__htmlReportLeafletMaps && typeof window.__htmlReportLeafletMaps.forEach === "function") {
+      window.__htmlReportLeafletMaps.forEach((m) => {
+        try { if (m && typeof m.invalidateSize === "function") m.invalidateSize({ animate: false }); } catch (_) {}
+      });
+    }
+    if (Array.isArray(window.reportMaps)) {
+      window.reportMaps.forEach((m) => {
+        try { if (m && typeof m.invalidateSize === "function") m.invalidateSize({ animate: false }); } catch (_) {}
+      });
+    }
+    if (window.leafletMap && typeof window.leafletMap.invalidateSize === "function") {
+      window.leafletMap.invalidateSize({ animate: false });
+    }
+  } catch (_) {}
+  try {
+    window.dispatchEvent(new Event("resize"));
+  } catch (_) {}
+}
+
+function registerLeafletInitHook() {
+  if (typeof window === "undefined" || window.__htmlReportLeafletHooked) return;
+  if (window.L && window.L.Map && typeof window.L.Map.addInitHook === "function") {
+    window.__htmlReportLeafletHooked = true;
+    window.L.Map.addInitHook(function () {
+      window.__htmlReportLeafletMaps = window.__htmlReportLeafletMaps || new Set();
+      window.__htmlReportLeafletMaps.add(this);
+    });
+  }
+}
+
+function extractSlideLabel(sectionEl, fallbackLabel = "Slide") {
+  if (!sectionEl) return fallbackLabel;
+  const explicit = sectionEl.getAttribute("data-title");
+  if (explicit && explicit.trim()) return explicit.trim();
+  const heading = sectionEl.querySelector("h1, h2, h3, [data-slide-title]");
+  if (heading && heading.textContent && heading.textContent.trim()) {
+    return heading.textContent.trim().replace(/\s+/g, " ");
+  }
+  return fallbackLabel;
+}
+
+function extractSlideNotesHtml(sectionEl) {
+  if (!sectionEl) return { hasNotes: false, html: "" };
+  const asideNotes = Array.from(sectionEl.querySelectorAll(":scope > aside.notes, :scope > .slide-body > aside.notes, aside.notes"))
+    .filter((el) => el.closest("section") === sectionEl);
+  if (asideNotes.length > 0) {
+    const combined = asideNotes
+      .map((el) => sanitizeSpeakerNotesHtml(el.innerHTML))
+      .filter(Boolean)
+      .join("<hr class=\"my-2 border-base-300\" />");
+    if (combined) {
+      return { hasNotes: true, html: combined };
+    }
+  }
+  const attrNotes = sectionEl.getAttribute("data-notes");
+  if (attrNotes && attrNotes.trim()) {
+    return { hasNotes: true, html: `<p>${escapeHtml(attrNotes.trim())}</p>` };
+  }
+  return { hasNotes: false, html: "" };
+}
+
+function getLeafSlides(deckEl) {
+  if (!deckEl) return [];
+  const all = Array.from(deckEl.querySelectorAll(".slides section"));
+  return all.filter((sec) => !sec.querySelector(":scope > section"));
+}
+
+/**
+ * Initializes #presentation-shell, Reveal.js embedded runtime, Fullscreen mode,
+ * modeless Follow-Along Speaker Notes popup (#presentation-notes-modal),
+ * Stacked view toggle, and widget resize hooks.
+ */
+function initPresentationShell(retries = 25) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  registerLeafletInitHook();
+
+  const deckEl = document.querySelector("#report-main .reveal, .reveal#presentation-deck, .reveal");
+  if (!deckEl) return;
+
+  // 1. Ensure #presentation-shell wraps toolbar + .reveal-stage
+  let stageEl = deckEl.closest(".reveal-stage");
+  if (!stageEl) {
+    stageEl = document.createElement("div");
+    stageEl.className = "reveal-stage";
+    deckEl.parentNode.insertBefore(stageEl, deckEl);
+    stageEl.appendChild(deckEl);
+  }
+
+  let shell = stageEl.closest("#presentation-shell");
+  if (!shell) {
+    shell = document.createElement("div");
+    shell.id = "presentation-shell";
+    stageEl.parentNode.insertBefore(shell, stageEl);
+    const maybeToolbar = shell.previousElementSibling;
+    if (maybeToolbar && maybeToolbar.classList.contains("presentation-toolbar")) {
+      shell.appendChild(maybeToolbar);
+    }
+    shell.appendChild(stageEl);
+  }
+
+  // Ensure a presentation toolbar exists if fragment omitted it
+  let toolbar = shell.querySelector(".presentation-toolbar");
+  if (!toolbar) {
+    toolbar = document.createElement("div");
+    toolbar.className = "presentation-toolbar flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-base-100 border border-base-300 rounded-box shadow-sm print:hidden";
+    toolbar.innerHTML = `
+      <div class="flex items-center gap-2 text-xs text-base-content/75 font-mono">
+        <span class="badge badge-primary badge-outline badge-xs font-mono">Slides</span>
+        <span id="presentation-toolbar-counter">1 / 1</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-1.5">
+        <button id="presentation-notes-btn" type="button" class="btn btn-xs btn-ghost border border-base-300 gap-1.5" title="Toggle Follow-Along Speaker Notes (N)" aria-pressed="false">
+          <span>Notes</span>
+          <kbd class="kbd kbd-xs font-mono hidden sm:inline-flex">N</kbd>
+          <span id="presentation-notes-dot" class="hidden w-2 h-2 rounded-full bg-primary" aria-hidden="true"></span>
+        </button>
+        <button id="presentation-stack-btn" type="button" class="btn btn-xs btn-ghost border border-base-300 gap-1.5" title="Toggle Stacked All-Slides View" aria-pressed="false">
+          <span>All Slides</span>
+        </button>
+        <button id="presentation-fullscreen-btn" type="button" class="btn btn-xs btn-primary gap-1.5" title="Enter Fullscreen Presentation (F)" aria-pressed="false">
+          <span>Fullscreen</span>
+          <kbd class="kbd kbd-xs bg-primary-content/20 text-primary-content border-none font-mono hidden sm:inline-flex">F</kbd>
+        </button>
+      </div>
+    `;
+    shell.insertBefore(toolbar, stageEl);
+  }
+
+  // Ensure compact Fullscreen mini-HUD exists inside #presentation-shell
+  let fsHud = document.getElementById("presentation-fullscreen-hud");
+  if (!fsHud) {
+    fsHud = document.createElement("div");
+    fsHud.id = "presentation-fullscreen-hud";
+    fsHud.setAttribute("aria-label", "Fullscreen Presentation Controls");
+    fsHud.innerHTML = `
+      <button id="presentation-hud-prev" type="button" class="btn btn-ghost btn-xs btn-circle" title="Previous slide" aria-label="Previous slide">&larr;</button>
+      <span id="presentation-hud-counter" class="text-xs font-mono font-semibold px-1.5 tabular-nums">1 / 1</span>
+      <button id="presentation-hud-next" type="button" class="btn btn-ghost btn-xs btn-circle" title="Next slide" aria-label="Next slide">&rarr;</button>
+      <button id="presentation-hud-notes" type="button" class="btn btn-ghost btn-xs gap-1" title="Toggle Speaker Notes (N)">Notes</button>
+      <button id="presentation-hud-exit" type="button" class="btn btn-outline btn-xs" title="Exit Fullscreen (F / Esc)">Exit</button>
+    `;
+    shell.appendChild(fsHud);
+  }
+
+  // Ensure modeless Follow-Along Speaker Notes popup modal exists inside #presentation-shell
+  let notesModal = document.getElementById("presentation-notes-modal");
+  if (!notesModal) {
+    notesModal = document.createElement("aside");
+    notesModal.id = "presentation-notes-modal";
+    notesModal.className = "hidden print:hidden";
+    notesModal.setAttribute("role", "dialog");
+    notesModal.setAttribute("aria-modal", "false");
+    notesModal.setAttribute("aria-labelledby", "presentation-notes-title");
+    notesModal.setAttribute("data-dock", "bottom-right");
+    notesModal.setAttribute("data-notes-size", "md");
+    notesModal.innerHTML = `
+      <div class="px-3 py-2 bg-base-200/90 border-b border-base-300 flex items-center justify-between gap-2 shrink-0">
+        <div class="min-w-0 flex items-center gap-2">
+          <span id="presentation-notes-badge" class="badge badge-primary badge-xs font-mono shrink-0">1</span>
+          <h3 id="presentation-notes-title" class="text-xs font-bold truncate">Speaker Notes</h3>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button id="presentation-notes-size-btn" type="button" class="btn btn-ghost btn-xs font-mono px-1.5 h-6 min-h-0" title="Toggle notes text size">Aa</button>
+          <select id="presentation-notes-dock-select" class="select select-bordered select-xs h-6 min-h-0 text-[11px] font-mono" aria-label="Notes popup dock position" title="Dock position">
+            <option value="bottom-right">Bottom Right</option>
+            <option value="bottom-left">Bottom Left</option>
+            <option value="side-right">Side Right</option>
+          </select>
+          <button id="presentation-notes-close-btn" type="button" class="btn btn-ghost btn-xs btn-circle h-6 min-h-0 w-6" aria-label="Close speaker notes" title="Close (N / Esc)">&times;</button>
+        </div>
+      </div>
+      <div id="presentation-notes-body" class="p-3 overflow-y-auto flex-1 leading-relaxed text-base-content/90 space-y-2">
+        <p class="text-xs italic opacity-60">No speaker notes for this slide.</p>
+      </div>
+      <div class="px-3 py-2 bg-base-200/70 border-t border-base-300 flex items-center justify-between gap-2 text-xs shrink-0">
+        <div id="presentation-notes-upnext" class="truncate text-base-content/70 font-medium">Up Next: —</div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button id="presentation-notes-prev" type="button" class="btn btn-ghost btn-xs border border-base-300 h-6 min-h-0 px-2" title="Previous slide">Prev</button>
+          <button id="presentation-notes-next" type="button" class="btn btn-primary btn-xs h-6 min-h-0 px-2" title="Next slide">Next</button>
+        </div>
+      </div>
+    `;
+    shell.appendChild(notesModal);
+  }
+
+  // Wait for Reveal.js CDN if still loading
+  if (!window.Reveal) {
+    if (retries > 0) {
+      setTimeout(() => initPresentationShell(retries - 1), 120);
+    }
+    return;
+  }
+
+  const updatePresenterUI = () => {
+    const deck = window.revealInstance;
+    const leafSlides = getLeafSlides(deckEl);
+    const total = Math.max(1, leafSlides.length);
+    let currentSlide = null;
+    let indices = { h: 0, v: 0 };
+    try {
+      if (deck && typeof deck.getCurrentSlide === "function") {
+        currentSlide = deck.getCurrentSlide();
+      }
+      if (deck && typeof deck.getIndices === "function") {
+        indices = deck.getIndices() || { h: 0, v: 0 };
+      }
+    } catch (_) {}
+    if (!currentSlide && leafSlides.length > 0) {
+      currentSlide = leafSlides[0];
+    }
+
+    const leafIdx = currentSlide ? Math.max(0, leafSlides.indexOf(currentSlide)) : 0;
+    const slideNumberLabel = indices.v > 0 ? `${(indices.h || 0) + 1}.${indices.v + 1}` : `${(indices.h || 0) + 1}`;
+    const counterText = `${leafIdx + 1} / ${total}`;
+
+    const toolbarCounter = document.getElementById("presentation-toolbar-counter");
+    if (toolbarCounter) toolbarCounter.textContent = counterText;
+    const hudCounter = document.getElementById("presentation-hud-counter");
+    if (hudCounter) hudCounter.textContent = counterText;
+
+    const slideTitle = extractSlideLabel(currentSlide, `Slide ${slideNumberLabel}`);
+    const { hasNotes, html: notesHtml } = extractSlideNotesHtml(currentSlide);
+
+    const notesDot = document.getElementById("presentation-notes-dot");
+    if (notesDot) notesDot.classList.toggle("hidden", !hasNotes);
+
+    const notesBadge = document.getElementById("presentation-notes-badge");
+    if (notesBadge) notesBadge.textContent = slideNumberLabel;
+    const notesTitleEl = document.getElementById("presentation-notes-title");
+    if (notesTitleEl) notesTitleEl.textContent = slideTitle;
+
+    const notesBody = document.getElementById("presentation-notes-body");
+    if (notesBody) {
+      notesBody.innerHTML = hasNotes
+        ? notesHtml
+        : `<p class="text-xs italic opacity-60">No speaker notes for this slide.</p>`;
+    }
+
+    const upNextEl = document.getElementById("presentation-notes-upnext");
+    if (upNextEl) {
+      const nextLeaf = leafIdx + 1 < leafSlides.length ? leafSlides[leafIdx + 1] : null;
+      upNextEl.textContent = nextLeaf
+        ? `Up Next: ${extractSlideLabel(nextLeaf, `Slide ${leafIdx + 2}`)}`
+        : "Up Next: End of Deck";
+    }
+  };
+
+  const isNativeFullscreen = () => Boolean(document.fullscreenElement === shell || document.webkitFullscreenElement === shell);
+  const isAnyFullscreen = () => isNativeFullscreen() || shell.classList.contains("is-fullscreen");
+
+  const syncFullscreenButtons = () => {
+    const active = isAnyFullscreen();
+    const fsBtn = document.getElementById("presentation-fullscreen-btn");
+    if (fsBtn) {
+      fsBtn.setAttribute("aria-pressed", active ? "true" : "false");
+      const labelSpan = fsBtn.querySelector("span");
+      if (labelSpan) labelSpan.textContent = active ? "Exit Fullscreen" : "Fullscreen";
+    }
+  };
+
+  const enterFullscreen = async () => {
+    if (shell.classList.contains("is-stacked")) {
+      setStackedMode(false);
+    }
+    const reqFs = shell.requestFullscreen || shell.webkitRequestFullscreen;
+    let enteredNative = false;
+    if (typeof reqFs === "function") {
+      try {
+        await reqFs.call(shell);
+        enteredNative = isNativeFullscreen();
+      } catch (_) {
+        enteredNative = false;
+      }
+    }
+    if (!enteredNative) {
+      shell.classList.add("is-fullscreen");
+    }
+    syncFullscreenButtons();
+    setTimeout(() => resizePresentationWidgets(), 60);
+  };
+
+  const exitFullscreen = async () => {
+    shell.classList.remove("is-fullscreen");
+    if (isNativeFullscreen()) {
+      const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
+      if (typeof exitFs === "function") {
+        try { await exitFs.call(document); } catch (_) {}
+      }
+    }
+    syncFullscreenButtons();
+    setTimeout(() => resizePresentationWidgets(), 60);
+  };
+
+  const toggleFullscreen = async () => {
+    if (isAnyFullscreen()) {
+      await exitFullscreen();
+    } else {
+      await enterFullscreen();
+    }
+  };
+
+  const setNotesOpen = (open) => {
+    notesModal.classList.toggle("hidden", !open);
+    const notesBtn = document.getElementById("presentation-notes-btn");
+    if (notesBtn) notesBtn.setAttribute("aria-pressed", open ? "true" : "false");
+    if (open) updatePresenterUI();
+  };
+
+  const toggleNotes = () => {
+    setNotesOpen(notesModal.classList.contains("hidden"));
+  };
+
+  const setStackedMode = (stacked) => {
+    shell.classList.toggle("is-stacked", Boolean(stacked));
+    stageEl.classList.toggle("is-stacked", Boolean(stacked));
+    const stackBtn = document.getElementById("presentation-stack-btn");
+    if (stackBtn) {
+      stackBtn.setAttribute("aria-pressed", stacked ? "true" : "false");
+      stackBtn.classList.toggle("btn-active", Boolean(stacked));
+    }
+    setTimeout(() => resizePresentationWidgets(), 60);
+  };
+
+  if (!shell.dataset.presentationBound) {
+    shell.dataset.presentationBound = "true";
+
+    document.getElementById("presentation-fullscreen-btn")?.addEventListener("click", () => toggleFullscreen());
+    document.getElementById("presentation-hud-exit")?.addEventListener("click", () => exitFullscreen());
+    document.getElementById("presentation-notes-btn")?.addEventListener("click", () => toggleNotes());
+    document.getElementById("presentation-hud-notes")?.addEventListener("click", () => toggleNotes());
+    document.getElementById("presentation-notes-close-btn")?.addEventListener("click", () => setNotesOpen(false));
+    document.getElementById("presentation-stack-btn")?.addEventListener("click", () => {
+      setStackedMode(!shell.classList.contains("is-stacked"));
+    });
+
+    const goPrev = () => { try { window.revealInstance?.prev?.(); } catch (_) {} };
+    const goNext = () => { try { window.revealInstance?.next?.(); } catch (_) {} };
+    document.getElementById("presentation-hud-prev")?.addEventListener("click", goPrev);
+    document.getElementById("presentation-hud-next")?.addEventListener("click", goNext);
+    document.getElementById("presentation-notes-prev")?.addEventListener("click", goPrev);
+    document.getElementById("presentation-notes-next")?.addEventListener("click", goNext);
+
+    const sizes = ["sm", "md", "lg"];
+    document.getElementById("presentation-notes-size-btn")?.addEventListener("click", () => {
+      const cur = notesModal.getAttribute("data-notes-size") || "md";
+      const next = sizes[(sizes.indexOf(cur) + 1) % sizes.length];
+      notesModal.setAttribute("data-notes-size", next);
+    });
+
+    document.getElementById("presentation-notes-dock-select")?.addEventListener("change", (e) => {
+      notesModal.setAttribute("data-dock", e.target.value || "bottom-right");
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!isNativeFullscreen()) {
+        shell.classList.remove("is-fullscreen");
+      }
+      syncFullscreenButtons();
+      setTimeout(() => resizePresentationWidgets(), 60);
+    });
+    document.addEventListener("webkitfullscreenchange", () => {
+      if (!isNativeFullscreen()) {
+        shell.classList.remove("is-fullscreen");
+      }
+      syncFullscreenButtons();
+      setTimeout(() => resizePresentationWidgets(), 60);
+    });
+
+    if (!window._presentationKeydownBound) {
+      window._presentationKeydownBound = true;
+      document.addEventListener("keydown", (e) => {
+        const active = document.activeElement;
+        const inEditable = Boolean(
+          active &&
+          (active.tagName === "INPUT" ||
+            active.tagName === "TEXTAREA" ||
+            active.tagName === "SELECT" ||
+            active.isContentEditable ||
+            active.closest?.(".ql-editor"))
+        );
+
+        if (e.key === "Escape") {
+          const blockingModalOpen = Boolean(
+            document.getElementById("all-settings-modal")?.open ||
+            document.getElementById("markdown-viewer-modal")?.open ||
+            document.getElementById("mermaid-enlarge-modal")?.open ||
+            document.getElementById("pdf-not-ready-modal")?.open ||
+            document.getElementById("agent-reconnect-modal")?.open
+          );
+          if (blockingModalOpen) return;
+          if (!notesModal.classList.contains("hidden")) {
+            setNotesOpen(false);
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+            return;
+          }
+          if (shell.classList.contains("is-fullscreen")) {
+            exitFullscreen();
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+          }
+          return;
+        }
+
+        if (inEditable || e.ctrlKey || e.metaKey || e.altKey) return;
+        const key = String(e.key || "").toLowerCase();
+        if (key === "f") {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+          toggleFullscreen();
+        } else if (key === "n") {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+          toggleNotes();
+        }
+      }, true);
+    }
+  }
+
+  // Initialize Reveal.js once per deck element
+  if (!deckEl.dataset.revealInitialized) {
+    deckEl.dataset.revealInitialized = "true";
+    const revealConfig = {
+      embedded: true,
+      disableLayout: true,
+      hash: false,
+      keyboard: {
+        70: null,
+        78: null
+      },
+      controls: true,
+      progress: true,
+      slideNumber: "c/t",
+      center: false,
+      transition: "slide"
+    };
+    try {
+      const useSingleton = document.querySelectorAll(".reveal").length <= 1 && typeof window.Reveal.initialize === "function";
+      const deck = useSingleton
+        ? window.Reveal
+        : (typeof window.Reveal === "function" ? new window.Reveal(deckEl, revealConfig) : window.Reveal);
+      window.revealInstance = deck;
+      window.revealDeck = deck;
+
+      if (typeof deck.on === "function") {
+        deck.on("ready", () => {
+          updatePresenterUI();
+          setTimeout(() => resizePresentationWidgets(), 50);
+        });
+        deck.on("slidechanged", () => {
+          updatePresenterUI();
+          setTimeout(() => resizePresentationWidgets(), 50);
+        });
+      }
+
+      const initPromise = typeof deck.initialize === "function"
+        ? deck.initialize(revealConfig)
+        : Promise.resolve();
+      Promise.resolve(initPromise).then(() => {
+        updatePresenterUI();
+        setTimeout(() => resizePresentationWidgets(), 60);
+      }).catch((err) => {
+        console.warn("[html-report] Reveal.js initialization notice:", err);
+      });
+    } catch (err) {
+      console.warn("[html-report] Reveal.js initialization notice:", err);
+    }
+  } else {
+    updatePresenterUI();
+    resizePresentationWidgets();
+  }
+
+  window.presentationToggleFullscreen = toggleFullscreen;
+  window.presentationToggleNotes = toggleNotes;
+  window.presentationToggleStacked = () => setStackedMode(!shell.classList.contains("is-stacked"));
+}
+
+
+
+/**
+ * Day.js runtime initialization & data-dayjs hydration.
+ */
+function initDayjs() {
+  if (typeof window === "undefined" || !window.dayjs) return;
+  try {
+    if (window.dayjs_plugin_relativeTime) {
+      window.dayjs.extend(window.dayjs_plugin_relativeTime);
+    }
+    if (window.dayjs_plugin_customParseFormat) {
+      window.dayjs.extend(window.dayjs_plugin_customParseFormat);
+    }
+  } catch (err) {
+    console.warn("[html-report] Day.js plugin registration notice:", err);
+  }
+
+  try {
+    document.querySelectorAll("[data-dayjs]").forEach((el) => {
+      const raw = el.getAttribute("data-dayjs");
+      const format = el.getAttribute("data-dayjs-format") || "YYYY-MM-DD HH:mm:ss";
+      const fromNow = el.hasAttribute("data-dayjs-from-now") || el.getAttribute("data-dayjs-relative") === "true";
+      const d = (raw && raw !== "now" && raw !== "true") ? window.dayjs(raw) : window.dayjs();
+      if (fromNow && typeof d.fromNow === "function") {
+        el.textContent = d.fromNow();
+      } else {
+        el.textContent = d.format(format);
+      }
+    });
+  } catch (err) {
+    console.warn("[html-report] Day.js DOM hydration notice:", err);
+  }
+}
+
 
 /**
  * Mock.js runtime initialization & data-mock hydration.
@@ -2491,19 +3969,86 @@ function initFullCalendar(retries = 25) {
       const calendar = new window.FullCalendar.Calendar(el, {
         initialView: el.getAttribute("data-calendar-view") || "dayGridMonth",
         headerToolbar: {
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,listWeek"
+          left: el.getAttribute("data-calendar-header-left") || "prev,next today",
+          center: el.getAttribute("data-calendar-header-center") || "title",
+          right: el.getAttribute("data-calendar-header-right") || "dayGridMonth,timeGridWeek,listWeek"
         },
         height: el.getAttribute("data-calendar-height") || "auto",
+        contentHeight: "auto",
+        dayMaxEvents: true,
+        handleWindowResize: true,
         events: events
       });
       calendar.render();
       window.reportCalendars.push(calendar);
+
+      if (typeof ResizeObserver === "function") {
+        let lastWidth = el.getBoundingClientRect ? el.getBoundingClientRect().width : 0;
+        const ro = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            const nextWidth = entry.contentRect ? entry.contentRect.width : 0;
+            if (nextWidth > 0 && Math.abs(nextWidth - lastWidth) > 1) {
+              lastWidth = nextWidth;
+              try {
+                if (typeof calendar.updateSize === "function") calendar.updateSize();
+              } catch (_) {}
+            } else if (nextWidth === 0) {
+              lastWidth = 0;
+            }
+          }
+        });
+        ro.observe(el);
+      }
     });
+    if (typeof syncFullCalendarTheme === "function" && typeof resolveDaisyUIThemePalette === "function") {
+      try { syncFullCalendarTheme(resolveDaisyUIThemePalette()); } catch (_) {}
+    }
   } catch (err) {
     console.warn("[html-report] FullCalendar initialization notice:", err);
   }
+}
+
+/**
+ * Fallback CDN mirrors for Lucide UMD in case primary jsDelivr CDN is blocked or slow.
+ */
+const LUCIDE_FALLBACK_CDNS = [
+  "https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/lucide/0.460.0/umd/lucide.min.js"
+];
+let _lucideFallbackAttempted = false;
+
+/**
+ * Ensures Lucide UMD library is available (loading fallback CDN mirrors if needed)
+ * and rehydrates all [data-lucide] placeholders in the DOM.
+ */
+function ensureLucideIcons(root = null) {
+  if (typeof window === "undefined") return;
+  if (window.lucide && typeof window.lucide.createIcons === "function") {
+    rehydrateLucideIcons(root);
+    return;
+  }
+  if (_lucideFallbackAttempted || typeof document === "undefined" || !document.head) return;
+  const hasIcons = typeof document.querySelector === "function"
+    ? Boolean(document.querySelector(":not(svg)[data-lucide], [data-lucide]"))
+    : false;
+  if (!hasIcons) return;
+
+  _lucideFallbackAttempted = true;
+  const loadMirror = (index) => {
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      rehydrateLucideIcons(root);
+      return;
+    }
+    if (index >= LUCIDE_FALLBACK_CDNS.length) return;
+    const s = document.createElement("script");
+    s.src = LUCIDE_FALLBACK_CDNS[index];
+    s.crossOrigin = "anonymous";
+    s.async = true;
+    s.onload = () => rehydrateLucideIcons(root);
+    s.onerror = () => loadMirror(index + 1);
+    document.head.appendChild(s);
+  };
+  loadMirror(0);
 }
 
 /**
@@ -2556,7 +4101,7 @@ function initDatastarObserver() {
     if (needsRehydrate) {
       if (_lucideRehydrationTimer) clearTimeout(_lucideRehydrationTimer);
       _lucideRehydrationTimer = setTimeout(() => {
-        rehydrateLucideIcons();
+        ensureLucideIcons();
       }, 16);
     }
   });
@@ -2608,6 +4153,163 @@ function syncDatastarTheme(themeName) {
     });
   } catch (_) {}
 }
+
+/**
+ * Ensures the built-in Showdown Markdown Viewer modal exists in the DOM.
+ */
+function ensureMarkdownViewerModal() {
+  if (typeof document === "undefined" || !document.body) return null;
+  let modal = document.getElementById("markdown-viewer-modal");
+  if (modal) return modal;
+
+  modal = document.createElement("dialog");
+  modal.id = "markdown-viewer-modal";
+  modal.className = "modal modal-bottom sm:modal-middle";
+  modal.setAttribute("aria-label", "Markdown Document Viewer");
+  modal.innerHTML = [
+    '<div class="modal-box max-w-4xl w-11/12 max-h-[88vh] flex flex-col p-0 bg-base-100 text-base-content border border-base-300 shadow-2xl overflow-hidden">',
+    '  <div class="flex items-center justify-between px-5 py-3.5 border-b border-base-300 bg-base-200/60 gap-3">',
+    '    <div class="min-w-0">',
+    '      <h3 id="markdown-modal-title" class="font-bold text-sm sm:text-base font-mono truncate">Document</h3>',
+    '      <p class="text-3xs text-base-content/60">Rendered with Showdown Markdown Viewer</p>',
+    '    </div>',
+    '    <button type="button" id="markdown-modal-close-btn" class="btn btn-sm btn-circle btn-ghost" aria-label="Close">✕</button>',
+    '  </div>',
+    '  <div id="markdown-modal-content" class="p-5 sm:p-6 overflow-y-auto flex-1 prose prose-sm max-w-none text-base-content/90 leading-relaxed space-y-3"></div>',
+    '  <div class="px-5 py-3 border-t border-base-300 bg-base-200/40 flex items-center justify-between gap-2">',
+    '    <a id="markdown-modal-raw-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-xs btn-ghost font-mono">Open Raw File</a>',
+    '    <button type="button" id="markdown-modal-done-btn" class="btn btn-xs sm:btn-sm btn-primary">Close</button>',
+    '  </div>',
+    '</div>',
+    '<form method="dialog" class="modal-backdrop bg-neutral/40"><button>close</button></form>'
+  ].join("\n");
+  document.body.appendChild(modal);
+
+  const closeBtn = modal.querySelector("#markdown-modal-close-btn");
+  const doneBtn = modal.querySelector("#markdown-modal-done-btn");
+  if (closeBtn) closeBtn.addEventListener("click", () => closeMarkdownViewer());
+  if (doneBtn) doneBtn.addEventListener("click", () => closeMarkdownViewer());
+  return modal;
+}
+
+/**
+ * Resolves markdown source text from embedded artifact maps or HTTP fetch.
+ */
+async function resolveMarkdownArtifact(docPath) {
+  const key = String(docPath || "").trim();
+  const base = key.split("/").pop();
+  const sources = [];
+  if (typeof window !== "undefined") {
+    if (window.MARKDOWN_ARTIFACTS && typeof window.MARKDOWN_ARTIFACTS === "object") {
+      sources.push(window.MARKDOWN_ARTIFACTS);
+    }
+    if (window.OPEN_SPEC_ARTIFACTS && typeof window.OPEN_SPEC_ARTIFACTS === "object") {
+      sources.push(window.OPEN_SPEC_ARTIFACTS);
+    }
+  }
+  if (typeof document !== "undefined") {
+    for (const scriptId of ["markdown-artifacts-data", "open-spec-artifacts-data"]) {
+      const el = document.getElementById(scriptId);
+      if (el && el.textContent) {
+        try { sources.push(JSON.parse(el.textContent)); } catch (_) {}
+      }
+    }
+  }
+  for (const map of sources) {
+    if (typeof map[key] === "string") return map[key];
+    if (base && typeof map[base] === "string") return map[base];
+  }
+
+  const proto = typeof window !== "undefined" && window.location ? window.location.protocol : "";
+  if ((proto === "http:" || proto === "https:") && typeof fetch === "function" && key) {
+    const cleanRel = key.replace(/^\/+/, "");
+    const candidates = [key, "/" + cleanRel];
+    if (base && base !== cleanRel) candidates.push(base);
+    for (const url of candidates) {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (res.ok) {
+          return await res.text();
+        }
+      } catch (_) {}
+    }
+  }
+
+  return `# ${key || "Document"}\n\nPreview is unavailable offline under \`file://\` without embedded artifacts.\n\nOpen the source file directly: [${key}](${key})`;
+}
+
+/**
+ * Closes the Showdown Markdown Viewer modal.
+ */
+function closeMarkdownViewer() {
+  if (typeof document === "undefined") return;
+  const modal = document.getElementById("markdown-viewer-modal");
+  if (!modal) return;
+  if (typeof modal.close === "function" && modal.open) {
+    modal.close();
+  } else {
+    modal.removeAttribute("open");
+  }
+}
+
+/**
+ * Opens the Showdown Markdown Viewer modal for a given markdown path or artifact key.
+ */
+async function openMarkdownViewer(docPath) {
+  if (typeof document === "undefined") return null;
+  const targetDoc = String(docPath || "").trim() || "README.md";
+  const modal = ensureMarkdownViewerModal();
+  if (!modal) return null;
+
+  const titleEl = document.getElementById("markdown-modal-title");
+  if (titleEl) titleEl.textContent = targetDoc;
+  const rawLink = document.getElementById("markdown-modal-raw-link");
+  if (rawLink) rawLink.setAttribute("href", targetDoc);
+
+  if (typeof modal.showModal === "function") {
+    if (!modal.open) modal.showModal();
+  } else {
+    modal.setAttribute("open", "true");
+  }
+
+  const contentEl =
+    document.getElementById("markdown-modal-content") ||
+    document.getElementById("markdown-modal-body") ||
+    document.getElementById("modal-markdown-body");
+
+  if (contentEl) {
+    contentEl.innerHTML = '<div class="flex items-center gap-2 text-xs opacity-70 py-6"><span class="loading loading-spinner loading-sm text-primary"></span><span>Loading document...</span></div>';
+  }
+
+  const markdown = await resolveMarkdownArtifact(targetDoc);
+  let rendered = "";
+  if (typeof window !== "undefined" && window.showdownConverter && typeof window.showdownConverter.makeHtml === "function") {
+    rendered = window.showdownConverter.makeHtml(markdown);
+  } else if (typeof window !== "undefined" && window.showdown && typeof window.showdown.Converter === "function") {
+    const conv = new window.showdown.Converter({
+      tables: true,
+      tasklists: true,
+      strikethrough: true,
+      emoji: true,
+      ghCodeBlocks: true
+    });
+    window.showdownConverter = conv;
+    rendered = conv.makeHtml(markdown);
+  } else if (typeof window !== "undefined" && window.marked && typeof window.marked.parse === "function") {
+    rendered = window.marked.parse(markdown);
+  } else {
+    rendered = `<pre class="whitespace-pre-wrap text-xs font-mono bg-base-200 p-4 rounded-lg overflow-x-auto">${escapeHtml(markdown)}</pre>`;
+  }
+
+  if (contentEl) {
+    contentEl.innerHTML = rendered;
+  }
+  try { rehydrateLucideIcons(modal); } catch (_) {}
+  return modal;
+}
+
+
+
 
 // =============================================================================
 // Declarative Public Feeds & Signal Bus
@@ -2929,6 +4631,798 @@ function initPublicFeeds(rootElement) {
   return feedElements;
 }
 
+
+/**
+ * Re-runs content-level hydration after <main> was hot-swapped in place by the
+ * live-reload dev server (no full page reload, so theme + scroll are preserved).
+ * Only touches content hooks; navbar/theme/download wiring stays as-is.
+ */
+async function reinitReportContent() {
+  if (typeof document === "undefined") return;
+  try { cleanupPublicFeeds(); } catch (_) {}
+  try { ensureLucideIcons(); } catch (_) {}
+  try { initTOC(); } catch (_) {}
+  try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
+  try { initDayjs(); } catch (_) {}
+  try { autoLinkMarkdownFiles(); } catch (_) {}
+  try { await renderMermaidWithTheme(resolveDaisyUIThemePalette()); } catch (_) {}
+  try { if (typeof HTMLReportMermaid !== "undefined") HTMLReportMermaid.initEnlarge(); } catch (_) {}
+  try { checkInsufficientHorizontalSpace(); } catch (_) {}
+  try { initPresentationShell(); } catch (_) {}
+  try { initPublicFeeds(); } catch (_) {}
+}
+
+
+
+
+const _authoringMemStore = {};
+
+function _authoringStorage() {
+  try {
+    if (typeof localStorage !== "undefined" && localStorage) return localStorage;
+  } catch (_) {}
+  return {
+    getItem: (k) => (Object.prototype.hasOwnProperty.call(_authoringMemStore, k) ? _authoringMemStore[k] : null),
+    setItem: (k, v) => { _authoringMemStore[k] = String(v); },
+    removeItem: (k) => { delete _authoringMemStore[k]; }
+  };
+}
+
+/** Stable per-board key: html-report-source meta, else location.pathname. */
+function getPageKey() {
+  try {
+    if (typeof document !== "undefined") {
+      const meta = document.querySelector('meta[name="html-report-source"]');
+      if (meta && meta.getAttribute("content")) return meta.getAttribute("content");
+    }
+    if (typeof window !== "undefined" && window.location && window.location.pathname) return window.location.pathname;
+  } catch (_) {}
+  return "page";
+}
+
+function isPublishedDocument() {
+  if (typeof document === "undefined") return false;
+  const meta = document.querySelector('meta[name="html-report-published"]');
+  return Boolean(meta && meta.getAttribute("content") === "true");
+}
+
+/**
+ * Settings gear section registry. Built-in sections (Appearance, Export) are
+ * static markup; other features register sections that render by `order`.
+ */
+const HTMLReportSettings = {
+  _sections: [],
+
+  registerSection(section) {
+    if (!section || !section.id || typeof section.render !== "function") return false;
+    const next = { title: section.id, icon: null, order: 100, ...section };
+    const idx = this._sections.findIndex((s) => s.id === next.id);
+    if (idx >= 0) this._sections[idx] = next; else this._sections.push(next);
+    this.renderAll();
+    return true;
+  },
+
+  getSections() {
+    return this._sections.slice().sort((a, b) => (a.order - b.order) || String(a.id).localeCompare(String(b.id)));
+  },
+
+  renderAll() {
+    if (typeof document === "undefined") return;
+    const host = document.getElementById("settings-extra-sections");
+    if (!host) return;
+    host.innerHTML = "";
+    for (const s of this.getSections()) {
+      const wrap = document.createElement("details");
+      wrap.className = "collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box";
+      wrap.id = `settings-section-${s.id}`;
+      wrap.setAttribute("data-settings-section", s.id);
+      const summary = document.createElement("summary");
+      summary.className = "collapse-title text-3xs font-bold uppercase tracking-wider text-base-content/80 min-h-0 py-2.5 px-3 flex items-center justify-between cursor-pointer select-none";
+      summary.innerHTML = `<span>${s.title}</span>`;
+      const content = document.createElement("div");
+      content.className = "collapse-content px-3 pb-3 pt-2";
+      const body = document.createElement("div");
+      body.className = "mt-1.5";
+      content.appendChild(body);
+      wrap.appendChild(summary);
+      wrap.appendChild(content);
+      host.appendChild(wrap);
+      try { s.render(body); } catch (err) { console.warn("[html-report] settings section failed:", s.id, err); }
+    }
+  },
+
+    initGear() {
+    if (typeof document === "undefined") return;
+    const dd = document.getElementById("settings-dropdown");
+    const btn = document.getElementById("settings-gear-btn");
+    const tocDd = document.getElementById("toc-dropdown");
+    const tocBtn = document.getElementById("toc-dropdown-btn");
+
+    const closeDropdown = (dropdownEl, triggerBtn) => {
+      if (!dropdownEl) return;
+      dropdownEl.classList.remove("dropdown-open");
+      dropdownEl.removeAttribute("open");
+      if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "false");
+      const active = document.activeElement;
+      if (active && dropdownEl.contains(active) && typeof active.blur === "function") {
+        active.blur();
+      }
+    };
+
+    const openDropdown = (dropdownEl, triggerBtn) => {
+      if (!dropdownEl) return;
+      dropdownEl.classList.add("dropdown-open");
+      if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "true");
+    };
+
+    const closeSettings = () => closeDropdown(dd, btn);
+    const closeToc = () => closeDropdown(tocDd, tocBtn);
+    const closeAll = () => {
+      closeSettings();
+      closeToc();
+    };
+
+    this.close = closeSettings;
+    this.closeToc = closeToc;
+    this.closeAll = closeAll;
+
+    if (tocDd && tocBtn && !tocDd.__tocWired) {
+      tocDd.__tocWired = true;
+      tocBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = tocDd.classList.contains("dropdown-open");
+        if (isOpen) {
+          closeToc();
+        } else {
+          closeSettings();
+          openDropdown(tocDd, tocBtn);
+        }
+      });
+      tocBtn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          tocBtn.click();
+        }
+      });
+    }
+
+    if (dd && btn && !dd.__gearWired) {
+      dd.__gearWired = true;
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = dd.classList.contains("dropdown-open");
+        if (isOpen) {
+          closeSettings();
+        } else {
+          closeToc();
+          openDropdown(dd, btn);
+        }
+      });
+      btn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+
+      const panel = document.getElementById("settings-panel");
+      if (panel) {
+        panel.addEventListener("click", (e) => {
+          const actionBtn = e.target && e.target.closest && e.target.closest("#open-all-settings-btn, #download-html-btn, #download-pdf-btn, #pwa-install-dropdown-btn, #settings-open-editor");
+          if (actionBtn) {
+            setTimeout(() => closeSettings(), 0);
+          }
+        });
+      }
+    }
+
+    if (!document.__toolbarDropdownsGlobalWired) {
+      document.__toolbarDropdownsGlobalWired = true;
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          const gearEl = document.getElementById("settings-dropdown");
+          const tocEl = document.getElementById("toc-dropdown");
+          if ((gearEl && gearEl.classList.contains("dropdown-open")) || (tocEl && tocEl.classList.contains("dropdown-open"))) {
+            closeAll();
+          }
+        }
+      });
+      document.addEventListener("mousedown", (e) => {
+        const gearEl = document.getElementById("settings-dropdown");
+        const tocEl = document.getElementById("toc-dropdown");
+        if (gearEl && gearEl.classList.contains("dropdown-open") && !gearEl.contains(e.target)) {
+          closeDropdown(gearEl, document.getElementById("settings-gear-btn"));
+        }
+        if (tocEl && tocEl.classList.contains("dropdown-open") && !tocEl.contains(e.target)) {
+          closeDropdown(tocEl, document.getElementById("toc-dropdown-btn"));
+        }
+      });
+    }
+  }
+};
+
+/* -------------------------------- Mermaid Enlarge -------------------------------- */
+
+const HTMLReportMermaid = {
+  _scale: 1.0,
+  _panX: 0,
+  _panY: 0,
+  _isDragging: false,
+  _startX: 0,
+  _startY: 0,
+  _isFullscreen: false,
+  _controlsBound: false,
+
+  /**
+   * Initializes or updates enlarge buttons on all .mermaid diagram containers.
+   */
+  initEnlarge() {
+    if (typeof document === "undefined") return;
+    this._bindControls();
+    const mermaidNodes = document.querySelectorAll(".mermaid");
+    mermaidNodes.forEach((node) => {
+      let wrapper = node.closest(".mermaid-wrapper");
+      if (!wrapper) {
+        wrapper = document.createElement("div");
+        wrapper.className = "mermaid-wrapper relative group";
+        node.parentNode.insertBefore(wrapper, node);
+        wrapper.appendChild(node);
+      }
+
+      let btn = wrapper.querySelector(".mermaid-enlarge-btn");
+      if (!btn) {
+        btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn btn-xs btn-ghost bg-base-100/90 backdrop-blur border border-base-300 hover:bg-base-200 shadow-xs gap-1 text-3xs font-medium mermaid-enlarge-btn";
+        btn.title = "Enlarge diagram";
+        btn.setAttribute("aria-label", "Enlarge diagram");
+        btn.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg><span>Enlarge</span>';
+        wrapper.appendChild(btn);
+      }
+      if (!btn.__enlargeWired) {
+        btn.__enlargeWired = true;
+        btn.addEventListener("click", () => this.openModal(node));
+      }
+    });
+  },
+
+  _bindControls() {
+    if (this._controlsBound || typeof document === "undefined") return;
+    this._controlsBound = true;
+
+    const zoomInBtn = document.getElementById("mermaid-zoom-in-btn");
+    const zoomOutBtn = document.getElementById("mermaid-zoom-out-btn");
+    const zoomResetBtn = document.getElementById("mermaid-zoom-reset-btn");
+    const zoomFitBtn = document.getElementById("mermaid-zoom-fit-btn");
+    const fullscreenBtn = document.getElementById("mermaid-fullscreen-btn");
+    const viewport = document.getElementById("mermaid-enlarge-viewport");
+    const modal = document.getElementById("mermaid-enlarge-modal");
+
+    if (zoomInBtn) zoomInBtn.addEventListener("click", () => this.zoomIn());
+    if (zoomOutBtn) zoomOutBtn.addEventListener("click", () => this.zoomOut());
+    if (zoomResetBtn) zoomResetBtn.addEventListener("click", () => this.resetZoom());
+    if (zoomFitBtn) zoomFitBtn.addEventListener("click", () => this.fitToViewport());
+    if (fullscreenBtn) fullscreenBtn.addEventListener("click", () => this.toggleFullscreen());
+
+    if (viewport) {
+      viewport.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.15 : -0.15;
+        this.setScale(this._scale + delta);
+      }, { passive: false });
+
+      viewport.addEventListener("mousedown", (e) => {
+        if (e.button !== 0) return;
+        this._isDragging = true;
+        this._startX = e.clientX - this._panX;
+        this._startY = e.clientY - this._panY;
+        viewport.classList.add("cursor-grabbing");
+        viewport.classList.remove("cursor-grab");
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!this._isDragging) return;
+        this._panX = e.clientX - this._startX;
+        this._panY = e.clientY - this._startY;
+        this.updateTransform();
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (this._isDragging) {
+          this._isDragging = false;
+          if (viewport) {
+            viewport.classList.remove("cursor-grabbing");
+            viewport.classList.add("cursor-grab");
+          }
+        }
+      });
+    }
+
+    if (modal) {
+      window.addEventListener("keydown", (e) => {
+        if (!modal.open && !modal.hasAttribute("open")) return;
+        if (e.key === "+" || e.key === "=") {
+          e.preventDefault();
+          this.zoomIn();
+        } else if (e.key === "-" || e.key === "_") {
+          e.preventDefault();
+          this.zoomOut();
+        } else if (e.key === "0") {
+          e.preventDefault();
+          this.resetZoom();
+        }
+      });
+    }
+  },
+
+  setScale(scale) {
+    this._scale = Math.min(Math.max(scale, 0.25), 4.0);
+    this.updateTransform();
+  },
+
+  zoomIn(step = 0.2) {
+    this.setScale(this._scale + step);
+  },
+
+  zoomOut(step = 0.2) {
+    this.setScale(this._scale - step);
+  },
+
+  resetZoom() {
+    this._scale = 1.0;
+    this._panX = 0;
+    this._panY = 0;
+    this.updateTransform();
+  },
+
+  fitToViewport() {
+    const viewport = document.getElementById("mermaid-enlarge-viewport");
+    const content = document.getElementById("mermaid-enlarge-content");
+    const svg = content?.querySelector("svg");
+    if (!viewport || !svg) {
+      this.resetZoom();
+      return;
+    }
+    const vpRect = viewport.getBoundingClientRect();
+    let svgW = 800;
+    let svgH = 500;
+    const vb = svg.getAttribute("viewBox");
+    if (vb) {
+      const parts = vb.split(/[\s,]+/).map(Number);
+      if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+        svgW = parts[2];
+        svgH = parts[3];
+      }
+    } else {
+      svgW = svg.clientWidth || 800;
+      svgH = svg.clientHeight || 500;
+    }
+    const scaleX = (vpRect.width - 40) / svgW;
+    const scaleY = (vpRect.height - 40) / svgH;
+    const fitScale = Math.min(scaleX, scaleY, 1.5);
+    this._panX = 0;
+    this._panY = 0;
+    this.setScale(fitScale);
+  },
+
+  toggleFullscreen() {
+    this._isFullscreen = !this._isFullscreen;
+    if (typeof document === "undefined") return;
+    const box = document.getElementById("mermaid-modal-box");
+    if (!box) return;
+    if (this._isFullscreen) {
+      box.classList.remove("max-w-6xl", "w-11/12", "max-h-[90vh]");
+      box.classList.add("max-w-none", "w-[98vw]", "h-[96vh]", "max-h-[96vh]");
+    } else {
+      box.classList.remove("max-w-none", "w-[98vw]", "h-[96vh]", "max-h-[96vh]");
+      box.classList.add("max-w-6xl", "w-11/12", "max-h-[90vh]");
+    }
+  },
+
+  updateTransform() {
+    if (typeof document === "undefined") return;
+    const content = document.getElementById("mermaid-enlarge-content");
+    const zoomLevelEl = document.getElementById("mermaid-zoom-level");
+    if (content) {
+      content.style.transform = `translate(${this._panX}px, ${this._panY}px) scale(${this._scale})`;
+    }
+    if (zoomLevelEl) {
+      zoomLevelEl.textContent = `${Math.round(this._scale * 100)}%`;
+    }
+  },
+
+  /**
+   * Opens the enlarged diagram modal displaying a readable clone of the SVG.
+   */
+  openModal(mermaidNode) {
+    if (typeof document === "undefined" || !mermaidNode) return;
+    this._bindControls();
+    const modal = document.getElementById("mermaid-enlarge-modal");
+    const container = document.getElementById("mermaid-enlarge-content");
+    if (!modal || !container) return;
+
+    this._scale = 1.0;
+    this._panX = 0;
+    this._panY = 0;
+
+    const svg = mermaidNode.querySelector("svg");
+    container.innerHTML = "";
+    if (svg) {
+      const clone = svg.cloneNode(true);
+      clone.removeAttribute("height");
+      clone.removeAttribute("width");
+      clone.style.width = "100%";
+      clone.style.height = "auto";
+      clone.style.maxWidth = "none";
+
+      // Detect SVG viewBox / aspect ratio
+      let isWide = false;
+      const vb = clone.getAttribute("viewBox");
+      if (vb) {
+        const parts = vb.split(/[\s,]+/).map(Number);
+        if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+          const aspect = parts[2] / parts[3];
+          if (aspect > 1.8) {
+            isWide = true;
+          }
+        }
+      }
+
+      if (isWide) {
+        clone.style.minWidth = "min(160%, 1100px)";
+      } else {
+        clone.style.minWidth = "min(100%, 750px)";
+      }
+      container.appendChild(clone);
+    } else {
+      const pre = document.createElement("pre");
+      pre.className = "text-xs font-mono p-4 overflow-auto";
+      pre.textContent = mermaidNode.textContent;
+      container.appendChild(pre);
+    }
+
+    this.updateTransform();
+
+    if (typeof modal.showModal === "function") {
+      modal.showModal();
+    } else {
+      modal.setAttribute("open", "true");
+    }
+  }
+};
+
+
+
+/* -------------------------------- Publisher -------------------------------- */
+
+const HTMLReportPublisher = {
+  AUTHORING_SELECTORS: [
+    "#open-all-settings-btn",
+    "#settings-publish-toggle-wrapper",
+    "#settings-extra-sections",
+    "#all-settings-modal",
+    "#edit-dock",
+    "#agent-dock-container",
+    "#agent-reconnect-modal",
+    "#agent-bridge-status-container",
+    "#published-badge",
+    "script[data-authoring]",
+    "[data-agent-authoring-only]"
+  ],
+
+  /** Prunes authoring chrome from a cloned document tree and returns it. */
+  stripAuthoringElements(docClone) {
+    if (!docClone || typeof docClone.querySelectorAll !== "function") return docClone;
+    this.AUTHORING_SELECTORS.forEach((sel) => docClone.querySelectorAll(sel).forEach((el) => el.remove()));
+    const pubToggle = docClone.querySelector("#settings-publish-toggle");
+    if (pubToggle) {
+      const wrap = pubToggle.closest("#settings-publish-toggle-wrapper") || pubToggle.closest("div.p-2") || pubToggle;
+      wrap.remove();
+    }
+    docClone.querySelectorAll(".divider").forEach((d) => {
+      if (d.textContent && d.textContent.includes("Quick Controls")) d.remove();
+    });
+    docClone.querySelectorAll('meta[name="html-report-ai"]').forEach((el) => el.remove());
+    docClone.querySelectorAll("#html-report-verify-styles").forEach((el) => el.remove());
+    docClone.querySelectorAll("[data-agent-authoring], [data-session-id], [data-insufficient-space]").forEach((el) => {
+      el.removeAttribute("data-agent-authoring");
+      el.removeAttribute("data-session-id");
+      el.removeAttribute("data-insufficient-space");
+    });
+    docClone.querySelectorAll("*").forEach((el) => {
+      if (el.attributes) {
+        Array.from(el.attributes).forEach((attr) => {
+          if (attr.name.startsWith("data-verify-")) el.removeAttribute(attr.name);
+        });
+      }
+      if (
+        (typeof el.hasAttribute === "function" &&
+          (el.hasAttribute("data-agent-prompt") ||
+            el.hasAttribute("data-agent-inspect") ||
+            el.hasAttribute(":data-agent-prompt") ||
+            el.hasAttribute("x-bind:data-agent-prompt")))
+      ) {
+        if (el.classList && typeof el.classList.add === "function") {
+          el.classList.add("hidden", "print:hidden");
+        }
+        el.setAttribute("aria-hidden", "true");
+        el.setAttribute("data-agent-prompt-hidden", "true");
+      }
+      if (el.classList && el.classList.length > 0) {
+        const toRemove = Array.from(el.classList).filter((cls) => cls.startsWith("verify-"));
+        if (toRemove.length > 0) {
+          toRemove.forEach((cls) => el.classList.remove(cls));
+          if (el.classList.length === 0) el.removeAttribute("class");
+        }
+      }
+    });
+    const body = docClone.querySelector("body");
+    if (body && body.style) {
+      body.style.removeProperty("padding-bottom");
+      if (!body.getAttribute("style")) body.removeAttribute("style");
+    }
+    return docClone;
+  },
+
+  /** Rewrites attributes in sorted order on every element for stable serialization. */
+  normalizeAttributes(docClone) {
+    if (!docClone || typeof docClone.querySelectorAll !== "function") return docClone;
+    const all = [docClone, ...Array.from(docClone.querySelectorAll("*"))];
+    all.forEach((el) => {
+      const attrs = Array.from(el.attributes || []).map((a) => [a.name, a.value]);
+      if (attrs.length < 2) return;
+      attrs.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+      attrs.forEach(([n]) => el.removeAttribute(n));
+      attrs.forEach(([n, v]) => el.setAttribute(n, v));
+    });
+    return docClone;
+  },
+
+  /** Full published prep: strip, mark, normalize. */
+  prepare(docClone) {
+    this.stripAuthoringElements(docClone);
+    const head = docClone.querySelector("head");
+    if (head && !head.querySelector('meta[name="html-report-published"]')) {
+      const m = (head.ownerDocument || document).createElement("meta");
+      m.setAttribute("name", "html-report-published");
+      m.setAttribute("content", "true");
+      head.appendChild(m);
+    }
+    return this.normalizeAttributes(docClone);
+  },
+
+  /** Normalizes serialized output: LF newlines, trimmed trailing whitespace, single trailing newline. */
+  normalizeSerialized(html) {
+    return String(html).replace(/\r\n?/g, "\n").replace(/[ \t]+$/gm, "").replace(/\n*$/, "\n");
+  },
+
+  isPublishedFlagOn() {
+    try { return _authoringStorage().getItem("html_report_published:" + getPageKey()) === "true"; } catch (_) { return false; }
+  },
+
+  setPublishedFlag(on) {
+    try {
+      const s = _authoringStorage();
+      if (on) s.setItem("html_report_published:" + getPageKey(), "true"); else s.removeItem("html_report_published:" + getPageKey());
+    } catch (_) {}
+    if (typeof document !== "undefined") {
+      const badge = document.getElementById("published-badge");
+      if (badge) badge.classList.toggle("hidden", !on);
+      const t1 = document.getElementById("settings-publish-toggle");
+      if (t1 && t1.checked !== on) t1.checked = on;
+      const t2 = document.getElementById("modal-publish-toggle");
+      if (t2 && t2.checked !== on) t2.checked = on;
+      const mb = document.getElementById("modal-publish-badge");
+      if (mb) mb.classList.toggle("hidden", !on);
+    }
+  },
+
+  async tryServerPublishDownload() {
+    if (typeof window === "undefined" || typeof fetch !== "function") return null;
+    if (!window.location || (window.location.protocol !== "http:" && window.location.protocol !== "https:")) {
+      return null;
+    }
+    try {
+      let projectSlug = null;
+      const manifestEl = typeof document !== "undefined" ? document.getElementById("agent-manifest") : null;
+      if (manifestEl && manifestEl.textContent) {
+        try {
+          const parsed = JSON.parse(manifestEl.textContent);
+          if (parsed && parsed.project) projectSlug = parsed.project;
+        } catch (_) {}
+      }
+      if (!projectSlug && window.location.pathname) {
+        const m = window.location.pathname.match(/^\/projects\/([^/]+)\//);
+        if (m) projectSlug = decodeURIComponent(m[1]);
+      }
+      const theme = typeof document !== "undefined"
+        ? (document.documentElement.getAttribute("data-theme") || "light")
+        : "light";
+      const res = await fetch("/api/publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ project: projectSlug, theme })
+      });
+      if (!res.ok) return null;
+      const contentType = (res.headers.get("Content-Type") || "").toLowerCase();
+      const publishedKind = (res.headers.get("X-Published-Kind") || "").toLowerCase();
+      if (!publishedKind && !contentType.includes("application/zip") && !res.headers.get("Content-Disposition")) {
+        return null;
+      }
+      const disp = res.headers.get("Content-Disposition") || "";
+      const fnMatch = disp.match(/filename="?([^";\n]+)"?/i);
+      const baseTitle = ((typeof document !== "undefined" && document.title) || "html-report")
+        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "html-report";
+      const fallbackName = contentType.includes("application/zip")
+        ? `${projectSlug || baseTitle}-published.zip`
+        : `${projectSlug || baseTitle}-published.html`;
+      const filename = fnMatch && fnMatch[1] ? fnMatch[1].trim() : fallbackName;
+      const blob = await res.blob();
+      _triggerBlobDownload(blob, filename);
+      return { ok: true, filename, kind: publishedKind || (contentType.includes("application/zip") ? "zip" : "html") };
+    } catch (_) {
+      return null;
+    }
+  },
+
+  async downloadPublished(btn) {
+    if (typeof document === "undefined") return null;
+    if (btn) btn.disabled = true;
+    try {
+      const serverRes = await this.tryServerPublishDownload();
+      if (serverRes && serverRes.ok) {
+        return serverRes;
+      }
+      const html = await buildInlinedHtmlSnapshot({ mode: "published" });
+      const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+      const baseName = (document.title || "html-report").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "html-report";
+      _triggerBlobDownload(blob, `${baseName}-published.html`);
+      return html;
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+};
+
+
+/**
+ * Turnkey Live Board State & SSE Helper
+ * Provides persistence (/api/board/state) and reactive SSE (/events) with file:// guards.
+ */
+const HTMLReportBoard = {
+  _activeStream: null,
+
+  isFileProtocol: function() {
+    return typeof window !== "undefined" && Boolean(window.location && window.location.protocol === "file:");
+  },
+
+  _localStorageKey: function(key) {
+    return `html_report_board_state:${key || getPageKey()}`;
+  },
+
+  saveLocalState: function(stateObj, key) {
+    if (!stateObj || typeof stateObj !== "object" || Array.isArray(stateObj)) return false;
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem(this._localStorageKey(key), JSON.stringify(stateObj));
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  },
+
+  loadLocalState: function(key) {
+    try {
+      if (typeof localStorage !== "undefined") {
+        const raw = localStorage.getItem(this._localStorageKey(key));
+        if (raw) return JSON.parse(raw);
+      }
+    } catch (_) {}
+    return {};
+  },
+
+  syncOfflineStatus: function() {
+    if (typeof document === "undefined") return;
+    const statusEl = document.getElementById("live-board-status");
+    if (!statusEl) return;
+    if (this.isFileProtocol() || (isPublishedDocument() && !this._activeStream)) {
+      statusEl.textContent = "Offline (Local Save)";
+      statusEl.className = "badge badge-info badge-outline badge-xs font-mono shrink-0 whitespace-nowrap";
+    }
+  },
+
+  _resolveEndpoint: function(path) {
+    if (typeof window === "undefined" && typeof process !== "undefined") {
+      const cfg = typeof HTMLReportAgent !== "undefined" ? HTMLReportAgent.getAiConfig() : { port: 3031 };
+      const port = process.env.REPORT_PORT || cfg.port || 3031;
+      return `http://127.0.0.1:${port}${path}`;
+    }
+    return path;
+  },
+
+  saveState: async function(stateObj, options = {}) {
+    if (!stateObj || typeof stateObj !== "object" || Array.isArray(stateObj)) {
+      return { ok: false, error: "State payload must be a JSON object" };
+    }
+    if (this.isFileProtocol()) {
+      const localSaved = this.saveLocalState(stateObj, options.key);
+      this.syncOfflineStatus();
+      return { ok: false, offline: true, localSaved, reason: "Standalone file:// mode - saved locally in browser storage" };
+    }
+    try {
+      const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(stateObj)
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  },
+
+  loadState: async function(options = {}) {
+    if (this.isFileProtocol()) {
+      this.syncOfflineStatus();
+      return { ok: false, offline: true, state: this.loadLocalState(options.key) };
+    }
+    try {
+      const endpoint = options.endpoint || this._resolveEndpoint("/api/board/state");
+      const res = await fetch(endpoint, { method: "GET" });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return { ok: false, error: err.message, state: {} };
+    }
+  },
+
+  connectStream: function(path = "/events", handlers = {}) {
+    if (this.isFileProtocol()) {
+      this.syncOfflineStatus();
+      return { ok: false, offline: true, reason: "Standalone file:// mode - SSE disabled", close() {} };
+    }
+    if (typeof EventSource === "undefined") {
+      return { ok: false, unsupported: true, reason: "EventSource unavailable in this environment", close() {} };
+    }
+    try {
+      if (this._activeStream && typeof this._activeStream.close === "function") {
+        this._activeStream.close();
+      }
+      const source = new EventSource(path);
+      this._activeStream = source;
+      if (typeof handlers.onOpen === "function") {
+        source.addEventListener("open", (e) => handlers.onOpen(e));
+      }
+      if (typeof handlers.onMessage === "function") {
+        source.addEventListener("message", (e) => handlers.onMessage(e));
+      }
+      if (typeof handlers.onState === "function") {
+        source.addEventListener("board-state", (e) => {
+          try { handlers.onState(JSON.parse(e.data), e); } catch (_) {}
+        });
+      }
+      if (typeof handlers.onError === "function") {
+        source.addEventListener("error", (e) => handlers.onError(e));
+      }
+      return {
+        ok: true,
+        source,
+        close: () => {
+          try { source.close(); } catch (_) {}
+          if (this._activeStream === source) this._activeStream = null;
+        }
+      };
+    } catch (err) {
+      return { ok: false, error: err.message, close() {} };
+    }
+  }
+};
+
+
 // Global browser window bindings
 if (typeof window !== "undefined") {
   window.STANDARD_DAISYUI_THEMES = STANDARD_DAISYUI_THEMES;
@@ -2961,10 +5455,15 @@ if (typeof window !== "undefined") {
   window.impressNext = impressNext;
   window.impressPrev = impressPrev;
   window.impressGoto = impressGoto;
+  window.initPresentationShell = initPresentationShell;
+  window.resizePresentationWidgets = resizePresentationWidgets;
   window.initMockjs = initMockjs;
   window.initShowdown = initShowdown;
+  window.openMarkdownViewer = window.openMarkdownViewer || openMarkdownViewer;
+  window.closeMarkdownViewer = window.closeMarkdownViewer || closeMarkdownViewer;
   window.initFullCalendar = initFullCalendar;
   window.rehydrateLucideIcons = rehydrateLucideIcons;
+  window.ensureLucideIcons = ensureLucideIcons;
   window.initDatastarObserver = initDatastarObserver;
   window.syncDatastarTheme = syncDatastarTheme;
   window.autoLinkMarkdownFiles = autoLinkMarkdownFiles;
@@ -2980,7 +5479,7 @@ if (typeof window !== "undefined") {
 
   window.addEventListener("DOMContentLoaded", async () => {
     try { scanAndRegisterExistingCustomThemes(); } catch (_) {}
-    try { if (window.lucide && typeof window.lucide.createIcons === "function") window.lucide.createIcons(); } catch (_) {}
+    try { ensureLucideIcons(); } catch (_) {}
     try { initTOC(); } catch (_) {}
     try { initModeBadge(); } catch (_) {}
     try { initThemeDropdown(); } catch (_) {}
@@ -2992,124 +5491,51 @@ if (typeof window !== "undefined") {
     try { initMockjs(); } catch (_) {}
     try { initFullCalendar(); } catch (_) {}
     try { initImpress(); } catch (_) {}
+    try { initPresentationShell(); } catch (_) {}
     try { initDatastarObserver(); } catch (_) {}
     try { autoLinkMarkdownFiles(); } catch (_) {}
     try { initPublicFeeds(); } catch (_) {}
 
     const palette = resolveDaisyUIThemePalette();
+    try { syncFullCalendarTheme(palette); } catch (_) {}
     try { await renderMermaidWithTheme(palette); } catch (_) {}
+    try { if (typeof HTMLReportMermaid !== "undefined") HTMLReportMermaid.initEnlarge(); } catch (_) {}
     try { checkInsufficientHorizontalSpace(); } catch (_) {}
+    try { if (typeof HTMLReportSettings !== "undefined") HTMLReportSettings.initGear(); } catch (_) {}
+    try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.init(); } catch (_) {}
+    try { if (typeof HTMLReportBoard !== "undefined") HTMLReportBoard.syncOfflineStatus(); } catch (_) {}
+    try { if (typeof initAuthoring === "function") initAuthoring(); } catch (err) { console.warn("[html-report] authoring init failed:", err); }
     window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.addEventListener("load", () => { try { ensureLucideIcons(); } catch (_) {} });
     window.addEventListener("beforeunload", () => {
       try { cleanupPublicFeeds(); } catch (_) {}
+      try { if (typeof HTMLReportAgent !== "undefined") HTMLReportAgent.stopHeartbeat(); } catch (_) {}
     });
     window.__REPORT_READY__ = true;
   });
 }
 
-/**
- * Re-runs content-level hydration after <main> was hot-swapped in place by the
- * live-reload dev server (no full page reload, so theme + scroll are preserved).
- * Only touches content hooks; navbar/theme/download wiring stays as-is.
- */
-async function reinitReportContent() {
-  if (typeof document === "undefined") return;
-  try { cleanupPublicFeeds(); } catch (_) {}
-  try { rehydrateLucideIcons(); } catch (_) {}
-  try { initTOC(); } catch (_) {}
-  try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
-  try { initDayjs(); } catch (_) {}
-  try { autoLinkMarkdownFiles(); } catch (_) {}
-  try { await renderMermaidWithTheme(resolveDaisyUIThemePalette()); } catch (_) {}
-  try { checkInsufficientHorizontalSpace(); } catch (_) {}
-  try { initPublicFeeds(); } catch (_) {}
-}
-
-/**
- * Universal Two-Way Agent Bridge Client
- * Provides programmatic co-pilot inference and action execution from reports.
- */
-const HTMLReportAgent = {
-  isAvailable: async function() {
-    try {
-      const res = await fetch("/__agent_status__", { method: "GET" });
-      if (res.ok) {
-        const data = await res.json();
-        return data && data.ok === true;
-      }
-    } catch (_) {}
-    return false;
-  },
-
-  registerPersona: async function(persona) {
-    if (!persona || !persona.id) return { ok: false, error: "Invalid persona object" };
-    try {
-      const res = await fetch("/api/agent/persona", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(persona)
-      });
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch (_) {}
-    return { ok: true, registered: persona.id, localOnly: true, persona };
-  },
-
-  getPersonas: async function() {
-    try {
-      const res = await fetch("/api/agent/personas", { method: "GET" });
-      if (res.ok) {
-        const data = await res.json();
-        return data.personas || [];
-      }
-    } catch (_) {}
-    return [
-      { id: "analyst", name: "Telemetry Analyst", badgeColor: "badge-primary", icon: "trending-up" },
-      { id: "debugger", name: "Systems Debugger", badgeColor: "badge-error", icon: "bug" },
-      { id: "strategist", name: "Competitive Strategist", badgeColor: "badge-secondary", icon: "target" },
-      { id: "executive", name: "Executive Advisor", badgeColor: "badge-neutral", icon: "briefcase" },
-      { id: "sarcastic", name: "Sarcastic Critic", badgeColor: "badge-warning", icon: "flame" },
-      { id: "oak", name: "Professor Oak", badgeColor: "badge-accent", icon: "book-open" },
-      { id: "hype", name: "Esports Shoutcaster", badgeColor: "badge-info", icon: "zap" }
-    ];
-  },
-
-  ask: async function(options) {
-    const payload = typeof options === "string" ? { prompt: options } : (options || {});
-    const endpoint = payload.endpoint || "/__agent_action__";
-    try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
-    } catch (err) {
-      return {
-        ok: false,
-        fallback: true,
-        error: err.message,
-        result: payload.fallbackText || "Agent bridge offline. Using local deterministic fallback.",
-        agent: "Local Autonomous Fallback",
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-};
-
 if (typeof window !== "undefined") {
-  window.HTMLReportAgent = HTMLReportAgent;
+  window.escapeHtml = escapeHtml;
+  window.createThemeSwatchButton = createThemeSwatchButton;
+  window._triggerBlobDownload = _triggerBlobDownload;
+  window._authoringStorage = _authoringStorage;
+  window.getPageKey = getPageKey;
+  window.isPublishedDocument = isPublishedDocument;
+  window.HTMLReportBoard = HTMLReportBoard;
+  window.HTMLReportSettings = HTMLReportSettings;
+  window.HTMLReportMermaid = HTMLReportMermaid;
+  window.HTMLReportPublisher = HTMLReportPublisher;
   window.HTMLReport = window.HTMLReport || {};
-  window.HTMLReport.agent = HTMLReportAgent;
+  window.HTMLReport.board = HTMLReportBoard;
 }
 
-// Node.js CommonJS exports for unit testing
+// Node.js CommonJS exports for unit testing and opt-in authoring plugins
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     STANDARD_DAISYUI_THEMES,
     DAISYUI_THEMES,
+    escapeHtml,
     registerCustomTheme,
     scanAndRegisterExistingCustomThemes,
     srgbToLinear,
@@ -3125,12 +5551,15 @@ if (typeof module !== "undefined" && module.exports) {
     resolveDaisyUIThemePalette,
     sanitizeMermaidSource,
     renderMermaidWithTheme,
+    createThemeSwatchButton,
     initThemeDropdown,
     setReportTheme,
     initTOC,
     checkInsufficientHorizontalSpace,
     buildInlinedHtmlSnapshot,
     exportReportPdf,
+    _triggerBlobDownload,
+    _authoringStorage,
     initModeBadge,
     initDownloadButton,
     initDayjs,
@@ -3138,8 +5567,13 @@ if (typeof module !== "undefined" && module.exports) {
     impressNext,
     impressPrev,
     impressGoto,
+    initPresentationShell,
+    resizePresentationWidgets,
+    sanitizeSpeakerNotesHtml,
     initMockjs,
     initShowdown,
+    openMarkdownViewer,
+    closeMarkdownViewer,
     initFullCalendar,
     rehydrateLucideIcons,
     initDatastarObserver,
@@ -3155,11 +5589,17 @@ if (typeof module !== "undefined" && module.exports) {
     mergeFeedSignals,
     syncPwaThemeColor,
     initPwa,
-    HTMLReportAgent,
+    HTMLReportBoard,
+    HTMLReportSettings,
+    HTMLReportMermaid,
+    HTMLReportPublisher,
+    getPageKey,
+    isPublishedDocument,
     _getActiveFeedPollers: () => _activeFeedPollers
   };
 }
 
   </script>
+  
 </body>
 </html>

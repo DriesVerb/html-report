@@ -400,6 +400,7 @@ if (typeof window !== "undefined") {
     try { initPublicFeeds(); } catch (_) {}
 
     const palette = resolveDaisyUIThemePalette();
+    try { syncFullCalendarTheme(palette); } catch (_) {}
     try { await renderMermaidWithTheme(palette); } catch (_) {}
     try { if (typeof HTMLReportMermaid !== "undefined") HTMLReportMermaid.initEnlarge(); } catch (_) {}
     try { checkInsufficientHorizontalSpace(); } catch (_) {}

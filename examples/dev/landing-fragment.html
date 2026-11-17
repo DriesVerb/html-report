@@ -587,7 +587,10 @@ function switchShowcaseTab(tabId) {
     setTimeout(() => { showcaseMapInstance.invalidateSize(); }, 50);
   }
   if (tabId === "widgets" && showcaseCalendarInstance) {
-    setTimeout(() => { showcaseCalendarInstance.render(); }, 50);
+    setTimeout(() => {
+      if (typeof showcaseCalendarInstance.updateSize === "function") showcaseCalendarInstance.updateSize();
+      showcaseCalendarInstance.render();
+    }, 50);
   }
 }
 
@@ -689,7 +692,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (calEl && typeof window.FullCalendar !== "undefined") {
       showcaseCalendarInstance = new window.FullCalendar.Calendar(calEl, {
         initialView: "dayGridMonth",
-        height: 280,
+        height: "auto",
+        contentHeight: "auto",
+        dayMaxEvents: true,
+        handleWindowResize: true,
         headerToolbar: { left: "prev,next", center: "title", right: "dayGridMonth,listWeek" },
         events: [
           { title: "Sprint Release v2.0", start: new Date().toISOString().slice(0, 10), color: "#3b82f6" },
@@ -697,6 +703,8 @@ document.addEventListener("DOMContentLoaded", function () {
         ]
       });
       showcaseCalendarInstance.render();
+      window.reportCalendars = window.reportCalendars || [];
+      window.reportCalendars.push(showcaseCalendarInstance);
     }
   } catch (e) {}
 

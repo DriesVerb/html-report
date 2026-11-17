@@ -173,16 +173,40 @@ function initFullCalendar(retries = 25) {
       const calendar = new window.FullCalendar.Calendar(el, {
         initialView: el.getAttribute("data-calendar-view") || "dayGridMonth",
         headerToolbar: {
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,listWeek"
+          left: el.getAttribute("data-calendar-header-left") || "prev,next today",
+          center: el.getAttribute("data-calendar-header-center") || "title",
+          right: el.getAttribute("data-calendar-header-right") || "dayGridMonth,timeGridWeek,listWeek"
         },
         height: el.getAttribute("data-calendar-height") || "auto",
+        contentHeight: "auto",
+        dayMaxEvents: true,
+        handleWindowResize: true,
         events: events
       });
       calendar.render();
       window.reportCalendars.push(calendar);
+
+      if (typeof ResizeObserver === "function") {
+        let lastWidth = el.getBoundingClientRect ? el.getBoundingClientRect().width : 0;
+        const ro = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            const nextWidth = entry.contentRect ? entry.contentRect.width : 0;
+            if (nextWidth > 0 && Math.abs(nextWidth - lastWidth) > 1) {
+              lastWidth = nextWidth;
+              try {
+                if (typeof calendar.updateSize === "function") calendar.updateSize();
+              } catch (_) {}
+            } else if (nextWidth === 0) {
+              lastWidth = 0;
+            }
+          }
+        });
+        ro.observe(el);
+      }
     });
+    if (typeof syncFullCalendarTheme === "function" && typeof resolveDaisyUIThemePalette === "function") {
+      try { syncFullCalendarTheme(resolveDaisyUIThemePalette()); } catch (_) {}
+    }
   } catch (err) {
     console.warn("[html-report] FullCalendar initialization notice:", err);
   }

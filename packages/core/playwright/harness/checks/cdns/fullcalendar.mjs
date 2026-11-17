@@ -7,7 +7,7 @@ export class FullCalendarCheck extends VerificationCheck {
       name: "FullCalendar Grid & Events Styleguide",
       category: "cdn",
       cliFlags: ["--check-calendar", "--check-fullcalendar", "--cdn-fullcalendar"],
-      styleguideRules: ["calendar-rendered", "toolbar-formatted", "event-presence"]
+      styleguideRules: ["calendar-rendered", "toolbar-formatted", "event-presence", "border-rendered", "clean-header-scroller"]
     });
   }
 
@@ -28,13 +28,35 @@ export class FullCalendarCheck extends VerificationCheck {
       const toolbarRendered = Boolean(container.querySelector(".fc-toolbar, .fc-header-toolbar") || document.querySelector(".fc-toolbar, .fc-header-toolbar"));
       const eventCount = document.querySelectorAll(".fc-event").length;
 
-      return { hasCalendar: true, fcRendered, toolbarRendered, eventCount };
+      let borderRendered = true;
+      let cleanHeaderScroller = true;
+      const hasViewHarness = Boolean(container.querySelector(".fc-view-harness"));
+      if (hasViewHarness && typeof getComputedStyle === "function") {
+        const gridEl = container.querySelector(".fc-scrollgrid, .fc-daygrid-day, .fc-list");
+        if (gridEl) {
+          const st = getComputedStyle(gridEl);
+          borderRendered = parseFloat(st.borderTopWidth || "0") > 0;
+        }
+        const headerScroller = container.querySelector(".fc-col-header .fc-scroller");
+        if (headerScroller) {
+          cleanHeaderScroller = getComputedStyle(headerScroller).overflowY !== "scroll";
+        }
+      }
+
+      return { hasCalendar: true, fcRendered, toolbarRendered, eventCount, borderRendered, cleanHeaderScroller };
     });
 
     if (!check.hasCalendar) {
       errors.push("Target CDN check calendar requested, but no calendar element found.");
     } else if (!check.fcRendered) {
       errors.push("FullCalendar container detected but failed to initialize calendar grid.");
+    } else {
+      if (check.borderRendered === false) {
+        errors.push("FullCalendar grid border collapsed to 0px (check OKLCH --fc-border-color theme tokens).");
+      }
+      if (check.cleanHeaderScroller === false) {
+        errors.push("FullCalendar column header scroller has an unwanted vertical scrollbar (overflow-y: scroll).");
+      }
     }
 
     return {
