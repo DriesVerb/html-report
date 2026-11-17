@@ -17,7 +17,7 @@ html-report/
 │       └── README.md
 ├── skills/
 │   ├── html-report/scripts/*                      <- Public CLI & programmatic shims forwarding to workspace packages
-│   ├── html-create/ SKILL.md
+│   ├── html-studio/ SKILL.md
 │   ├── html-dashboard/ SKILL.md
 │   ├── html-presentation/ SKILL.md
 │   ├── html-print/ SKILL.md

@@ -76,16 +76,13 @@ describe("Feature Spec: Feature 4 & 4.1 - Interactive html-create Studio & Termi
   });
 
   describe("Requirement: Live Dev Server Creation Studio Endpoints", () => {
-    it("Scenario: Visiting /create and /html-create serves the standalone creation studio", async () => {
-      const resCreate = await fetchUrl(`${baseUrl}/create`);
-      assert.equal(resCreate.statusCode, 200);
-      assert.match(resCreate.headers["content-type"], /text\/html/);
-      assert.match(resCreate.body, /Setup Wizard/);
-
-      const resHtmlCreate = await fetchUrl(`${baseUrl}/html-create`);
-      assert.equal(resHtmlCreate.statusCode, 200);
-      assert.match(resHtmlCreate.headers["content-type"], /text\/html/);
-      assert.match(resHtmlCreate.body, /Setup Wizard/);
+    it("Scenario: Visiting /studio, /html-studio, /create, and /html-create serves the standalone creation studio", async () => {
+      for (const route of ["/studio", "/html-studio", "/create", "/html-create"]) {
+        const res = await fetchUrl(`${baseUrl}${route}`);
+        assert.equal(res.statusCode, 200, `Expected 200 for ${route}`);
+        assert.match(res.headers["content-type"], /text\/html/);
+        assert.match(res.body, /Setup Wizard/);
+      }
     });
 
     it("Scenario: Querying /api/create/config returns canonical themes and target metadata", async () => {
@@ -242,17 +239,16 @@ describe("Feature Spec: Feature 4 & 4.1 - Interactive html-create Studio & Termi
   });
 
   describe("Requirement: Modular Skill Router Intent Handoff", () => {
-    it("Scenario: Slash command /html-create routes to html-create skill", () => {
-      const match1 = routeSkill("/html-create");
-      assert.equal(match1.skill, "html-create");
-
-      const match2 = routeSkill("/html-create:cli");
-      assert.equal(match2.skill, "html-create");
+    it("Scenario: Slash commands /html-studio and legacy /html-create route to html-studio skill", () => {
+      for (const cmd of ["/html-studio", "/html-studio:cli", "/html-create", "/html-create:cli"]) {
+        const match = routeSkill(cmd);
+        assert.equal(match.skill, "html-studio", `Expected ${cmd} to route to html-studio`);
+      }
     });
 
-    it("Scenario: Natural language creation wizard questions route to html-create skill", () => {
+    it("Scenario: Natural language creation wizard questions route to html-studio skill", () => {
       const match = routeSkill("help me decide what kind of report to build for my team");
-      assert.equal(match.skill, "html-create");
+      assert.equal(match.skill, "html-studio");
     });
   });
 });

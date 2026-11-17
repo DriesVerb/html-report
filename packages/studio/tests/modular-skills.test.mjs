@@ -133,15 +133,18 @@ describe('Skill Intent Router & Token Efficiency Benchmark', () => {
     assert.equal(r2.skill, 'html-pwa');
   });
 
-  it('accurately routes creation wizard and decision prompts to @html-create', () => {
+  it('accurately routes creation wizard and decision prompts to @html-studio (including /html-create aliases)', () => {
     const r1 = routeSkill('Help me decide what kind of HTML report or dashboard I should create');
-    assert.equal(r1.skill, 'html-create');
+    assert.equal(r1.skill, 'html-studio');
 
-    const r2 = routeSkill('Launch /html-create:cli for a terminal grill interview');
-    assert.equal(r2.skill, 'html-create');
+    const r2 = routeSkill('Launch /html-studio:cli for a terminal grill interview');
+    assert.equal(r2.skill, 'html-studio');
+
+    const r2Alias = routeSkill('Launch /html-create:cli for a terminal grill interview');
+    assert.equal(r2Alias.skill, 'html-studio');
 
     const r3 = routeSkill('Help me choose between a live dashboard or a printable PDF');
-    assert.equal(r3.skill, 'html-create');
+    assert.equal(r3.skill, 'html-studio');
   });
 
   it('accurately routes standard KPI summaries to @html-report', () => {

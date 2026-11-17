@@ -105,4 +105,4 @@ node skills/html-report/scripts/serve-report.mjs dashboard.html --port 3000
 ## Sibling Skill Routing
 - **Analytical Reports & Static Charts**: Use `@html-report` (baseline report assembler).
 - **Printable PDFs & Invoices**: Use `@html-print` (handles pagination and page breaks).
-- **Interactive Onboarding Wizard**: Use `@html-create` (runs decision interview).
+- **Interactive Onboarding Wizard**: Use `@html-studio` (runs decision interview).

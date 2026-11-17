@@ -117,8 +117,8 @@ export function handleStaticRoutes(req, res, parsedUrl, pathname, ctx) {
       return true;
     }
 
-    // 2b. Serve Interactive Creation Studio on /create and /html-create
-    if (pathname === "/create" || pathname === "/html-create" || pathname === "/create.html") {
+    // 2b. Serve Interactive Creation Studio on /studio, /html-studio, and legacy /create, /html-create
+    if (pathname === "/studio" || pathname === "/html-studio" || pathname === "/create" || pathname === "/html-create" || pathname === "/create.html") {
       const candidates = [
         path.resolve(__dirname, "../../assets/create.html"),
         path.resolve(rootDir, "create.html")
@@ -165,7 +165,7 @@ export function handleStaticRoutes(req, res, parsedUrl, pathname, ctx) {
     // 2c. Dedicated Creation Studio PWA manifest endpoint for /create context
     if (pathname === "/manifest.webmanifest" || pathname === "/sw.js" || pathname === "/icon.svg") {
       const referer = req.headers.referer || "";
-      const isStudio = targetFileName === "create.html" || referer.includes("/create") || referer.includes("/html-create");
+      const isStudio = targetFileName === "create.html" || referer.includes("/studio") || referer.includes("/html-studio") || referer.includes("/create") || referer.includes("/html-create");
       if (isStudio) {
         const assetName = pathname.slice(1);
         const studioAsset = path.resolve(__dirname, "../../public", assetName);

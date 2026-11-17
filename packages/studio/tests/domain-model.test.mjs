@@ -227,7 +227,7 @@ describe("Domain Model: Deterministic Prompt Synthesis", () => {
       }
     });
 
-    assert.match(prompt, /Invoked via \/html-create -> Routing to Specialized Facade: @html-report/);
+    assert.match(prompt, /Invoked via \/html-studio -> Routing to Specialized Facade: @html-report/);
     assert.match(prompt, /Purpose & Format: EXECUTIVE ANALYTICAL REPORT/);
     assert.match(prompt, /Operational Mode: LIVE_CONNECTED/);
     assert.match(prompt, /Startup Theme: "synthwave"/);

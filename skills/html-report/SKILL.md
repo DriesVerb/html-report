@@ -72,4 +72,4 @@ node skills/html-report/scripts/serve-report.mjs report.html --port 3031 --no-op
 - **Real-Time Telemetry & SSE**: `@html-dashboard` (Datastar hypermedia, agent monitoring)
 - **Interactive Slide Decks**: `@html-presentation` (Reveal.js with Fullscreen & Notes; `--impress` for legacy 3D)
 - **Offline Installable App**: `@html-pwa` (Service Worker, W3C manifest)
-- **Onboarding Studio**: `@html-create` (decision wizard, OKLCH studio)
+- **Onboarding Studio**: `@html-studio` (decision wizard, OKLCH studio)

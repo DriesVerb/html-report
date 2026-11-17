@@ -1,0 +1,133 @@
+<div class="space-y-8">
+  <!-- Hero & Journey Stepper -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body gap-5">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div class="badge badge-success badge-outline mb-2 font-mono text-xs">OpenSpec Journey · Complete</div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Rename <code>/html-create</code> to <code>/html-studio</code></h1>
+          <p class="text-base-content/75 mt-1 max-w-2xl">
+            Align the primary creation skill, router, and HTTP routes with <code>@html-report/studio</code> while preserving backward-compatible <code>/html-create</code> and <code>/create</code> aliases.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="openMarkdownViewer('openspec/changes/rename-html-create-to-studio/proposal.md')" class="btn btn-sm btn-outline gap-1.5">
+            <i data-lucide="file-text" class="w-4 h-4"></i> proposal.md
+          </button>
+          <button onclick="openMarkdownViewer('openspec/changes/rename-html-create-to-studio/design.md')" class="btn btn-sm btn-outline gap-1.5">
+            <i data-lucide="compass" class="w-4 h-4"></i> design.md
+          </button>
+          <button onclick="openMarkdownViewer('openspec/changes/rename-html-create-to-studio/tasks.md')" class="btn btn-sm btn-primary gap-1.5">
+            <i data-lucide="check-square" class="w-4 h-4"></i> tasks.md
+          </button>
+        </div>
+      </div>
+
+      <!-- Mandatory Journey Stepper -->
+      <div class="w-full overflow-x-auto pt-2">
+        <ul class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+          <li class="step step-primary">Brainstorming</li>
+          <li class="step step-primary">Planning</li>
+          <li class="step step-primary">Implementing</li>
+          <li class="step step-primary">Verifying</li>
+          <li class="step">Shipped / Archived</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Progress Metrics -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm">
+      <div class="stat-title">Total Tasks</div>
+      <div class="stat-value text-primary">9</div>
+      <div class="stat-desc">Across 4 phases</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm">
+      <div class="stat-title">Completed</div>
+      <div class="stat-value text-success">9</div>
+      <div class="stat-desc">100% complete</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm">
+      <div class="stat-title">In Progress</div>
+      <div class="stat-value text-warning">0</div>
+      <div class="stat-desc">Ready for archive</div>
+    </div>
+    <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm">
+      <div class="stat-title">Remaining</div>
+      <div class="stat-value">0</div>
+      <div class="stat-desc">All tasks complete</div>
+    </div>
+  </section>
+
+  <!-- Architecture & Compatibility Flow -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-lg">
+        <i data-lucide="git-branch" class="w-5 h-5 text-primary"></i>
+        Integration &amp; Backward-Compatibility Architecture
+      </h2>
+      <p class="text-sm text-base-content/75">
+        Canonical routing moves to <code>/html-studio</code> and <code>/studio</code>, while <code>/html-create</code> and <code>/create</code> remain active aliases so existing workflows and muscle memory never break. See <a href="javascript:void(0)" onclick="openMarkdownViewer('openspec/changes/rename-html-create-to-studio/design.md')" class="link link-primary">design.md</a> for full details.
+      </p>
+      <div class="mermaid bg-base-200/50 rounded-box p-4 mt-2 overflow-x-auto">
+flowchart LR
+  U1["/html-studio · /html-studio:cli"] --> R["skill-router.mjs"]
+  U2["/html-create · /html-create:cli (alias)"] --> R
+  R --> S["Canonical Skill: html-studio"]
+  S --> SK["skills/html-studio/SKILL.md"]
+  H1["GET /studio · /html-studio"] --> ST["routes/static.mjs"]
+  H2["GET /create · /html-create (alias)"] --> ST
+  ST --> UI["packages/studio/assets/create.html"]
+      </div>
+    </div>
+  </section>
+
+  <!-- Connected Task Checklist -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body gap-4">
+      <div class="flex items-center justify-between">
+        <h2 class="card-title text-lg">
+          <i data-lucide="list-checks" class="w-5 h-5 text-primary"></i>
+          Implementation Checklist
+        </h2>
+        <button onclick="openMarkdownViewer('openspec/changes/rename-html-create-to-studio/tasks.md')" class="btn btn-xs btn-ghost link link-primary">View tasks.md</button>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
+          <h3 class="font-semibold text-sm">Phase 1: Skill &amp; Discovery Migration</h3>
+          <ul class="space-y-1.5 text-sm">
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Rename <code>skills/html-create/</code> → <code>skills/html-studio/</code> &amp; update <a href="javascript:void(0)" onclick="openMarkdownViewer('skills/html-studio/SKILL.md')" class="link link-primary">SKILL.md</a></span></li>
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Replace <code>.agents/skills/html-create</code> symlink with <code>html-studio</code></span></li>
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Update sibling <code>SKILL.md</code> cross-references</span></li>
+          </ul>
+        </div>
+
+        <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
+          <h3 class="font-semibold text-sm">Phase 2: Router, Server Routes &amp; Domain Model</h3>
+          <ul class="space-y-1.5 text-sm">
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Update <code>skill-router.mjs</code> to <code>'html-studio'</code> (keep <code>/html-create</code> triggers)</span></li>
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Add <code>/studio</code> &amp; <code>/html-studio</code> routes in <code>static.mjs</code></span></li>
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Update <code>studio-config.mjs</code>, <code>domain-model.mjs</code>, <code>html-grill.mjs</code>, <code>open-create.{mjs,sh}</code></span></li>
+          </ul>
+        </div>
+
+        <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
+          <h3 class="font-semibold text-sm">Phase 3: Documentation &amp; Tests</h3>
+          <ul class="space-y-1.5 text-sm">
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Update <a href="javascript:void(0)" onclick="openMarkdownViewer('AGENTS.md')" class="link link-primary">AGENTS.md</a>, <a href="javascript:void(0)" onclick="openMarkdownViewer('docs/codebase-map.md')" class="link link-primary">docs/codebase-map.md</a>, and <a href="javascript:void(0)" onclick="openMarkdownViewer('TODO.md')" class="link link-primary">TODO.md</a></span></li>
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Update unit, BDD, integration, and E2E tests (7 test files)</span></li>
+          </ul>
+        </div>
+
+        <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
+          <h3 class="font-semibold text-sm">Phase 4: Verification</h3>
+          <ul class="space-y-1.5 text-sm">
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Run <code>npm test</code> (592/592 pass) &amp; <code>npm run test:e2e</code> (40/42 pass; Studio E2E 9/9 pass; 2 pre-existing unrelated failures)</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

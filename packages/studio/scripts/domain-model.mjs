@@ -1,6 +1,6 @@
 /**
  * @file domain-model.mjs
- * Canonical domain decision model and deterministic prompt generator for html-create.
+ * Canonical domain decision model and deterministic prompt generator for html-studio.
  * Barrel re-exporting studio config & DDD glossary from lib/domain/*.
  * Zero external npm dependencies.
  */

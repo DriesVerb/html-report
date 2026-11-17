@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fast launcher for html-create Interactive Studio
+# Fast launcher for html-studio Interactive Studio
 # Auto-detects Node.js vs No-Node environments with instant browser launch.
 
 set -e
@@ -43,11 +43,11 @@ if command -v node >/dev/null 2>&1; then
     sleep 0.25
     open_browser "$SERVER_URL"
   fi
-  echo "🚀 html-create studio launched at $SERVER_URL"
+  echo "🚀 html-studio launched at $SERVER_URL"
 else
   # No-Node environment: Fallback directly to file:// protocol
   FILE_URL="file://$CREATE_HTML"
   echo "Node.js not detected on this machine. Falling back to static browser launch..."
   open_browser "$FILE_URL"
-  echo "🚀 html-create studio opened via file URL: $FILE_URL"
+  echo "🚀 html-studio opened via file URL: $FILE_URL"
 fi

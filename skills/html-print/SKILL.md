@@ -105,4 +105,4 @@ node skills/html-report/playwright/verify-report.mjs invoice.html --pdf invoice.
 - **Analytical & BI Summaries**: Use `@html-report` for screen-first dashboards with charts and tables.
 - **Real-Time Telemetry & SSE**: Use `@html-dashboard` for live agent monitoring.
 - **3D Pitch Decks**: Use `@html-presentation` for slide transitions.
-- **Interactive Decision Wizard**: Use `@html-create` to configure prompt parameters.
+- **Interactive Decision Wizard**: Use `@html-studio` to configure prompt parameters.

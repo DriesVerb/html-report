@@ -2,7 +2,7 @@
 
 > [!NOTE]
 > **Status: Executed & Verified.**
-> All planned tasks, including the `/html-create` quick launcher script and agent capabilities fallback, have been fully implemented, verified, and integrated.
+> All planned tasks, including the `/html-studio` (legacy `/html-create`) quick launcher script and agent capabilities fallback, have been fully implemented, verified, and integrated.
 
 ---
 
@@ -66,18 +66,18 @@ When an HTML report is exported or toggled into Published mode, developer-centri
 
 ---
 
-## 4. Quick Studio Launch & Agent Capabilities Fallback (`/html-create`)
+## 4. Quick Studio Launch & Agent Capabilities Fallback (`/html-studio`, legacy `/html-create`)
 
 **Context & Scope:**
-The `/html-create` interactive creation studio must launch quickly without waiting for heavy commands. In environments where Node.js is unavailable, AI coding agents must leverage their native capabilities to open or conduct the wizard seamlessly.
+The `/html-studio` interactive creation studio must launch quickly without waiting for heavy commands. In environments where Node.js is unavailable, AI coding agents must leverage their native capabilities to open or conduct the wizard seamlessly.
 
-- [x] **4.1 Instant Launcher Script ([open-create.sh](file:///home/eta/projects/html-report/skills/html-create/scripts/open-create.sh))**
+- [x] **4.1 Instant Launcher Script ([open-create.sh](file:///home/eta/projects/html-report/skills/html-report/scripts/open-create.sh))**
   - [x] Create executable launcher script auto-detecting environment:
     - If `node` is available: checks if port 3000 is active or spins up background server in 250ms and launches browser.
     - If `node` is not available: immediately launches `create.html` in default browser via `file://` protocol (`xdg-open`, `open`, `explorer.exe`, or `python3 -m webbrowser`).
-  - [x] Create Node.js launcher ([open.mjs](file:///home/eta/projects/html-report/skills/html-create/scripts/open.mjs)) for cross-platform Node startup.
-- [x] **4.2 Agent Capabilities Fallback in Documentation ([SKILL.md](file:///home/eta/projects/html-report/skills/html-create/SKILL.md))**
-  - [x] Document the fast launcher scripts (`./skills/html-create/scripts/open-create.sh`, `node skills/html-create/scripts/open.mjs`).
+  - [x] Create Node.js launcher ([open-create.mjs](file:///home/eta/projects/html-report/skills/html-report/scripts/open-create.mjs)) for cross-platform Node startup.
+- [x] **4.2 Agent Capabilities Fallback in Documentation ([SKILL.md](file:///home/eta/projects/html-report/skills/html-studio/SKILL.md))**
+  - [x] Document the fast launcher scripts (`./skills/html-report/scripts/open-create.sh`, `node skills/html-report/scripts/open-create.mjs`).
   - [x] Document agent fallback workflows when Node.js is missing:
     1. Agent browser capabilities (e.g. `/browser` or Chrome DevTools MCP `navigate_page` to `file:///path/to/create.html`).
     2. System desktop opener commands (`xdg-open`, `open`, `start`).

@@ -1,13 +1,13 @@
 ---
-name: html-create
+name: html-studio
 description: >-
   Interactive onboarding decision wizard, OKLCH theme studio, and deterministic prompt
   generator for HTML reports, dashboards, presentations, and PWAs. Use when the user
-  runs /html-create or /html-create:cli, or asks for help deciding what report type,
-  theme, or architecture to create.
+  runs /html-studio or /html-studio:cli (legacy aliases /html-create and /html-create:cli
+  also supported), or asks for help deciding what report type, theme, or architecture to create.
 ---
 
-# Interactive Creation Studio & Skill Router (`html-create`)
+# Interactive Creation Studio & Skill Router (`html-studio`)
 
 > **Domain:** `Create Mode` | **Beneficiary:** `Hybrid` | **Serving:** `Static File / Server-Connected` | **Behavior:** `Interactive`
 
@@ -17,7 +17,7 @@ This specialized skill guides users and agents through a structured, multi-dimen
 
 ## Slash Commands & Access Modes
 
-### 1. `/html-create` (Web Onboarding Studio & Theme Creator)
+### 1. `/html-studio` (Web Onboarding Studio & Theme Creator; legacy alias `/html-create`)
 
 #### Fast Instant Launch (Recommended)
 Open the creation studio in milliseconds using the fast launcher script:
@@ -43,7 +43,7 @@ If Node.js is not executable, the agent leverages its native capabilities:
 2. **System Desktop Opener**: Run `xdg-open packages/studio/assets/create.html` (Linux), `open packages/studio/assets/create.html` (macOS), or `cmd.exe /c start packages/studio/assets/create.html`.
 3. **Interactive Decision Interview**: If headless, conduct the 4-step interview directly via multiple-choice questions.
 
-### 2. `/html-create:cli` (Terminal Grill Interview)
+### 2. `/html-studio:cli` (Terminal Grill Interview; legacy alias `/html-create:cli`)
 Executes a zero-dependency interactive terminal interview for CLI-first developers:
 ```bash
 node skills/html-report/scripts/html-grill.mjs
@@ -70,7 +70,7 @@ Target (Report | Print | Live | Slide | PWA)
 ```
 
 ### Deterministic Skill Handoff Matrix
-Upon wizard completion, `html-create` automatically routes into the exact specialized sibling skill:
+Upon wizard completion, `html-studio` automatically routes into the exact specialized sibling skill:
 
 | User Selections | Target Sibling Skill | Required CLI Flags |
 | :--- | :--- | :--- |

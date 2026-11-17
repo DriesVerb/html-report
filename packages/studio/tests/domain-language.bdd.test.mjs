@@ -112,7 +112,7 @@ describe("Feature Spec: Ubiquitous Domain Language & Feature Alignment Architect
       const proposal = {
         title: "OKLCH Palette Harmonizer",
         boundedContext: "themeAdaptation",
-        archetypes: ["@html-report", "@html-create"],
+        archetypes: ["@html-report", "@html-studio"],
         invariants: "Ensures contrast ratio >= 4.5:1 against base-100 backgrounds.",
         artifactQuad: true
       };
@@ -139,11 +139,15 @@ describe("Feature Spec: Ubiquitous Domain Language & Feature Alignment Architect
       assert.ok(fs.existsSync(path.resolve("openspec/specs/domain-language-model/spec.md")), "main spec.md must exist in openspec/specs");
       assert.ok(fs.existsSync(path.join(changeDir, "index.html")), "index.html must exist");
 
+      const indexHtml = fs.readFileSync(path.join(changeDir, "index.html"), "utf8");
+      assert.match(indexHtml, /OpenSpec Journey/);
+      assert.match(indexHtml, /steps steps-horizontal w-full min-w-\[500px\]/);
+      assert.match(indexHtml, /openMarkdownViewer\('proposal\.md'\)/);
+
       // Verify live mirror at root
+      assert.ok(fs.existsSync(path.resolve("implementation-progress.html")), "implementation-progress.html must exist");
       const mirrorHtml = fs.readFileSync(path.resolve("implementation-progress.html"), "utf8");
-      assert.match(mirrorHtml, /OpenSpec Journey/);
       assert.match(mirrorHtml, /steps steps-horizontal w-full min-w-\[500px\]/);
-      assert.match(mirrorHtml, /openMarkdownViewer\('proposal\.md'\)/);
     });
   });
 });

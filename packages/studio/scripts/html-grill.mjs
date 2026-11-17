@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * @file html-grill.mjs
- * Zero-dependency interactive terminal interview ("grill-me" service) for /html-create:cli.
+ * Zero-dependency interactive terminal interview ("grill-me" service) for /html-studio:cli.
  * Generates deterministic AI agent prompts and CLI build commands using domain-model.mjs.
  */
 
@@ -224,7 +224,7 @@ export async function runInteractiveGrill(options = {}) {
     const addonKeys = Object.keys(ADDON_CATALOG).join(", ");
     const widgetKeys = Object.keys(WIDGET_PRESETS).join(", ");
     output.write(`
-${ANSI.bold}${ANSI.cyan}HTML Report Terminal Grill Interview (/html-create:cli)${ANSI.reset}
+${ANSI.bold}${ANSI.cyan}HTML Report Terminal Grill Interview (/html-studio:cli)${ANSI.reset}
 Core CDN Stack: Tailwind CSS Play CDN + DaisyUI v${CORE_CDN_STACK.daisyui.version} (${CORE_CDN_STACK.daisyui.themes} themes) + Lucide v${CORE_CDN_STACK.lucide.version} + Alpine.js v${CORE_CDN_STACK.alpinejs.version}
 
 Usage:
@@ -286,7 +286,7 @@ Options:
   const rl = readline.createInterface({ input, output });
 
   output.write(`\n${ANSI.bold}${ANSI.cyan}╔════════════════════════════════════════════════════════════════════╗${ANSI.reset}\n`);
-  output.write(`${ANSI.bold}${ANSI.cyan}║   ✨ HTML Report Creation Studio & Terminal Grill (/html-create:cli)║${ANSI.reset}\n`);
+  output.write(`${ANSI.bold}${ANSI.cyan}║   ✨ HTML Report Creation Studio & Terminal Grill (/html-studio:cli)║${ANSI.reset}\n`);
   output.write(`${ANSI.bold}${ANSI.cyan}╚════════════════════════════════════════════════════════════════════╝${ANSI.reset}\n`);
   output.write(`${ANSI.gray}Core CDN Stack: Tailwind CSS + DaisyUI v${CORE_CDN_STACK.daisyui.version} (${CORE_CDN_STACK.daisyui.themes} themes) + Lucide v${CORE_CDN_STACK.lucide.version} + Alpine.js v${CORE_CDN_STACK.alpinejs.version}${ANSI.reset}\n`);
   output.write(`${ANSI.gray}Answer the following questions to deterministically generate your report architecture & AI prompt.${ANSI.reset}\n\n`);

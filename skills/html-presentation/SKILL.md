@@ -81,4 +81,4 @@ node skills/html-report/scripts/serve-report.mjs deck.html --port 3031 --no-open
 - **Analytical Reports & BI**: Use `@html-report`
 - **Paged Documents & PDFs**: Use `@html-print`
 - **Real-Time Telemetry**: Use `@html-dashboard`
-- **Studio Onboarding**: Use `@html-create`
+- **Studio Onboarding**: Use `@html-studio`

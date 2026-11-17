@@ -78,4 +78,4 @@ node --test tests/pwa.test.mjs
 - **Standard Analytical Reports**: Use `@html-report` for desktop/web reports.
 - **Printable PDFs & Invoices**: Use `@html-print` for document export.
 - **Real-Time Telemetry**: Use `@html-dashboard` for SSE live streams.
-- **Interactive Onboarding**: Use `@html-create` to configure project requirements.
+- **Interactive Onboarding**: Use `@html-studio` to configure project requirements.

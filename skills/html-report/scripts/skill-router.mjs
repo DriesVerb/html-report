@@ -21,7 +21,7 @@ export const CANONICAL_SKILL_NAMES = [
   'html-dashboard',
   'html-presentation',
   'html-pwa',
-  'html-create'
+  'html-studio'
 ];
 
 export const MAX_SKILL_SIZE_BYTES = 5120; // 5.0 KB strict limit
@@ -32,7 +32,7 @@ export const SKILL_DOMAIN_METADATA = Object.freeze({
   'html-dashboard': { role: 'Delivery Archetype', beneficiary: 'hybrid', servingMode: 'serverConnected', behavioralMode: 'interactive' },
   'html-presentation': { role: 'Delivery Archetype', beneficiary: 'user', servingMode: 'staticFile', behavioralMode: 'interactive' },
   'html-pwa': { role: 'Offline Packaging Modifier', beneficiary: 'user', servingMode: 'staticFile', behavioralMode: 'interactive' },
-  'html-create': { role: 'Create Mode', beneficiary: 'hybrid', servingMode: 'staticFile', behavioralMode: 'interactive' }
+  'html-studio': { role: 'Create Mode', beneficiary: 'hybrid', servingMode: 'staticFile', behavioralMode: 'interactive' }
 });
 
 /**
@@ -133,9 +133,9 @@ export function discoverSkills(skillsDir = path.join(REPO_ROOT, 'skills')) {
  */
 export const ROUTING_RULES = [
   {
-    skill: 'html-create',
+    skill: 'html-studio',
     priority: 120,
-    exactTriggers: ['/html-create', '/html-create:cli', '@html-create'],
+    exactTriggers: ['/html-studio', '/html-studio:cli', '@html-studio', '/html-create', '/html-create:cli', '@html-create'],
     regex: /\b(wizard|decision|onboarding|interactive\s+studio|choose\s+report|what\s+report|help\s+me\s+(choose|build|decide|pick)|choose\s+between|decide\s+between|which\s+(one|report|architecture)|grill|interview|studio|questionnaire)\b/i,
     keywords: ['wizard', 'decision', 'onboarding', 'grill', 'interview', 'studio', 'questionnaire', 'decide', 'choose']
   },
@@ -223,7 +223,7 @@ export function routeSkill(promptText) {
     }
 
     // Extra weight for creation wizard meta-choice questions
-    if (rule.skill === 'html-create' && /\b(choose\s+between|decide\s+between|help\s+me\s+(choose|decide))\b/i.test(text)) {
+    if (rule.skill === 'html-studio' && /\b(choose\s+between|decide\s+between|help\s+me\s+(choose|decide))\b/i.test(text)) {
       score += 40;
     }
 
@@ -277,12 +277,14 @@ export const BENCHMARK_CASES = [
   { prompt: 'Enable native mobile installation and dual-caching sw.js', expected: 'html-pwa' },
   { prompt: 'Run /html-pwa to generate the service worker and manifest', expected: 'html-pwa' },
 
-  // html-create
-  { prompt: 'Help me decide what kind of HTML report or dashboard I should create', expected: 'html-create' },
-  { prompt: 'Run /html-create to launch the decision wizard and theme studio', expected: 'html-create' },
-  { prompt: 'Execute /html-create:cli for a terminal grill interview', expected: 'html-create' },
-  { prompt: 'I need an onboarding questionnaire to choose my report architecture', expected: 'html-create' },
-  { prompt: 'Help me choose between a live dashboard or a printable PDF', expected: 'html-create' },
+  // html-studio (with /html-create legacy alias coverage)
+  { prompt: 'Help me decide what kind of HTML report or dashboard I should create', expected: 'html-studio' },
+  { prompt: 'Run /html-studio to launch the decision wizard and theme studio', expected: 'html-studio' },
+  { prompt: 'Run /html-create to launch the decision wizard and theme studio', expected: 'html-studio' },
+  { prompt: 'Execute /html-studio:cli for a terminal grill interview', expected: 'html-studio' },
+  { prompt: 'Execute /html-create:cli for a terminal grill interview', expected: 'html-studio' },
+  { prompt: 'I need an onboarding questionnaire to choose my report architecture', expected: 'html-studio' },
+  { prompt: 'Help me choose between a live dashboard or a printable PDF', expected: 'html-studio' },
 
   // html-report
   { prompt: 'Build a quarterly business performance report with KPI metrics and charts', expected: 'html-report' },

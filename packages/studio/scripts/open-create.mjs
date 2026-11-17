@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Fast cross-platform Node.js launcher for html-create studio.
+ * Fast cross-platform Node.js launcher for html-studio.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -60,7 +60,7 @@ async function main() {
       if (await checkHtmlReportServer(p)) {
         const targetUrl = `http://localhost:${p}/create.html`;
         openBrowser(targetUrl);
-        console.log(`🚀 html-create studio launched at ${targetUrl}`);
+        console.log(`🚀 html-studio launched at ${targetUrl}`);
         process.exit(0);
       }
     }
@@ -68,7 +68,7 @@ async function main() {
 
   const fallbackUrl = `http://localhost:${primaryPort}/create.html`;
   openBrowser(fallbackUrl);
-  console.log(`🚀 html-create studio launched at ${fallbackUrl}`);
+  console.log(`🚀 html-studio launched at ${fallbackUrl}`);
   process.exit(0);
 }
 

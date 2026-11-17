@@ -147,7 +147,7 @@ export function createProjectFileWatcher({
     const pagePath = client && client._pagePath ? String(client._pagePath) : "";
     const resolvedUpdated = path.resolve(updatedFile);
     const updatedBase = path.basename(resolvedUpdated).toLowerCase();
-    const isCreateStudioPage = pagePath === "/create" || pagePath === "/create.html" || pagePath === "/html-create";
+    const isCreateStudioPage = pagePath === "/studio" || pagePath === "/html-studio" || pagePath === "/create" || pagePath === "/create.html" || pagePath === "/html-create";
     if (isCreateStudioPage) {
       return updatedBase === "create.html";
     }

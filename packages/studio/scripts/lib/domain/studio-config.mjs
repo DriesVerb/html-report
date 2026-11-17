@@ -381,7 +381,7 @@ export function generateDeterministicPrompt(config) {
       : "Downloadable Offline-First App (100% Offline Service Worker Cache)";
 
   const lines = [
-    `Invoked via /html-create -> Routing to Specialized Facade: ${def.skillTag}`,
+    `Invoked via /html-studio -> Routing to Specialized Facade: ${def.skillTag}`,
     "",
     "Deliverable Architecture:",
     `- Purpose & Format: ${def.humanName.toUpperCase()}`,
