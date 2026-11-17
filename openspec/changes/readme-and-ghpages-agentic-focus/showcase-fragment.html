@@ -1,0 +1,930 @@
+<main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 flex-1 w-full">
+
+<!-- ========================================== -->
+<!-- HERO SECTION                               -->
+<!-- ========================================== -->
+<section class="py-10 sm:py-14 lg:py-16 text-center space-y-6">
+  <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-base-100 border border-base-300 text-xs font-semibold shadow-sm">
+    <span class="flex h-2 w-2 rounded-full bg-success animate-pulse"></span>
+    <span class="text-base-content/80">Agent-First HTML5 &bull; ~70% Fewer Tokens &bull; &lt;100ms Assembly</span>
+  </div>
+
+  <div class="max-w-4xl mx-auto space-y-4">
+    <h1 id="hero-headline" class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-base-content leading-tight">
+      Publication-Grade HTML5 Reports <br class="hidden sm:inline" />
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">Built for AI Coding Agents</span>
+    </h1>
+    <p class="text-base sm:text-lg text-base-content/75 max-w-2xl mx-auto leading-relaxed">
+      Stop burning LLM tokens on doctypes, CDN boilerplate, and theme glue. Agents emit a tiny semantic <code>&lt;main&gt;</code> fragment; <code>html-report</code> compiles a responsive, 32-theme, Playwright-verified deliverable in <strong>&lt;100ms</strong>.
+    </p>
+  </div>
+
+  <!-- Primary CTAs -->
+  <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+    <a href="#capability-explorer" class="btn btn-primary gap-2 shadow-md hover:scale-105 transition-transform">
+      <i data-lucide="sparkles" class="w-4 h-4"></i> Explore Features
+    </a>
+    <a id="hero-launch-studio-btn" href="packages/studio/assets/create.html" class="btn btn-secondary btn-outline gap-2">
+      <i data-lucide="wand-2" class="w-4 h-4"></i> Bonus: Launch HTML Studio
+    </a>
+    <a href="#documentation-hub" class="btn btn-outline gap-2">
+      <i data-lucide="book-open" class="w-4 h-4"></i> Documentation
+    </a>
+    <a href="https://github.com/DriesVerb/html-report" target="_blank" rel="noopener noreferrer" class="btn btn-ghost gap-2 border border-base-300">
+      <i data-lucide="github" class="w-4 h-4"></i> GitHub
+    </a>
+  </div>
+
+  <!-- 1-Click Copy Agent Prompt Card -->
+  <div class="max-w-3xl mx-auto mt-8 text-left">
+    <div class="card bg-base-100 border border-base-300 shadow-xl overflow-hidden">
+      <div class="bg-base-200/80 px-4 py-2.5 border-b border-base-300 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-2.5 h-2.5 rounded-full bg-error/70 shrink-0"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-warning/70 shrink-0"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-success/70 shrink-0"></span>
+          <span class="text-xs font-mono font-bold text-base-content/70 ml-1 truncate">1-Prompt Agent Install (Antigravity · Claude Code · Cursor · Codex)</span>
+        </div>
+        <button id="copy-prompt-btn" type="button" onclick="copyAgentPrompt()" class="btn btn-xs btn-primary gap-1.5 font-mono shrink-0">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span id="copy-prompt-text">Copy Prompt</span>
+        </button>
+      </div>
+      <div class="p-4 bg-base-100 text-xs font-mono text-base-content/90 break-words leading-relaxed select-all">
+        <code id="agent-prompt-code">Install the html-report skill from https://github.com/DriesVerb/html-report.git by cloning it into ~/.agents/html-report, symlinking ~/.agents/html-report/skills/html-report into ~/.agents/skills/html-report (and ~/.gemini/config/skills/html-report if using Antigravity/Gemini), and installing Playwright in ~/.agents/html-report/skills/html-report/playwright. Then read skills/html-report/SKILL.md.</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- THE CONCEPT: 3-STEP AGENTIC LOOP           -->
+<!-- ========================================== -->
+<section id="agentic-concept" class="space-y-6">
+  <div class="text-center max-w-2xl mx-auto space-y-2">
+    <div class="badge badge-primary badge-outline font-mono text-xs font-bold uppercase tracking-wider">The Concept</div>
+    <h2 id="concept-heading" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
+      Three Steps from Agent Prompt to Verified Deliverable
+    </h2>
+    <p class="text-sm text-base-content/70">
+      Separate creative content from deterministic engineering so every AI coding agent ships reliable reports on the first pass.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-primary font-mono font-bold">STEP 01</span>
+        <span class="text-xs font-mono text-success font-semibold">~70% fewer tokens</span>
+      </div>
+      <h3 id="step-1-heading" class="text-lg font-bold">Emit Only Semantic HTML</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        The agent writes just <code>&lt;main id="report-main"&gt;</code> with headings, KPI cards, charts, or Mermaid blocks—zero doctypes, head tags, or CSS resets.
+      </p>
+      <div class="bg-base-200/70 rounded-lg p-2.5 text-2xs font-mono text-base-content/80 break-all">
+        &lt;main id="report-main"&gt;...&lt;/main&gt;
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-secondary font-mono font-bold">STEP 02</span>
+        <span class="text-xs font-mono text-primary font-semibold">&lt;100ms build</span>
+      </div>
+      <h3 id="step-2-heading" class="text-lg font-bold">Assemble &amp; Verify Automatically</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        <code>harness.mjs</code> repairs missing heading IDs, auto-detects only the CDNs actually used, injects 32 DaisyUI themes, and runs 5-breakpoint Playwright checks.
+      </p>
+      <div class="bg-base-200/70 rounded-lg p-2.5 text-2xs font-mono text-base-content/80 break-all">
+        node skills/html-report/scripts/harness.mjs run fragment.html
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="badge badge-accent font-mono font-bold">STEP 03</span>
+        <span class="text-xs font-mono text-accent font-semibold">Two-Way Loop</span>
+      </div>
+      <h3 id="step-3-heading" class="text-lg font-bold">Live Preview &amp; Visual Edit Mode</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        <code>serve-report.mjs</code> hot-swaps updates via Idiomorph with zero scroll loss. Click any element in Edit Mode to tweak styles or send a surgical edit prompt back to your agent.
+      </p>
+      <div class="bg-base-200/70 rounded-lg p-2.5 text-2xs font-mono text-base-content/80 break-all">
+        node skills/html-report/scripts/serve-report.mjs report.html
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 Specialized Deliverable Skills -->
+  <div id="deliverable-skills" class="card bg-base-100 border border-base-300 p-5 sm:p-6 shadow-sm space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <h3 id="skills-heading" class="text-base sm:text-lg font-bold flex items-center gap-2">
+        <i data-lucide="cpu" class="w-4 h-4 text-primary"></i> Five Purpose-Built Agent Skills
+      </h3>
+      <span class="text-xs text-base-content/60 font-mono">Invoke by slash command or natural request</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      <div class="p-3 rounded-xl bg-base-200/50 border border-base-300 space-y-1">
+        <div class="font-mono text-xs font-bold text-primary">/html-report</div>
+        <div class="text-xs font-semibold">Analytical Reports</div>
+        <p class="text-2xs text-base-content/70">Charts, Mermaid, Grid.js, KaTeX, Leaflet &amp; 32 themes.</p>
+      </div>
+      <div class="p-3 rounded-xl bg-base-200/50 border border-base-300 space-y-1">
+        <div class="font-mono text-xs font-bold text-secondary">/html-dashboard</div>
+        <div class="text-xs font-semibold">Live SSE Telemetry</div>
+        <p class="text-2xs text-base-content/70">Datastar hypermedia morphing &amp; Two-Way Agent Bridge.</p>
+      </div>
+      <div class="p-3 rounded-xl bg-base-200/50 border border-base-300 space-y-1">
+        <div class="font-mono text-xs font-bold text-accent">/html-presentation</div>
+        <div class="text-xs font-semibold">Slide Decks</div>
+        <p class="text-2xs text-base-content/70">Reveal.js decks with Fullscreen (F) &amp; Speaker Notes (N).</p>
+      </div>
+      <div class="p-3 rounded-xl bg-base-200/50 border border-base-300 space-y-1">
+        <div class="font-mono text-xs font-bold text-warning">/html-print</div>
+        <div class="text-xs font-semibold">Paged PDFs</div>
+        <p class="text-2xs text-base-content/70">@page margins, repeating headers &amp; print-ready CSS.</p>
+      </div>
+      <div class="p-3 rounded-xl bg-base-200/50 border border-base-300 space-y-1">
+        <div class="font-mono text-xs font-bold text-success">/html-pwa</div>
+        <div class="text-xs font-semibold">Offline Apps</div>
+        <p class="text-2xs text-base-content/70">W3C manifest, Service Worker caching &amp; theme sync.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- VALUE PROPOSITION PILLARS (6-CARD GRID)    -->
+<!-- ========================================== -->
+<section class="space-y-6">
+  <div class="text-center max-w-2xl mx-auto space-y-2">
+    <h2 id="core-pillars" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
+      Key Capabilities Built Into Every Deliverable
+    </h2>
+    <p class="text-sm text-base-content/70">
+      Engineered to eliminate token waste, layout hallucination, and broken CDN dependencies.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+        <i data-lucide="zap" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-assembly" class="text-lg font-bold text-base-content">Deterministic Assembly (&lt;100ms)</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Zero-dependency Node engine validates fragments, repairs heading IDs and responsive wrappers, and stitches complete HTML in milliseconds.
+      </p>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center font-bold">
+        <i data-lucide="palette" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-themes" class="text-lg font-bold text-base-content">32 DaisyUI Themes + OKLCH</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Sticky navbar swatch picker defaulting to light. Pure JS OKLCH matrix math adapts Chart.js, Mermaid, and Grid.js palettes live.
+      </p>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center font-bold">
+        <i data-lucide="layers" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-cdns" class="text-lg font-bold text-base-content">On-Demand 17-CDN Power Stack</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Only the libraries detected in your fragment are injected: charts, flowcharts, Leaflet maps, KaTeX math, Highlight.js, Reveal.js, and FullCalendar.
+      </p>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-info/10 text-info flex items-center justify-center font-bold">
+        <i data-lucide="shield-check" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-security" class="text-lg font-bold text-base-content">Cryptographic SRI &amp; CSP</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Core CDN scripts carry SHA-384 integrity hashes, anonymous cross-origin isolation, strict Content Security Policy, and no-referrer privacy headers.
+      </p>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-success/10 text-success flex items-center justify-center font-bold">
+        <i data-lucide="activity" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-telemetry" class="text-lg font-bold text-base-content">Real-Time Datastar &amp; Agent Bridge</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Stream live task checklist morphs over SSE without page reloads and inspect or edit report blocks directly from the browser.
+      </p>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+      <div class="w-10 h-10 rounded-lg bg-warning/10 text-warning flex items-center justify-center font-bold">
+        <i data-lucide="smartphone" class="w-5 h-5"></i>
+      </div>
+      <h3 id="pillar-verification" class="text-lg font-bold text-base-content">5-Breakpoint Verification</h3>
+      <p class="text-xs text-base-content/75 leading-relaxed">
+        Playwright verification checks viewports from 375px mobile to 1536px desktop, catching horizontal overflow and dark/light contrast issues.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- INTERACTIVE CAPABILITY EXPLORER (TABBED)   -->
+<!-- ========================================== -->
+<section id="capability-explorer" class="space-y-6 pt-2">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <div class="badge badge-primary font-mono text-xs font-bold uppercase tracking-wider mb-2">Interactive Feature Showcase</div>
+      <h2 id="capability-explorer-title" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
+        Explore Live Features &amp; CDN Stack
+      </h2>
+      <p class="text-sm text-base-content/70">
+        Test each capability live. Switch the DaisyUI theme in the top navbar to watch charts, diagrams, and tables re-theme instantly.
+      </p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="badge badge-outline font-mono text-xs gap-1">
+        <i data-lucide="check" class="w-3.5 h-3.5 text-success"></i> 100% Client-Side
+      </span>
+    </div>
+  </div>
+
+  <!-- Tabbed Showcase Card -->
+  <div class="card bg-base-100 border border-base-300 shadow-md overflow-hidden">
+    <!-- Tab Headers -->
+    <div class="border-b border-base-300 bg-base-200/50 p-2">
+      <div class="tabs tabs-boxed bg-transparent gap-1 flex flex-wrap justify-start" id="capability-tabs">
+        <button type="button" onclick="switchShowcaseTab('charts')" class="tab tab-active font-semibold text-xs gap-1.5 transition" id="tab-btn-charts">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Charts &amp; Analytics
+        </button>
+        <button type="button" onclick="switchShowcaseTab('diagrams')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-diagrams">
+          <i data-lucide="git-branch" class="w-4 h-4"></i> Architecture Flows
+        </button>
+        <button type="button" onclick="switchShowcaseTab('tables')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-tables">
+          <i data-lucide="table" class="w-4 h-4"></i> Interactive Tables
+        </button>
+        <button type="button" onclick="switchShowcaseTab('maps')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-maps">
+          <i data-lucide="map-pin" class="w-4 h-4"></i> Geospatial Maps
+        </button>
+        <button type="button" onclick="switchShowcaseTab('telemetry')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-telemetry">
+          <i data-lucide="activity" class="w-4 h-4"></i> Live Telemetry
+        </button>
+        <button type="button" onclick="switchShowcaseTab('mathcode')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-mathcode">
+          <i data-lucide="code" class="w-4 h-4"></i> Math &amp; Code Syntax
+        </button>
+        <button type="button" onclick="switchShowcaseTab('widgets')" class="tab font-semibold text-xs gap-1.5 transition" id="tab-btn-widgets">
+          <i data-lucide="calendar" class="w-4 h-4"></i> Calendar &amp; Synthetic Data
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Content Panels -->
+    <div class="p-6">
+      <!-- 1. Charts Tab -->
+      <div id="tab-panel-charts" class="tab-panel space-y-4">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div>
+            <h3 id="panel-charts-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="bar-chart" class="w-4 h-4 text-primary"></i> Chart.js 4.4 — Theme-Adaptive Canvas Rendering
+            </h3>
+            <p class="text-xs text-base-content/70">Canvas palettes synchronize automatically when switching DaisyUI themes.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Chart.js UMD</span>
+        </div>
+        <div class="h-64 sm:h-72 w-full max-w-full">
+          <canvas id="showcaseChart" class="w-full h-full"></canvas>
+        </div>
+      </div>
+
+      <!-- 2. Diagrams Tab -->
+      <div id="tab-panel-diagrams" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div>
+            <h3 id="panel-diagrams-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="git-merge" class="w-4 h-4 text-secondary"></i> Mermaid 11.4 — Architecture &amp; Sequence Diagrams
+            </h3>
+            <p class="text-xs text-base-content/70">Includes automatic theme contrast defense and fullscreen zoomable Enlarge modal.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Mermaid UMD</span>
+        </div>
+        <div class="overflow-x-auto py-2 bg-base-200/40 rounded-lg p-4 border border-base-300">
+          <pre class="mermaid text-center">
+sequenceDiagram
+    autonumber
+    participant Agent as AI Coding Agent
+    participant Harness as FSM Harness (harness.mjs)
+    participant Shell as Pre-bundled DaisyUI Shell
+    participant Verifier as Playwright Gate
+
+    Agent->>Harness: Emits semantic &lt;main&gt; fragment (~500 tokens)
+    Note over Harness: Pre-flight auto-fixing (&lt;1ms)\nSlugs IDs &amp; wraps tables
+    Harness->>Shell: Deterministic assembly (&lt;100ms)
+    Shell->>Verifier: 5-Breakpoint check (375px–1536px)
+    Verifier-->>Agent: Verified report.html (Zero horizontal overflow)
+          </pre>
+        </div>
+      </div>
+
+      <!-- 3. Tables Tab -->
+      <div id="tab-panel-tables" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div>
+            <h3 id="panel-tables-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="table" class="w-4 h-4 text-accent"></i> Grid.js 6.0 — Interactive, Sortable &amp; Searchable Tables
+            </h3>
+            <p class="text-xs text-base-content/70">Full DaisyUI dark/light theme integration with instant search and pagination.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Grid.js UMD</span>
+        </div>
+        <div id="showcaseGridContainer" class="w-full overflow-x-auto"></div>
+      </div>
+
+      <!-- 4. Maps Tab -->
+      <div id="tab-panel-maps" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div>
+            <h3 id="panel-maps-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="map" class="w-4 h-4 text-info"></i> Leaflet 1.9 — Esri World Street Geospatial Maps
+            </h3>
+            <p class="text-xs text-base-content/70">Zero API keys required and zero local file:// tile referrer blocks.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Leaflet UMD</span>
+        </div>
+        <div id="showcaseMap" class="h-64 sm:h-72 w-full rounded-lg border border-base-300 overflow-hidden z-10"></div>
+      </div>
+
+      <!-- 5. Telemetry Tab -->
+      <div id="tab-panel-telemetry" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div>
+            <h3 id="panel-telemetry-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="activity" class="w-4 h-4 text-warning"></i> Datastar.js — Real-Time SSE Telemetry &amp; Morphing
+            </h3>
+            <p class="text-xs text-base-content/75">Live task checklist updates and agent telemetry streams without full reloads.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">Datastar ESM</span>
+        </div>
+        <div class="card bg-base-200/50 border border-base-300 p-4 space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <span class="font-mono text-xs font-bold text-base-content flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-success animate-ping"></span> Live SSE Stream: <code>/__datastar_stream__</code>
+            </span>
+            <button type="button" onclick="simulateTelemetryStep()" class="btn btn-xs btn-outline btn-primary gap-1">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i> Simulate Step
+            </button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="card bg-base-100 border border-base-300 p-3">
+              <div class="text-2xs opacity-70 uppercase font-mono">Context Saturation</div>
+              <div id="sim-metric-context" class="text-xl font-black text-primary">24.5%</div>
+              <progress id="sim-progress-context" class="progress progress-primary w-full h-1.5 mt-1" value="24.5" max="100"></progress>
+            </div>
+            <div class="card bg-base-100 border border-base-300 p-3">
+              <div class="text-2xs opacity-70 uppercase font-mono">Token Velocity</div>
+              <div id="sim-metric-velocity" class="text-xl font-black text-secondary">82 tokens/s</div>
+              <div class="text-2xs text-success font-semibold mt-1">High Throughput</div>
+            </div>
+            <div class="card bg-base-100 border border-base-300 p-3">
+              <div class="text-2xs opacity-70 uppercase font-mono">Active Subagents</div>
+              <div id="sim-metric-subagents" class="text-xl font-black text-accent">3 Running</div>
+              <div class="text-2xs text-base-content/60 mt-1">Swarm Hierarchy</div>
+            </div>
+          </div>
+          <div class="mockup-code text-xs bg-neutral text-neutral-content p-3 rounded-lg overflow-x-auto">
+            <pre><code id="sim-telemetry-log">[20:10:15] info: Datastar SSE bridge connected. Listening on /__datastar_stream__...</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Math & Code Tab -->
+      <div id="tab-panel-mathcode" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div>
+            <h3 id="panel-mathcode-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="sigma" class="w-4 h-4 text-primary"></i> KaTeX 0.16 &amp; Highlight.js 11
+            </h3>
+            <p class="text-xs text-base-content/70">Scientific LaTeX equations and syntax highlighting across modern languages.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">KaTeX + hljs</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="card bg-base-200/50 border border-base-300 p-4 space-y-2">
+            <span class="font-mono text-xs font-bold text-base-content/80">Ottosson Matrix OKLCH Formulation</span>
+            <div id="katexShowcaseEquation" class="py-2 text-center text-sm font-serif overflow-x-auto">
+              $$\begin{bmatrix} L \\ M \\ S \end{bmatrix} = \mathbf{M}_1 \begin{bmatrix} R \\ G \\ B \end{bmatrix}, \quad C = \sqrt{a^2 + b^2}, \quad H = \text{atan2}(b, a)$$
+            </div>
+          </div>
+          <div class="card bg-base-200/50 border border-base-300 p-4 space-y-2 overflow-x-auto">
+            <span class="font-mono text-xs font-bold text-base-content/80">Deterministic Assembly (Node.js)</span>
+            <pre class="p-0 m-0 bg-transparent"><code class="language-javascript text-xs rounded">import { buildReport } from "html-report/build";
+
+const { html, durationMs } = buildReport({
+  title: "Audit Report",
+  content: fragmentHtml,
+  theme: "light"
+});
+console.log(`Assembled in ${durationMs.toFixed(2)}ms`);</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Widgets & Data Tab -->
+      <div id="tab-panel-widgets" class="tab-panel hidden space-y-4">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div>
+            <h3 id="panel-widgets-heading" class="font-bold text-base text-base-content flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-primary"></i> FullCalendar 6 &amp; Mock.js 1.1
+            </h3>
+            <p class="text-xs text-base-content/70">Interactive scheduling grid, synthetic test fixtures, and Day.js timestamps.</p>
+          </div>
+          <span class="badge badge-sm badge-outline font-mono">FullCalendar + Mock.js</span>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="lg:col-span-2 card bg-base-200/40 border border-base-300 p-3">
+            <div id="showcaseCalendar" class="w-full text-xs"></div>
+          </div>
+          <div class="card bg-base-200/40 border border-base-300 p-4 space-y-3">
+            <span class="font-bold text-xs uppercase font-mono text-base-content/70 flex items-center gap-1.5">
+              <i data-lucide="database" class="w-3.5 h-3.5 text-secondary"></i> Mock.js Synthetic Entities
+            </span>
+            <div id="mockDataContainer" class="space-y-2 text-xs"></div>
+            <div class="text-2xs text-base-content/60">
+              Timestamps formatted with Day.js: <span class="font-mono font-semibold" data-dayjs="now">now</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- BONUS: INTERACTIVE HTML CREATION STUDIO    -->
+<!-- ========================================== -->
+<section id="html-studio-bonus" class="card bg-gradient-to-br from-base-100 via-base-100 to-secondary/10 border-2 border-secondary/30 shadow-lg p-6 sm:p-8 space-y-6">
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div class="space-y-3 max-w-2xl">
+      <div class="inline-flex items-center gap-2">
+        <span class="badge badge-secondary font-mono text-xs font-bold uppercase">Bonus Companion</span>
+        <span class="badge badge-outline font-mono text-xs">Zero Node.js Required</span>
+      </div>
+      <h2 id="studio-bonus-heading" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-base-content">
+        ✨ Interactive HTML Creation Studio (<code>/html-studio</code>)
+      </h2>
+      <p class="text-sm text-base-content/80 leading-relaxed">
+        Want a visual cockpit before prompting your agent? Launch the latest live <strong>HTML Studio</strong> right in your browser to configure report archetypes, design custom OKLCH DaisyUI themes, compose rich Quill goals, and export deterministic agent prompts.
+      </p>
+      <div class="flex flex-wrap gap-2 text-xs">
+        <span class="badge badge-ghost border border-base-300">4-Step Archetype Wizard</span>
+        <span class="badge badge-ghost border border-base-300">OKLCH Theme Designer</span>
+        <span class="badge badge-ghost border border-base-300">Quill Rich Goals Modal</span>
+        <span class="badge badge-ghost border border-base-300">Installable as PWA</span>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+      <a id="bonus-launch-studio-btn" href="packages/studio/assets/create.html" class="btn btn-secondary gap-2 shadow-md">
+        <i data-lucide="sparkles" class="w-4 h-4"></i> Launch Latest HTML Studio
+      </a>
+      <a id="bonus-studio-alias-btn" href="studio.html" class="btn btn-outline btn-sm gap-2 font-mono">
+        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open /studio.html
+      </a>
+      <div class="text-2xs font-mono text-base-content/60 bg-base-200/80 px-3 py-2 rounded-lg border border-base-300">
+        Local CLI: <code>./skills/html-report/scripts/open-create.sh</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- DOCUMENTATION HUB (MODULAR GUIDES)         -->
+<!-- ========================================== -->
+<section id="documentation-hub" class="space-y-6 pt-2">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <div class="badge badge-secondary font-mono text-xs font-bold uppercase tracking-wider mb-2">Documentation Hub</div>
+      <h2 id="documentation-hub-title" class="text-2xl sm:text-3xl font-bold tracking-tight text-base-content">
+        Focused Engineering Guides
+      </h2>
+      <p class="text-sm text-base-content/70">
+        Click <strong>Read Guide</strong> to preview any guide inside the Showdown modal, or open the raw markdown directly.
+      </p>
+    </div>
+    <span class="badge badge-outline font-mono text-xs">9 Modular Guides</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- Doc Card 1 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-primary font-bold text-sm">
+          <i data-lucide="rocket" class="w-4 h-4"></i> Getting Started
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Agent prompt installation, 1-line CLI setup, global symlinks, and 30-second first report.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between gap-2">
+        <button type="button" onclick="openMarkdownViewer('docs/getting-started.md')" class="btn btn-xs btn-outline btn-primary gap-1 font-mono">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/getting-started.md" class="text-xs link link-hover font-mono opacity-60">getting-started.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 2 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-secondary font-bold text-sm">
+          <i data-lucide="cpu" class="w-4 h-4"></i> FSM Architecture &amp; Harness
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          The 10-state deterministic lifecycle, pre-flight auto-fixes, and bounded JSON remediation.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between gap-2">
+        <button type="button" onclick="openMarkdownViewer('docs/architecture-fsm.md')" class="btn btn-xs btn-outline btn-secondary gap-1 font-mono">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/architecture-fsm.md" class="text-xs link link-hover font-mono opacity-60">architecture-fsm.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 3 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-accent font-bold text-sm">
+          <i data-lucide="layers" class="w-4 h-4"></i> 17-CDN Power Stack
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Complete 17-library catalog, SHA-384 SRI hashes, CSP hardening, and offline bundling.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between gap-2">
+        <button type="button" onclick="openMarkdownViewer('docs/cdn-stack.md')" class="btn btn-xs btn-outline btn-accent gap-1 font-mono">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/cdn-stack.md" class="text-xs link link-hover font-mono opacity-60">cdn-stack.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 4 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-info font-bold text-sm">
+          <i data-lucide="palette" class="w-4 h-4"></i> Custom DaisyUI Themes
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Zero-dependency OKLCH engine, theme inheritance (extends), and theme compilation.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between gap-2">
+        <button type="button" onclick="openMarkdownViewer('docs/custom-themes.md')" class="btn btn-xs btn-outline btn-info gap-1 font-mono">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/custom-themes.md" class="text-xs link link-hover font-mono opacity-60">custom-themes.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 5 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-success font-bold text-sm">
+          <i data-lucide="activity" class="w-4 h-4"></i> Real-Time Telemetry
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Datastar.js SSE streaming, agent transcript tailing, and live checklist morphs.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between gap-2">
+        <button type="button" onclick="openMarkdownViewer('docs/live-telemetry.md')" class="btn btn-xs btn-outline btn-success gap-1 font-mono">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/live-telemetry.md" class="text-xs link link-hover font-mono opacity-60">live-telemetry.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 6 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-warning font-bold text-sm">
+          <i data-lucide="check-circle-2" class="w-4 h-4"></i> Testing &amp; Verification
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Zero-framework native BDD harness, Playwright 5-breakpoint verification, and overflow gates.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between gap-2">
+        <button type="button" onclick="openMarkdownViewer('docs/testing-and-verification.md')" class="btn btn-xs btn-outline btn-warning gap-1 font-mono">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/testing-and-verification.md" class="text-xs link link-hover font-mono opacity-60">testing-and-verification.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 7 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-base-content font-bold text-sm">
+          <i data-lucide="terminal" class="w-4 h-4"></i> CLI &amp; API Reference
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          CLI flags for build-report.mjs, harness.mjs, serve-report.mjs, and programmatic ESM APIs.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between gap-2">
+        <button type="button" onclick="openMarkdownViewer('docs/api-and-cli-reference.md')" class="btn btn-xs btn-outline gap-1 font-mono">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/api-and-cli-reference.md" class="text-xs link link-hover font-mono opacity-60">api-and-cli-reference.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 8 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-primary font-bold text-sm">
+          <i data-lucide="map" class="w-4 h-4"></i> Codebase Map
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          Monorepo package topology (@html-report/core &amp; @html-report/studio) and module boundaries.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between gap-2">
+        <button type="button" onclick="openMarkdownViewer('docs/codebase-map.md')" class="btn btn-xs btn-outline btn-primary gap-1 font-mono">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/codebase-map.md" class="text-xs link link-hover font-mono opacity-60">codebase-map.md</a>
+      </div>
+    </div>
+
+    <!-- Doc Card 9 -->
+    <div class="card bg-base-100 border border-base-300 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-secondary font-bold text-sm">
+          <i data-lucide="tag" class="w-4 h-4"></i> Semantic Versioning
+        </div>
+        <p class="text-xs text-base-content/75 leading-relaxed">
+          SemVer 2.0.0 stability contract, public ESM exports, and AI migration prompts.
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-between gap-2">
+        <button type="button" onclick="openMarkdownViewer('docs/semantic-versioning.md')" class="btn btn-xs btn-outline btn-secondary gap-1 font-mono">
+          <i data-lucide="eye" class="w-3.5 h-3.5"></i> Read Guide
+        </button>
+        <a href="docs/semantic-versioning.md" class="text-xs link link-hover font-mono opacity-60">semantic-versioning.md</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- STANDALONE LIVE DEMOS & STUDIO LINKS       -->
+<!-- ========================================== -->
+<section class="card bg-base-100 border border-base-300 p-6 sm:p-8 shadow-sm space-y-4">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h2 id="deep-dive-reports" class="text-xl sm:text-2xl font-bold tracking-tight text-base-content flex items-center gap-2">
+        <i data-lucide="file-bar-chart" class="w-5 h-5 text-primary"></i> Live Demos &amp; Reference Deliverables
+      </h2>
+      <p class="text-xs sm:text-sm text-base-content/70">
+        Inspect standalone reports compiled with html-report or jump directly into the static HTML Studio.
+      </p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <a href="packages/studio/assets/create.html" class="btn btn-sm btn-secondary gap-1.5 font-mono">
+        <i data-lucide="wand-2" class="w-4 h-4"></i> Live HTML Studio
+      </a>
+      <a href="report.html" class="btn btn-sm btn-primary gap-1.5 font-mono">
+        <i data-lucide="file-text" class="w-4 h-4"></i> report.html
+      </a>
+      <a href="implementation-progress.html" class="btn btn-sm btn-outline gap-1.5 font-mono">
+        <i data-lucide="activity" class="w-4 h-4"></i> implementation-progress.html
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+function copyAgentPrompt() {
+  const codeEl = document.getElementById("agent-prompt-code");
+  const textBtn = document.getElementById("copy-prompt-text");
+  if (!codeEl || !textBtn) return;
+  const promptText = codeEl.textContent.trim();
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+    navigator.clipboard.writeText(promptText).then(() => {
+      textBtn.textContent = "Copied!";
+      setTimeout(() => { textBtn.textContent = "Copy Prompt"; }, 2000);
+    }).catch(() => {
+      textBtn.textContent = "Copied!";
+    });
+  }
+}
+
+let showcaseChartInstance = null;
+let showcaseMapInstance = null;
+let showcaseGridInstance = null;
+let showcaseCalendarInstance = null;
+
+function switchShowcaseTab(tabId) {
+  document.querySelectorAll("#capability-tabs .tab").forEach(tab => {
+    tab.classList.remove("tab-active");
+  });
+  const activeBtn = document.getElementById("tab-btn-" + tabId);
+  if (activeBtn) activeBtn.classList.add("tab-active");
+
+  document.querySelectorAll(".tab-panel").forEach(panel => {
+    panel.classList.add("hidden");
+  });
+  const activePanel = document.getElementById("tab-panel-" + tabId);
+  if (activePanel) activePanel.classList.remove("hidden");
+
+  if (tabId === "charts" && showcaseChartInstance) {
+    setTimeout(() => { showcaseChartInstance.resize(); }, 50);
+  }
+  if (tabId === "diagrams") {
+    setTimeout(() => {
+      if (typeof window.renderMermaidWithTheme === "function" && typeof window.resolveDaisyUIThemePalette === "function") {
+        window.renderMermaidWithTheme(window.resolveDaisyUIThemePalette()).then(() => {
+          if (window.HTMLReportMermaid && typeof window.HTMLReportMermaid.initEnlarge === "function") {
+            window.HTMLReportMermaid.initEnlarge();
+          }
+        }).catch(() => {});
+      }
+    }, 50);
+  }
+  if (tabId === "maps" && showcaseMapInstance) {
+    setTimeout(() => { showcaseMapInstance.invalidateSize(); }, 50);
+  }
+  if (tabId === "widgets" && showcaseCalendarInstance) {
+    setTimeout(() => { showcaseCalendarInstance.render(); }, 50);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  try {
+    const ctx = document.getElementById("showcaseChart");
+    if (ctx && typeof window.Chart !== "undefined") {
+      showcaseChartInstance = new window.Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Claude Code", "Antigravity", "Codex", "OpenCode", "Cursor", "Gemini CLI"],
+          datasets: [
+            {
+              label: "Token Savings (%)",
+              data: [74, 78, 71, 75, 72, 76],
+              backgroundColor: "rgba(59, 130, 246, 0.75)",
+              borderColor: "rgb(59, 130, 246)",
+              borderWidth: 1.5,
+              borderRadius: 6
+            },
+            {
+              label: "Assembly Latency (ms)",
+              data: [6.2, 4.8, 5.5, 6.9, 5.1, 4.2],
+              backgroundColor: "rgba(16, 185, 129, 0.75)",
+              borderColor: "rgb(16, 185, 129)",
+              borderWidth: 1.5,
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { font: { size: 11, family: "sans-serif" } } }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: "rgba(150, 150, 150, 0.15)" } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+  } catch (_) {}
+
+  try {
+    const gridEl = document.getElementById("showcaseGridContainer");
+    if (gridEl && typeof window.gridjs !== "undefined") {
+      showcaseGridInstance = new window.gridjs.Grid({
+        columns: ["Agent Harness", "Assembly Latency", "Token Reduction", "Verification Status"],
+        data: [
+          ["Google Antigravity", "<5ms", "78% Savings", "✓ Verified"],
+          ["Anthropic Claude Code", "<7ms", "74% Savings", "✓ Verified"],
+          ["OpenAI Codex", "<6ms", "71% Savings", "✓ Verified"],
+          ["Cursor AI", "<6ms", "72% Savings", "✓ Verified"],
+          ["OpenCode / Gemini CLI", "<5ms", "76% Savings", "✓ Verified"]
+        ],
+        search: true,
+        pagination: { limit: 3 },
+        sort: true
+      }).render(gridEl);
+    }
+  } catch (_) {}
+
+  try {
+    const mapEl = document.getElementById("showcaseMap");
+    if (mapEl && typeof window.L !== "undefined") {
+      showcaseMapInstance = window.L.map("showcaseMap", { zoomControl: false }).setView([37.7749, -122.4194], 4);
+      window.L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Esri Street Map",
+        maxZoom: 18
+      }).addTo(showcaseMapInstance);
+      window.L.circleMarker([37.7749, -122.4194], {
+        radius: 7,
+        fillColor: "#3b82f6",
+        color: "#ffffff",
+        weight: 2,
+        fillOpacity: 0.9
+      }).addTo(showcaseMapInstance).bindPopup("San Francisco Cluster");
+      window.L.circleMarker([47.6062, -122.3321], {
+        radius: 7,
+        fillColor: "#10b981",
+        color: "#ffffff",
+        weight: 2,
+        fillOpacity: 0.9
+      }).addTo(showcaseMapInstance).bindPopup("Seattle Gateway");
+    }
+  } catch (_) {}
+
+  try {
+    const calEl = document.getElementById("showcaseCalendar");
+    if (calEl && typeof window.FullCalendar !== "undefined") {
+      showcaseCalendarInstance = new window.FullCalendar.Calendar(calEl, {
+        initialView: "dayGridMonth",
+        height: 280,
+        headerToolbar: { left: "prev,next", center: "title", right: "dayGridMonth,listWeek" },
+        events: [
+          { title: "Agentic Release v2.0", start: new Date().toISOString().slice(0, 10), color: "#3b82f6" },
+          { title: "Deterministic FSM Audit", start: new Date(Date.now() + 86400000 * 2).toISOString().slice(0, 10), color: "#10b981" }
+        ]
+      });
+      showcaseCalendarInstance.render();
+    }
+  } catch (_) {}
+
+  try {
+    const mockEl = document.getElementById("mockDataContainer");
+    if (mockEl && typeof window.Mock !== "undefined") {
+      const mockData = window.Mock.mock({
+        "users|3": [
+          {
+            "id|+1": 101,
+            "name": "@first @last",
+            "role|1": ["Core Architect", "Verification Agent", "Security Auditor"],
+            "status|1": ["Active", "Idle", "Verifying"]
+          }
+        ]
+      });
+      mockEl.innerHTML = mockData.users.map(u => `
+        <div class="flex items-center justify-between p-2 rounded bg-base-100 border border-base-300">
+          <span class="font-semibold">${u.name}</span>
+          <span class="badge badge-xs badge-outline font-mono">${u.role}</span>
+        </div>
+      `).join("");
+    }
+  } catch (_) {}
+
+  try {
+    if (typeof window.hljs !== "undefined") {
+      window.hljs.highlightAll();
+    }
+  } catch (_) {}
+
+  try {
+    if (typeof window.renderMathInElement !== "undefined") {
+      window.renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ]
+      });
+    }
+  } catch (_) {}
+});
+
+let simStepIndex = 1;
+function simulateTelemetryStep() {
+  simStepIndex++;
+  const contextEl = document.getElementById("sim-metric-context");
+  const progressEl = document.getElementById("sim-progress-context");
+  const velocityEl = document.getElementById("sim-metric-velocity");
+  const logEl = document.getElementById("sim-telemetry-log");
+
+  const newSaturation = Math.min(95, 24.5 + simStepIndex * 7.5);
+  const newVelocity = Math.floor(75 + Math.random() * 40);
+
+  if (contextEl) contextEl.textContent = newSaturation.toFixed(1) + "%";
+  if (progressEl) progressEl.value = newSaturation;
+  if (velocityEl) velocityEl.textContent = newVelocity + " tokens/s";
+  if (logEl) {
+    const time = new Date().toTimeString().split(" ")[0];
+    logEl.textContent = `[${time}] step ${simStepIndex}: SSE patch received -> Idiomorph morphed #task-${simStepIndex} (0.4ms)\n` + logEl.textContent;
+  }
+}
+</script>
+
+<script id="markdown-artifacts-data" type="application/json">
+{"docs/api-and-cli-reference.md":"# 📖 API & CLI Reference\n\nThis document provides a comprehensive reference for the command-line interfaces and programmatic APIs provided by `html-report`.\n\n---\n\n## 💻 CLI Commands\n\n### 1. Unified Pipeline FSM Harness (`harness.mjs`)\n\nThe recommended Agent-Facing entrypoint. Coordinates pre-flight validation, auto-fixing, deterministic **Assembly**, and multi-breakpoint verification.\n\n```bash\nnode skills/html-report/scripts/harness.mjs run \u003cfragment-path\u003e [options]\n```\n\n#### Options:\n- `--title \u003cstring\u003e`: Sets the document `\u003ctitle\u003e` and sticky navbar title.\n- `--caller \u003cid\u003e`: Activates Caller-Aware mode. Loads the caller's profile, uses 3-tier config precedence, routes to `./report-\u003ccaller\u003e.html`, and persists runs in `.caller-requests/\u003ccaller\u003e/runs/` with 10-run pruning.\n- `--theme \u003cname\u003e`: Sets the initial DaisyUI theme (e.g. `light`, `dark`, `nord`, `synthwave`). Defaults to `light`.\n- `--custom-theme \u003cpath\u003e`: Injects a custom theme definition (`.json` or `.css`) via the OKLCH compiler.\n- `--verify`: Runs Playwright 5-breakpoint verification and horizontal overflow detection.\n- `--pdf`: Instructs Playwright to compile and verify a print-ready PDF version.\n- `--live`: Enables Datastar.js ESM module and real-time SSE streaming mode.\n- `--pwa`: Generates an instant Progressive Web App with companion `manifest.webmanifest`, `sw.js`, and `icon.svg`.\n- `--offline`: Inlines all external CDN stylesheets and scripts for 100% air-gapped offline portability.\n\n---\n\n### 2. Deterministic Assembly Engine (`build-report.mjs`)\n\nThe core **Assembly** engine. Joins a **Semantic Fragment** (`\u003cmain id=\"report-main\"\u003e`) into the pre-bundled **Template Shell** (`template-shell.html`) in **\u003c100ms** to emit an **Output Deliverable**.\n\n```bash\nnode skills/html-report/scripts/build-report.mjs [options]\n```\n\n#### Options:\n- `--content \u003cpath\u003e`: Path to the input Semantic Fragment file (required).\n- `--output \u003cpath\u003e`: Destination path for the Output Deliverable (defaults to `./report.html`).\n- `--title \u003cstring\u003e`: Document and navbar title.\n- `--theme \u003cname\u003e`: Initial DaisyUI theme (defaults to `light`).\n- `--custom-theme \u003cpath\u003e`: Path to custom JSON or CSS theme definition.\n- `--live`: Enables Server-Connected Datastar.js SSE streaming mode.\n- `--published`: Emits a **Published Document** with Edit Mode authoring chrome pruned.\n- `--json`: Outputs machine-readable JSON Assembly summary (Agent-Facing).\n- `--pwa`: Applies the **Offline Packaging Modifier** (`manifest.webmanifest`, `sw.js`, and `icon.svg`) to any Interactive Delivery Archetype.\n- `--pwa-name \u003cname\u003e`: Custom PWA app name.\n- `--pwa-short-name \u003cshort\u003e`: Custom PWA homescreen short name.\n- `--pwa-theme-color \u003chex\u003e`: Custom PWA window/status-bar theme color.\n- `--pwa-icon \u003cemoji\u003e`: Custom icon emoji glyph.\n- `--offline`: Inlines external CSS/JS for standalone offline usage.\n- `--all-addons`: Explicitly forces inclusion of all 17 CDN libraries regardless of auto-detection.\n\n---\n\n### 3. Instant PWA Generator (`generate-pwa.mjs`)\n\nStandalone CLI tool to transform *any* existing HTML report into an installable, offline-ready Progressive Web App.\n\n```bash\nnode skills/html-report/scripts/generate-pwa.mjs \u003creport-path\u003e [options]\n```\n\n#### Options:\n- `\u003creport-path\u003e`: Path to the HTML report file to convert.\n- `--title, -t \u003cname\u003e`: PWA application name (defaults to HTML title).\n- `--short-name, -s \u003cshort\u003e`: Homescreen short title.\n- `--theme-color, -c \u003chex\u003e`: App status bar / window frame color (default: `#2563eb`).\n- `--bg-color, -b \u003chex\u003e`: Splash screen background color (default: `#ffffff`).\n- `--emoji, -e \u003cemoji\u003e`: Emoji glyph used for generating the app icon (default: `📊`).\n- `--output-dir, -o \u003cdir\u003e`: Target directory for manifest and service worker files.\n\n---\n\n### 4. Single-Tab Dev Server (`serve-report.mjs`)\n\nLightweight local HTTP server supporting live reloading and Datastar SSE streaming.\n\n```bash\nnode skills/html-report/scripts/serve-report.mjs \u003creport-path\u003e [--port \u003cnumber\u003e] [--no-open] [--feed-proxy \u003cprefix=targetUrl\u003e]\n```\n\n#### Options:\n- `\u003creport-path\u003e`: Path to the HTML report file to serve (e.g. `report.html` or `implementation-progress.html`).\n- `--port \u003cnumber\u003e`: Port number (defaults to `3000`).\n- `--no-open`: Prevents automatically launching the report in the default browser.\n- `--feed-proxy \u003cprefix=targetUrl\u003e`: Configures a local reverse proxy prefix for declarative public feeds (bypasses CORS restrictions).\n\n---\n\n## 🧩 Programmatic Node.js API\n\nYou can also invoke `html-report` modules programmatically in Node.js scripts:\n\n### `buildReport(options)`\n\n```javascript\nimport { buildReport } from \"./skills/html-report/scripts/build-report.mjs\";\nimport fs from \"node:fs\";\n\nconst content = fs.readFileSync(\"my-fragment.html\", \"utf-8\");\n\nconst { html, title, activeAddons, durationMs } = buildReport({\n  title: \"Automated Benchmark Audit\",\n  content,\n  theme: \"light\",\n  live: false,\n  offline: false,\n  allAddons: false\n});\n\nfs.writeFileSync(\"output.html\", html, \"utf-8\");\nconsole.log(`Compiled in ${durationMs.toFixed(2)}ms with addons: ${activeAddons.join(\", \")}`);\n```\n\n### `compileTheme(input)`\n\n```javascript\nimport { compileTheme } from \"./skills/html-report/scripts/theme-compiler.mjs\";\n\nconst cssBlock = compileTheme({\n  name: \"cyber-teal\",\n  extends: \"dark\",\n  colors: {\n    primary: \"#06b6d4\",\n    secondary: \"#3b82f6\",\n    accent: \"#f43f5e\",\n    neutral: \"#1e293b\",\n    \"base-100\": \"#0f172a\"\n  }\n});\n\nconsole.log(cssBlock);\n// Outputs valid DaisyUI 4 OKLCH CSS variables\n```\n","docs/architecture-fsm.md":"# 🛡️ Pipeline Architecture & Deterministic FSM Harness\n\nAt the core of `html-report` is an explicit, zero-dependency Node.js **Pipeline Finite State Machine (FSM)** (`skills/html-report/scripts/harness.mjs`) orchestrating validation, auto-repair, **Assembly** (`build-report.mjs`, `\u003c100ms` mechanical join of `Semantic Fragment` + `Template Shell`), and verification. Structuring the Pipeline as mathematically defined states achieves bulletproof reliability and protects agent token budgets.\n\n---\n\n## 📐 The 10 Lifecycle States\n\n```mermaid\nflowchart TD\n    IDLE[\"1. IDLE (Zero-Dep Node Engine &lt;2ms)\"] --\u003e CHECK_CALLER{\"Has --caller?\"}\n    \n    CHECK_CALLER -- Yes --\u003e RESOLVING_CALLER[\"2. RESOLVING_CALLER\\n(Load Profile &amp; 3-Tier Config)\"]\n    CHECK_CALLER -- No --\u003e VALIDATING\n    \n    RESOLVING_CALLER --\u003e VALIDATING[\"3. VALIDATING\\n(Semantic Checks &amp; Linting)\"]\n    VALIDATING --\u003e AUTO_FIXING[\"4. AUTO_FIXING\\n(Mechanical Repairs in &lt;1ms)\"]\n    AUTO_FIXING --\u003e ASSEMBLING[\"5. ASSEMBLING\\n(Deterministic Build in &lt;100ms)\"]\n    ASSEMBLING --\u003e VERIFYING[\"6. VERIFYING\\n(Playwright Multi-Breakpoint Check)\"]\n    \n    VERIFYING -- Success --\u003e RECORDING_RUN{\"Has --caller?\"}\n    RECORDING_RUN -- Yes --\u003e WRITE_VAULT[\"7. RECORDING_RUN\\n(Persist Trace &amp; 10-Run Prune)\"]\n    RECORDING_RUN -- No --\u003e COMPLETED\n    WRITE_VAULT --\u003e COMPLETED[\"8. COMPLETED\\n(./report.html or ./report-caller.html)\"]\n    \n    VERIFYING -- Issues &amp; Retries Left --\u003e REMEDIATING[\"9. REMEDIATING\\n(Spoon-Fed Prescriptive JSON Directive)\"]\n    REMEDIATING -. Attempt 2 or 3 .-&gt; VALIDATING\n    \n    VERIFYING -- Exceeded 3 Retries --\u003e FAILED[\"10. FAILED\\n(Terminal Bounded Safety Ceiling)\"]\n\n    classDef state fill:#2563eb,stroke:#1d4ed8,stroke-width:2px,color:#fff;\n    classDef success fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff;\n    classDef remediation fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#000;\n    classDef failure fill:#dc2626,stroke:#b91c1c,stroke-width:2px,color:#fff;\n    \n    class IDLE,RESOLVING_CALLER,VALIDATING,AUTO_FIXING,ASSEMBLING,VERIFYING,WRITE_VAULT state;\n    class COMPLETED success;\n    class REMEDIATING remediation;\n    class FAILED failure;\n```\n\n---\n\n## ⚙️ Key Harness Capabilities\n\n### 1. Mechanical Pre-Flight Auto-Fix State (`AUTO_FIXING`)\nSmaller language models frequently emit accidental boilerplate wrappers, omit anchor IDs, or forget table container elements. The `AUTO_FIXING` state automatically rectifies these in **\u003c1ms without consuming LLM tokens**:\n- **Outer Wrapper Stripping**: Removes accidental `\u003c!DOCTYPE html\u003e`, `\u003chtml\u003e`, `\u003cbody\u003e`, `\u003cmain\u003e`, or YAML frontmatter blocks.\n- **Heading Anchor Generation**: Generates kebab-case slugified `id` attributes for all `\u003ch1\u003e`, `\u003ch2\u003e`, and `\u003ch3\u003e` tags, guaranteeing the Table of Contents works out-of-the-box.\n- **Responsive Table Wrapping**: Wraps unadorned `\u003ctable\u003e` tags inside responsive `\u003cdiv class=\"overflow-x-auto w-full\"\u003e` containers.\n\n### 2. \"Small-Model-First\" Spoon-Fed Remediation State (`REMEDIATING`)\nWhen Playwright catches CSS overflow or responsive regressions, smaller models (e.g. Flash-Lite, Claude Haiku, or local models) get overwhelmed by raw stack traces. The harness intercepts errors and outputs an **actionable, prescriptive JSON directive**:\n\n```json\n{\n  \"status\": \"REMEDIATING\",\n  \"attempt\": 1,\n  \"max_attempts\": 3,\n  \"instruction_for_agent\": \"CRITICAL: Fix horizontal scrollbar on element #workload-table. Replace container with \u003cdiv class='overflow-x-auto w-full max-w-full'\u003e to resolve overflow at mobile breakpoint (375px).\"\n}\n```\n\nThe calling agent reads the directive, edits the specific container element, and re-runs the harness.\n\n### 3. Bounded Retry Supervisor\nThe supervisor enforces a strict **3-attempt ceiling**. If an agent cannot resolve issues within 3 attempts, the harness enters `FAILED` and halts, preventing infinite retry loops and runaway token expenditure.\n\n---\n\n## 🔀 Progressive Complexity: Standalone vs. Caller-Aware Mode\n\nThe harness provides two operational modes:\n\n| Feature | Standalone Mode (`node harness.mjs run fragment.html`) | Caller-Aware Mode (`--caller \u003cid\u003e`) |\n| :--- | :--- | :--- |\n| **Output Destination** | `./report.html` | `./report-\u003ccaller\u003e.html` |\n| **Profile Precedence** | Core baseline settings | Runtime Overrides \u003e Caller Profile \u003e Core Baseline |\n| **Trace Vault** | Disabled (Zero disk footprint) | Enabled (`.caller-requests/\u003ccaller\u003e/runs/`) |\n| **Pruning Policy** | N/A | Strict 10-run automatic pruning ceiling |\n| **Use Case** | Direct user reports, single-file generation | Shared visual bus for other skills (`memory-leak-debugging`, etc.) |\n\n---\n\n## 🔍 Standalone Command Example\n\n```bash\n# Basic run:\nnode skills/html-report/scripts/harness.mjs run fragment.html --title \"Security Audit\"\n\n# With custom theme, Playwright verification, and PDF output:\nnode skills/html-report/scripts/harness.mjs run fragment.html \\\n  --title \"Q3 Infrastructure Assessment\" \\\n  --theme nord \\\n  --verify \\\n  --pdf\n```\n","docs/cdn-stack.md":"# 📦 The 17-Library Non-Blocking CDN Stack & Security\n\n`html-report` features a carefully engineered, non-blocking CDN stack pre-wired for instant interactivity, cryptographic security, responsive elegance, and offline portability.\n\n---\n\n## 🏛️ Stack Architecture\n\n```\n┌─────────────────────────────────────────────────────────────────────────────┐\n│                          CORE FOUNDATION (Loaded Always)                    │\n│  Tailwind CSS (CDN)  │  DaisyUI v4 (All 32 Themes)  │  Lucide  │  Alpine.js │\n└─────────────────────────────────────────────────────────────────────────────┘\n┌─────────────────────────────────────────────────────────────────────────────┐\n│                   ON-DEMAND ADDONS (Auto-Detected by Harness)               │\n│  Chart.js 4.4    — Animated Canvas Charts (2D OKLCH Palette Theme Synced)   │\n│  Mermaid 11.4    — Architecture & Sequence Diagrams (DaisyUI Theme Synced)  │\n│  Leaflet 1.9     — Interactive Maps (Esri Street Tiles, 0 API Keys, 0 403s) │\n│  Grid.js 6.0     — Searchable, Sortable, Paginated Tables (Dark-Mode Synced)│\n│  KaTeX 0.16      — Scientific & LaTeX Equation Math Rendering               │\n│  Marked 14.1     — Client-Side Markdown Prose Rendering                     │\n│  Highlight.js 11 — Syntax Highlighting (TypeScript, Kotlin, Python, Bash)   │\n│  Day.js 1.11     — Lightweight Date Formatting & Relative Timestamps        │\n│  Impress.js 1.1  — 3D Presentations (Presentation-Guarded, Print Fallback)  │\n│  Mock.js 1.1     — Client-Side Synthetic Data & Schema Simulation           │\n│  Showdown 2.1    — Two-Way Markdown Converter (Zero Marked Collision)       │\n│  Quill 2.0       — In-Browser WYSIWYG Rich Text Editor (Snow Theme Synced)  │\n│  FullCalendar 6  — Interactive Scheduling Grids & Theme Palette Sync        │\n│  Datastar.js 1.0 — Real-Time SSE Morphing & Reactive Signals (Idiomorph)    │\n└─────────────────────────────────────────────────────────────────────────────┘\n```\n\n---\n\n## 📋 Complete Library Catalog & Version Matrix\n\n| Library | Version | Loading Strategy | Purpose & Highlights |\n| :--- | :--- | :--- | :--- |\n| **Tailwind CSS** | Latest Play CDN | Non-blocking script | Full utility class engine across all 5 responsive breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`). |\n| **DaisyUI** | v4.12.14 | Stylesheet (32 Themes) | Semantic components with all 32 official themes defaulting to `light`. Custom themes fully supported. |\n| **Lucide Icons** | v0.460.0 | `defer` + UMD | 1,400+ crisp SVG vector icons rendered dynamically via `data-lucide` attributes. |\n| **Alpine.js** | v3.14.3 | `defer` + CDN | Declarative micro-reactivity (`x-data`, `x-model`, `@click`) for filters and UI controls. |\n| **Chart.js** | v4.4.6 | `defer` + UMD | High-performance HTML5 canvas charts synchronized live with active DaisyUI theme palettes. |\n| **Mermaid** | v11.4.0 | `defer` + UMD | Architecture, sequence, and entity diagrams with numbered-list syntax defense and live re-theming. |\n| **Leaflet** | v1.9.4 | `defer` + UMD | Geospatial maps powered by Esri World Street tiles (zero API keys, zero `file:///` 403 errors). |\n| **Grid.js** | v6.0.6 | `defer` + UMD | Interactive, sortable, searchable, and paginated tables styled for both light and dark modes. |\n| **KaTeX** | v0.16.11 | `defer` + UMD | Fast scientific math and LaTeX typesetting with automatic math delimiters (`$$...$$`, `$...$`). |\n| **Marked** | v14.1.3 | `defer` + UMD | Lightning-fast client-side Markdown rendering for rich prose and technical documentation. |\n| **Highlight.js** | v11.10.0 | `defer` + UMD | Syntax highlighting across TypeScript, JavaScript, Kotlin, Python, Bash, and SQL code blocks. |\n| **Day.js** | v1.11.13 | `defer` + UMD | 2kB immutable date parser and relative-time calculator (`[data-dayjs=\"now\"]`, `[data-dayjs-from-now]`). |\n| **Impress.js** | v1.1.0 | Presentation-Guarded | 3D step transitions for pitch decks. Strictly guarded: renders as clean printable cards by default. |\n| **Mock.js** | v1.1.0 | `defer` + UMD | Client-side synthetic data simulation engine (`Mock.mock(...)` via `[data-mock]`) with 0 backend calls. |\n| **Showdown** | v2.1.0 | `defer` + UMD | Two-way Markdown parser with table and strikethrough support that co-exists cleanly with Marked. |\n| **Quill** | v2.0.3 | `defer` + UMD | WYSIWYG rich text editor with Snow theme, DaisyUI styling, and auto-detection (`ql-editor`, `id=\"editor\"`). |\n| **FullCalendar** | v6.1.15 | `defer` + UMD | Interactive scheduling grids (month, week, list) with theme-adaptive border and accent highlights. |\n| **Datastar.js** | v1.0.0-beta.9 | Module + ESM | Real-time SSE hypermedia streaming, live DOM morphing (Idiomorph), and reactive signals. |\n\n---\n\n## 🔒 Cryptographic Security & CSP Hardening\n\nEvery report assembled by `html-report` is hardened against supply-chain injection, unauthorized script execution, and context leakage:\n\n1. **Subresource Integrity (SRI)**:\n   External CDN stylesheets and scripts carry SHA-384 cryptographic integrity hashes:\n   ```html\n   \u003clink rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css\"\n         integrity=\"sha384-iMbeRReqpIEp0z+cPe0FZxnbV/GbGyGjDfou8Rjcr6KSJIptc245QXNVjLMtu5TR\" crossorigin=\"anonymous\" /\u003e\n   ```\n2. **Content Security Policy (CSP)**:\n   Strict `\u003cmeta http-equiv=\"Content-Security-Policy\"\u003e` restricting executable scripts, styles, fonts, and images to vetted CDN domains (`cdn.jsdelivr.net`, `cdn.tailwindcss.com`, `cdnjs.cloudflare.com`, `unpkg.com`, `server.arcgisonline.com`).\n3. **No-Referrer Privacy Policy**:\n   Includes `\u003cmeta name=\"referrer\" content=\"no-referrer\" /\u003e` on all templates and reports, preventing browsers from transmitting document paths, query params, or private caller IDs to external tile servers or CDNs.\n\n---\n\n## 📴 Offline Bundling & Standalone Inlining\n\nFor air-gapped environments or permanent archival, `html-report` supports inlining all remote CDN assets into a 100% self-contained `.html` file:\n\n- **Build-Time Flag**: `node skills/html-report/scripts/build-report.mjs --offline --content fragment.html --output report-offline.html`\n- **In-Browser Export**: Click the download icon in the sticky navbar and select **Download as HTML**. The client-side runtime fetches and packages all stylesheets and scripts into inline `\u003cstyle\u003e` and `\u003cscript\u003e` blocks.\n","docs/codebase-map.md":"# HTML Report — Repository & LLM Navigation Map\n\nThis document gives AI coding agents and maintainers a fast top-down map of the repository so any subsystem can be located, read, modified, and verified with minimal context consumption.\n\n---\n\n## Package Topology\n\n```\nhtml-report/\n├── AGENTS.md (symlinked as CLAUDE.md, GEMINI.md)  \u003c- Mandatory OpenSpec & repo conventions\n├── docs/codebase-map.md                           \u003c- This overview map\n├── packages/\n│   ├── core/       (@html-report/core)            \u003c- Zero-dependency HTML builder, harness, theme compiler, runtime\n│   │   └── README.md\n│   └── studio/     (@html-report/studio)          \u003c- Creation Studio UI, HTTP/SSE dev server, scaffolding, AI bridge, MCP\n│       └── README.md\n├── skills/\n│   ├── html-report/scripts/*                      \u003c- Public CLI & programmatic shims forwarding to workspace packages\n│   ├── html-studio/ SKILL.md\n│   ├── html-dashboard/ SKILL.md\n│   ├── html-presentation/ SKILL.md\n│   ├── html-print/ SKILL.md\n│   └── html-pwa/ SKILL.md\n├── tests/\n│   ├── integration/                               \u003c- Cross-package assembly, publish bundle & zero-key bridge tests\n│   └── e2e/                                       \u003c- Playwright browser tests (themes, Reveal.js, CSP, fast assembly)\n└── openspec/                                      \u003c- OpenSpec change specs, tasks & localhost:3031 journey reports\n```\n\n---\n\n## Where to Look by Task\n\n| Need | Start Here | Implementation Sub-Modules |\n| :--- | :--- | :--- |\n| Assemble HTML deliverable from fragment | [packages/core/scripts/build-report.mjs](../packages/core/scripts/build-report.mjs) | [packages/core/scripts/lib/build/](../packages/core/scripts/lib/build/) |\n| Lint fragment or run verification gate | [packages/core/scripts/harness.mjs](../packages/core/scripts/harness.mjs) | [packages/core/scripts/lib/harness/](../packages/core/scripts/lib/harness/) |\n| Change navbar, theme switcher, Mermaid, or Reveal runtime | [packages/core/assets/report-runtime.js](../packages/core/assets/report-runtime.js) | [packages/core/assets/runtime/](../packages/core/assets/runtime/) |\n| Adjust DaisyUI custom OKLCH theme compilation | [packages/core/scripts/theme-compiler.mjs](../packages/core/scripts/theme-compiler.mjs) | — |\n| Package offline deliverable / ZIP archive | [packages/core/scripts/publish-report.mjs](../packages/core/scripts/publish-report.mjs) | [packages/core/scripts/lib/publish/](../packages/core/scripts/lib/publish/) |\n| Modify Creation Studio wizard UI or client logic | [packages/studio/assets/create.html](../packages/studio/assets/create.html) | [packages/studio/assets/create-studio/](../packages/studio/assets/create-studio/) |\n| Change HTTP dev server, file watcher, or live reload | [packages/studio/scripts/server.mjs](../packages/studio/scripts/server.mjs) | [packages/studio/scripts/lib/server/](../packages/studio/scripts/lib/server/), [packages/studio/scripts/routes/](../packages/studio/scripts/routes/) |\n| Update project scaffolding (`projects/\u003cslug\u003e/`) | [packages/studio/scripts/scaffold-project.mjs](../packages/studio/scripts/scaffold-project.mjs) | [packages/studio/scripts/lib/scaffold/](../packages/studio/scripts/lib/scaffold/) |\n| Edit Two-Way Agent Bridge / Edit Dock / Style persistence | [packages/studio/assets/authoring-plugin.js](../packages/studio/assets/authoring-plugin.js) | [packages/studio/assets/authoring/](../packages/studio/assets/authoring/), [packages/studio/scripts/routes/agent-bridge.mjs](../packages/studio/scripts/routes/agent-bridge.mjs) |\n| Update MCP server tools, CSRF, or gateway allowlist | [packages/studio/scripts/mcp-server.mjs](../packages/studio/scripts/mcp-server.mjs) | [packages/studio/scripts/lib/mcp/security-and-schemas.mjs](../packages/studio/scripts/lib/mcp/security-and-schemas.mjs), [packages/studio/scripts/routes/mcp.mjs](../packages/studio/scripts/routes/mcp.mjs) |\n| Change AI CLI/HTTP provider detection & dispatch | [packages/studio/scripts/preflight.mjs](../packages/studio/scripts/preflight.mjs) | [packages/studio/scripts/lib/preflight/inference-router.mjs](../packages/studio/scripts/lib/preflight/inference-router.mjs) |\n| Modify domain archetypes, addons, widgets, or glossary | [packages/studio/scripts/domain-model.mjs](../packages/studio/scripts/domain-model.mjs) | [packages/studio/scripts/lib/domain/](../packages/studio/scripts/lib/domain/) |\n| Update Datastar SSE bridge or Agent Tracker | [packages/studio/scripts/datastar-sse.mjs](../packages/studio/scripts/datastar-sse.mjs), [packages/studio/scripts/agent-tracker.mjs](../packages/studio/scripts/agent-tracker.mjs) | [packages/studio/scripts/lib/datastar/](../packages/studio/scripts/lib/datastar/), [packages/studio/scripts/lib/tracker/](../packages/studio/scripts/lib/tracker/) |\n\n---\n\n## Core Architectural Invariants\n\n1. **Module Size Budget (LLM Digestibility Guard):**\n   - Every `.mjs`/`.js` module inside `packages/core/{scripts,assets}` and `packages/studio/{scripts,assets}` must remain `\u003c= 650` lines (`create.html \u003c= 1,600` lines).\n   - Verified automatically by [packages/core/tests/codebase-digestibility.test.mjs](../packages/core/tests/codebase-digestibility.test.mjs).\n2. **Strict Two-Package Boundary:**\n   - `@html-report/core` has zero imports or references to studio internals.\n   - `@html-report/studio` imports core only via `@html-report/core/*` subpath exports defined in [packages/core/package.json](../packages/core/package.json).\n   - Verified automatically by [packages/studio/tests/package-boundary.test.mjs](../packages/studio/tests/package-boundary.test.mjs).\n3. **CommonJS ESM Named Export Rule:**\n   - [packages/core/assets/report-runtime.js](../packages/core/assets/report-runtime.js) and [packages/studio/assets/authoring-plugin.js](../packages/studio/assets/authoring-plugin.js) are dual CommonJS/ESM-compatible loaders: symbols must be assigned to local identifiers and exported via shorthand object property syntax (`module.exports = { Foo, Bar }`) so Node's `cjs-module-lexer` detects every named ESM import.\n4. **Domain Language & Skill Facades:**\n   - CLI `--help` output and `NATIVE_MCP_TOOLS` must avoid deprecated synonyms defined in `UBIQUITOUS_GLOSSARY` (enforced by [packages/studio/tests/domain-code-alignment.test.mjs](../packages/studio/tests/domain-code-alignment.test.mjs)).\n\nSee [packages/core/README.md](../packages/core/README.md) and [packages/studio/README.md](../packages/studio/README.md) for module-by-module references.\n","docs/custom-themes.md":"# 🎨 Custom DaisyUI Themes & OKLCH Engine\n\n`html-report` features a zero-dependency, pure JavaScript OKLCH color engine and compiler (`skills/html-report/scripts/theme-compiler.mjs`) that allows agents and users to define custom themes that seamlessly integrate with DaisyUI 4 and automatically adapt all Chart.js, Mermaid, and Grid.js visuals.\n\n---\n\n## 🔬 Zero-Dependency Pure JS OKLCH Engine\n\nDaisyUI 4 uses the modern **OKLCH color space** (`oklch(L C H)`), which delivers perceptual uniformity and vibrant gradients without clipping in wide-gamut displays. \n\nRather than pulling in heavy npm color libraries, `html-report` implements standard Ottosson matrix math directly in pure JavaScript:\n1. **sRGB $\\to$ Linear sRGB**: Gamma decompression.\n2. **Linear sRGB $\\to$ LMS Cone Space**: Linear matrix multiplication.\n3. **LMS $\\to$ OKLab**: Cube root non-linearity and transfer matrix.\n4. **OKLab $\\to$ OKLCH**: Cartesian to polar coordinates ($L$, $C = \\sqrt{a^2 + b^2}$, $H = \\text{atan2}(b, a)$).\n\n---\n\n## 🧬 Theme Definition & Inheritance (`extends`)\n\nYou can define custom themes using JSON or raw CSS. With the `\"extends\"` property, you can inherit from any of the 32 native DaisyUI themes (`dark`, `light`, `emerald`, `synthwave`, `nord`, etc.) while overriding only specific semantic colors.\n\n### Example JSON Theme (`my-brand.json`):\n\n```json\n{\n  \"name\": \"my-brand\",\n  \"extends\": \"dark\",\n  \"colors\": {\n    \"primary\": \"#3b82f6\",\n    \"secondary\": \"#ec4899\",\n    \"accent\": \"#f59e0b\",\n    \"neutral\": \"#1e293b\",\n    \"base-100\": \"#0f172a\"\n  }\n}\n```\n\n### Auto-Contrast Content Generation\n\nWhen you specify base colors, the compiler automatically computes high-contrast values for their companion text variables (`--pc`, `--sc`, `--ac`, `--nc`, `--bc`) using luminance thresholding:\n- Dark backgrounds receive light content colors.\n- Light backgrounds receive dark content colors.\n\n---\n\n## 🛠️ Build-Time CLI Integration\n\nInject custom themes directly into your compiled report at build time:\n\n```bash\n# Inject JSON theme:\nnode skills/html-report/scripts/build-report.mjs \\\n  --title \"Brand Report\" \\\n  --content fragment.html \\\n  --custom-theme my-brand.json \\\n  --theme my-brand \\\n  --output report.html\n\n# Inject raw CSS theme block:\nnode skills/html-report/scripts/build-report.mjs \\\n  --title \"Brand Report\" \\\n  --content fragment.html \\\n  --custom-theme brand-theme.css \\\n  --output report.html\n```\n\n---\n\n## 🎛️ In-Browser Collapsible Theme Studio\n\nEvery report includes an interactive theme studio embedded directly beneath the navbar:\n1. **Click the Studio Banner**: Expand the collapsible theme designer.\n2. **Interactive Color Pickers**: Adjust Primary, Secondary, Accent, Neutral, and Base colors in real time.\n3. **Live OKLCH Monitors**: Inspect live channel values (`L%`, `C`, `H`).\n4. **Immediate Widget Reactivity**: Watch Chart.js canvas palettes, Mermaid nodes, and Grid.js borders re-render instantaneously.\n5. **1-Click Export**: Copy the generated DaisyUI CSS block or Tailwind CSS configuration snippet with one click.\n6. **Persistence**: Changes are saved to `localStorage` and restored automatically on page reloads.\n","docs/getting-started.md":"# 🚀 Getting Started with `html-report`\n\n`html-report` is an LLM-agnostic Agent Skill and deterministic build system that empowers AI coding agents (Antigravity, Claude Code, Cursor, Codex, OpenCode, Gemini CLI) to produce publication-grade, interactive, theme-adaptive, and print/PDF-ready HTML5 reports with **~70% fewer output tokens** and **\u003c100ms compilation**.\n\n---\n\n## ⚡ 1-Minute Quickstart\n\n### Method 1: Install as an Agent Prompt (Recommended)\n\nPaste this single prompt into your AI coding assistant (Antigravity, Claude Code, Cursor, Codex, OpenCode, or Gemini CLI):\n\n```text\nInstall the html-report skill from https://github.com/DriesVerb/html-report.git by cloning it into ~/.agents/html-report, symlinking ~/.agents/html-report/skills/html-report into ~/.agents/skills/html-report (and ~/.gemini/config/skills/html-report if using Antigravity/Gemini), and installing Playwright in ~/.agents/html-report/skills/html-report/playwright. Then read skills/html-report/SKILL.md.\n```\n\nYour agent will automatically clone the repository, establish symlinks, install Playwright dependencies, and read `SKILL.md`.\n\n---\n\n### Method 2: 1-Line Terminal Install\n\nIf installing manually from your shell:\n\n```bash\n# Clone the canonical repository:\ngit clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report\n\n# Create agent skills directories and symlink:\nmkdir -p ~/.agents/skills ~/.gemini/config/skills\nln -sfn ~/.agents/html-report/skills/html-report ~/.agents/skills/html-report\nln -sfn ~/.agents/html-report/skills/html-report ~/.gemini/config/skills/html-report\n\n# (Optional) Install Playwright for multi-breakpoint verification:\ncd ~/.agents/html-report/skills/html-report/playwright && npm install && npx playwright install --with-deps chromium\n```\n\n---\n\n## 💡 The Core Workflow\n\nTraditional LLMs waste thousands of tokens writing boilerplate doctypes, CDN script tags, CSS resets, and navbars. With `html-report`, agents emit **only the semantic `\u003cmain\u003e` content fragment**.\n\n### Step 1: Write a Semantic Fragment\n\nCreate a file named `fragment.html` containing only your report's content:\n\n```html\n\u003c!-- fragment.html --\u003e\n\u003csection class=\"space-y-6\"\u003e\n  \u003cdiv class=\"flex flex-wrap items-center justify-between gap-3\"\u003e\n    \u003cdiv\u003e\n      \u003ch1 id=\"perf-audit\" class=\"text-3xl font-extrabold tracking-tight\"\u003ePerformance Audit\u003c/h1\u003e\n      \u003cp class=\"text-sm opacity-70\"\u003eAutomated diagnostic report\u003c/p\u003e\n    \u003c/div\u003e\n    \u003cspan class=\"badge badge-success font-mono font-bold\"\u003e100% HEALTHY\u003c/span\u003e\n  \u003c/div\u003e\n\n  \u003cdiv class=\"grid grid-cols-1 sm:grid-cols-3 gap-4\"\u003e\n    \u003cdiv class=\"card bg-base-100 border border-base-300 p-4\"\u003e\n      \u003cdiv class=\"text-xs uppercase opacity-70\"\u003eLCP Latency\u003c/div\u003e\n      \u003cdiv class=\"text-2xl font-bold text-primary\"\u003e1.1s\u003c/div\u003e\n    \u003c/div\u003e\n    \u003cdiv class=\"card bg-base-100 border border-base-300 p-4\"\u003e\n      \u003cdiv class=\"text-xs uppercase opacity-70\"\u003eCLS Score\u003c/div\u003e\n      \u003cdiv class=\"text-2xl font-bold text-success\"\u003e0.01\u003c/div\u003e\n    \u003c/div\u003e\n    \u003cdiv class=\"card bg-base-100 border border-base-300 p-4\"\u003e\n      \u003cdiv class=\"text-xs uppercase opacity-70\"\u003eINP Latency\u003c/div\u003e\n      \u003cdiv class=\"text-2xl font-bold text-accent\"\u003e140ms\u003c/div\u003e\n    \u003c/div\u003e\n  \u003c/div\u003e\n\u003c/section\u003e\n```\n\n### Step 2: Compile & Verify via the FSM Harness\n\nRun the single-command deterministic harness:\n\n```bash\nnode skills/html-report/scripts/harness.mjs run fragment.html --title \"Performance Audit\"\n```\n\nThe harness will:\n1. Validate semantic structure.\n2. Auto-fix any missing `id` anchors or unadorned tables in `\u003c1ms`.\n3. Deterministically assemble the full HTML5 report into `./report.html` in `\u003c100ms`.\n4. (Optional) Run Playwright across 5 breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) to guarantee zero horizontal scrollbar overflow.\n\n### Step 3: View & Live Iterate\n\nServe your report with single-tab live reload:\n\n```bash\nnode skills/html-report/scripts/serve-report.mjs report.html --port 3000\n```\n\nWhen you update `fragment.html` and re-run the harness, your browser tab instantly refreshes in place without spawning duplicate tabs.\n\n---\n\n## 📚 Next Steps\n\n- Explore the [10-State Deterministic FSM Harness](architecture-fsm.md)\n- Learn about the [17-Library Non-Blocking CDN Stack](cdn-stack.md)\n- Customize your color palettes with [Custom DaisyUI Themes & OKLCH Engine](custom-themes.md)\n- Enable real-time LLM streaming with [Live Telemetry & Datastar.js](live-telemetry.md)\n- Review the [Full CLI & API Reference](api-and-cli-reference.md)\n","docs/live-telemetry.md":"# 📡 Real-Time Live Dashboards & Agent Telemetry\n\n`html-report` supports real-time hypermedia streaming and reactive signals via **Datastar.js** (`@starfederation/datastar`). This enables live, low-latency observability of AI agents executing multi-step workflows without full-page reloads.\n\n---\n\n## ⚡ The Server-Connected Live Mode Flag (`--live`)\n\nUnder the **Two-Axis Runtime Model**, Datastar SSE streaming operates in **Server-Connected + Interactive** mode (backed by `serve-report.mjs`), whereas **Static File + Interactive** reports run client-side `fetch()` without a backend. When building a Server-Connected live dashboard, pass `--live` to `build-report.mjs` or `harness.mjs`:\n\n```bash\nnode skills/html-report/scripts/build-report.mjs \\\n  --title \"Live Agent Swarm\" \\\n  --content live-fragment.html \\\n  --live \\\n  --output live-dashboard.html\n```\n\nThis injects the official Datastar.js ESM module, sets `data-report-mode=\"live\"`, and wires client signals for SSE ingestion.\n\n---\n\n## 🌊 SSE Hypermedia Streaming Architecture\n\nThe dev server (`serve-report.mjs`) provides a high-throughput Server-Sent Events endpoint at `/__datastar_stream__`.\n\n```\n┌────────────────────────────────┐\n│ Agent Execution Engine         │\n│ (Antigravity / Codex / Claude) │\n└──────────────┬─────────────────┘\n               │ Byte-offset tailing or direct events\n               ▼\n┌────────────────────────────────┐\n│ DatastarBridge (datastar-sse)  │ 🛡️ Canonical Telemetry Normalization\n└──────────────┬─────────────────┘\n               │ SSE event: datastar-merge-fragments\n               ▼\n┌────────────────────────────────┐\n│ Browser (Datastar + Idiomorph) │ ⚡ Zero-Flicker Micro-DOM Morphing\n└────────────────────────────────┘\n```\n\n### Standardized `TaskTelemetrySchema`\n\nThe telemetry pipeline normalizes diverse vendor telemetry into a unified canonical schema:\n\n```typescript\ninterface CanonicalTaskTelemetry {\n  taskId: string;\n  status: \"pending\" | \"running\" | \"completed\" | \"failed\";\n  progressPct: number;\n  toolCall?: {\n    name: string;\n    params: Record\u003cstring, any\u003e;\n    status: \"invoked\" | \"streaming\" | \"completed\" | \"error\";\n    outputSnippet?: string;\n  };\n  metrics: {\n    contextWindowSaturationPct: number;\n    tokensPerSecond: number;\n    totalTokens: number;\n  };\n}\n```\n\n---\n\n## 🧩 Supported Telemetry Adapters\n\n`skills/html-report/scripts/datastar-sse.mjs` includes built-in adapters for major AI coding agents:\n\n1. **Google Antigravity (`AgyTelemetryAdapter`)**:\n   - Tails active conversation JSONL transcripts (`transcript.jsonl`) via byte offsets without re-reading previous lines.\n   - Streams tool calls (`run_command`, `write_file`, `edit_file`, `invoke_subagent`).\n   - Normalizes subagent swarms and tracks execution across swimlanes.\n2. **OpenAI Codex (`CodexTelemetryAdapter`)**:\n   - Streams live Chain-of-Thought reasoning blocks and function call executions.\n3. **Claude Code (`ClaudeTelemetryAdapter`)**:\n   - Normalizes Claude `tool_use` and thinking blocks into unified SSE morphs.\n\n---\n\n## 🔄 Zero-Flicker Morphing & Lucide Rehydration\n\nWhen the server pushes updated task HTML fragments:\n- **Idiomorph Algorithm**: Morphs only the mutated elements (e.g. updating a task badge from `running` to `completed` or updating a progress bar width) while preserving scroll position and focus.\n- **Post-Morph Icon Rehydration**: The client runtime observes DOM changes using a `MutationObserver` and automatically rehydrates newly inserted `\u003ci data-lucide=\"...\"\u003e` tags into crisp SVG icons.\n\n---\n\n## 📑 Showdown Artifact Modal Preview\n\nDuring active planning or coding journeys, live dashboards expose 1-click artifact preview buttons (`proposal.md`, `specs/`, `design.md`, `tasks.md`). Clicking an artifact triggers `window.openMarkdownViewer(url)`, which fetches the markdown from the dev server and renders it inside an accessible Showdown preview modal without page navigation.\n","docs/semantic-versioning.md":"# 🏷️ Semantic Versioning Specification & Public API Contract\n\n`html-report` adheres strictly to [**Semantic Versioning 2.0.0**](https://semver.org/) (`MAJOR.MINOR.PATCH`).  \nThis document defines the stability guarantees, public API boundaries, deprecation lifecycle, and automated migration policies for downstream libraries and toolchains.\n\n---\n\n## 🎯 Version Format & Guarantees\n\nEvery release of `html-report` follows the standard format:\n\n$$\\text{v}\\mathbf{MAJOR}.\\mathbf{MINOR}.\\mathbf{PATCH}$$\n\n| Level | When Incremented | Backward Compatibility | Downstream Action Required |\n| :--- | :--- | :--- | :--- |\n| **`PATCH`** (`1.0.x`) | Bug fixes, performance optimizations, CDN SRI updates, documentation | 100% Backward Compatible | Safe instant update (`npm update`) |\n| **`MINOR`** (`1.x.0`) | New optional CLI flags, new CDN addons, backward-compatible API functions | 100% Backward Compatible | Safe instant update; optional new features |\n| **`MAJOR`** (`x.0.0`) | Breaking changes, removal of deprecated flags/APIs, altered template contracts | May require changes | Follow migration guide or run turnkey AI prompt |\n\n---\n\n## 🛡️ Public API Boundary\n\nThe following components constitute the **guaranteed Public API** of `html-report`. Changes to these components dictate version increments:\n\n### 1. CLI Commands & Flags\n* **Entrypoints**: `npx html-report` (`harness.mjs`), `html-report-build` (`build-report.mjs`), `html-report-serve` (`serve-report.mjs`), `html-report-pwa` (`generate-pwa.mjs`).\n* **Canonical Flags**:\n  * `--content, -c`, `--title, -t`, `--output, -o`\n  * `--mode, -m` (`report`, `print`, `presentation`, `dashboard`, `working-report`, `live-report`, `pwa`)\n  * `--pwa`, `--theme`, `--custom-theme`, `--live, -l`, `--print, -p`\n  * `--check-compatibility`, `--version, -v`, `--help, -h`\n* *Contract Guarantee*: Existing flags will never be removed or renamed in `PATCH` or `MINOR` releases without deprecation grace periods.\n\n### 2. Programmatic Node.js ESM Exports\nDownstream libraries can import canonical modules via subpaths:\n```javascript\nimport { harness, runHarness } from \"html-report/harness\";\nimport { buildReport } from \"html-report/build\";\nimport { startServer, serveReport } from \"html-report/serve\";\nimport { buildPwa, generatePwaAssets } from \"html-report/pwa\";\nimport { compileTheme, compileThemeFile } from \"html-report/theme\";\nimport { checkCompatibility, getPackageVersion } from \"html-report/compatibility\";\n```\n* *Contract Guarantee*: Function names, exported signatures, and return structures will remain stable across minor versions.\n\n### 3. Template Shell Token Contracts\nThe deterministic compiler guarantees standard slot replacements in `skills/html-report/assets/template-shell.html`:\n* `\u003c!-- {{TITLE}} --\u003e`: Document `\u003ctitle\u003e` and navbar heading.\n* `\u003c!-- {{HEAD_EXTRAS}} --\u003e`: CDN stylesheets, addons, and PWA manifest links.\n* `\u003c!-- {{CONTENT}} --\u003e`: Injected semantic `\u003cmain\u003e` content fragment.\n* `\u003c!-- {{VERSION}} --\u003e`: Dynamic SemVer version number in footer.\n* `\u003c!-- {{CUSTOM_THEMES}} --\u003e`: Compiled OKLCH custom CSS.\n* `\u003c!-- {{RUNTIME_SCRIPT}} --\u003e`: Inlined report runtime and event listeners.\n\n### 4. Client Runtime & Telemetry Protocols\n* **DaisyUI Themes**: Catalog of 32 standard themes with `light` default.\n* **Datastar Live SSE Signals**: `$theme`, `$activeTab`, and live checklist morph targets (`#task-${id}`).\n* **PWA Lifecycle**: `beforeinstallprompt` registration, theme-color dynamic update, and service worker offline caching.\n\n---\n\n## ⏳ Deprecation Lifecycle Policy\n\nWe respect downstream maintainers' time. When an API or CLI flag must be retired or replaced:\n\n1. **Announcement (`MINOR` bump)**:\n   * The feature is marked `@deprecated` in documentation and `MIGRATION.md`.\n   * The runtime interceptor (`skills/html-report/scripts/compatibility.mjs`) logs a high-visibility warning to `stderr` with the replacement flag, link to the migration guide, and sunset release target.\n   * **The old flag continues to function normally.**\n2. **Sunset Window**:\n   * Deprecated features remain functional for at least one minor release cycle before removal.\n3. **Retirement (`MAJOR` bump)**:\n   * The deprecated feature is formally removed or transformed into a structured remediation error.\n   * A dedicated migration guide is published in `docs/migrations/v\u003cX\u003e-to-v\u003cY\u003e.md` with a copy-paste AI agent migration prompt.\n\n---\n\n## 🤖 AI-First Migration Assistance\n\nWhen breaking changes occur, downstream library maintainers are never left stranded. Every breaking release includes:\n\n1. **Automated Migration Guides (`docs/migrations/`)**: Clear before/after examples and rationale.\n2. **Turnkey `\u003cAI_MIGRATION_PROMPT\u003e`**: A standardized, copy-pastable prompt designed for Antigravity, Claude Code, Cursor, or Codex to mechanically refactor downstream consumer code in one turn.\n3. **Compatibility Audit CLI**:\n   ```bash\n   npx html-report --check-compatibility [optional-dir]\n   ```\n   Scans consumer codebases for deprecated flags and API usages, printing exact file/line findings and recommended codemods.\n","docs/testing-and-verification.md":"# 🧪 Testing, Verification & Native BDD\n\n`html-report` features a dual verification strategy designed to guarantee both functional correctness and responsive visual integrity across viewports, themes, and devices.\n\n---\n\n## 🔬 Zero-Framework Native BDD Harness\n\nTo achieve test-driven development directly from OpenSpec specifications without heavy external dependencies (like Cucumber or Jest), `html-report` includes a native BDD micro-framework built directly on Node's native `node:test` and `node:assert/strict`:\n\n- **Location**: `tests/harness/bdd.mjs` & `tests/harness/openspec-bdd.mjs`\n- **Zero Dependencies**: Requires zero npm packages; runs natively on Node.js v20+.\n- **Language Constructs**: Provides familiar Gherkin semantics: `Feature`, `Scenario`, `Given`, `When`, `Then`, and `And`.\n\n```javascript\nimport { Feature, Scenario, Given, When, Then } from \"./harness/bdd.mjs\";\nimport assert from \"node:assert/strict\";\n\nFeature(\"Report Generation Integrity\", () =\u003e {\n  Scenario(\"Assembling a minimal report fragment\", async () =\u003e {\n    let htmlResult;\n\n    Given(\"a semantic HTML fragment\", () =\u003e {\n      // Setup fragment\n    });\n\n    When(\"the deterministic compiler builds the report\", () =\u003e {\n      // Call buildReport(...)\n    });\n\n    Then(\"the output should contain DOCTYPE and active Tailwind\", () =\u003e {\n      // Assertions\n    });\n  });\n});\n```\n\n### Automatic OpenSpec Scenario Binding\n\nThe OpenSpec BDD harness (`tests/harness/openspec-bdd.mjs`) parses `spec.md` files at test time, extracting requirement scenarios (`#### Scenario: \u003ctitle\u003e`). It automatically binds defined test functions and registers any unmapped scenarios as `test.todo()`, ensuring complete requirement coverage tracking.\n\n---\n\n## 📱 Playwright Multi-Breakpoint Verification\n\nVisual quality cannot be guaranteed by unit tests alone. The verification engine (`skills/html-report/playwright/verify-report.mjs`) automates responsive auditing across all 5 Tailwind CSS breakpoints:\n\n| Viewport | Width | Height | Device Class |\n| :--- | :--- | :--- | :--- |\n| **Mobile (`sm`)** | 375px | 667px | iPhone SE / Compact Mobile |\n| **Tablet (`md`)** | 768px | 1024px | iPad / Tablet Portrait |\n| **Desktop (`lg`)** | 1024px | 768px | Standard Laptop |\n| **Wide Desktop (`xl`)** | 1280px | 800px | High-DPI Desktop |\n| **Ultra-Wide (`2xl`)** | 1536px | 900px | Ultra-Wide Monitor |\n\n### Horizontal Scrollbar (\"Insufficient Space\") Detection\n\nDuring headless verification, Playwright executes a layout pass inspecting every container element. If any element has:\n$$\\text{scrollWidth} \u003e \\text{clientWidth}$$\nthe harness visually flags the element with `[data-insufficient-space=\"true\"]`, captures a diagnostic screenshot, and triggers the `REMEDIATING` state with a prescriptive JSON instruction indicating the offending element ID and recommended CSS fix.\n\n---\n\n## 🛡️ Browser Runtime Integrity & CDN Health\n\nThe suite includes headless browser tests (`tests/browser-runtime-integrity.test.mjs`) that:\n1. Verify that `index.html` loads with **zero console errors** and **zero unhandled page errors**.\n2. Assert that all 16 external CDN globals (`tailwind`, `lucide`, `Alpine`, `Chart`, `mermaid`, `L`, `gridjs`, `katex`, `marked`, `hljs`, `dayjs`, `impress`, `Mock`, `showdown`, `FullCalendar`) initialize cleanly without collisions.\n3. Validate Content Security Policy (CSP) and Subresource Integrity (SRI) declarations.\n\n---\n\n## 🏃 Running the Test Suite\n\n```bash\n# Run all unit, integration, and BDD tests:\nnode --test tests/*.test.mjs\n\n# Run a specific BDD suite:\nnode --test tests/agent-tracker.bdd.test.mjs\n```\n"}
+</script>
+</main>

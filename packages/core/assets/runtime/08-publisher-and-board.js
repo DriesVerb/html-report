@@ -362,6 +362,8 @@ if (typeof window !== "undefined") {
   window.resizePresentationWidgets = resizePresentationWidgets;
   window.initMockjs = initMockjs;
   window.initShowdown = initShowdown;
+  window.openMarkdownViewer = window.openMarkdownViewer || openMarkdownViewer;
+  window.closeMarkdownViewer = window.closeMarkdownViewer || closeMarkdownViewer;
   window.initFullCalendar = initFullCalendar;
   window.rehydrateLucideIcons = rehydrateLucideIcons;
   window.ensureLucideIcons = ensureLucideIcons;
@@ -472,6 +474,8 @@ if (typeof module !== "undefined" && module.exports) {
     sanitizeSpeakerNotesHtml,
     initMockjs,
     initShowdown,
+    openMarkdownViewer,
+    closeMarkdownViewer,
     initFullCalendar,
     rehydrateLucideIcons,
     initDatastarObserver,

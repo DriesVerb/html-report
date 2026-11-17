@@ -2,41 +2,38 @@
 
 # ⚡ html-report
 
-**Publication-grade, interactive, and print-ready HTML5 reports for AI coding agents.**  
-Generate theme-adaptive Output Deliverables with **~70% fewer tokens** and **<100ms Assembly**.
+**Publication-grade, interactive, and print-ready HTML5 deliverables for AI coding agents.**  
+Emit a tiny semantic fragment (**~70% fewer tokens**) and assemble a verified, 32-theme report in **<100ms**.
 
-[Live GitHub Pages Showcase](https://driesverb.github.io/html-report/) · [Quickstart](#-quickstart-in-30-seconds) · [Key Features](#-key-features) · [Documentation Hub](#-documentation-hub) · [License](#-license)
+[Live GitHub Pages Showcase](https://driesverb.github.io/html-report/) · [Launch Live HTML Studio ✨](https://driesverb.github.io/html-report/studio.html) · [1-Prompt Install](#-1-prompt-agent-install) · [3-Step Agentic Loop](#-the-3-step-agentic-loop) · [5 Deliverable Skills](#-5-deliverable-skills) · [Bonus: HTML Studio](#-bonus-interactive-html-studio) · [Documentation Hub](#-documentation-hub)
 
 <br/>
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success.svg?logo=github&style=flat-square)](https://driesverb.github.io/html-report/)
+[![Live Studio](https://img.shields.io/badge/Bonus-HTML%20Studio-8b5cf6.svg?style=flat-square)](https://driesverb.github.io/html-report/studio.html)
 [![SemVer: 2.0.0](https://img.shields.io/badge/SemVer-2.0.0-blue.svg?logo=semver&style=flat-square)](docs/semantic-versioning.md)
 [![Version: v0.0.0-beta.1](https://img.shields.io/badge/Version-v0.0.0--beta.1-orange.svg?style=flat-square)](package.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Agent Skill: LLM-Agnostic](https://img.shields.io/badge/Agent%20Skill-LLM--Agnostic-blueviolet.svg?style=flat-square)](https://agentskills.io)
-[![CDN Stack: 17 Libraries](https://img.shields.io/badge/CDN%20Stack-17%20Libraries-3b82f6.svg?style=flat-square)](docs/cdn-stack.md)
-[![Verified: 276 Tests Passing](https://img.shields.io/badge/Verified-276%20Tests%20Passing-2ea44f.svg?style=flat-square)](docs/testing-and-verification.md)
 
 </div>
 
 ---
 
-> 🌐 **Live GitHub Pages Showcase:** [https://driesverb.github.io/html-report/](https://driesverb.github.io/html-report/)  
-> Works natively with **Antigravity, Claude Code, Cursor, Codex, OpenCode, Gemini CLI**, and autonomous agent pipelines.
+> 🌐 **Live Showcase:** [driesverb.github.io/html-report](https://driesverb.github.io/html-report/) · ✨ **Bonus Live Studio:** [driesverb.github.io/html-report/studio.html](https://driesverb.github.io/html-report/studio.html)  
+> Built for **Antigravity, Claude Code, Cursor, Codex, OpenCode, Gemini CLI**, and autonomous agent workflows.
 
 ---
 
-## 🚀 Quick Install
+## 🚀 1-Prompt Agent Install
 
-### Option A: Install as an Agent Prompt (Recommended)
-
-Copy and paste this single prompt directly into your AI coding assistant:
+### Option A: Paste into Your AI Agent (Recommended)
 
 ```text
 Install the html-report skill from https://github.com/DriesVerb/html-report.git by cloning it into ~/.agents/html-report, symlinking ~/.agents/html-report/skills/html-report into ~/.agents/skills/html-report (and ~/.gemini/config/skills/html-report if using Antigravity/Gemini), and installing Playwright in ~/.agents/html-report/skills/html-report/playwright. Then read skills/html-report/SKILL.md.
 ```
 
-### Option B: 1-Line Terminal Command
+### Option B: 1-Line Terminal Setup
 
 ```bash
 git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report && \
@@ -47,90 +44,70 @@ git clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report && 
 
 ---
 
-## 💡 Why `html-report`?
+## 💡 Why `html-report`? (The Agentic Advantage)
 
-When LLMs generate full HTML documents from scratch, they waste **70% to 80% of their output tokens** on boilerplate: doctypes, CDN imports, CSS resets, repetitive navbars, and theme glue. Worse, models frequently hallucinate broken CDN links, omit heading IDs, and cause mobile layout overflow.
+When LLMs write full HTML files from scratch, **70–80% of output tokens** vanish into `<!DOCTYPE>`, CDN links, navbars, CSS resets, and theme plumbing—often introducing broken links or mobile overflow. With `html-report`, your agent writes **only semantic content**; the deterministic Node engine builds and verifies the rest.
 
-`html-report` replaces fragile generation with a **deterministic build harness**:
-- **Agents emit only the semantic content fragment** (headings, metric cards, charts, diagrams, tables).
-- The **deterministic harness** validates, auto-fixes, and stitches the fragment into a pre-bundled shell in **<100ms**.
-
-| Metric | Traditional LLM Generation | With `html-report` | Advantage |
+| Metric | Raw LLM HTML Generation | With `html-report` | Agentic Advantage |
 | :--- | :--- | :--- | :--- |
 | **Output Tokens** | ~2,500+ tokens | **~500–800 tokens** | **~70% token savings** |
-| **Assembly Latency** | 10–25s | **<100ms** | **100x faster execution** |
-| **Pre-Flight Repairs** | 1+ LLM turn (5–10s) | **<1ms** mechanical auto-fix | **Zero token burn for trivial fixes** |
-| **Layout Assurance** | Manual browser inspection | **<4s** Playwright check | **Instant responsive confidence** |
+| **Assembly Speed** | 10–25s streaming | **<100ms** | **Deterministic build & auto-detected CDNs** |
+| **Pre-Flight Fixes** | Extra LLM turn | **<1ms** mechanical repair | **Zero token burn on IDs & tables** |
+| **Visual QA** | Manual inspection | **<4s** Playwright check | **5-breakpoint overflow assurance** |
 
 ---
 
-## ⚡ Quickstart in 30 Seconds
+## ⚡ The 3-Step Agentic Loop
 
-### 1. Write a Semantic Fragment
-
-Write *only* the semantic content (no `<!DOCTYPE>`, `<html>`, or `<head>`):
-
-```html
-<!-- fragment.html -->
-<section class="space-y-6">
-  <div class="flex flex-wrap items-center justify-between gap-3">
-    <h1 id="audit-summary" class="text-3xl font-extrabold tracking-tight">System Health Audit</h1>
-    <span class="badge badge-success font-mono font-bold">ALL SYSTEMS NORMAL</span>
-  </div>
-
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div class="card bg-base-100 border border-base-300 p-4">
-      <div class="text-xs uppercase opacity-70">Uptime</div>
-      <div class="text-2xl font-bold text-primary">99.99%</div>
-    </div>
-    <div class="card bg-base-100 border border-base-300 p-4">
-      <div class="text-xs uppercase opacity-70">LCP Latency</div>
-      <div class="text-2xl font-bold text-success">1.05s</div>
-    </div>
-    <div class="card bg-base-100 border border-base-300 p-4">
-      <div class="text-xs uppercase opacity-70">Active Swarms</div>
-      <div class="text-2xl font-bold text-accent">12</div>
-    </div>
-  </div>
-</section>
-```
-
-### 2. Compile via the FSM Harness
-
-```bash
-node skills/html-report/scripts/harness.mjs run fragment.html --title "System Health Audit"
-```
-
-Your report is compiled in `<100ms` into `./report.html`.
-
-### 3. Live Preview & Iterate
-
-```bash
-node skills/html-report/scripts/serve-report.mjs report.html --port 3000
-```
-
-Refreshes your existing browser tab instantly whenever you recompile (zero duplicate tabs).
+1. **Emit Only Semantic HTML (`fragment.html`)** — No `<!DOCTYPE>`, `<head>`, or CDN tags. Just headings, KPI cards, charts, Mermaid diagrams, or tables:
+   ```html
+   <main id="report-main" class="space-y-6">
+     <h1 id="audit-summary" class="text-3xl font-extrabold">System Health Audit</h1>
+     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+       <div class="stat bg-base-100 border border-base-300 rounded-box">
+         <div class="stat-title">Uptime</div><div class="stat-value text-primary">99.99%</div>
+       </div>
+     </div>
+   </main>
+   ```
+2. **Assemble & Verify in `<100ms`** — Auto-detects only the CDNs your fragment uses, applies 32 DaisyUI themes, and validates structure:
+   ```bash
+   node skills/html-report/scripts/harness.mjs run fragment.html --title "System Health Audit"
+   ```
+3. **Live Preview & Two-Way Visual Edit Mode** — Serve locally with zero-reload hot-swapping, click any element in the browser to tweak styles, or send a surgical edit prompt back to your agent:
+   ```bash
+   node skills/html-report/scripts/serve-report.mjs report.html --port 3031
+   ```
 
 ---
 
-## ✨ Key Features
+## 🎯 5 Deliverable Skills
 
-- 📱 **Instant Progressive Web Apps (PWA)**: Turn any report into an installable desktop/mobile app with offline Service Worker caching, dynamic DaisyUI theme-color sync, and native install prompt affordances (`--pwa` or `generate-pwa.mjs`).
-- 📲 **1-Click Studio & PWA Installer (`/html-install`)**: Package and install the interactive Creation Studio (`create.html`) or any report as an offline-first desktop application on port 3030 (`npm run install:wizard` or `./skills/html-report/scripts/install-pwa.sh`).
-- ⚡ **<100ms Deterministic Compilation**: Stitches semantic fragments into a pre-bundled publication shell.
-- 🎨 **32 DaisyUI Themes + Custom OKLCH**: Sticky navbar theme switcher synced live with Chart.js, Mermaid, and Grid.js via Ottosson matrix math.
-- 📦 **17-Library Non-Blocking CDN Stack**: Chart.js, Mermaid, Leaflet maps, Grid.js tables, KaTeX math, Marked, Highlight.js, FullCalendar, and more.
-- 🛡️ **Cryptographic SRI & Hardened CSP**: All assets verified via SHA-384 hashes with strict Content Security Policy.
-- 📡 **Real-Time Datastar SSE Telemetry**: Stream live task checklist morphs (`#task-${id}`) and tool execution feeds without page reloads.
-- 📱 **5-Breakpoint Playwright Verification**: Automated layout auditing detecting horizontal overflow (`scrollWidth > clientWidth`).
+Invoke any specialized skill directly in your AI assistant for tailored layouts and build flags:
+
+| Skill | Output Archetype | Key Capability | Guide |
+| :--- | :--- | :--- | :--- |
+| **`/html-report`** | Analytical Reports | Auto-detected Chart.js, Mermaid, Grid.js, KaTeX, Leaflet & 32 themes | [SKILL.md](skills/html-report/SKILL.md) |
+| **`/html-dashboard`** | Live Telemetry Consoles | Datastar.js SSE morphing (`#task-${id}`) & Two-Way AI Agent Bridge | [SKILL.md](skills/html-dashboard/SKILL.md) |
+| **`/html-presentation`** | Interactive Slide Decks | Reveal.js decks with Fullscreen (`F`), Speaker Notes (`N`) & print stack | [SKILL.md](skills/html-presentation/SKILL.md) |
+| **`/html-print`** | Paged PDFs & Invoices | `@page` margins, repeating `<thead>`, `break-inside-avoid` & PDF export | [SKILL.md](skills/html-print/SKILL.md) |
+| **`/html-pwa`** | Offline Installable Apps | W3C manifest, dual-caching Service Worker & theme-color sync (`--pwa`) | [SKILL.md](skills/html-pwa/SKILL.md) |
+
+---
+
+## 🎁 Bonus: Interactive HTML Studio (`/html-studio`)
+
+As a **bonus visual companion** (`@html-report/studio`), `html-studio` helps humans and agents configure deliverables interactively with **zero Node.js required**:
+
+- **Live Browser Studio (GitHub Pages):** **[https://driesverb.github.io/html-report/studio.html](https://driesverb.github.io/html-report/studio.html)** ([Direct `create.html`](https://driesverb.github.io/html-report/packages/studio/assets/create.html))
+- **Local Instant Launch (`<250ms`):** Run `./skills/html-report/scripts/open-create.sh` or ask your agent for **`/html-studio`** ([SKILL.md](skills/html-studio/SKILL.md))
+- **What's Inside:** 4-step archetype & addon wizard, real-time OKLCH custom theme designer, Quill WYSIWYG goals modal, workspace project scanner, and deterministic prompt/CLI generator.
 
 ---
 
 ## 📚 Documentation Hub
 
-Explore in-depth guides in the [`docs/`](docs/) directory:
-
-| Guide | Description |
+| Guide | Covers |
 | :--- | :--- |
 | [🚀 **Getting Started**](docs/getting-started.md) | Agent prompt setup, CLI installation, and symlinks |
 | [🛡️ **FSM Architecture**](docs/architecture-fsm.md) | 10-state deterministic lifecycle, pre-flight auto-fixes, and bounded retries |
@@ -139,36 +116,17 @@ Explore in-depth guides in the [`docs/`](docs/) directory:
 | [📡 **Live Telemetry**](docs/live-telemetry.md) | Datastar.js SSE hypermedia streaming and agent transcript tailing |
 | [🧪 **Testing & Verification**](docs/testing-and-verification.md) | Native BDD micro-framework, Playwright checks, and overflow detection |
 | [📖 **API & CLI Reference**](docs/api-and-cli-reference.md) | Command-line flags, options, and programmatic Node.js API |
-| [🏷️ **Semantic Versioning**](docs/semantic-versioning.md) | SemVer 2.0.0 policy, public API boundaries, and stability contract |
-| [🔄 **Migration Hub**](MIGRATION.md) | Breaking change guides, compatibility checker, and AI refactoring prompts |
+| [🗺️ **Codebase Map**](docs/codebase-map.md) | Monorepo package boundaries (`@html-report/core`, `@html-report/studio`) |
 
 ---
 
 ## 🏷️ Semantic Versioning & Downstream Integration
 
-`html-report` adheres strictly to **[Semantic Versioning 2.0.0](docs/semantic-versioning.md)** (`MAJOR.MINOR.PATCH`).
-When including `html-report` in other libraries, CLI toolchains, or AI agent harnesses, you are protected by formal stability contracts:
-
-- **Public API Stability**: Guaranteed stability across CLI flags, programmatic ESM exports (`html-report/build`, `html-report/harness`, `html-report/serve`, `html-report/pwa`, `html-report/theme`), and template slot contracts.
-- **Breaking Change AI Migration Prompts**: Every breaking release includes a turnkey `<AI_MIGRATION_PROMPT>` inside [`MIGRATION.md`](MIGRATION.md) and [`docs/migrations/`](docs/migrations/) so coding agents can upgrade downstream consumer code in one prompt.
-- **Pre-Flight Compatibility Scanner**:
-  ```bash
-  node skills/html-report/scripts/harness.mjs --check-compatibility
-  ```
-- **Report Footer Versioning**: Every generated report displays its exact SemVer version number in the footer (`v0.0.0-beta.1`).
+`html-report` adheres strictly to **[Semantic Versioning 2.0.0](docs/semantic-versioning.md)** (`MAJOR.MINOR.PATCH`), providing stable CLI flags, ESM exports (`html-report/build`, `html-report/harness`, `html-report/serve`, `html-report/pwa`, `html-report/theme`), compatibility scanning (`node skills/html-report/scripts/harness.mjs --check-compatibility`), and AI migration prompts in [`MIGRATION.md`](MIGRATION.md).
 
 ---
 
-## 🧪 Verification
+## 🧪 Verification & 📄 License
 
-Run the full suite of 276+ unit, integration, and BDD tests in ~2 seconds:
-
-```bash
-node --test tests/*.test.mjs
-```
-
----
-
-## 📄 License
-
-Distributed under the **MIT License**. Built with [OpenSpec](https://github.com/Fission-AI/OpenSpec) for the global AI agent ecosystem.
+Run the workspace unit & integration suite (`npm test`) or E2E Playwright checks (`npm run test:e2e`).  
+Distributed under the **MIT License**. Built with [OpenSpec](https://github.com/Fission-AI/OpenSpec) for the AI agent ecosystem.

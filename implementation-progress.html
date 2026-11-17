@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://unpkg.com https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Rename /html-create to /html-studio - Journey & Plan</title>
+  <title>Agentic README & GitHub Pages Showcase - Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -31,17 +31,23 @@
   </style>
 
   <!-- Optional Addon CDNs & Styles -->
-    <!-- Addon: Mermaid -->
+    <!-- Addon: Showdown -->
+  <script defer src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" crossorigin="anonymous"></script>
+
+  <!-- Addon: Chart.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
+
+  <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
 
-  <meta name="html-report-source" content="openspec/changes/rename-html-create-to-studio/index.html" />
+  <meta name="html-report-source" content="openspec/changes/readme-and-ghpages-agentic-focus/index.html" />
 
   <!-- Deterministic Agent Manifest -->
   <script type="application/json" id="agent-manifest">
 {
   "schemaVersion": "1.0.0",
   "project": null,
-  "title": "Rename /html-create to /html-studio - Journey & Plan",
+  "title": "Agentic README & GitHub Pages Showcase - Journey & Plan",
   "mode": "report",
   "theme": "light",
   "favicon": "📊",
@@ -50,24 +56,26 @@
   "published": false,
   "pwa": false,
   "activeAddons": [
+    "showdown",
+    "charts",
     "mermaid"
   ],
   "files": {
-    "entry": "openspec/changes/rename-html-create-to-studio/index.html",
-    "fragment": "openspec/changes/rename-html-create-to-studio/fragment.html"
+    "entry": "openspec/changes/readme-and-ghpages-agentic-focus/index.html",
+    "fragment": "openspec/changes/readme-and-ghpages-agentic-focus/fragment.html"
   },
   "pipeline": {
-    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output openspec/changes/rename-html-create-to-studio/index.html --content openspec/changes/rename-html-create-to-studio/fragment.html --title \"Rename /html-create to /html-studio - Journey & Plan\" --mode report --theme light --addons mermaid",
-    "serveCommand": "node skills/html-report/scripts/serve-report.mjs openspec/changes/rename-html-create-to-studio/index.html --port 3031",
-    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs openspec/changes/rename-html-create-to-studio/index.html",
+    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output openspec/changes/readme-and-ghpages-agentic-focus/index.html --content openspec/changes/readme-and-ghpages-agentic-focus/fragment.html --title \"Agentic README & GitHub Pages Showcase - Journey & Plan\" --mode report --theme light --addons showdown,charts,mermaid",
+    "serveCommand": "node skills/html-report/scripts/serve-report.mjs openspec/changes/readme-and-ghpages-agentic-focus/index.html --port 3031",
+    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs openspec/changes/readme-and-ghpages-agentic-focus/index.html",
     "preflightCommand": "node skills/html-report/scripts/preflight.mjs --json",
     "authoringGuide": "../../skills/html-report/references/agent-authoring-guide.md"
   },
   "sections": [
     {
       "agentId": "section-1",
-      "slug": "rename-html-create-to-html-studio",
-      "label": "Rename /html-create to /html-studio",
+      "slug": "agentic-readme-github-pages-showcase-with-bonus-",
+      "label": "Agentic README &amp; GitHub Pages Showcase with Bonus HTML Studio",
       "id": null,
       "selector": "[data-agent-id=\"section-1\"]"
     },
@@ -80,15 +88,15 @@
     },
     {
       "agentId": "section-3",
-      "slug": "integration-backward-compatibility-architecture",
-      "label": "Integration &amp; Backward-Compatibility Architecture",
+      "slug": "public-entrypoints-bonus-studio-architecture",
+      "label": "Public Entrypoints &amp; Bonus Studio Architecture",
       "id": null,
       "selector": "[data-agent-id=\"section-3\"]"
     },
     {
       "agentId": "section-4",
-      "slug": "implementation-checklist",
-      "label": "Implementation Checklist",
+      "slug": "connected-task-checklist",
+      "label": "Connected Task Checklist",
       "id": null,
       "selector": "[data-agent-id=\"section-4\"]"
     }
@@ -117,6 +125,12 @@
       "type": "kpi",
       "id": null,
       "selector": "[data-agent-id=\"kpi-4\"]"
+    },
+    {
+      "agentId": "chart-1",
+      "type": "chart",
+      "id": "journeyProgressChart",
+      "selector": "#journeyProgressChart"
     },
     {
       "agentId": "mermaid-1",
@@ -715,7 +729,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Rename /html-create to /html-studio - Journey & Plan
+          Agentic README & GitHub Pages Showcase - Journey & Plan
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -901,28 +915,34 @@
   </dialog>
 
   <!-- Main Content Container -->
-  <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
-<div class="space-y-8">
-  <!-- Hero & Journey Stepper -->
-  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="rename-html-create-to-html-studio" data-agent-id="section-1">
+  <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full space-y-8">
+<!-- Hero & Journey Stepper -->
+  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="agentic-readme-github-pages-showcase-with-bonus-" data-agent-id="section-1">
     <div class="card-body gap-5">
       <div class="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <div class="badge badge-success badge-outline mb-2 font-mono text-xs">OpenSpec Journey · Complete</div>
-          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Rename <code>/html-create</code> to <code>/html-studio</code></h1>
-          <p class="text-base-content/75 mt-1 max-w-2xl">
-            Align the primary creation skill, router, and HTTP routes with <code>@html-report/studio</code> while preserving backward-compatible <code>/html-create</code> and <code>/create</code> aliases.
+        <div class="space-y-2 max-w-3xl">
+          <div class="badge badge-success badge-outline font-mono text-xs">OpenSpec Journey &bull; Verified</div>
+          <h1 id="journey-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Agentic README &amp; GitHub Pages Showcase with Bonus HTML Studio
+          </h1>
+          <p class="text-sm text-base-content/75 leading-relaxed">
+            Structuring the repository entrypoints around <strong>agentic ease of use</strong> (1-prompt install, 3-step fragment-to-verified-report loop, 5 specialized deliverable skills) while presenting <code>/html-studio</code> as a bonus interactive companion with live browser links on GitHub Pages.
           </p>
         </div>
+
+        <!-- Direct Artifact Backlinks -->
         <div class="flex flex-wrap gap-2">
-          <button onclick="openMarkdownViewer('openspec/changes/rename-html-create-to-studio/proposal.md')" class="btn btn-sm btn-outline gap-1.5">
+          <button type="button" onclick="openMarkdownViewer('openspec/changes/readme-and-ghpages-agentic-focus/proposal.md')" class="btn btn-sm btn-outline gap-1.5 font-mono">
             <i data-lucide="file-text" class="w-4 h-4"></i> proposal.md
           </button>
-          <button onclick="openMarkdownViewer('openspec/changes/rename-html-create-to-studio/design.md')" class="btn btn-sm btn-outline gap-1.5">
+          <button type="button" onclick="openMarkdownViewer('openspec/changes/readme-and-ghpages-agentic-focus/design.md')" class="btn btn-sm btn-outline gap-1.5 font-mono">
             <i data-lucide="compass" class="w-4 h-4"></i> design.md
           </button>
-          <button onclick="openMarkdownViewer('openspec/changes/rename-html-create-to-studio/tasks.md')" class="btn btn-sm btn-primary gap-1.5">
+          <button type="button" onclick="openMarkdownViewer('openspec/changes/readme-and-ghpages-agentic-focus/tasks.md')" class="btn btn-sm btn-primary gap-1.5 font-mono">
             <i data-lucide="check-square" class="w-4 h-4"></i> tasks.md
+          </button>
+          <button type="button" onclick="openMarkdownViewer('openspec/changes/readme-and-ghpages-agentic-focus/specs/modular-documentation-and-showcase/spec.md')" class="btn btn-sm btn-outline gap-1.5 font-mono">
+            <i data-lucide="layers" class="w-4 h-4"></i> spec.md
           </button>
         </div>
       </div>
@@ -934,7 +954,7 @@
           <li class="step step-primary">Planning</li>
           <li class="step step-primary">Implementing</li>
           <li class="step step-primary">Verifying</li>
-          <li class="step">Shipped / Archived</li>
+          <li class="step step-primary">Shipped / Archived</li>
         </ul>
       </div>
     </div>
@@ -944,97 +964,145 @@
   <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" data-agent-section="section-2" data-agent-id="section-2">
     <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm" data-agent-widget="kpi" data-agent-id="kpi-1">
       <div class="stat-title">Total Tasks</div>
-      <div class="stat-value text-primary">9</div>
-      <div class="stat-desc">Across 4 phases</div>
+      <div class="stat-value text-primary">11</div>
+      <div class="stat-desc">Across 5 implementation phases</div>
     </div>
     <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm" data-agent-widget="kpi" data-agent-id="kpi-2">
       <div class="stat-title">Completed</div>
-      <div class="stat-value text-success">9</div>
-      <div class="stat-desc">100% complete</div>
+      <div class="stat-value text-success">11</div>
+      <div class="stat-desc">100% implemented &amp; verified</div>
     </div>
     <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm" data-agent-widget="kpi" data-agent-id="kpi-3">
-      <div class="stat-title">In Progress</div>
-      <div class="stat-value text-warning">0</div>
-      <div class="stat-desc">Ready for archive</div>
+      <div class="stat-title">Remaining</div>
+      <div class="stat-value text-success">0</div>
+      <div class="stat-desc">All Playwright &amp; unit gates green</div>
     </div>
     <div class="stat bg-base-100 border border-base-300 rounded-box shadow-sm" data-agent-widget="kpi" data-agent-id="kpi-4">
-      <div class="stat-title">Remaining</div>
-      <div class="stat-value">0</div>
-      <div class="stat-desc">All tasks complete</div>
+      <div class="stat-title">README Budget</div>
+      <div class="stat-value text-secondary">132</div>
+      <div class="stat-desc">Lines (max 200 enforced)</div>
     </div>
   </section>
 
-  <!-- Architecture & Compatibility Flow -->
-  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="integration-backward-compatibility-architecture" data-agent-id="section-3">
-    <div class="card-body">
-      <h2 class="card-title text-lg">
-        <i data-lucide="git-branch" class="w-5 h-5 text-primary"></i>
-        Integration &amp; Backward-Compatibility Architecture
-      </h2>
-      <p class="text-sm text-base-content/75">
-        Canonical routing moves to <code>/html-studio</code> and <code>/studio</code>, while <code>/html-create</code> and <code>/create</code> remain active aliases so existing workflows and muscle memory never break. See <a href="javascript:void(0)" onclick="openMarkdownViewer('openspec/changes/rename-html-create-to-studio/design.md')" class="link link-primary">design.md</a> for full details.
-      </p>
-      <div class="mermaid bg-base-200/50 rounded-box p-4 mt-2 overflow-x-auto" data-agent-widget="mermaid" data-agent-id="mermaid-1">
+  <!-- Architecture Flow & Progress Chart -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6" data-agent-section="public-entrypoints-bonus-studio-architecture" data-agent-id="section-3">
+    <div class="lg:col-span-2 card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body gap-4">
+        <h2 id="architecture-flow" class="card-title text-lg flex items-center gap-2">
+          <i data-lucide="git-branch" class="w-5 h-5 text-primary"></i>
+          Public Entrypoints &amp; Bonus Studio Architecture
+        </h2>
+        <div class="mermaid bg-base-200/40 p-4 rounded-box border border-base-300 overflow-x-auto text-center" data-agent-widget="mermaid" data-agent-id="mermaid-1">
 flowchart LR
-  U1["/html-studio · /html-studio:cli"] --> R["skill-router.mjs"]
-  U2["/html-create · /html-create:cli (alias)"] --> R
-  R --> S["Canonical Skill: html-studio"]
-  S --> SK["skills/html-studio/SKILL.md"]
-  H1["GET /studio · /html-studio"] --> ST["routes/static.mjs"]
-  H2["GET /create · /html-create (alias)"] --> ST
-  ST --> UI["packages/studio/assets/create.html"]
+    R["README.md (132 lines)\n1-Prompt Install + 3-Step Loop + 5 Skills"] -->|Links to| GH["index.html (GitHub Pages)\nConcept + 7-Tab Showcase + Docs"]
+    R -->|Bonus Link| ST["studio.html\n(Root Redirect)"]
+    GH -->|CTA &amp; Bonus Card| CR["packages/studio/assets/create.html\nLive Zero-Node HTML Studio"]
+    ST --> CR
+    GH -->|Read Guide| MD["05-cdn-hydrators.js\nopenMarkdownViewer() Modal"]
+    MD --> DOCS["docs/*.md\n9 Modular Guides"]
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body gap-4">
+        <h2 id="phase-chart-heading" class="card-title text-lg flex items-center gap-2">
+          <i data-lucide="bar-chart-2" class="w-5 h-5 text-secondary"></i>
+          Phase Completion
+        </h2>
+        <div class="relative h-64 w-full min-w-0">
+          <canvas id="journeyProgressChart" data-agent-widget="chart" data-agent-id="chart-1"></canvas>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Connected Task Checklist -->
-  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="implementation-checklist" data-agent-id="section-4">
+  <section class="card bg-base-100 border border-base-300 shadow-sm" data-agent-section="connected-task-checklist" data-agent-id="section-4">
     <div class="card-body gap-4">
-      <div class="flex items-center justify-between">
-        <h2 class="card-title text-lg">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 id="implementation-checklist" class="card-title text-lg flex items-center gap-2">
           <i data-lucide="list-checks" class="w-5 h-5 text-primary"></i>
-          Implementation Checklist
+          Connected Task Checklist
         </h2>
-        <button onclick="openMarkdownViewer('openspec/changes/rename-html-create-to-studio/tasks.md')" class="btn btn-xs btn-ghost link link-primary">View tasks.md</button>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="openMarkdownViewer('README.md')" class="btn btn-xs btn-outline font-mono">README.md</button>
+          <button type="button" onclick="openMarkdownViewer('docs/codebase-map.md')" class="btn btn-xs btn-outline font-mono">codebase-map.md</button>
+          <button type="button" onclick="openMarkdownViewer('openspec/changes/readme-and-ghpages-agentic-focus/tasks.md')" class="btn btn-xs btn-primary font-mono">tasks.md</button>
+        </div>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
-          <h3 class="font-semibold text-sm">Phase 1: Skill &amp; Discovery Migration</h3>
-          <ul class="space-y-1.5 text-sm">
-            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Rename <code>skills/html-create/</code> → <code>skills/html-studio/</code> &amp; update <a href="javascript:void(0)" onclick="openMarkdownViewer('skills/html-studio/SKILL.md')" class="link link-primary">SKILL.md</a></span></li>
-            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Replace <code>.agents/skills/html-create</code> symlink with <code>html-studio</code></span></li>
-            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Update sibling <code>SKILL.md</code> cross-references</span></li>
+          <h3 class="font-semibold text-sm">1. Core Runtime Markdown Viewer</h3>
+          <ul class="space-y-1.5 text-xs">
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" /> <span>1.1 Add <code>openMarkdownViewer()</code> &amp; <code>closeMarkdownViewer()</code> to <code>05-cdn-hydrators.js</code></span></li>
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" /> <span>1.2 Expose &amp; export in <code>08-publisher-and-board.js</code> and <code>report-runtime.js</code></span></li>
           </ul>
         </div>
 
         <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
-          <h3 class="font-semibold text-sm">Phase 2: Router, Server Routes &amp; Domain Model</h3>
-          <ul class="space-y-1.5 text-sm">
-            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Update <code>skill-router.mjs</code> to <code>'html-studio'</code> (keep <code>/html-create</code> triggers)</span></li>
-            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Add <code>/studio</code> &amp; <code>/html-studio</code> routes in <code>static.mjs</code></span></li>
-            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Update <code>studio-config.mjs</code>, <code>domain-model.mjs</code>, <code>html-grill.mjs</code>, <code>open-create.{mjs,sh}</code></span></li>
+          <h3 class="font-semibold text-sm">2. Live Static <code>html-studio</code> Entrypoint</h3>
+          <ul class="space-y-1.5 text-xs">
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" /> <span>2.1 Copy <code>manifest.webmanifest</code>, <code>icon.svg</code>, and <code>sw.js</code> into <code>packages/studio/assets/</code></span></li>
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" /> <span>2.2 Create root <code>studio.html</code> redirecting to <code>./packages/studio/assets/create.html</code></span></li>
           </ul>
         </div>
 
         <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
-          <h3 class="font-semibold text-sm">Phase 3: Documentation &amp; Tests</h3>
-          <ul class="space-y-1.5 text-sm">
-            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Update <a href="javascript:void(0)" onclick="openMarkdownViewer('AGENTS.md')" class="link link-primary">AGENTS.md</a>, <a href="javascript:void(0)" onclick="openMarkdownViewer('docs/codebase-map.md')" class="link link-primary">docs/codebase-map.md</a>, and <a href="javascript:void(0)" onclick="openMarkdownViewer('TODO.md')" class="link link-primary">TODO.md</a></span></li>
-            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Update unit, BDD, integration, and E2E tests (7 test files)</span></li>
+          <h3 class="font-semibold text-sm">3. Restructure <code>README.md</code></h3>
+          <ul class="space-y-1.5 text-xs">
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" /> <span>3.1 Lead with 1-Prompt Install, 3-Step Loop &amp; 5 Deliverable Skills</span></li>
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" /> <span>3.2 Add Bonus <code>html-studio</code> section, preserve SemVer &amp; <code>docs/*.md</code> links (132 lines)</span></li>
           </ul>
         </div>
 
         <div class="p-4 rounded-box bg-base-200/50 border border-base-300 space-y-2">
-          <h3 class="font-semibold text-sm">Phase 4: Verification</h3>
-          <ul class="space-y-1.5 text-sm">
-            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-1" /> <span>Run <code>npm test</code> (592/592 pass) &amp; <code>npm run test:e2e</code> (40/42 pass; Studio E2E 9/9 pass; 2 pre-existing unrelated failures)</span></li>
+          <h3 class="font-semibold text-sm">4 &amp; 5. GitHub Pages, OpenSpec &amp; Verification</h3>
+          <ul class="space-y-1.5 text-xs">
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" /> <span>4.1–4.2 Author <code>showcase-fragment.html</code> &amp; compile root <code>index.html</code></span></li>
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" /> <span>5.1–5.2 Sync spec &amp; mirror companion to <code>implementation-progress.html</code></span></li>
+            <li class="flex items-start gap-2"><input type="checkbox" checked disabled class="checkbox checkbox-xs checkbox-success mt-0.5" /> <span>5.3 Run <code>npm test</code> and E2E Playwright verification suites</span></li>
           </ul>
         </div>
       </div>
     </div>
   </section>
-</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const ctx = document.getElementById("journeyProgressChart");
+  if (ctx && typeof window.Chart !== "undefined") {
+    new window.Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Runtime Viewer", "Studio Assets", "README.md", "GitHub Pages", "Verify"],
+        datasets: [
+          {
+            label: "Completed (%)",
+            data: [100, 100, 100, 100, 100],
+            backgroundColor: ["#10b981", "#10b981", "#10b981", "#10b981", "#10b981"],
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, max: 100 },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+});
+</script>
+
+<script id="open-spec-artifacts-data" type="application/json">
+{"proposal.md":"# Proposal: Agentic Ease of Use README & GitHub Pages Showcase with Bonus HTML Studio\n\n## Why\n\nWhile `html-report` has grown into a rich multi-skill ecosystem (`@html-report/core` + `@html-report/studio` + 5 specialized output skills), the root `README.md` and GitHub Pages showcase (`index.html`) did not clearly lead with **agentic ease of use** or position `html-studio` accurately:\n\n1. Users and AI agents visiting the repo need an immediate grasp of the **core loop**: paste 1 prompt to install, emit only a small semantic fragment (`~70%` token savings), assemble deterministically in `\u003c100ms`, and iterate via Two-Way Visual Edit Mode.\n2. The 5 specialized output skills (`/html-report`, `/html-dashboard`, `/html-presentation`, `/html-print`, `/html-pwa`) need clear visibility right in `README.md` and GitHub Pages.\n3. `html-studio` (`/html-studio`, `@html-report/studio`) should be presented clearly as a **bonus interactive companion** rather than competing with the core agentic workflow—while giving GitHub Pages visitors a **direct working link** to the latest live browser version (`studio.html` / `packages/studio/assets/create.html`).\n\n## What Changes\n\n- **Core Runtime Built-In Showdown Markdown Viewer**:\n  - Add `openMarkdownViewer()` and `closeMarkdownViewer()` directly in `packages/core/assets/runtime/05-cdn-hydrators.js` (and expose/export in `08-publisher-and-board.js` and `report-runtime.js`) so every assembled report can preview `.md` files via `#markdown-viewer-modal` out of the box.\n- **Live GitHub Pages `html-studio` Entrypoint**:\n  - Copy `manifest.webmanifest`, `icon.svg`, and `sw.js` into `packages/studio/assets/` so static GitHub Pages hosting resolves studio PWA assets with zero 404s.\n  - Add root `studio.html` redirecting cleanly to `./packages/studio/assets/create.html` so `https://driesverb.github.io/html-report/studio.html` works directly.\n- **Restructure `README.md` (\u003c= 200 lines)**:\n  - Lead with 1-Prompt Agent Install, the Agentic Advantage benchmark table, and the 3-Step Agentic Loop (Semantic Fragment -\u003e `\u003c100ms` Build -\u003e Live Preview & Visual Edit Mode).\n  - Showcase the 5 Deliverable Skills in a concise table.\n  - Present `/html-studio` as a Bonus Interactive Companion with direct links to the live GitHub Pages studio and local instant launcher.\n  - Retain SemVer badges, `Semantic Versioning & Downstream Integration`, and all 7+ documentation links.\n- **Redesign GitHub Pages Showcase (`index.html`)**:\n  - Briefly explain the core concept (3-Step Agentic Workflow + 5 Deliverable Skills).\n  - Showcase interactive features via the 7-tab Capability Explorer (Chart.js, Mermaid with Enlarge, Grid.js, Leaflet, Datastar Telemetry, KaTeX + Highlight.js, FullCalendar + Mock.js).\n  - Add a dedicated **Bonus: HTML Studio** section and hero CTA linking directly to `packages/studio/assets/create.html` and `studio.html`.\n  - Wire the Documentation Hub cards and embedded `MARKDOWN_ARTIFACTS` to the Showdown viewer modal.\n- **OpenSpec Companion (`localhost:3031`)**:\n  - Maintain `openspec/changes/readme-and-ghpages-agentic-focus/index.html` mirrored to `implementation-progress.html`.\n\n## Impact\n\n- `README.md`, `index.html`, `studio.html`\n- `packages/core/assets/runtime/05-cdn-hydrators.js`, `08-publisher-and-board.js`, `report-runtime.js`\n- `packages/studio/assets/{manifest.webmanifest,icon.svg,sw.js}`\n- `openspec/specs/modular-documentation-and-showcase/spec.md`\n","openspec/changes/readme-and-ghpages-agentic-focus/proposal.md":"# Proposal: Agentic Ease of Use README & GitHub Pages Showcase with Bonus HTML Studio\n\n## Why\n\nWhile `html-report` has grown into a rich multi-skill ecosystem (`@html-report/core` + `@html-report/studio` + 5 specialized output skills), the root `README.md` and GitHub Pages showcase (`index.html`) did not clearly lead with **agentic ease of use** or position `html-studio` accurately:\n\n1. Users and AI agents visiting the repo need an immediate grasp of the **core loop**: paste 1 prompt to install, emit only a small semantic fragment (`~70%` token savings), assemble deterministically in `\u003c100ms`, and iterate via Two-Way Visual Edit Mode.\n2. The 5 specialized output skills (`/html-report`, `/html-dashboard`, `/html-presentation`, `/html-print`, `/html-pwa`) need clear visibility right in `README.md` and GitHub Pages.\n3. `html-studio` (`/html-studio`, `@html-report/studio`) should be presented clearly as a **bonus interactive companion** rather than competing with the core agentic workflow—while giving GitHub Pages visitors a **direct working link** to the latest live browser version (`studio.html` / `packages/studio/assets/create.html`).\n\n## What Changes\n\n- **Core Runtime Built-In Showdown Markdown Viewer**:\n  - Add `openMarkdownViewer()` and `closeMarkdownViewer()` directly in `packages/core/assets/runtime/05-cdn-hydrators.js` (and expose/export in `08-publisher-and-board.js` and `report-runtime.js`) so every assembled report can preview `.md` files via `#markdown-viewer-modal` out of the box.\n- **Live GitHub Pages `html-studio` Entrypoint**:\n  - Copy `manifest.webmanifest`, `icon.svg`, and `sw.js` into `packages/studio/assets/` so static GitHub Pages hosting resolves studio PWA assets with zero 404s.\n  - Add root `studio.html` redirecting cleanly to `./packages/studio/assets/create.html` so `https://driesverb.github.io/html-report/studio.html` works directly.\n- **Restructure `README.md` (\u003c= 200 lines)**:\n  - Lead with 1-Prompt Agent Install, the Agentic Advantage benchmark table, and the 3-Step Agentic Loop (Semantic Fragment -\u003e `\u003c100ms` Build -\u003e Live Preview & Visual Edit Mode).\n  - Showcase the 5 Deliverable Skills in a concise table.\n  - Present `/html-studio` as a Bonus Interactive Companion with direct links to the live GitHub Pages studio and local instant launcher.\n  - Retain SemVer badges, `Semantic Versioning & Downstream Integration`, and all 7+ documentation links.\n- **Redesign GitHub Pages Showcase (`index.html`)**:\n  - Briefly explain the core concept (3-Step Agentic Workflow + 5 Deliverable Skills).\n  - Showcase interactive features via the 7-tab Capability Explorer (Chart.js, Mermaid with Enlarge, Grid.js, Leaflet, Datastar Telemetry, KaTeX + Highlight.js, FullCalendar + Mock.js).\n  - Add a dedicated **Bonus: HTML Studio** section and hero CTA linking directly to `packages/studio/assets/create.html` and `studio.html`.\n  - Wire the Documentation Hub cards and embedded `MARKDOWN_ARTIFACTS` to the Showdown viewer modal.\n- **OpenSpec Companion (`localhost:3031`)**:\n  - Maintain `openspec/changes/readme-and-ghpages-agentic-focus/index.html` mirrored to `implementation-progress.html`.\n\n## Impact\n\n- `README.md`, `index.html`, `studio.html`\n- `packages/core/assets/runtime/05-cdn-hydrators.js`, `08-publisher-and-board.js`, `report-runtime.js`\n- `packages/studio/assets/{manifest.webmanifest,icon.svg,sw.js}`\n- `openspec/specs/modular-documentation-and-showcase/spec.md`\n","design.md":"# Design: Agentic Ease of Use README & GitHub Pages Showcase with Bonus HTML Studio\n\n## Overview\n\nThis change aligns the public entrypoints (`README.md` and `index.html`) with how developers and AI coding agents actually adopt and use `html-report`:\n\n1. **Primary Narrative — Agentic Ease of Use**:\n   - Install in 1 agent prompt (or 1 terminal line).\n   - Agent emits **only** the `\u003cmain\u003e` semantic fragment (~70% token reduction).\n   - Harness compiles and verifies in `\u003c100ms` (`harness.mjs` / `build-report.mjs`).\n   - Live dev server (`serve-report.mjs`) provides zero-reload hot swapping and Two-Way Visual Edit Mode.\n   - 5 specialized deliverable skills (`/html-report`, `/html-dashboard`, `/html-presentation`, `/html-print`, `/html-pwa`).\n2. **Bonus Narrative — Interactive `html-studio`**:\n   - Positioned explicitly as a **Bonus Companion** (`@html-report/studio`) that runs completely client-side with zero Node.js required.\n   - Accessible from GitHub Pages via both `https://driesverb.github.io/html-report/studio.html` and direct `./packages/studio/assets/create.html`.\n\n## Key Technical Decisions\n\n### 1. Built-In Showdown Markdown Viewer in Core Runtime\n- Placing `openMarkdownViewer` / `closeMarkdownViewer` in `packages/core/assets/runtime/05-cdn-hydrators.js` guarantees that `autoLinkMarkdownFiles()` links and Documentation Hub buttons work automatically in every generated report (including `index.html` and `implementation-progress.html`).\n- Uses `window.openMarkdownViewer = window.openMarkdownViewer || openMarkdownViewer` in `08-publisher-and-board.js` so fragments with custom viewers are never clobbered.\n- Resolves content from `window.MARKDOWN_ARTIFACTS`, `window.OPEN_SPEC_ARTIFACTS`, `\u003cscript id=\"markdown-artifacts-data\"\u003e`, `\u003cscript id=\"open-spec-artifacts-data\"\u003e`, or `fetch()` over HTTP/HTTPS, with a clean `file://` fallback.\n\n### 2. Static GitHub Pages Compatibility for `html-studio`\n- `packages/studio/assets/create.html` references `./manifest.webmanifest`, `./icon.svg`, and `./create-studio/01..06.js`.\n- Copying `manifest.webmanifest`, `icon.svg`, and `sw.js` from `packages/studio/public/` into `packages/studio/assets/` ensures zero 404s when served directly from GitHub Pages.\n- Root `studio.html` acts as a friendly vanity entrypoint (`https://driesverb.github.io/html-report/studio.html`) redirecting immediately to `./packages/studio/assets/create.html` while preserving query params and hashes.\n\n### 3. Backward Compatibility with Existing Tests\n- `README.md` stays `\u003c= 200` lines (132 lines), preserving the `Install the html-report skill` prompt, SemVer badges/section, `MIGRATION.md`, and all 7+ `docs/*.md` links.\n- `index.html` preserves `#hero-headline` (`\"Publication-Grade HTML5 Reports\"`), all 7 `#tab-btn-*` / `#tab-panel-*` explorer elements, and full CDN global parity with zero console errors under headless Chromium `file://`.\n","openspec/changes/readme-and-ghpages-agentic-focus/design.md":"# Design: Agentic Ease of Use README & GitHub Pages Showcase with Bonus HTML Studio\n\n## Overview\n\nThis change aligns the public entrypoints (`README.md` and `index.html`) with how developers and AI coding agents actually adopt and use `html-report`:\n\n1. **Primary Narrative — Agentic Ease of Use**:\n   - Install in 1 agent prompt (or 1 terminal line).\n   - Agent emits **only** the `\u003cmain\u003e` semantic fragment (~70% token reduction).\n   - Harness compiles and verifies in `\u003c100ms` (`harness.mjs` / `build-report.mjs`).\n   - Live dev server (`serve-report.mjs`) provides zero-reload hot swapping and Two-Way Visual Edit Mode.\n   - 5 specialized deliverable skills (`/html-report`, `/html-dashboard`, `/html-presentation`, `/html-print`, `/html-pwa`).\n2. **Bonus Narrative — Interactive `html-studio`**:\n   - Positioned explicitly as a **Bonus Companion** (`@html-report/studio`) that runs completely client-side with zero Node.js required.\n   - Accessible from GitHub Pages via both `https://driesverb.github.io/html-report/studio.html` and direct `./packages/studio/assets/create.html`.\n\n## Key Technical Decisions\n\n### 1. Built-In Showdown Markdown Viewer in Core Runtime\n- Placing `openMarkdownViewer` / `closeMarkdownViewer` in `packages/core/assets/runtime/05-cdn-hydrators.js` guarantees that `autoLinkMarkdownFiles()` links and Documentation Hub buttons work automatically in every generated report (including `index.html` and `implementation-progress.html`).\n- Uses `window.openMarkdownViewer = window.openMarkdownViewer || openMarkdownViewer` in `08-publisher-and-board.js` so fragments with custom viewers are never clobbered.\n- Resolves content from `window.MARKDOWN_ARTIFACTS`, `window.OPEN_SPEC_ARTIFACTS`, `\u003cscript id=\"markdown-artifacts-data\"\u003e`, `\u003cscript id=\"open-spec-artifacts-data\"\u003e`, or `fetch()` over HTTP/HTTPS, with a clean `file://` fallback.\n\n### 2. Static GitHub Pages Compatibility for `html-studio`\n- `packages/studio/assets/create.html` references `./manifest.webmanifest`, `./icon.svg`, and `./create-studio/01..06.js`.\n- Copying `manifest.webmanifest`, `icon.svg`, and `sw.js` from `packages/studio/public/` into `packages/studio/assets/` ensures zero 404s when served directly from GitHub Pages.\n- Root `studio.html` acts as a friendly vanity entrypoint (`https://driesverb.github.io/html-report/studio.html`) redirecting immediately to `./packages/studio/assets/create.html` while preserving query params and hashes.\n\n### 3. Backward Compatibility with Existing Tests\n- `README.md` stays `\u003c= 200` lines (132 lines), preserving the `Install the html-report skill` prompt, SemVer badges/section, `MIGRATION.md`, and all 7+ `docs/*.md` links.\n- `index.html` preserves `#hero-headline` (`\"Publication-Grade HTML5 Reports\"`), all 7 `#tab-btn-*` / `#tab-panel-*` explorer elements, and full CDN global parity with zero console errors under headless Chromium `file://`.\n","tasks.md":"# Tasks: Agentic Ease of Use README & GitHub Pages Showcase with Bonus HTML Studio\n\n## 1. Core Runtime Markdown Viewer\n- [x] 1.1 Add `ensureMarkdownViewerModal()`, `resolveMarkdownArtifact()`, `openMarkdownViewer()`, and `closeMarkdownViewer()` to `packages/core/assets/runtime/05-cdn-hydrators.js`\n- [x] 1.2 Expose `openMarkdownViewer` and `closeMarkdownViewer` in `08-publisher-and-board.js` and `report-runtime.js`\n\n## 2. Live Static `html-studio` Entrypoint for GitHub Pages\n- [x] 2.1 Copy `manifest.webmanifest`, `icon.svg`, and `sw.js` into `packages/studio/assets/`\n- [x] 2.2 Create root `studio.html` redirecting cleanly to `./packages/studio/assets/create.html`\n\n## 3. Restructure `README.md`\n- [x] 3.1 Lead with 1-Prompt Agent Install, Agentic Advantage table, 3-Step Agentic Loop, and 5 Deliverable Skills\n- [x] 3.2 Add Bonus `html-studio` section with live GitHub Pages links and keep total length \u003c= 200 lines while preserving SemVer & all `docs/*.md` links\n\n## 4. Redesign GitHub Pages Showcase (`index.html`)\n- [x] 4.1 Author `showcase-fragment.html` explaining the concept briefly, showcasing features across the 7-tab Capability Explorer, and highlighting Bonus `html-studio` links\n- [x] 4.2 Compile root `index.html` via `build-report.mjs` with `--all-addons --published`\n\n## 5. OpenSpec Companion & Verification\n- [x] 5.1 Sync updated specification to `openspec/specs/modular-documentation-and-showcase/spec.md`\n- [x] 5.2 Build companion `index.html` and mirror to `implementation-progress.html` on `http://localhost:3031`\n- [x] 5.3 Run `npm test` and E2E tests (`modular-documentation-and-showcase.bdd.test.mjs`, `browser-runtime-integrity.test.mjs`)\n","openspec/changes/readme-and-ghpages-agentic-focus/tasks.md":"# Tasks: Agentic Ease of Use README & GitHub Pages Showcase with Bonus HTML Studio\n\n## 1. Core Runtime Markdown Viewer\n- [x] 1.1 Add `ensureMarkdownViewerModal()`, `resolveMarkdownArtifact()`, `openMarkdownViewer()`, and `closeMarkdownViewer()` to `packages/core/assets/runtime/05-cdn-hydrators.js`\n- [x] 1.2 Expose `openMarkdownViewer` and `closeMarkdownViewer` in `08-publisher-and-board.js` and `report-runtime.js`\n\n## 2. Live Static `html-studio` Entrypoint for GitHub Pages\n- [x] 2.1 Copy `manifest.webmanifest`, `icon.svg`, and `sw.js` into `packages/studio/assets/`\n- [x] 2.2 Create root `studio.html` redirecting cleanly to `./packages/studio/assets/create.html`\n\n## 3. Restructure `README.md`\n- [x] 3.1 Lead with 1-Prompt Agent Install, Agentic Advantage table, 3-Step Agentic Loop, and 5 Deliverable Skills\n- [x] 3.2 Add Bonus `html-studio` section with live GitHub Pages links and keep total length \u003c= 200 lines while preserving SemVer & all `docs/*.md` links\n\n## 4. Redesign GitHub Pages Showcase (`index.html`)\n- [x] 4.1 Author `showcase-fragment.html` explaining the concept briefly, showcasing features across the 7-tab Capability Explorer, and highlighting Bonus `html-studio` links\n- [x] 4.2 Compile root `index.html` via `build-report.mjs` with `--all-addons --published`\n\n## 5. OpenSpec Companion & Verification\n- [x] 5.1 Sync updated specification to `openspec/specs/modular-documentation-and-showcase/spec.md`\n- [x] 5.2 Build companion `index.html` and mirror to `implementation-progress.html` on `http://localhost:3031`\n- [x] 5.3 Run `npm test` and E2E tests (`modular-documentation-and-showcase.bdd.test.mjs`, `browser-runtime-integrity.test.mjs`)\n","specs/modular-documentation-and-showcase/spec.md":"# Spec Delta: modular-documentation-and-showcase\n\n## Purpose\n\nAligns `README.md` and the GitHub Pages showcase (`index.html`) around **agentic ease of use** (1-prompt install, 3-step fragment-to-verified-report loop, 5 specialized deliverable skills) while presenting `html-studio` (`/html-studio`) as a **bonus interactive companion** with a live browser entrypoint (`studio.html` / `packages/studio/assets/create.html`).\n\n## MODIFIED Requirements\n\n### Requirement: Minimal Scannable Standard README\nThe root `README.md` SHALL remain concise (`\u003c= 200` lines), lead with 1-prompt agent installation and the 3-step agentic loop, summarize the 5 deliverable skills (`/html-report`, `/html-dashboard`, `/html-presentation`, `/html-print`, `/html-pwa`), highlight `html-studio` as a bonus companion linking to live GitHub Pages (`studio.html`), preserve SemVer badges and migration links, and index all guides in `docs/`.\n\n#### Scenario: Inspecting root README layout and documentation links\n- **WHEN** a user reads `README.md`\n- **THEN** it is `\u003c= 200` lines, provides copyable agent install commands, demonstrates the 3-step agentic workflow and 5 deliverable skills, links to the bonus live `html-studio` on GitHub Pages, includes SemVer badges/links, and links to all `docs/*.md` guides\n\n### Requirement: Minimalist Aesthetic Landing Page Showcase\nThe GitHub Pages entrypoint (`index.html`) SHALL briefly explain the core agentic concept, showcase the interactive features via the tabbed Capability Explorer, present `html-studio` as a bonus companion with direct links to `packages/studio/assets/create.html` and `studio.html`, and wire the Documentation Hub to the built-in Showdown markdown viewer modal.\n\n#### Scenario: Loading GitHub Pages index.html showcase\n- **WHEN** a visitor loads `index.html` in a web browser\n- **THEN** the page renders with zero console errors, explains the 3-step agentic concept, exposes direct links to the live `html-studio`, and provides full 16-CDN runtime integrity\n\n#### Scenario: Launching live html-studio from GitHub Pages\n- **WHEN** a visitor clicks the bonus `html-studio` CTA on `index.html` or opens `studio.html`\n- **THEN** they navigate directly to the live static `packages/studio/assets/create.html` Creation Studio\n","openspec/changes/readme-and-ghpages-agentic-focus/specs/modular-documentation-and-showcase/spec.md":"# Spec Delta: modular-documentation-and-showcase\n\n## Purpose\n\nAligns `README.md` and the GitHub Pages showcase (`index.html`) around **agentic ease of use** (1-prompt install, 3-step fragment-to-verified-report loop, 5 specialized deliverable skills) while presenting `html-studio` (`/html-studio`) as a **bonus interactive companion** with a live browser entrypoint (`studio.html` / `packages/studio/assets/create.html`).\n\n## MODIFIED Requirements\n\n### Requirement: Minimal Scannable Standard README\nThe root `README.md` SHALL remain concise (`\u003c= 200` lines), lead with 1-prompt agent installation and the 3-step agentic loop, summarize the 5 deliverable skills (`/html-report`, `/html-dashboard`, `/html-presentation`, `/html-print`, `/html-pwa`), highlight `html-studio` as a bonus companion linking to live GitHub Pages (`studio.html`), preserve SemVer badges and migration links, and index all guides in `docs/`.\n\n#### Scenario: Inspecting root README layout and documentation links\n- **WHEN** a user reads `README.md`\n- **THEN** it is `\u003c= 200` lines, provides copyable agent install commands, demonstrates the 3-step agentic workflow and 5 deliverable skills, links to the bonus live `html-studio` on GitHub Pages, includes SemVer badges/links, and links to all `docs/*.md` guides\n\n### Requirement: Minimalist Aesthetic Landing Page Showcase\nThe GitHub Pages entrypoint (`index.html`) SHALL briefly explain the core agentic concept, showcase the interactive features via the tabbed Capability Explorer, present `html-studio` as a bonus companion with direct links to `packages/studio/assets/create.html` and `studio.html`, and wire the Documentation Hub to the built-in Showdown markdown viewer modal.\n\n#### Scenario: Loading GitHub Pages index.html showcase\n- **WHEN** a visitor loads `index.html` in a web browser\n- **THEN** the page renders with zero console errors, explains the 3-step agentic concept, exposes direct links to the live `html-studio`, and provides full 16-CDN runtime integrity\n\n#### Scenario: Launching live html-studio from GitHub Pages\n- **WHEN** a visitor clicks the bonus `html-studio` CTA on `index.html` or opens `studio.html`\n- **THEN** they navigate directly to the live static `packages/studio/assets/create.html` Creation Studio\n","README.md":"\u003cdiv align=\"center\"\u003e\n\n# ⚡ html-report\n\n**Publication-grade, interactive, and print-ready HTML5 deliverables for AI coding agents.**  \nEmit a tiny semantic fragment (**~70% fewer tokens**) and assemble a verified, 32-theme report in **\u003c100ms**.\n\n[Live GitHub Pages Showcase](https://driesverb.github.io/html-report/) · [Launch Live HTML Studio ✨](https://driesverb.github.io/html-report/studio.html) · [1-Prompt Install](#-1-prompt-agent-install) · [3-Step Agentic Loop](#-the-3-step-agentic-loop) · [5 Deliverable Skills](#-5-deliverable-skills) · [Bonus: HTML Studio](#-bonus-interactive-html-studio) · [Documentation Hub](#-documentation-hub)\n\n\u003cbr/\u003e\n\n[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success.svg?logo=github&style=flat-square)](https://driesverb.github.io/html-report/)\n[![Live Studio](https://img.shields.io/badge/Bonus-HTML%20Studio-8b5cf6.svg?style=flat-square)](https://driesverb.github.io/html-report/studio.html)\n[![SemVer: 2.0.0](https://img.shields.io/badge/SemVer-2.0.0-blue.svg?logo=semver&style=flat-square)](docs/semantic-versioning.md)\n[![Version: v0.0.0-beta.1](https://img.shields.io/badge/Version-v0.0.0--beta.1-orange.svg?style=flat-square)](package.json)\n[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)\n[![Agent Skill: LLM-Agnostic](https://img.shields.io/badge/Agent%20Skill-LLM--Agnostic-blueviolet.svg?style=flat-square)](https://agentskills.io)\n\n\u003c/div\u003e\n\n---\n\n\u003e 🌐 **Live Showcase:** [driesverb.github.io/html-report](https://driesverb.github.io/html-report/) · ✨ **Bonus Live Studio:** [driesverb.github.io/html-report/studio.html](https://driesverb.github.io/html-report/studio.html)  \n\u003e Built for **Antigravity, Claude Code, Cursor, Codex, OpenCode, Gemini CLI**, and autonomous agent workflows.\n\n---\n\n## 🚀 1-Prompt Agent Install\n\n### Option A: Paste into Your AI Agent (Recommended)\n\n```text\nInstall the html-report skill from https://github.com/DriesVerb/html-report.git by cloning it into ~/.agents/html-report, symlinking ~/.agents/html-report/skills/html-report into ~/.agents/skills/html-report (and ~/.gemini/config/skills/html-report if using Antigravity/Gemini), and installing Playwright in ~/.agents/html-report/skills/html-report/playwright. Then read skills/html-report/SKILL.md.\n```\n\n### Option B: 1-Line Terminal Setup\n\n```bash\ngit clone https://github.com/DriesVerb/html-report.git ~/.agents/html-report && \\\n  mkdir -p ~/.agents/skills ~/.gemini/config/skills && \\\n  ln -sfn ~/.agents/html-report/skills/html-report ~/.agents/skills/html-report && \\\n  ln -sfn ~/.agents/html-report/skills/html-report ~/.gemini/config/skills/html-report\n```\n\n---\n\n## 💡 Why `html-report`? (The Agentic Advantage)\n\nWhen LLMs write full HTML files from scratch, **70–80% of output tokens** vanish into `\u003c!DOCTYPE\u003e`, CDN links, navbars, CSS resets, and theme plumbing—often introducing broken links or mobile overflow. With `html-report`, your agent writes **only semantic content**; the deterministic Node engine builds and verifies the rest.\n\n| Metric | Raw LLM HTML Generation | With `html-report` | Agentic Advantage |\n| :--- | :--- | :--- | :--- |\n| **Output Tokens** | ~2,500+ tokens | **~500–800 tokens** | **~70% token savings** |\n| **Assembly Speed** | 10–25s streaming | **\u003c100ms** | **Deterministic build & auto-detected CDNs** |\n| **Pre-Flight Fixes** | Extra LLM turn | **\u003c1ms** mechanical repair | **Zero token burn on IDs & tables** |\n| **Visual QA** | Manual inspection | **\u003c4s** Playwright check | **5-breakpoint overflow assurance** |\n\n---\n\n## ⚡ The 3-Step Agentic Loop\n\n1. **Emit Only Semantic HTML (`fragment.html`)** — No `\u003c!DOCTYPE\u003e`, `\u003chead\u003e`, or CDN tags. Just headings, KPI cards, charts, Mermaid diagrams, or tables:\n   ```html\n   \u003cmain id=\"report-main\" class=\"space-y-6\"\u003e\n     \u003ch1 id=\"audit-summary\" class=\"text-3xl font-extrabold\"\u003eSystem Health Audit\u003c/h1\u003e\n     \u003cdiv class=\"grid grid-cols-1 sm:grid-cols-3 gap-4\"\u003e\n       \u003cdiv class=\"stat bg-base-100 border border-base-300 rounded-box\"\u003e\n         \u003cdiv class=\"stat-title\"\u003eUptime\u003c/div\u003e\u003cdiv class=\"stat-value text-primary\"\u003e99.99%\u003c/div\u003e\n       \u003c/div\u003e\n     \u003c/div\u003e\n   \u003c/main\u003e\n   ```\n2. **Assemble & Verify in `\u003c100ms`** — Auto-detects only the CDNs your fragment uses, applies 32 DaisyUI themes, and validates structure:\n   ```bash\n   node skills/html-report/scripts/harness.mjs run fragment.html --title \"System Health Audit\"\n   ```\n3. **Live Preview & Two-Way Visual Edit Mode** — Serve locally with zero-reload hot-swapping, click any element in the browser to tweak styles, or send a surgical edit prompt back to your agent:\n   ```bash\n   node skills/html-report/scripts/serve-report.mjs report.html --port 3031\n   ```\n\n---\n\n## 🎯 5 Deliverable Skills\n\nInvoke any specialized skill directly in your AI assistant for tailored layouts and build flags:\n\n| Skill | Output Archetype | Key Capability | Guide |\n| :--- | :--- | :--- | :--- |\n| **`/html-report`** | Analytical Reports | Auto-detected Chart.js, Mermaid, Grid.js, KaTeX, Leaflet & 32 themes | [SKILL.md](skills/html-report/SKILL.md) |\n| **`/html-dashboard`** | Live Telemetry Consoles | Datastar.js SSE morphing (`#task-${id}`) & Two-Way AI Agent Bridge | [SKILL.md](skills/html-dashboard/SKILL.md) |\n| **`/html-presentation`** | Interactive Slide Decks | Reveal.js decks with Fullscreen (`F`), Speaker Notes (`N`) & print stack | [SKILL.md](skills/html-presentation/SKILL.md) |\n| **`/html-print`** | Paged PDFs & Invoices | `@page` margins, repeating `\u003cthead\u003e`, `break-inside-avoid` & PDF export | [SKILL.md](skills/html-print/SKILL.md) |\n| **`/html-pwa`** | Offline Installable Apps | W3C manifest, dual-caching Service Worker & theme-color sync (`--pwa`) | [SKILL.md](skills/html-pwa/SKILL.md) |\n\n---\n\n## 🎁 Bonus: Interactive HTML Studio (`/html-studio`)\n\nAs a **bonus visual companion** (`@html-report/studio`), `html-studio` helps humans and agents configure deliverables interactively with **zero Node.js required**:\n\n- **Live Browser Studio (GitHub Pages):** **[https://driesverb.github.io/html-report/studio.html](https://driesverb.github.io/html-report/studio.html)** ([Direct `create.html`](https://driesverb.github.io/html-report/packages/studio/assets/create.html))\n- **Local Instant Launch (`\u003c250ms`):** Run `./skills/html-report/scripts/open-create.sh` or ask your agent for **`/html-studio`** ([SKILL.md](skills/html-studio/SKILL.md))\n- **What's Inside:** 4-step archetype & addon wizard, real-time OKLCH custom theme designer, Quill WYSIWYG goals modal, workspace project scanner, and deterministic prompt/CLI generator.\n\n---\n\n## 📚 Documentation Hub\n\n| Guide | Covers |\n| :--- | :--- |\n| [🚀 **Getting Started**](docs/getting-started.md) | Agent prompt setup, CLI installation, and symlinks |\n| [🛡️ **FSM Architecture**](docs/architecture-fsm.md) | 10-state deterministic lifecycle, pre-flight auto-fixes, and bounded retries |\n| [📦 **CDN Power Stack**](docs/cdn-stack.md) | Complete 17-library catalog, SRI integrity hashes, and offline bundling |\n| [🎨 **Custom Themes**](docs/custom-themes.md) | Pure JS OKLCH engine, theme inheritance (`extends`), and collapsible studio |\n| [📡 **Live Telemetry**](docs/live-telemetry.md) | Datastar.js SSE hypermedia streaming and agent transcript tailing |\n| [🧪 **Testing & Verification**](docs/testing-and-verification.md) | Native BDD micro-framework, Playwright checks, and overflow detection |\n| [📖 **API & CLI Reference**](docs/api-and-cli-reference.md) | Command-line flags, options, and programmatic Node.js API |\n| [🗺️ **Codebase Map**](docs/codebase-map.md) | Monorepo package boundaries (`@html-report/core`, `@html-report/studio`) |\n\n---\n\n## 🏷️ Semantic Versioning & Downstream Integration\n\n`html-report` adheres strictly to **[Semantic Versioning 2.0.0](docs/semantic-versioning.md)** (`MAJOR.MINOR.PATCH`), providing stable CLI flags, ESM exports (`html-report/build`, `html-report/harness`, `html-report/serve`, `html-report/pwa`, `html-report/theme`), compatibility scanning (`node skills/html-report/scripts/harness.mjs --check-compatibility`), and AI migration prompts in [`MIGRATION.md`](MIGRATION.md).\n\n---\n\n## 🧪 Verification & 📄 License\n\nRun the workspace unit & integration suite (`npm test`) or E2E Playwright checks (`npm run test:e2e`).  \nDistributed under the **MIT License**. Built with [OpenSpec](https://github.com/Fission-AI/OpenSpec) for the AI agent ecosystem.\n","docs/codebase-map.md":"# HTML Report — Repository & LLM Navigation Map\n\nThis document gives AI coding agents and maintainers a fast top-down map of the repository so any subsystem can be located, read, modified, and verified with minimal context consumption.\n\n---\n\n## Package Topology\n\n```\nhtml-report/\n├── AGENTS.md (symlinked as CLAUDE.md, GEMINI.md)  \u003c- Mandatory OpenSpec & repo conventions\n├── docs/codebase-map.md                           \u003c- This overview map\n├── packages/\n│   ├── core/       (@html-report/core)            \u003c- Zero-dependency HTML builder, harness, theme compiler, runtime\n│   │   └── README.md\n│   └── studio/     (@html-report/studio)          \u003c- Creation Studio UI, HTTP/SSE dev server, scaffolding, AI bridge, MCP\n│       └── README.md\n├── skills/\n│   ├── html-report/scripts/*                      \u003c- Public CLI & programmatic shims forwarding to workspace packages\n│   ├── html-studio/ SKILL.md\n│   ├── html-dashboard/ SKILL.md\n│   ├── html-presentation/ SKILL.md\n│   ├── html-print/ SKILL.md\n│   └── html-pwa/ SKILL.md\n├── tests/\n│   ├── integration/                               \u003c- Cross-package assembly, publish bundle & zero-key bridge tests\n│   └── e2e/                                       \u003c- Playwright browser tests (themes, Reveal.js, CSP, fast assembly)\n└── openspec/                                      \u003c- OpenSpec change specs, tasks & localhost:3031 journey reports\n```\n\n---\n\n## Where to Look by Task\n\n| Need | Start Here | Implementation Sub-Modules |\n| :--- | :--- | :--- |\n| Assemble HTML deliverable from fragment | [packages/core/scripts/build-report.mjs](../packages/core/scripts/build-report.mjs) | [packages/core/scripts/lib/build/](../packages/core/scripts/lib/build/) |\n| Lint fragment or run verification gate | [packages/core/scripts/harness.mjs](../packages/core/scripts/harness.mjs) | [packages/core/scripts/lib/harness/](../packages/core/scripts/lib/harness/) |\n| Change navbar, theme switcher, Mermaid, or Reveal runtime | [packages/core/assets/report-runtime.js](../packages/core/assets/report-runtime.js) | [packages/core/assets/runtime/](../packages/core/assets/runtime/) |\n| Adjust DaisyUI custom OKLCH theme compilation | [packages/core/scripts/theme-compiler.mjs](../packages/core/scripts/theme-compiler.mjs) | — |\n| Package offline deliverable / ZIP archive | [packages/core/scripts/publish-report.mjs](../packages/core/scripts/publish-report.mjs) | [packages/core/scripts/lib/publish/](../packages/core/scripts/lib/publish/) |\n| Modify Creation Studio wizard UI or client logic | [packages/studio/assets/create.html](../packages/studio/assets/create.html) | [packages/studio/assets/create-studio/](../packages/studio/assets/create-studio/) |\n| Change HTTP dev server, file watcher, or live reload | [packages/studio/scripts/server.mjs](../packages/studio/scripts/server.mjs) | [packages/studio/scripts/lib/server/](../packages/studio/scripts/lib/server/), [packages/studio/scripts/routes/](../packages/studio/scripts/routes/) |\n| Update project scaffolding (`projects/\u003cslug\u003e/`) | [packages/studio/scripts/scaffold-project.mjs](../packages/studio/scripts/scaffold-project.mjs) | [packages/studio/scripts/lib/scaffold/](../packages/studio/scripts/lib/scaffold/) |\n| Edit Two-Way Agent Bridge / Edit Dock / Style persistence | [packages/studio/assets/authoring-plugin.js](../packages/studio/assets/authoring-plugin.js) | [packages/studio/assets/authoring/](../packages/studio/assets/authoring/), [packages/studio/scripts/routes/agent-bridge.mjs](../packages/studio/scripts/routes/agent-bridge.mjs) |\n| Update MCP server tools, CSRF, or gateway allowlist | [packages/studio/scripts/mcp-server.mjs](../packages/studio/scripts/mcp-server.mjs) | [packages/studio/scripts/lib/mcp/security-and-schemas.mjs](../packages/studio/scripts/lib/mcp/security-and-schemas.mjs), [packages/studio/scripts/routes/mcp.mjs](../packages/studio/scripts/routes/mcp.mjs) |\n| Change AI CLI/HTTP provider detection & dispatch | [packages/studio/scripts/preflight.mjs](../packages/studio/scripts/preflight.mjs) | [packages/studio/scripts/lib/preflight/inference-router.mjs](../packages/studio/scripts/lib/preflight/inference-router.mjs) |\n| Modify domain archetypes, addons, widgets, or glossary | [packages/studio/scripts/domain-model.mjs](../packages/studio/scripts/domain-model.mjs) | [packages/studio/scripts/lib/domain/](../packages/studio/scripts/lib/domain/) |\n| Update Datastar SSE bridge or Agent Tracker | [packages/studio/scripts/datastar-sse.mjs](../packages/studio/scripts/datastar-sse.mjs), [packages/studio/scripts/agent-tracker.mjs](../packages/studio/scripts/agent-tracker.mjs) | [packages/studio/scripts/lib/datastar/](../packages/studio/scripts/lib/datastar/), [packages/studio/scripts/lib/tracker/](../packages/studio/scripts/lib/tracker/) |\n\n---\n\n## Core Architectural Invariants\n\n1. **Module Size Budget (LLM Digestibility Guard):**\n   - Every `.mjs`/`.js` module inside `packages/core/{scripts,assets}` and `packages/studio/{scripts,assets}` must remain `\u003c= 650` lines (`create.html \u003c= 1,600` lines).\n   - Verified automatically by [packages/core/tests/codebase-digestibility.test.mjs](../packages/core/tests/codebase-digestibility.test.mjs).\n2. **Strict Two-Package Boundary:**\n   - `@html-report/core` has zero imports or references to studio internals.\n   - `@html-report/studio` imports core only via `@html-report/core/*` subpath exports defined in [packages/core/package.json](../packages/core/package.json).\n   - Verified automatically by [packages/studio/tests/package-boundary.test.mjs](../packages/studio/tests/package-boundary.test.mjs).\n3. **CommonJS ESM Named Export Rule:**\n   - [packages/core/assets/report-runtime.js](../packages/core/assets/report-runtime.js) and [packages/studio/assets/authoring-plugin.js](../packages/studio/assets/authoring-plugin.js) are dual CommonJS/ESM-compatible loaders: symbols must be assigned to local identifiers and exported via shorthand object property syntax (`module.exports = { Foo, Bar }`) so Node's `cjs-module-lexer` detects every named ESM import.\n4. **Domain Language & Skill Facades:**\n   - CLI `--help` output and `NATIVE_MCP_TOOLS` must avoid deprecated synonyms defined in `UBIQUITOUS_GLOSSARY` (enforced by [packages/studio/tests/domain-code-alignment.test.mjs](../packages/studio/tests/domain-code-alignment.test.mjs)).\n\nSee [packages/core/README.md](../packages/core/README.md) and [packages/studio/README.md](../packages/studio/README.md) for module-by-module references.\n"}
+</script>
   </main>
 
   <!-- Minimal Centered Footer with Semantic Versioning -->
@@ -3344,6 +3412,161 @@ function syncDatastarTheme(themeName) {
   } catch (_) {}
 }
 
+/**
+ * Ensures the built-in Showdown Markdown Viewer modal exists in the DOM.
+ */
+function ensureMarkdownViewerModal() {
+  if (typeof document === "undefined" || !document.body) return null;
+  let modal = document.getElementById("markdown-viewer-modal");
+  if (modal) return modal;
+
+  modal = document.createElement("dialog");
+  modal.id = "markdown-viewer-modal";
+  modal.className = "modal modal-bottom sm:modal-middle";
+  modal.setAttribute("aria-label", "Markdown Document Viewer");
+  modal.innerHTML = [
+    '<div class="modal-box max-w-4xl w-11/12 max-h-[88vh] flex flex-col p-0 bg-base-100 text-base-content border border-base-300 shadow-2xl overflow-hidden">',
+    '  <div class="flex items-center justify-between px-5 py-3.5 border-b border-base-300 bg-base-200/60 gap-3">',
+    '    <div class="min-w-0">',
+    '      <h3 id="markdown-modal-title" class="font-bold text-sm sm:text-base font-mono truncate">Document</h3>',
+    '      <p class="text-3xs text-base-content/60">Rendered with Showdown Markdown Viewer</p>',
+    '    </div>',
+    '    <button type="button" id="markdown-modal-close-btn" class="btn btn-sm btn-circle btn-ghost" aria-label="Close">✕</button>',
+    '  </div>',
+    '  <div id="markdown-modal-content" class="p-5 sm:p-6 overflow-y-auto flex-1 prose prose-sm max-w-none text-base-content/90 leading-relaxed space-y-3"></div>',
+    '  <div class="px-5 py-3 border-t border-base-300 bg-base-200/40 flex items-center justify-between gap-2">',
+    '    <a id="markdown-modal-raw-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-xs btn-ghost font-mono">Open Raw File</a>',
+    '    <button type="button" id="markdown-modal-done-btn" class="btn btn-xs sm:btn-sm btn-primary">Close</button>',
+    '  </div>',
+    '</div>',
+    '<form method="dialog" class="modal-backdrop bg-neutral/40"><button>close</button></form>'
+  ].join("\n");
+  document.body.appendChild(modal);
+
+  const closeBtn = modal.querySelector("#markdown-modal-close-btn");
+  const doneBtn = modal.querySelector("#markdown-modal-done-btn");
+  if (closeBtn) closeBtn.addEventListener("click", () => closeMarkdownViewer());
+  if (doneBtn) doneBtn.addEventListener("click", () => closeMarkdownViewer());
+  return modal;
+}
+
+/**
+ * Resolves markdown source text from embedded artifact maps or HTTP fetch.
+ */
+async function resolveMarkdownArtifact(docPath) {
+  const key = String(docPath || "").trim();
+  const base = key.split("/").pop();
+  const sources = [];
+  if (typeof window !== "undefined") {
+    if (window.MARKDOWN_ARTIFACTS && typeof window.MARKDOWN_ARTIFACTS === "object") {
+      sources.push(window.MARKDOWN_ARTIFACTS);
+    }
+    if (window.OPEN_SPEC_ARTIFACTS && typeof window.OPEN_SPEC_ARTIFACTS === "object") {
+      sources.push(window.OPEN_SPEC_ARTIFACTS);
+    }
+  }
+  if (typeof document !== "undefined") {
+    for (const scriptId of ["markdown-artifacts-data", "open-spec-artifacts-data"]) {
+      const el = document.getElementById(scriptId);
+      if (el && el.textContent) {
+        try { sources.push(JSON.parse(el.textContent)); } catch (_) {}
+      }
+    }
+  }
+  for (const map of sources) {
+    if (typeof map[key] === "string") return map[key];
+    if (base && typeof map[base] === "string") return map[base];
+  }
+
+  const proto = typeof window !== "undefined" && window.location ? window.location.protocol : "";
+  if ((proto === "http:" || proto === "https:") && typeof fetch === "function" && key) {
+    const cleanRel = key.replace(/^\/+/, "");
+    const candidates = [key, "/" + cleanRel];
+    if (base && base !== cleanRel) candidates.push(base);
+    for (const url of candidates) {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (res.ok) {
+          return await res.text();
+        }
+      } catch (_) {}
+    }
+  }
+
+  return `# ${key || "Document"}\n\nPreview is unavailable offline under \`file://\` without embedded artifacts.\n\nOpen the source file directly: [${key}](${key})`;
+}
+
+/**
+ * Closes the Showdown Markdown Viewer modal.
+ */
+function closeMarkdownViewer() {
+  if (typeof document === "undefined") return;
+  const modal = document.getElementById("markdown-viewer-modal");
+  if (!modal) return;
+  if (typeof modal.close === "function" && modal.open) {
+    modal.close();
+  } else {
+    modal.removeAttribute("open");
+  }
+}
+
+/**
+ * Opens the Showdown Markdown Viewer modal for a given markdown path or artifact key.
+ */
+async function openMarkdownViewer(docPath) {
+  if (typeof document === "undefined") return null;
+  const targetDoc = String(docPath || "").trim() || "README.md";
+  const modal = ensureMarkdownViewerModal();
+  if (!modal) return null;
+
+  const titleEl = document.getElementById("markdown-modal-title");
+  if (titleEl) titleEl.textContent = targetDoc;
+  const rawLink = document.getElementById("markdown-modal-raw-link");
+  if (rawLink) rawLink.setAttribute("href", targetDoc);
+
+  if (typeof modal.showModal === "function") {
+    if (!modal.open) modal.showModal();
+  } else {
+    modal.setAttribute("open", "true");
+  }
+
+  const contentEl =
+    document.getElementById("markdown-modal-content") ||
+    document.getElementById("markdown-modal-body") ||
+    document.getElementById("modal-markdown-body");
+
+  if (contentEl) {
+    contentEl.innerHTML = '<div class="flex items-center gap-2 text-xs opacity-70 py-6"><span class="loading loading-spinner loading-sm text-primary"></span><span>Loading document...</span></div>';
+  }
+
+  const markdown = await resolveMarkdownArtifact(targetDoc);
+  let rendered = "";
+  if (typeof window !== "undefined" && window.showdownConverter && typeof window.showdownConverter.makeHtml === "function") {
+    rendered = window.showdownConverter.makeHtml(markdown);
+  } else if (typeof window !== "undefined" && window.showdown && typeof window.showdown.Converter === "function") {
+    const conv = new window.showdown.Converter({
+      tables: true,
+      tasklists: true,
+      strikethrough: true,
+      emoji: true,
+      ghCodeBlocks: true
+    });
+    window.showdownConverter = conv;
+    rendered = conv.makeHtml(markdown);
+  } else if (typeof window !== "undefined" && window.marked && typeof window.marked.parse === "function") {
+    rendered = window.marked.parse(markdown);
+  } else {
+    rendered = `<pre class="whitespace-pre-wrap text-xs font-mono bg-base-200 p-4 rounded-lg overflow-x-auto">${escapeHtml(markdown)}</pre>`;
+  }
+
+  if (contentEl) {
+    contentEl.innerHTML = rendered;
+  }
+  try { rehydrateLucideIcons(modal); } catch (_) {}
+  return modal;
+}
+
+
 
 
 // =============================================================================
@@ -4494,6 +4717,8 @@ if (typeof window !== "undefined") {
   window.resizePresentationWidgets = resizePresentationWidgets;
   window.initMockjs = initMockjs;
   window.initShowdown = initShowdown;
+  window.openMarkdownViewer = window.openMarkdownViewer || openMarkdownViewer;
+  window.closeMarkdownViewer = window.closeMarkdownViewer || closeMarkdownViewer;
   window.initFullCalendar = initFullCalendar;
   window.rehydrateLucideIcons = rehydrateLucideIcons;
   window.ensureLucideIcons = ensureLucideIcons;
@@ -4604,6 +4829,8 @@ if (typeof module !== "undefined" && module.exports) {
     sanitizeSpeakerNotesHtml,
     initMockjs,
     initShowdown,
+    openMarkdownViewer,
+    closeMarkdownViewer,
     initFullCalendar,
     rehydrateLucideIcons,
     initDatastarObserver,

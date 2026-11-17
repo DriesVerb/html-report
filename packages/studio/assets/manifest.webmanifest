@@ -1,0 +1,50 @@
+{
+  "name": "HTML Report Creation Studio",
+  "short_name": "HTML Studio",
+  "description": "Interactive onboarding decision wizard, OKLCH theme studio, and deterministic prompt generator",
+  "start_url": "./create.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "categories": [
+    "productivity",
+    "developer",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Table of Contents",
+      "short_name": "Contents",
+      "description": "Jump straight to the report sections and navigation table of contents",
+      "url": "./create.html#navbar-report-title",
+      "icons": [
+        {
+          "src": "icon.svg",
+          "sizes": "any"
+        }
+      ]
+    }
+  ]
+}

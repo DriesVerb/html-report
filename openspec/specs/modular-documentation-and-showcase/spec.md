@@ -1,7 +1,7 @@
 # modular-documentation-and-showcase Specification
 
 ## Purpose
-Establishes a modular documentation architecture in the `docs/` directory, an ultra-scannable minimalist README following open-source north-star standards, and an aesthetic, tabbed DaisyUI landing page showcase for GitHub Pages (`index.html`) that replaces monolithic content dumping with interactive progressive disclosure.
+Establishes a modular documentation architecture in the `docs/` directory, an ultra-scannable agent-first `README.md` leading with agentic ease of use and bonus `html-studio`, and an aesthetic DaisyUI GitHub Pages showcase (`index.html`) with live links to `html-studio` (`studio.html` / `packages/studio/assets/create.html`).
 
 ## Requirements
 
@@ -13,23 +13,27 @@ The repository SHALL maintain a dedicated `docs/` directory containing focused, 
 - **THEN** guides for `getting-started.md`, `architecture-fsm.md`, `cdn-stack.md`, `custom-themes.md`, `live-telemetry.md`, `testing-and-verification.md`, and `api-and-cli-reference.md` SHALL be present and linked
 
 ### Requirement: Minimal Scannable Standard README
-The root `README.md` SHALL present an elevator pitch, minimal essential badges, 1-click agent prompt and CLI installation instructions, a 2-step quickstart example, and a clean documentation index linking to `docs/`.
+The root `README.md` SHALL remain concise (`<= 200` lines), lead with 1-prompt agent installation and the 3-step agentic loop, summarize the 5 deliverable skills (`/html-report`, `/html-dashboard`, `/html-presentation`, `/html-print`, `/html-pwa`), highlight `html-studio` as a bonus companion linking to live GitHub Pages (`studio.html`), preserve SemVer badges and migration links, and index all guides in `docs/`.
 
 #### Scenario: Inspecting root README layout and documentation links
 - **WHEN** a user reads `README.md`
-- **THEN** it provides copyable install commands, links to live demo and `docs/`, and avoids embedding full state machine code or exhaustive CDN version tables
+- **THEN** it is `<= 200` lines, provides copyable agent install commands, demonstrates the 3-step agentic workflow and 5 deliverable skills, links to the bonus live `html-studio` on GitHub Pages, includes SemVer badges/links, and links to all `docs/*.md` guides
 
 ### Requirement: Minimalist Aesthetic Landing Page Showcase
-The GitHub Pages entrypoint (`index.html`) SHALL provide a DaisyUI-powered minimal landing page featuring a hero section, value proposition cards, an interactive tabbed capability explorer, and a documentation hub linking to all guides.
+The GitHub Pages entrypoint (`index.html`) SHALL briefly explain the core agentic concept, showcase the interactive features via the tabbed Capability Explorer, present `html-studio` as a bonus companion with direct links to `packages/studio/assets/create.html` and `studio.html`, and wire the Documentation Hub to the built-in Showdown markdown viewer modal.
 
 #### Scenario: Loading GitHub Pages index.html showcase
 - **WHEN** a visitor loads `index.html` in a web browser
-- **THEN** the page renders with zero console errors, displays hero and capability cards, and provides full 16-CDN runtime integrity
+- **THEN** the page renders with zero console errors, explains the 3-step agentic concept, exposes direct links to the live `html-studio`, and provides full 16-CDN runtime integrity
 
 #### Scenario: Switching capability explorer tabs
-- **WHEN** a visitor clicks capability tabs (such as Data & Visualizations, Architecture Flows, Interactive Tables, Live Telemetry, or Formatted Math & Code)
+- **WHEN** a visitor clicks capability tabs (such as Charts & Analytics, Architecture Flows, Interactive Tables, Live Telemetry, or Math & Code Syntax)
 - **THEN** the active tab displays the selected interactive component preview without requiring full-page scrolling
 
 #### Scenario: Previewing documentation via Showdown viewer
 - **WHEN** a visitor clicks any documentation link in the landing page documentation hub
 - **THEN** the runtime activates the interactive Showdown markdown modal to display the formatted guide directly in the browser
+
+#### Scenario: Launching live html-studio from GitHub Pages
+- **WHEN** a visitor clicks the bonus `html-studio` CTA on `index.html` or opens `studio.html`
+- **THEN** they navigate directly to the live static `packages/studio/assets/create.html` Creation Studio

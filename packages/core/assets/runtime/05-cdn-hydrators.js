@@ -334,3 +334,158 @@ function syncDatastarTheme(themeName) {
   } catch (_) {}
 }
 
+/**
+ * Ensures the built-in Showdown Markdown Viewer modal exists in the DOM.
+ */
+function ensureMarkdownViewerModal() {
+  if (typeof document === "undefined" || !document.body) return null;
+  let modal = document.getElementById("markdown-viewer-modal");
+  if (modal) return modal;
+
+  modal = document.createElement("dialog");
+  modal.id = "markdown-viewer-modal";
+  modal.className = "modal modal-bottom sm:modal-middle";
+  modal.setAttribute("aria-label", "Markdown Document Viewer");
+  modal.innerHTML = [
+    '<div class="modal-box max-w-4xl w-11/12 max-h-[88vh] flex flex-col p-0 bg-base-100 text-base-content border border-base-300 shadow-2xl overflow-hidden">',
+    '  <div class="flex items-center justify-between px-5 py-3.5 border-b border-base-300 bg-base-200/60 gap-3">',
+    '    <div class="min-w-0">',
+    '      <h3 id="markdown-modal-title" class="font-bold text-sm sm:text-base font-mono truncate">Document</h3>',
+    '      <p class="text-3xs text-base-content/60">Rendered with Showdown Markdown Viewer</p>',
+    '    </div>',
+    '    <button type="button" id="markdown-modal-close-btn" class="btn btn-sm btn-circle btn-ghost" aria-label="Close">✕</button>',
+    '  </div>',
+    '  <div id="markdown-modal-content" class="p-5 sm:p-6 overflow-y-auto flex-1 prose prose-sm max-w-none text-base-content/90 leading-relaxed space-y-3"></div>',
+    '  <div class="px-5 py-3 border-t border-base-300 bg-base-200/40 flex items-center justify-between gap-2">',
+    '    <a id="markdown-modal-raw-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-xs btn-ghost font-mono">Open Raw File</a>',
+    '    <button type="button" id="markdown-modal-done-btn" class="btn btn-xs sm:btn-sm btn-primary">Close</button>',
+    '  </div>',
+    '</div>',
+    '<form method="dialog" class="modal-backdrop bg-neutral/40"><button>close</button></form>'
+  ].join("\n");
+  document.body.appendChild(modal);
+
+  const closeBtn = modal.querySelector("#markdown-modal-close-btn");
+  const doneBtn = modal.querySelector("#markdown-modal-done-btn");
+  if (closeBtn) closeBtn.addEventListener("click", () => closeMarkdownViewer());
+  if (doneBtn) doneBtn.addEventListener("click", () => closeMarkdownViewer());
+  return modal;
+}
+
+/**
+ * Resolves markdown source text from embedded artifact maps or HTTP fetch.
+ */
+async function resolveMarkdownArtifact(docPath) {
+  const key = String(docPath || "").trim();
+  const base = key.split("/").pop();
+  const sources = [];
+  if (typeof window !== "undefined") {
+    if (window.MARKDOWN_ARTIFACTS && typeof window.MARKDOWN_ARTIFACTS === "object") {
+      sources.push(window.MARKDOWN_ARTIFACTS);
+    }
+    if (window.OPEN_SPEC_ARTIFACTS && typeof window.OPEN_SPEC_ARTIFACTS === "object") {
+      sources.push(window.OPEN_SPEC_ARTIFACTS);
+    }
+  }
+  if (typeof document !== "undefined") {
+    for (const scriptId of ["markdown-artifacts-data", "open-spec-artifacts-data"]) {
+      const el = document.getElementById(scriptId);
+      if (el && el.textContent) {
+        try { sources.push(JSON.parse(el.textContent)); } catch (_) {}
+      }
+    }
+  }
+  for (const map of sources) {
+    if (typeof map[key] === "string") return map[key];
+    if (base && typeof map[base] === "string") return map[base];
+  }
+
+  const proto = typeof window !== "undefined" && window.location ? window.location.protocol : "";
+  if ((proto === "http:" || proto === "https:") && typeof fetch === "function" && key) {
+    const cleanRel = key.replace(/^\/+/, "");
+    const candidates = [key, "/" + cleanRel];
+    if (base && base !== cleanRel) candidates.push(base);
+    for (const url of candidates) {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (res.ok) {
+          return await res.text();
+        }
+      } catch (_) {}
+    }
+  }
+
+  return `# ${key || "Document"}\n\nPreview is unavailable offline under \`file://\` without embedded artifacts.\n\nOpen the source file directly: [${key}](${key})`;
+}
+
+/**
+ * Closes the Showdown Markdown Viewer modal.
+ */
+function closeMarkdownViewer() {
+  if (typeof document === "undefined") return;
+  const modal = document.getElementById("markdown-viewer-modal");
+  if (!modal) return;
+  if (typeof modal.close === "function" && modal.open) {
+    modal.close();
+  } else {
+    modal.removeAttribute("open");
+  }
+}
+
+/**
+ * Opens the Showdown Markdown Viewer modal for a given markdown path or artifact key.
+ */
+async function openMarkdownViewer(docPath) {
+  if (typeof document === "undefined") return null;
+  const targetDoc = String(docPath || "").trim() || "README.md";
+  const modal = ensureMarkdownViewerModal();
+  if (!modal) return null;
+
+  const titleEl = document.getElementById("markdown-modal-title");
+  if (titleEl) titleEl.textContent = targetDoc;
+  const rawLink = document.getElementById("markdown-modal-raw-link");
+  if (rawLink) rawLink.setAttribute("href", targetDoc);
+
+  if (typeof modal.showModal === "function") {
+    if (!modal.open) modal.showModal();
+  } else {
+    modal.setAttribute("open", "true");
+  }
+
+  const contentEl =
+    document.getElementById("markdown-modal-content") ||
+    document.getElementById("markdown-modal-body") ||
+    document.getElementById("modal-markdown-body");
+
+  if (contentEl) {
+    contentEl.innerHTML = '<div class="flex items-center gap-2 text-xs opacity-70 py-6"><span class="loading loading-spinner loading-sm text-primary"></span><span>Loading document...</span></div>';
+  }
+
+  const markdown = await resolveMarkdownArtifact(targetDoc);
+  let rendered = "";
+  if (typeof window !== "undefined" && window.showdownConverter && typeof window.showdownConverter.makeHtml === "function") {
+    rendered = window.showdownConverter.makeHtml(markdown);
+  } else if (typeof window !== "undefined" && window.showdown && typeof window.showdown.Converter === "function") {
+    const conv = new window.showdown.Converter({
+      tables: true,
+      tasklists: true,
+      strikethrough: true,
+      emoji: true,
+      ghCodeBlocks: true
+    });
+    window.showdownConverter = conv;
+    rendered = conv.makeHtml(markdown);
+  } else if (typeof window !== "undefined" && window.marked && typeof window.marked.parse === "function") {
+    rendered = window.marked.parse(markdown);
+  } else {
+    rendered = `<pre class="whitespace-pre-wrap text-xs font-mono bg-base-200 p-4 rounded-lg overflow-x-auto">${escapeHtml(markdown)}</pre>`;
+  }
+
+  if (contentEl) {
+    contentEl.innerHTML = rendered;
+  }
+  try { rehydrateLucideIcons(modal); } catch (_) {}
+  return modal;
+}
+
+

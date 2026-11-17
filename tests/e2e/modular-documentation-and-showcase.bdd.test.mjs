@@ -171,5 +171,30 @@ bindOpenSpec("modular-documentation-and-showcase", {
         if (srv) await srv.close();
       }
     });
+  },
+
+  "Launching live html-studio from GitHub Pages": async ({ Given, When, Then }) => {
+    let indexHtml = "";
+
+    await Given("the compiled GitHub Pages index.html and static studio entrypoints", () => {
+      assert.ok(fs.existsSync("index.html"), "index.html must exist at root");
+      assert.ok(fs.existsSync("studio.html"), "studio.html must exist at root");
+      assert.ok(fs.existsSync("packages/studio/assets/create.html"), "packages/studio/assets/create.html must exist");
+      assert.ok(fs.existsSync("packages/studio/assets/manifest.webmanifest"), "Studio assets manifest.webmanifest must exist");
+      assert.ok(fs.existsSync("packages/studio/assets/icon.svg"), "Studio assets icon.svg must exist");
+      assert.ok(fs.existsSync("packages/studio/assets/sw.js"), "Studio assets sw.js must exist");
+      indexHtml = fs.readFileSync("index.html", "utf-8");
+    });
+
+    await When("inspecting the bonus html-studio call-to-action links", () => {
+      assert.match(indexHtml, /id="hero-launch-studio-btn"[^>]*href="packages\/studio\/assets\/create\.html"/);
+      assert.match(indexHtml, /id="bonus-launch-studio-btn"[^>]*href="packages\/studio\/assets\/create\.html"/);
+      assert.match(indexHtml, /id="bonus-studio-alias-btn"[^>]*href="studio\.html"/);
+    });
+
+    await Then("they navigate directly to the live static packages/studio/assets/create.html Creation Studio", () => {
+      const studioHtml = fs.readFileSync("studio.html", "utf-8");
+      assert.match(studioHtml, /\.\/packages\/studio\/assets\/create\.html/);
+    });
   }
 });
