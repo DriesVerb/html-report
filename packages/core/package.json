@@ -22,6 +22,7 @@
     "./compatibility": "./scripts/compatibility.mjs",
     "./caller-registry": "./scripts/caller-registry.mjs",
     "./env": "./scripts/env.mjs",
+    "./workspace-loader": "./scripts/workspace-loader.mjs",
     "./verify": "./playwright/verify-report.mjs",
     "./assets/*": "./assets/*",
     "./package.json": "./package.json"

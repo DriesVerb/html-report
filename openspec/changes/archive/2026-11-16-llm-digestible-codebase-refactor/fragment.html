@@ -1,0 +1,331 @@
+<section class="space-y-8">
+  <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div class="space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Journey</span>
+        <span class="badge badge-outline font-mono text-xs">2026-11-16-llm-digestible-codebase-refactor</span>
+      </div>
+      <h1 id="journey-overview" class="text-3xl font-extrabold tracking-tight">LLM-Digestible Codebase Refactoring</h1>
+      <p class="text-sm text-base-content/75 max-w-3xl">
+        Decomposing monolithic runtime, studio, and script files across <code>@html-report/core</code> and <code>@html-report/studio</code> into bounded, single-purpose modules (&le; 650 lines) with zero breaking changes.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="file-text" class="w-4 h-4"></i><span>proposal.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="layers" class="w-4 h-4"></i><span>design.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="check-square" class="w-4 h-4"></i><span>tasks.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/skill-packaging/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
+        <i data-lucide="shield-check" class="w-4 h-4"></i><span>specs/</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Journey Phase Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex items-center justify-between gap-2">
+      <h2 id="journey-phase-stepper" class="text-sm font-bold uppercase tracking-wider text-base-content/70">Journey Phase</h2>
+      <span class="badge badge-success badge-sm font-mono">Phase 7 Complete &mdash; Shipped / Archived</span>
+    </div>
+    <div class="w-full overflow-x-auto">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li class="step step-primary">Brainstorming</li>
+        <li class="step step-primary">Planning</li>
+        <li class="step step-primary">Implementing</li>
+        <li class="step step-primary">Verifying</li>
+        <li class="step step-primary">Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Progress KPIs -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Completion</div>
+      <div class="text-2xl font-extrabold text-success">100%</div>
+      <div class="text-xs text-base-content/70">20 / 20 tasks complete</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Monoliths Refactored</div>
+      <div class="text-2xl font-extrabold text-secondary">16</div>
+      <div class="text-xs text-base-content/70">638 &ndash; 4,435 lines before split</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Max JS/MJS Size</div>
+      <div class="text-2xl font-extrabold text-accent">622</div>
+      <div class="text-xs text-base-content/70">All modules &le; 650 lines</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Workspace Boundary</div>
+      <div class="text-2xl font-extrabold text-success">Intact</div>
+      <div class="text-xs text-base-content/70">2 packages + skills shims</div>
+    </div>
+  </div>
+
+  <!-- Architecture Mermaid & Line-Count Comparison Chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <h2 id="module-architecture" class="text-lg font-bold">Two-Package Modular Architecture</h2>
+      <p class="text-xs text-base-content/70">
+        Top-level entrypoints preserve public exports and delegate to focused domain sub-modules under <code>lib/</code>, <code>routes/</code>, and ordered browser chunks.
+      </p>
+      <pre class="mermaid">
+flowchart LR
+  Skills["skills/html-* shims"] --> Core["@html-report/core"]
+  Skills --> Studio["@html-report/studio"]
+  Studio -->|public exports| Core
+  Core --> CoreLib["scripts/lib/{build,harness,publish}/"]
+  Core --> CoreRt["assets/report-runtime.js <- runtime/*.js"]
+  Studio --> StudioLib["scripts/lib/{tracker,datastar,scaffold,server,domain,preflight,mcp}/"]
+  Studio --> StudioRoutes["scripts/routes/{static,projects,studio-files,agent-*,mcp,sse,publish}.mjs"]
+  Studio --> StudioAssets["assets/{authoring-plugin.js <- authoring/*, create.html + create-studio/*}"]
+      </pre>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <h2 id="file-size-audit" class="text-lg font-bold">Monolith Line-Count Reduction Results</h2>
+      <p class="text-xs text-base-content/70">
+        Measured line counts before refactoring vs. largest resulting module/shell per area.
+      </p>
+      <div class="relative w-full h-72 min-w-0">
+        <canvas id="refactorSizeChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Artifact Index -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+    <h2 id="openspec-artifacts" class="text-lg font-bold">OpenSpec Artifacts &amp; Specifications</h2>
+    <div class="overflow-x-auto w-full">
+      <table class="table table-zebra table-sm w-full">
+        <thead>
+          <tr>
+            <th>Artifact</th>
+            <th>Purpose</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-mono text-xs">proposal.md</td>
+            <td>16-file size audit, context savings, and refactoring scope</td>
+            <td><button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs btn-primary btn-outline">Open proposal.md</button></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">design.md</td>
+            <td>Target module tree, ordered chunk concatenation, and static script extraction</td>
+            <td><button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs btn-primary btn-outline">Open design.md</button></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">tasks.md</td>
+            <td>7-phase implementation checklist with verification gates</td>
+            <td><button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-primary btn-outline">Open tasks.md</button></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">specs/skill-packaging/spec.md</td>
+            <td>Module size budgets (&le; 650 lines) and orientation documentation requirements</td>
+            <td><button type="button" onclick="openMarkdownViewer('specs/skill-packaging/spec.md')" class="btn btn-xs btn-primary btn-outline">Open spec.md</button></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">specs/deterministic-assembly/spec.md</td>
+            <td>Ordered browser chunk assembly preserving ESM exports &amp; standalone HTML</td>
+            <td><button type="button" onclick="openMarkdownViewer('specs/deterministic-assembly/spec.md')" class="btn btn-xs btn-primary btn-outline">Open spec.md</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Task Checklist -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <h2 id="task-checklist" class="text-lg font-bold">Connected Task Checklist (<button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary font-mono text-base">tasks.md</button>)</h2>
+      <span class="badge badge-success font-mono text-xs">All 20 Tasks Verified</span>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+      <div class="p-3 rounded-xl bg-base-200/50 border border-base-300 space-y-2">
+        <div class="font-bold text-xs uppercase text-base-content/70">Phase 1 &ndash; 3: OpenSpec &amp; Core</div>
+        <ul class="space-y-1 text-xs">
+          <li>&#9745; 1.1 Create OpenSpec artifacts &amp; delta specs</li>
+          <li>&#9745; 1.2 Build dashboard &amp; serve on :3031</li>
+          <li>&#9745; 2.1&ndash;2.3 Split <code>report-runtime.js</code> into <code>runtime/*.js</code></li>
+          <li>&#9745; 3.1 Split <code>build-report.mjs</code> into <code>lib/build/*</code></li>
+          <li>&#9745; 3.2 Split <code>harness.mjs</code> into <code>lib/harness/*</code></li>
+          <li>&#9745; 3.3 Split <code>publish-report.mjs</code> into <code>lib/publish/*</code></li>
+        </ul>
+      </div>
+      <div class="p-3 rounded-xl bg-base-200/50 border border-base-300 space-y-2">
+        <div class="font-bold text-xs uppercase text-base-content/70">Phase 4 &ndash; 7: Studio, Maps &amp; Verify</div>
+        <ul class="space-y-1 text-xs">
+          <li>&#9745; 4.1 Split <code>authoring-plugin.js</code> into <code>authoring/*.js</code></li>
+          <li>&#9745; 4.2 Extract <code>create.html</code> JS into <code>create-studio/*.js</code></li>
+          <li>&#9745; 5.1&ndash;5.7 Decompose Studio scripts &amp; routes</li>
+          <li>&#9745; 6.1&ndash;6.2 Add navigation maps &amp; digestibility test</li>
+          <li>&#9745; 7.1&ndash;7.3 Full test suite &amp; final dashboard update</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Embedded Showdown Markdown Artifact Viewer Modal -->
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box max-w-4xl w-11/12 bg-base-100 border border-base-300">
+    <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-base-300">
+      <h3 id="markdown-modal-title" class="font-mono font-bold text-sm">proposal.md</h3>
+      <div class="flex flex-wrap gap-1">
+        <button type="button" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')" class="doc-tab-btn btn btn-xs">proposal.md</button>
+        <button type="button" data-doc="design.md" onclick="switchViewerTab('design.md')" class="doc-tab-btn btn btn-xs">design.md</button>
+        <button type="button" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')" class="doc-tab-btn btn btn-xs">tasks.md</button>
+        <button type="button" data-doc="specs/skill-packaging/spec.md" onclick="switchViewerTab('specs/skill-packaging/spec.md')" class="doc-tab-btn btn btn-xs">skill-packaging</button>
+        <button type="button" data-doc="specs/deterministic-assembly/spec.md" onclick="switchViewerTab('specs/deterministic-assembly/spec.md')" class="doc-tab-btn btn btn-xs">deterministic-assembly</button>
+        <button type="button" onclick="closeMarkdownViewer()" class="btn btn-xs btn-ghost">&times;</button>
+      </div>
+    </div>
+    <div id="markdown-modal-body" class="prose prose-sm max-w-none py-4 max-h-[65vh] overflow-y-auto text-sm leading-relaxed"></div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button type="submit">close</button>
+  </form>
+</dialog>
+
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: LLM-Digestible Codebase Refactoring\n\nRefactor monolithic scripts and assets across `@html-report/core` and `@html-report/studio` into focused <= 650-line modules with clear navigation maps while preserving all public exports, package boundaries, and CLI/skill contracts.",
+  "design.md": "# Design: Two-Package Modular Decomposition\n\n- `@html-report/core`: `scripts/lib/{build,harness,publish}/*.mjs` and ordered `assets/runtime/01..08.js` chunks.\n- `@html-report/studio`: `scripts/lib/{tracker,datastar,scaffold,server,domain,preflight,mcp}/*.mjs`, `scripts/routes/{agent-edit,agent-copilot,studio-files}.mjs`, `assets/authoring/01..07.js`, and `assets/create-studio/01..06.js`.",
+  "tasks.md": "# Tasks: LLM-Digestible Codebase Refactoring\n\nAll 7 phases and 20 tasks complete and verified.",
+  "specs/skill-packaging/spec.md": "# Spec Delta: skill-packaging\n\nEnforces <= 650 lines per workspace module, <= 1,600 lines for create.html, package READMEs, docs/codebase-map.md, and AGENTS.md navigation links.",
+  "specs/deterministic-assembly/spec.md": "# Spec Delta: deterministic-assembly\n\nOrdered runtime/ and authoring/ chunk concatenation preserving CommonJS ESM named exports and buildReport() standalone output."
+}
+</script>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function renderMarkdownDoc(docName) {
+    activeDocKey = docName;
+    const titleEl = document.getElementById("markdown-modal-title");
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (titleEl) titleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) btn.classList.add("btn-active", "btn-primary");
+      else btn.classList.remove("btn-active", "btn-primary");
+    });
+
+    let md = "";
+    try {
+      const res = await fetch(docName);
+      if (res.ok) md = await res.text();
+    } catch (_) {}
+    if (!md) {
+      md = getOpenSpecArtifacts()[docName] || "";
+    }
+
+    if (bodyEl) {
+      if (md) {
+        const conv = getShowdownConverter();
+        bodyEl.innerHTML = conv
+          ? conv.makeHtml(md)
+          : "<pre class='whitespace-pre-wrap font-mono text-xs'>" + md.replace(/</g, "&lt;") + "</pre>";
+      } else {
+        bodyEl.innerHTML = "<div class='alert alert-warning text-xs'>Artifact " + docName + " not loaded.</div>";
+      }
+    }
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") modal.showModal();
+    else modal.setAttribute("open", "true");
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") modal.close();
+    else if (modal) modal.removeAttribute("open");
+  }
+
+  async function switchViewerTab(docName) {
+    await renderMarkdownDoc(docName);
+  }
+
+  window.openMarkdownViewer = openMarkdownViewer;
+  window.closeMarkdownViewer = closeMarkdownViewer;
+  window.switchViewerTab = switchViewerTab;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById("refactorSizeChart");
+    if (!canvas || typeof Chart === "undefined") return;
+    new Chart(canvas.getContext("2d"), {
+      type: "bar",
+      data: {
+        labels: [
+          "create.html",
+          "report-runtime.js",
+          "authoring-plugin.js",
+          "build-report.mjs",
+          "harness.mjs",
+          "agent-tracker.mjs",
+          "datastar-sse.mjs",
+          "scaffold-project.mjs",
+          "server-utils.mjs",
+          "server.mjs"
+        ],
+        datasets: [
+          {
+            label: "Before (lines)",
+            data: [4435, 3560, 2913, 1657, 1426, 1360, 1293, 1289, 1255, 1119],
+            backgroundColor: "rgba(239, 68, 68, 0.72)",
+            borderRadius: 4
+          },
+          {
+            label: "Largest File / Sub-Module After (lines)",
+            data: [1560, 533, 622, 501, 543, 412, 322, 538, 401, 503],
+            backgroundColor: "rgba(34, 197, 94, 0.78)",
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "top" }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  });
+</script>

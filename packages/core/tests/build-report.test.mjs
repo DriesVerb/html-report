@@ -14,6 +14,7 @@ const {
   detectAddons,
   extractMainContent,
   stripDuplicateNavbars,
+  resolveMermaidIncludes,
   generateFaviconTag,
   parseArgs,
   buildReport,
@@ -542,6 +543,107 @@ addons: [charts]
       const mirroredFile = path.join(mirrorDir, "demo-proj", "index.html");
       assert.ok(fs.existsSync(mirroredFile), "--mirror-dir must copy compiled output to <mirrorDir>/<project>/index.html");
       assert.equal(fs.readFileSync(mirroredFile, "utf8"), fs.readFileSync(outFile, "utf8"));
+    });
+  });
+
+  describe("Review Learnings: Minimal Addon Detection, --only-addons & Mermaid File Inclusion", () => {
+    it("does not trigger addon injection on prose containing English words like marked, showdown, Leaflet, KaTeX, Chart.js, hljs, dayjs, or datastar", () => {
+      const proseFragment = `
+        <section id="prose-only">
+          <h1 id="notes">Release Notes</h1>
+          <p>Tasks were marked complete after comparing Leaflet, KaTeX, Chart.js, hljs, dayjs, datastar, and a markdown showdown in prose.</p>
+          <div class="overflow-x-auto w-full">
+            <table class="table table-sm w-full"><thead><tr><th>Item</th></tr></thead><tbody><tr><td>Text</td></tr></tbody></table>
+          </div>
+        </section>
+      `;
+
+      assert.deepEqual(detectAddons(proseFragment), []);
+      const { html, activeAddons } = buildReport({
+        title: "Prose Report",
+        content: proseFragment
+      });
+      assert.deepEqual(activeAddons, []);
+      assert.ok(!html.includes("marked.min.js"));
+      assert.ok(!html.includes("showdown.min.js"));
+      assert.ok(!html.includes("leaflet.js"));
+      assert.ok(!html.includes("katex.min.js"));
+      assert.ok(!html.includes("chart.umd.min.js"));
+      assert.ok(!html.includes("highlight.min.js"));
+      assert.ok(!html.includes("dayjs.min.js"));
+      assert.ok(!html.includes("@starfederation/datastar"));
+    });
+
+    it("supports --only-addons and --no-auto-addons in parseArgs, detectAddons, and buildReport CLI", () => {
+      const onlyMermaid = parseArgs(["node", "build-report.mjs", "-c", "f.html", "--only-addons", "mermaid"]);
+      assert.equal(onlyMermaid.autoDetectAddons, false);
+      assert.deepEqual(onlyMermaid.addons, ["mermaid"]);
+
+      const onlyNone = parseArgs(["node", "build-report.mjs", "-c", "f.html", "--only-addons", "none"]);
+      assert.equal(onlyNone.autoDetectAddons, false);
+      assert.deepEqual(onlyNone.addons, []);
+
+      const noAuto = parseArgs(["node", "build-report.mjs", "-c", "f.html", "--no-auto-addons"]);
+      assert.equal(noAuto.autoDetectAddons, false);
+
+      const contentWithCanvasAndMermaid = `<canvas id="c1"></canvas><div class="mermaid">graph TD\nA-->B</div>`;
+      assert.deepEqual(detectAddons(contentWithCanvasAndMermaid, ["mermaid"], { autoDetect: false }), ["mermaid"]);
+      assert.deepEqual(detectAddons(contentWithCanvasAndMermaid, ["none"], { autoDetect: false }), []);
+
+      const fragFile = path.join(tmpDir, "only-frag.html");
+      const outFile = path.join(tmpDir, "only-out.html");
+      fs.writeFileSync(fragFile, `<h1 id="o1">Only Addons</h1>${contentWithCanvasAndMermaid}`, "utf-8");
+      execSync(`node ${cliPath} --content "${fragFile}" --output "${outFile}" --only-addons mermaid`, { encoding: "utf-8" });
+      const builtHtml = fs.readFileSync(outFile, "utf-8");
+      assert.ok(builtHtml.includes("mermaid.min.js"));
+      assert.ok(!builtHtml.includes("chart.umd.min.js"));
+    });
+
+    it("resolves direct .mmd file inclusions via data-mermaid-src, data-src, and <!-- {{MERMAID:...}} -->", () => {
+      const diagramsDir = path.join(tmpDir, "diagrams");
+      fs.mkdirSync(diagramsDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(diagramsDir, "flow.mmd"),
+        "```mermaid\nflowchart LR\n  Client --> Server\n```\n",
+        "utf-8"
+      );
+      fs.writeFileSync(
+        path.join(tmpDir, "seq.mmd"),
+        "sequenceDiagram\n  Alice->>Bob: Sync\n",
+        "utf-8"
+      );
+
+      const fragPath = path.join(tmpDir, "frag.html");
+      const fragment = `
+        <h1 id="arch">Architecture</h1>
+        <div class="mermaid bg-base-200/50 p-4 rounded-box" data-mermaid-src="./diagrams/flow.mmd"></div>
+        <!-- {{MERMAID:./seq.mmd}} -->
+      `;
+      fs.writeFileSync(fragPath, fragment, "utf-8");
+
+      const resolved = resolveMermaidIncludes(fragment, { contentPath: fragPath, workspaceRoot: tmpDir });
+      assert.ok(resolved.includes("Client --> Server"));
+      assert.ok(!resolved.includes("```mermaid"));
+      assert.ok(resolved.includes("Alice->>Bob: Sync"));
+
+      const built = buildReport({
+        title: "Mermaid Include Test",
+        content: fragment,
+        contentPath: fragPath,
+        workspaceRoot: tmpDir
+      });
+      assert.ok(built.activeAddons.includes("mermaid"));
+      assert.ok(built.html.includes("Client --> Server"));
+      assert.ok(built.html.includes("Alice->>Bob: Sync"));
+      assert.ok(built.html.includes("mermaid.min.js"));
+
+      assert.throws(
+        () => resolveMermaidIncludes(`<div class="mermaid" data-mermaid-src="./missing.mmd"></div>`, {
+          contentPath: fragPath,
+          workspaceRoot: tmpDir
+        }),
+        /Mermaid diagram file not found/
+      );
     });
   });
 });

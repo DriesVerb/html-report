@@ -111,5 +111,5 @@ Deliverable Architecture:
 - `@html-report`: Analytical summaries, BI metrics, Chart.js, Grid.js.
 - `@html-print`: Pixel-perfect A4/Letter PDF deliverables, invoices.
 - `@html-dashboard`: Live Datastar SSE hypermedia streaming.
-- `@html-presentation`: Impress.js 3D slide transitions.
+- `@html-presentation`: Reveal.js interactive slide decks (legacy `--impress` supported).
 - `@html-pwa`: Installable Progressive Web App with offline Service Worker.

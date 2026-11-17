@@ -1,12 +1,14 @@
-# HTML Report Architecture, 11-CDN Stack & DaisyUI Navbar Blueprint
+# HTML Report Architecture, Core 4 + On-Demand Addons & DaisyUI Navbar Blueprint
 
-This reference defines the mandatory document skeleton, non-blocking 11-library CDN stack, swapped DaisyUI navbar structure (left-aligned report title; right-aligned TOC dropdown, DaisyUI color-swatch theme dropdown, and icon-only CDN-inlining Download button), horizontal-scrollbar insufficient-space detector, and print/PDF media resilience rules for the `html-report` skill.
+This reference defines the mandatory document skeleton, **Core 4** always-loaded shell libraries plus the **15 on-demand addon catalog** (injected automatically by `build-report.mjs` only when matching signatures or explicit flags appear), unified DaisyUI navbar structure (left-aligned report title + mode badge; right-aligned Contents TOC dropdown and Settings gear panel), horizontal-scrollbar insufficient-space detector, and print/PDF media resilience rules for the `html-report` skill.
 
 ---
 
-## 1. Non-Blocking 11-Library CDN Stack
+## 1. Core 4 Shell & 15 On-Demand Addon Catalog
 
-Every report MUST include the following 11-library CDN stack. Scripts use `defer` and isolated initialization guards so that a slow or unused library never blocks initial HTML rendering or other widgets.
+Every assembled report loads **only the Core 4 shell libraries** by default. Additional libraries from the **15 on-demand addon catalog** are injected **only when detected in `<main>`** (e.g., `<canvas>`, `.mermaid`, `data-mermaid-src`, `data-gridjs`) or explicitly requested (`--addons` / `--only-addons`). Scripts use `defer` and isolated initialization guards so a slow library never blocks initial HTML rendering.
+
+### Always-Loaded Core 4 Shell
 
 | # | CDN Name | Purpose |
 | :--- | :--- | :--- |
@@ -14,38 +16,37 @@ Every report MUST include the following 11-library CDN stack. Scripts use `defer
 | 2 | **DaisyUI** | Semantic component classes and all 32 built-in themes (`data-theme`) |
 | 3 | **Lucide Icons** | Crisp vector icons (`data-lucide="..."`) |
 | 4 | **Alpine.js** | Lightweight declarative UI interactivity (`x-data`, `x-show`, `@click`) |
-| 5 | **Chart.js** | Interactive canvas charts dynamically synced with DaisyUI themes |
-| 6 | **Mermaid** | Architecture & workflow SVG diagrams dynamically synced with DaisyUI themes |
-| 7 | **Leaflet** | Interactive geospatial maps and markers |
-| 8 | **Grid.js** | Interactive sortable, searchable, and paginated data tables |
-| 9 | **KaTeX** | Fast scientific math and LaTeX equation rendering |
-| 10 | **Marked** | Client-side Markdown prose parsing |
-| 11 | **Highlight.js** | Syntax-highlighted code blocks |
-| 12 | **Quill** | In-browser rich text WYSIWYG authoring and note drafting |
 
+### On-Demand Addon Catalog (Injected Only When Used)
+
+| Addon Key | CDN Name | Detection Triggers / Explicit Flag | Purpose |
+| :--- | :--- | :--- | :--- |
+| `charts` | **Chart.js** | `<canvas>`, `new Chart(`, `--charts` | Interactive canvas charts dynamically synced with DaisyUI themes |
+| `mermaid` | **Mermaid** | `.mermaid`, `data-mermaid-src`, `<!-- {{MERMAID:...}} -->`, `--mermaid` | Architecture & workflow SVG diagrams synced with DaisyUI themes |
+| `gridjs` | **Grid.js** | `data-gridjs`, `.gridjs`, `--gridjs` | Interactive sortable, searchable, paginated data tables |
+| `katex` | **KaTeX** | `.katex`, `\( ... \)`, `\[ ... \]`, `--katex` / `--math` | Fast scientific math and LaTeX equation rendering |
+| `leaflet` | **Leaflet** | `.leaflet-*`, `L.map(`, `#map`, `--leaflet` | Interactive geospatial maps and markers |
+| `hljs` | **Highlight.js** | `.hljs`, `language-*`, `--hljs` | Syntax-highlighted code blocks |
+| `marked` | **Marked** | `#markdown-output`, `marked.parse(`, `--marked` | Client-side Markdown prose parsing |
+| `showdown` | **Showdown** | `data-showdown`, `new showdown.Converter`, `--showdown` | In-browser Markdown artifact viewer |
+| `dayjs` | **Day.js** | `data-dayjs`, `dayjs(`, `--dayjs` | Lightweight relative/formatted timestamps |
+| `reveal` | **Reveal.js** | `.reveal`, `--mode presentation`, `--reveal` | Interactive slide decks (default presentation engine) |
+| `impress` | **Impress.js** | `#impress`, `--impress` | Legacy 3D spatial presentations |
+| `mockjs` | **Mock.js** | `data-mock`, `Mock.mock(`, `--mockjs` | Deterministic mock dataset generation |
+| `quill` | **Quill** | `.ql-editor`, `new Quill(`, `--quill` | In-browser rich text WYSIWYG authoring |
+| `fullcalendar` | **FullCalendar** | `data-fullcalendar`, `FullCalendar.Calendar`, `--fullcalendar` | Interactive schedules and timelines |
+| `datastar` | **Datastar** | `data-signals`, `data-on-*`, `data-public-feed`, `--live` | Reactive hypermedia & SSE streaming |
+
+Example head tags injected for a report using only Mermaid (`--only-addons mermaid` or `.mermaid` auto-detection):
 ```html
-<!-- 1. Stylesheets (DaisyUI v4 full + all 32 themes, Leaflet, Highlight.js, Grid.js, KaTeX) -->
+<!-- Core 4 Styles & Scripts (Always Loaded) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/theme/mermaid.min.css" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
-
-<!-- 2. Tailwind CSS Play CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
-
-<!-- 3. Non-Blocking Feature Scripts (defer) -->
 <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" crossorigin="anonymous"></script>
-<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/gridjs.umd.js" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js" crossorigin="anonymous"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js" crossorigin="anonymous"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/kotlin.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" crossorigin="anonymous"></script>
+
+<!-- On-Demand Addon (Injected Only When Detected or Requested) -->
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" crossorigin="anonymous"></script>
 ```
 
 > [!WARNING]
@@ -108,11 +109,11 @@ Every HTML report MUST start with `<html lang="en" data-theme="light" data-repor
       <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider"></span>
     </div>
 
-    <!-- Right (navbar-end): Contents TOC Dropdown + DaisyUI Color-Swatch Theme Dropdown + Icon-Only Download Dropdown -->
+    <!-- Right (navbar-end): Contents TOC Dropdown + Settings Gear Dropdown (Appearance + Download + Authoring) -->
     <div class="navbar-end w-auto flex-shrink-0 gap-1.5 sm:gap-2 justify-end">
       <!-- 1. TOC Dropdown mapping h1, h2, h3 -->
       <div class="dropdown dropdown-end" id="toc-dropdown">
-        <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents">
+        <div tabindex="0" role="button" id="toc-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Table of Contents" aria-haspopup="true" aria-expanded="false">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
           </svg>
@@ -123,43 +124,15 @@ Every HTML report MUST start with `<html lang="en" data-theme="light" data-repor
         </ul>
       </div>
 
-      <!-- 2. DaisyUI 32-Themes Dropdown with Official Color-Scheme Swatches -->
-      <div class="dropdown dropdown-end" id="theme-dropdown">
-        <div tabindex="0" role="button" id="theme-dropdown-btn" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 gap-1.5" aria-label="Change DaisyUI Theme">
-          <span class="text-xs font-medium capitalize" id="active-theme-label">light</span>
-          <div class="flex items-center gap-0.5">
-            <span class="bg-primary rounded-badge w-1.5 h-3"></span>
-            <span class="bg-secondary rounded-badge w-1.5 h-3"></span>
-            <span class="bg-accent rounded-badge w-1.5 h-3"></span>
-            <span class="bg-neutral rounded-badge w-1.5 h-3"></span>
-          </div>
+      <!-- 2. Unified Settings Gear Dropdown (Appearance 32-Theme Picker + Download HTML/PDF + Edit/AI controls) -->
+      <div class="dropdown dropdown-end" id="settings-dropdown">
+        <div id="settings-gear-btn" tabindex="0" role="button" class="btn btn-xs sm:btn-sm btn-ghost border border-base-300 btn-square" aria-label="Settings" title="Settings" aria-haspopup="true" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
         </div>
-        <div tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[60] mt-2 w-56 max-h-96 overflow-y-auto p-2 shadow-2xl border border-base-300">
-          <div id="theme-swatch-list" class="grid grid-cols-1 gap-1.5">
-            <!-- Populated with 32 DaisyUI theme preview cards (data-theme="<name>" + 4 color pills) -->
-          </div>
+        <div id="settings-panel" tabindex="0" role="dialog" aria-label="Settings" class="dropdown-content bg-base-100 text-base-content rounded-box z-[60] mt-2 w-80 max-w-[calc(100vw-1.5rem)] max-h-[70vh] overflow-y-auto p-3 shadow-2xl border border-base-300 space-y-2.5">
+          <!-- Appearance section: #active-theme-label + #theme-swatch-list -->
+          <!-- Download section: #download-dropdown, #download-html-btn, #download-pdf-btn -->
         </div>
-      </div>
-
-      <!-- 3. Icon-Only Download Dropdown (Download as HTML or Download as PDF) -->
-      <div class="dropdown dropdown-end" id="download-dropdown">
-        <div id="download-dropdown-btn" tabindex="0" role="button" class="btn btn-primary btn-xs sm:btn-sm btn-square" aria-label="Download Report (HTML or PDF)" title="Download Report (HTML or PDF)">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V4" />
-          </svg>
-        </div>
-        <ul id="download-dropdown-menu" tabindex="0" class="dropdown-content menu menu-sm bg-base-100 text-base-content rounded-box z-[60] mt-2 w-56 p-2 shadow-2xl border border-base-300">
-          <li>
-            <button id="download-html-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
-              <span>Download as HTML</span>
-            </button>
-          </li>
-          <li>
-            <button id="download-pdf-btn" type="button" class="flex items-center gap-2.5 py-2 text-xs font-semibold">
-              <span>Download as PDF</span>
-            </button>
-          </li>
-        </ul>
       </div>
     </div>
   </nav>
@@ -290,11 +263,11 @@ Whenever an HTML report or interactive form is generated on the basis of a CSV f
 
 ## 6. `@media print` Queries, Page 1 Cover + H1/H2/H3 TOC, & Interactive Control Fallbacks
 
-Every report MUST include `@media print` rules and a first-page print cover (`#print-cover-page`) inside `<main>` so that PDF exports look publication-grade in any DaisyUI theme:
+When building a `--mode print` publication report, you may include an optional first-page print cover (`#print-cover-page`) inside `<main>` so PDF exports begin with a formatted title page and table of contents:
 
 1. **Navbar Hidden in Print**: `header, .navbar, .print\:hidden { display: none !important; }`
 2. **Page 1 Cover + H1/H2/H3 Table of Contents (`#print-cover-page`)**:
-   - Hidden on screen (`display: none`), shown on Page 1 in `@media print` (`display: flex !important; break-after: page !important; page-break-after: always !important; min-height: 92vh !important;`).
+   - **MUST be hidden on screen** (`class="hidden print:flex"` and baseline `#print-cover-page { display: none; }` in `template-shell.html`), shown only on Page 1 in `@media print` (`display: flex !important; break-after: page !important; page-break-after: always !important; min-height: 92vh !important;`). Both `core:structure` and `core:print-pdf` fail verification if `#print-cover-page` is visible in `@media screen`.
    - Displays the **Report Title (`#print-cover-title`)** (use a `<div>` instead of `<h1>` so it is not duplicated in heading queries) and the **complete Table of Contents of all `h1`, `h2`, and `h3` headings (`#print-toc-list`)** populated by `initTOC()`.
 3. **Interactive Controls Hidden & Static Print Summaries Shown**:
    - Interactive elements that do not work in static PDFs (`.print-interactive-control`, `.gridjs-head`, `.gridjs-pages`) are hidden (`display: none !important`), while static print fallbacks (`.print-only-summary`, such as `#csv-print-static-fallback`) are displayed (`display: block !important`).

@@ -14,6 +14,8 @@ import { execFile } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { routeSkill } from "../../../skills/html-report/scripts/skill-router.mjs";
 import { startServer } from "../../../skills/html-report/scripts/serve-report.mjs";
+import { resolveInteractiveAddons, runInteractiveGrill } from "../../../skills/html-report/scripts/html-grill.mjs";
+import { PassThrough } from "node:stream";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -163,6 +165,79 @@ describe("Feature Spec: Feature 4 & 4.1 - Interactive html-create Studio & Termi
       assert.ok(data.cli.buildFlags.includes("--mode presentation"));
       assert.ok(data.cli.buildFlags.includes("--presentation"));
       assert.match(data.prompt, /Q1 Product Keynote/);
+    });
+
+    it("Scenario: html-grill.mjs normalizes addon aliases, --no-addons, --slug, and --custom-color", async () => {
+      const { stdout } = await runCli([
+        "--target", "report",
+        "--title", "Platform Telemetry",
+        "--slug", "platform-telemetry",
+        "--custom-color", "#0ea5e9",
+        "--addons", "charts,hljs,quill,reveal",
+        "--non-interactive",
+        "--json"
+      ]);
+
+      const data = JSON.parse(stdout);
+      assert.equal(data.config.projectSlug, "platform-telemetry");
+      assert.equal(data.config.customBrandColorHex, "#0ea5e9");
+      assert.deepEqual(data.config.features.addons, ["charts", "highlightjs", "quill", "reveal"]);
+      assert.ok(data.cli.buildFlags.includes("--hljs"));
+      assert.ok(data.cli.buildFlags.includes("--quill"));
+      assert.ok(data.cli.buildFlags.includes("--reveal"));
+
+      const noAddonsRes = await runCli([
+        "--target", "report",
+        "--no-addons",
+        "--non-interactive",
+        "--json"
+      ]);
+      const noAddonsData = JSON.parse(noAddonsRes.stdout);
+      assert.deepEqual(noAddonsData.config.features.addons, []);
+    });
+
+    it("Scenario: resolveInteractiveAddons supports defaults, none, modifiers, and indices", () => {
+      const defaults = ["charts", "mermaid", "gridjs"];
+      assert.deepEqual(resolveInteractiveAddons("", defaults), defaults);
+      assert.deepEqual(resolveInteractiveAddons("none", defaults), []);
+      assert.deepEqual(resolveInteractiveAddons("+quill,-gridjs,+hljs", defaults), ["charts", "mermaid", "quill", "highlightjs"]);
+      assert.deepEqual(resolveInteractiveAddons("1,8", defaults), ["charts", "quill"]);
+    });
+
+    it("Scenario: Interactive grill prompts reflect Reveal.js v5.1, Datastar SSE, DaisyUI v4.12, and CDN addons", async () => {
+      const input = new PassThrough();
+      const output = new PassThrough();
+      let captured = "";
+      const answers = [
+        "4",          // Step 1: Presentation (Reveal.js)
+        "1",          // Step 2: Static
+        "1",          // Step 3: Browser page
+        "1",          // Step 4: light theme
+        "",           // Step 4b: skip custom brand color
+        "2026 Deck",  // Step 5a: title
+        "+quill"      // Step 5b: add Quill addon
+      ];
+      let answerIdx = 0;
+
+      output.on("data", (chunk) => {
+        const text = chunk.toString();
+        captured += text;
+        if (answerIdx < answers.length && text.includes(": ")) {
+          const next = answers[answerIdx++];
+          setImmediate(() => input.write(next + "\n"));
+        }
+      });
+
+      const result = await runInteractiveGrill({ input, output, args: [], skipClipboard: true });
+      input.end();
+
+      assert.match(captured, /Reveal\.js v5\.1/);
+      assert.doesNotMatch(captured, /Interactive 3D Slide Presentation/);
+      assert.match(captured, /DaisyUI v4\.12\.14/);
+      assert.match(captured, /Datastar v1\.0-beta\.9/);
+      assert.match(captured, /Highlight\.js v11\.10/);
+      assert.equal(result.config.target, "presentation");
+      assert.deepEqual(result.config.features.addons, ["mermaid", "quill"]);
     });
   });
 

@@ -27,7 +27,10 @@ export function parseArgs(argv = process.argv) {
     headed: false,
     json: null,
     screenshots: null,
+    withCore: false,
     colorContrast: false,
+    checkPrint: false,
+    checkPdf: false,
     checkCharts: false,
     checkMermaid: false,
     checkMaps: false,
@@ -87,8 +90,13 @@ export function parseArgs(argv = process.argv) {
       options.strict = true;
     } else if (arg === "--headed") {
       options.headed = true;
+    } else if (arg === "--with-core") {
+      options.withCore = true;
     } else if (arg === "--color-contrast") {
       options.colorContrast = true;
+    } else if (arg === "--check-print" || arg === "--check-pdf") {
+      options.checkPrint = true;
+      options.checkPdf = true;
     } else if (arg === "--json" && args[i + 1] && !args[i + 1].startsWith("--")) {
       options.json = args[++i];
     } else if (arg === "--review-packet") {
@@ -152,7 +160,26 @@ export function parseArgs(argv = process.argv) {
 export async function main() {
   if (process.argv.includes("--help") || process.argv.includes("-h")) {
     console.log(
-      "Usage: node verify-report.mjs <path-to-report.html | --url http://localhost:3031> [--expected-theme <theme>] [--mode <interactive|static>] [--pdf <output.pdf>] [--caller <caller-id>] [--quick]"
+      [
+        "Usage: node verify-report.mjs <path-to-report.html | --url http://localhost:3031> [options]",
+        "",
+        "Check Selection:",
+        "  (default)             Runs all Core checks (console, structure, responsive, themes, print-pdf)",
+        "                        PLUS all auto-detected CDN checks present in the report (e.g. mermaid).",
+        "  --check-<cdn>         Isolates ONLY that check (e.g. --check-mermaid, --check-charts, --check-print).",
+        "  --only <id|name>      Isolates a single check by id, category, or name substring.",
+        "  --suites <list>       Runs comma-separated suites (core, cdns, responsive, themes, print, a11y).",
+        "  --cdns <list>         Isolates comma-separated CDN checks (mermaid,charts,...).",
+        "  --with-core           Combine with --check-* or --cdns to keep all Core checks enabled.",
+        "",
+        "Common Options:",
+        "  --quick, -q           Fast 2-breakpoint check (sm, lg) with shorter timeouts",
+        "  --expected-theme <t>  Override expected startup theme (default: manifest theme or light)",
+        "  --mode <name>         Override report mode detection (report, print, interactive, ...)",
+        "  --pdf <output.pdf>    Generate an on-demand PDF export while keeping default checks active",
+        "  --caller <caller-id>  Verify caller profile directory integration",
+        "  --json <file.json>    Write structured verification summary JSON"
+      ].join("\n")
     );
     process.exit(0);
   }

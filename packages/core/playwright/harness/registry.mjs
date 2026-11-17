@@ -180,6 +180,11 @@ export class CheckRegistry {
       });
       if (flagMatched) matches = true;
 
+      // 7. --with-core keeps core baseline checks enabled alongside targeted CDN/print flags
+      if (options.withCore && check.id.startsWith("core:") && check.category !== "a11y") {
+        matches = true;
+      }
+
       return matches;
     });
   }

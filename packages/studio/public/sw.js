@@ -14,6 +14,12 @@
 const CACHE_NAME = "html-report-pwa-1-0-0";
 const PRECACHE_ASSETS = [
   "./create.html",
+  "./create-studio/01-files-and-dropzone.js",
+  "./create-studio/02-theme-and-wizard.js",
+  "./create-studio/03-prompt-and-preview.js",
+  "./create-studio/04-scaffold-and-bridge.js",
+  "./create-studio/05-projects-directory.js",
+  "./create-studio/06-quill-and-bootstrap.js",
   "./manifest.webmanifest",
   "./icon.svg",
   "https://cdn.tailwindcss.com",
@@ -37,7 +43,10 @@ const IMMUTABLE_CDN_HOSTS = [
 const BYPASS_PATTERNS = [
   "/__live_reload__",
   "/__datastar_stream__",
-  "/__report_mode__"
+  "/__report_mode__",
+  "/api/",
+  "/__agent_",
+  "/mcp"
 ];
 
 self.addEventListener("install", (event) => {

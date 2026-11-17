@@ -9,6 +9,15 @@ import { HTMLReportAgent } from "../assets/authoring-plugin.js";
 
 const REPO_ROOT = process.cwd();
 
+function readCreateStudioBundle() {
+  const studioDir = path.join(REPO_ROOT, "packages/studio/assets/create-studio");
+  const scripts = fs.existsSync(studioDir)
+    ? fs.readdirSync(studioDir).filter((f) => f.endsWith(".js")).sort().map((f) => fs.readFileSync(path.join(studioDir, f), "utf-8"))
+    : [];
+  const html = fs.readFileSync(path.join(REPO_ROOT, "packages/studio/assets/create.html"), "utf-8");
+  return `${html}\n${scripts.join("\n")}`;
+}
+
 describe("Project Scaffolding & Deterministic Agent-Facing Hooks", () => {
   it("stampAgentHooks deterministically stamps sections and widgets and is idempotent", () => {
     const sample = `
@@ -136,14 +145,13 @@ describe("Project Scaffolding & Deterministic Agent-Facing Hooks", () => {
 
   it("create.html integrates Two-Way Agent Bridge label and scaffold-project.mjs pipeline", () => {
     const createHtml = fs.readFileSync(path.join(REPO_ROOT, "packages/studio/assets/create.html"), "utf-8");
-    const assetCreateHtml = fs.readFileSync(path.join(REPO_ROOT, "packages/studio/assets/create.html"), "utf-8");
-    assert.equal(createHtml, assetCreateHtml, "create.html and packages/studio/assets/create.html must stay synced");
+    const createBundle = readCreateStudioBundle();
     assert.match(createHtml, /Two-Way Agent Bridge &amp; AI Dock/);
     assert.match(createHtml, /id="ai-turnkey-config"/);
     assert.match(createHtml, /id="ai-bridge-port"/);
     assert.match(createHtml, /id="ai-bridge-purpose"/);
-    assert.match(createHtml, /node skills\/html-report\/scripts\/scaffold-project\.mjs/);
-    assert.match(createHtml, /--ai-port \$\{aiPort\}/);
+    assert.match(createBundle, /node skills\/html-report\/scripts\/scaffold-project\.mjs/);
+    assert.match(createBundle, /--ai-port \$\{aiPort\}/);
   });
 
   it("scaffoldProject transfers Turnkey AI connection settings (port, model, persona) into manifest, HTML meta, and AGENTS.md", () => {
@@ -188,16 +196,15 @@ describe("Project Scaffolding & Deterministic Agent-Facing Hooks", () => {
 
   it("create.html exposes Key & Lock AI Handshake (port 3031, board support description, mandatory Part 2 lock)", () => {
     const createHtml = fs.readFileSync(path.join(REPO_ROOT, "packages/studio/assets/create.html"), "utf-8");
-    const assetCreateHtml = fs.readFileSync(path.join(REPO_ROOT, "packages/studio/assets/create.html"), "utf-8");
-    assert.equal(createHtml, assetCreateHtml, "create.html and packages/studio/assets/create.html must stay in sync");
+    const createBundle = readCreateStudioBundle();
     assert.match(createHtml, /id="ai-bridge-port"[^>]*value="3031"/);
     assert.match(createHtml, /id="ai-bridge-purpose"/);
     assert.match(createHtml, /id="ai-floating-assistant"/);
     assert.match(createHtml, /Activate hovering AI Assistant button/);
-    assert.match(createHtml, /--no-ai-dock/);
+    assert.match(createBundle, /--no-ai-dock/);
     assert.match(createHtml, /What should the AI on your board do\?/);
-    assert.doesNotMatch(createHtml, /id="ai-bridge-model"/);
-    assert.doesNotMatch(createHtml, /id="ai-bridge-persona"/);
+    assert.doesNotMatch(createBundle, /id="ai-bridge-model"/);
+    assert.doesNotMatch(createBundle, /id="ai-bridge-persona"/);
     assert.match(createHtml, /id="ai-turnkey-part1-prompt"/);
     assert.match(createHtml, /id="ai-turnkey-reply-prompt"/);
     assert.match(createHtml, /id="ai-turnkey-part2-status"/);
@@ -205,15 +212,15 @@ describe("Project Scaffolding & Deterministic Agent-Facing Hooks", () => {
     assert.match(createHtml, /id="prompt-ready-badge"/);
     assert.match(createHtml, /id="btn-copy-prompt"/);
     assert.match(createHtml, /id="btn-save-prompt"/);
-    assert.match(createHtml, /What the AI on this board should do:/);
-    assert.match(createHtml, /How to maintain a connection to the board:/);
-    assert.match(createHtml, /Reply Prompt to give back \(paste into Step 2 in create\.html to unlock\):/);
-    assert.match(createHtml, /The board is NOT scaffolded yet/);
-    assert.match(createHtml, /Connection & Keep-Alive Details:/);
-    assert.match(createHtml, /Hovering AI Assistant \(⌘K\) Integration Schema:/);
-    assert.match(createHtml, /Agent-Side Capabilities & Context:/);
-    assert.match(createHtml, /Turnkey Agent Reply \(Scaffold Info & Two-Way Agent Bridge\):/);
-    assert.match(createHtml, /--ai-purpose/);
+    assert.match(createBundle, /What the AI on this board should do:/);
+    assert.match(createBundle, /How to maintain a connection to the board:/);
+    assert.match(createBundle, /Reply Prompt to give back \(paste into Step 2 in create\.html to unlock\):/);
+    assert.match(createBundle, /The board is NOT scaffolded yet/);
+    assert.match(createBundle, /Connection & Keep-Alive Details:/);
+    assert.match(createBundle, /Hovering AI Assistant \(⌘K\) Integration Schema:/);
+    assert.match(createBundle, /Agent-Side Capabilities & Context:/);
+    assert.match(createBundle, /Turnkey Agent Reply \(Scaffold Info & Two-Way Agent Bridge\):/);
+    assert.match(createBundle, /--ai-purpose/);
   });
 
   it("scaffoldProject records floatingAssistant=false and html-report-ai-dock=off when aiDock is false", () => {

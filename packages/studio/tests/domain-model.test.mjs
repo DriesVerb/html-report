@@ -1,6 +1,7 @@
 import test, { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
+  CORE_CDN_STACK,
   DAISYUI_THEMES,
   TARGET_DEFINITIONS,
   ADDON_CATALOG,
@@ -10,6 +11,7 @@ import {
   SERVING_MODES,
   BEHAVIORAL_MODES,
   FEATURE_ALIGNMENT_RUBRIC,
+  normalizeAddonKey,
   normalizeTarget,
   normalizeDomainConfig,
   resolveSiblingSkill,
@@ -61,6 +63,28 @@ describe("Domain Model: Target Normalization & Constants", () => {
 
     assert.equal(normalizeTarget(null), "report");
     assert.equal(normalizeTarget("unknown-foo"), "report");
+  });
+
+  it("should align CORE_CDN_STACK and ADDON_CATALOG with active CDN versions and aliases", () => {
+    assert.equal(CORE_CDN_STACK.daisyui.version, "4.12.14");
+    assert.equal(CORE_CDN_STACK.lucide.version, "0.460.0");
+    assert.equal(CORE_CDN_STACK.alpinejs.version, "3.14.3");
+
+    assert.match(ADDON_CATALOG.gridjs.label, /Grid\.js v6\.0/);
+    assert.match(ADDON_CATALOG.highlightjs.label, /Highlight\.js v11\.10/);
+    assert.match(ADDON_CATALOG.reveal.label, /Reveal\.js v5\.1/);
+    assert.match(ADDON_CATALOG.marked.label, /Marked v14\.1/);
+    assert.match(ADDON_CATALOG.mockjs.label, /Mock\.js v1\.1/);
+    assert.match(ADDON_CATALOG.datastar.label, /Datastar v1\.0-beta\.9/);
+
+    assert.equal(normalizeAddonKey("hljs"), "highlightjs");
+    assert.equal(normalizeAddonKey("revealjs"), "reveal");
+    assert.equal(normalizeAddonKey("chartjs"), "charts");
+
+    const normalized = normalizeDomainConfig({
+      features: { addons: ["hljs", "reveal", "quill", "hljs"] }
+    });
+    assert.deepEqual(normalized.features.addons, ["highlightjs", "reveal", "quill"]);
   });
 });
 

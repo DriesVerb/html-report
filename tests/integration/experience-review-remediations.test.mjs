@@ -430,11 +430,15 @@ describe("Experience Review Remediations (Phases 1-5)", () => {
       assert.match(shellHtml, /id="toc-dropdown-btn"[^>]*aria-haspopup="true"/);
       assert.match(editDockHtml, /<option value="support">Support<\/option>/);
 
+      const studioScriptsDir = path.join(repoRoot, "packages/studio/assets/create-studio");
+      const studioScripts = fs.existsSync(studioScriptsDir)
+        ? fs.readdirSync(studioScriptsDir).filter((f) => f.endsWith(".js")).sort().map((f) => fs.readFileSync(path.join(studioScriptsDir, f), "utf-8")).join("\n")
+        : "";
       assert.match(createHtml, /#toc-dropdown:not\(\.dropdown-open\) > \.dropdown-content/);
       assert.match(createHtml, /#navbar-projects-dropdown:not\(\.dropdown-open\) > \.dropdown-content/);
       assert.match(createHtml, /#studio-settings-dropdown:not\(\.dropdown-open\) > \.dropdown-content/);
       assert.match(createHtml, /#initial-theme-dropdown:not\(\.dropdown-open\) > \.dropdown-content/);
-      assert.match(createHtml, /document\.activeElement\.blur\(\)/);
+      assert.match(`${createHtml}\n${studioScripts}`, /document\.activeElement\.blur\(\)/);
     });
 
     it("6.2 findWorkspaceRoot skips projects/<slug>/package.json and resolves workspace root", () => {
@@ -619,6 +623,31 @@ describe("Experience Review Remediations (Phases 1-5)", () => {
         await srv.close();
         fs.rmSync(tmpDir, { recursive: true, force: true });
       }
+    });
+
+    it("6.8 workspace-loader.mjs resolves workspace exports and getChildNodeExecArgs preserves process.execArgv", async () => {
+      const { resolveWorkspacePackageSpecifier } = await import("../../packages/core/scripts/workspace-loader.mjs");
+      const { getChildNodeExecArgs } = await import("../../packages/core/scripts/env.mjs");
+
+      assert.match(resolveWorkspacePackageSpecifier("@html-report/core") || "", /packages\/core\/scripts\/harness\.mjs$/);
+      assert.match(resolveWorkspacePackageSpecifier("@html-report/core/build") || "", /packages\/core\/scripts\/build-report\.mjs$/);
+      assert.match(resolveWorkspacePackageSpecifier("@html-report/core/assets/report-runtime.js") || "", /packages\/core\/assets\/report-runtime\.js$/);
+      assert.match(resolveWorkspacePackageSpecifier("@html-report/studio/serve") || "", /packages\/studio\/scripts\/server\.mjs$/);
+
+      const childArgs = getChildNodeExecArgs(["script.mjs", "--port", "3031"]);
+      assert.deepEqual(childArgs.slice(-3), ["script.mjs", "--port", "3031"]);
+
+      const stdout = execFileSync(
+        process.execPath,
+        [
+          "--import",
+          path.join(ROOT_DIR, "packages/core/scripts/workspace-loader.mjs"),
+          path.join(ROOT_DIR, "skills/html-report/scripts/build-report.mjs"),
+          "--version"
+        ],
+        { encoding: "utf-8" }
+      );
+      assert.match(stdout, /html-report v/);
     });
   });
 });

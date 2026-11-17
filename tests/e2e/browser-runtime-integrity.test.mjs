@@ -115,7 +115,7 @@ describe("Browser Runtime Integrity & CDN Health Tests", () => {
   });
 
   it("should load GitHub Pages index.html in headless browser with zero console errors and full 16-CDN parity", async () => {
-    const indexPath = path.resolve(__dirname, "../index.html");
+    const indexPath = path.resolve(__dirname, "../../index.html");
     assert.ok(fs.existsSync(indexPath), "index.html must exist at repo root");
 
     const browser = await chromium.launch({ headless: true });

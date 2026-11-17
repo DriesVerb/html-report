@@ -6,6 +6,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -70,7 +71,17 @@ export function getAuthoringPlugin({
   authoringScriptPath = path.join(ASSETS_DIR, "authoring-plugin.js")
 } = {}) {
   const rawDock = fs.readFileSync(editDockPath, "utf-8");
-  const script = fs.readFileSync(authoringScriptPath, "utf-8");
+  const defaultScriptPath = path.join(ASSETS_DIR, "authoring-plugin.js");
+  let script;
+  if (path.resolve(authoringScriptPath) === defaultScriptPath) {
+    const req = createRequire(import.meta.url);
+    const loader = req(defaultScriptPath);
+    script = typeof loader.getBundledAuthoringSource === "function"
+      ? loader.getBundledAuthoringSource()
+      : fs.readFileSync(authoringScriptPath, "utf-8");
+  } else {
+    script = fs.readFileSync(authoringScriptPath, "utf-8");
+  }
 
   const navbar = extractSlot(rawDock, "navbar");
   const settingsTop = extractSlot(rawDock, "settings-top");

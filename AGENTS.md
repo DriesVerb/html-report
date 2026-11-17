@@ -63,3 +63,14 @@ To serve on `http://localhost:3031` (fallback `3032`):
 node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3031
 ```
 
+---
+
+## Codebase Architecture & LLM Navigation Map
+
+This repository is an npm workspaces monorepo (`packages/*`) split into two focused packages plus skill facade shims under `skills/html-report/scripts/*`:
+
+- **`@html-report/core`** ([packages/core/README.md](packages/core/README.md)) — Zero-dependency deterministic HTML5 assembler (`build-report.mjs`), OKLCH theme compiler (`theme-compiler.mjs`), fragment linter & diagnostic harness (`harness.mjs`), standalone ZIP exporter (`publish-report.mjs`), PWA generator (`generate-pwa.mjs`, `pwa-builder.mjs`), and browser runtime (`assets/report-runtime.js` assembled from `assets/runtime/*.js`).
+- **`@html-report/studio`** ([packages/studio/README.md](packages/studio/README.md)) — Creation Studio UI (`assets/create.html` + `assets/create-studio/*.js`), live-reload SSE dev server (`server.mjs` + `routes/*.mjs`), project scaffolder (`scaffold-project.mjs`), CLI interview (`html-grill.mjs`), Two-Way AI Agent Bridge & Edit Mode (`assets/authoring-plugin.js` + `assets/authoring/*.js`), Datastar SSE telemetry (`datastar-sse.mjs`), Agent Tracker (`agent-tracker.mjs`), and MCP JSON-RPC server (`mcp-server.mjs`).
+- **Full Repository Map**: See [docs/codebase-map.md](docs/codebase-map.md) for the complete file tree, package boundary rules, request/build dataflows, and `<= 650`-line module digestibility guard (`packages/core/tests/codebase-digestibility.test.mjs`).
+
+

@@ -6,7 +6,7 @@ Defines the Semantic Versioning (SemVer 2.0.0) standard, public API surface boun
 ## Requirements
 
 ### Requirement: Root Package Distribution and Semantic Version Declaration
-The system SHALL provide a canonical `package.json` file at repository root defining `name: "html-report"`, SemVer-compliant `version`, ESM module type, subpath exports (`./build`, `./harness`, `./serve`, `./pwa`, `./theme`), dual CLI bin aliases, and compatible Node.js engines.
+The root `package.json` SHALL configure npm `"workspaces": ["packages/*"]` alongside `"name": "html-report"`, SemVer-compliant `version`, ESM module type, and backward-compatible subpath `"exports"` (`./build`, `./harness`, `./theme`, `./pwa`, `./generate-pwa`, `./publish`, `./compatibility`, `./serve`, `./scaffold`) and CLI `"bin"` aliases forwarding cleanly to `packages/core` (`@html-report/core`) and `packages/studio` (`@html-report/studio`).
 
 #### Scenario: Resolving programmatic library exports
 - **WHEN** an external project imports `"html-report"` or subpaths like `"html-report/build"`
@@ -15,6 +15,14 @@ The system SHALL provide a canonical `package.json` file at repository root defi
 #### Scenario: CLI executable discovery and version query
 - **WHEN** a user or script invokes `npx html-report` or executes `--version`
 - **THEN** the system MUST output the current SemVer string matching `package.json`.
+
+#### Scenario: Existing subpath imports resolve seamlessly across the workspace split
+- **WHEN** a downstream consumer imports `"html-report/build"`, `"html-report/harness"`, `"html-report/theme"`, `"html-report/serve"`, or `"html-report/scaffold"`
+- **THEN** Node.js resolves each subpath to its canonical module inside `packages/core/` or `packages/studio/` without breaking existing callers.
+
+#### Scenario: Studio package resolves core via workspace dependency
+- **WHEN** `packages/studio` imports `"@html-report/core/build"` or `"@html-report/core/publish"`
+- **THEN** npm workspaces resolves `"@html-report/core"` to `packages/core/` cleanly with zero external npm dependencies.
 
 ---
 

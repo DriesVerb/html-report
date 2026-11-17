@@ -1,4 +1,6 @@
-node_modules/
+node_modules/*
+!node_modules/@html-report/
+!node_modules/@html-report/**
 skills/html-report/playwright/node_modules/
 packages/core/playwright/node_modules/
 skills/html-report/examples/*.pdf

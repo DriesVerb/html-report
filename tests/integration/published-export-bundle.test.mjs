@@ -378,9 +378,13 @@ describe("Published Export Fidelity & Asset-Aware Bundle Pipeline", () => {
 
     // Replace CDN URLs with local mock CDN URLs
     html = html
-      .replace(/<link[^>]+daisyui[^>]+>/i, "")
-      .replace(/<script[^>]+cdn\.tailwindcss\.com[^>]*><\/script>/i, "")
-      .replace(/<script[^>]+lucide[^>]+><\/script>/i, "")
+      .replace(/<link[^>]+daisyui[^>]+>/gi, "")
+      .replace(/<script[^>]+cdn\.tailwindcss\.com[^>]*><\/script>/gi, "")
+      .replace(/<script[^>]+lucide[^>]*><\/script>/gi, "")
+      .replace(/<!-- Addon: (?:Grid\.js|Mermaid) -->/gi, "")
+      .replace(/<link[^>]+gridjs[^>]+>/gi, "")
+      .replace(/<script[^>]+gridjs[^>]*><\/script>/gi, "")
+      .replace(/<script[^>]+mermaid[^>]*><\/script>/gi, "")
       .replace(
         /<script[^>]+alpinejs[^>]+><\/script>/i,
         `<script type="module" src="http://127.0.0.1:${cdnPort}/datastar.js"></script>\n  <script defer src="http://127.0.0.1:${cdnPort}/alpine.js"></script>\n  <script defer src="http://127.0.0.1:${cdnPort}/gridjs.js"></script>\n  <script defer src="http://127.0.0.1:${cdnPort}/mermaid.js"></script>`

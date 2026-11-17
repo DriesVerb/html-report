@@ -486,4 +486,69 @@ describe("Playwright Extensible Harness Test Suite", () => {
       );
     });
   });
+
+  describe("7. Verification Selection & Screen-Hidden Print Cover Checks", () => {
+    it("should keep all checks active when --pdf is passed and support --with-core with --check-mermaid", async () => {
+      const registry = await createDefaultRegistry();
+
+      const pdfParsed = parseArgs(["node", "verify-report.mjs", "report.html", "--pdf", "out.pdf"]);
+      const pdfFiltered = registry.filter(pdfParsed);
+      assert.equal(pdfFiltered.length, registry.getAll().length, "--pdf must not isolate only core:print-pdf");
+
+      const mermaidOnlyParsed = parseArgs(["node", "verify-report.mjs", "report.html", "--check-mermaid"]);
+      const mermaidOnly = registry.filter(mermaidOnlyParsed);
+      assert.deepEqual(mermaidOnly.map((c) => c.id), ["cdn:mermaid"]);
+
+      const withCoreParsed = parseArgs(["node", "verify-report.mjs", "report.html", "--check-mermaid", "--with-core"]);
+      const withCoreIds = registry.filter(withCoreParsed).map((c) => c.id);
+      assert.ok(withCoreIds.includes("cdn:mermaid"));
+      assert.ok(withCoreIds.includes("core:console-errors"));
+      assert.ok(withCoreIds.includes("core:structure"));
+      assert.ok(withCoreIds.includes("core:responsive"));
+      assert.ok(withCoreIds.includes("core:theme-switcher"));
+      assert.ok(withCoreIds.includes("core:print-pdf"));
+    });
+
+    it("should fail core:structure and core:print-pdf when #print-cover-page is visible on screen, and pass when hidden", async () => {
+      const { buildReport } = await import(
+        path.resolve(process.cwd(), "skills/html-report/scripts/build-report.mjs")
+      );
+
+      const badBuilt = buildReport({
+        title: "Visible Cover Regression Test",
+        content: `<section id="print-cover-page" style="display: block !important;"><div>Cover</div></section><h1 id="sec-1">Section 1</h1><p>Body</p>`,
+        mode: "print"
+      });
+      const badFile = path.join(tmpDir, "visible-cover.html");
+      fs.writeFileSync(badFile, badBuilt.html, "utf-8");
+
+      const badRes = await runHarness(badFile, {
+        only: "core:structure",
+        quick: true
+      });
+      assert.equal(badRes.success, false);
+      assert.ok(badRes.failures.some((f) => f.includes("#print-cover-page")));
+
+      const badPrintRes = await runHarness(badFile, {
+        only: "core:print-pdf",
+        quick: true
+      });
+      assert.equal(badPrintRes.success, false);
+      assert.ok(badPrintRes.failures.some((f) => f.includes("#print-cover-page")));
+
+      const goodBuilt = buildReport({
+        title: "Hidden Cover Print Test",
+        content: `<section id="print-cover-page"><div>Cover</div></section><h1 id="sec-1">Section 1</h1><p>Body</p>`,
+        mode: "print"
+      });
+      const goodFile = path.join(tmpDir, "hidden-cover.html");
+      fs.writeFileSync(goodFile, goodBuilt.html, "utf-8");
+
+      const goodPrintRes = await runHarness(goodFile, {
+        only: "core:print-pdf",
+        quick: true
+      });
+      assert.equal(goodPrintRes.success, true, `Expected hidden cover to pass, got: ${JSON.stringify(goodPrintRes.failures)}`);
+    });
+  });
 });

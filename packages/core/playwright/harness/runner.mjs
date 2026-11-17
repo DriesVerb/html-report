@@ -164,12 +164,23 @@ export async function runHarness(htmlPath, rawOptions = {}) {
     }
   }
 
+  const isTargetedSelection = Boolean(
+    options.only ||
+    options.suites ||
+    options.grep ||
+    options.allCdns ||
+    options.cdns ||
+    Object.entries(options).some(([k, v]) => v === true && (k.startsWith("check") || k.startsWith("cdn")))
+  );
+
   reporter.onRunStart({
     htmlPath: resolvedHtmlPath,
     mode: options.mode,
     detectedMode,
     quick: options.quick,
-    totalChecks: activeChecks.length
+    totalChecks: activeChecks.length,
+    targeted: isTargetedSelection,
+    withCore: Boolean(options.withCore)
   });
 
   let step = 1;

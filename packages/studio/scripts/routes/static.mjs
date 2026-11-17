@@ -147,6 +147,21 @@ export function handleStaticRoutes(req, res, parsedUrl, pathname, ctx) {
       }
     }
 
+    // 2b-2. Serve Creation Studio modular scripts (/create-studio/*.js)
+    if (pathname.startsWith("/create-studio/")) {
+      const studioScriptsDir = path.resolve(__dirname, "../../assets/create-studio");
+      const relScript = pathname.slice("/create-studio/".length);
+      const scriptPath = path.resolve(studioScriptsDir, relScript);
+      if (isPathInside(studioScriptsDir, scriptPath) && scriptPath.endsWith(".js") && fs.existsSync(scriptPath) && fs.statSync(scriptPath).isFile()) {
+        res.writeHead(200, {
+          "Content-Type": "text/javascript; charset=utf-8",
+          "Cache-Control": "no-cache, no-store, must-revalidate"
+        });
+        fs.createReadStream(scriptPath).pipe(res);
+        return true;
+      }
+    }
+
     // 2c. Dedicated Creation Studio PWA manifest endpoint for /create context
     if (pathname === "/manifest.webmanifest" || pathname === "/sw.js" || pathname === "/icon.svg") {
       const referer = req.headers.referer || "";

@@ -4,13 +4,92 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { register as registerModuleLoader } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const REPO_ROOT = path.resolve(__dirname, "../../..");
 
 export const DEFAULT_PRIMARY_PORT = 3031;
 export const DEFAULT_SECONDARY_PORT = 3032;
+
+const CORE_PKG_NAME = "@html-report/core";
+
+/**
+ * Ensures workspace package symlinks (e.g. node_modules/@html-report/core)
+ * exist on disk and falls back to the zero-dependency ESM workspace loader hook
+ * when running in a read-only or symlink-free checkout.
+ */
+export function ensureWorkspacePackageLinks(repoRoot = REPO_ROOT) {
+  const packagesDir = path.join(repoRoot, "packages");
+  let linksHealthy = false;
+  try {
+    if (fs.existsSync(packagesDir)) {
+      for (const entry of fs.readdirSync(packagesDir, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue;
+        const pkgDir = path.join(packagesDir, entry.name);
+        const pkgJsonPath = path.join(pkgDir, "package.json");
+        if (!fs.existsSync(pkgJsonPath)) continue;
+        let pkgName = null;
+        try {
+          pkgName = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"))?.name;
+        } catch (_) {}
+        if (!pkgName || typeof pkgName !== "string") continue;
+
+        const linkPath = path.join(repoRoot, "node_modules", ...pkgName.split("/"));
+        let exists = false;
+        try {
+          exists = fs.existsSync(linkPath);
+        } catch (_) {}
+        if (!exists) {
+          try {
+            fs.mkdirSync(path.dirname(linkPath), { recursive: true });
+            const target = process.platform === "win32"
+              ? pkgDir
+              : path.relative(path.dirname(linkPath), pkgDir);
+            fs.symlinkSync(target, linkPath, process.platform === "win32" ? "junction" : "dir");
+          } catch (_) {}
+        }
+      }
+    }
+    linksHealthy = fs.existsSync(path.join(repoRoot, "node_modules", ...CORE_PKG_NAME.split("/")));
+  } catch (_) {
+    linksHealthy = false;
+  }
+
+  if (!linksHealthy && typeof registerModuleLoader === "function") {
+    const loaderSym = Symbol.for("html-report.workspace-loader.registered");
+    if (!globalThis[loaderSym]) {
+      try {
+        globalThis[loaderSym] = true;
+        registerModuleLoader(pathToFileURL(path.resolve(__dirname, "workspace-loader.mjs")).href);
+      } catch (_) {}
+    }
+  }
+
+  return linksHealthy;
+}
+
+/**
+ * Builds Node CLI arguments for child/supervised processes, preserving
+ * process.execArgv (--import, --loader, --conditions, etc.) and injecting
+ * the workspace loader automatically if node_modules/@html-report/core is missing.
+ */
+export function getChildNodeExecArgs(extraArgs = [], repoRoot = REPO_ROOT) {
+  const execArgs = [...process.execArgv];
+  const coreLinkPath = path.join(repoRoot, "node_modules", ...CORE_PKG_NAME.split("/"));
+  const hasCoreLink = fs.existsSync(coreLinkPath);
+  if (!hasCoreLink) {
+    const alreadyHasWorkspaceLoader = execArgs.some((a) => String(a).includes("workspace-loader.mjs"));
+    if (!alreadyHasWorkspaceLoader) {
+      execArgs.push("--import", pathToFileURL(path.resolve(__dirname, "workspace-loader.mjs")).href);
+    }
+  }
+  return [...execArgs, ...extraArgs];
+}
+
+ensureWorkspacePackageLinks();
 
 /**
  * Symlink-safe direct CLI execution check.

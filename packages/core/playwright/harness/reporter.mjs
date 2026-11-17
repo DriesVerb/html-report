@@ -18,7 +18,7 @@ export class Reporter {
     this.durationMs = 0;
   }
 
-  onRunStart({ htmlPath, mode, detectedMode, quick, totalChecks }) {
+  onRunStart({ htmlPath, mode, detectedMode, quick, totalChecks, targeted = false, withCore = false }) {
     this.startTime = performance.now();
     const modeLabel = quick ? "QUICK MODE" : "FULL SUITE";
     const effectiveMode = (mode || detectedMode || "interactive").toLowerCase();
@@ -27,6 +27,13 @@ export class Reporter {
     console.log(
       `Report Mode: ${effectiveMode.toUpperCase()} (mode arg: ${mode || "none"}, detected: ${detectedMode || "auto"})`
     );
+    if (targeted) {
+      console.log(
+        `Check Selection: TARGETED (${totalChecks} check(s)${withCore ? " + core" : " isolated"}; omit --check-*/--only or pass --with-core to include all core checks)`
+      );
+    } else {
+      console.log(`Check Selection: STANDARD (all core checks + auto-detected CDN checks; ${totalChecks} active)`);
+    }
   }
 
   onCheckStart(check, index, total) {

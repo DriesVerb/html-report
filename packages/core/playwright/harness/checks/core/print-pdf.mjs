@@ -8,8 +8,8 @@ export class PrintPdfCheck extends VerificationCheck {
       id: "core:print-pdf",
       name: "Print Media (@media print) & On-Demand PDF Export",
       category: "print",
-      cliFlags: ["--pdf"],
-      styleguideRules: ["media-print-navbar-hidden", "cover-page-present", "pdf-export-valid"]
+      cliFlags: ["--check-print", "--check-pdf"],
+      styleguideRules: ["media-print-navbar-hidden", "screen-cover-hidden", "cover-page-present", "pdf-export-valid"]
     });
   }
 
@@ -17,6 +17,24 @@ export class PrintPdfCheck extends VerificationCheck {
     const errors = [];
     const messages = [];
     const effectiveMode = (options.mode || options.detectedMode || "interactive").toLowerCase();
+
+    await page.emulateMedia({ media: "screen" });
+    const screenCheck = await page.evaluate(() => {
+      const coverPage = document.getElementById("print-cover-page");
+      if (!coverPage) return { hasCover: false, coverHiddenOnScreen: true, display: "none" };
+      const style = getComputedStyle(coverPage);
+      return {
+        hasCover: true,
+        coverHiddenOnScreen: style.display === "none" || style.visibility === "hidden",
+        display: style.display
+      };
+    });
+
+    if (screenCheck.hasCover && !screenCheck.coverHiddenOnScreen) {
+      errors.push(`In @media screen, #print-cover-page must be hidden (display: none), got display: "${screenCheck.display}".`);
+    } else if (screenCheck.hasCover) {
+      messages.push("@media screen verified: #print-cover-page hidden (display: none).");
+    }
 
     if (effectiveMode === "interactive") {
       messages.push("Interactive Mode: Skipping @media print checks (web-first report).");
@@ -46,13 +64,19 @@ export class PrintPdfCheck extends VerificationCheck {
         const hasCover = Boolean(coverPage);
         const coverVisible = hasCover ? getComputedStyle(coverPage).display === "flex" : true;
 
-        return { headerHidden, navbarHidden, coverVisible };
+        return { headerHidden, navbarHidden, hasCover, coverVisible };
       });
 
       if (!printCheck.headerHidden || !printCheck.navbarHidden) {
         errors.push("In @media print, header and .navbar must be hidden (display: none).");
       } else {
         messages.push("@media print verified: navbar hidden (display:none).");
+      }
+
+      if (printCheck.hasCover && !printCheck.coverVisible) {
+        errors.push("In @media print, #print-cover-page must be visible (display: flex).");
+      } else if (printCheck.hasCover) {
+        messages.push("@media print verified: #print-cover-page visible (display: flex).");
       }
 
       if (options.pdfPath || options.pdf) {

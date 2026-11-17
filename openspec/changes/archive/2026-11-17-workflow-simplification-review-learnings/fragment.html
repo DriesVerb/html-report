@@ -1,0 +1,361 @@
+<section class="space-y-8">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+    <div class="min-w-0 flex-1 space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Journey</span>
+        <span class="badge badge-outline font-mono text-xs">2026-11-17-workflow-simplification-review-learnings</span>
+      </div>
+      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Workflow Simplification &amp; Review Learnings</h1>
+      <p class="text-xs sm:text-sm text-base-content/75 max-w-3xl">
+        Implements all five review priorities: reliable zero-install preview startup and loader forwarding, precision on-demand CDN loading, direct <code>.mmd</code> inclusion, screen-hidden print cover guards, and clear verification check selection.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="file-text" class="w-4 h-4"></i><span>proposal.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="layers" class="w-4 h-4"></i><span>design.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="check-square" class="w-4 h-4"></i><span>tasks.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/deterministic-assembly/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
+        <i data-lucide="shield-check" class="w-4 h-4"></i><span>specs/</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Journey Phase Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="journey-phase-stepper" class="text-sm font-bold uppercase tracking-wider text-base-content/70">Journey Phase</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">All 4 Phases Complete &mdash; Shipped / Archived</span>
+    </div>
+    <div class="w-full overflow-x-auto">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li class="step step-primary" data-content="✓">Brainstorming</li>
+        <li class="step step-primary" data-content="✓">Planning</li>
+        <li class="step step-primary" data-content="✓">Implementing</li>
+        <li class="step step-primary" data-content="✓">Verifying</li>
+        <li class="step step-primary" data-content="★">Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Progress KPIs -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Completion</div>
+      <div class="text-2xl font-extrabold text-success">100%</div>
+      <div class="text-xs text-base-content/70">11 / 11 tasks complete (0 remaining)</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Priorities Landed</div>
+      <div class="text-2xl font-extrabold text-primary">5 / 5</div>
+      <div class="text-xs text-base-content/70">Preview, Addons, .mmd, Screen Cover, Verify</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Prose False-Positives</div>
+      <div class="text-2xl font-extrabold text-accent">0</div>
+      <div class="text-xs text-base-content/70">Core 4 only unless DOM/JS used</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Skill Facade Size</div>
+      <div class="text-2xl font-extrabold text-secondary">4.73 KB</div>
+      <div class="text-xs text-base-content/70">Under 5,120-byte budget</div>
+    </div>
+  </div>
+
+  <!-- Architecture Mermaid (.mmd file inclusion dogfooded) & Chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="workflow-architecture" class="text-lg font-bold min-w-0 flex-1 break-words">Simplified Build &amp; Preview Pipeline</h2>
+        <span class="badge badge-info badge-outline badge-xs font-mono shrink-0">Loaded from .mmd</span>
+      </div>
+      <p class="text-xs text-base-content/70">
+        Included directly from <code>diagrams/workflow-improvements.mmd</code> via <code>data-mermaid-src</code> with zero source duplication.
+      </p>
+      <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center" data-mermaid-src="./diagrams/workflow-improvements.mmd"></div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="priority-coverage" class="text-lg font-bold min-w-0 flex-1 break-words">Review Learning Resolution Summary</h2>
+        <span class="badge badge-success badge-outline badge-xs font-mono shrink-0">Verified</span>
+      </div>
+      <p class="text-xs text-base-content/70">
+        CDN requests reduced for prose/table/Mermaid reports alongside deterministic verification coverage.
+      </p>
+      <div class="relative h-72 sm:h-80 w-full min-w-0">
+        <canvas id="learningsChart" aria-label="Review Learnings Impact Chart" role="img"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Task Checklist -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="task-checklist" class="text-lg font-bold">Implementation Checklist (<button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</button>)</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">11 / 11 Done</span>
+    </div>
+    <div class="overflow-x-auto w-full">
+      <table class="table table-zebra table-sm w-full [&_code]:break-all">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Review Learning Addressed</th>
+            <th>Key Change</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-mono text-xs">1.1–1.3</td>
+            <td>Preview server startup &amp; supervisor loader drop</td>
+            <td>Un-ignored <code>node_modules/@html-report/</code>, added <code>workspace-loader.mjs</code>, forwarded <code>process.execArgv</code> across shims, <code>server-policy.mjs</code>, and <code>supervisor.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Done</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">2.1</td>
+            <td>Excessive library loading &amp; prose false-positives</td>
+            <td>Tightened <code>ADDON_REGISTRY</code> regexes; added <code>--only-addons</code> &amp; <code>--no-auto-addons</code></td>
+            <td><span class="badge badge-success badge-xs">Done</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">2.2–2.3</td>
+            <td>Duplicated Mermaid diagram sources</td>
+            <td>Added <code>resolveMermaidIncludes()</code> (<code>data-mermaid-src</code>, <code>data-src</code>, <code>&lt;!-- {{MERMAID:...}} --&gt;</code>) + <code>.mmd</code> watching in <code>file-watcher.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Done</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">3.1–3.2</td>
+            <td>Print cover appearing on screen</td>
+            <td>Default screen-hidden CSS in <code>template-shell.html</code> + <code>PRINT_MEDIA_CSS</code> + <code>example.html</code>; added screen-cover assertions in <code>core:structure</code> &amp; <code>core:print-pdf</code></td>
+            <td><span class="badge badge-success badge-xs">Done</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">3.3</td>
+            <td>Ambiguous verification selection &amp; doc drift</td>
+            <td>Removed <code>--pdf</code> from <code>PrintPdfCheck.cliFlags</code>, added <code>--with-core</code>, updated <code>Reporter.onRunStart()</code>, reconciled <code>SKILL.md</code> &amp; <code>architecture-and-styling.md</code></td>
+            <td><span class="badge badge-success badge-xs">Done</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">4.1–4.2</td>
+            <td>Automated regression coverage &amp; live journey sync</td>
+            <td>Unit, Playwright harness, and integration tests + OpenSpec companion synced to <code>localhost:3031</code></td>
+            <td><span class="badge badge-success badge-xs">Done</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Artifact Links Table -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+    <h2 id="openspec-artifacts" class="text-lg font-bold">OpenSpec Artifacts &amp; Specifications</h2>
+    <div class="overflow-x-auto w-full">
+      <table class="table table-zebra table-sm w-full [&_code]:break-all">
+        <thead>
+          <tr>
+            <th>Artifact</th>
+            <th>Purpose</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-mono text-xs"><button type="button" onclick="openMarkdownViewer('proposal.md')" class="link link-primary">proposal.md</button></td>
+            <td>Review findings, root causes, and five-priority scope</td>
+            <td><button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-xs btn-primary btn-outline">Open proposal.md</button></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs"><button type="button" onclick="openMarkdownViewer('design.md')" class="link link-primary">design.md</button></td>
+            <td>Architecture decisions for loader forwarding, addon detection, .mmd includes, and checks</td>
+            <td><button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-xs btn-primary btn-outline">Open design.md</button></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs"><button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</button></td>
+            <td>Minimal phased checklist (11 / 11 completed)</td>
+            <td><button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-xs btn-primary btn-outline">Open tasks.md</button></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs"><button type="button" onclick="openMarkdownViewer('specs/deterministic-assembly/spec.md')" class="link link-primary">specs/deterministic-assembly/spec.md</button></td>
+            <td>Precision detection, .mmd includes, screen-hidden cover, and non-filtering --pdf spec</td>
+            <td><button type="button" onclick="openMarkdownViewer('specs/deterministic-assembly/spec.md')" class="btn btn-xs btn-primary btn-outline">Open spec</button></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs"><button type="button" onclick="openMarkdownViewer('specs/skill-packaging/spec.md')" class="link link-primary">specs/skill-packaging/spec.md</button></td>
+            <td>Workspace loader, execArgv forwarding, and reconciled documentation spec</td>
+            <td><button type="button" onclick="openMarkdownViewer('specs/skill-packaging/spec.md')" class="btn btn-xs btn-primary btn-outline">Open spec</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- In-Browser Showdown Markdown Viewer Modal -->
+<dialog id="markdown-viewer-modal" class="modal">
+  <div class="modal-box max-w-4xl w-11/12 max-h-[85vh] flex flex-col gap-3">
+    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-base-300 pb-3">
+      <div class="flex items-center gap-2">
+        <i data-lucide="book-open" class="w-5 h-5 text-primary"></i>
+        <h3 id="markdown-modal-title" class="font-bold text-base font-mono">proposal.md</h3>
+      </div>
+      <button type="button" onclick="closeMarkdownViewer()" class="btn btn-sm btn-circle btn-ghost">✕</button>
+    </div>
+    <div class="flex flex-wrap gap-1.5">
+      <button type="button" data-doc="proposal.md" onclick="switchViewerTab('proposal.md')" class="btn btn-xs btn-ghost border border-base-300 doc-tab-btn">proposal.md</button>
+      <button type="button" data-doc="design.md" onclick="switchViewerTab('design.md')" class="btn btn-xs btn-ghost border border-base-300 doc-tab-btn">design.md</button>
+      <button type="button" data-doc="tasks.md" onclick="switchViewerTab('tasks.md')" class="btn btn-xs btn-ghost border border-base-300 doc-tab-btn">tasks.md</button>
+      <button type="button" data-doc="specs/deterministic-assembly/spec.md" onclick="switchViewerTab('specs/deterministic-assembly/spec.md')" class="btn btn-xs btn-ghost border border-base-300 doc-tab-btn">deterministic-assembly</button>
+      <button type="button" data-doc="specs/skill-packaging/spec.md" onclick="switchViewerTab('specs/skill-packaging/spec.md')" class="btn btn-xs btn-ghost border border-base-300 doc-tab-btn">skill-packaging</button>
+    </div>
+    <div id="markdown-modal-body" class="overflow-y-auto prose prose-sm max-w-none bg-base-200/40 p-4 rounded-box border border-base-300 text-xs sm:text-sm leading-relaxed"></div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>close</button></form>
+</dialog>
+
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Post-Review Workflow Simplification & Reliability Improvements\n\nAddresses all 5 review priorities: preview server resolution & supervisor execArgv forwarding, precision on-demand CDN loading, direct .mmd inclusion, screen-hidden print cover checks, and unambiguous verification selection.",
+  "design.md": "# Design: Post-Review Workflow Simplification & Reliability Improvements\n\n- Generic packages/core/scripts/workspace-loader.mjs + env.mjs helpers\n- Tightened ADDON_REGISTRY + --only-addons / --no-auto-addons\n- resolveMermaidIncludes() + file-watcher .mmd live rebuild\n- Screen-hidden #print-cover-page rules + StructureCheck / PrintPdfCheck assertions\n- Non-filtering --pdf + --with-core + reconciled SKILL.md / architecture-and-styling.md",
+  "tasks.md": "# Tasks: Post-Review Workflow Simplification & Reliability Improvements\n\nAll 4 phases (11 / 11 tasks) completed and verified.",
+  "specs/deterministic-assembly/spec.md": "# Spec Delta: deterministic-assembly\n\nDefines precision addon detection, direct .mmd file inclusions, screen-hidden print cover assertions, and non-filtering --pdf / --with-core verification behavior.",
+  "specs/skill-packaging/spec.md": "# Spec Delta: skill-packaging\n\nDefines zero-install workspace resolution, supervisor execArgv preservation, and reconciled SKILL.md & reference documentation."
+}
+</script>
+
+<script>
+  let activeDocKey = "proposal.md";
+  let showdownConverter = null;
+
+  function getShowdownConverter() {
+    if (!showdownConverter && window.showdown && typeof window.showdown.Converter === "function") {
+      showdownConverter = new window.showdown.Converter({
+        tables: true,
+        tasklists: true,
+        strikethrough: true,
+        emoji: true
+      });
+    }
+    return showdownConverter;
+  }
+
+  function getOpenSpecArtifacts() {
+    try {
+      const el = document.getElementById("open-spec-artifacts-data");
+      if (el) return JSON.parse(el.textContent);
+    } catch (_) {}
+    return {};
+  }
+
+  async function renderMarkdownDoc(docName) {
+    activeDocKey = docName;
+    const titleEl = document.getElementById("markdown-modal-title");
+    const bodyEl = document.getElementById("markdown-modal-body");
+    if (titleEl) titleEl.textContent = docName;
+
+    document.querySelectorAll(".doc-tab-btn").forEach((btn) => {
+      if (btn.getAttribute("data-doc") === docName) btn.classList.add("btn-active", "btn-primary");
+      else btn.classList.remove("btn-active", "btn-primary");
+    });
+
+    let md = "";
+    try {
+      const res = await fetch(docName);
+      if (res.ok) md = await res.text();
+    } catch (_) {}
+    if (!md) {
+      md = getOpenSpecArtifacts()[docName] || "";
+    }
+
+    if (bodyEl) {
+      if (md) {
+        const conv = getShowdownConverter();
+        bodyEl.innerHTML = conv
+          ? conv.makeHtml(md)
+          : "<pre class='whitespace-pre-wrap font-mono text-xs'>" + md.replace(/</g, "&lt;") + "</pre>";
+      } else {
+        bodyEl.innerHTML = "<div class='alert alert-warning text-xs'>Artifact " + docName + " not loaded.</div>";
+      }
+    }
+  }
+
+  async function openMarkdownViewer(docName) {
+    activeDocKey = docName || "proposal.md";
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (!modal) return;
+    if (typeof modal.showModal === "function") modal.showModal();
+    else modal.setAttribute("open", "true");
+    await renderMarkdownDoc(activeDocKey);
+  }
+
+  function closeMarkdownViewer() {
+    const modal = document.getElementById("markdown-viewer-modal");
+    if (modal && typeof modal.close === "function") modal.close();
+    else if (modal) modal.removeAttribute("open");
+  }
+
+  async function switchViewerTab(docName) {
+    await renderMarkdownDoc(docName);
+  }
+
+  window.openMarkdownViewer = openMarkdownViewer;
+  window.closeMarkdownViewer = closeMarkdownViewer;
+  window.switchViewerTab = switchViewerTab;
+
+  (function initLearningsChartWithPolling() {
+    let attempts = 0;
+    function tryInit() {
+      const canvas = document.getElementById("learningsChart");
+      if (!canvas) return;
+      if (typeof Chart === "undefined") {
+        if (++attempts < 60) setTimeout(tryInit, 60);
+        return;
+      }
+      if (canvas.__initialized) return;
+      canvas.__initialized = true;
+      const chart = new Chart(canvas.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: ["Prose-Only Report Addons", "Prose + Mermaid Report Addons", "Targeted Check Clarity", "Screen Cover Checks"],
+          datasets: [
+            {
+              label: "Before",
+              data: [4, 5, 1, 0],
+              backgroundColor: "rgba(239, 68, 68, 0.72)",
+              borderRadius: 4
+            },
+            {
+              label: "After",
+              data: [0, 1, 2, 2],
+              backgroundColor: "rgba(34, 197, 94, 0.78)",
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top" }
+          },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+      window.reportCharts = window.reportCharts || [];
+      window.reportCharts.push(chart);
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", tryInit);
+    } else {
+      tryInit();
+    }
+    window.addEventListener("load", tryInit);
+  })();
+</script>

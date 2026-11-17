@@ -1,0 +1,6 @@
+flowchart TD
+  Frag["Fragment + .mmd Diagram"] --> Resolve["resolveMermaidIncludes()"]
+  Resolve --> Detect["Precision detectAddons() + --only-addons"]
+  Detect --> Shell["Core 4 Shell + Screen-Hidden Print Cover"]
+  Shell --> Verify["verify-report.mjs (Core + Auto CDNs + Screen Cover)"]
+  Verify --> Serve["serve-report.mjs (execArgv + Workspace Loader + .mmd Watch)"]
