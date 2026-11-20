@@ -115,21 +115,32 @@ export function stageReferenceFiles(referenceFiles = [], projectDir, workspaceRo
     }
 
     let sourcePath = null;
+    let outsideWorkspace = false;
     for (const cand of candidates) {
-      if (isPathInside(resolvedWs, cand) && fs.existsSync(cand) && fs.statSync(cand).isFile()) {
+      const inside = isPathInside(resolvedWs, cand);
+      if (inside && fs.existsSync(cand) && fs.statSync(cand).isFile()) {
         sourcePath = cand;
         break;
+      }
+      if (!inside && fs.existsSync(cand) && fs.statSync(cand).isFile()) {
+        outsideWorkspace = true;
       }
     }
 
     if (!sourcePath) {
+      const reason = outsideWorkspace ? "outside_workspace" : "not_found";
+      const warning = outsideWorkspace
+        ? `Reference file "${refObj.path || refObj.name}" is outside workspaceRoot (${resolvedWs}); copy it into projects/_uploads/ or projects/${slug}/refs/ first.`
+        : `Reference file "${refObj.path || refObj.name}" was not found inside workspaceRoot (${resolvedWs}).`;
       staged.push({
         name: refObj.name,
         originalPath: refObj.path || null,
         stagedPath: null,
         note: refObj.note,
         category: refObj.category,
-        diskPath: null
+        diskPath: null,
+        reason,
+        warning
       });
       continue;
     }

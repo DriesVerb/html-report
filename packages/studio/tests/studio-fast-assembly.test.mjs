@@ -202,7 +202,7 @@ describe("Studio Fast Assembly & Smart Scaffolding Pipeline", () => {
       assert.match(studioSkill, /scaffold-project\.mjs --project .* --ref .* --widgets .* --json/);
     });
 
-    it("generateStarterFragment() emits Chart.js and Grid.js wired to introspected dataset columns", () => {
+    it("generateStarterFragment() emits declarative Chart.js and Grid.js wired to introspected dataset columns", () => {
       const csvPath = path.join(tmpRoot, "projects", "_uploads", "q3-metrics.csv");
       const dataset = introspectDataFile(csvPath);
       const fragment = generateStarterFragment({
@@ -213,11 +213,40 @@ describe("Studio Fast Assembly & Smart Scaffolding Pipeline", () => {
         datasets: [dataset]
       });
       assert.ok(fragment.includes('id="kpi-overview"'));
-      assert.ok(fragment.includes("new Chart("));
-      assert.ok(fragment.includes("new gridjs.Grid("));
+      assert.ok(fragment.includes('data-chart-source="#starter-chart-primary-data"'));
+      assert.ok(fragment.includes('data-gridjs-source="#starter-grid-data"'));
       assert.ok(fragment.includes('"region"') && fragment.includes('"revenue"'));
       assert.ok(fragment.includes('<div class="mermaid">'));
       assert.ok(fragment.includes('class="timeline'));
+    });
+
+    it("generateStarterFragment() averages pct/latency columns in kpi-row and scaffoldProject warns on outside-workspace --ref", () => {
+      const outsideCsv = path.join(os.tmpdir(), `outside-ref-${Date.now()}.csv`);
+      fs.writeFileSync(outsideCsv, "service,availability_pct,p95_ms\napi,99.90,40\nworker,99.80,60\n", "utf8");
+      try {
+        const res = scaffoldProject({
+          project: "outside-ref-warn",
+          title: "Outside Ref Warn",
+          referenceFiles: [outsideCsv],
+          workspaceRoot: tmpRoot
+        });
+        assert.equal(res.stagedRefs[0].stagedPath, null);
+        assert.equal(res.stagedRefs[0].reason, "outside_workspace");
+        assert.ok(Array.isArray(res.warnings) && res.warnings.length === 1);
+        assert.match(res.warnings[0], /outside workspaceRoot/);
+
+        const ds = introspectDataFile(outsideCsv);
+        const frag = generateStarterFragment({
+          slug: "pct-avg-test",
+          title: "Pct Avg Test",
+          widgets: ["kpi-row"],
+          datasets: [ds]
+        });
+        assert.ok(frag.includes("99.85"), "availability_pct should average to 99.85 instead of summing to 199.70");
+        assert.ok(!frag.includes("199.70"));
+      } finally {
+        if (fs.existsSync(outsideCsv)) fs.unlinkSync(outsideCsv);
+      }
     });
   });
 
@@ -255,10 +284,10 @@ describe("Studio Fast Assembly & Smart Scaffolding Pipeline", () => {
       assert.equal(body1.stagedRefs.length, 2);
       assert.equal(body1.datasets.length, 2);
 
-      // Verify pre-wired fragment content
+      // Verify pre-wired declarative fragment content
       const fragContent = fs.readFileSync(absFragPath, "utf8");
-      assert.ok(fragContent.includes("new Chart("));
-      assert.ok(fragContent.includes("new gridjs.Grid("));
+      assert.ok(fragContent.includes('data-chart-source="#starter-chart-primary-data"'));
+      assert.ok(fragContent.includes('data-gridjs-source="#starter-grid-data"'));
 
       // Second POST with same slug without updateExisting must auto-suffix -2 without overwriting
       const res2 = await fetch(`${baseUrl}/api/create/scaffold`, {

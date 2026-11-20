@@ -20,6 +20,10 @@ function safeJsonEmbed(value) {
   return JSON.stringify(value).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
 }
 
+function isRateOrAvgColumn(colName = "") {
+  return /(?:^|_|-)(?:pct|percent|percentage|rate|ratio|avg|mean|score|ms|latency|mttr|duration)(?:$|_|-)/i.test(String(colName));
+}
+
 function renderKpiRowWidget({ isDashboard = false, dataset = null } = {}) {
   if (dataset && dataset.columns.length > 0) {
     const primaryMetric = dataset.numericColumns[0] || null;
@@ -33,8 +37,14 @@ function renderKpiRowWidget({ isDashboard = false, dataset = null } = {}) {
       const nums = dataset.rows.map((r) => parseNumericValue(r[colIdx])).filter((v) => v !== null);
       const total = nums.reduce((acc, n) => acc + n, 0);
       primaryTitle = escapeHtml(primaryMetric);
-      primaryDisplay = Number.isInteger(total) ? total.toLocaleString("en-US") : total.toFixed(2);
-      primaryDesc = `Sum across ${nums.length} row(s)`;
+      if (isRateOrAvgColumn(primaryMetric) && nums.length > 0) {
+        const avg = total / nums.length;
+        primaryDisplay = Number.isInteger(avg) ? avg.toLocaleString("en-US") : avg.toFixed(2);
+        primaryDesc = `Average (${nums.length} rows)`;
+      } else {
+        primaryDisplay = Number.isInteger(total) ? total.toLocaleString("en-US") : total.toFixed(2);
+        primaryDesc = `Sum across ${nums.length} row(s)`;
+      }
     }
 
     let secondaryTitle = escapeHtml(dataset.labelColumn || "Dimensions");
@@ -130,6 +140,23 @@ function renderChartPairWidget({ dataset = null } = {}) {
     sourceNote = `Pre-wired from ${escapeHtml(dataset.fileName)} (${escapeHtml(dataset.labelColumn)} vs ${escapeHtml(seriesALabel)})`;
   }
 
+  const primaryChartConfig = {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{ label: seriesALabel, data: seriesAData }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+  };
+  const secondaryChartConfig = {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{ label: seriesBLabel, data: seriesBData, tension: 0.3, fill: false }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+  };
+
   return `  <!-- Preset: chart-pair -->
   <section id="analytics-charts" class="space-y-4">
     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -139,45 +166,19 @@ function renderChartPairWidget({ dataset = null } = {}) {
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="card bg-base-100 border border-base-300 shadow-sm p-5">
         <h3 id="chart-primary-heading" class="text-sm font-bold mb-3">${escapeHtml(seriesALabel)} by ${escapeHtml(dataset?.labelColumn || "Period")}</h3>
-        <div class="h-64">
-          <canvas id="starter-chart-primary"></canvas>
+        <div class="relative w-full h-64 sm:h-72 min-w-0">
+          <canvas id="starter-chart-primary" data-chart-source="#starter-chart-primary-data"></canvas>
         </div>
       </div>
       <div class="card bg-base-100 border border-base-300 shadow-sm p-5">
         <h3 id="chart-secondary-heading" class="text-sm font-bold mb-3">${escapeHtml(seriesBLabel)} Trend</h3>
-        <div class="h-64">
-          <canvas id="starter-chart-secondary"></canvas>
+        <div class="relative w-full h-64 sm:h-72 min-w-0">
+          <canvas id="starter-chart-secondary" data-chart-source="#starter-chart-secondary-data"></canvas>
         </div>
       </div>
     </div>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        if (typeof Chart === "undefined") return;
-        const labels = ${safeJsonEmbed(labels)};
-        const c1 = document.getElementById("starter-chart-primary");
-        if (c1) {
-          new Chart(c1, {
-            type: "bar",
-            data: {
-              labels,
-              datasets: [{ label: ${safeJsonEmbed(seriesALabel)}, data: ${safeJsonEmbed(seriesAData)}, backgroundColor: "rgba(59, 130, 246, 0.8)" }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-          });
-        }
-        const c2 = document.getElementById("starter-chart-secondary");
-        if (c2) {
-          new Chart(c2, {
-            type: "line",
-            data: {
-              labels,
-              datasets: [{ label: ${safeJsonEmbed(seriesBLabel)}, data: ${safeJsonEmbed(seriesBData)}, borderColor: "rgba(16, 185, 129, 0.9)", tension: 0.3, fill: false }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-          });
-        }
-      });
-    </script>
+    <script id="starter-chart-primary-data" type="application/json">${safeJsonEmbed(primaryChartConfig)}</script>
+    <script id="starter-chart-secondary-data" type="application/json">${safeJsonEmbed(secondaryChartConfig)}</script>
   </section>`;
 }
 
@@ -196,6 +197,14 @@ function renderGridTableWidget({ dataset = null } = {}) {
     ? `Pre-bound to ${escapeHtml(dataset.fileName)} (${rows.length} rows)`
     : "Interactive Grid.js Starter";
 
+  const gridConfig = {
+    columns,
+    data: rows,
+    search: true,
+    sort: true,
+    pagination: { limit: 10 }
+  };
+
   return `  <!-- Preset: grid-table -->
   <section id="data-explorer" class="space-y-4">
     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -203,26 +212,14 @@ function renderGridTableWidget({ dataset = null } = {}) {
       <span class="badge badge-outline badge-sm font-mono">${badgeText}</span>
     </div>
     <div class="card bg-base-100 border border-base-300 shadow-sm p-4">
-      <div id="starter-grid-table" class="overflow-x-auto w-full"></div>
+      <div id="starter-grid-table" class="overflow-x-auto w-full" data-gridjs-source="#starter-grid-data"></div>
     </div>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const target = document.getElementById("starter-grid-table");
-        if (!target || typeof gridjs === "undefined") return;
-        new gridjs.Grid({
-          columns: ${safeJsonEmbed(columns)},
-          data: ${safeJsonEmbed(rows)},
-          search: true,
-          sort: true,
-          pagination: { limit: 10 }
-        }).render(target);
-      });
-    </script>
+    <script id="starter-grid-data" type="application/json">${safeJsonEmbed(gridConfig)}</script>
   </section>`;
 }
 
 function renderMermaidFlowWidget({ title = "Workflow" } = {}) {
-  const safeLabel = String(title).replace(/["[\]<>]/g, "").slice(0, 40) || "Deliverable";
+  const safeLabel = String(title).replace(/["[\]<>]/g, "").slice(0, 40).trim() || "Deliverable";
   return `  <!-- Preset: mermaid-flow -->
   <section id="architecture-flow" class="space-y-4">
     <h2 id="process-flow" class="text-xl font-bold">Process &amp; Architecture Flow</h2>
@@ -230,7 +227,7 @@ function renderMermaidFlowWidget({ title = "Workflow" } = {}) {
       <div class="mermaid">
 flowchart LR
   Input["Source Inputs"] --> Process["${safeLabel}"]
-  Process --> Review["Validation &amp; Insights"]
+  Process --> Review["Validation & Insights"]
   Review --> Output["Published Deliverable"]
       </div>
     </div>

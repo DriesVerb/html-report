@@ -29,8 +29,8 @@ Synthesizes responsive, theme-adaptive reports via a **deterministic Assembly Pi
 
 ### Step 1: Bootstrap Project or Synthesize Semantic `<main>` Fragment
 ```bash
-# Optional <100ms bootstrap from CSV/JSON (--ref) + widget presets + columnSummaries JSON:
-node skills/html-report/scripts/scaffold-project.mjs --project q4-audit --title "Q4 Audit" --ref data.csv --widgets kpi-row,chart-pair,grid-table --json
+# Bootstrap from workspace CSV/JSON (--ref inside workspaceRoot) + declarative widgets:
+node skills/html-report/scripts/scaffold-project.mjs --project q4-audit --title "Q4 Audit" --ref projects/_uploads/data.csv --widgets kpi-row,chart-pair,grid-table --json
 ```
 Emit `<main id="report-main" class="container mx-auto px-4 py-8 space-y-8">` in `projects/<slug>/fragment.html` (`x-data`, `data-*`, `aria-*` preserved; never write to root `report.html` or `index.html`):
 - **Heading IDs**: Every `<h1>`/`<h2>`/`<h3>` needs a kebab-case `id` (e.g. `id="kpi-metrics"`) for TOC mapping.
@@ -51,9 +51,10 @@ node skills/html-report/scripts/harness.mjs run --project q4-audit --published -
 
 ### Step 3: Verification & Live-Reload Server
 ```bash
+# Omit --check-* to run ALL core + auto-detected addon checks (use --check-<name> to isolate one):
 node skills/html-report/playwright/verify-report.mjs projects/q4-audit/index.html --quick --json projects/q4-audit/verify.json
-node skills/html-report/playwright/verify-report.mjs projects/q4-audit/index.html --check-mermaid --with-core --quick
 node skills/html-report/playwright/verify-report.mjs projects/q4-audit/index.html --quick --review-packet projects/q4-audit/review.json --screenshots projects/q4-audit/screenshots
+node skills/html-report/playwright/verify-report.mjs projects/q4-audit/index.html --check-mermaid --with-core --quick
 # Serve on port 3031 (fallback 3032); wait for load + window.__REPORT_READY__ (never networkidle):
 node skills/html-report/scripts/serve-report.mjs projects/q4-audit/index.html --port 3031 --no-open
 ```

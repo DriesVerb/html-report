@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://unpkg.com https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Plan 1: Core Runtime & Harness Fixes - Journey & Plan</title>
+  <title>Plan 2: Studio Scaffolder & Skill Docs - Journey & Plan</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -37,14 +37,18 @@
   <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
 
-  <meta name="html-report-source" content="openspec/changes/eval-runtime-and-harness-fixes/index.html" />
+  <!-- Addon: Grid.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/theme/mermaid.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/gridjs@6.0.6/dist/gridjs.umd.js" crossorigin="anonymous"></script>
+
+  <meta name="html-report-source" content="openspec/changes/eval-scaffold-and-skill-docs/index.html" />
 
   <!-- Deterministic Agent Manifest -->
   <script type="application/json" id="agent-manifest">
 {
   "schemaVersion": "1.0.0",
   "project": null,
-  "title": "Plan 1: Core Runtime & Harness Fixes - Journey & Plan",
+  "title": "Plan 2: Studio Scaffolder & Skill Docs - Journey & Plan",
   "mode": "report",
   "theme": "light",
   "favicon": "📊",
@@ -54,24 +58,25 @@
   "pwa": false,
   "activeAddons": [
     "charts",
-    "mermaid"
+    "mermaid",
+    "gridjs"
   ],
   "files": {
-    "entry": "openspec/changes/eval-runtime-and-harness-fixes/index.html",
-    "fragment": "openspec/changes/eval-runtime-and-harness-fixes/fragment.html"
+    "entry": "openspec/changes/eval-scaffold-and-skill-docs/index.html",
+    "fragment": "openspec/changes/eval-scaffold-and-skill-docs/fragment.html"
   },
   "pipeline": {
-    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output openspec/changes/eval-runtime-and-harness-fixes/index.html --content openspec/changes/eval-runtime-and-harness-fixes/fragment.html --title \"Plan 1: Core Runtime & Harness Fixes - Journey & Plan\" --mode report --theme light --addons charts,mermaid",
-    "serveCommand": "node skills/html-report/scripts/serve-report.mjs openspec/changes/eval-runtime-and-harness-fixes/index.html --port 3031 --no-open",
-    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs openspec/changes/eval-runtime-and-harness-fixes/index.html",
+    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output openspec/changes/eval-scaffold-and-skill-docs/index.html --content openspec/changes/eval-scaffold-and-skill-docs/fragment.html --title \"Plan 2: Studio Scaffolder & Skill Docs - Journey & Plan\" --mode report --theme light --addons charts,mermaid,gridjs",
+    "serveCommand": "node skills/html-report/scripts/serve-report.mjs openspec/changes/eval-scaffold-and-skill-docs/index.html --port 3031 --no-open",
+    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs openspec/changes/eval-scaffold-and-skill-docs/index.html",
     "preflightCommand": "node skills/html-report/scripts/preflight.mjs --json",
     "authoringGuide": "../../skills/html-report/references/agent-authoring-guide.md"
   },
   "sections": [
     {
       "agentId": "section-1",
-      "slug": "plan-1-core-runtime-chart-palette-legend-playwri",
-      "label": "Plan 1: Core Runtime Chart Palette/Legend &amp; Playwright Harness Fixes",
+      "slug": "plan-2-studio-scaffolder-diagnostics-declarative",
+      "label": "Plan 2: Studio Scaffolder Diagnostics, Declarative Templates &amp; Skill Docs",
       "id": null,
       "selector": "[data-agent-id=\"section-1\"]"
     }
@@ -80,8 +85,8 @@
     {
       "agentId": "chart-1",
       "type": "chart",
-      "id": "corePaletteChart",
-      "selector": "#corePaletteChart"
+      "id": "skillBudgetChart",
+      "selector": "#skillBudgetChart"
     },
     {
       "agentId": "mermaid-1",
@@ -797,7 +802,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Plan 1: Core Runtime & Harness Fixes - Journey & Plan
+          Plan 2: Studio Scaffolder & Skill Docs - Journey & Plan
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -1018,16 +1023,16 @@
 
   <!-- Main Content Container -->
   <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
-<section class="space-y-8" data-agent-section="plan-1-core-runtime-chart-palette-legend-playwri" data-agent-id="section-1">
+<section class="space-y-8" data-agent-section="plan-2-studio-scaffolder-diagnostics-declarative" data-agent-id="section-1">
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
     <div class="min-w-0 flex-1 space-y-2">
       <div class="flex flex-wrap items-center gap-2">
-        <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Plan 1 of 2</span>
-        <span class="badge badge-outline font-mono text-xs">eval-runtime-and-harness-fixes</span>
+        <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Plan 2 of 2</span>
+        <span class="badge badge-outline font-mono text-xs">eval-scaffold-and-skill-docs</span>
       </div>
-      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Plan 1: Core Runtime Chart Palette/Legend &amp; Playwright Harness Fixes</h1>
+      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Plan 2: Studio Scaffolder Diagnostics, Declarative Templates &amp; Skill Docs</h1>
       <p class="text-xs sm:text-sm text-base-content/75 max-w-3xl">
-        Audits, spec-syncs, verifies, and commits the <code>@html-report/core</code> evaluation fixes: 8-token DaisyUI chart palette (<code>neutral</code>), compact bottom legend on &gt;4-slice pie/doughnut charts, accurate <code>STANDARD</code> check selection with <code>cdnCache=true</code>, and 640x800 <code>review_mobile</code> screenshot capture.
+        Audits, spec-syncs, verifies, and commits the <code>@html-report/studio</code> and <code>skills/html-report</code> improvements: explicit <code>outside_workspace</code> / <code>not_found</code> warnings on unstaged <code>--ref</code> files, declarative <code>data-chart-source</code> / <code>data-gridjs-source</code> starter templates, rate/latency KPI averaging, and concise CLI docs under 5,120 B.
       </p>
     </div>
     <div class="flex flex-wrap gap-2 shrink-0">
@@ -1040,7 +1045,7 @@
       <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5">
         <i data-lucide="check-square" class="w-4 h-4"></i><span>tasks.md</span>
       </button>
-      <button type="button" onclick="openMarkdownViewer('specs/declarative-widget-hydration/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
+      <button type="button" onclick="openMarkdownViewer('specs/skill-data-scaffolding-workflow/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
         <i data-lucide="shield-check" class="w-4 h-4"></i><span>specs/</span>
       </button>
     </div>
@@ -1068,22 +1073,22 @@
     <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
       <div class="text-xs uppercase font-semibold text-base-content/60">Task Progress</div>
       <div class="text-2xl font-extrabold text-primary">6 / 6 (100%)</div>
-      <div class="text-xs text-base-content/70">All 3 phases complete</div>
+      <div class="text-xs text-base-content/70">Completed across 3 phases</div>
     </div>
     <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
-      <div class="text-xs uppercase font-semibold text-base-content/60">Palette Tokens</div>
-      <div class="text-2xl font-extrabold text-secondary">8 Tokens</div>
-      <div class="text-xs text-base-content/70">primary..error + neutral</div>
+      <div class="text-xs uppercase font-semibold text-base-content/60">Skill Budget</div>
+      <div class="text-2xl font-extrabold text-success">5,027 B</div>
+      <div class="text-xs text-base-content/70">Within 5,120 B facade cap</div>
     </div>
     <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
-      <div class="text-xs uppercase font-semibold text-base-content/60">Review Viewports</div>
-      <div class="text-2xl font-extrabold text-accent">2 Shots</div>
-      <div class="text-xs text-base-content/70">1280x900 desktop &amp; 640x800 mobile</div>
+      <div class="text-xs uppercase font-semibold text-base-content/60">Starter Widgets</div>
+      <div class="text-2xl font-extrabold text-secondary">Declarative</div>
+      <div class="text-xs text-base-content/70">Zero inline Chart/Grid JS</div>
     </div>
     <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
       <div class="text-xs uppercase font-semibold text-base-content/60">Target Files</div>
       <div class="text-2xl font-extrabold text-info">5 Files</div>
-      <div class="text-xs text-base-content/70">packages/core runtime, runner &amp; tests</div>
+      <div class="text-xs text-base-content/70">Studio scaffolder, templates, SKILL.md</div>
     </div>
   </div>
 
@@ -1091,24 +1096,25 @@
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
       <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
-        <h2 id="core-architecture" class="text-lg font-bold min-w-0 flex-1 break-words">Core Runtime &amp; Harness Verification Flow</h2>
-        <span class="badge badge-primary badge-outline badge-xs font-mono shrink-0">@html-report/core</span>
+        <h2 id="scaffold-diagnostics-flow" class="text-lg font-bold min-w-0 flex-1 break-words">Reference Staging &amp; Template Pipeline</h2>
+        <span class="badge badge-primary badge-outline badge-xs font-mono shrink-0">@html-report/studio</span>
       </div>
       <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center" data-agent-widget="mermaid" data-agent-id="mermaid-1">
 flowchart LR
-  Chart["Declarative Pie/Doughnut"] --> Palette["8-Token Palette + Bottom Legend"]
-  Verify["verify-report.mjs"] --> Std["STANDARD Auto-Detect (cdnCache=true)"]
-  Std --> Shots["review_desktop + review_mobile"]
+  Ref["--ref path"] --> Check{"Inside workspaceRoot?"}
+  Check -- "No" --> Warn["reason: outside_workspace + warning"]
+  Check -- "Yes" --> Widgets["Declarative data-chart-source + data-gridjs-source"]
+  Widgets --> KPI["isRateOrAvgColumn -> Avg vs Sum"]
       </div>
     </div>
 
     <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
       <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
-        <h2 id="palette-coverage-chart" class="text-lg font-bold min-w-0 flex-1 break-words">8-Token Semantic Palette Demo</h2>
-        <span class="badge badge-secondary badge-outline badge-xs font-mono shrink-0">Live Dogfood</span>
+        <h2 id="skill-size-chart" class="text-lg font-bold min-w-0 flex-1 break-words">Facade Budget Utilization (Bytes)</h2>
+        <span class="badge badge-success badge-outline badge-xs font-mono shrink-0">SKILL.md Cap</span>
       </div>
       <div class="relative h-72 sm:h-80 w-full min-w-0">
-        <canvas id="corePaletteChart" aria-label="8-Token Palette Doughnut Demo" role="img" data-chart-source="#core-palette-data" data-agent-widget="chart" data-agent-id="chart-1"></canvas>
+        <canvas id="skillBudgetChart" aria-label="SKILL.md Byte Budget" role="img" data-chart-source="#skill-budget-data" data-agent-widget="chart" data-agent-id="chart-1"></canvas>
       </div>
     </div>
   </div>
@@ -1132,31 +1138,31 @@ flowchart LR
         <tbody>
           <tr>
             <td class="font-mono text-xs">1.1</td>
-            <td>Audit 8-token <code>paletteSequence</code> and compact bottom legend defaults</td>
-            <td><code>02-theme-switcher.js</code>, <code>05b-widget-hydrators.js</code></td>
+            <td>Audit <code>outside_workspace</code> / <code>not_found</code> warnings &amp; CLI help</td>
+            <td><code>data-introspector.mjs</code>, <code>scaffold-project.mjs</code></td>
             <td><span class="badge badge-success badge-xs">Complete</span></td>
           </tr>
           <tr>
             <td class="font-mono text-xs">1.2</td>
-            <td>Audit <code>isTargeted</code> and dual-viewport <code>--review-packet</code> capture</td>
-            <td><code>packages/core/playwright/harness/runner.mjs</code></td>
+            <td>Audit declarative starters, rate averaging &amp; <code>SKILL.md</code> byte cap</td>
+            <td><code>widget-templates.mjs</code>, <code>SKILL.md</code></td>
             <td><span class="badge badge-success badge-xs">Complete</span></td>
           </tr>
           <tr>
             <td class="font-mono text-xs">2.1</td>
-            <td>Run runtime-assets, playwright-harness, and digestibility test suites</td>
-            <td><code>packages/core/tests/*.test.mjs</code></td>
+            <td>Run studio-fast-assembly, modular-skills, and full <code>npm run test:unit</code></td>
+            <td><code>packages/studio/tests/*.test.mjs</code></td>
             <td><span class="badge badge-success badge-xs">Complete</span></td>
           </tr>
           <tr>
             <td class="font-mono text-xs">2.2</td>
-            <td>Sync delta specs and run <code>openspec validate</code></td>
-            <td><code>openspec/specs/</code></td>
+            <td>Sync delta spec and run <code>openspec validate</code></td>
+            <td><code>openspec/specs/skill-data-scaffolding-workflow/spec.md</code></td>
             <td><span class="badge badge-success badge-xs">Complete</span></td>
           </tr>
           <tr>
             <td class="font-mono text-xs">3.1–3.2</td>
-            <td>Update companion dashboard, archive change, and commit Plan 1 files</td>
+            <td>Update companion dashboard, archive change, and commit Plan 2 cleanly</td>
             <td><code>index.html</code>, <code>implementation-progress.html</code></td>
             <td><span class="badge badge-success badge-xs">Complete</span></td>
           </tr>
@@ -1166,22 +1172,23 @@ flowchart LR
   </div>
 </section>
 
-<script id="core-palette-data" type="application/json">
+<script id="skill-budget-data" type="application/json">
 {
-  "type": "doughnut",
+  "type": "bar",
   "data": {
-    "labels": ["primary", "secondary", "accent", "info", "success", "warning", "error", "neutral"],
-    "datasets": [{ "label": "Tokens", "data": [1, 1, 1, 1, 1, 1, 1, 1] }]
-  }
+    "labels": ["SKILL.md Current", "Facade Budget Cap"],
+    "datasets": [{ "label": "Bytes", "data": [5027, 5120] }]
+  },
+  "options": { "scales": { "y": { "beginAtZero": true } } }
 }
 </script>
 
 <script id="open-spec-artifacts-data" type="application/json">
 {
-  "proposal.md": "# Proposal: Core Runtime Chart Palette/Legend & Playwright Harness Fixes\n\nAudits, spec-syncs, verifies, and commits @html-report/core fixes (8-token neutral palette, compact >4-slice doughnut legend, cdnCache STANDARD check selection, and review_mobile screenshot).",
-  "design.md": "# Design: Core Runtime Chart Palette/Legend & Playwright Harness Fixes\n\n- 02-theme-switcher.js & 05b-widget-hydrators.js: 8-token paletteSequence + bottom compact legend\n- runner.mjs: k.startsWith('check') + review_mobile 640x800",
-  "tasks.md": "# Tasks: eval-runtime-and-harness-fixes\n\n- [x] 1.1 Audit theme switcher & widget hydrators\n- [x] 1.2 Audit runner.mjs\n- [x] 2.1 Run core & digestibility tests\n- [x] 2.2 Sync delta specs & validate\n- [x] 3.1 Update index.html & implementation-progress.html\n- [x] 3.2 Archive & commit Plan 1",
-  "specs/declarative-widget-hydration/spec.md": "# Delta Spec: declarative-widget-hydration\n\nDefines 8-token DaisyUI palette (including neutral) and compact bottom legend defaults for >4-slice pie/doughnut/polarArea charts."
+  "proposal.md": "# Proposal: Studio Scaffolder Diagnostics, Declarative Starter Templates & Skill Docs\n\nAudits, spec-syncs, verifies, and commits @html-report/studio scaffolder warnings, declarative starter templates, rate KPI averaging, and SKILL.md updates.",
+  "design.md": "# Design: Studio Scaffolder Diagnostics & Skill Docs\n\n- data-introspector.mjs & scaffold-project.mjs: outside_workspace/not_found reasons + warnings\n- widget-templates.mjs: data-chart-source, data-gridjs-source, isRateOrAvgColumn\n- SKILL.md: 5,027 B <= 5,120 B",
+  "tasks.md": "# Tasks: eval-scaffold-and-skill-docs\n\n- [x] 1.1 Audit data-introspector.mjs & scaffold-project.mjs\n- [x] 1.2 Audit widget-templates.mjs & SKILL.md\n- [x] 2.1 Run studio & full unit test suite\n- [x] 2.2 Sync delta spec & validate\n- [x] 3.1 Update index.html & implementation-progress.html\n- [x] 3.2 Archive & commit Plan 2",
+  "specs/skill-data-scaffolding-workflow/spec.md": "# Delta Spec: skill-data-scaffolding-workflow\n\nRequires outside_workspace/not_found diagnostics, declarative widget presets, and rate/latency KPI averaging."
 }
 </script>
   </main>

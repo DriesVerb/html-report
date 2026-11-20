@@ -259,6 +259,10 @@ export function scaffoldProject({
     } catch (_) {}
   }
 
+  const warnings = stagedRefs
+    .filter((r) => !r.stagedPath && r.warning)
+    .map((r) => r.warning);
+
   return {
     slug,
     projectDir,
@@ -270,6 +274,7 @@ export function scaffoldProject({
     widgets: normalizedWidgets,
     packageJsonPath,
     agentsMdPath: agentsPath,
+    ...(warnings.length > 0 ? { warnings } : {}),
     stagedRefs: stagedRefs.map(({ diskPath, ...rest }) => rest),
     datasets: datasets.map(({ rows, ...summary }) => ({
       ...summary,
@@ -399,9 +404,11 @@ Options:
   -t, --title <string>   Report / deliverable title
   -m, --mode <name>      Archetype mode: ${CANONICAL_MODES.join(", ")} (default: report)
       --theme <name>     DaisyUI theme (default: light)
+      --custom-theme <v> Custom OKLCH theme preset or JSON spec
+      --favicon <emoji>  Emoji favicon for the HTML shell (default: 📊)
       --addons <list>    Comma-separated addons (charts,mermaid,gridjs,...)
       --widgets <list>   Comma-separated presets (${Object.keys(WIDGET_PRESETS).join(",")})
-      --ref <path>       Reference file to stage into refs/ and introspect (repeatable)
+      --ref <path>       Reference file inside workspaceRoot to stage into refs/ (repeatable)
       --ai, --bridge     Pre-bake Two-Way AI Agent Bridge controls (--ai)
       --ai-local         Enable zero-API-key local context bridge mode (--ai-local)
       --ai-port <port>   Turnkey AI bridge server port (default: 3031)
@@ -460,5 +467,8 @@ Options:
     console.log(`  Manifest:  ${result.files.manifest}`);
     console.log(`  Agents:    ${result.files.agents}`);
     console.log(`  Rebuild:   ${result.manifest.pipeline.rebuildCommand}`);
+    if (Array.isArray(result.warnings) && result.warnings.length > 0) {
+      for (const w of result.warnings) console.warn(`  Warning:   ${w}`);
+    }
   }
 }
