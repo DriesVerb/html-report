@@ -41,6 +41,8 @@ import {
   stripOuterBoilerplate,
   injectHeadingIds,
   wrapBareTables,
+  normalizeResponsiveSteppers,
+  wrapBareCanvases,
   autoFixFragment
 } from "./lib/harness/fragment-linter.mjs";
 import {
@@ -56,6 +58,7 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const REPO_ROOT = path.resolve(__dirname, "../../..");
 
 export {
   CANONICAL_MODES,
@@ -72,6 +75,8 @@ export {
   stripOuterBoilerplate,
   injectHeadingIds,
   wrapBareTables,
+  normalizeResponsiveSteppers,
+  wrapBareCanvases,
   autoFixFragment,
   parseVerificationError,
   formatPrescriptiveDiagnostic,
@@ -87,6 +92,7 @@ export {
  */
 export async function runLifecycle({
   file,
+  project = null,
   content = null,
   output = null,
   title = "HTML Report",
@@ -103,7 +109,8 @@ export async function runLifecycle({
   caller = null,
   pdf = null,
   pwa = false,
-  editable = false,
+  editable = true,
+  published = false,
   authoringPlugin = null,
   attempt = 1,
   maxAttempts = 3,
@@ -160,7 +167,21 @@ export async function runLifecycle({
   const shouldServe = fast ? false : (serve !== null ? Boolean(serve) : serverPolicy.requiresServer);
 
   let siblingManifest = null;
-  if (fast && file && content === null) {
+  let inferredProjectSlug = project
+    ? String(project)
+        .toLowerCase()
+        .replace(/[^a-z0-9-]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+    : null;
+  if (!file && inferredProjectSlug && content === null) {
+    file = path.join("projects", inferredProjectSlug, "fragment.html");
+  }
+  if (file) {
+    const normFile = String(file).replace(/\\/g, "/");
+    const projMatch = normFile.match(/(?:^|\/)projects\/([a-z0-9-]+)\//i);
+    if (projMatch && !inferredProjectSlug) inferredProjectSlug = projMatch[1].toLowerCase();
+  }
+  if (file && content === null) {
     const absInput = path.resolve(process.cwd(), file);
     const candidateManifest = path.join(path.dirname(absInput), "report.manifest.json");
     if (fs.existsSync(candidateManifest)) {
@@ -229,11 +250,24 @@ export async function runLifecycle({
     });
   }
 
-  const resolvedOutput = output
+  let resolvedOutput = output
     ? path.resolve(process.cwd(), output)
-    : (siblingManifest && file
-        ? path.join(path.dirname(path.resolve(process.cwd(), file)), "index.html")
+    : ((siblingManifest || inferredProjectSlug) && file
+        ? path.join(path.dirname(path.resolve(process.cwd(), file)), published ? "published.html" : "index.html")
         : (caller ? getOutputPath(caller) : path.resolve(process.cwd(), "./report.html")));
+
+  const repoRootReportHtml = path.resolve(REPO_ROOT, "report.html");
+  const isCanonicalShowcase = file && String(file).replace(/\\/g, "/").endsWith("examples/dev/landing-fragment.html");
+  if (resolvedOutput === repoRootReportHtml && !isCanonicalShowcase) {
+    const fallbackSlug =
+      inferredProjectSlug ||
+      siblingManifest?.project ||
+      (title && title !== "HTML Report" ? slugify(title) : "") ||
+      (file ? slugify(path.basename(file, path.extname(file)).replace(/(?:^|-)fragment$/i, "")) : "") ||
+      "report";
+    inferredProjectSlug = fallbackSlug;
+    resolvedOutput = path.join(REPO_ROOT, "projects", fallbackSlug, "index.html");
+  }
 
   const resolvedPdf = pdf
     ? (pdf === true
@@ -361,10 +395,11 @@ export async function runLifecycle({
     const effectiveTitle = (title === "HTML Report" && siblingManifest?.title) ? siblingManifest.title : title;
     const isPwa = Boolean(pwa || siblingManifest?.pwa);
 
+    const activeProject = inferredProjectSlug || siblingManifest?.project || null;
     const buildRes = buildReport({
       title: effectiveTitle,
       content: raw,
-      project: siblingManifest?.project || null,
+      project: activeProject,
       contentPath: siblingManifest?.files?.fragment || file || null,
       mode: resolvedMode,
       printable: isPrintable,
@@ -379,15 +414,21 @@ export async function runLifecycle({
       aiPersona: siblingManifest?.aiConfig?.persona || "analyst",
       aiPurpose: siblingManifest?.aiConfig?.purpose || "",
       aiDock: siblingManifest?.aiConfig?.floatingAssistant ?? true,
-      editable: Boolean(editable),
+      editable: Boolean(editable && !published),
+      published: Boolean(published),
       authoringPlugin,
-      source: siblingManifest?.files?.entry || null
+      source: siblingManifest?.files?.entry || (activeProject ? `projects/${activeProject}/${published ? "published.html" : "index.html"}` : null)
     });
     assembledHtml = typeof buildRes === "string" ? buildRes : buildRes.html;
 
     const outDir = path.dirname(resolvedOutput);
     fs.mkdirSync(outDir, { recursive: true });
     fs.writeFileSync(resolvedOutput, assembledHtml, "utf-8");
+
+    if (activeProject && !published && buildRes.agentManifest) {
+      const manifestPath = path.join(outDir, "report.manifest.json");
+      fs.writeFileSync(manifestPath, JSON.stringify(buildRes.agentManifest, null, 2) + "\n", "utf-8");
+    }
 
     if (buildRes.isPwa && buildRes.pwaConfig) {
       const { generatePwaAssets } = await import("./pwa-builder.mjs");

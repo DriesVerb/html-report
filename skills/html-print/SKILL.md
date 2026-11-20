@@ -53,7 +53,7 @@ Always specify high-contrast, ink-conserving themes:
 ## Assembly & Verification Workflow
 
 ### Step 1: Synthesize Print Semantic `<main>` Fragment
-Emit the document fragment (e.g. `invoice-fragment.html`):
+Emit the document fragment inside the gitignored `projects/<slug>/` folder (e.g. `projects/invoice-2026-0042/fragment.html`):
 ```html
 <main id="report-main" class="container mx-auto px-6 py-4 max-w-4xl space-y-6">
   <!-- Invoice Header -->
@@ -83,20 +83,19 @@ Emit the document fragment (e.g. `invoice-fragment.html`):
 ```
 
 ### Step 2: Assemble Print Deliverable
-Compile with `--mode print`:
+Run the one-shot `<150ms` harness with `--project` and `--mode print` (lints, auto-fixes, and writes to `projects/invoice-2026-0042/index.html`):
 ```bash
-node skills/html-report/scripts/build-report.mjs \
+node skills/html-report/scripts/harness.mjs run \
+  --project invoice-2026-0042 \
   --title "Invoice INV-2026-0042" \
-  --content invoice-fragment.html \
   --mode print \
-  --theme corporate \
-  --output invoice.html
+  --theme corporate --fast
 ```
 
 ### Step 3: Headless PDF Export & Validation
 Generate and verify the PDF deliverable via Playwright:
 ```bash
-node skills/html-report/playwright/verify-report.mjs invoice.html --pdf invoice.pdf --quick
+node skills/html-report/playwright/verify-report.mjs projects/invoice-2026-0042/index.html --pdf projects/invoice-2026-0042/invoice.pdf --quick
 ```
 
 ---

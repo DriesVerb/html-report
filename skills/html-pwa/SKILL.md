@@ -34,15 +34,14 @@ This specialized skill acts as a cross-cutting **Offline Packaging Modifier** (`
 ## Assembly & Retrofit Workflow
 
 ### Option A: Build New PWA Deliverable (`--pwa`)
-Assemble a report with full PWA scaffolding enabled:
+Lint, auto-fix, and assemble a report with full PWA scaffolding enabled inside the gitignored `projects/<slug>/` folder:
 ```bash
-node skills/html-report/scripts/build-report.mjs \
+node skills/html-report/scripts/harness.mjs run \
+  --project field-inspection-app \
   --title "Field Inspection App" \
-  --content report-fragment.html \
-  --pwa \
-  --output index.html
+  --pwa --fast
 ```
-This automatically produces:
+This automatically produces inside `projects/field-inspection-app/`:
 - `index.html` (with SW registration & manifest links)
 - `manifest.webmanifest`
 - `sw.js`
@@ -51,7 +50,7 @@ This automatically produces:
 ### Option B: Retrofit ANY Existing Report (`generate-pwa.mjs`)
 Transform any previously generated standalone HTML report into an installable PWA without modifying original code:
 ```bash
-node skills/html-report/scripts/generate-pwa.mjs ./existing-report.html \
+node skills/html-report/scripts/generate-pwa.mjs projects/audit-report/index.html \
   --title "Audit Report" \
   --short-name "AuditApp" \
   --theme-color "#10b981" \

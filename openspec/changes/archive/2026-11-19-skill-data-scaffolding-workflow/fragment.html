@@ -1,0 +1,175 @@
+<section class="space-y-8">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+    <div class="min-w-0 flex-1 space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Plan 4 of 5</span>
+        <span class="badge badge-outline font-mono text-xs">skill-data-scaffolding-workflow</span>
+      </div>
+      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Plan 4: Data-First Scaffolding &amp; Schema Introspection</h1>
+      <p class="text-xs sm:text-sm text-base-content/75 max-w-3xl">
+        Surfaces <code>scaffold-project.mjs --project &lt;slug&gt; --ref data.csv --widgets kpi-row,chart-pair,grid-table --json</code> directly in agent skill facades and enriches <code>data-introspector.mjs</code> with pre-computed <code>{ sum, avg, min, max, count }</code> column summaries.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="file-text" class="w-4 h-4"></i><span>proposal.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="layers" class="w-4 h-4"></i><span>design.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="check-square" class="w-4 h-4"></i><span>tasks.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/skill-data-scaffolding-workflow/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
+        <i data-lucide="shield-check" class="w-4 h-4"></i><span>specs/</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Journey Phase Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="journey-phase-stepper" class="text-sm font-bold uppercase tracking-wider text-base-content/70">Journey Phase</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">Stage 5: Shipped / Archived (4 / 4 Tasks Complete - 100%)</span>
+    </div>
+    <div class="w-full overflow-x-auto">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li class="step step-primary" data-content="✓">Brainstorming</li>
+        <li class="step step-primary" data-content="✓">Planning</li>
+        <li class="step step-primary" data-content="✓">Implementing</li>
+        <li class="step step-primary" data-content="✓">Verifying</li>
+        <li class="step step-primary" data-content="✓">Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Progress KPIs -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Task Progress</div>
+      <div class="text-2xl font-extrabold text-success">4 / 4 (100%)</div>
+      <div class="text-xs text-base-content/70">Completed across 2 phases</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Bootstrap Speed</div>
+      <div class="text-2xl font-extrabold text-success">&lt; 100ms</div>
+      <div class="text-xs text-base-content/70">CSV/JSON -> pre-wired fragment + index.html</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Widget Presets</div>
+      <div class="text-2xl font-extrabold text-primary">5 Presets</div>
+      <div class="text-xs text-base-content/70">kpi-row, chart-pair, grid-table, mermaid-flow, timeline</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Column Stats</div>
+      <div class="text-2xl font-extrabold text-secondary">5 Metrics</div>
+      <div class="text-xs text-base-content/70">count, sum, avg, min, max in --json</div>
+    </div>
+  </div>
+
+  <!-- Architecture Mermaid & Turn Reduction Chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="scaffold-architecture" class="text-lg font-bold min-w-0 flex-1 break-words">Data-First Scaffolding Pipeline</h2>
+        <span class="badge badge-primary badge-outline badge-xs font-mono shrink-0">scaffold-project.mjs --json</span>
+      </div>
+      <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">
+flowchart LR
+  CSV["Raw CSV / JSON (--ref)"] --> Introspect["introspectDataFile() + columnSummaries"]
+  Introspect --> Presets["Render Widget Presets (kpi-row, chart-pair, grid-table)"]
+  Presets --> Frag["projects/slug/fragment.html + index.html"]
+  Introspect --> JSON["stdout JSON Schema + Aggregates for Agent"]
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="scaffold-turns-chart" class="text-lg font-bold min-w-0 flex-1 break-words">Agent Tool Calls to Bootstrap Data Report</h2>
+        <span class="badge badge-success badge-outline badge-xs font-mono shrink-0">1 Tool Call vs 5</span>
+      </div>
+      <div class="relative h-72 sm:h-80 w-full min-w-0">
+        <canvas id="scaffoldTurnsChart" aria-label="Agent Tool Calls Before and After" role="img"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Task Checklist -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="task-checklist" class="text-lg font-bold">Implementation Checklist (<button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</button>)</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">4 / 4 Complete (100%)</span>
+    </div>
+    <div class="overflow-x-auto w-full">
+      <table class="table table-zebra table-sm w-full [&_code]:break-all">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Milestone</th>
+            <th>Target Files</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-mono text-xs">1.1</td>
+            <td>Compute <code>columnSummaries</code> (<code>count</code>, <code>sum</code>, <code>avg</code>, <code>min</code>, <code>max</code>) per numeric column</td>
+            <td><code>packages/studio/scripts/lib/scaffold/data-introspector.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">1.2</td>
+            <td>Add <code>--json</code> CLI flag to <code>scaffold-project.mjs</code></td>
+            <td><code>packages/studio/scripts/scaffold-project.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">2.1–2.2</td>
+            <td>Document data-first scaffolding in <code>SKILL.md</code> and add unit tests</td>
+            <td><code>skills/html-report/SKILL.md</code>, <code>packages/studio/tests/</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Data-First Scaffolding & Schema Introspection in Agent Skills\n\nExposes scaffold-project.mjs in SKILL.md, adds --json CLI output, and computes numeric column summaries (sum, avg, min, max, count) in data-introspector.mjs.",
+  "design.md": "# Design: Data-First Scaffolding & Schema Introspection\n\n- columnSummaries computed in introspectDataFile()\n- --json flag on scaffold-project.mjs outputs dataset schema + aggregates + generated paths\n- Documented in skills/html-report/SKILL.md and skills/html-studio/SKILL.md",
+  "tasks.md": "# Tasks: Data-First Scaffolding & Schema Introspection\n\n- [x] 1.1 Add columnSummaries to data-introspector.mjs\n- [x] 1.2 Add --json CLI flag to scaffold-project.mjs\n- [x] 2.1 Document scaffold-project.mjs in SKILL.md\n- [x] 2.2 Add unit tests and sync localhost:3031",
+  "specs/skill-data-scaffolding-workflow/spec.md": "# Delta Specification: skill-data-scaffolding-workflow\n\nDefines pre-computed numeric columnSummaries and --json CLI output for scaffold-project.mjs."
+}
+</script>
+
+<script>
+  (function initScaffoldChart() {
+    let attempts = 0;
+    function tryInit() {
+      const canvas = document.getElementById("scaffoldTurnsChart");
+      if (!canvas) return;
+      if (typeof Chart === "undefined") {
+        if (++attempts < 60) setTimeout(tryInit, 60);
+        return;
+      }
+      if (canvas.__initialized) return;
+      canvas.__initialized = true;
+      const chart = new Chart(canvas.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: ["Manual CSV Parse + Scratch Script + Write + Build", "scaffold-project.mjs --ref data.csv --widgets ... --json"],
+          datasets: [
+            { label: "Agent Tool Calls", data: [5, 1], backgroundColor: ["rgba(239, 68, 68, 0.72)", "rgba(34, 197, 94, 0.78)"], borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+      });
+      window.reportCharts = window.reportCharts || [];
+      window.reportCharts.push(chart);
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tryInit);
+    else tryInit();
+  })();
+</script>

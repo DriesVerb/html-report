@@ -256,11 +256,25 @@ export class SessionStateStore {
   }
 }
 
-export function parseArgs(argv) {
+export function isAgentOrSandboxedEnv(env = process.env) {
+  if (!env || typeof env !== "object") return false;
+  return Boolean(
+    env.HTML_REPORT_NO_OPEN === "1" ||
+    env.CI === "true" ||
+    env.CI === "1" ||
+    env.ANTIGRAVITY_AGENT ||
+    env.ANTIGRAVITY_CONVERSATION_ID ||
+    env.CLAUDECODE ||
+    env.CODEX_SANDBOX ||
+    env.CURSOR_TRACE_ID
+  );
+}
+
+export function parseArgs(argv, env = process.env) {
   const args = argv.slice(2);
   let filePath = null;
   let port = 3031;
-  let autoOpen = process.env.HTML_REPORT_NO_OPEN !== "1";
+  let autoOpen = !isAgentOrSandboxedEnv(env);
   let aiLocal = false;
   const feedProxies = [];
 
@@ -269,6 +283,8 @@ export function parseArgs(argv) {
       port = parseInt(args[++i], 10) || 3031;
     } else if (args[i] === "--no-open") {
       autoOpen = false;
+    } else if (args[i] === "--open") {
+      autoOpen = true;
     } else if (args[i] === "--ai-local") {
       aiLocal = true;
     } else if (args[i] === "--feed-proxy" && args[i + 1]) {
@@ -291,6 +307,9 @@ export function parseArgs(argv) {
 }
 
 export function openBrowser(url) {
+  if (isAgentOrSandboxedEnv(process.env)) {
+    return;
+  }
   const platform = process.platform;
   let cmd = "";
   if (platform === "darwin") {

@@ -56,7 +56,7 @@ export function parseArgs(argv) {
     aiPersona: "analyst",
     aiPurpose: "",
     aiDock: true,
-    editable: false,
+    editable: true,
     mirrorDir: null,
     published: false,
     verify: false,
@@ -154,6 +154,7 @@ export function parseArgs(argv) {
       options.mirrorDir = args[++i];
     } else if (arg === "--published") {
       options.published = true;
+      options.editable = false;
     } else if (arg === "--verify") {
       options.verify = true;
     } else if (arg === "--json") {
@@ -229,7 +230,7 @@ Usage:
 Options:
   -c, --content <file>      Path to Semantic Fragment (<main id="report-main">) file (required)
   -t, --title <string>      Output Deliverable title (default: "HTML Report")
-  -o, --output <file>       Destination Output Deliverable HTML file (default: "./report.html")
+  -o, --output <file>       Destination Output Deliverable HTML file (default: "projects/<slug>/index.html")
       --project <slug>      Scaffold output into projects/<slug>/index.html (or published.html with --published)
   -m, --mode <name>         Delivery Archetype / mode: print, report, presentation, dashboard, working-report, live-report (default: "report")
   -p, --print, --printable  Enable printable/PDF mode (@media print rules, Static File + Passive)
@@ -246,9 +247,10 @@ Options:
       --no-pwa-assets       Skip writing companion PWA files to disk
       --ai                  Enable Two-Way AI Agent Bridge controls in Settings
       --ai-local            Enable zero-API-key local context bridge mode
-      --editable            Inject opt-in Authoring Plugin (Edit Mode, All Settings, AI Bridge)
+      --editable            Include Authoring Plugin (Edit Mode, All Settings, AI Bridge; enabled by default)
+      --no-editable         Omit Authoring Plugin for non-editable Output Deliverable
       --mirror-dir <dir>    Explicitly mirror project outputs into <dir>
-      --published           Emit a clean Published Document with verification artifacts pruned
+      --published           Emit a clean non-editable Published Document with Authoring Plugin and verification artifacts pruned
       --verify              Run deterministic Playwright verification (verify-report.mjs --quick) after assembly
       --json                Output machine-readable JSON Assembly summary (Agent-Facing)
       --theme <name>        DaisyUI theme name (default: "light")
@@ -279,6 +281,14 @@ Options:
 `);
 }
 
+function slugifyProjectName(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
+
 export function runBuildCli(argv, { buildReport }) {
   const rawArgv = argv.slice(2);
   const hasFlag = (...names) => rawArgv.some((a) => names.includes(a));
@@ -304,6 +314,22 @@ export function runBuildCli(argv, { buildReport }) {
         break;
       }
     }
+  }
+
+  const resolvedInitialOut = path.resolve(process.cwd(), options.output || "./report.html");
+  const repoRootReportHtml = path.resolve(REPO_ROOT, "report.html");
+  const normalizedContentArg = String(options.content || "").replace(/\\/g, "/");
+  const isCanonicalRootShowcase = normalizedContentArg.endsWith("examples/dev/landing-fragment.html");
+  const shouldRouteToProjects =
+    !hasFlag("--output", "-o") ||
+    (resolvedInitialOut === repoRootReportHtml && !isCanonicalRootShowcase);
+
+  if (!options.project && shouldRouteToProjects) {
+    const derivedFromTitle = hasFlag("--title", "-t") ? slugifyProjectName(options.title) : "";
+    const derivedFromContent = options.content
+      ? slugifyProjectName(path.basename(options.content, path.extname(options.content)).replace(/(?:^|-)fragment$/i, ""))
+      : "";
+    options.project = derivedFromTitle || derivedFromContent || "report";
   }
 
   if (options.project) {
@@ -353,8 +379,10 @@ export function runBuildCli(argv, { buildReport }) {
       } catch (_) {}
     }
 
-    if (options.published && !hasFlag("--output", "-o")) {
-      options.output = `projects/${options.project}/published.html`;
+    if (shouldRouteToProjects) {
+      options.output = options.published
+        ? `projects/${options.project}/published.html`
+        : `projects/${options.project}/index.html`;
     }
   }
 

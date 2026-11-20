@@ -244,7 +244,7 @@ export function buildReport({
   aiPersona = "analyst",
   aiPurpose = "",
   aiDock = true,
-  editable = false,
+  editable = true,
   authoringPlugin = null,
   published = false,
   source = null,

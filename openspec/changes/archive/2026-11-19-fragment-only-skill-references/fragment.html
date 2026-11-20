@@ -1,0 +1,175 @@
+<section class="space-y-8">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+    <div class="min-w-0 flex-1 space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Plan 3 of 5</span>
+        <span class="badge badge-outline font-mono text-xs">fragment-only-skill-references</span>
+      </div>
+      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Plan 3: Fragment-Only Skill Reference Guides</h1>
+      <p class="text-xs sm:text-sm text-base-content/75 max-w-3xl">
+        Condenses <code>skills/html-report/references/architecture-and-styling.md</code> from 459 lines down to <code>&lt;= 120</code> lines by stripping raw <code>template-shell.html</code> navbar/head dumps and replacing them with high-signal <code>&lt;main id="report-main"&gt;</code> recipes.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="file-text" class="w-4 h-4"></i><span>proposal.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="layers" class="w-4 h-4"></i><span>design.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="check-square" class="w-4 h-4"></i><span>tasks.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/fragment-only-skill-references/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
+        <i data-lucide="shield-check" class="w-4 h-4"></i><span>specs/</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Journey Phase Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="journey-phase-stepper" class="text-sm font-bold uppercase tracking-wider text-base-content/70">Journey Phase</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">Stage 5: Shipped / Archived (4/4 Tasks Complete — 100%)</span>
+    </div>
+    <div class="w-full overflow-x-auto">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li class="step step-primary" data-content="✓">Brainstorming</li>
+        <li class="step step-primary" data-content="✓">Planning</li>
+        <li class="step step-primary" data-content="✓">Implementing</li>
+        <li class="step step-primary" data-content="✓">Verifying</li>
+        <li class="step step-primary" data-content="✓">Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Progress KPIs -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Task Progress</div>
+      <div class="text-2xl font-extrabold text-success">4 / 4 (100%)</div>
+      <div class="text-xs text-base-content/70">Completed across 2 phases</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Reference Size</div>
+      <div class="text-2xl font-extrabold text-success">107 Lines</div>
+      <div class="text-xs text-base-content/70">Down from 459 lines (-77%)</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Duplicate Navbars</div>
+      <div class="text-2xl font-extrabold text-primary">0</div>
+      <div class="text-xs text-base-content/70">No raw navbar HTML in agent docs</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Component Recipes</div>
+      <div class="text-2xl font-extrabold text-secondary">5 Blocks</div>
+      <div class="text-xs text-base-content/70">KPIs, Cards, Steppers, Tables, MD</div>
+    </div>
+  </div>
+
+  <!-- Architecture Mermaid & Line Reduction Chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="reference-architecture" class="text-lg font-bold min-w-0 flex-1 break-words">Progressive Disclosure Separation</h2>
+        <span class="badge badge-primary badge-outline badge-xs font-mono shrink-0">Fragment vs Shell</span>
+      </div>
+      <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">
+flowchart TD
+  Agent["AI Agent Reading Skill"] --> SkillMd["SKILL.md (&lt;= 5KB)"]
+  SkillMd --> Ref["architecture-and-styling.md (&lt;= 120 lines)"]
+  Ref --> MainOnly["Strictly &lt;main id='report-main'&gt; Recipes &amp; Addon Triggers"]
+  Shell["template-shell.html (&lt;head&gt;, Navbar, Footer)"] --> Builder["build-report.mjs (Automatic Injection)"]
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="reference-size-chart" class="text-lg font-bold min-w-0 flex-1 break-words">Reference Context Line Count</h2>
+        <span class="badge badge-success badge-outline badge-xs font-mono shrink-0">-74% Context Overhead</span>
+      </div>
+      <div class="relative h-72 sm:h-80 w-full min-w-0">
+        <canvas id="refSizeChart" aria-label="Reference File Line Count Before and After" role="img"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Task Checklist -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="task-checklist" class="text-lg font-bold">Implementation Checklist (<button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</button>)</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">4 / 4 Complete</span>
+    </div>
+    <div class="overflow-x-auto w-full">
+      <table class="table table-zebra table-sm w-full [&_code]:break-all">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Milestone</th>
+            <th>Target Files</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-mono text-xs">1.1</td>
+            <td>Prune raw <code>&lt;head&gt;</code>, <code>&lt;header class="navbar"&gt;</code>, and <code>&lt;footer&gt;</code> dumps</td>
+            <td><code>skills/html-report/references/architecture-and-styling.md</code></td>
+            <td><span class="badge badge-success badge-xs">Completed</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">1.2</td>
+            <td>Add copy-pasteable <code>&lt;main&gt;</code> component recipes and addon trigger table</td>
+            <td><code>skills/html-report/references/architecture-and-styling.md</code></td>
+            <td><span class="badge badge-success badge-xs">Completed</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">2.1–2.2</td>
+            <td>Add automated <code>&lt;= 150</code>-line guard test and sync companion report</td>
+            <td><code>packages/core/tests/codebase-digestibility.test.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Completed</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Fragment-Only Skill Reference Guides (70% Context Reduction)\n\nCondenses architecture-and-styling.md from 459 lines down to <= 120 lines by removing raw template-shell.html (head, navbar, footer) HTML dumps and focusing strictly on Semantic Fragment rules and component recipes.",
+  "design.md": "# Design: Fragment-Only Skill Reference Guides\n\n- 4 concise sections: Shell Invariants, 15 Addon Auto-Detection Triggers, Copy-Pasteable Fragment Component Recipes, and 6 Rendering Modes\n- Automated test guard ensuring <= 150 lines and zero raw navbar HTML dumps",
+  "tasks.md": "# Tasks: Fragment-Only Skill Reference Guides\n\n- [x] 1.1 Rewrite architecture-and-styling.md to <= 120 lines (107 lines)\n- [x] 1.2 Add copy-pasteable Semantic Fragment component recipes\n- [x] 2.1 Add automated reference size guard test\n- [x] 2.2 Sync companion index.html to localhost:3031",
+  "specs/fragment-only-skill-references/spec.md": "# Delta Specification: fragment-only-skill-references\n\nEnforces that architecture-and-styling.md remains <= 150 lines and focuses strictly on Semantic Fragment authoring."
+}
+</script>
+
+<script>
+  (function initRefChart() {
+    let attempts = 0;
+    function tryInit() {
+      const canvas = document.getElementById("refSizeChart");
+      if (!canvas) return;
+      if (typeof Chart === "undefined") {
+        if (++attempts < 60) setTimeout(tryInit, 60);
+        return;
+      }
+      if (canvas.__initialized) return;
+      canvas.__initialized = true;
+      const chart = new Chart(canvas.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: ["architecture-and-styling.md (Before)", "architecture-and-styling.md (After)"],
+          datasets: [
+            { label: "Line Count", data: [459, 115], backgroundColor: ["rgba(239, 68, 68, 0.72)", "rgba(34, 197, 94, 0.78)"], borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+      });
+      window.reportCharts = window.reportCharts || [];
+      window.reportCharts.push(chart);
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tryInit);
+    else tryInit();
+  })();
+</script>

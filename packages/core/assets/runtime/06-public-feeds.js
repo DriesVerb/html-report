@@ -331,6 +331,9 @@ async function reinitReportContent() {
   try { initTOC(); } catch (_) {}
   try { if (window.hljs && typeof window.hljs.highlightAll === "function") window.hljs.highlightAll(); } catch (_) {}
   try { initDayjs(); } catch (_) {}
+  try { initDeclarativeCharts(); } catch (_) {}
+  try { initDeclarativeGridjs(); } catch (_) {}
+  try { initDeclarativeLeaflet(); } catch (_) {}
   try { autoLinkMarkdownFiles(); } catch (_) {}
   try { await renderMermaidWithTheme(resolveDaisyUIThemePalette()); } catch (_) {}
   try { if (typeof HTMLReportMermaid !== "undefined") HTMLReportMermaid.initEnlarge(); } catch (_) {}

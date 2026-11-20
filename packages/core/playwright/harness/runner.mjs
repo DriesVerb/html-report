@@ -4,6 +4,8 @@ import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 import { createDefaultRegistry } from "./registry.mjs";
 import { Reporter } from "./reporter.mjs";
+import { attachCdnDiskCache } from "./cdn-cache.mjs";
+import { areUsedVendorsCached } from "../../scripts/lib/build/vendor-disk-cache.mjs";
 import { detectSystemChrome } from "../../scripts/env.mjs";
 
 export async function launchBrowserWithFallback(options = {}, launcher = chromium) {
@@ -66,7 +68,11 @@ export async function runHarness(htmlPath, rawOptions = {}) {
     screenshots: rawOptions.screenshots || null,
     colorContrast: Boolean(rawOptions.colorContrast || rawOptions["color-contrast"]),
     allCdns: Boolean(rawOptions.allCdns || rawOptions["all-cdns"]),
-    cdns: rawOptions.cdns || null
+    cdns: rawOptions.cdns || null,
+    cdnCache: rawOptions.cdnCache !== undefined
+      ? Boolean(rawOptions.cdnCache)
+      : (rawOptions["no-cdn-cache"] ? false : true),
+    cacheDir: rawOptions.cacheDir || rawOptions["cache-dir"] || null
   };
 
   const reporter = new Reporter(options);
@@ -77,7 +83,21 @@ export async function runHarness(htmlPath, rawOptions = {}) {
     viewport: { width: 1280, height: 900 },
     acceptDownloads: true
   });
+  const cdnCacheSession = await attachCdnDiskCache(context, {
+    enabled: options.cdnCache !== false,
+    cacheDir: options.cacheDir
+  });
   const page = await context.newPage();
+
+  let allVendorsCachedOnDisk = false;
+  if (!isHttpUrl && options.cdnCache !== false) {
+    try {
+      const reportHtml = fs.readFileSync(resolvedHtmlPath, "utf-8");
+      allVendorsCachedOnDisk = areUsedVendorsCached(reportHtml, {
+        cacheDir: cdnCacheSession.cacheDir
+      });
+    } catch (_) {}
+  }
 
   const sharedState = {
     consoleErrors: [],
@@ -117,9 +137,15 @@ export async function runHarness(htmlPath, rawOptions = {}) {
       if (!options.quick) {
         await page.waitForTimeout(300);
       }
-    } else if (options.quick) {
+    } else if (options.quick || allVendorsCachedOnDisk) {
       await page.goto(fileUrl, { waitUntil: "domcontentloaded", timeout: options.timeout });
-      await page.waitForFunction(() => window.__REPORT_READY__ === true, null, { timeout: 4000 }).catch(() => {});
+      await page.waitForFunction(
+        () =>
+          window.__REPORT_READY__ === true &&
+          Array.from(document.querySelectorAll('link[rel="stylesheet"]')).every((l) => Boolean(l.sheet)),
+        null,
+        { timeout: options.quick ? 4000 : 10000 }
+      ).catch(() => {});
     } else {
       await page.goto(fileUrl, { waitUntil: "networkidle", timeout: options.timeout });
       await page.waitForFunction(() => window.__REPORT_READY__ === true, null, { timeout: 15000 }).catch(() => {});
@@ -275,5 +301,11 @@ export async function runHarness(htmlPath, rawOptions = {}) {
   }
 
   await browser.close();
-  return reporter.onRunComplete();
+  const summary = reporter.onRunComplete();
+  summary.cdnCache = {
+    enabled: cdnCacheSession.enabled,
+    cacheDir: cdnCacheSession.cacheDir,
+    ...cdnCacheSession.stats
+  };
+  return summary;
 }

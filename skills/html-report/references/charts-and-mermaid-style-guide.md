@@ -1,177 +1,76 @@
-# Charts (Chart.js) & Diagrams (Mermaid) Dedicated Style Guide
+# Charts (Chart.js), Tables (Grid.js), Maps (Leaflet) & Diagrams (Mermaid) Style Guide
 
-Whenever an HTML report includes **Chart.js** charts or **Mermaid** diagrams, the agent MUST follow this dedicated style guide. Visuals must be responsive across all Tailwind breakpoints (`sm` through `2xl`), dynamically synchronize with all **32 DaisyUI themes**, and render cleanly in print/PDF export.
-
----
-
-## 1. Universal DaisyUI Theme Color Resolver (`#rrggbb` & `rgba`)
-
-DaisyUI v4 defines theme colors using modern `oklch(...)` CSS variables. While browsers render `oklch(...)` in CSS, **Mermaid's `themeVariables` parser** and some Canvas 2D operations require standard `#rrggbb` hex or `rgba(r, g, b, a)` strings.
-
-Always include this lightweight resolver so every DaisyUI theme change converts semantic DaisyUI classes (`bg-primary`, `bg-secondary`, `bg-accent`, `bg-info`, `bg-success`, `bg-warning`, `bg-error`, `bg-base-100`, `bg-base-200`, `bg-base-300`, `text-base-content`) into universal `#rrggbb` and `rgba(...)` strings:
-
-```javascript
-function cssColorToHexAndRgba(cssColor) {
-  const canvas = document.createElement("canvas");
-  canvas.width = 1;
-  canvas.height = 1;
-  const ctx = canvas.getContext("2d");
-  ctx.fillStyle = cssColor;
-  ctx.fillRect(0, 0, 1, 1);
-  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-  const hex = "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
-  return {
-    hex,
-    rgb: `rgb(${r}, ${g}, ${b})`,
-    rgba: (alpha = 1) => `rgba(${r}, ${g}, ${b}, ${alpha})`
-  };
-}
-
-function resolveDaisyUIThemePalette() {
-  const probeContainer = document.createElement("div");
-  probeContainer.style.cssText = "position:fixed;left:-9999px;top:-9999px;visibility:hidden;pointer-events:none;";
-  const roles = {
-    primary: "bg-primary",
-    secondary: "bg-secondary",
-    accent: "bg-accent",
-    neutral: "bg-neutral",
-    base100: "bg-base-100",
-    base200: "bg-base-200",
-    base300: "bg-base-300",
-    info: "bg-info",
-    success: "bg-success",
-    warning: "bg-warning",
-    error: "bg-error"
-  };
-
-  const nodes = {};
-  for (const [key, cls] of Object.entries(roles)) {
-    const el = document.createElement("span");
-    el.className = cls;
-    probeContainer.appendChild(el);
-    nodes[key] = el;
-  }
-  const textNode = document.createElement("span");
-  textNode.className = "text-base-content";
-  probeContainer.appendChild(textNode);
-
-  document.body.appendChild(probeContainer);
-
-  const palette = {};
-  for (const [key, el] of Object.entries(nodes)) {
-    palette[key] = cssColorToHexAndRgba(getComputedStyle(el).backgroundColor);
-  }
-  palette.content = cssColorToHexAndRgba(getComputedStyle(textNode).color);
-
-  probeContainer.remove();
-  return palette;
-}
-```
+Whenever an HTML report includes **Chart.js** charts, **Grid.js** tables, **Leaflet** geospatial maps, or **Mermaid** diagrams, the agent MUST follow this style guide. Visuals must be responsive across all Tailwind breakpoints (`sm` through `2xl`), dynamically synchronize with all **32 DaisyUI themes**, and render cleanly in print/PDF export.
 
 ---
 
-## 2. Chart.js Standards
+## 1. Zero-JS Declarative Widget Auto-Hydration (Preferred Pattern)
 
-### 2.1 Container & Sizing Rules (Preventing Overflow & Resize Loops)
-1. **Never place a `<canvas>` directly inside a flex/grid item without a relative fixed-height wrapper.**
-2. Always wrap `<canvas>` in `<div class="relative w-full h-72 sm:h-80">` and set `responsive: true, maintainAspectRatio: false`.
-3. Add `break-inside-avoid` to the parent card so PDF/print export never splits a chart across pages.
+`report-runtime.js` automatically bundles `cssColorToHexAndRgba()`, `resolveDaisyUIThemePalette()`, `renderMermaidWithTheme()`, and declarative auto-hydrators (`initDeclarativeCharts()`, `initDeclarativeGridjs()`, `initDeclarativeLeaflet()`).
+
+> [!IMPORTANT]
+> **Do NOT copy-paste `cssColorToHexAndRgba`, `resolveDaisyUIThemePalette`, or `applyThemeToCharts` into your fragment `<script>`.** They are already pre-bundled in `report-runtime.js` (`02-theme-switcher.js` and `05b-widget-hydrators.js`). Prefer declarative `data-chart`, `data-gridjs`, and `data-leaflet` attributes so zero custom `<script>` tags are required.
+
+### 1.1 Declarative Chart.js (`data-chart` / `data-chart-source`)
+`initDeclarativeCharts()` automatically hydrates `<canvas data-chart='{...}'>` (or `<canvas data-chart-source="#json-script-id">`), applies active DaisyUI theme palette colors (`primary`, `secondary`, `accent`, `info`, `success`, `warning`, `error`) when dataset colors are omitted, enforces `responsive: true, maintainAspectRatio: false`, and registers instances in `window.reportCharts` for instant 32-theme switching:
 
 ```html
 <div class="card bg-base-100 shadow-sm border border-base-300 break-inside-avoid">
   <div class="card-body p-4 sm:p-6">
     <h3 id="chart-revenue-heading" class="card-title text-base sm:text-lg scroll-mt-20">
-      Quarterly Revenue & Margin Trend
+      Quarterly Revenue &amp; Margin Trend
     </h3>
-    <p class="text-xs sm:text-sm opacity-75"> Figures in USD ($M) — Synchronized with active DaisyUI theme </p>
-    <div class="relative w-full h-72 sm:h-80 mt-2">
-      <canvas id="revenueChart" aria-label="Quarterly Revenue Chart" role="img"></canvas>
+    <p class="text-xs sm:text-sm opacity-75">Figures in USD ($M) — Synchronized with active DaisyUI theme</p>
+    <div class="relative w-full h-72 sm:h-80 min-w-0 mt-2">
+      <canvas
+        id="revenueChart"
+        aria-label="Quarterly Revenue Chart"
+        role="img"
+        data-chart='{"type":"bar","data":{"labels":["Q1","Q2","Q3","Q4"],"datasets":[{"label":"Revenue ($M)","data":[42,58,65,81]},{"label":"Net Margin ($M)","data":[12,18,22,29]}]}}'
+      ></canvas>
     </div>
   </div>
 </div>
 ```
 
-### 2.2 Palette, Typography & Theme Reactivity
-1. Maintain a global `window.reportCharts = []` array of active Chart.js instances.
-2. Bind datasets to `palette.primary`, `palette.secondary`, `palette.accent`, `palette.info`, `palette.success`, and `palette.warning`.
-3. Set axis tick colors to `palette.content.rgba(0.8)` and grid lines to `palette.content.rgba(0.12)`.
-4. Whenever the user changes the DaisyUI theme in the navbar, call `updateChartsForTheme(palette)` and invoke `chart.update('none')` so every chart updates immediately without jarring re-entry animations.
+For larger datasets, store the JSON in `<script type="application/json" id="revenue-chart-data">` inside `<main>` and reference it with `<canvas data-chart-source="#revenue-chart-data"></canvas>`.
 
-```javascript
-function applyThemeToCharts(palette) {
-  if (!window.reportCharts) return;
-  const seriesColors = [
-    palette.primary,
-    palette.secondary,
-    palette.accent,
-    palette.info,
-    palette.success,
-    palette.warning
-  ];
+### 1.2 Declarative Grid.js (`data-gridjs` / `data-gridjs-source`)
+`initDeclarativeGridjs()` automatically hydrates `[data-gridjs]` (or `[data-gridjs-source="#..."]`) and defaults to `{ search: true, sort: true, pagination: { limit: 10 } }`:
 
-  for (const chart of window.reportCharts) {
-    chart.data.datasets.forEach((ds, idx) => {
-      const color = seriesColors[idx % seriesColors.length];
-      if (ds.type === "line" || chart.config.type === "line") {
-        ds.borderColor = color.hex;
-        ds.backgroundColor = color.rgba(0.2);
-        ds.pointBackgroundColor = color.hex;
-      } else {
-        ds.backgroundColor = color.rgba(0.82);
-        ds.borderColor = color.hex;
-        ds.borderWidth = 1.5;
-        ds.borderRadius = 6;
-      }
-    });
-
-    if (chart.options.scales) {
-      for (const scale of Object.values(chart.options.scales)) {
-        if (scale.ticks) scale.ticks.color = palette.content.rgba(0.8);
-        if (scale.grid) scale.grid.color = palette.content.rgba(0.12);
-        if (scale.title) scale.title.color = palette.content.rgba(0.9);
-      }
-    }
-    if (chart.options.plugins?.legend?.labels) {
-      chart.options.plugins.legend.labels.color = palette.content.hex;
-    }
-    chart.update("none");
-  }
-}
+```html
+<div
+  id="regional-scorecard-table"
+  data-gridjs='{"columns":["Region","Owner","ARR ($M)","YoY Growth"],"data":[["North America","A. Chen","$48.2M","+24%"],["EMEA","M. Weber","$31.5M","+19%"],["APAC","S. Tanaka","$22.8M","+31%"]]}'
+></div>
 ```
 
-### 2.3 Critical Execution Rules: Script Placement, Deferred CDN Polling & Offline Fallbacks
+### 1.3 Declarative Leaflet Maps (`data-leaflet` / `data-leaflet-source`)
+`initDeclarativeLeaflet()` automatically hydrates `[data-leaflet]` (or `[data-leaflet-source="#..."]`) and binds Esri ArcGIS World Street Map tiles (`https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}`), preventing `file://` tile 403 errors from OpenStreetMap or CartoDB:
 
-> [!CAUTION]
-> **Never place `<script>` tags after `</main>` in content fragments.**
-> `build-report.mjs` extracts content using `content.match(/<main[^>]*>([\s\S]*?)<\/main>/i)`. Any `<script>` tag placed outside `</main>` is silently stripped, leaving canvases completely blank without throwing errors.
+```html
+<div
+  id="global-footprint-map"
+  class="h-72 sm:h-80 w-full rounded-box border border-base-300"
+  data-leaflet='{"center":[51.505,-0.09],"zoom":12,"markers":[{"lat":51.505,"lng":-0.09,"popup":"London HQ"},{"lat":51.515,"lng":-0.08,"popup":"City Data Center"}]}'
+></div>
+```
 
-1. **Mandatory Script Enclosure:** Always place initialization `<script>` tags **inside** `<main>...</main>`.
-2. **Deferred CDN Auto-Polling:** Because Chart.js CDN scripts load with `defer`, inline code can execute before `window.Chart` exists. Never write single-tick `if (typeof Chart === 'undefined') return;`. Always use self-polling:
-   ```javascript
-   (function initChartWithPolling() {
-     let attempts = 0;
-     function tryInit() {
-       const canvas = document.getElementById("myChart");
-       if (!canvas) return;
-       if (typeof Chart === "undefined") {
-         if (++attempts < 60) setTimeout(tryInit, 60);
-         return;
-       }
-       if (canvas.__initialized) return;
-       canvas.__initialized = true;
-       const chart = new Chart(canvas, { /* config */ });
-       window.reportCharts = window.reportCharts || [];
-       window.reportCharts.push(chart);
-     }
-     if (document.readyState === "loading") {
-       document.addEventListener("DOMContentLoaded", tryInit);
-     } else {
-       tryInit();
-     }
-     window.addEventListener("load", tryInit);
-   })();
-   ```
-3. **Mandatory Offline Visual Fallback:** Never leave a `<canvas>` alone in a card. Always accompany canvas charts with a zero-JS visual scorecard, CSS bar breakdown, or structured table. If a user is offline or an air-gapped firewall blocks the CDN, the card must still present the data clearly and never display as an empty white card.
+---
+
+## 2. Chart.js Layout & Custom Script Rules (When Custom JS Is Needed)
+
+### 2.1 Container & Sizing Rules (Preventing Overflow & Resize Loops)
+1. **Never place a `<canvas>` directly inside a flex/grid item without a relative fixed-height wrapper.**
+2. Always wrap `<canvas>` in `<div class="relative w-full h-72 sm:h-80 min-w-0">`.
+3. Add `break-inside-avoid` to the parent card so PDF/print export never splits a chart across pages.
+4. **Offline Visual Context:** Accompany canvas charts with a KPI summary row, scorecard, or table so air-gapped viewers still see key figures.
+
+### 2.2 Custom Imperative Chart.js Fallback Rules
+If a chart requires custom JavaScript callbacks (e.g. custom tooltip formatters):
+1. **Mandatory Script Enclosure:** Always place `<script>` tags **inside** `<main>...</main>`. `build-report.mjs` extracts `<main[^>]*>([\s\S]*?)<\/main>` and strips any script placed after `</main>`.
+2. **Use Pre-Bundled Runtime Helpers:** Call `window.resolveDaisyUIThemePalette()` directly and push the created chart to `window.reportCharts = window.reportCharts || []` so `setReportTheme()` updates it automatically on theme change.
+3. **Deferred CDN Auto-Polling:** Because Chart.js loads with `defer`, poll for `typeof Chart !== "undefined"` before instantiating.
 
 ---
 
@@ -181,6 +80,7 @@ function applyThemeToCharts(palette) {
 1. Wrap every `.mermaid` block inside a responsive, scrollable card container (`overflow-x-auto flex justify-center p-4 bg-base-200/50 rounded-box break-inside-avoid`) so wide diagrams never cause horizontal page overflow at `640px` (`sm`).
 2. Keep node labels concise (max 4–6 words per node) and quote labels containing parentheses or special characters (`A["Ingestion Service (v2)"]`).
 3. Prefer `flowchart LR` or `flowchart TD` with at most 12 nodes per diagram for clarity.
+4. `report-runtime.js` automatically themes and re-renders `.mermaid` blocks on every DaisyUI theme switch via `renderMermaidWithTheme(resolveDaisyUIThemePalette())`.
 
 ### 3.2 Mermaid 11.4 Syntax Defense & Strict Parsing Rules
 Mermaid 11.4 enforces strict token parsing that will throw `Syntax error in text` or fail silently if common text tokens are unescaped:
@@ -197,65 +97,12 @@ Mermaid 11.4 enforces strict token parsing that will throw `Syntax error in text
    - Participant paths with leading dots or path separators (e.g. `.caller-requests/`) cause parser errors unless quoted or aliased.
    - **Correct**: `participant Vault as ".caller-requests/"` or `participant Vault as Caller Vault`.
    - **Wrong**: `participant Vault as .caller-requests/`.
-4. **Hex color format mandatory for `themeVariables`**:
-   - DaisyUI v4 exports colors as modern `oklch(...)`. Passing `oklch(...)` to `mermaid.initialize({ themeVariables })` throws `Error: Unsupported color format: "oklch(...)"`.
-   - Always resolve theme colors through `cssColorToHexAndRgba()` (using an offscreen 1x1 `<canvas>` 2D context) and pass strict `#rrggbb` hex values (`palette.primary.hex`, `palette.base100.hex`). Never rely on regex `rgba?\(...` matching which fails against `oklch(...)`.
-5. **Never start subgraph titles or node labels with ordered list patterns (`1. `, `2. `)**:
+4. **Never start subgraph titles or node labels with ordered list patterns (`1. `, `2. `)**:
    - Mermaid 11 parses leading numbers with periods (e.g. `subgraph Input["1. User Request"]`) as markdown ordered list items, triggering `Unsupported markdown: list` syntax errors.
    - **Correct**: Use hyphens or descriptive words: `subgraph Input["Step 1 - User Request"]` or `subgraph Input["[1] User Request"]`.
    - **Wrong**: `subgraph Input["1. User Request"]`.
-6. **Badge & Card Header Responsive Boundary Defense**:
-   - Flex header rows containing badges and titles must use `flex flex-wrap items-center justify-between gap-2` with `shrink-0` on badges and `min-w-0 flex-1 break-words` on title containers. Without `shrink-0` and `flex-wrap`, badges overflow card boundaries on narrow viewports.
-
-### 3.3 Dynamic DaisyUI Theme Re-Rendering for Mermaid
-Before running `mermaid.run()` for the first time, store the raw Mermaid definition in `el.dataset.mermaidSource = el.textContent.trim()`. When the DaisyUI theme changes:
-1. Restore each element's raw source (`el.removeAttribute("data-processed"); el.textContent = el.dataset.mermaidSource;`).
-2. Re-initialize `mermaid.initialize({ startOnLoad: false, theme: "base", themeVariables: { ... } })` using `#rrggbb` hex values from `resolveDaisyUIThemePalette()`.
-3. Call `await mermaid.run({ querySelector: ".mermaid" })`.
-
-```javascript
-async function renderMermaidWithTheme(palette) {
-  if (!window.mermaid) return;
-  const mermaidNodes = document.querySelectorAll(".mermaid");
-  if (!mermaidNodes.length) return;
-
-  mermaidNodes.forEach((node) => {
-    if (!node.dataset.mermaidSource) {
-      node.dataset.mermaidSource = node.textContent.trim();
-    }
-    node.removeAttribute("data-processed");
-    node.textContent = node.dataset.mermaidSource;
-  });
-
-  window.mermaid.initialize({
-    startOnLoad: false,
-    securityLevel: "loose",
-    theme: "base",
-    themeVariables: {
-      background: palette.base100.hex,
-      primaryColor: palette.base200.hex,
-      primaryTextColor: palette.content.hex,
-      primaryBorderColor: palette.primary.hex,
-      secondaryColor: palette.base300.hex,
-      secondaryTextColor: palette.content.hex,
-      secondaryBorderColor: palette.secondary.hex,
-      tertiaryColor: palette.base100.hex,
-      tertiaryTextColor: palette.content.hex,
-      tertiaryBorderColor: palette.accent.hex,
-      lineColor: palette.primary.hex,
-      textColor: palette.content.hex,
-      mainBkg: palette.base200.hex,
-      nodeBorder: palette.primary.hex,
-      clusterBkg: palette.base200.hex,
-      clusterBorder: palette.secondary.hex,
-      titleColor: palette.content.hex,
-      edgeLabelBackground: palette.base100.hex
-    }
-  });
-
-  await window.mermaid.run({ querySelector: ".mermaid" });
-}
-```
+5. **Badge & Card Header Responsive Boundary Defense**:
+   - Flex header rows containing badges and titles must use `flex flex-wrap items-center justify-between gap-2` with `shrink-0` on badges and `min-w-0 flex-1 break-words` on title containers.
 
 ---
 

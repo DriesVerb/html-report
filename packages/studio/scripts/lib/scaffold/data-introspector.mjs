@@ -202,16 +202,34 @@ export function parseNumericValue(val) {
 
 function detectColumnStats(columns, rows) {
   const numericColumns = [];
+  const columnSummaries = {};
   for (let colIdx = 0; colIdx < columns.length; colIdx++) {
     const sampleValues = rows.map((r) => r[colIdx]).filter((v) => v !== undefined && v !== null && String(v).trim() !== "");
     if (sampleValues.length === 0) continue;
-    const numCount = sampleValues.filter((v) => parseNumericValue(v) !== null).length;
-    if (numCount / sampleValues.length >= 0.5) {
-      numericColumns.push(columns[colIdx]);
+    const numericValues = sampleValues.map((v) => parseNumericValue(v)).filter((v) => v !== null);
+    if (numericValues.length / sampleValues.length >= 0.5) {
+      const colName = columns[colIdx];
+      numericColumns.push(colName);
+      let sum = 0;
+      let min = numericValues[0];
+      let max = numericValues[0];
+      for (const n of numericValues) {
+        sum += n;
+        if (n < min) min = n;
+        if (n > max) max = n;
+      }
+      const count = numericValues.length;
+      columnSummaries[colName] = {
+        count,
+        sum: Number(sum.toFixed(6)),
+        avg: Number((sum / count).toFixed(6)),
+        min,
+        max
+      };
     }
   }
   const labelColumn = columns.find((c) => !numericColumns.includes(c)) || columns[0] || "item";
-  return { numericColumns, labelColumn };
+  return { numericColumns, labelColumn, columnSummaries };
 }
 
 export function introspectDataFile(filePath, stagedPath = null) {
@@ -241,18 +259,21 @@ export function introspectDataFile(filePath, stagedPath = null) {
     if (lines.length === 0) return null;
     const columns = parseDelimitedLine(lines[0], delimiter).filter(Boolean);
     if (columns.length === 0) return null;
-    const rows = lines.slice(1, MAX_INTROSPECT_ROWS + 1).map((line) => {
+    const allRows = lines.slice(1).map((line) => {
       const parsed = parseDelimitedLine(line, delimiter);
       return columns.map((_, idx) => (parsed[idx] !== undefined ? parsed[idx] : ""));
     });
-    const { numericColumns, labelColumn } = detectColumnStats(columns, rows);
+    const rows = allRows.slice(0, MAX_INTROSPECT_ROWS);
+    const { numericColumns, labelColumn, columnSummaries } = detectColumnStats(columns, allRows);
     return {
       fileName,
       stagedPath,
       format: ext.slice(1),
+      rowCount: allRows.length,
       columns,
       numericColumns,
       labelColumn,
+      columnSummaries,
       rows
     };
   }
@@ -291,35 +312,42 @@ export function introspectDataFile(filePath, stagedPath = null) {
       }
       const columns = [...colSet];
       if (columns.length === 0) return null;
-      const rows = slice.map((rec) => columns.map((c) => {
+      const toRow = (rec) => columns.map((c) => {
         const val = rec?.[c];
         return val === undefined || val === null ? "" : (typeof val === "object" ? JSON.stringify(val) : String(val));
-      }));
-      const { numericColumns, labelColumn } = detectColumnStats(columns, rows);
+      });
+      const allRows = records.map(toRow);
+      const rows = allRows.slice(0, MAX_INTROSPECT_ROWS);
+      const { numericColumns, labelColumn, columnSummaries } = detectColumnStats(columns, allRows);
       return {
         fileName,
         stagedPath,
         format: "json",
+        rowCount: allRows.length,
         columns,
         numericColumns,
         labelColumn,
+        columnSummaries,
         rows
       };
     }
 
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      const entries = Object.entries(parsed).slice(0, MAX_INTROSPECT_ROWS);
-      if (entries.length === 0) return null;
+      const allEntries = Object.entries(parsed);
+      if (allEntries.length === 0) return null;
       const columns = ["key", "value"];
-      const rows = entries.map(([k, v]) => [String(k), typeof v === "object" ? JSON.stringify(v) : String(v ?? "")]);
-      const { numericColumns, labelColumn } = detectColumnStats(columns, rows);
+      const allRows = allEntries.map(([k, v]) => [String(k), typeof v === "object" ? JSON.stringify(v) : String(v ?? "")]);
+      const rows = allRows.slice(0, MAX_INTROSPECT_ROWS);
+      const { numericColumns, labelColumn, columnSummaries } = detectColumnStats(columns, allRows);
       return {
         fileName,
         stagedPath,
         format: "json",
+        rowCount: allRows.length,
         columns,
         numericColumns,
         labelColumn,
+        columnSummaries,
         rows
       };
     }

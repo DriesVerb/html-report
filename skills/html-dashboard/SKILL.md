@@ -54,7 +54,7 @@ Connects the browser UI to the active agent CLI session via `window.HTMLReportAg
 ## Assembly & Verification Workflow
 
 ### Step 1: Synthesize Live Semantic `<main>` Fragment
-Emit the live dashboard fragment (e.g. `dashboard-fragment.html`):
+Emit the live dashboard fragment into the gitignored `projects/<slug>/` folder (e.g. `projects/agent-dashboard/fragment.html`):
 ```html
 <main id="report-main" class="container mx-auto px-4 py-6 space-y-6" data-signals="{ activeTab: 'stream' }">
   <!-- Live Status Hero -->
@@ -85,19 +85,18 @@ Emit the live dashboard fragment (e.g. `dashboard-fragment.html`):
 ```
 
 ### Step 2: Assemble Live Deliverable
-Compile with `--live`:
+Run the one-shot `<150ms` harness with `--project` and `--live` (lints, auto-fixes, and compiles `projects/agent-dashboard/index.html`):
 ```bash
-node skills/html-report/scripts/build-report.mjs \
+node skills/html-report/scripts/harness.mjs run \
+  --project agent-dashboard \
   --title "Live Agent Dashboard" \
-  --content dashboard-fragment.html \
-  --live \
-  --output dashboard.html
+  --live --fast
 ```
 
 ### Step 3: Launch Live-Streaming Dev Server
 Run the dev server to stream SSE fragments and listen for agent interactions:
 ```bash
-node skills/html-report/scripts/serve-report.mjs dashboard.html --port 3000
+node skills/html-report/scripts/serve-report.mjs projects/agent-dashboard/index.html --port 3000 --no-open
 ```
 
 ---

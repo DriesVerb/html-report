@@ -27,11 +27,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, "../../..");
 
+import { isAgentOrSandboxedEnv } from "./lib/server/persona-and-session.mjs";
+
 export function parseInstallArgs(argv = process.argv.slice(2), env = process.env) {
   const options = {
     target: null,
     port: parseInt(env.HTML_REPORT_PORT || env.PORT || "3030", 10),
-    noOpen: Boolean(env.HTML_REPORT_NO_OPEN || false),
+    noOpen: Boolean(env.HTML_REPORT_NO_OPEN || isAgentOrSandboxedEnv(env) || false),
     help: false
   };
 
@@ -52,7 +54,7 @@ export function parseInstallArgs(argv = process.argv.slice(2), env = process.env
 }
 
 export function openBrowser(url) {
-  if (process.env.HTML_REPORT_NO_OPEN) return;
+  if (process.env.HTML_REPORT_NO_OPEN || isAgentOrSandboxedEnv(process.env)) return;
   const platform = process.platform;
   let cmd = "xdg-open";
   if (platform === "darwin") cmd = "open";

@@ -29,6 +29,8 @@ export function parseArgs(argv = process.argv) {
     screenshots: null,
     withCore: false,
     colorContrast: false,
+    cdnCache: true,
+    cacheDir: null,
     checkPrint: false,
     checkPdf: false,
     checkCharts: false,
@@ -94,6 +96,12 @@ export function parseArgs(argv = process.argv) {
       options.withCore = true;
     } else if (arg === "--color-contrast") {
       options.colorContrast = true;
+    } else if (arg === "--no-cdn-cache") {
+      options.cdnCache = false;
+    } else if (arg === "--cdn-cache") {
+      options.cdnCache = true;
+    } else if (arg === "--cache-dir" && args[i + 1] && !args[i + 1].startsWith("--")) {
+      options.cacheDir = args[++i];
     } else if (arg === "--check-print" || arg === "--check-pdf") {
       options.checkPrint = true;
       options.checkPdf = true;
@@ -178,7 +186,9 @@ export async function main() {
         "  --mode <name>         Override report mode detection (report, print, interactive, ...)",
         "  --pdf <output.pdf>    Generate an on-demand PDF export while keeping default checks active",
         "  --caller <caller-id>  Verify caller profile directory integration",
-        "  --json <file.json>    Write structured verification summary JSON"
+        "  --json <file.json>    Write structured verification summary JSON",
+        "  --no-cdn-cache        Bypass local disk CDN cache (.cache/html-report-cdn/)",
+        "  --cache-dir <dir>     Override the disk directory used for on-demand CDN caching"
       ].join("\n")
     );
     process.exit(0);

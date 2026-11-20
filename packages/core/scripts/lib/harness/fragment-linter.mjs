@@ -158,6 +158,42 @@ export function lintFragment(rawContent = "") {
     }
   }
 
+  const stepperTrapRegex = /class\s*=\s*["'][^"']*\bsteps-vertical\s+(?:sm|md|lg|xl):steps-horizontal\b[^"']*["']/gi;
+  let sMatch;
+  while ((sMatch = stepperTrapRegex.exec(content)) !== null) {
+    const { line } = getLineAndCol(content, sMatch.index);
+    issues.push({
+      type: "STEPPER_RESPONSIVE_TRAP",
+      tag: "steps",
+      line,
+      message: "DaisyUI stepper uses responsive variant 'steps-vertical sm:steps-horizontal', which Tailwind Play CDN does not generate.",
+      snippet: sMatch[0].length > 100 ? sMatch[0].slice(0, 97) + "..." : sMatch[0],
+      fixable: true,
+      suggestedFix: "Replace 'steps-vertical sm:steps-horizontal' with 'steps-horizontal'."
+    });
+  }
+
+  const canvasRegex = /<canvas\b[^>]*>[\s\S]*?<\/canvas>/gi;
+  let cMatch;
+  while ((cMatch = canvasRegex.exec(content)) !== null) {
+    const canvasIndex = cMatch.index;
+    const preText = content.slice(Math.max(0, canvasIndex - 300), canvasIndex);
+    const hasBoundedHeightWrapper = /<div\b[^>]*class\s*=\s*["'][^"']*(?:\bh-(?:\d+|full|\[[^\]]+\])|\bmin-h-(?:\d+|full|\[[^\]]+\]))[^"']*["'][^>]*>\s*$/i.test(preText);
+
+    if (!hasBoundedHeightWrapper) {
+      const { line } = getLineAndCol(content, canvasIndex);
+      issues.push({
+        type: "BARE_CANVAS_WRAPPER",
+        tag: "canvas",
+        line,
+        message: "<canvas> element lacks a bounded height parent wrapper (<div class=\"relative h-72 sm:h-80 w-full min-w-0\">).",
+        snippet: cMatch[0].length > 100 ? cMatch[0].slice(0, 97) + "..." : cMatch[0],
+        fixable: true,
+        suggestedFix: "Wrap <canvas> in <div class=\"relative h-72 sm:h-80 w-full min-w-0\">."
+      });
+    }
+  }
+
   return {
     valid: issues.length === 0,
     issues
@@ -285,13 +321,60 @@ export function wrapBareTables(rawContent = "") {
 }
 
 /**
+ * Normalizes 'steps-vertical sm:steps-horizontal' (and md/lg/xl responsive variants) to 'steps-horizontal'.
+ */
+export function normalizeResponsiveSteppers(rawContent = "") {
+  let content = String(rawContent);
+  let fixedCount = 0;
+
+  content = content.replace(/\bsteps-vertical\s+(?:sm|md|lg|xl):steps-horizontal\b/g, () => {
+    fixedCount++;
+    return "steps-horizontal";
+  });
+
+  return {
+    content,
+    fixedCount
+  };
+}
+
+/**
+ * Wraps bare <canvas> elements lacking a bounded-height parent container in
+ * <div class="relative h-72 sm:h-80 w-full min-w-0">.
+ */
+export function wrapBareCanvases(rawContent = "") {
+  let content = String(rawContent);
+  let wrappedCount = 0;
+
+  const canvasRegex = /<canvas\b[^>]*>[\s\S]*?<\/canvas>/gi;
+  content = content.replace(canvasRegex, (canvasHtml, offset, fullString) => {
+    const preText = fullString.slice(Math.max(0, offset - 300), offset);
+    const hasBoundedHeightWrapper = /<div\b[^>]*class\s*=\s*["'][^"']*(?:\bh-(?:\d+|full|\[[^\]]+\])|\bmin-h-(?:\d+|full|\[[^\]]+\]))[^"']*["'][^>]*>\s*$/i.test(preText);
+
+    if (hasBoundedHeightWrapper) {
+      return canvasHtml;
+    }
+
+    wrappedCount++;
+    return `<div class="relative h-72 sm:h-80 w-full min-w-0">\n  ${canvasHtml}\n</div>`;
+  });
+
+  return {
+    content,
+    wrappedCount
+  };
+}
+
+/**
  * Orchestrates mechanical auto-fix transforms on raw HTML fragment.
  */
 export function autoFixFragment(rawContent = "", options = {}) {
   const {
     stripBoilerplate = true,
     injectHeadings = true,
-    wrapTables = true
+    wrapTables = true,
+    fixSteppers = true,
+    wrapCanvases = true
   } = options;
 
   let current = String(rawContent);
@@ -332,6 +415,30 @@ export function autoFixFragment(rawContent = "", options = {}) {
         count: tableRes.wrappedCount
       });
       current = tableRes.content;
+    }
+  }
+
+  if (fixSteppers) {
+    const stepperRes = normalizeResponsiveSteppers(current);
+    if (stepperRes.fixedCount > 0) {
+      fixesApplied.push({
+        type: "STEPPER_RESPONSIVE_TRAP",
+        description: `Normalized ${stepperRes.fixedCount} responsive stepper class(es) to 'steps-horizontal'.`,
+        count: stepperRes.fixedCount
+      });
+      current = stepperRes.content;
+    }
+  }
+
+  if (wrapCanvases) {
+    const canvasRes = wrapBareCanvases(current);
+    if (canvasRes.wrappedCount > 0) {
+      fixesApplied.push({
+        type: "BARE_CANVAS_WRAPPER",
+        description: `Wrapped ${canvasRes.wrappedCount} bare <canvas> element(s) with bounded height container.`,
+        count: canvasRes.wrappedCount
+      });
+      current = canvasRes.content;
     }
   }
 

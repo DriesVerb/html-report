@@ -16,7 +16,11 @@ const {
   sanitizeMermaidSource,
   renderMermaidWithTheme,
   initThemeDropdown,
-  checkInsufficientHorizontalSpace
+  checkInsufficientHorizontalSpace,
+  initDeclarativeCharts,
+  initDeclarativeGridjs,
+  initDeclarativeLeaflet,
+  setReportTheme
 } = runtime.default || runtime;
 
 describe("Phase 1: Runtime Assets & Template Shell Unit Tests", () => {
@@ -302,6 +306,273 @@ end`;
         assert.equal(dispatchedEvent.detail.theme, "dracula");
         assert.equal(datastarMergedTheme, "dracula");
         assert.equal(mockElement._dsSignals.theme, "dracula");
+      } finally {
+        globalThis.window = originalWindow;
+        globalThis.document = originalDoc;
+      }
+    });
+  });
+
+  describe("report-runtime.js: Declarative Widget Auto-Hydrators (05b-widget-hydrators.js)", () => {
+    it("should hydrate <canvas data-chart> and <canvas data-chart-source> with DaisyUI palette colors and register in window.reportCharts", async () => {
+      const originalWindow = globalThis.window;
+      const originalDoc = globalThis.document;
+
+      const createdChartConfigs = [];
+      class MockChart {
+        constructor(ctx, config) {
+          this.ctx = ctx;
+          this.config = config;
+          this.data = config.data;
+          this.options = config.options;
+          this.updates = 0;
+          createdChartConfigs.push(config);
+        }
+        update() {
+          this.updates += 1;
+        }
+        static getChart() {
+          return null;
+        }
+      }
+
+      const inlineCanvas = {
+        dataset: {},
+        getContext: () => ({ id: "ctx-inline" }),
+        getAttribute: (name) => {
+          if (name === "data-chart") {
+            return JSON.stringify({
+              type: "bar",
+              data: {
+                labels: ["Q1", "Q2"],
+                datasets: [{ label: "Revenue", data: [42, 58] }]
+              }
+            });
+          }
+          return null;
+        }
+      };
+
+      const sourceCanvas = {
+        dataset: {},
+        getContext: () => ({ id: "ctx-source" }),
+        getAttribute: (name) => (name === "data-chart-source" ? "#chart-json-payload" : null)
+      };
+
+      const jsonScriptEl = {
+        textContent: JSON.stringify({
+          type: "line",
+          data: {
+            labels: ["Jan", "Feb"],
+            datasets: [{ label: "Latency", data: [12, 9] }]
+          }
+        })
+      };
+
+      let currentTheme = "light";
+      let canvasFillStyle = "";
+      globalThis.window = {
+        Chart: MockChart,
+        reportCharts: [],
+        getComputedStyle: (el) => {
+          if (currentTheme === "dracula") {
+            if (el.className.includes("bg-primary")) return { backgroundColor: "rgb(255, 121, 198)", color: "#f8f8f2" };
+            if (el.className.includes("text-base-content")) return { backgroundColor: "transparent", color: "rgb(248, 248, 242)" };
+          }
+          if (el.className.includes("bg-primary")) return { backgroundColor: "rgb(59, 130, 246)", color: "#1f2937" };
+          if (el.className.includes("text-base-content")) return { backgroundColor: "transparent", color: "rgb(31, 41, 55)" };
+          return { backgroundColor: "rgb(59, 130, 246)", color: "rgb(31, 41, 55)" };
+        }
+      };
+
+      globalThis.document = {
+        body: { appendChild() {}, removeChild() {} },
+        documentElement: {
+          getAttribute: () => currentTheme,
+          setAttribute: (_k, v) => { currentTheme = v; }
+        },
+        createElement: (tag) => {
+          if (tag === "canvas") {
+            return {
+              getContext: () => ({
+                set fillStyle(val) { canvasFillStyle = val; },
+                get fillStyle() { return canvasFillStyle; },
+                fillRect() {},
+                getImageData: () => {
+                  const m = canvasFillStyle.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/);
+                  if (m) return { data: [Number(m[1]), Number(m[2]), Number(m[3]), 255] };
+                  return { data: [59, 130, 246, 255] };
+                }
+              })
+            };
+          }
+          return { style: {}, className: "", appendChild() {}, remove() {} };
+        },
+        querySelector: (sel) => (sel === "#chart-json-payload" ? jsonScriptEl : null),
+        getElementById: (id) => (id === "chart-json-payload" ? jsonScriptEl : null),
+        querySelectorAll: (sel) => {
+          if (sel === "canvas[data-chart], canvas[data-chart-source]") {
+            return [inlineCanvas, sourceCanvas];
+          }
+          return [];
+        }
+      };
+
+      try {
+        const created = initDeclarativeCharts(0);
+        assert.equal(created.length, 2);
+        assert.equal(globalThis.window.reportCharts.length, 2);
+        assert.equal(inlineCanvas.dataset.chartInitialized, "true");
+        assert.equal(sourceCanvas.dataset.chartInitialized, "true");
+
+        assert.equal(createdChartConfigs[0].options.responsive, true);
+        assert.equal(createdChartConfigs[0].options.maintainAspectRatio, false);
+        assert.equal(createdChartConfigs[0].data.datasets[0].borderColor, "#3b82f6");
+        assert.ok(createdChartConfigs[0].data.datasets[0].backgroundColor.includes("rgba(59, 130, 246"));
+
+        // Re-running initDeclarativeCharts should be idempotent
+        const secondRun = initDeclarativeCharts(0);
+        assert.equal(secondRun.length, 0);
+
+        // Switching DaisyUI theme updates declarative charts in window.reportCharts
+        await setReportTheme("dracula");
+        assert.equal(globalThis.window.reportCharts[0].data.datasets[0].borderColor, "#ff79c6");
+        assert.equal(globalThis.window.reportCharts[0].updates, 1);
+      } finally {
+        globalThis.window = originalWindow;
+        globalThis.document = originalDoc;
+      }
+    });
+
+    it("should hydrate [data-gridjs] with default search, sort, and 10-row pagination", () => {
+      const originalWindow = globalThis.window;
+      const originalDoc = globalThis.document;
+
+      let capturedGridConfig = null;
+      let renderedTarget = null;
+      class MockGrid {
+        constructor(config) {
+          this.config = config;
+          capturedGridConfig = config;
+        }
+        render(el) {
+          renderedTarget = el;
+          return this;
+        }
+      }
+
+      const gridEl = {
+        tagName: "DIV",
+        dataset: {},
+        innerHTML: "fallback",
+        closest: () => null,
+        querySelector: () => null,
+        getAttribute: (name) => {
+          if (name === "data-gridjs") {
+            return JSON.stringify({
+              columns: ["Name", "Score"],
+              data: [["Alice", 98], ["Bob", 91]]
+            });
+          }
+          return null;
+        }
+      };
+
+      globalThis.window = {
+        gridjs: { Grid: MockGrid },
+        reportGrids: []
+      };
+      globalThis.document = {
+        querySelectorAll: (sel) => (sel === "[data-gridjs], [data-gridjs-source]" ? [gridEl] : [])
+      };
+
+      try {
+        const grids = initDeclarativeGridjs(0);
+        assert.equal(grids.length, 1);
+        assert.equal(renderedTarget, gridEl);
+        assert.equal(gridEl.dataset.gridjsInitialized, "true");
+        assert.equal(capturedGridConfig.search, true);
+        assert.equal(capturedGridConfig.sort, true);
+        assert.deepEqual(capturedGridConfig.pagination, { limit: 10 });
+        assert.deepEqual(capturedGridConfig.columns, ["Name", "Score"]);
+      } finally {
+        globalThis.window = originalWindow;
+        globalThis.document = originalDoc;
+      }
+    });
+
+    it("should hydrate [data-leaflet] with Esri ArcGIS World Street Map tiles and bind markers", () => {
+      const originalWindow = globalThis.window;
+      const originalDoc = globalThis.document;
+
+      let capturedTileUrl = null;
+      let capturedCenter = null;
+      let capturedZoom = null;
+      const createdMarkers = [];
+
+      const mockMap = {
+        setView(center, zoom) {
+          capturedCenter = center;
+          capturedZoom = zoom;
+          return this;
+        },
+        invalidateSize() {}
+      };
+
+      globalThis.window = {
+        L: {
+          map: () => mockMap,
+          tileLayer: (url) => {
+            capturedTileUrl = url;
+            return { addTo() { return this; } };
+          },
+          marker: (coords) => {
+            const m = {
+              coords,
+              popup: null,
+              addTo() { return this; },
+              bindPopup(text) { this.popup = text; return this; }
+            };
+            createdMarkers.push(m);
+            return m;
+          }
+        },
+        reportMaps: []
+      };
+
+      const mapEl = {
+        tagName: "DIV",
+        dataset: {},
+        closest: () => null,
+        getAttribute: (name) => {
+          if (name === "data-leaflet") {
+            return JSON.stringify({
+              center: [51.505, -0.09],
+              zoom: 12,
+              markers: [{ lat: 51.505, lng: -0.09, popup: "London HQ" }]
+            });
+          }
+          return null;
+        }
+      };
+
+      globalThis.document = {
+        querySelectorAll: (sel) => (sel === "[data-leaflet], [data-leaflet-source]" ? [mapEl] : [])
+      };
+
+      try {
+        const maps = initDeclarativeLeaflet(0);
+        assert.equal(maps.length, 1);
+        assert.equal(mapEl.dataset.leafletInitialized, "true");
+        assert.deepEqual(capturedCenter, [51.505, -0.09]);
+        assert.equal(capturedZoom, 12);
+        assert.equal(
+          capturedTileUrl,
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+        );
+        assert.equal(createdMarkers.length, 1);
+        assert.deepEqual(createdMarkers[0].coords, [51.505, -0.09]);
+        assert.equal(createdMarkers[0].popup, "London HQ");
       } finally {
         globalThis.window = originalWindow;
         globalThis.document = originalDoc;

@@ -407,9 +407,6 @@ function registerCustomTheme(themeName, css = null) {
   if (typeof document !== "undefined" && document.getElementById("theme-swatch-list")) {
     initThemeDropdown();
   }
-  if (typeof HTMLReportEdit !== "undefined" && typeof HTMLReportEdit.refreshStyleThemeSelect === "function") {
-    HTMLReportEdit.refreshStyleThemeSelect();
-  }
   return true;
 }
 

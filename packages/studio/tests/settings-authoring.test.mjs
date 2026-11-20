@@ -401,15 +401,20 @@ describe("publish-clean-report", () => {
   });
 
   it("default builds omit authoring chrome while editable builds include it", () => {
-    const cleanHtml = buildReport({ title: "T", content: FRAGMENT }).html;
-    assert.ok(cleanHtml.includes('id="settings-gear-btn"'));
-    assert.ok(!cleanHtml.includes('id="edit-dock"'));
-    assert.ok(!cleanHtml.includes('id="all-settings-modal"'));
+    const defaultHtml = buildReport({ title: "T", content: FRAGMENT }).html;
+    assert.ok(defaultHtml.includes('id="settings-gear-btn"'));
+    assert.ok(defaultHtml.includes('id="edit-dock"'));
+    assert.ok(defaultHtml.includes('id="all-settings-modal"'));
 
-    const editableHtml = buildReport({ title: "T", content: FRAGMENT, editable: true }).html;
-    assert.ok(editableHtml.includes('id="settings-gear-btn"'));
-    assert.ok(editableHtml.includes('id="edit-dock"'));
-    assert.ok(editableHtml.includes('id="all-settings-modal"'));
+    const nonEditableHtml = buildReport({ title: "T", content: FRAGMENT, editable: false }).html;
+    assert.ok(nonEditableHtml.includes('id="settings-gear-btn"'));
+    assert.ok(!nonEditableHtml.includes('id="edit-dock"'));
+    assert.ok(!nonEditableHtml.includes('id="all-settings-modal"'));
+
+    const publishedHtml = buildReport({ title: "T", content: FRAGMENT, published: true }).html;
+    assert.ok(publishedHtml.includes('id="settings-gear-btn"'));
+    assert.ok(!publishedHtml.includes('id="edit-dock"'));
+    assert.ok(!publishedHtml.includes('id="all-settings-modal"'));
   });
 
   it("stripAuthoringMarkup is idempotent", () => {

@@ -53,7 +53,11 @@ function resolveDaisyUIThemePalette(doc = (typeof document !== "undefined" ? doc
     neutral: "bg-neutral",
     base100: "bg-base-100",
     base200: "bg-base-200",
-    base300: "bg-base-300"
+    base300: "bg-base-300",
+    info: "bg-info",
+    success: "bg-success",
+    warning: "bg-warning",
+    error: "bg-error"
   };
 
   const nodes = {};
@@ -341,8 +345,10 @@ async function setReportTheme(themeName) {
       }
 
       if (chart?.options?.scales && typeof chart.options.scales === "object") {
-        const textHex = palette.text ? palette.text.hex : "#64748b";
-        const gridColor = palette.grid ? palette.grid.rgba(0.25) : "rgba(148, 163, 184, 0.2)";
+        const textHex = palette.text ? palette.text.hex : (palette.content ? palette.content.hex : "#64748b");
+        const gridColor = palette.grid
+          ? palette.grid.rgba(0.25)
+          : (palette.content && typeof palette.content.rgba === "function" ? palette.content.rgba(0.15) : "rgba(148, 163, 184, 0.2)");
         for (const scale of Object.values(chart.options.scales)) {
           if (!scale || typeof scale !== "object") continue;
           if (scale.ticks && typeof scale.ticks === "object") scale.ticks.color = textHex;
@@ -353,7 +359,9 @@ async function setReportTheme(themeName) {
       }
 
       if (chart?.options?.plugins?.legend?.labels && typeof chart.options.plugins.legend.labels === "object") {
-        chart.options.plugins.legend.labels.color = palette.text ? palette.text.hex : "#64748b";
+        chart.options.plugins.legend.labels.color = palette.text
+          ? palette.text.hex
+          : (palette.content ? palette.content.hex : "#64748b");
       }
 
       if (typeof chart?.update === "function") {

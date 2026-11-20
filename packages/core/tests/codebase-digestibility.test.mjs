@@ -110,4 +110,27 @@ describe("Codebase Digestibility & Modular Structure Guard", () => {
       assert.ok(content.length > 200, `Navigation document too small/empty: ${relDoc}`);
     }
   });
+
+  it("enforces <= 150 lines and zero raw shell HTML templates in skills/html-report/references/architecture-and-styling.md", () => {
+    const refPath = path.join(REPO_ROOT, "skills/html-report/references/architecture-and-styling.md");
+    assert.ok(fs.existsSync(refPath), "Expected architecture-and-styling.md to exist");
+    const content = fs.readFileSync(refPath, "utf-8");
+    const lineCount = content.split(/\r?\n/).length;
+    assert.ok(
+      lineCount <= 150,
+      `skills/html-report/references/architecture-and-styling.md has ${lineCount} lines (max 150)`
+    );
+    assert.ok(
+      !content.includes('<header class="sticky'),
+      "architecture-and-styling.md must not include raw sticky navbar HTML dumps"
+    );
+    assert.ok(
+      !content.includes('<footer class="border-t'),
+      "architecture-and-styling.md must not include raw footer HTML dumps"
+    );
+    assert.ok(
+      content.includes("openMarkdownViewer(") && content.includes("steps-horizontal"),
+      "architecture-and-styling.md must include canonical fragment recipes"
+    );
+  });
 });

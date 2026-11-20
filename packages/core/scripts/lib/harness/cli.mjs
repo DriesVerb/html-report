@@ -26,12 +26,13 @@ USAGE:
   node harness.mjs <command> [options]
 
 COMMANDS:
-  run <fragment.html>       Execute full Pipeline: Validate -> Auto-Fix -> Assemble -> Verify
-  lint <fragment.html>      Perform pre-flight semantic linting on Semantic Fragment
-  fix <fragment.html>       Apply deterministic auto-fixes to Semantic Fragment and output result
+  run [fragment.html]       Execute full Pipeline: Validate -> Auto-Fix -> Assemble -> Verify
+  lint [fragment.html]      Perform pre-flight semantic linting on Semantic Fragment
+  fix [fragment.html]       Apply deterministic auto-fixes to Semantic Fragment and output result
 
 OPTIONS:
-  --output, -o <file>       Output Deliverable destination (default: ./report.html or ./report-<caller>.html)
+  --project, -P <slug>      Target projects/<slug>/fragment.html and output to projects/<slug>/index.html
+  --output, -o <file>       Output Deliverable destination (default: ./report.html or projects/<slug>/index.html)
   --title, -t <title>       Output Deliverable title (default: "HTML Report")
   --theme <name>            DaisyUI theme override (e.g. "light", "cupcake", "synthwave")
   --run-id <runId>          Run ID for multi-attempt correlation in vault
@@ -42,7 +43,9 @@ OPTIONS:
   --working-report          Enable OpenSpec Journey companion mode
   --live-report, -l         Enable Server-Connected Datastar SSE live streaming mode
   --pwa                     Enable Offline Packaging Modifier (PWA manifest, sw.js, and icons)
-  --editable                Inject opt-in Authoring Plugin (Edit Mode & All Settings)
+  --editable                Include Authoring Plugin (Edit Mode & All Settings; enabled by default)
+  --no-editable             Omit Authoring Plugin for non-editable Output Deliverable
+  --published               Emit a clean non-editable Published Document with Authoring Plugin pruned
   --serve                   Force start/check dev server
   --no-serve                Disable dev server regardless of mode policy
   --port <number>           Target dev server port (default: 3000)
@@ -67,6 +70,7 @@ export function parseArgs(argv = process.argv.slice(2)) {
   const args = {
     command: "",
     file: "",
+    project: null,
     output: null,
     title: "HTML Report",
     theme: null,
@@ -85,7 +89,8 @@ export function parseArgs(argv = process.argv.slice(2)) {
     pdf: null,
     json: false,
     pwa: false,
-    editable: false,
+    editable: true,
+    published: false,
     checkCompatibility: false,
     version: false,
     help: false
@@ -128,12 +133,23 @@ export function parseArgs(argv = process.argv.slice(2)) {
       args.pwa = true;
     } else if (arg === "--editable") {
       args.editable = true;
+    } else if (arg === "--no-editable") {
+      args.editable = false;
+    } else if (arg === "--published") {
+      args.published = true;
+      args.editable = false;
     } else if (arg === "--serve") {
       args.serve = true;
     } else if (arg === "--no-serve") {
       args.serve = false;
     } else if (arg === "--port" && argv[i + 1]) {
       args.port = parseInt(argv[++i], 10) || 3000;
+    } else if ((arg === "--project" || arg === "-P") && argv[i + 1]) {
+      const slug = String(argv[++i] || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      if (slug) args.project = slug;
     } else if ((arg === "--output" || arg === "-o") && argv[i + 1]) {
       args.output = argv[++i];
     } else if ((arg === "--title" || arg === "-t") && argv[i + 1]) {
@@ -168,6 +184,17 @@ export function parseArgs(argv = process.argv.slice(2)) {
     } else {
       args.command = "run";
       args.file = positional[0];
+    }
+  } else if (args.project) {
+    args.command = "run";
+  }
+
+  if (args.project) {
+    if (!args.file) {
+      args.file = path.join("projects", args.project, "fragment.html");
+    }
+    if (!args.output && args.command === "run") {
+      args.output = path.join("projects", args.project, args.published ? "published.html" : "index.html");
     }
   }
 
@@ -245,6 +272,13 @@ export async function runHarnessCli(argv = process.argv.slice(2), { runLifecycle
       const outPath = path.resolve(process.cwd(), args.output);
       fs.writeFileSync(outPath, fixRes.content, "utf-8");
       console.log(`✓ Auto-fixes applied (${fixRes.fixesApplied.length} transforms) -> Written to: ${outPath}`);
+    } else if (args.project) {
+      fs.writeFileSync(filePath, fixRes.content, "utf-8");
+      if (args.json) {
+        console.log(JSON.stringify(fixRes, null, 2));
+      } else {
+        console.log(`✓ Auto-fixes applied (${fixRes.fixesApplied.length} transforms) -> Written to: ${filePath}`);
+      }
     } else {
       if (args.json) {
         console.log(JSON.stringify(fixRes, null, 2));
@@ -258,6 +292,7 @@ export async function runHarnessCli(argv = process.argv.slice(2), { runLifecycle
   if (args.command === "run") {
     const runResult = await runLifecycle({
       file: args.file,
+      project: args.project,
       output: args.output,
       title: args.title,
       theme: args.theme,
@@ -274,6 +309,7 @@ export async function runHarnessCli(argv = process.argv.slice(2), { runLifecycle
       pdf: args.pdf,
       pwa: args.pwa,
       editable: args.editable,
+      published: args.published,
       attempt: args.attempt,
       maxAttempts: args.maxAttempts,
       json: args.json

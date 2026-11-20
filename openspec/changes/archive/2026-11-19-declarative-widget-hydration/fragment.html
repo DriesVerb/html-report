@@ -1,0 +1,166 @@
+<section class="space-y-8">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+    <div class="min-w-0 flex-1 space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Plan 1 of 5</span>
+        <span class="badge badge-outline font-mono text-xs">declarative-widget-hydration</span>
+      </div>
+      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Plan 1: Declarative Widget Auto-Hydration</h1>
+      <p class="text-xs sm:text-sm text-base-content/75 max-w-3xl">
+        Eliminates imperative <code>&lt;script&gt;</code> boilerplate in Semantic Fragments by adding zero-JS runtime auto-hydrators for <code>data-chart</code> (Chart.js), <code>data-gridjs</code> (Grid.js), and <code>data-leaflet</code> (Leaflet with Esri ArcGIS tiles) directly into <code>report-runtime.js</code>.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="file-text" class="w-4 h-4"></i><span>proposal.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="layers" class="w-4 h-4"></i><span>design.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="check-square" class="w-4 h-4"></i><span>tasks.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/declarative-widget-hydration/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
+        <i data-lucide="shield-check" class="w-4 h-4"></i><span>specs/</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Journey Phase Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="journey-phase-stepper" class="text-sm font-bold uppercase tracking-wider text-base-content/70">Journey Phase</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">Stage 5: Shipped / Archived (7/7 Tasks Complete — 100%)</span>
+    </div>
+    <div class="w-full overflow-x-auto">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li class="step step-primary" data-content="✓">Brainstorming</li>
+        <li class="step step-primary" data-content="✓">Planning</li>
+        <li class="step step-primary" data-content="✓">Implementing</li>
+        <li class="step step-primary" data-content="✓">Verifying</li>
+        <li class="step step-primary" data-content="✓">Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Progress KPIs -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Task Progress</div>
+      <div class="text-2xl font-extrabold text-success">7 / 7 (100%)</div>
+      <div class="text-xs text-base-content/70">All 3 phases completed</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Fragment Token Savings</div>
+      <div class="text-2xl font-extrabold text-success">~50%</div>
+      <div class="text-xs text-base-content/70">Zero custom JS boilerplate needed</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Declarative Hydrators</div>
+      <div class="text-2xl font-extrabold text-primary">3 Active</div>
+      <div class="text-xs text-base-content/70">data-chart, data-gridjs, data-leaflet</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Runtime Chunk</div>
+      <div class="text-2xl font-extrabold text-secondary">05b</div>
+      <div class="text-xs text-base-content/70">352 / 650 lines digestibility guard</div>
+    </div>
+  </div>
+
+  <!-- Architecture Mermaid & Token Reduction Chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="hydration-architecture" class="text-lg font-bold min-w-0 flex-1 break-words">Declarative Runtime Hydration Pipeline</h2>
+        <span class="badge badge-primary badge-outline badge-xs font-mono shrink-0">05b-widget-hydrators.js</span>
+      </div>
+      <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">
+flowchart TD
+  Frag["Semantic Fragment (&lt;main&gt;)"] --> ChartAttr["&lt;canvas data-chart='{...}'&gt;"]
+  Frag --> GridAttr["&lt;div data-gridjs='{...}'&gt;"]
+  Frag --> MapAttr["&lt;div data-leaflet='{...}'&gt;"]
+  ChartAttr --> Hydrator["05b-widget-hydrators.js"]
+  GridAttr --> Hydrator
+  MapAttr --> Hydrator
+  Hydrator --> Palette["resolveDaisyUIThemePalette()"]
+  Palette --> Sync["window.reportCharts + 32-Theme Sync"]
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="token-reduction-chart" class="text-lg font-bold min-w-0 flex-1 break-words">Agent Lines of Code Emitted per Widget</h2>
+        <span class="badge badge-success badge-outline badge-xs font-mono shrink-0">Before vs After (Declarative data-chart)</span>
+      </div>
+      <div class="relative h-72 sm:h-80 w-full min-w-0">
+        <canvas
+          id="hydrationImpactChart"
+          aria-label="Lines of Code per Widget Before and After"
+          role="img"
+          data-chart='{"type":"bar","data":{"labels":["Chart.js + Theme Sync","Grid.js Table","Leaflet Map + Tiles"],"datasets":[{"label":"Before (Lines of JS + HTML)","data":[95,24,28]},{"label":"After (Declarative HTML Only)","data":[6,4,5]}]},"options":{"responsive":true,"maintainAspectRatio":false,"scales":{"y":{"beginAtZero":true}}}}'
+        ></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Task Checklist -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="task-checklist" class="text-lg font-bold">Implementation Checklist (<button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</button>)</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">7 / 7 Complete (100%)</span>
+    </div>
+    <div class="overflow-x-auto w-full">
+      <table class="table table-zebra table-sm w-full [&_code]:break-all">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Milestone</th>
+            <th>Target Files</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-mono text-xs">1.1</td>
+            <td>Create declarative hydrators for Chart.js, Grid.js, and Leaflet</td>
+            <td><code>packages/core/assets/runtime/05b-widget-hydrators.js</code></td>
+            <td><span class="badge badge-success badge-xs">Completed</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">1.2</td>
+            <td>Wire hydrators into DOMContentLoaded and <code>reinitReportContent()</code></td>
+            <td><code>06-public-feeds.js</code>, <code>08-publisher-and-board.js</code></td>
+            <td><span class="badge badge-success badge-xs">Completed</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">1.3</td>
+            <td>Export hydrators via shorthand syntax in <code>report-runtime.js</code></td>
+            <td><code>packages/core/assets/report-runtime.js</code></td>
+            <td><span class="badge badge-success badge-xs">Completed</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">2.1–2.2</td>
+            <td>Replace 100-line palette boilerplate in style guide with declarative examples</td>
+            <td><code>charts-and-mermaid-style-guide.md</code>, <code>SKILL.md</code></td>
+            <td><span class="badge badge-success badge-xs">Completed</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">3.1–3.2</td>
+            <td>Unit + Playwright verification and live journey dashboard sync</td>
+            <td><code>packages/core/tests/</code>, <code>index.html</code></td>
+            <td><span class="badge badge-success badge-xs">Completed</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Declarative Widget Auto-Hydration (data-chart, data-gridjs, data-leaflet)\n\nEliminates imperative <script> boilerplate in Semantic Fragments by adding zero-JS declarative hydration for Chart.js, Grid.js, and Leaflet directly into report-runtime.js and removing the redundant 100-line palette resolver copy-paste block from charts-and-mermaid-style-guide.md.",
+  "design.md": "# Design: Declarative Widget Auto-Hydration\n\n- Dedicated runtime chunk packages/core/assets/runtime/05b-widget-hydrators.js (respecting <= 650-line budget)\n- initDeclarativeCharts() auto-applies resolveDaisyUIThemePalette() and registers in window.reportCharts\n- initDeclarativeGridjs() defaults to search, sort, and 10-row pagination\n- initDeclarativeLeaflet() auto-wires Esri ArcGIS World Street Map tiles (file:// safe)",
+  "tasks.md": "# Tasks: Declarative Widget Auto-Hydration\n\n- [x] 1.1 Create packages/core/assets/runtime/05b-widget-hydrators.js\n- [x] 1.2 Wire hydrators into DOMContentLoaded and reinitReportContent()\n- [x] 1.3 Export hydrators in packages/core/assets/report-runtime.js\n- [x] 2.1 Update skills/html-report/references/charts-and-mermaid-style-guide.md\n- [x] 2.2 Update skills/html-report/SKILL.md\n- [x] 3.1 Add unit and Playwright tests\n- [x] 3.2 Update companion index.html and sync localhost:3031",
+  "specs/declarative-widget-hydration/spec.md": "# Delta Specification: declarative-widget-hydration\n\nDefines requirements and scenarios for data-chart, data-gridjs, and data-leaflet auto-hydration in report-runtime.js."
+}
+</script>

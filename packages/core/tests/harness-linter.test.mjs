@@ -19,6 +19,8 @@ const {
   stripOuterBoilerplate,
   injectHeadingIds,
   wrapBareTables,
+  normalizeResponsiveSteppers,
+  wrapBareCanvases,
   autoFixFragment,
   formatPrescriptiveDiagnostic,
   parseArgs
@@ -162,6 +164,22 @@ date: 2026-11-02
       assert.ok(tableIssue);
       assert.equal(tableIssue.tag, "table");
     });
+
+    it("should detect STEPPER_RESPONSIVE_TRAP and BARE_CANVAS_WRAPPER issues", () => {
+      const frag = `
+        <h2 id="journey">Journey</h2>
+        <ul class="steps steps-vertical sm:steps-horizontal w-full">
+          <li class="step step-primary">One</li>
+        </ul>
+        <div class="card p-4">
+          <canvas id="myChart"></canvas>
+        </div>
+      `;
+      const res = lintFragment(frag);
+      assert.equal(res.valid, false);
+      assert.ok(res.issues.some(i => i.type === "STEPPER_RESPONSIVE_TRAP"));
+      assert.ok(res.issues.some(i => i.type === "BARE_CANVAS_WRAPPER"));
+    });
   });
 
   describe("stripOuterBoilerplate", () => {
@@ -261,6 +279,39 @@ theme: corporate
         </div>
       `;
       const { content, wrappedCount } = wrapBareTables(raw);
+      assert.equal(wrappedCount, 0);
+      assert.equal(content, raw);
+    });
+  });
+
+  describe("normalizeResponsiveSteppers & wrapBareCanvases", () => {
+    it("should rewrite steps-vertical sm:steps-horizontal to steps-horizontal", () => {
+      const raw = `<ul class="steps steps-vertical sm:steps-horizontal w-full"><li class="step">1</li></ul>`;
+      const { content, fixedCount } = normalizeResponsiveSteppers(raw);
+      assert.equal(fixedCount, 1);
+      assert.ok(content.includes('class="steps steps-horizontal w-full"'));
+    });
+
+    it("should wrap bare <canvas> elements lacking a bounded-height parent container", () => {
+      const raw = `
+        <h2 id="charts">Charts</h2>
+        <div class="card p-4">
+          <canvas id="revenueChart"></canvas>
+        </div>
+      `;
+      const { content, wrappedCount } = wrapBareCanvases(raw);
+      assert.equal(wrappedCount, 1);
+      assert.ok(content.includes('<div class="relative h-72 sm:h-80 w-full min-w-0">'));
+      assert.equal(lintFragment(content).valid, true);
+    });
+
+    it("should not double-wrap <canvas> elements already inside a bounded-height container", () => {
+      const raw = `
+        <div class="relative h-72 sm:h-80 w-full min-w-0">
+          <canvas id="revenueChart"></canvas>
+        </div>
+      `;
+      const { content, wrappedCount } = wrapBareCanvases(raw);
       assert.equal(wrappedCount, 0);
       assert.equal(content, raw);
     });

@@ -494,39 +494,69 @@ addons: [charts]
   });
 
   describe("Clean-by-default & Opt-in Authoring + Explicit Mirroring", () => {
-    it("omits Studio authoring chrome by default (clean viewer output)", () => {
+    it("includes Studio authoring chrome by default (Edit Mode enabled unless --published or --no-editable)", () => {
       const { html } = buildReport({
-        title: "Clean Report",
-        content: `<h1 id="clean-title">Clean Report</h1><p>Viewer only</p>`
+        title: "Default Editable Report",
+        content: `<h1 id="default-title">Default Editable Report</h1><p>Edit mode ready</p>`
       });
-      assert.equal(html.includes('id="edit-dock"'), false, "Default build must omit #edit-dock");
-      assert.equal(html.includes('id="all-settings-modal"'), false, "Default build must omit #all-settings-modal");
-      assert.equal(html.includes('id="open-all-settings-btn"'), false, "Default build must omit #open-all-settings-btn");
-      assert.equal(html.includes('id="settings-publish-toggle"'), false, "Default build must omit #settings-publish-toggle");
-      assert.equal(html.includes('id="agent-dock-container"'), false, "Default build must omit #agent-dock-container");
-      assert.equal(html.includes('id="agent-reconnect-modal"'), false, "Default build must omit #agent-reconnect-modal");
-      assert.equal(html.includes('id="agent-bridge-status-container"'), false, "Default build must omit #agent-bridge-status-container");
-      assert.ok(html.includes('id="settings-gear-btn"'), "Clean viewer must retain lightweight gear switcher");
+      assert.ok(html.includes('id="edit-dock"'), "Default build must inject #edit-dock");
+      assert.ok(html.includes('id="all-settings-modal"'), "Default build must inject #all-settings-modal");
+      assert.ok(html.includes('id="open-all-settings-btn"'), "Default build must inject #open-all-settings-btn");
+      assert.ok(html.includes('id="settings-publish-toggle"'), "Default build must inject #settings-publish-toggle");
+      assert.ok(html.includes("HTMLReportEdit"), "Default build must include authoring runtime");
+      assert.ok(html.includes('id="settings-gear-btn"'), "Default build must retain settings gear switcher");
+
+      const fragFile = path.join(tmpDir, "default-edit-frag.html");
+      const outFile = path.join(tmpDir, "default-edit-out.html");
+      fs.writeFileSync(fragFile, `<h1 id="cli-default-edit">CLI Default Editable</h1>`, "utf8");
+      execSync(`node ${cliPath} --content "${fragFile}" --output "${outFile}"`, { encoding: "utf8" });
+      const cliHtml = fs.readFileSync(outFile, "utf8");
+      assert.ok(cliHtml.includes('id="edit-dock"'), "Default CLI build must inject #edit-dock");
+      assert.ok(cliHtml.includes('id="all-settings-modal"'), "Default CLI build must inject #all-settings-modal");
+      assert.ok(cliHtml.includes('id="open-all-settings-btn"'), "Default CLI build must inject #open-all-settings-btn");
+      assert.ok(cliHtml.includes('id="settings-publish-toggle"'), "Default CLI build must inject #settings-publish-toggle");
+      assert.ok(cliHtml.includes("HTMLReportEdit"), "Default CLI build must include authoring runtime");
     });
 
-    it("injects authoring plugin chrome when editable: true or --editable CLI flag is passed", () => {
-      const { html } = buildReport({
-        title: "Editable Report",
-        content: `<h1 id="edit-title">Editable Report</h1>`,
-        editable: true
+    it("omits authoring plugin chrome when published: true / --published or editable: false / --no-editable is passed", () => {
+      const { html: publishedHtml } = buildReport({
+        title: "Published Report",
+        content: `<h1 id="pub-title">Published Report</h1>`,
+        published: true
       });
-      assert.ok(html.includes('id="edit-dock"'), "editable: true must inject #edit-dock");
-      assert.ok(html.includes('id="all-settings-modal"'), "editable: true must inject #all-settings-modal");
-      assert.ok(html.includes('id="open-all-settings-btn"'), "editable: true must inject #open-all-settings-btn");
-      assert.ok(html.includes('id="settings-publish-toggle"'), "editable: true must inject #settings-publish-toggle");
-      assert.ok(html.includes("HTMLReportEdit"), "editable: true must include authoring runtime");
+      assert.equal(publishedHtml.includes('id="edit-dock"'), false, "published: true must omit #edit-dock");
+      assert.equal(publishedHtml.includes('id="all-settings-modal"'), false, "published: true must omit #all-settings-modal");
+      assert.equal(publishedHtml.includes('id="open-all-settings-btn"'), false, "published: true must omit #open-all-settings-btn");
+      assert.equal(publishedHtml.includes('id="settings-publish-toggle"'), false, "published: true must omit #settings-publish-toggle");
+      assert.equal(publishedHtml.includes("HTMLReportEdit"), false, "published: true must omit authoring runtime");
+      assert.ok(publishedHtml.includes('id="settings-gear-btn"'), "published: true must retain lightweight gear switcher");
+
+      const { html: nonEditableHtml } = buildReport({
+        title: "Non-Editable Report",
+        content: `<h1 id="no-edit-title">Non-Editable Report</h1>`,
+        editable: false
+      });
+      assert.equal(nonEditableHtml.includes('id="edit-dock"'), false, "editable: false must omit #edit-dock");
+      assert.equal(nonEditableHtml.includes('id="all-settings-modal"'), false, "editable: false must omit #all-settings-modal");
+      assert.equal(nonEditableHtml.includes('id="open-all-settings-btn"'), false, "editable: false must omit #open-all-settings-btn");
+      assert.equal(nonEditableHtml.includes('id="settings-publish-toggle"'), false, "editable: false must omit #settings-publish-toggle");
+      assert.equal(nonEditableHtml.includes("HTMLReportEdit"), false, "editable: false must omit authoring runtime");
+      assert.ok(nonEditableHtml.includes('id="settings-gear-btn"'), "editable: false must retain lightweight gear switcher");
 
       const fragFile = path.join(tmpDir, "edit-frag.html");
-      const outFile = path.join(tmpDir, "edit-out.html");
-      fs.writeFileSync(fragFile, `<h1 id="cli-edit">CLI Editable</h1>`, "utf8");
-      execSync(`node ${cliPath} --content "${fragFile}" --output "${outFile}" --editable`, { encoding: "utf8" });
-      const cliHtml = fs.readFileSync(outFile, "utf8");
-      assert.ok(cliHtml.includes('id="edit-dock"'), "--editable CLI flag must inject #edit-dock");
+      const pubOutFile = path.join(tmpDir, "pub-out.html");
+      const noEditOutFile = path.join(tmpDir, "no-edit-out.html");
+      fs.writeFileSync(fragFile, `<h1 id="cli-edit">CLI Opt-Out</h1>`, "utf8");
+
+      execSync(`node ${cliPath} --content "${fragFile}" --output "${pubOutFile}" --published`, { encoding: "utf8" });
+      const pubCliHtml = fs.readFileSync(pubOutFile, "utf8");
+      assert.equal(pubCliHtml.includes('id="edit-dock"'), false, "--published CLI flag must omit #edit-dock");
+      assert.equal(pubCliHtml.includes("HTMLReportEdit"), false, "--published CLI flag must omit HTMLReportEdit");
+
+      execSync(`node ${cliPath} --content "${fragFile}" --output "${noEditOutFile}" --no-editable`, { encoding: "utf8" });
+      const noEditCliHtml = fs.readFileSync(noEditOutFile, "utf8");
+      assert.equal(noEditCliHtml.includes('id="edit-dock"'), false, "--no-editable CLI flag must omit #edit-dock");
+      assert.equal(noEditCliHtml.includes("HTMLReportEdit"), false, "--no-editable CLI flag must omit HTMLReportEdit");
     });
 
     it("mirrors output only when --mirror-dir is explicitly supplied", () => {
@@ -644,6 +674,21 @@ addons: [charts]
         }),
         /Mermaid diagram file not found/
       );
+    });
+
+    it("routes CLI builds without --output into projects/<slug>/index.html instead of root report.html", () => {
+      const projDir = path.join(tmpDir, "projects", "tax-roadmap");
+      fs.mkdirSync(projDir, { recursive: true });
+      const fragFile = path.join(projDir, "fragment.html");
+      fs.writeFileSync(fragFile, `<main id="report-main"><h1 id="t1">Tax Roadmap</h1></main>`, "utf-8");
+
+      execSync(`node "${cliPath}" --content "${fragFile}" --title "Tax Roadmap"`, {
+        cwd: tmpDir,
+        encoding: "utf-8"
+      });
+
+      assert.ok(fs.existsSync(path.join(projDir, "index.html")), "Should write to projects/tax-roadmap/index.html");
+      assert.equal(fs.existsSync(path.join(tmpDir, "report.html")), false, "Must not write report.html in workspace root");
     });
   });
 });

@@ -12,6 +12,10 @@ CREATE_HTML="$SCRIPT_DIR/../assets/create.html"
 
 open_browser() {
   local target="$1"
+  if [ "${HTML_REPORT_NO_OPEN:-}" = "1" ] || [ -n "${ANTIGRAVITY_AGENT:-}" ] || [ -n "${ANTIGRAVITY_CONVERSATION_ID:-}" ] || [ "${CI:-}" = "true" ]; then
+    echo "Please open in browser: $target"
+    return 0
+  fi
   if command -v xdg-open >/dev/null 2>&1; then
     xdg-open "$target" >/dev/null 2>&1 &
   elif command -v open >/dev/null 2>&1; then

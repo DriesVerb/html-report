@@ -11,7 +11,7 @@ description: >-
 
 > **Domain:** `Create Mode` | **Beneficiary:** `Hybrid` | **Serving:** `Static File / Server-Connected` | **Behavior:** `Interactive`
 
-This specialized skill guides users and agents through a structured, multi-dimensional decision wizard to determine the optimal report architecture, DaisyUI theme, and deterministic execution pipeline.
+Guides users and agents through a multi-dimensional decision wizard to select the optimal report architecture, DaisyUI theme, and deterministic execution pipeline.
 
 ---
 
@@ -20,41 +20,36 @@ This specialized skill guides users and agents through a structured, multi-dimen
 ### 1. `/html-studio` (Web Onboarding Studio & Theme Creator; legacy alias `/html-create`)
 
 #### Fast Instant Launch (Recommended)
-Open the creation studio in milliseconds using the fast launcher script:
 ```bash
-# Fast instant launcher (auto-detects Node.js vs No-Node):
 ./skills/html-report/scripts/open-create.sh
-
-# Or via Node:
+# Or via Node / manual server:
 node skills/html-report/scripts/open-create.mjs
-```
-
-Or start the server manually:
-```bash
-node skills/html-report/scripts/serve-report.mjs packages/studio/assets/create.html --port 3031
+node skills/html-report/scripts/serve-report.mjs packages/studio/assets/create.html --port 3031 --no-open
 ```
 - **Streamlined Navbar & Projects Hub**: Header with Sections TOC, Projects dropdown & directory launcher (`#navbar-projects-btn`), and consolidated Settings Gear.
 - **Auto Workspace Discovery (`GET /api/projects`)**: Scans workspace up to 4 levels with TTL cache, SemVer tags, and offline zero-node fallback.
 - **Visual Questionnaire & Theme Studio**: 4-step wizard, real-time OKLCH DaisyUI theme generator, and 1-click agent prompt.
 
 #### Agent Capabilities Fallback (No Node.js on Machine)
-If Node.js is not executable, the agent leverages its native capabilities:
-1. **Agent Browser Capabilities**: Open `packages/studio/assets/create.html` directly via `file:///path/to/html-report/packages/studio/assets/create.html`.
-2. **System Desktop Opener**: Run `xdg-open packages/studio/assets/create.html` (Linux), `open packages/studio/assets/create.html` (macOS), or `cmd.exe /c start packages/studio/assets/create.html`.
-3. **Interactive Decision Interview**: If headless, conduct the 4-step interview directly via multiple-choice questions.
+1. **Browser**: Open `file:///path/to/html-report/packages/studio/assets/create.html`.
+2. **System Opener**: `xdg-open packages/studio/assets/create.html` (Linux), `open` (macOS), or `cmd.exe /c start` (Windows).
+3. **Interactive Interview**: Conduct the 4-step decision interview directly via multiple-choice questions.
 
 ### 2. `/html-studio:cli` (Terminal Grill Interview; legacy alias `/html-create:cli`)
-Executes a zero-dependency interactive terminal interview for CLI-first developers:
+Zero-dependency interactive terminal interview outputting the exact CLI command and agent prompt:
 ```bash
 node skills/html-report/scripts/html-grill.mjs
 ```
-Walks the user through top-down architectural decisions via terminal prompts and outputs the exact command and agent prompt.
 
 ### 3. `/html-install` (1-Click PWA App Packaging)
-Package and install the creation studio as an offline-first desktop application:
 ```bash
-./skills/html-report/scripts/install-pwa.sh
-# or: npm run install:wizard
+./skills/html-report/scripts/install-pwa.sh # or: npm run install:wizard
+```
+
+### 4. Data-First Project Scaffolding (`scaffold-project.mjs --json`)
+Stage CSV/JSON datasets into `projects/<slug>/refs/`, compute numeric `columnSummaries` (`sum`, `avg`, `min`, `max`), and emit pre-wired `fragment.html` + `index.html` in <100ms:
+```bash
+node skills/html-report/scripts/scaffold-project.mjs --project q4-audit --title "Q4 Audit" --ref data.csv --widgets kpi-row,chart-pair,grid-table --json
 ```
 
 ---
@@ -70,7 +65,7 @@ Target (Report | Print | Live | Slide | PWA)
 ```
 
 ### Deterministic Skill Handoff Matrix
-Upon wizard completion, `html-studio` automatically routes into the exact specialized sibling skill:
+Upon wizard completion, `html-studio` routes into the specialized sibling skill:
 
 | User Selections | Target Sibling Skill | Required CLI Flags |
 | :--- | :--- | :--- |
@@ -83,26 +78,14 @@ Upon wizard completion, `html-studio` automatically routes into the exact specia
 ---
 
 ## AI Agent Prompt Synthesis Pattern
-The studio synthesizes unambiguous, structured instructions with direct sibling skill routing:
 ```text
 Task: Build an Executive KPI Dashboard
 Skill Command: /html-report (Specialized Facade: @html-report)
-
-Objective & Scope (What the board needs to show):
-Weekly revenue churn alerts and regional enterprise sales quotas
-
-Target Audience:
-C-Suite Leadership and Operating Committee
-
+Objective & Scope: Weekly revenue churn alerts and regional enterprise sales quotas
+Target Audience: C-Suite Leadership and Operating Committee
 Deliverable Architecture:
-- Purpose & Format: ANALYTICAL REPORT
-- Operational Mode: STATIC_STANDALONE
-- App Packaging: Standard Browser Page
-- Startup Theme: "emerald"
-- Features & Capabilities:
-  • Interactive Charts (Chart.js)
-  • Data Tables (Grid.js)
-  • Markdown Reader (Showdown)
+- Purpose & Format: ANALYTICAL REPORT | Mode: STATIC_STANDALONE | Packaging: Standard Browser Page
+- Startup Theme: "emerald" | Addons: Chart.js, Grid.js, Showdown
 ```
 
 ---

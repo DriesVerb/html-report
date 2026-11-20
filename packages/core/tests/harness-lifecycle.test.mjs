@@ -284,5 +284,51 @@ Breakpoint sm (640px) has page horizontal overflow: scrollWidth=750px > innerWid
         assert.ok(parsed.instruction_for_agent);
       }
     });
+
+    it("should resolve --project <slug> in parseArgs and runLifecycle (--fast)", async () => {
+      const parsedRun = parseArgs(["run", "--project", "q4-audit", "--title", "Q4 Audit", "--fast"]);
+      assert.equal(parsedRun.command, "run");
+      assert.equal(parsedRun.project, "q4-audit");
+      assert.equal(parsedRun.file.replace(/\\/g, "/"), "projects/q4-audit/fragment.html");
+      assert.equal(parsedRun.output.replace(/\\/g, "/"), "projects/q4-audit/index.html");
+      assert.equal(parsedRun.fast, true);
+      assert.equal(parsedRun.verify, false);
+
+      const parsedPublished = parseArgs(["run", "--project", "q4-audit", "--published", "--fast"]);
+      assert.equal(parsedPublished.output.replace(/\\/g, "/"), "projects/q4-audit/published.html");
+
+      const projDir = path.join(tmpDir, "projects", "demo-audit");
+      fs.mkdirSync(projDir, { recursive: true });
+      const fragFile = path.join(projDir, "fragment.html");
+      fs.writeFileSync(
+        fragFile,
+        `<h2>Audit Summary</h2><ul class="steps steps-vertical sm:steps-horizontal"><li class="step">1</li></ul><canvas id="c1"></canvas>`,
+        "utf-8"
+      );
+
+      const prevCwd = process.cwd();
+      try {
+        process.chdir(tmpDir);
+        const res = await runLifecycle({
+          project: "demo-audit",
+          title: "Demo Audit",
+          fast: true
+        });
+        assert.equal(res.success, true);
+        const outHtmlPath = path.join(projDir, "index.html");
+        const manifestPath = path.join(projDir, "report.manifest.json");
+        assert.ok(fs.existsSync(outHtmlPath));
+        assert.ok(fs.existsSync(manifestPath));
+        const html = fs.readFileSync(outHtmlPath, "utf-8");
+        assert.ok(html.includes('id="audit-summary"'));
+        assert.ok(html.includes("steps-horizontal"));
+        assert.ok(!html.includes("steps-vertical sm:steps-horizontal"));
+        assert.ok(html.includes("relative h-72 sm:h-80 w-full min-w-0"));
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+        assert.equal(manifest.project, "demo-audit");
+      } finally {
+        process.chdir(prevCwd);
+      }
+    });
   });
 });

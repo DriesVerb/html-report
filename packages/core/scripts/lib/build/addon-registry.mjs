@@ -5,7 +5,7 @@
 export const ADDON_REGISTRY = {
   charts: {
     name: "Chart.js",
-    signatures: [/<canvas\b/i, /\bnew\s+Chart\s*\(/i, /\bChart\.register\b/i, /\bdata-chart\b/i],
+    signatures: [/<canvas\b/i, /\bnew\s+Chart\s*\(/i, /\bChart\.register\b/i, /\bdata-chart(?:-source)?\b/i],
     head: `<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>`
   },
   mermaid: {
@@ -43,7 +43,7 @@ export const ADDON_REGISTRY = {
     name: "Leaflet",
     signatures: [
       /class=["'][^"']*\bleaflet-/i,
-      /\bdata-leaflet\b/i,
+      /\bdata-leaflet(?:-source)?\b/i,
       /\bL\.(?:map|tileLayer|marker|circleMarker)\s*\(/,
       /id=["'](?:datacenterMap|map)["']/i,
       /leaflet-pane/i

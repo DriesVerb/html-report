@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
-import { spawn } from "node:child_process";
+import { spawn, execFileSync } from "node:child_process";
 import net from "node:net";
 
 const REPO_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../..");
@@ -119,23 +119,87 @@ describe("Studio Fast Assembly & Smart Scaffolding Pipeline", () => {
   });
 
   describe("Zero-Dependency CSV/JSON Introspection & Widget Starters", () => {
-    it("introspects CSV headers and sample rows cleanly", () => {
+    it("introspects CSV headers, sample rows, and pre-computed numeric columnSummaries cleanly", () => {
       const csvPath = path.join(tmpRoot, "projects", "_uploads", "q3-metrics.csv");
       const meta = introspectDataFile(csvPath);
       assert.equal(meta.format, "csv");
+      assert.equal(meta.rowCount, 3);
       assert.deepEqual(meta.columns, ["region", "revenue", "growth_pct"]);
       assert.equal(meta.rows.length, 3);
       assert.deepEqual(meta.numericColumns, ["revenue", "growth_pct"]);
       assert.equal(meta.labelColumn, "region");
+      assert.deepEqual(meta.columnSummaries.revenue, {
+        count: 3,
+        sum: 995000,
+        avg: 331666.666667,
+        min: 265000,
+        max: 420000
+      });
+      assert.deepEqual(meta.columnSummaries.growth_pct, {
+        count: 3,
+        sum: 54.8,
+        avg: 18.266667,
+        min: 14.5,
+        max: 22.1
+      });
     });
 
-    it("introspects JSON arrays of objects into columns and numeric fields", () => {
+    it("introspects JSON arrays of objects into columns, numeric fields, and columnSummaries", () => {
       const jsonPath = path.join(tmpRoot, "projects", "_uploads", "service-health.json");
       const meta = introspectDataFile(jsonPath);
       assert.equal(meta.format, "json");
+      assert.equal(meta.rowCount, 2);
       assert.deepEqual(meta.columns, ["service", "p95_ms", "availability"]);
       assert.equal(meta.rows.length, 2);
       assert.ok(meta.numericColumns.includes("p95_ms"));
+      assert.deepEqual(meta.columnSummaries.p95_ms, {
+        count: 2,
+        sum: 120,
+        avg: 60,
+        min: 42,
+        max: 78
+      });
+    });
+
+    it("scaffold-project.mjs --json stages reference CSV, generates pre-wired fragment + index.html, and prints columnSummaries JSON", () => {
+      const scaffoldCli = path.join(REPO_ROOT, "skills/html-report/scripts/scaffold-project.mjs");
+      const stdout = execFileSync(
+        process.execPath,
+        [
+          scaffoldCli,
+          "--project", "q4-sales",
+          "--title", "Q4 Sales Audit",
+          "--ref", "projects/_uploads/q3-metrics.csv",
+          "--widgets", "kpi-row,chart-pair,grid-table",
+          "--json"
+        ],
+        { cwd: tmpRoot, encoding: "utf8" }
+      );
+      const payload = JSON.parse(stdout);
+      assert.equal(payload.ok, true);
+      assert.equal(payload.slug, "q4-sales");
+      assert.equal(payload.mode, "report");
+      assert.equal(payload.theme, "light");
+      assert.deepEqual(payload.widgets, ["kpi-row", "chart-pair", "grid-table"]);
+      assert.ok(payload.addons.includes("charts") && payload.addons.includes("gridjs"));
+      assert.ok(fs.existsSync(payload.fragmentPath), "fragmentPath must exist on disk");
+      assert.ok(fs.existsSync(payload.outputPath), "outputPath (index.html) must exist on disk");
+      assert.ok(fs.existsSync(path.join(payload.projectDir, "refs", "q3-metrics.csv")), "staged CSV must exist in refs/");
+      assert.equal(payload.datasets.length, 1);
+      assert.equal(payload.datasets[0].fileName, "q3-metrics.csv");
+      assert.equal(payload.datasets[0].rowCount, 3);
+      assert.deepEqual(payload.datasets[0].columnSummaries.revenue, {
+        count: 3,
+        sum: 995000,
+        avg: 331666.666667,
+        min: 265000,
+        max: 420000
+      });
+
+      const reportSkill = fs.readFileSync(path.join(REPO_ROOT, "skills/html-report/SKILL.md"), "utf8");
+      const studioSkill = fs.readFileSync(path.join(REPO_ROOT, "skills/html-studio/SKILL.md"), "utf8");
+      assert.match(reportSkill, /scaffold-project\.mjs --project .* --ref .* --widgets .* --json/);
+      assert.match(studioSkill, /scaffold-project\.mjs --project .* --ref .* --widgets .* --json/);
     });
 
     it("generateStarterFragment() emits Chart.js and Grid.js wired to introspected dataset columns", () => {

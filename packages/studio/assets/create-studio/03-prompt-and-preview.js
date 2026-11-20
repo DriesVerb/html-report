@@ -197,7 +197,7 @@ function updatePromptAndPreview() {
     .replace(/^-+|-+$/g, "")
     .slice(0, 40) || `${currentTarget}-project`;
 
-  const serveCmd = `node skills/html-report/scripts/serve-report.mjs projects/${projectSlug}/index.html --port ${aiPort}`;
+  const serveCmd = `node skills/html-report/scripts/serve-report.mjs projects/${projectSlug}/index.html --port ${aiPort} --no-open`;
 
   const purposeText = aiPurpose || `Provide live AI support on the board: answer user questions about the metrics, help explore data, and push live updates back to the HTML board.`;
   const turnkeyPart1El = document.getElementById("ai-turnkey-part1-prompt");
@@ -209,7 +209,7 @@ function updatePromptAndPreview() {
       `${purposeText}`,
       ``,
       `How to maintain a connection to the board:`,
-      `- Once the board is scaffolded, keep the Two-Way Agent Bridge running on port ${aiPort} via skills/html-report/scripts/serve-report.mjs --port ${aiPort}.`,
+      `- Once the board is scaffolded, keep the Two-Way Agent Bridge running on port ${aiPort} via skills/html-report/scripts/serve-report.mjs --port ${aiPort} --no-open.`,
       `- Hovering AI Assistant (⌘K): ${aiFloatingAssistant ? "Activated (user can open the floating chat dock in the bottom-right corner)" : "Disabled (headless bridge only — push live updates without showing the floating chat button)"}.`,
       `- Stay connected to the board's SSE stream (http://localhost:${aiPort}/events) and handle two-way requests (POST /api/agent and POST /api/agent/prompt) to push live updates back to the HTML file.`,
       ``,

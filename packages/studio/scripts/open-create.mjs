@@ -8,12 +8,15 @@ import http from "node:http";
 import { exec, spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
+import { isAgentOrSandboxedEnv } from "./lib/server/persona-and-session.mjs";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "../../..");
 const explicitPort = process.env.PORT ? Number(process.env.PORT) : null;
 const candidatePorts = explicitPort ? [explicitPort] : [3031, 3032];
 
 function openBrowser(url) {
+  if (isAgentOrSandboxedEnv(process.env)) return;
   const platform = process.platform;
   let cmd = "xdg-open";
   if (platform === "darwin") cmd = "open";

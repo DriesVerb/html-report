@@ -221,4 +221,97 @@ describe("Browser Runtime Integrity & CDN Health Tests", () => {
       }
     }
   });
+
+  it("should auto-hydrate declarative data-chart, data-gridjs, and data-leaflet widgets over file:// and react to DaisyUI theme switches", async () => {
+    const declarativeFragment = `
+      <main id="report-main" class="max-w-4xl mx-auto p-6 space-y-6">
+        <h1 id="decl-heading" class="text-2xl font-bold">Declarative Widget Auto-Hydration E2E</h1>
+        <div class="relative h-72 w-full min-w-0">
+          <canvas
+            id="decl-chart"
+            data-chart='{"type":"bar","data":{"labels":["Q1","Q2"],"datasets":[{"label":"Revenue","data":[42,58]}]}}'
+          ></canvas>
+        </div>
+        <div
+          id="decl-grid"
+          data-gridjs='{"columns":["Name","Score"],"data":[["Alice",98],["Bob",91]]}'
+        ></div>
+        <div
+          id="decl-map"
+          class="h-72 w-full"
+          data-leaflet='{"center":[51.505,-0.09],"zoom":12,"markers":[{"lat":51.505,"lng":-0.09,"popup":"London HQ"}]}'
+        ></div>
+      </main>
+    `;
+
+    const { html, activeAddons } = buildReport({
+      title: "Declarative Widget Auto-Hydration E2E",
+      content: declarativeFragment,
+      theme: "light"
+    });
+
+    assert.ok(activeAddons.includes("charts"), "buildReport must auto-detect charts addon from data-chart");
+    assert.ok(activeAddons.includes("gridjs"), "buildReport must auto-detect gridjs addon from data-gridjs");
+    assert.ok(activeAddons.includes("leaflet"), "buildReport must auto-detect leaflet addon from data-leaflet");
+
+    const tempPath = path.resolve(__dirname, "../tmp-declarative-widgets-test.html");
+    fs.writeFileSync(tempPath, html, "utf-8");
+
+    const browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    const consoleErrors = [];
+    const pageErrors = [];
+
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
+        consoleErrors.push(msg.text());
+      }
+    });
+    page.on("pageerror", (err) => {
+      pageErrors.push(err.message);
+    });
+
+    try {
+      await page.goto("file://" + tempPath, { waitUntil: "load" });
+      await page.waitForFunction(() => window.__REPORT_READY__ === true, { timeout: 10000 });
+      await page.waitForFunction(
+        () =>
+          Array.isArray(window.reportCharts) &&
+          window.reportCharts.length === 1 &&
+          Boolean(document.querySelector("#decl-grid .gridjs-container")) &&
+          Boolean(document.querySelector("#decl-map .leaflet-pane")),
+        { timeout: 10000 }
+      );
+
+      assert.deepEqual(pageErrors, [], `Declarative widgets threw page errors: ${pageErrors.join(", ")}`);
+
+      const state = await page.evaluate(async () => {
+        const chart = window.reportCharts[0];
+        const lightBorder = chart.data.datasets[0].borderColor;
+        await window.setReportTheme("dracula");
+        const draculaBorder = chart.data.datasets[0].borderColor;
+        const gridText = document.querySelector("#decl-grid")?.textContent || "";
+        const markerCount = document.querySelectorAll("#decl-map .leaflet-marker-icon").length;
+        return {
+          lightBorder,
+          draculaBorder,
+          hasGridSearch: Boolean(document.querySelector("#decl-grid input.gridjs-input")),
+          hasAliceRow: gridText.includes("Alice"),
+          markerCount
+        };
+      });
+
+      assert.ok(state.lightBorder, "Declarative chart must have resolved initial light theme borderColor");
+      assert.ok(state.draculaBorder, "Declarative chart must have resolved dracula theme borderColor");
+      assert.notEqual(state.lightBorder, state.draculaBorder, "Switching DaisyUI theme must update declarative chart palette");
+      assert.equal(state.hasGridSearch, true, "Declarative Grid.js must mount with search enabled by default");
+      assert.equal(state.hasAliceRow, true, "Declarative Grid.js must render table rows");
+      assert.equal(state.markerCount, 1, "Declarative Leaflet must render marker icon");
+    } finally {
+      await browser.close();
+      if (fs.existsSync(tempPath)) {
+        fs.unlinkSync(tempPath);
+      }
+    }
+  });
 });

@@ -262,10 +262,20 @@ export function scaffoldProject({
   return {
     slug,
     projectDir,
+    fragmentPath,
+    outputPath: entryPath,
+    mode: resolvedMode,
+    theme: resolvedTheme,
+    addons: resolvedAddons,
+    widgets: normalizedWidgets,
     packageJsonPath,
     agentsMdPath: agentsPath,
     stagedRefs: stagedRefs.map(({ diskPath, ...rest }) => rest),
-    datasets: datasets.map(({ rows, ...summary }) => ({ ...summary, sampleRowCount: rows.length })),
+    datasets: datasets.map(({ rows, ...summary }) => ({
+      ...summary,
+      rowCount: summary.rowCount ?? rows.length,
+      sampleRowCount: rows.length
+    })),
     files: {
       fragment: fragmentPath,
       entry: entryPath,
@@ -298,6 +308,7 @@ function parseCliArgs(argv) {
     aiDock: true,
     pwa: false,
     content: null,
+    rootDir: null,
     force: false,
     unique: false,
     json: false,
@@ -321,6 +332,9 @@ function parseCliArgs(argv) {
     }
     else if (arg === "--ref" && args[i + 1]) {
       opts.referenceFiles.push(args[++i]);
+    }
+    else if ((arg === "--root-dir" || arg === "--workspace") && args[i + 1]) {
+      opts.rootDir = args[++i];
     }
     else if (arg === "--charts") opts.addons.push("charts");
     else if (arg === "--mermaid") opts.addons.push("mermaid");
@@ -432,6 +446,7 @@ Options:
     aiDock: opts.aiDock,
     pwa: opts.pwa,
     content: seededContent,
+    rootDir: opts.rootDir,
     force: opts.force,
     avoidCollision: opts.unique
   });

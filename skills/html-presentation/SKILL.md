@@ -62,17 +62,17 @@ Wrap slides in `#presentation-shell` and `.reveal-stage > .reveal#presentation-d
 ## Assembly & Verification Workflow
 
 ```bash
-# 1. Scaffold or build Reveal.js presentation deck
-node skills/html-report/scripts/build-report.mjs \
+# 1. One-shot <150ms lint, auto-fix, and assemble Reveal.js deck inside gitignored projects/<slug>/
+node skills/html-report/scripts/harness.mjs run \
+  --project autonomous-agents-deck \
   --title "Autonomous Agents 2026" \
-  --content slides-fragment.html \
-  --presentation --theme night --output deck.html
+  --presentation --theme night --fast
 
 # 2. Verify spacing, safe zones, fullscreen, and notes in Playwright
-node skills/html-report/playwright/verify-report.mjs deck.html --mode presentation --cdn-reveal
+node skills/html-report/playwright/verify-report.mjs projects/autonomous-agents-deck/index.html --mode presentation --cdn-reveal
 
 # 3. Preview on local dev server (default port 3031, fallback 3032)
-node skills/html-report/scripts/serve-report.mjs deck.html --port 3031 --no-open
+node skills/html-report/scripts/serve-report.mjs projects/autonomous-agents-deck/index.html --port 3031 --no-open
 ```
 
 ---

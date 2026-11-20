@@ -6,6 +6,7 @@ packages/core/playwright/node_modules/
 skills/html-report/examples/*.pdf
 .DS_Store
 .caller-requests/
+.cache/
 projects/
 .board-state.json
 

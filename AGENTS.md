@@ -44,6 +44,10 @@ Whenever we brainstorm, plan, or use **OpenSpec** in this repository, agents and
   * In HTML reports, wire `.md` mentions to the in-browser Showdown Markdown Viewer (`openMarkdownViewer('filename.md')`) or direct URL preview, allowing users to immediately click and view the formatted artifact in a modal or preview tab.
   * In text and assistant messages, always format `.md` file paths as clickable file:// or workspace links.
 
+### 5. Gitignored `projects/` Output Rule for Generated Deliverables
+* **Rule**: Any user-generated report, dashboard, presentation, printable document, or PWA created in this repository MUST be placed inside the gitignored **`projects/<slug>/`** folder (`projects/<slug>/fragment.html` compiled to `projects/<slug>/index.html` via `--project <slug>`).
+* **Never overwrite tracked root files**: Never output user-generated content to `report.html`, `index.html`, or other root repository paths. Only OpenSpec journey companions (`openspec/changes/<feature-name>/index.html` synced to `implementation-progress.html`) or explicit repo showcase updates (`examples/dev/landing-fragment.html`) belong in tracked repository paths.
+
 ---
 
 ### Generation & Serving Workflow
@@ -60,7 +64,7 @@ cp openspec/changes/<feature-name>/index.html implementation-progress.html
 
 To serve on `http://localhost:3031` (fallback `3032`):
 ```bash
-node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3031
+node skills/html-report/scripts/serve-report.mjs implementation-progress.html --port 3031 --no-open
 ```
 
 ---

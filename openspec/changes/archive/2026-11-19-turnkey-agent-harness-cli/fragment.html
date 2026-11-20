@@ -1,0 +1,175 @@
+<section class="space-y-8">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+    <div class="min-w-0 flex-1 space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Plan 2 of 5</span>
+        <span class="badge badge-outline font-mono text-xs">turnkey-agent-harness-cli</span>
+      </div>
+      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Plan 2: Turnkey Project-Aware Agent Harness</h1>
+      <p class="text-xs sm:text-sm text-base-content/75 max-w-3xl">
+        Collapses multi-step agent CLI chains into a single <code>&lt;150ms</code> command (<code>harness.mjs run --project &lt;slug&gt; --fast</code>) that lints, auto-fixes common markup hazards, and assembles <code>projects/&lt;slug&gt;/index.html</code> in one pass.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="file-text" class="w-4 h-4"></i><span>proposal.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="layers" class="w-4 h-4"></i><span>design.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="check-square" class="w-4 h-4"></i><span>tasks.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/turnkey-agent-harness-cli/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
+        <i data-lucide="shield-check" class="w-4 h-4"></i><span>specs/</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Journey Phase Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="journey-phase-stepper" class="text-sm font-bold uppercase tracking-wider text-base-content/70">Journey Phase</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">Stage 5: Shipped / Archived (6/6 Tasks Complete — 100%)</span>
+    </div>
+    <div class="w-full overflow-x-auto">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li class="step step-primary" data-content="✓">Brainstorming</li>
+        <li class="step step-primary" data-content="✓">Planning</li>
+        <li class="step step-primary" data-content="✓">Implementing</li>
+        <li class="step step-primary" data-content="✓">Verifying</li>
+        <li class="step step-primary" data-content="✓">Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Progress KPIs -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Task Progress</div>
+      <div class="text-2xl font-extrabold text-success">6 / 6 (100%)</div>
+      <div class="text-xs text-base-content/70">All 3 phases implemented &amp; verified</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Inner-Loop Latency</div>
+      <div class="text-2xl font-extrabold text-success">&lt; 150ms</div>
+      <div class="text-xs text-base-content/70">Pure Node.js static gate + assembly</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Auto-Fix Transforms</div>
+      <div class="text-2xl font-extrabold text-primary">5 Rules</div>
+      <div class="text-xs text-base-content/70">+Stepper trap &amp; bare canvas wrapper</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">CLI Invocations</div>
+      <div class="text-2xl font-extrabold text-secondary">1 Command</div>
+      <div class="text-xs text-base-content/70">Down from 3–4 separate steps</div>
+    </div>
+  </div>
+
+  <!-- Architecture Mermaid & Latency Chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="harness-architecture" class="text-lg font-bold min-w-0 flex-1 break-words">One-Command Fast Harness FSM</h2>
+        <span class="badge badge-primary badge-outline badge-xs font-mono shrink-0">--project &lt;slug&gt; --fast</span>
+      </div>
+      <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">
+flowchart LR
+  Cmd["harness.mjs run --project slug --fast"] --> Resolve["Resolve projects/slug/fragment.html"]
+  Resolve --> Lint["lintFragment()"]
+  Lint --> Fix["autoFixFragment() (IDs, Tables, Canvas, Stepper)"]
+  Fix --> Build["buildReport() -> projects/slug/index.html"]
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="harness-latency-chart" class="text-lg font-bold min-w-0 flex-1 break-words">Inner-Loop Iteration Time (ms)</h2>
+        <span class="badge badge-success badge-outline badge-xs font-mono shrink-0">60x Faster Inner Loop</span>
+      </div>
+      <div class="relative h-72 sm:h-80 w-full min-w-0">
+        <canvas id="harnessLatencyChart" aria-label="Inner Loop Iteration Time Comparison" role="img"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Task Checklist -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="task-checklist" class="text-lg font-bold">Implementation Checklist (<button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</button>)</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">6 / 6 Complete</span>
+    </div>
+    <div class="overflow-x-auto w-full">
+      <table class="table table-zebra table-sm w-full [&_code]:break-all">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Milestone</th>
+            <th>Target Files</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-mono text-xs">1.1–1.2</td>
+            <td>Add <code>--project &lt;slug&gt;</code> path resolution and forward to <code>buildReport()</code></td>
+            <td><code>packages/core/scripts/lib/harness/cli.mjs</code>, <code>harness.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">2.1–2.2</td>
+            <td>Add auto-fix rules for <code>steps-vertical sm:steps-horizontal</code> and bare <code>&lt;canvas&gt;</code></td>
+            <td><code>packages/core/scripts/lib/harness/fragment-linter.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">3.1–3.2</td>
+            <td>Promote 1-shot fast harness command in <code>SKILL.md</code> and add unit tests</td>
+            <td><code>skills/*/SKILL.md</code>, <code>packages/core/tests/</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Turnkey Project-Aware Agent Harness (harness.mjs run --project <slug> --fast)\n\nAdds --project <slug> resolution to harness.mjs, expands mechanical auto-fixes in fragment-linter.mjs, and promotes a single <150ms inner-loop command across all SKILL.md facades.",
+  "design.md": "# Design: Turnkey Project-Aware Agent Harness\n\n- Resolves projects/<slug>/fragment.html -> projects/<slug>/index.html when --project <slug> is passed\n- Adds STEPPER_RESPONSIVE_TRAP and BARE_CANVAS_WRAPPER auto-fixes in fragment-linter.mjs\n- Separates <150ms inner authoring loop (--fast) from final visual Playwright verification",
+  "tasks.md": "# Tasks: Turnkey Project-Aware Agent Harness\n\n- [x] 1.1 Add --project <slug> parsing in harness cli.mjs\n- [x] 1.2 Forward project into buildReport() in harness.mjs\n- [x] 2.1 Add STEPPER_RESPONSIVE_TRAP auto-fix\n- [x] 2.2 Add BARE_CANVAS_WRAPPER auto-fix\n- [x] 3.1 Update SKILL.md workflows\n- [x] 3.2 Add unit tests and sync localhost:3031",
+  "specs/turnkey-agent-harness-cli/spec.md": "# Delta Specification: turnkey-agent-harness-cli\n\nDefines --project <slug> path resolution in harness.mjs and new mechanical auto-fix rules in fragment-linter.mjs."
+}
+</script>
+
+<script>
+  (function initHarnessChart() {
+    let attempts = 0;
+    function tryInit() {
+      const canvas = document.getElementById("harnessLatencyChart");
+      if (!canvas) return;
+      if (typeof Chart === "undefined") {
+        if (++attempts < 60) setTimeout(tryInit, 60);
+        return;
+      }
+      if (canvas.__initialized) return;
+      canvas.__initialized = true;
+      const chart = new Chart(canvas.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: ["Multi-Command Build + Cold Playwright (ms)", "One-Shot harness.mjs --project --fast (ms)"],
+          datasets: [
+            { label: "Duration (ms)", data: [8200, 120], backgroundColor: ["rgba(239, 68, 68, 0.72)", "rgba(34, 197, 94, 0.78)"], borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+      });
+      window.reportCharts = window.reportCharts || [];
+      window.reportCharts.push(chart);
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tryInit);
+    else tryInit();
+  })();
+</script>

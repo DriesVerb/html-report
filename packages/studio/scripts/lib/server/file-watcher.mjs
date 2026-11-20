@@ -8,7 +8,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { buildReport } from "@html-report/core/build";
 import { getAuthoringPlugin } from "../../authoring-plugin.mjs";
-import { openBrowser } from "./persona-and-session.mjs";
 import { findWorkspaceRoot } from "./workspace-scanner.mjs";
 
 export function createProjectFileWatcher({
@@ -193,13 +192,9 @@ export function createProjectFileWatcher({
             sseClients.delete(client);
           }
         }
-      } else if (autoOpen && path.resolve(updatedFile) === resolvedPath) {
-        console.log(`\n[html-report] File updated: ${fileName}`);
-        console.log(`[html-report] -> No active tabs detected. Reopening in browser: ${targetUrl}`);
-        openBrowser(targetUrl);
       } else if (sseClients.size === 0) {
         console.log(`\n[html-report] File updated: ${fileName}`);
-        console.log(`[html-report] -> No active tabs detected (--no-open active; waiting for browser connection at ${targetUrl}).`);
+        console.log(`[html-report] -> No active tabs detected (waiting for browser connection at ${targetUrl}).`);
       }
     }, 150);
   }

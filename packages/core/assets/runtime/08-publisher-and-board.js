@@ -365,6 +365,9 @@ if (typeof window !== "undefined") {
   window.openMarkdownViewer = window.openMarkdownViewer || openMarkdownViewer;
   window.closeMarkdownViewer = window.closeMarkdownViewer || closeMarkdownViewer;
   window.initFullCalendar = initFullCalendar;
+  window.initDeclarativeCharts = initDeclarativeCharts;
+  window.initDeclarativeGridjs = initDeclarativeGridjs;
+  window.initDeclarativeLeaflet = initDeclarativeLeaflet;
   window.rehydrateLucideIcons = rehydrateLucideIcons;
   window.ensureLucideIcons = ensureLucideIcons;
   window.initDatastarObserver = initDatastarObserver;
@@ -393,6 +396,9 @@ if (typeof window !== "undefined") {
     try { initShowdown(); } catch (_) {}
     try { initMockjs(); } catch (_) {}
     try { initFullCalendar(); } catch (_) {}
+    try { initDeclarativeCharts(); } catch (_) {}
+    try { initDeclarativeGridjs(); } catch (_) {}
+    try { initDeclarativeLeaflet(); } catch (_) {}
     try { initImpress(); } catch (_) {}
     try { initPresentationShell(); } catch (_) {}
     try { initDatastarObserver(); } catch (_) {}
@@ -478,6 +484,9 @@ if (typeof module !== "undefined" && module.exports) {
     openMarkdownViewer,
     closeMarkdownViewer,
     initFullCalendar,
+    initDeclarativeCharts,
+    initDeclarativeGridjs,
+    initDeclarativeLeaflet,
     rehydrateLucideIcons,
     initDatastarObserver,
     syncDatastarTheme,

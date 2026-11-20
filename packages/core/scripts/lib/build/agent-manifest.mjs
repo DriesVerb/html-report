@@ -287,7 +287,7 @@ export function buildAgentManifest({
     },
     pipeline: {
       rebuildCommand: rebuildArgs.join(" "),
-      serveCommand: `node ${skillPaths.serveScript} ${entryPath} --port ${resolvedAiPort}${aiLocal ? " --ai-local" : ""}`,
+      serveCommand: `node ${skillPaths.serveScript} ${entryPath} --port ${resolvedAiPort}${aiLocal ? " --ai-local" : ""} --no-open`,
       verifyCommand: `node ${skillPaths.verifyScript} ${entryPath}`,
       preflightCommand: `node ${skillPaths.preflightScript} --json`,
       authoringGuide: skillPaths.authoringGuide
