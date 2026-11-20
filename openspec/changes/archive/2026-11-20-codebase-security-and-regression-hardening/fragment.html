@@ -1,0 +1,96 @@
+<section class="space-y-8">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+    <div class="min-w-0 flex-1 space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Journey</span>
+        <span class="badge badge-outline font-mono text-xs">codebase-security-and-regression-hardening</span>
+        <span class="badge badge-success badge-outline font-mono text-xs">P0 / P1 / P2</span>
+      </div>
+      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Codebase Security &amp; Regression Hardening</h1>
+      <p class="text-xs sm:text-sm text-base-content/75 max-w-3xl">
+        Resolves build-pipeline command injection and path traversal, hardens Studio server CSRF/CORS/dotfile/XSS boundaries, repairs <code>--pwa</code> / <code>--feed-proxy</code> / CLI symlink regressions, and synchronizes documentation and regression tests.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="file-text" class="w-4 h-4"></i><span>proposal.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="layers" class="w-4 h-4"></i><span>design.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="check-square" class="w-4 h-4"></i><span>tasks.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/security-and-regression-hardening/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
+        <i data-lucide="shield-check" class="w-4 h-4"></i><span>specs/</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Journey Phase Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="journey-phase-stepper" class="text-sm font-bold uppercase tracking-wider text-base-content/70">Journey Phase</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">Stage 5: Shipped / Archived (6 / 6 Tasks Complete - 100%)</span>
+    </div>
+    <div class="w-full overflow-x-auto">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li class="step step-primary" data-content="✓">Brainstorming</li>
+        <li class="step step-primary" data-content="✓">Planning</li>
+        <li class="step step-primary" data-content="✓">Implementing</li>
+        <li class="step step-primary" data-content="✓">Verifying</li>
+        <li class="step step-primary" data-content="✓">Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Progress KPIs -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Task Progress</div>
+      <div class="text-2xl font-extrabold text-primary">6 / 6 (100%)</div>
+      <div class="text-xs text-base-content/70">All phases verified and complete</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Unit &amp; Integration</div>
+      <div class="text-2xl font-extrabold text-success">636 / 638</div>
+      <div class="text-xs text-base-content/70">0 fail, 2 intentional todo</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Playwright E2E</div>
+      <div class="text-2xl font-extrabold text-secondary">46 / 46</div>
+      <div class="text-xs text-base-content/70">16 suites passing cleanly</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Skill Router</div>
+      <div class="text-2xl font-extrabold text-accent">100%</div>
+      <div class="text-xs text-base-content/70">34 / 34 benchmark prompts</div>
+    </div>
+  </div>
+
+  <!-- Security & Hardening Flow -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <h2 id="architecture-flow" class="text-lg font-bold">Security &amp; Regression Architecture</h2>
+    <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">
+flowchart LR
+  Frag["Fragment / URL / Request"] --> Guard["Security Guards (URL / realpath / Local Origin)"]
+  Guard --> CoreSafe["@html-report/core (execFileSync + escapeAttr + DOM Sanitize)"]
+  Guard --> StudioSafe["@html-report/studio (400 URIError + 404 Dotfiles + 413 Cap + 405 Method)"]
+  CoreSafe --> Tests["638 Unit + 46 E2E Tests"]
+  StudioSafe --> Tests
+    </div>
+  </div>
+
+  <!-- Task Checklist -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <h2 id="task-checklist" class="text-lg font-bold">Completed Checklist</h2>
+    <div class="space-y-2 text-xs sm:text-sm">
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>1.1</strong> Protocol-checked <code>execFileSync</code> in <code>fetchFeedSnapshotSync()</code> &amp; <code>realpathSync</code> containment in <code>loadMermaidFileContent()</code>.</span></div>
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>1.2</strong> Enforced <code>enforceLocalBridgeSecurity</code>, local CORS headers, and <code>2 MB</code> body caps across mutating Studio routes &amp; CSRF token endpoint.</span></div>
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>1.3</strong> Guarded malformed URL decoding (<code>400</code>), dotfile access (<code>404</code>), and HTML/script XSS sinks.</span></div>
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>2.1</strong> Fixed <code>harness.mjs --pwa</code>, <code>--feed-proxy</code> fallthrough, <code>405</code> responses, <code>node:crypto</code>, symlink CLIs, <code>getAiConfig()</code>, and CSS typo.</span></div>
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>2.2</strong> Updated CLI, CDN, getting-started, testing docs, and <a href="#" onclick="openMarkdownViewer('proposal.md');return false;" class="link link-primary">proposal.md</a> links.</span></div>
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>2.3</strong> Added regression suites and verified unit, E2E, and skill router checks.</span></div>
+    </div>
+  </div>
+</section>

@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: blob: https://unpkg.com https://server.arcgisonline.com https://*.tile.openstreetmap.org https://images.unsplash.com https://raw.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' ws: wss: http: https:;" />
-  <title>Eval Modes, Responsive UX & Hardening - Journey & Plan</title>
+  <title>Codebase Security &amp; Regression Hardening - OpenSpec Journey</title>
 
   <!-- Content-Aware Favicon Emoticon -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%8A%3C%2Ftext%3E%3C%2Fsvg%3E" />
@@ -31,20 +31,17 @@
   </style>
 
   <!-- Optional Addon CDNs & Styles -->
-    <!-- Addon: Chart.js -->
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-Sse/HDqcypGpyTDpvZOJNnG0TT3feGQUkF9H+mnRvic+LjR+K1NhTt8f51KIQ3v3" crossorigin="anonymous"></script>
-
-  <!-- Addon: Mermaid -->
+    <!-- Addon: Mermaid -->
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" integrity="sha384-Wm9qzEgq4j1jEnuFK2FxKTlwuhbV2QqtGhcchvjDoKxeJ7WWAW7fysBq+1s6myfX" crossorigin="anonymous"></script>
 
-  <meta name="html-report-source" content="openspec/changes/eval-modes-and-ux-improvements/index.html" />
+  <meta name="html-report-source" content="openspec/changes/codebase-security-and-regression-hardening/index.html" />
 
   <!-- Deterministic Agent Manifest -->
   <script type="application/json" id="agent-manifest">
 {
   "schemaVersion": "1.0.0",
   "project": null,
-  "title": "Eval Modes, Responsive UX & Hardening - Journey & Plan",
+  "title": "Codebase Security & Regression Hardening - OpenSpec Journey",
   "mode": "report",
   "theme": "light",
   "favicon": "📊",
@@ -53,47 +50,34 @@
   "published": false,
   "pwa": false,
   "activeAddons": [
-    "charts",
     "mermaid"
   ],
   "files": {
-    "entry": "openspec/changes/eval-modes-and-ux-improvements/index.html",
-    "fragment": "openspec/changes/eval-modes-and-ux-improvements/fragment.html"
+    "entry": "openspec/changes/codebase-security-and-regression-hardening/index.html",
+    "fragment": "openspec/changes/codebase-security-and-regression-hardening/fragment.html"
   },
   "pipeline": {
-    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output openspec/changes/eval-modes-and-ux-improvements/index.html --content openspec/changes/eval-modes-and-ux-improvements/fragment.html --title \"Eval Modes, Responsive UX & Hardening - Journey & Plan\" --mode report --theme light --addons charts,mermaid",
-    "serveCommand": "node skills/html-report/scripts/serve-report.mjs openspec/changes/eval-modes-and-ux-improvements/index.html --port 3031 --no-open",
-    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs openspec/changes/eval-modes-and-ux-improvements/index.html",
+    "rebuildCommand": "node skills/html-report/scripts/build-report.mjs --output openspec/changes/codebase-security-and-regression-hardening/index.html --content openspec/changes/codebase-security-and-regression-hardening/fragment.html --title \"Codebase Security & Regression Hardening - OpenSpec Journey\" --mode report --theme light --addons mermaid",
+    "serveCommand": "node skills/html-report/scripts/serve-report.mjs openspec/changes/codebase-security-and-regression-hardening/index.html --port 3031 --no-open",
+    "verifyCommand": "node skills/html-report/playwright/verify-report.mjs openspec/changes/codebase-security-and-regression-hardening/index.html",
     "preflightCommand": "node skills/html-report/scripts/preflight.mjs --json",
     "authoringGuide": "../../skills/html-report/references/agent-authoring-guide.md"
   },
   "sections": [
     {
       "agentId": "section-1",
-      "slug": "evaluation-modes-responsive-ux-security-hardenin",
-      "label": "Evaluation Modes, Responsive UX &amp; Security Hardening",
+      "slug": "codebase-security-regression-hardening",
+      "label": "Codebase Security &amp; Regression Hardening",
       "id": null,
       "selector": "[data-agent-id=\"section-1\"]"
     }
   ],
   "widgets": [
     {
-      "agentId": "chart-1",
-      "type": "chart",
-      "id": "evalCoverageChart",
-      "selector": "#evalCoverageChart"
-    },
-    {
       "agentId": "mermaid-1",
       "type": "mermaid",
       "id": null,
       "selector": "[data-agent-id=\"mermaid-1\"]"
-    },
-    {
-      "agentId": "table-1",
-      "type": "table",
-      "id": null,
-      "selector": "[data-agent-id=\"table-1\"]"
     }
   ]
 }
@@ -857,7 +841,7 @@
       <!-- Left: Title & Mode Badge -->
       <div class="navbar-start w-auto flex-1 min-w-0 justify-start items-center gap-2">
         <span id="navbar-report-title" class="text-xs sm:text-sm md:text-base lg:text-lg font-bold tracking-tight text-left truncate flex items-center gap-2">
-          Eval Modes, Responsive UX & Hardening - Journey & Plan
+          Codebase Security &amp; Regression Hardening - OpenSpec Journey
         </span>
         <span id="navbar-mode-badge" class="badge badge-sm badge-outline hidden font-mono text-3xs sm:text-2xs font-semibold shrink-0 uppercase tracking-wider" aria-label="Report Mode"></span>
       </div>
@@ -1078,17 +1062,17 @@
 
   <!-- Main Content Container -->
   <main id="report-main" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1 w-full">
-<section class="space-y-8" data-agent-section="evaluation-modes-responsive-ux-security-hardenin" data-agent-id="section-1">
+<section class="space-y-8" data-agent-section="codebase-security-regression-hardening" data-agent-id="section-1">
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
     <div class="min-w-0 flex-1 space-y-2">
       <div class="flex flex-wrap items-center gap-2">
         <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Journey</span>
-        <span class="badge badge-outline font-mono text-xs">eval-modes-and-ux-improvements</span>
-        <span class="badge badge-success badge-outline font-mono text-xs">Plans 1–5</span>
+        <span class="badge badge-outline font-mono text-xs">codebase-security-and-regression-hardening</span>
+        <span class="badge badge-success badge-outline font-mono text-xs">P0 / P1 / P2</span>
       </div>
-      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Evaluation Modes, Responsive UX &amp; Security Hardening</h1>
+      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Codebase Security &amp; Regression Hardening</h1>
       <p class="text-xs sm:text-sm text-base-content/75 max-w-3xl">
-        Consolidates, spec-syncs, verifies, and archives all reviewed improvements across Presentation (Reveal.js), Print (A4 pagination &amp; starter), Live Dashboard (reactive <code>&lt;main&gt;</code>, port <code>3031</code>, <code>--ai-local</code> precedence), Grid.js mobile responsiveness, and Security/Scaffold hardening.
+        Resolves build-pipeline command injection and path traversal, hardens Studio server CSRF/CORS/dotfile/XSS boundaries, repairs <code>--pwa</code> / <code>--feed-proxy</code> / CLI symlink regressions, and synchronizes documentation and regression tests.
       </p>
     </div>
     <div class="flex flex-wrap gap-2 shrink-0">
@@ -1101,7 +1085,7 @@
       <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5">
         <i data-lucide="check-square" class="w-4 h-4"></i><span>tasks.md</span>
       </button>
-      <button type="button" onclick="openMarkdownViewer('specs/reveal-presentation-fixes/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
+      <button type="button" onclick="openMarkdownViewer('specs/security-and-regression-hardening/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
         <i data-lucide="shield-check" class="w-4 h-4"></i><span>specs/</span>
       </button>
     </div>
@@ -1129,159 +1113,51 @@
     <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
       <div class="text-xs uppercase font-semibold text-base-content/60">Task Progress</div>
       <div class="text-2xl font-extrabold text-primary">6 / 6 (100%)</div>
-      <div class="text-xs text-base-content/70">All 3 phases complete</div>
+      <div class="text-xs text-base-content/70">All phases verified and complete</div>
     </div>
     <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
-      <div class="text-xs uppercase font-semibold text-base-content/60">Evaluation Scope</div>
-      <div class="text-2xl font-extrabold text-secondary">Plans 1–5</div>
-      <div class="text-xs text-base-content/70">Presentation, Print, Live, Grid.js, Security</div>
+      <div class="text-xs uppercase font-semibold text-base-content/60">Unit &amp; Integration</div>
+      <div class="text-2xl font-extrabold text-success">636 / 638</div>
+      <div class="text-xs text-base-content/70">0 fail, 2 intentional todo</div>
     </div>
     <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
-      <div class="text-xs uppercase font-semibold text-base-content/60">Delta Specs Synced</div>
-      <div class="text-2xl font-extrabold text-accent">7 Specs</div>
-      <div class="text-xs text-base-content/70">Synced to openspec/specs/</div>
+      <div class="text-xs uppercase font-semibold text-base-content/60">Playwright E2E</div>
+      <div class="text-2xl font-extrabold text-secondary">46 / 46</div>
+      <div class="text-xs text-base-content/70">16 suites passing cleanly</div>
     </div>
     <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
-      <div class="text-xs uppercase font-semibold text-base-content/60">Repo Surface</div>
-      <div class="text-2xl font-extrabold text-info">36 Files</div>
-      <div class="text-xs text-base-content/70">Core, Studio, Skills, Unit &amp; E2E Tests</div>
+      <div class="text-xs uppercase font-semibold text-base-content/60">Skill Router</div>
+      <div class="text-2xl font-extrabold text-accent">100%</div>
+      <div class="text-xs text-base-content/70">34 / 34 benchmark prompts</div>
     </div>
   </div>
 
-  <!-- Architecture Mermaid & Scope Chart -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
-      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
-        <h2 id="improvement-architecture" class="text-lg font-bold min-w-0 flex-1 break-words">Cross-Mode Evaluation Architecture</h2>
-        <span class="badge badge-primary badge-outline badge-xs font-mono shrink-0">Plans 1–5</span>
-      </div>
-      <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center" data-agent-widget="mermaid" data-agent-id="mermaid-1">
-flowchart TD
-  P1["Plan 1: Presentation"] --> P1A["Transparent .reveal + Offscreen Mermaid + Hidden Notes"]
-  P2["Plan 2: Print Mode"] --> P2A["A4 @page CSS + resizeChartsForPrint + print-starter"]
-  P3["Plan 3: Live Dashboard"] --> P3A["Reactive main + Port 3031 + --ai-local Precedence"]
-  P4["Plan 4: Grid.js Mobile"] --> P4A["overflow-x: auto + nowrap Headers + Space Filter Skip"]
-  P5["Plan 5: Hardening"] --> P5A["realpathSync Symlink Guard + JSON/Mermaid Sanitization"]
-      </div>
-    </div>
-
-    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
-      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
-        <h2 id="surface-distribution-chart" class="text-lg font-bold min-w-0 flex-1 break-words">Synced Spec &amp; Test Coverage Breakdown</h2>
-        <span class="badge badge-secondary badge-outline badge-xs font-mono shrink-0">Live Chart</span>
-      </div>
-      <div class="relative h-72 sm:h-80 w-full min-w-0">
-        <canvas id="evalCoverageChart" aria-label="Evaluation Coverage Breakdown Chart" role="img" data-chart-source="#eval-coverage-data" data-agent-widget="chart" data-agent-id="chart-1"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- Connected Delta Specs Links -->
+  <!-- Security & Hardening Flow -->
   <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
-    <h2 id="delta-specs" class="text-lg font-bold">Delta Specifications</h2>
-    <div class="flex flex-wrap gap-2">
-      <button type="button" onclick="openMarkdownViewer('specs/reveal-presentation-fixes/spec.md')" class="btn btn-xs btn-outline font-mono">specs/reveal-presentation-fixes/spec.md</button>
-      <button type="button" onclick="openMarkdownViewer('specs/report-rendering-modes/spec.md')" class="btn btn-xs btn-outline font-mono">specs/report-rendering-modes/spec.md</button>
-      <button type="button" onclick="openMarkdownViewer('specs/declarative-widget-hydration/spec.md')" class="btn btn-xs btn-outline font-mono">specs/declarative-widget-hydration/spec.md</button>
-      <button type="button" onclick="openMarkdownViewer('specs/turnkey-agent-harness-cli/spec.md')" class="btn btn-xs btn-outline font-mono">specs/turnkey-agent-harness-cli/spec.md</button>
-      <button type="button" onclick="openMarkdownViewer('specs/reactive-data-copilot/spec.md')" class="btn btn-xs btn-outline font-mono">specs/reactive-data-copilot/spec.md</button>
-      <button type="button" onclick="openMarkdownViewer('specs/playwright-extensible-harness/spec.md')" class="btn btn-xs btn-outline font-mono">specs/playwright-extensible-harness/spec.md</button>
-      <button type="button" onclick="openMarkdownViewer('specs/skill-data-scaffolding-workflow/spec.md')" class="btn btn-xs btn-outline font-mono">specs/skill-data-scaffolding-workflow/spec.md</button>
+    <h2 id="architecture-flow" class="text-lg font-bold">Security &amp; Regression Architecture</h2>
+    <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center" data-agent-widget="mermaid" data-agent-id="mermaid-1">
+flowchart LR
+  Frag["Fragment / URL / Request"] --> Guard["Security Guards (URL / realpath / Local Origin)"]
+  Guard --> CoreSafe["@html-report/core (execFileSync + escapeAttr + DOM Sanitize)"]
+  Guard --> StudioSafe["@html-report/studio (400 URIError + 404 Dotfiles + 413 Cap + 405 Method)"]
+  CoreSafe --> Tests["638 Unit + 46 E2E Tests"]
+  StudioSafe --> Tests
     </div>
   </div>
 
-  <!-- Connected Task Checklist -->
-  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
-    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
-      <h2 id="task-checklist" class="text-lg font-bold">Implementation Checklist (<button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</button>)</h2>
-      <span class="badge badge-success badge-sm font-mono shrink-0">6 / 6 Complete (100%)</span>
-    </div>
-    <div class="overflow-x-auto w-full">
-      <table class="table table-zebra table-sm w-full [&_code]:break-all" data-agent-widget="table" data-agent-id="table-1">
-        <thead>
-          <tr>
-            <th>Task</th>
-            <th>Milestone</th>
-            <th>Target Files</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="font-mono text-xs">1.1</td>
-            <td>Reveal.js dark theme transparency, hidden notes modal, offscreen Mermaid render, TOC exclusion, and <code>--mode presentation --quick</code> docs</td>
-            <td><code>template-shell.html</code>, <code>02-theme-switcher.js</code>, <code>reveal.mjs</code></td>
-            <td><span class="badge badge-success badge-xs">Complete</span></td>
-          </tr>
-          <tr>
-            <td class="font-mono text-xs">1.2</td>
-            <td>Print A4 <code>@page</code> CSS, <code>resizeChartsForPrint()</code>, full-width Mermaid wrapper, and dedicated <code>print-starter.mjs</code></td>
-            <td><code>addon-registry.mjs</code>, <code>03-shell-controls.js</code>, <code>print-starter.mjs</code></td>
-            <td><span class="badge badge-success badge-xs">Complete</span></td>
-          </tr>
-          <tr>
-            <td class="font-mono text-xs">2.1</td>
-            <td>Reactive <code>&lt;main&gt;</code> preservation, port <code>3031</code> alignment, <code>--ai-local</code> precedence, and <code>.mockup-code</code> wrapping/highlight skip</td>
-            <td><code>fragment-linter.mjs</code>, <code>harness.mjs</code>, <code>server.mjs</code>, <code>highlight.mjs</code></td>
-            <td><span class="badge badge-success badge-xs">Complete</span></td>
-          </tr>
-          <tr>
-            <td class="font-mono text-xs">2.2</td>
-            <td>Grid.js mobile horizontal scroll containment, single-line headers, <code>checkInsufficientHorizontalSpace()</code> skip, and <code>GridJsCheck</code> overflow check</td>
-            <td><code>template-shell.html</code>, <code>03-shell-controls.js</code>, <code>gridjs.mjs</code></td>
-            <td><span class="badge badge-success badge-xs">Complete</span></td>
-          </tr>
-          <tr>
-            <td class="font-mono text-xs">3.1</td>
-            <td><code>realpathSync()</code> symlink escape guard, <code>safeJsonEmbed()</code> &amp; Mermaid escaping, and camelCase rate KPI averaging</td>
-            <td><code>data-introspector.mjs</code>, <code>widget-templates.mjs</code></td>
-            <td><span class="badge badge-success badge-xs">Complete</span></td>
-          </tr>
-          <tr>
-            <td class="font-mono text-xs">3.2</td>
-            <td>Run full unit + E2E suites, sync 7 delta specs, validate, archive, and create clean commit on <code>main</code></td>
-            <td><code>tests/**</code>, <code>openspec/specs/**</code>, <code>implementation-progress.html</code></td>
-            <td><span class="badge badge-success badge-xs">Complete</span></td>
-          </tr>
-        </tbody>
-      </table>
+  <!-- Task Checklist -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <h2 id="task-checklist" class="text-lg font-bold">Completed Checklist</h2>
+    <div class="space-y-2 text-xs sm:text-sm">
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>1.1</strong> Protocol-checked <code>execFileSync</code> in <code>fetchFeedSnapshotSync()</code> &amp; <code>realpathSync</code> containment in <code>loadMermaidFileContent()</code>.</span></div>
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>1.2</strong> Enforced <code>enforceLocalBridgeSecurity</code>, local CORS headers, and <code>2 MB</code> body caps across mutating Studio routes &amp; CSRF token endpoint.</span></div>
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>1.3</strong> Guarded malformed URL decoding (<code>400</code>), dotfile access (<code>404</code>), and HTML/script XSS sinks.</span></div>
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>2.1</strong> Fixed <code>harness.mjs --pwa</code>, <code>--feed-proxy</code> fallthrough, <code>405</code> responses, <code>node:crypto</code>, symlink CLIs, <code>getAiConfig()</code>, and CSS typo.</span></div>
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>2.2</strong> Updated CLI, CDN, getting-started, testing docs, and <a href="#" onclick="openMarkdownViewer('proposal.md');return false;" class="link link-primary">proposal.md</a> links.</span></div>
+      <div class="flex items-start gap-2"><span class="badge badge-success badge-xs mt-1">✓</span><span><strong>2.3</strong> Added regression suites and verified unit, E2E, and skill router checks.</span></div>
     </div>
   </div>
 </section>
-
-<script id="eval-coverage-data" type="application/json">
-{
-  "type": "bar",
-  "data": {
-    "labels": ["Presentation", "Print Mode", "Live/Bridge", "Grid.js Mobile", "Hardening"],
-    "datasets": [
-      {
-        "label": "Code & Docs Files",
-        "data": [7, 10, 12, 3, 2]
-      },
-      {
-        "label": "Test Files Updated",
-        "data": [1, 3, 2, 2, 1]
-      }
-    ]
-  }
-}
-</script>
-
-<script id="open-spec-artifacts-data" type="application/json">
-{
-  "proposal.md": "# Proposal: Evaluation Modes, Responsive UX & Security Hardening Improvements\n\nConsolidates Plans 1-5 across Presentation (Reveal.js dark theme, notes modal, offscreen Mermaid), Print (A4 CSS, Chart resize, print-starter.mjs), Live Dashboard (reactive <main>, port 3031, --ai-local precedence, .mockup-code exclusion), Grid.js mobile responsive tables, and symlink/JSON/Mermaid security hardening.",
-  "design.md": "# Design: eval-modes-and-ux-improvements\n\n1. Reveal.js stage transparency + isMermaidContainerHidden() offscreen mermaid.render()\n2. PRINT_MEDIA_CSS @page A4 portrait + resizeChartsForPrint() + print-starter.mjs\n3. Reactive <main> preservation + port 3031 default + --ai-local precedence + .mockup-code HighlightCheck exclusion\n4. Grid.js overflow-x: auto + nowrap headers + checkInsufficientHorizontalSpace() skip\n5. realpathSync() symlink escape rejection + safeJsonEmbed() + camelCase isRateOrAvgColumn()",
-  "tasks.md": "# Tasks: eval-modes-and-ux-improvements\n\n- [x] 1.1 Presentation Reveal.js dark theme, notes modal, hidden Mermaid, TOC & docs\n- [x] 1.2 Print A4 CSS, resizeChartsForPrint(), Mermaid wrapper & print-starter.mjs\n- [x] 2.1 Reactive <main>, port 3031, --ai-local precedence & .mockup-code isolation\n- [x] 2.2 Grid.js mobile scroll containment, headers & checkInsufficientHorizontalSpace\n- [x] 3.1 Symlink escape guard, JSON/Mermaid sanitization & camelCase rate KPIs\n- [x] 3.2 Run unit + E2E tests, sync specs, validate, archive & commit on main",
-  "specs/reveal-presentation-fixes/spec.md": "# Delta Spec: reveal-presentation-fixes\n\nTransparent .reveal/.reveal-viewport background, hidden #presentation-notes-modal, offscreen mermaid.render() for hidden slides, and #print-cover-page TOC exclusion.",
-  "specs/report-rendering-modes/spec.md": "# Delta Spec: report-rendering-modes\n\nA4 @page print rules, thead/tfoot pagination, resizeChartsForPrint(), and dedicated --mode print starter (print-starter.mjs).",
-  "specs/declarative-widget-hydration/spec.md": "# Delta Spec: declarative-widget-hydration\n\nResponsive Grid.js horizontal scroll containment inside .gridjs-wrapper, table-layout: auto, nowrap headers, and checkInsufficientHorizontalSpace() skip.",
-  "specs/turnkey-agent-harness-cli/spec.md": "# Delta Spec: turnkey-agent-harness-cli\n\nPreserves reactive <main> attributes in lintFragment()/stripOuterBoilerplate(), defaults ports to 3031, and forwards --ai/--ai-local/--ai-port.",
-  "specs/reactive-data-copilot/spec.md": "# Delta Spec: reactive-data-copilot\n\nGives --ai-local (local-bridge) precedence when no explicit provider/HTML_REPORT_AI_CMD is set and wraps .mockup-code terminal lines.",
-  "specs/playwright-extensible-harness/spec.md": "# Delta Spec: playwright-extensible-harness\n\nRevealCheck dark stage transparency + hidden notes modal assertions, GridJsCheck overflowPx <= 2, and .mockup-code exclusion from hasCode/HighlightCheck.",
-  "specs/skill-data-scaffolding-workflow/spec.md": "# Delta Spec: skill-data-scaffolding-workflow\n\nrealpathSync() symlink escape rejection in stageReferenceFiles(), safeJsonEmbed() & renderMermaidFlowWidget() sanitization, and camelCase rate column averaging."
-}
-</script>
   </main>
 
   <!-- Minimal Centered Footer with Semantic Versioning -->
@@ -1302,7 +1178,7 @@ flowchart TD
     #edit-style-theme-menu.hidden,
     #edit-selected-target.hidden,
     #edit-prompt-preview.hidden,
-    #edit-style-offline-actions.hidden { {
+    #edit-style-offline-actions.hidden {
       display: none !important;
     }
   </style>
@@ -2224,6 +2100,7 @@ function tailwindConfigSnippet(themeName, variables) {
 function registerCustomTheme(themeName, css = null) {
   if (!themeName || typeof themeName !== "string") return false;
   const name = themeName.trim();
+  if (!/^[a-zA-Z0-9_-]{1,64}$/.test(name)) return false;
   if (!DAISYUI_THEMES.includes(name)) {
     DAISYUI_THEMES.push(name);
   }
@@ -2541,6 +2418,7 @@ async function renderMermaidWithTheme(palette) {
  */
 function createThemeSwatchButton(theme, currentTheme, { attrName = "data-set-theme", onSelect } = {}) {
   const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
+  const safeTheme = typeof escapeHtml === "function" ? escapeHtml(theme) : String(theme ?? "").replace(/[&<>"']/g, "");
   const btn = document.createElement("button");
   btn.type = "button";
   btn.setAttribute("data-theme", theme);
@@ -2554,10 +2432,10 @@ function createThemeSwatchButton(theme, currentTheme, { attrName = "data-set-the
             <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
           </svg>
           <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
-            <span>${theme}</span>
+            <span>${safeTheme}</span>
             ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
           </span>
-          <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
+          <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${safeTheme}">
             <span class="bg-primary rounded-badge w-2 h-4"></span>
             <span class="bg-secondary rounded-badge w-2 h-4"></span>
             <span class="bg-accent rounded-badge w-2 h-4"></span>
@@ -3992,14 +3870,71 @@ function autoLinkMarkdownFiles(root = document.body) {
     const mdRegex = /\b([a-zA-Z0-9_\/-]+\.md)\b/g;
     for (const node of nodes) {
       const text = node.nodeValue;
-      if (!text || !text.match(mdRegex)) continue;
-      const span = document.createElement("span");
-      span.innerHTML = text.replace(mdRegex, (match) => {
-        return `<a href="${match}" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('${match}');return false;}" class="link link-primary font-mono text-xs underline decoration-primary/40 hover:decoration-primary cursor-pointer">${match}</a>`;
-      });
-      node.parentNode.replaceChild(span, node);
+      if (!text) continue;
+      mdRegex.lastIndex = 0;
+      if (!mdRegex.test(text)) continue;
+      mdRegex.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let lastIdx = 0;
+      let match;
+      while ((match = mdRegex.exec(text)) !== null) {
+        if (match.index > lastIdx) {
+          frag.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+        }
+        const mdPath = match[1];
+        const a = document.createElement("a");
+        a.href = mdPath;
+        a.className = "link link-primary font-mono text-xs underline decoration-primary/40 hover:decoration-primary cursor-pointer";
+        a.textContent = mdPath;
+        a.addEventListener("click", (e) => {
+          if (typeof window !== "undefined" && typeof window.openMarkdownViewer === "function") {
+            e.preventDefault();
+            window.openMarkdownViewer(mdPath);
+          }
+        });
+        frag.appendChild(a);
+        lastIdx = match.index + match[0].length;
+      }
+      if (lastIdx < text.length) {
+        frag.appendChild(document.createTextNode(text.slice(lastIdx)));
+      }
+      node.parentNode.replaceChild(frag, node);
     }
   } catch (_) {}
+}
+
+/**
+ * Sanitizes rendered Markdown HTML against script/handler/dangerous-URI XSS.
+ */
+function sanitizeRenderedHtml(rawHtml) {
+  if (!rawHtml || typeof rawHtml !== "string") return "";
+  if (typeof document !== "undefined" && typeof document.createElement === "function") {
+    try {
+      const tpl = document.createElement("template");
+      tpl.innerHTML = rawHtml;
+      const blocked = tpl.content.querySelectorAll("script, iframe, object, embed, link[rel='import'], meta, base, form");
+      blocked.forEach((el) => el.remove());
+      tpl.content.querySelectorAll("*").forEach((el) => {
+        if (!el.attributes) return;
+        for (const attr of Array.from(el.attributes)) {
+          const name = attr.name.toLowerCase();
+          const val = String(attr.value || "").trim().toLowerCase();
+          if (name.startsWith("on") || name === "srcdoc") {
+            el.removeAttribute(attr.name);
+          } else if (
+            (name === "href" || name === "src" || name === "xlink:href" || name === "action" || name === "formaction") &&
+            (/^(?:javascript|vbscript):/i.test(val) || /^data:text\/html/i.test(val))
+          ) {
+            el.removeAttribute(attr.name);
+          }
+        }
+      });
+      return tpl.innerHTML;
+    } catch (_) {}
+  }
+  return rawHtml
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "");
 }
 
 /**
@@ -4033,7 +3968,7 @@ function initShowdown() {
         md = (rawAttr && rawAttr !== "true") ? rawAttr : el.textContent;
       }
       if (md) {
-        el.innerHTML = converter.makeHtml(md);
+        el.innerHTML = sanitizeRenderedHtml(converter.makeHtml(md));
       }
     });
   } catch (err) {
@@ -4409,7 +4344,7 @@ async function openMarkdownViewer(docPath) {
   }
 
   if (contentEl) {
-    contentEl.innerHTML = rendered;
+    contentEl.innerHTML = sanitizeRenderedHtml(rendered);
   }
   try { rehydrateLucideIcons(modal); } catch (_) {}
   return modal;
@@ -5601,7 +5536,7 @@ const HTMLReportPublisher = {
     docClone.querySelectorAll(".divider").forEach((d) => {
       if (d.textContent && d.textContent.includes("Quick Controls")) d.remove();
     });
-    docClone.querySelectorAll('meta[name="html-report-ai"]').forEach((el) => el.remove());
+    docClone.querySelectorAll('meta[name="html-report-ai"], meta[name^="html-report-ai-"]').forEach((el) => el.remove());
     docClone.querySelectorAll("#html-report-verify-styles").forEach((el) => el.remove());
     docClone.querySelectorAll("[data-agent-authoring], [data-session-id], [data-insufficient-space]").forEach((el) => {
       el.removeAttribute("data-agent-authoring");
@@ -6889,11 +6824,12 @@ Object.assign(HTMLReportAgent, {
       `;
     } else {
       const persona = options.persona || "analyst";
+      const safePersona = typeof escapeHtml === "function" ? escapeHtml(persona) : String(persona).replace(/[&<>"']/g, "");
       msgEl.className = "flex justify-start w-full";
       msgEl.innerHTML = `
         <div class="w-full max-w-[95%] p-3 rounded-2xl rounded-tl-none bg-base-200/90 border border-base-300 text-base-content shadow-sm space-y-2 text-xs">
           <div class="flex items-center justify-between text-[10px] text-base-content/60 pb-1 border-b border-base-300/50">
-            <span class="font-mono font-semibold text-primary uppercase">${persona}</span>
+            <span class="font-mono font-semibold text-primary uppercase">${safePersona}</span>
             <span class="font-mono">${new Date().toLocaleTimeString()}</span>
           </div>
           <div class="prose prose-xs max-w-none text-base-content leading-relaxed message-content">
@@ -6909,11 +6845,34 @@ Object.assign(HTMLReportAgent, {
     return msgEl;
   },
 
+  _sanitizeHtml: function(rawHtml) {
+    if (!rawHtml || typeof rawHtml !== "string") return "";
+    if (typeof document !== "undefined" && typeof document.createElement === "function") {
+      try {
+        const tpl = document.createElement("template");
+        tpl.innerHTML = rawHtml;
+        tpl.content.querySelectorAll("script, iframe, object, embed, link[rel='import'], meta, base, form").forEach((el) => el.remove());
+        tpl.content.querySelectorAll("*").forEach((el) => {
+          for (const attr of Array.from(el.attributes || [])) {
+            const name = attr.name.toLowerCase();
+            const val = String(attr.value || "").trim().toLowerCase();
+            if (name.startsWith("on") || name === "srcdoc") el.removeAttribute(attr.name);
+            else if ((name === "href" || name === "src" || name === "xlink:href" || name === "action" || name === "formaction") && (/^(?:javascript|vbscript):/i.test(val) || /^data:text\/html/i.test(val))) el.removeAttribute(attr.name);
+          }
+        });
+        return tpl.innerHTML;
+      } catch (_) {}
+    }
+    return rawHtml
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+      .replace(/\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "");
+  },
+
   _formatMarkdown: function(text) {
     if (!text) return "";
     if (typeof window !== "undefined") {
       if (window.showdownConverter && typeof window.showdownConverter.makeHtml === "function") {
-        return window.showdownConverter.makeHtml(text);
+        return this._sanitizeHtml(window.showdownConverter.makeHtml(text));
       }
       if (window.showdown && typeof window.showdown.Converter === "function") {
         const conv = new window.showdown.Converter({
@@ -6924,7 +6883,7 @@ Object.assign(HTMLReportAgent, {
           ghCodeBlocks: true
         });
         window.showdownConverter = conv;
-        return conv.makeHtml(text);
+        return this._sanitizeHtml(conv.makeHtml(text));
       }
     }
     // Defensive built-in markdown formatter fallback
@@ -7041,7 +7000,8 @@ Object.assign(HTMLReportAgent, {
       } catch (adapterErr) {
         if (loadingEl) {
           const contentEl = loadingEl.querySelector(".message-content");
-          if (contentEl) contentEl.innerHTML = `<span class="text-error font-semibold">Error: ${adapterErr.message}</span>`;
+          const safeErr = typeof escapeHtml === "function" ? escapeHtml(adapterErr.message) : String(adapterErr.message || "").replace(/[&<>"']/g, "");
+          if (contentEl) contentEl.innerHTML = `<span class="text-error font-semibold">Error: ${safeErr}</span>`;
         }
         return { ok: false, error: adapterErr.message };
       }
@@ -7333,10 +7293,10 @@ if (HTMLReportSettings) {
       });
     });
 
-    // Populate 32-theme selector grid
+    // Populate 32-theme selector grid (re-populate if custom themes were added)
     const themeGrid = document.getElementById("modal-theme-grid");
-    if (themeGrid && !themeGrid.__populated && typeof DAISYUI_THEMES !== "undefined") {
-      themeGrid.__populated = true;
+    if (themeGrid && typeof DAISYUI_THEMES !== "undefined" && themeGrid.__populatedCount !== DAISYUI_THEMES.length) {
+      themeGrid.__populatedCount = DAISYUI_THEMES.length;
       themeGrid.innerHTML = "";
       const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
       DAISYUI_THEMES.forEach((theme) => {
@@ -7876,7 +7836,9 @@ const HTMLReportEdit = {
       lines.push("- Auto-priority: The AI agent must assess all tasks, identify dependencies, and create/determine its own optimal execution priority order.");
     }
     lines.push("- Follow the principles and conventions of this project (DaisyUI themes, Tailwind, light default theme).");
-    const cfgPort = (typeof HTMLReportAgent !== "undefined" && HTMLReportAgent.getConfig) ? (HTMLReportAgent.getConfig().port || 3031) : 3031;
+    const cfgPort = (typeof HTMLReportAgent !== "undefined" && typeof HTMLReportAgent.getAiConfig === "function")
+      ? (HTMLReportAgent.getAiConfig().port || 3031)
+      : 3031;
     if (hasFragment) {
       lines.push(`- Edit only ${fragmentPath}; do NOT hand-edit ${page.source || "index.html"} directly.`);
       lines.push(`- Keep the report live on localhost:${cfgPort}; saving ${fragmentPath} triggers automatic rebuild and hot-swap (no manual build-report.mjs run needed).`);
