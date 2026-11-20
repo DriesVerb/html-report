@@ -29,14 +29,16 @@
 - [scripts/lib/build/addon-registry.mjs](scripts/lib/build/addon-registry.mjs) — CDN addon catalog (`charts`, `mermaid`, `gridjs`, `leaflet`, `katex`, `fullcalendar`, `showdown`, `quill`, `hljs`, `dayjs`, `marked`, `reveal`, `mockjs`, `datastar`, `impress`), SRI tags, and auto-detection from fragment HTML.
 - [scripts/lib/build/fragment-sanitizer.mjs](scripts/lib/build/fragment-sanitizer.mjs) — Strips boilerplate wrappers, normalizes `<main id="report-main">` attributes, and repairs common markup hazards.
 - [scripts/lib/build/agent-manifest.mjs](scripts/lib/build/agent-manifest.mjs) — Deterministic `data-agent-id` hook stamper, `#agent-manifest` JSON builder, and optional authoring plugin injection (via `require.resolve` when installed).
+- [scripts/lib/build/vendor-disk-cache.mjs](scripts/lib/build/vendor-disk-cache.mjs) — On-demand disk vendor downloader for used CDN packages (`Core 4` + detected addons) persisted to `.cache/html-report-cdn/`.
 - [scripts/lib/build/cli.mjs](scripts/lib/build/cli.mjs) — CLI flag parser and help printer for `build-report.mjs`.
 
-### 2. Verification & Linting Harness (`harness.mjs` -> `scripts/lib/harness/`)
-- [scripts/harness.mjs](scripts/harness.mjs) — End-to-end verification runner (`--fast` static gate + optional headless browser verification).
-- [scripts/lib/harness/fragment-linter.mjs](scripts/lib/harness/fragment-linter.mjs) — Static HTML checks (missing heading IDs, bare `<table>`, outer boilerplate leaks, responsive DaisyUI traps).
+### 2. Verification & Linting Harness (`harness.mjs` -> `scripts/lib/harness/` & `playwright/harness/`)
+- [scripts/harness.mjs](scripts/harness.mjs) — End-to-end verification runner (`--project <slug>` resolution, `--fast` static gate + optional headless browser verification).
+- [scripts/lib/harness/fragment-linter.mjs](scripts/lib/harness/fragment-linter.mjs) — Static HTML checks & mechanical auto-fixes (missing heading IDs, bare `<table>`, bare `<canvas>`, outer boilerplate leaks, responsive DaisyUI stepper traps).
 - [scripts/lib/harness/diagnostics.mjs](scripts/lib/harness/diagnostics.mjs) — Root-cause fix suggestion engine for lint and runtime layout failures.
 - [scripts/lib/harness/server-policy.mjs](scripts/lib/harness/server-policy.mjs) — Startup policy determining whether static deliverable vs live server is appropriate for the target mode.
-- [scripts/lib/harness/cli.mjs](scripts/lib/harness/cli.mjs) — CLI parser, `--help`, and formatted console diagnostics output.
+- [scripts/lib/harness/cli.mjs](scripts/lib/harness/cli.mjs) — CLI parser, `--project <slug>` resolution, `--help`, and formatted console diagnostics output.
+- [playwright/harness/cdn-cache.mjs](playwright/harness/cdn-cache.mjs) — Playwright route interceptor (`attachCdnDiskCache()`) serving cached CDN packages from `.cache/html-report-cdn/` in `<1ms`.
 
 ### 3. Portable Bundle & ZIP Exporter (`publish-report.mjs` -> `scripts/lib/publish/`)
 - [scripts/publish-report.mjs](scripts/publish-report.mjs) — `publishReport()` orchestrator producing standalone `./dist` or `.zip` packages.
@@ -52,10 +54,11 @@
   3. [assets/runtime/03-shell-controls.js](assets/runtime/03-shell-controls.js) — TOC dropdown, fullscreen toggle, smooth scrolling, and responsive table/grid guards.
   4. [assets/runtime/04a-impress-deck.js](assets/runtime/04a-impress-deck.js) — Legacy 3D spatial presentation adapter (`impress.js`).
   5. [assets/runtime/04b-reveal-shell.js](assets/runtime/04b-reveal-shell.js) — Reveal.js presentation toolbar, fullscreen reflow, `N` speaker notes popup, and stacked all-slides toggle.
-  6. [assets/runtime/05-cdn-hydrators.js](assets/runtime/05-cdn-hydrators.js) — Chart.js, KaTeX, Highlight.js, and Grid.js hydration + `window.reinitReportContent()`.
-  7. [assets/runtime/06-public-feeds.js](assets/runtime/06-public-feeds.js) — Client-side `#feed-registry` polling for zero-backend dashboards.
-  8. [assets/runtime/07-settings-and-mermaid.js](assets/runtime/07-settings-and-mermaid.js) — Mermaid diagram renderer + enlarge modal + report settings drawer.
-  9. [assets/runtime/08-publisher-and-board.js](assets/runtime/08-publisher-and-board.js) — Export helpers, Showdown Markdown artifact viewer (`openMarkdownViewer()`), and publisher utilities.
+  6. [assets/runtime/05-cdn-hydrators.js](assets/runtime/05-cdn-hydrators.js) — KaTeX, Highlight.js, FullCalendar, and Quill hydration + `window.reinitReportContent()`.
+  7. [assets/runtime/05b-widget-hydrators.js](assets/runtime/05b-widget-hydrators.js) — Zero-JS declarative widget auto-hydrators for `data-chart` (Chart.js), `data-gridjs` (Grid.js), and `data-leaflet` (Leaflet + Esri ArcGIS tiles).
+  8. [assets/runtime/06-public-feeds.js](assets/runtime/06-public-feeds.js) — Client-side `#feed-registry` polling for zero-backend dashboards.
+  9. [assets/runtime/07-settings-and-mermaid.js](assets/runtime/07-settings-and-mermaid.js) — Mermaid diagram renderer + enlarge modal + report settings drawer.
+  10. [assets/runtime/08-publisher-and-board.js](assets/runtime/08-publisher-and-board.js) — Export helpers, Showdown Markdown artifact viewer (`openMarkdownViewer()`), and publisher utilities.
 
 ### 5. Standalone Core Tests
 All core unit tests live under [tests/](tests/), including [tests/codebase-digestibility.test.mjs](tests/codebase-digestibility.test.mjs) enforcing the `<= 650` line budget across workspace modules.

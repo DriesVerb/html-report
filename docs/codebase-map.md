@@ -35,8 +35,8 @@ html-report/
 | Need | Start Here | Implementation Sub-Modules |
 | :--- | :--- | :--- |
 | Assemble HTML deliverable from fragment | [packages/core/scripts/build-report.mjs](../packages/core/scripts/build-report.mjs) | [packages/core/scripts/lib/build/](../packages/core/scripts/lib/build/) |
-| Lint fragment or run verification gate | [packages/core/scripts/harness.mjs](../packages/core/scripts/harness.mjs) | [packages/core/scripts/lib/harness/](../packages/core/scripts/lib/harness/) |
-| Change navbar, theme switcher, Mermaid, or Reveal runtime | [packages/core/assets/report-runtime.js](../packages/core/assets/report-runtime.js) | [packages/core/assets/runtime/](../packages/core/assets/runtime/) |
+| Lint fragment or run verification gate | [packages/core/scripts/harness.mjs](../packages/core/scripts/harness.mjs) | [packages/core/scripts/lib/harness/](../packages/core/scripts/lib/harness/), [packages/core/playwright/harness/cdn-cache.mjs](../packages/core/playwright/harness/cdn-cache.mjs) |
+| Change navbar, theme switcher, Mermaid, Reveal, or declarative widget hydrators | [packages/core/assets/report-runtime.js](../packages/core/assets/report-runtime.js) | [packages/core/assets/runtime/](../packages/core/assets/runtime/) (`05b-widget-hydrators.js`) |
 | Adjust DaisyUI custom OKLCH theme compilation | [packages/core/scripts/theme-compiler.mjs](../packages/core/scripts/theme-compiler.mjs) | — |
 | Package offline deliverable / ZIP archive | [packages/core/scripts/publish-report.mjs](../packages/core/scripts/publish-report.mjs) | [packages/core/scripts/lib/publish/](../packages/core/scripts/lib/publish/) |
 | Modify Creation Studio wizard UI or client logic | [packages/studio/assets/create.html](../packages/studio/assets/create.html) | [packages/studio/assets/create-studio/](../packages/studio/assets/create-studio/) |
