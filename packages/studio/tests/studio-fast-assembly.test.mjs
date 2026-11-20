@@ -25,7 +25,7 @@ import {
   generateStarterFragment
 } from "../../../skills/html-report/scripts/scaffold-project.mjs";
 import { startServer } from "../../../skills/html-report/scripts/serve-report.mjs";
-import { runLifecycle } from "../../../skills/html-report/scripts/harness.mjs";
+import { runLifecycle, lintFragment } from "../../../skills/html-report/scripts/harness.mjs";
 import { buildReport } from "../../../skills/html-report/scripts/build-report.mjs";
 
 describe("Studio Fast Assembly & Smart Scaffolding Pipeline", () => {
@@ -246,6 +246,66 @@ describe("Studio Fast Assembly & Smart Scaffolding Pipeline", () => {
         assert.ok(!frag.includes("199.70"));
       } finally {
         if (fs.existsSync(outsideCsv)) fs.unlinkSync(outsideCsv);
+      }
+    });
+
+    it("generateStarterFragment() emits dedicated print starter with #print-cover-page, table, and sign-off in print mode", () => {
+      const frag = generateStarterFragment({
+        slug: "print-starter-test",
+        title: "Q4 Compliance Print Pack",
+        mode: "print"
+      });
+      assert.ok(frag.includes('id="print-cover-page"'));
+      assert.ok(frag.includes('id="print-cover-title"'));
+      assert.ok(frag.includes("hidden print:flex"));
+      assert.ok(frag.includes("break-after-page"));
+      assert.ok(frag.includes("break-inside-avoid"));
+      assert.ok(frag.includes('<div class="overflow-x-auto w-full">'));
+      assert.ok(frag.includes("<table class=\"table table-zebra table-xs"));
+      assert.ok(frag.includes('id="attestation"'));
+
+      const innerOnly = frag.replace(/^<main[^>]*>/i, "").replace(/<\/main>\s*$/i, "");
+      const lintRes = lintFragment(innerOnly);
+      assert.equal(lintRes.valid, true, `Print starter inner fragment should pass lintFragment cleanly: ${JSON.stringify(lintRes.issues)}`);
+    });
+
+    it("stageReferenceFiles rejects symlink escapes outside workspaceRoot and handles camelCase rate KPIs", () => {
+      const outsideSecret = path.join(os.tmpdir(), `outside-secret-${Date.now()}.csv`);
+      fs.writeFileSync(outsideSecret, "k,v\na,1\n", "utf8");
+      const uploadsDir = path.join(tmpRoot, "projects", "_uploads");
+      fs.mkdirSync(uploadsDir, { recursive: true });
+      const symlinkPath = path.join(uploadsDir, "symlink-escape.csv");
+      try {
+        fs.symlinkSync(outsideSecret, symlinkPath);
+        const res = scaffoldProject({
+          project: "symlink-escape-test",
+          title: "Symlink Escape Test",
+          referenceFiles: ["projects/_uploads/symlink-escape.csv", "/nonexistent/outside-oracle.csv"],
+          workspaceRoot: tmpRoot
+        });
+        assert.equal(res.stagedRefs[0].stagedPath, null);
+        assert.equal(res.stagedRefs[0].reason, "outside_workspace");
+        assert.equal(res.stagedRefs[1].stagedPath, null);
+        assert.equal(res.stagedRefs[1].reason, "outside_workspace");
+      } finally {
+        if (fs.existsSync(symlinkPath)) fs.unlinkSync(symlinkPath);
+        if (fs.existsSync(outsideSecret)) fs.unlinkSync(outsideSecret);
+      }
+
+      const rateCsv = path.join(tmpRoot, "projects", "_uploads", "camel-rates.csv");
+      fs.writeFileSync(rateCsv, "service,errorRate,cost_usd\napi,1.20,100\nworker,2.50,250\n", "utf8");
+      try {
+        const ds = introspectDataFile(rateCsv);
+        const frag = generateStarterFragment({
+          slug: "camel-rate-test",
+          title: "Camel Rate Test",
+          widgets: ["kpi-row"],
+          datasets: [ds]
+        });
+        assert.ok(frag.includes("1.85"), "errorRate should average to 1.85");
+        assert.ok(!frag.includes("3.70"), "errorRate must not sum to 3.70");
+      } finally {
+        if (fs.existsSync(rateCsv)) fs.unlinkSync(rateCsv);
       }
     });
   });

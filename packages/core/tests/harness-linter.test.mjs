@@ -400,5 +400,15 @@ theme: corporate
       assert.ok(!content.includes("<body>"));
       assert.ok(content.includes('<h2 id="auto-fixed-heading">Auto Fixed Heading</h2>'));
     });
+
+    it("should preserve reactive <main data-signals> root in lintFragment and stripOuterBoilerplate", () => {
+      const reactiveFrag = `<main id="report-main" data-signals='{"tick":0}'><h2 id="live">Live</h2></main>`;
+      const lintRes = lintFragment(reactiveFrag);
+      assert.equal(lintRes.valid, true);
+
+      const wrappedHtml = `<body><main id="report-main" data-signals='{"tick":0}'><h2 id="live">Live</h2></main></body>`;
+      const stripped = stripOuterBoilerplate(wrappedHtml);
+      assert.ok(stripped.content.includes(`data-signals='{"tick":0}'`));
+    });
   });
 });

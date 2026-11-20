@@ -6,7 +6,7 @@ function initTOC() {
   const tocList = document.getElementById("report-toc-list");
   if (!tocList) return;
   const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).filter(
-    (h) => !h.closest(".fc, .katex, .gridjs, .notes, #presentation-notes-modal, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
+    (h) => !h.closest(".fc, .katex, .gridjs, .notes, #presentation-notes-modal, #print-cover-page, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
   );
   tocList.innerHTML = "";
 
@@ -68,9 +68,15 @@ function checkInsufficientHorizontalSpace() {
   if (!mainEl) return [];
 
   const insufficient = [];
-  const candidates = mainEl.querySelectorAll("section, div, pre, table, .card, .overflow-x-auto, .gridjs-wrapper");
+  const candidates = mainEl.querySelectorAll("section, div, pre, table, .card, .overflow-x-auto");
 
   candidates.forEach((el) => {
+    // Grid.js handles horizontal scrolling intentionally inside .gridjs-wrapper for wide tables
+    if (el.classList && (el.classList.contains("gridjs-wrapper") || el.classList.contains("gridjs-table"))) {
+      el.removeAttribute("data-insufficient-space");
+      el.classList.remove("verify-insufficient-space");
+      return;
+    }
     const style = (typeof window !== "undefined" && window.getComputedStyle) ? window.getComputedStyle(el) : el.style;
     if (style.display === "none" || style.visibility === "hidden" || el.clientWidth === 0) {
       el.removeAttribute("data-insufficient-space");
@@ -277,10 +283,25 @@ async function buildInlinedHtmlSnapshot(options = {}) {
 }
 
 /**
+ * Resizes active Chart.js instances so canvases fit print/A4 margins cleanly.
+ */
+function resizeChartsForPrint() {
+  if (typeof window === "undefined") return;
+  if (Array.isArray(window.reportCharts)) {
+    window.reportCharts.forEach((chart) => {
+      try {
+        if (chart && typeof chart.resize === "function") chart.resize();
+      } catch (_) {}
+    });
+  }
+}
+
+/**
  * Triggers PDF export / print dialog.
  */
 function exportReportPdf() {
   if (typeof window === "undefined") return;
+  resizeChartsForPrint();
   resizePresentationWidgets();
   if (window.reportLeafletMap && typeof window.reportLeafletMap.invalidateSize === "function") {
     window.reportLeafletMap.invalidateSize();

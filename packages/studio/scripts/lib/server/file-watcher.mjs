@@ -77,6 +77,7 @@ export function createProjectFileWatcher({
         favicon: manifest.favicon || "📊",
         addons: Array.isArray(manifest.activeAddons) ? manifest.activeAddons : [],
         ai: Boolean(manifest.aiBridge),
+        aiLocal: Boolean(manifest.aiConfig?.local),
         aiPort: manifest.aiConfig?.port || 3031,
         aiModel: manifest.aiConfig?.model || "Gemini 3.8 Flash (Low)",
         aiPersona: manifest.aiConfig?.persona || "analyst",

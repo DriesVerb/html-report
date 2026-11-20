@@ -32,6 +32,7 @@
 ### 2. Project Scaffolding & CLI Interview
 - [scripts/scaffold-project.mjs](scripts/scaffold-project.mjs) — `scaffoldProject()` creating `projects/<slug>/{fragment.html,index.html,report.manifest.json,AGENTS.md,package.json}` + CLI entrypoint.
   - [scripts/lib/scaffold/data-introspector.mjs](scripts/lib/scaffold/data-introspector.mjs) — `slugifyProject()`, `resolveUniqueSlug()`, `stageReferenceFiles()`, CSV/TSV/JSON bounded introspection.
+  - [scripts/lib/scaffold/print-starter.mjs](scripts/lib/scaffold/print-starter.mjs) — `renderPrintStarterFragment()` dedicated `--mode print` A4 cover page, ledger table, and sign-off starter.
   - [scripts/lib/scaffold/widget-templates.mjs](scripts/lib/scaffold/widget-templates.mjs) — KPI, Chart.js, Grid.js, Mermaid, Timeline, and Reveal starter fragment generators + per-project `AGENTS.md`/`package.json` templates.
 - [scripts/domain-model.mjs](scripts/domain-model.mjs) — Barrel re-exporting studio domain & DDD helpers:
   - [scripts/lib/domain/studio-config.mjs](scripts/lib/domain/studio-config.mjs) — `DAISYUI_THEMES`, `TARGET_DEFINITIONS`, `ADDON_CATALOG`, `WIDGET_PRESETS`, `normalizeDomainConfig()`, `generateCliCommand()`, `generateDeterministicPrompt()`.

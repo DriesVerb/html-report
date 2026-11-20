@@ -111,7 +111,7 @@ export class StructureCheck extends VerificationCheck {
 
       const tocLinks = Array.from(document.querySelectorAll("#report-toc-list a[href^='#']"));
       const headings = Array.from(document.querySelectorAll("main h1, main h2, main h3")).filter(
-        (h) => !h.closest(".fc, .katex, .gridjs, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
+        (h) => !h.closest(".fc, .katex, .gridjs, .notes, #presentation-notes-modal, #print-cover-page, [aria-hidden='true']") && !h.classList.contains("fc-toolbar-title")
       );
       const missingHeadingIds = headings.filter((h) => !h.id).map((h) => h.textContent.trim());
       const unmappedHeadings = headings

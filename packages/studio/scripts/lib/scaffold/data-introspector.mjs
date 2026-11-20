@@ -116,14 +116,30 @@ export function stageReferenceFiles(referenceFiles = [], projectDir, workspaceRo
 
     let sourcePath = null;
     let outsideWorkspace = false;
+    let realWs = null;
+    try {
+      realWs = fs.realpathSync(resolvedWs);
+    } catch {
+      realWs = resolvedWs;
+    }
     for (const cand of candidates) {
       const inside = isPathInside(resolvedWs, cand);
-      if (inside && fs.existsSync(cand) && fs.statSync(cand).isFile()) {
-        sourcePath = cand;
-        break;
-      }
-      if (!inside && fs.existsSync(cand) && fs.statSync(cand).isFile()) {
+      if (!inside) {
         outsideWorkspace = true;
+        continue;
+      }
+      if (fs.existsSync(cand) && fs.statSync(cand).isFile()) {
+        try {
+          const realCand = fs.realpathSync(cand);
+          if (!isPathInside(realWs, realCand)) {
+            outsideWorkspace = true;
+            continue;
+          }
+          sourcePath = cand;
+          break;
+        } catch {
+          outsideWorkspace = true;
+        }
       }
     }
 

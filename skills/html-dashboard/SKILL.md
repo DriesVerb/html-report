@@ -96,7 +96,7 @@ node skills/html-report/scripts/harness.mjs run \
 ### Step 3: Launch Live-Streaming Dev Server
 Run the dev server to stream SSE fragments and listen for agent interactions:
 ```bash
-node skills/html-report/scripts/serve-report.mjs projects/agent-dashboard/index.html --port 3000 --no-open
+node skills/html-report/scripts/serve-report.mjs projects/agent-dashboard/index.html --port 3031 --no-open
 ```
 
 ---

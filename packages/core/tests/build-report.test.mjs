@@ -288,6 +288,10 @@ addons: [charts]
       assert.equal(result.mode, "print");
       assert.ok(result.html.includes('data-report-mode="print"'));
       assert.ok(result.html.includes("@media print"));
+      assert.ok(result.html.includes("@page"));
+      assert.ok(result.html.includes("display: table-header-group"));
+      assert.ok(result.html.includes("display: table-row-group"));
+      assert.ok(result.html.includes(".break-after-page"));
       assert.ok(result.html.includes('id="printable-media-styles"'));
       assert.ok(!result.html.includes("Not PDF-Ready"));
     });

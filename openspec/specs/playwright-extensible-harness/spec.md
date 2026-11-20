@@ -76,3 +76,10 @@ The runner MUST support saving structured diagnostic data and visual artifacts, 
 #### Scenario: Standard run with cdnCache=true and --review-packet captures desktop and mobile views
 - **WHEN** `verify-report.mjs` runs without `--check-*` filtering and with `--review-packet --screenshots <dir>`
 - **THEN** the runner executes in `STANDARD` mode (not `TARGETED`) despite `cdnCache: true` and saves both `review_desktop` and `review_mobile` PNG screenshots.
+
+### Requirement: Mode-Specific Layout, Transparency & Code-Block Isolation Checks
+`RevealCheck` SHALL verify that `.reveal` does not paint opaque white (`rgb(255, 255, 255)`) over a non-white `.reveal-stage` and that `#presentation-notes-modal` starts hidden (`display === "none"`), `GridJsCheck` SHALL verify zero horizontal page overflow (`overflowPx <= 2`), and `runner.mjs` (`hasCode`) / `HighlightCheck` SHALL exclude `.mockup-code` terminal elements unless explicitly marked with `.hljs` or `language-*`.
+
+#### Scenario: Presentation check catches opaque white `.reveal` stage or visible notes modal, while dashboard `.mockup-code` skips HighlightCheck
+- **WHEN** `runHarness()` evaluates a dark-theme Reveal.js presentation or a Datastar dashboard containing `<div class="mockup-code"><pre><code>tick</code></pre></div>`
+- **THEN** `RevealCheck` enforces stage transparency and initial notes modal hiding, `GridJsCheck` enforces `overflowPx <= 2`, and `HighlightCheck` does not fail on unhighlighted `.mockup-code` terminal output.

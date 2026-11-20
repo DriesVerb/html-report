@@ -48,7 +48,10 @@ OPTIONS:
   --published               Emit a clean non-editable Published Document with Authoring Plugin pruned
   --serve                   Force start/check dev server
   --no-serve                Disable dev server regardless of mode policy
-  --port <number>           Target dev server port (default: 3000)
+  --port <number>           Target dev server port (default: 3031)
+  --ai, --bridge            Enable Two-Way AI Agent Bridge controls
+  --ai-local                Enable zero-key Local Context Bridge mode
+  --ai-port <number>        Agent Bridge port (default: 3031)
   --no-auto-fix             Disable mechanical auto-fix transforms during run/validate
   --no-verify               Skip Playwright responsive & console verification
   --fast                    Run sub-second static gate (lintFragment + Assembly) without Playwright
@@ -84,7 +87,10 @@ export function parseArgs(argv = process.argv.slice(2)) {
     maxAttempts: 3,
     mode: null,
     serve: null,
-    port: 3000,
+    port: 3031,
+    ai: null,
+    aiLocal: null,
+    aiPort: null,
     caller: null,
     pdf: null,
     json: false,
@@ -143,7 +149,16 @@ export function parseArgs(argv = process.argv.slice(2)) {
     } else if (arg === "--no-serve") {
       args.serve = false;
     } else if (arg === "--port" && argv[i + 1]) {
-      args.port = parseInt(argv[++i], 10) || 3000;
+      args.port = parseInt(argv[++i], 10) || 3031;
+    } else if (arg === "--ai" || arg === "--bridge") {
+      args.ai = true;
+    } else if (arg === "--ai-local") {
+      args.ai = true;
+      args.aiLocal = true;
+    } else if (arg === "--ai-port" && argv[i + 1]) {
+      const parsedAiPort = parseInt(argv[++i], 10);
+      if (Number.isFinite(parsedAiPort) && parsedAiPort > 0) args.aiPort = parsedAiPort;
+      args.ai = true;
     } else if ((arg === "--project" || arg === "-P") && argv[i + 1]) {
       const slug = String(argv[++i] || "")
         .toLowerCase()
@@ -305,6 +320,9 @@ export async function runHarnessCli(argv = process.argv.slice(2), { runLifecycle
       mode: args.mode,
       serve: args.serve,
       port: args.port,
+      ai: args.ai,
+      aiLocal: args.aiLocal,
+      aiPort: args.aiPort,
       caller: args.caller,
       pdf: args.pdf,
       pwa: args.pwa,

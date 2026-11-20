@@ -210,7 +210,7 @@ const HTMLReportMermaid = {
       let wrapper = node.closest(".mermaid-wrapper");
       if (!wrapper) {
         wrapper = document.createElement("div");
-        wrapper.className = "mermaid-wrapper relative group";
+        wrapper.className = "mermaid-wrapper relative group w-full flex justify-center";
         node.parentNode.insertBefore(wrapper, node);
         wrapper.appendChild(node);
       }

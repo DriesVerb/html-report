@@ -52,7 +52,7 @@ export async function isPortActive(port, host = "localhost") {
 
 export async function ensureDevServerRunning({
   filePath,
-  port = 3000,
+  port = 3031,
   serveScript = null
 }) {
   const active = await isPortActive(port);

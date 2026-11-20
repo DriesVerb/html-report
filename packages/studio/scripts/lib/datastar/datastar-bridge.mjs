@@ -183,8 +183,8 @@ export class DatastarBridge extends EventEmitter {
     </div>
   </div>
   ${hasOutput ? `
-  <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-2 px-3 max-h-36 overflow-y-auto">
-    ${stdoutLines.map((l) => `<pre data-prefix=">"><code>${escapeHtml(l)}</code></pre>`).join("\n    ")}
+  <div class="mockup-code bg-neutral text-neutral-content text-3xs mt-2 py-2 px-3 max-h-36 overflow-y-auto w-full max-w-full">
+    ${stdoutLines.map((l) => `<pre data-prefix=">" class="whitespace-pre-wrap break-words"><code>${escapeHtml(l)}</code></pre>`).join("\n    ")}
   </div>` : ""}
 </div>`.trim();
   }

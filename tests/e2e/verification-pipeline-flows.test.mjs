@@ -154,4 +154,112 @@ describe("Verification Pipeline Flows & Ephemeral Verification Classes", () => {
     assert.equal(parsed.ok, true);
     assert.equal(parsed.verification.summary.compliant, true);
   });
+
+  it("4.3 narrow 3-col Grid.js stretches 100% and wide 10-col Grid.js scrolls cleanly inside .gridjs-wrapper at 640x800 and 1280x900", async () => {
+    const { html } = buildReport({
+      title: "Grid.js Narrow & Wide Table Regression",
+      content: `
+        <section id="tables-section" class="space-y-6">
+          <h1 id="sec-tables">Grid.js Responsive Tables</h1>
+          <div class="card bg-base-100 border border-base-300 p-4">
+            <div id="narrow-grid" data-gridjs='{"columns":["Service","Region","Status"],"data":[["auth-gateway","us-east-1","Healthy"],["edge-router","global","Healthy"]]}'></div>
+          </div>
+          <div class="card bg-base-100 border border-base-300 p-4">
+            <div id="wide-grid" data-gridjs='{"columns":["Service","Region","Avail (%)","P50 (ms)","P95 (ms)","P99 (ms)","Err (%)","Incidents","MTTR (m)","Cost ($/mo)"],"data":[["auth-gateway","us-east-1","99.98",14,42,88,"0.04",1,12,18400],["search-indexer","us-west-2","99.84",45,168,390,"0.34",4,41,27900]]}'></div>
+          </div>
+        </section>
+      `,
+      mode: "report",
+      addons: ["gridjs"]
+    });
+
+    const reportFile = path.join(tmpDir, "gridjs-responsive.html");
+    fs.writeFileSync(reportFile, html, "utf-8");
+
+    const harnessRes = await runHarness(reportFile, { quick: true });
+    assert.equal(
+      harnessRes.success,
+      true,
+      `Expected narrow + wide Grid.js report to pass harness, got failures: ${JSON.stringify(harnessRes.failures)}`
+    );
+
+    const browser = await chromium.launch({ headless: true });
+    try {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      await page.goto(pathToFileURL(reportFile).href, { waitUntil: "load" });
+      await page.waitForFunction(
+        () =>
+          document.querySelectorAll("#narrow-grid .gridjs-tr").length >= 2 &&
+          document.querySelectorAll("#wide-grid .gridjs-tr").length >= 2,
+        { timeout: 10000 }
+      );
+
+      const desktop = await page.evaluate(() => {
+        const narrowWrap = document.querySelector("#narrow-grid .gridjs-wrapper");
+        const narrowTable = document.querySelector("#narrow-grid .gridjs-table");
+        const wideWrap = document.querySelector("#wide-grid .gridjs-wrapper");
+        return {
+          pageOverflow: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
+          narrowScrollOverflow: narrowWrap.scrollWidth - narrowWrap.clientWidth,
+          narrowTableWidth: narrowTable.getBoundingClientRect().width,
+          narrowWrapClientWidth: narrowWrap.clientWidth,
+          wideScrollOverflow: wideWrap.scrollWidth - wideWrap.clientWidth
+        };
+      });
+
+      assert.equal(desktop.pageOverflow, 0, "Desktop (1280px) must have 0px page overflow");
+      assert.ok(desktop.narrowScrollOverflow <= 2, "3-col Grid.js must not scroll horizontally on desktop");
+      assert.ok(
+        desktop.narrowTableWidth >= desktop.narrowWrapClientWidth - 4,
+        `3-col Grid.js must fill 100% wrapper width on desktop (${desktop.narrowTableWidth} vs ${desktop.narrowWrapClientWidth})`
+      );
+
+      await page.setViewportSize({ width: 640, height: 800 });
+      await page.waitForTimeout(100);
+
+      const mobile = await page.evaluate(() => {
+        const insufficient = typeof window.checkInsufficientHorizontalSpace === "function"
+          ? window.checkInsufficientHorizontalSpace()
+          : [];
+        const narrowWrap = document.querySelector("#narrow-grid .gridjs-wrapper");
+        const narrowTable = document.querySelector("#narrow-grid .gridjs-table");
+        const wideWrap = document.querySelector("#wide-grid .gridjs-wrapper");
+        const wideHeaders = Array.from(document.querySelectorAll("#wide-grid th.gridjs-th")).map((th) => ({
+          text: th.textContent.trim(),
+          height: th.getBoundingClientRect().height,
+          whiteSpace: window.getComputedStyle(th).whiteSpace,
+          scrollWidth: th.scrollWidth,
+          clientWidth: th.clientWidth
+        }));
+        return {
+          pageOverflow: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
+          insufficientCount: insufficient.length,
+          wideHasInsufficientAttr: wideWrap.hasAttribute("data-insufficient-space"),
+          narrowScrollOverflow: narrowWrap.scrollWidth - narrowWrap.clientWidth,
+          narrowTableWidth: narrowTable.getBoundingClientRect().width,
+          narrowWrapClientWidth: narrowWrap.clientWidth,
+          wideScrollOverflow: wideWrap.scrollWidth - wideWrap.clientWidth,
+          wideHeaders
+        };
+      });
+
+      assert.equal(mobile.pageOverflow, 0, "Mobile (640px) must have 0px page overflow");
+      assert.equal(mobile.insufficientCount, 0, "Mobile (640px) must not flag .gridjs-wrapper as insufficient space");
+      assert.equal(mobile.wideHasInsufficientAttr, false);
+      assert.ok(mobile.narrowScrollOverflow <= 2, "3-col Grid.js must fit without horizontal scroll on 640px");
+      assert.ok(
+        mobile.narrowTableWidth >= mobile.narrowWrapClientWidth - 4,
+        `3-col Grid.js must fill 100% wrapper width on 640px (${mobile.narrowTableWidth} vs ${mobile.narrowWrapClientWidth})`
+      );
+      assert.ok(mobile.wideScrollOverflow > 20, "10-col Grid.js must scroll horizontally inside .gridjs-wrapper on 640px");
+      assert.equal(mobile.wideHeaders.length, 10);
+      for (const h of mobile.wideHeaders) {
+        assert.equal(h.whiteSpace, "nowrap", `Header "${h.text}" must have white-space: nowrap`);
+        assert.ok(h.height <= 42, `Header "${h.text}" wrapped vertically (height=${h.height}px)`);
+        assert.ok(h.scrollWidth <= h.clientWidth + 2, `Header "${h.text}" clipped horizontally`);
+      }
+    } finally {
+      await browser.close();
+    }
+  });
 });

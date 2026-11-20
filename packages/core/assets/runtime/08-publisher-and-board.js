@@ -350,6 +350,7 @@ if (typeof window !== "undefined") {
   window.initTOC = initTOC;
   window.checkInsufficientHorizontalSpace = checkInsufficientHorizontalSpace;
   window.buildInlinedHtmlSnapshot = buildInlinedHtmlSnapshot;
+  window.resizeChartsForPrint = resizeChartsForPrint;
   window.exportReportPdf = exportReportPdf;
   window.initModeBadge = initModeBadge;
   window.initDownloadButton = initDownloadButton;
@@ -415,6 +416,18 @@ if (typeof window !== "undefined") {
     try { if (typeof HTMLReportBoard !== "undefined") HTMLReportBoard.syncOfflineStatus(); } catch (_) {}
     try { if (typeof initAuthoring === "function") initAuthoring(); } catch (err) { console.warn("[html-report] authoring init failed:", err); }
     window.addEventListener("resize", () => checkInsufficientHorizontalSpace());
+    window.addEventListener("beforeprint", () => resizeChartsForPrint());
+    window.addEventListener("afterprint", () => resizeChartsForPrint());
+    if (typeof window.matchMedia === "function") {
+      try {
+        const printMql = window.matchMedia("print");
+        if (printMql && typeof printMql.addEventListener === "function") {
+          printMql.addEventListener("change", () => resizeChartsForPrint());
+        } else if (printMql && typeof printMql.addListener === "function") {
+          printMql.addListener(() => resizeChartsForPrint());
+        }
+      } catch (_) {}
+    }
     window.addEventListener("load", () => { try { ensureLucideIcons(); } catch (_) {} });
     window.addEventListener("beforeunload", () => {
       try { cleanupPublicFeeds(); } catch (_) {}
@@ -466,6 +479,7 @@ if (typeof module !== "undefined" && module.exports) {
     initTOC,
     checkInsufficientHorizontalSpace,
     buildInlinedHtmlSnapshot,
+    resizeChartsForPrint,
     exportReportPdf,
     _triggerBlobDownload,
     _authoringStorage,

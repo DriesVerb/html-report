@@ -207,6 +207,10 @@ export const ADDON_ALIASES = {
 
 export const PRINT_MEDIA_CSS = `
   <style id="printable-media-styles">
+    @page {
+      size: A4 portrait;
+      margin: 12mm 14mm 16mm 14mm;
+    }
     #print-cover-page,
     .print-only-summary {
       display: none;
@@ -216,8 +220,16 @@ export const PRINT_MEDIA_CSS = `
         background-color: #ffffff !important;
         color: #111827 !important;
       }
+      main,
+      #report-main {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+      }
       header,
       .navbar,
+      footer,
       .print\\:hidden,
       .print-interactive-control,
       .gridjs-head,
@@ -228,16 +240,44 @@ export const PRINT_MEDIA_CSS = `
         display: flex !important;
         flex-direction: column !important;
         justify-content: space-between !important;
-        min-height: 92vh !important;
+        min-height: 245mm !important;
         break-after: page !important;
         page-break-after: always !important;
       }
       .print-only-summary {
         display: block !important;
       }
-      .break-inside-avoid {
+      .break-inside-avoid,
+      .print\\:break-inside-avoid {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
+      }
+      .break-after-page,
+      .print\\:break-after-page {
+        break-after: page !important;
+        page-break-after: always !important;
+      }
+      thead {
+        display: table-header-group !important;
+      }
+      tfoot {
+        display: table-row-group !important;
+      }
+      tr,
+      td,
+      th {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .overflow-x-auto {
+        overflow: visible !important;
+      }
+      canvas {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+      .card {
+        box-shadow: none !important;
       }
       /* Impress.js print fallback: render slides statically without 3D transforms */
       #impress,

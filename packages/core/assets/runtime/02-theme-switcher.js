@@ -118,11 +118,35 @@ function sanitizeMermaidSource(source) {
 }
 
 /**
+ * Detects whether a .mermaid container is currently inside a hidden element
+ * (e.g., an inactive Reveal.js slide) where getBBox() would yield 0/NaN.
+ */
+function isMermaidContainerHidden(node) {
+  if (!node || typeof window === "undefined") return false;
+  if (typeof node.closest === "function") {
+    const hiddenSlide = node.closest(".reveal .slides section");
+    if (hiddenSlide && !hiddenSlide.classList.contains("present")) {
+      const shell = node.closest("#presentation-shell");
+      if (!shell || !shell.classList.contains("is-stacked")) return true;
+    }
+    if (node.closest("[hidden]")) return true;
+  }
+  if (typeof getComputedStyle === "function") {
+    let cur = node;
+    while (cur && cur.nodeType === 1) {
+      if (getComputedStyle(cur).display === "none") return true;
+      cur = cur.parentElement;
+    }
+  }
+  return false;
+}
+
+/**
  * Dynamic Mermaid theme re-rendering synced with DaisyUI theme palette.
  */
 async function renderMermaidWithTheme(palette) {
   if (typeof window === "undefined" || !window.mermaid) return;
-  const mermaidNodes = document.querySelectorAll(".mermaid");
+  const mermaidNodes = Array.from(document.querySelectorAll(".mermaid"));
   if (!mermaidNodes.length) return;
 
   mermaidNodes.forEach((node) => {
@@ -168,8 +192,41 @@ async function renderMermaidWithTheme(palette) {
     }
   });
 
+  const hiddenNodes = mermaidNodes.filter((n) => isMermaidContainerHidden(n));
+  const visibleNodes = mermaidNodes.filter((n) => !hiddenNodes.includes(n));
+
   try {
-    await window.mermaid.run({ querySelector: ".mermaid" });
+    if (hiddenNodes.length === 0) {
+      await window.mermaid.run({ querySelector: ".mermaid" });
+    } else {
+      if (visibleNodes.length > 0) {
+        await window.mermaid.run({ nodes: visibleNodes });
+      }
+      if (typeof window.mermaid.render === "function") {
+        let counter = 0;
+        for (const node of hiddenNodes) {
+          const src = sanitizeMermaidSource(node.dataset.mermaidSource || node.textContent || "");
+          if (!src) continue;
+          const renderId = `mermaid-offscreen-${Date.now()}-${++counter}`;
+          try {
+            const rendered = await window.mermaid.render(renderId, src);
+            if (rendered && rendered.svg) {
+              node.innerHTML = rendered.svg;
+              node.setAttribute("data-processed", "true");
+              if (typeof rendered.bindFunctions === "function") {
+                try { rendered.bindFunctions(node); } catch (_) {}
+              }
+            }
+          } catch (renderErr) {
+            console.warn("[html-report] Hidden Mermaid render notice:", renderErr);
+            const stale = document.getElementById(`d${renderId}`);
+            if (stale && stale.parentNode) stale.parentNode.removeChild(stale);
+          }
+        }
+      } else {
+        await window.mermaid.run({ nodes: hiddenNodes });
+      }
+    }
   } catch (err) {
     console.warn("[html-report] Mermaid render notice:", err);
   }

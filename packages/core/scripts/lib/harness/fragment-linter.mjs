@@ -84,6 +84,13 @@ export function lintFragment(rawContent = "") {
     }
   }
 
+  const hasDocumentShell = /<!DOCTYPE\b|<html\b|<head\b|<body\b/i.test(content);
+  const mainOpenMatch = content.match(/<main\b([^>]*)>/i);
+  const hasReactiveMainRoot =
+    !hasDocumentShell &&
+    Boolean(mainOpenMatch) &&
+    /\b(?:data-signals|x-data|x-init|data-store|data-on-)/i.test(mainOpenMatch[1] || "");
+
   const boilerplateTags = [
     { tag: "<!DOCTYPE", regex: /<!DOCTYPE\b[^>]*>/gi, name: "<!DOCTYPE>" },
     { tag: "<html", regex: /<html\b[^>]*>/gi, name: "<html>" },
@@ -91,8 +98,12 @@ export function lintFragment(rawContent = "") {
     { tag: "<head", regex: /<head\b[^>]*>[\s\S]*?<\/head>/gi, name: "<head>...</head>" },
     { tag: "<body", regex: /<body\b[^>]*>/gi, name: "<body>" },
     { tag: "</body>", regex: /<\/body>/gi, name: "</body>" },
-    { tag: "<main", regex: /<main\b[^>]*>/gi, name: "<main>" },
-    { tag: "</main>", regex: /<\/main>/gi, name: "</main>" }
+    ...(hasReactiveMainRoot
+      ? []
+      : [
+          { tag: "<main", regex: /<main\b[^>]*>/gi, name: "<main>" },
+          { tag: "</main>", regex: /<\/main>/gi, name: "</main>" }
+        ])
   ];
 
   for (const bp of boilerplateTags) {
@@ -232,9 +243,13 @@ export function stripOuterBoilerplate(rawContent = "") {
     removedTags.push("<html>");
   }
 
-  const mainMatch = content.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
+  const mainMatch = content.match(/<main\b((?:[^>"']|"[^"]*"|'[^']*')*)>([\s\S]*?)<\/main>/i);
   if (mainMatch) {
-    content = mainMatch[1].trim();
+    const mainAttrs = (mainMatch[1] || "").trim();
+    const hasReactiveAttrs = /\b(?:data-signals|x-data|x-init|data-store|data-on-)/i.test(mainAttrs);
+    content = hasReactiveAttrs
+      ? `<div ${mainAttrs}>\n${mainMatch[2].trim()}\n</div>`
+      : mainMatch[2].trim();
     removedTags.push("<main>");
   }
 

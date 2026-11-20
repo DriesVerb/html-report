@@ -27,14 +27,17 @@ export class GridJsCheck extends VerificationCheck {
       const gridjsRowCount = document.querySelectorAll(".gridjs-tr").length;
       const hasSearch = Boolean(document.querySelector(".gridjs-search input"));
       const hasPagination = Boolean(document.querySelector(".gridjs-pagination"));
+      const overflowPx = Math.max(0, document.documentElement.scrollWidth - window.innerWidth);
 
-      return { hasGridJs: true, gridjsRowCount, hasSearch, hasPagination };
+      return { hasGridJs: true, gridjsRowCount, hasSearch, hasPagination, overflowPx };
     });
 
     if (!check.hasGridJs) {
       errors.push("Target CDN check tables requested, but no Grid.js element found.");
     } else if (check.gridjsRowCount === 0) {
       errors.push("Grid.js table detected but failed to render rows.");
+    } else if (check.overflowPx > 2) {
+      errors.push(`Grid.js table caused horizontal page overflow (${check.overflowPx}px).`);
     }
 
     return {

@@ -1,0 +1,204 @@
+<section class="space-y-8">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+    <div class="min-w-0 flex-1 space-y-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="badge badge-primary font-mono text-xs font-bold">OpenSpec Journey</span>
+        <span class="badge badge-outline font-mono text-xs">eval-modes-and-ux-improvements</span>
+        <span class="badge badge-success badge-outline font-mono text-xs">Plans 1–5</span>
+      </div>
+      <h1 id="journey-overview" class="text-2xl sm:text-3xl font-extrabold tracking-tight break-words">Evaluation Modes, Responsive UX &amp; Security Hardening</h1>
+      <p class="text-xs sm:text-sm text-base-content/75 max-w-3xl">
+        Consolidates, spec-syncs, verifies, and archives all reviewed improvements across Presentation (Reveal.js), Print (A4 pagination &amp; starter), Live Dashboard (reactive <code>&lt;main&gt;</code>, port <code>3031</code>, <code>--ai-local</code> precedence), Grid.js mobile responsiveness, and Security/Scaffold hardening.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2 shrink-0">
+      <button type="button" onclick="openMarkdownViewer('proposal.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="file-text" class="w-4 h-4"></i><span>proposal.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('design.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="layers" class="w-4 h-4"></i><span>design.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('tasks.md')" class="btn btn-sm btn-outline gap-1.5">
+        <i data-lucide="check-square" class="w-4 h-4"></i><span>tasks.md</span>
+      </button>
+      <button type="button" onclick="openMarkdownViewer('specs/reveal-presentation-fixes/spec.md')" class="btn btn-sm btn-ghost border border-base-300 gap-1.5">
+        <i data-lucide="shield-check" class="w-4 h-4"></i><span>specs/</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Journey Phase Stepper -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="journey-phase-stepper" class="text-sm font-bold uppercase tracking-wider text-base-content/70">Journey Phase</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">Stage 5: Shipped / Archived (6 / 6 Tasks Complete - 100%)</span>
+    </div>
+    <div class="w-full overflow-x-auto">
+      <ul id="journey-stepper" class="steps steps-horizontal w-full min-w-[500px] text-xs font-semibold">
+        <li class="step step-primary" data-content="✓">Brainstorming</li>
+        <li class="step step-primary" data-content="✓">Planning</li>
+        <li class="step step-primary" data-content="✓">Implementing</li>
+        <li class="step step-primary" data-content="✓">Verifying</li>
+        <li class="step step-primary" data-content="✓">Shipped / Archived</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Progress KPIs -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Task Progress</div>
+      <div class="text-2xl font-extrabold text-primary">6 / 6 (100%)</div>
+      <div class="text-xs text-base-content/70">All 3 phases complete</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Evaluation Scope</div>
+      <div class="text-2xl font-extrabold text-secondary">Plans 1–5</div>
+      <div class="text-xs text-base-content/70">Presentation, Print, Live, Grid.js, Security</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Delta Specs Synced</div>
+      <div class="text-2xl font-extrabold text-accent">7 Specs</div>
+      <div class="text-xs text-base-content/70">Synced to openspec/specs/</div>
+    </div>
+    <div class="card bg-base-100 border border-base-300 p-4 space-y-1">
+      <div class="text-xs uppercase font-semibold text-base-content/60">Repo Surface</div>
+      <div class="text-2xl font-extrabold text-info">36 Files</div>
+      <div class="text-xs text-base-content/70">Core, Studio, Skills, Unit &amp; E2E Tests</div>
+    </div>
+  </div>
+
+  <!-- Architecture Mermaid & Scope Chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="improvement-architecture" class="text-lg font-bold min-w-0 flex-1 break-words">Cross-Mode Evaluation Architecture</h2>
+        <span class="badge badge-primary badge-outline badge-xs font-mono shrink-0">Plans 1–5</span>
+      </div>
+      <div class="mermaid bg-base-200/50 p-4 rounded-box overflow-x-auto text-center">
+flowchart TD
+  P1["Plan 1: Presentation"] --> P1A["Transparent .reveal + Offscreen Mermaid + Hidden Notes"]
+  P2["Plan 2: Print Mode"] --> P2A["A4 @page CSS + resizeChartsForPrint + print-starter"]
+  P3["Plan 3: Live Dashboard"] --> P3A["Reactive main + Port 3031 + --ai-local Precedence"]
+  P4["Plan 4: Grid.js Mobile"] --> P4A["overflow-x: auto + nowrap Headers + Space Filter Skip"]
+  P5["Plan 5: Hardening"] --> P5A["realpathSync Symlink Guard + JSON/Mermaid Sanitization"]
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3 min-w-0">
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+        <h2 id="surface-distribution-chart" class="text-lg font-bold min-w-0 flex-1 break-words">Synced Spec &amp; Test Coverage Breakdown</h2>
+        <span class="badge badge-secondary badge-outline badge-xs font-mono shrink-0">Live Chart</span>
+      </div>
+      <div class="relative h-72 sm:h-80 w-full min-w-0">
+        <canvas id="evalCoverageChart" aria-label="Evaluation Coverage Breakdown Chart" role="img" data-chart-source="#eval-coverage-data"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Delta Specs Links -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-3">
+    <h2 id="delta-specs" class="text-lg font-bold">Delta Specifications</h2>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" onclick="openMarkdownViewer('specs/reveal-presentation-fixes/spec.md')" class="btn btn-xs btn-outline font-mono">specs/reveal-presentation-fixes/spec.md</button>
+      <button type="button" onclick="openMarkdownViewer('specs/report-rendering-modes/spec.md')" class="btn btn-xs btn-outline font-mono">specs/report-rendering-modes/spec.md</button>
+      <button type="button" onclick="openMarkdownViewer('specs/declarative-widget-hydration/spec.md')" class="btn btn-xs btn-outline font-mono">specs/declarative-widget-hydration/spec.md</button>
+      <button type="button" onclick="openMarkdownViewer('specs/turnkey-agent-harness-cli/spec.md')" class="btn btn-xs btn-outline font-mono">specs/turnkey-agent-harness-cli/spec.md</button>
+      <button type="button" onclick="openMarkdownViewer('specs/reactive-data-copilot/spec.md')" class="btn btn-xs btn-outline font-mono">specs/reactive-data-copilot/spec.md</button>
+      <button type="button" onclick="openMarkdownViewer('specs/playwright-extensible-harness/spec.md')" class="btn btn-xs btn-outline font-mono">specs/playwright-extensible-harness/spec.md</button>
+      <button type="button" onclick="openMarkdownViewer('specs/skill-data-scaffolding-workflow/spec.md')" class="btn btn-xs btn-outline font-mono">specs/skill-data-scaffolding-workflow/spec.md</button>
+    </div>
+  </div>
+
+  <!-- Connected Task Checklist -->
+  <div class="card bg-base-100 border border-base-300 shadow-sm p-5 space-y-4">
+    <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3 w-full">
+      <h2 id="task-checklist" class="text-lg font-bold">Implementation Checklist (<button type="button" onclick="openMarkdownViewer('tasks.md')" class="link link-primary">tasks.md</button>)</h2>
+      <span class="badge badge-success badge-sm font-mono shrink-0">6 / 6 Complete (100%)</span>
+    </div>
+    <div class="overflow-x-auto w-full">
+      <table class="table table-zebra table-sm w-full [&_code]:break-all">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Milestone</th>
+            <th>Target Files</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-mono text-xs">1.1</td>
+            <td>Reveal.js dark theme transparency, hidden notes modal, offscreen Mermaid render, TOC exclusion, and <code>--mode presentation --quick</code> docs</td>
+            <td><code>template-shell.html</code>, <code>02-theme-switcher.js</code>, <code>reveal.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">1.2</td>
+            <td>Print A4 <code>@page</code> CSS, <code>resizeChartsForPrint()</code>, full-width Mermaid wrapper, and dedicated <code>print-starter.mjs</code></td>
+            <td><code>addon-registry.mjs</code>, <code>03-shell-controls.js</code>, <code>print-starter.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">2.1</td>
+            <td>Reactive <code>&lt;main&gt;</code> preservation, port <code>3031</code> alignment, <code>--ai-local</code> precedence, and <code>.mockup-code</code> wrapping/highlight skip</td>
+            <td><code>fragment-linter.mjs</code>, <code>harness.mjs</code>, <code>server.mjs</code>, <code>highlight.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">2.2</td>
+            <td>Grid.js mobile horizontal scroll containment, single-line headers, <code>checkInsufficientHorizontalSpace()</code> skip, and <code>GridJsCheck</code> overflow check</td>
+            <td><code>template-shell.html</code>, <code>03-shell-controls.js</code>, <code>gridjs.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">3.1</td>
+            <td><code>realpathSync()</code> symlink escape guard, <code>safeJsonEmbed()</code> &amp; Mermaid escaping, and camelCase rate KPI averaging</td>
+            <td><code>data-introspector.mjs</code>, <code>widget-templates.mjs</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+          <tr>
+            <td class="font-mono text-xs">3.2</td>
+            <td>Run full unit + E2E suites, sync 7 delta specs, validate, archive, and create clean commit on <code>main</code></td>
+            <td><code>tests/**</code>, <code>openspec/specs/**</code>, <code>implementation-progress.html</code></td>
+            <td><span class="badge badge-success badge-xs">Complete</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script id="eval-coverage-data" type="application/json">
+{
+  "type": "bar",
+  "data": {
+    "labels": ["Presentation", "Print Mode", "Live/Bridge", "Grid.js Mobile", "Hardening"],
+    "datasets": [
+      {
+        "label": "Code & Docs Files",
+        "data": [7, 10, 12, 3, 2]
+      },
+      {
+        "label": "Test Files Updated",
+        "data": [1, 3, 2, 2, 1]
+      }
+    ]
+  }
+}
+</script>
+
+<script id="open-spec-artifacts-data" type="application/json">
+{
+  "proposal.md": "# Proposal: Evaluation Modes, Responsive UX & Security Hardening Improvements\n\nConsolidates Plans 1-5 across Presentation (Reveal.js dark theme, notes modal, offscreen Mermaid), Print (A4 CSS, Chart resize, print-starter.mjs), Live Dashboard (reactive <main>, port 3031, --ai-local precedence, .mockup-code exclusion), Grid.js mobile responsive tables, and symlink/JSON/Mermaid security hardening.",
+  "design.md": "# Design: eval-modes-and-ux-improvements\n\n1. Reveal.js stage transparency + isMermaidContainerHidden() offscreen mermaid.render()\n2. PRINT_MEDIA_CSS @page A4 portrait + resizeChartsForPrint() + print-starter.mjs\n3. Reactive <main> preservation + port 3031 default + --ai-local precedence + .mockup-code HighlightCheck exclusion\n4. Grid.js overflow-x: auto + nowrap headers + checkInsufficientHorizontalSpace() skip\n5. realpathSync() symlink escape rejection + safeJsonEmbed() + camelCase isRateOrAvgColumn()",
+  "tasks.md": "# Tasks: eval-modes-and-ux-improvements\n\n- [x] 1.1 Presentation Reveal.js dark theme, notes modal, hidden Mermaid, TOC & docs\n- [x] 1.2 Print A4 CSS, resizeChartsForPrint(), Mermaid wrapper & print-starter.mjs\n- [x] 2.1 Reactive <main>, port 3031, --ai-local precedence & .mockup-code isolation\n- [x] 2.2 Grid.js mobile scroll containment, headers & checkInsufficientHorizontalSpace\n- [x] 3.1 Symlink escape guard, JSON/Mermaid sanitization & camelCase rate KPIs\n- [x] 3.2 Run unit + E2E tests, sync specs, validate, archive & commit on main",
+  "specs/reveal-presentation-fixes/spec.md": "# Delta Spec: reveal-presentation-fixes\n\nTransparent .reveal/.reveal-viewport background, hidden #presentation-notes-modal, offscreen mermaid.render() for hidden slides, and #print-cover-page TOC exclusion.",
+  "specs/report-rendering-modes/spec.md": "# Delta Spec: report-rendering-modes\n\nA4 @page print rules, thead/tfoot pagination, resizeChartsForPrint(), and dedicated --mode print starter (print-starter.mjs).",
+  "specs/declarative-widget-hydration/spec.md": "# Delta Spec: declarative-widget-hydration\n\nResponsive Grid.js horizontal scroll containment inside .gridjs-wrapper, table-layout: auto, nowrap headers, and checkInsufficientHorizontalSpace() skip.",
+  "specs/turnkey-agent-harness-cli/spec.md": "# Delta Spec: turnkey-agent-harness-cli\n\nPreserves reactive <main> attributes in lintFragment()/stripOuterBoilerplate(), defaults ports to 3031, and forwards --ai/--ai-local/--ai-port.",
+  "specs/reactive-data-copilot/spec.md": "# Delta Spec: reactive-data-copilot\n\nGives --ai-local (local-bridge) precedence when no explicit provider/HTML_REPORT_AI_CMD is set and wraps .mockup-code terminal lines.",
+  "specs/playwright-extensible-harness/spec.md": "# Delta Spec: playwright-extensible-harness\n\nRevealCheck dark stage transparency + hidden notes modal assertions, GridJsCheck overflowPx <= 2, and .mockup-code exclusion from hasCode/HighlightCheck.",
+  "specs/skill-data-scaffolding-workflow/spec.md": "# Delta Spec: skill-data-scaffolding-workflow\n\nrealpathSync() symlink escape rejection in stageReferenceFiles(), safeJsonEmbed() & renderMermaidFlowWidget() sanitization, and camelCase rate column averaging."
+}
+</script>

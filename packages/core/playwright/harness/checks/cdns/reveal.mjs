@@ -93,6 +93,10 @@ export class RevealCheck extends VerificationCheck {
           }
         }
 
+        const stageEl = deck.closest(".reveal-stage");
+        const stageBg = stageEl ? getComputedStyle(stageEl).backgroundColor : "";
+        const deckBg = getComputedStyle(deck).backgroundColor;
+
         return {
           found: true,
           hasSlide: true,
@@ -101,7 +105,9 @@ export class RevealCheck extends VerificationCheck {
           padBottom,
           scrollHeight,
           clientHeight,
-          overlaps
+          overlaps,
+          stageBg,
+          deckBg
         };
       });
 
@@ -120,16 +126,27 @@ export class RevealCheck extends VerificationCheck {
         if (layoutReport.overlaps.length > 0) {
           errors.push(`Reveal slide content overlaps navigation chrome: ${layoutReport.overlaps.join("; ")}`);
         }
+        if (layoutReport.deckBg === "rgb(255, 255, 255)" && layoutReport.stageBg && layoutReport.stageBg !== "rgb(255, 255, 255)") {
+          errors.push(`Reveal .reveal/.reveal-viewport painted opaque white (${layoutReport.deckBg}) over themed .reveal-stage (${layoutReport.stageBg}).`);
+        }
         messages.push(`Reveal slide padding L/R=${Math.round(layoutReport.padLeft)}/${Math.round(layoutReport.padRight)}px, bottom=${Math.round(layoutReport.padBottom)}px, height=${layoutReport.scrollHeight}/${layoutReport.clientHeight}px.`);
       }
 
-      const shellState = await page.evaluate(() => ({
-        hasShell: Boolean(document.getElementById("presentation-shell")),
-        hasFullscreenBtn: Boolean(document.getElementById("presentation-fullscreen-btn")),
-        hasNotesBtn: Boolean(document.getElementById("presentation-notes-btn")),
-        hasNotesModal: Boolean(document.getElementById("presentation-notes-modal")),
-        totalSlides: document.querySelectorAll(".reveal .slides section").length
-      }));
+      const shellState = await page.evaluate(() => {
+        const notesModal = document.getElementById("presentation-notes-modal");
+        return {
+          hasShell: Boolean(document.getElementById("presentation-shell")),
+          hasFullscreenBtn: Boolean(document.getElementById("presentation-fullscreen-btn")),
+          hasNotesBtn: Boolean(document.getElementById("presentation-notes-btn")),
+          hasNotesModal: Boolean(notesModal),
+          notesInitiallyHidden: notesModal ? getComputedStyle(notesModal).display === "none" : true,
+          totalSlides: document.querySelectorAll(".reveal .slides section").length
+        };
+      });
+
+      if (shellState.hasNotesModal && !shellState.notesInitiallyHidden) {
+        errors.push("#presentation-notes-modal must start hidden on initial load (computed display !== 'none').");
+      }
 
       if (shellState.hasShell && shellState.hasFullscreenBtn) {
         await page.click("#presentation-fullscreen-btn");

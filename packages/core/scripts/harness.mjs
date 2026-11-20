@@ -105,7 +105,10 @@ export async function runLifecycle({
   quick = true,
   mode = null,
   serve = null,
-  port = 3000,
+  port = 3031,
+  ai = null,
+  aiLocal = null,
+  aiPort = null,
   caller = null,
   pdf = null,
   pwa = false,
@@ -396,6 +399,11 @@ export async function runLifecycle({
     const isPwa = Boolean(pwa || siblingManifest?.pwa);
 
     const activeProject = inferredProjectSlug || siblingManifest?.project || null;
+    const resolvedAi = ai !== null ? Boolean(ai) : Boolean(siblingManifest?.aiBridge);
+    const resolvedAiLocal = aiLocal !== null ? Boolean(aiLocal) : Boolean(siblingManifest?.aiConfig?.local);
+    const resolvedAiPort = (aiPort !== null && Number.isFinite(Number(aiPort)) && Number(aiPort) > 0)
+      ? Number(aiPort)
+      : (siblingManifest?.aiConfig?.port || 3031);
     const buildRes = buildReport({
       title: effectiveTitle,
       content: raw,
@@ -408,8 +416,9 @@ export async function runLifecycle({
       customTheme: siblingManifest?.customTheme || null,
       favicon: siblingManifest?.favicon || "📊",
       addons: activeAddons,
-      ai: Boolean(siblingManifest?.aiBridge),
-      aiPort: siblingManifest?.aiConfig?.port || 3031,
+      ai: resolvedAi,
+      aiLocal: resolvedAiLocal,
+      aiPort: resolvedAiPort,
       aiModel: siblingManifest?.aiConfig?.model || "Gemini 3.8 Flash (Low)",
       aiPersona: siblingManifest?.aiConfig?.persona || "analyst",
       aiPurpose: siblingManifest?.aiConfig?.purpose || "",
@@ -427,7 +436,12 @@ export async function runLifecycle({
 
     if (activeProject && !published && buildRes.agentManifest) {
       const manifestPath = path.join(outDir, "report.manifest.json");
-      fs.writeFileSync(manifestPath, JSON.stringify(buildRes.agentManifest, null, 2) + "\n", "utf-8");
+      const preservedFields = {};
+      for (const k of ["servingMode", "behavioralMode", "starterFragmentHash", "presetWidgets", "referenceFiles", "customTheme", "audience", "goals"]) {
+        if (siblingManifest && siblingManifest[k] !== undefined) preservedFields[k] = siblingManifest[k];
+      }
+      const nextManifest = { ...buildRes.agentManifest, ...preservedFields };
+      fs.writeFileSync(manifestPath, JSON.stringify(nextManifest, null, 2) + "\n", "utf-8");
     }
 
     if (buildRes.isPwa && buildRes.pwaConfig) {

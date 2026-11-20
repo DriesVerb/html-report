@@ -37,11 +37,12 @@ The shared template shell automatically applies print rules, but fragments shoul
 
 ### 2. Defensive Page-Break Utility Classes
 Use Tailwind / CSS print utilities to avoid awkward splits across pages:
-- **Card & Section Preservation**: Add `break-inside-avoid print:break-inside-avoid` to every card, KPI box, chart wrapper, and signature block.
+- **Cover Page**: Use `<section id="print-cover-page" class="hidden print:flex flex-col justify-between min-h-[245mm] p-10 border border-base-300 rounded-box break-after-page print:break-after-page">` (hidden on screen, full page 1 in `@media print`).
+- **Card & Section Preservation**: Add `break-inside-avoid print:break-inside-avoid` to cards, KPI boxes, chart wrappers, and signature blocks.
 - **Explicit Page Breaks**: Use `break-after-page print:break-after-page` between distinct chapters or invoice sections.
-- **Table Integrity**: Ensure tables use `thead { display: table-header-group; }` and rows use `tr { break-inside: avoid; }` so table headers repeat neatly on subsequent sheets.
-- **Screen UI Suppression**: Ensure screen-only action buttons, filter inputs, and interactive widgets are flagged with `print:hidden`.
-- **Single Navbar Rule**: Never add a second navbar, sticky control bar, or duplicate quick-nav/print toolbar inside `<main id="report-main">`. The shared template shell (`template-shell.html`) already renders the single sticky top navbar with the report title, `PRINT` badge, `Contents` TOC dropdown, theme switcher, and Print/PDF export action.
+- **Table Integrity**: `thead` repeats automatically and `tfoot` stays at the end (`display: table-row-group`). Use `table-xs` so columns fit `640px` (`sm`) without horizontal scrollbars; never wrap multi-page tables in `break-inside-avoid`.
+- **Screen UI Suppression**: Flag screen-only controls with `print:hidden`.
+- **Single Navbar Rule**: Never add a second navbar or print toolbar inside `<main id="report-main">`; `template-shell.html` already renders the sticky navbar (auto-hidden in `@media print`).
 
 ### 3. Recommended DaisyUI Themes for Print
 Always specify high-contrast, ink-conserving themes:
@@ -69,8 +70,8 @@ Emit the document fragment inside the gitignored `projects/<slug>/` folder (e.g.
   </div>
 
   <!-- Line Items Table -->
-  <div class="overflow-x-auto break-inside-avoid">
-    <table class="table table-zebra table-sm w-full border border-base-300">
+  <div class="overflow-x-auto">
+    <table class="table table-zebra table-xs w-full border border-base-300">
       <thead class="bg-base-200">
         <tr><th>Description</th><th class="text-right">Qty</th><th class="text-right">Unit Price</th><th class="text-right">Amount</th></tr>
       </thead>

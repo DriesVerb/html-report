@@ -123,10 +123,10 @@ Presenters rely on two modeless controls automatically wired by `report-runtime.
 Run headless verification on every presentation before delivery:
 
 ```bash
-node skills/html-report/playwright/verify-report.mjs path/to/index.html --mode presentation --cdn-reveal
+node skills/html-report/playwright/verify-report.mjs path/to/index.html --mode presentation --quick
 ```
 
-`checks/cdns/reveal.mjs` enforces:
+`--mode presentation` runs all core checks (console errors, TOC/structure, overflow, theme switcher) plus auto-detected CDN checks (`cdn:charts`, `cdn:mermaid`, `cdn:reveal`). Avoid passing `--cdn-reveal` alone unless you pair it with `--with-core`, because `--cdn-reveal` isolates a single check. `checks/cdns/reveal.mjs` enforces:
 1. Horizontal padding `>= 24px` and bottom safe-zone clearance `>= 52px` on active slides.
 2. Zero vertical clipping (`scrollHeight <= clientHeight + 2`) and zero overlap with `.controls` / `.slide-number`.
 3. Fullscreen toggle reflows Reveal layout without console/page errors.

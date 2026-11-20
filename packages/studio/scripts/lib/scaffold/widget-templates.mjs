@@ -6,6 +6,7 @@
 
 import { WIDGET_PRESETS } from "../../domain-model.mjs";
 import { parseNumericValue } from "./data-introspector.mjs";
+import { renderPrintStarterFragment } from "./print-starter.mjs";
 
 function escapeHtml(str = "") {
   return String(str)
@@ -17,11 +18,20 @@ function escapeHtml(str = "") {
 }
 
 function safeJsonEmbed(value) {
-  return JSON.stringify(value).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
+  return JSON.stringify(value)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
 }
 
 function isRateOrAvgColumn(colName = "") {
-  return /(?:^|_|-)(?:pct|percent|percentage|rate|ratio|avg|mean|score|ms|latency|mttr|duration)(?:$|_|-)/i.test(String(colName));
+  const s = String(colName);
+  return (
+    /(?:^|[_-])(?:pct|percent|percentage|rate|ratio|avg|mean|score|ms|latency|mttr|duration)(?:$|[_-])/i.test(s) ||
+    /(?<=[a-z0-9])(?:Pct|Percent|Percentage|Rate|Ratio|Avg|Mean|Score|Ms|Latency|Mttr|Duration)(?=$|[A-Z0-9_-])/.test(s)
+  );
 }
 
 function renderKpiRowWidget({ isDashboard = false, dataset = null } = {}) {
@@ -219,7 +229,7 @@ function renderGridTableWidget({ dataset = null } = {}) {
 }
 
 function renderMermaidFlowWidget({ title = "Workflow" } = {}) {
-  const safeLabel = String(title).replace(/["[\]<>]/g, "").slice(0, 40).trim() || "Deliverable";
+  const safeLabel = String(title).replace(/[\r\n]+/g, " ").replace(/["[\]<>`{}()]/g, "").slice(0, 40).trim() || "Deliverable";
   return `  <!-- Preset: mermaid-flow -->
   <section id="architecture-flow" class="space-y-4">
     <h2 id="process-flow" class="text-xl font-bold">Process &amp; Architecture Flow</h2>
@@ -413,6 +423,7 @@ export function generateStarterFragment({
   const safeTitle = escapeHtml(title);
   const isDashboard = mode === "dashboard" || mode === "live-report";
   const isPresentation = mode === "presentation";
+  const isPrint = mode === "print";
   const primaryDataset = Array.isArray(datasets) && datasets.length > 0 ? datasets[0] : null;
 
   const validWidgets = Array.isArray(widgets)
@@ -421,6 +432,9 @@ export function generateStarterFragment({
 
   if (isPresentation && validWidgets.length === 0) {
     return renderPresentationStarterFragment({ title, mode, slug, goals, audience });
+  }
+  if (isPrint && validWidgets.length === 0) {
+    return renderPrintStarterFragment({ title, mode, slug, goals, audience, dataset: primaryDataset });
   }
 
   const refSummaryHtml = Array.isArray(stagedRefs) && stagedRefs.some((r) => r.stagedPath)

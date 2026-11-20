@@ -343,8 +343,7 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
             return;
           }
 
-          const inferenceStatus = resolveInferenceStatus({ provider: payload.provider || null });
-          if (inferenceStatus._useBuiltInLocalBridge && !payload.provider) {
+          const sendLocalBridgeReply = () => {
             activeProvider = "local-bridge";
             const responseText = buildLocalBridgeReply({
               prompt,
@@ -365,6 +364,11 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
               sessionStore.storePendingAction(sessionId, action);
             }
             handleDispatch(responseText, action);
+          };
+
+          const inferenceStatus = resolveInferenceStatus({ provider: payload.provider || null });
+          if (inferenceStatus._useBuiltInLocalBridge && !payload.provider) {
+            sendLocalBridgeReply();
             return;
           }
 
@@ -399,6 +403,10 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
               handleDispatch(responseText, action);
             })
             .catch((err) => {
+              if (inferenceStatus.localMode && !payload.provider) {
+                sendLocalBridgeReply();
+                return;
+              }
               const preflightInfo = err.preflight || AgentInferenceRouter.detectProviders();
               res.writeHead(503, applyLocalCorsHeaders(req, {
                 "Content-Type": "application/json",

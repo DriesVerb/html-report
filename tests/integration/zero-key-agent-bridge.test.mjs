@@ -528,5 +528,35 @@ process.stdout.write("Acknowledged turn " + existing.length + "\\n");
         await browser.close();
       }
     });
+
+    it("prefers local-bridge when --ai-local is active even if an authenticated external CLI exists", async () => {
+      const reportPath = path.join(tmpDir, "local-override.html");
+      const built = buildReport({
+        title: "Local Override Test",
+        content: `<main id="report-main"><section id="s1"><h1 id="h1">Telemetry</h1><p>Active ticks.</p></section></main>`,
+        ai: true,
+        aiLocal: true
+      });
+      fs.writeFileSync(reportPath, built.html, "utf-8");
+
+      const srv = await serveReport({ filePath: reportPath, port: 0, autoOpen: false, aiLocal: true });
+      try {
+        const baseUrl = `http://127.0.0.1:${srv.serverPort}`;
+        const pre = await (await fetch(`${baseUrl}/api/agent/preflight`)).json();
+        assert.equal(pre.activeProvider, "local-bridge");
+        assert.equal(pre.localMode, true);
+
+        const res = await fetch(`${baseUrl}/api/agent/prompt`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-CSRF-Token": pre.csrfToken },
+          body: JSON.stringify({ prompt: "Summarize telemetry" })
+        });
+        assert.equal(res.status, 200);
+        const data = await res.json();
+        assert.equal(data.provider, "local-bridge");
+      } finally {
+        await srv.close();
+      }
+    });
   });
 });

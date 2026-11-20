@@ -68,8 +68,8 @@ node skills/html-report/scripts/harness.mjs run \
   --title "Autonomous Agents 2026" \
   --presentation --theme night --fast
 
-# 2. Verify spacing, safe zones, fullscreen, and notes in Playwright
-node skills/html-report/playwright/verify-report.mjs projects/autonomous-agents-deck/index.html --mode presentation --cdn-reveal
+# 2. Verify spacing, safe zones, fullscreen, notes, console errors, and layout in Playwright
+node skills/html-report/playwright/verify-report.mjs projects/autonomous-agents-deck/index.html --mode presentation --quick
 
 # 3. Preview on local dev server (default port 3031, fallback 3032)
 node skills/html-report/scripts/serve-report.mjs projects/autonomous-agents-deck/index.html --port 3031 --no-open

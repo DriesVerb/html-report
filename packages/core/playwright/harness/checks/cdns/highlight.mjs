@@ -15,13 +15,19 @@ export class HighlightCheck extends VerificationCheck {
     if (options.allCdns || options.checkCode || options.checkHighlight || options.cdnHighlight) return true;
     if (options.cdns?.includes("highlight") || options.cdns?.includes("code") || options.cdns?.includes("hljs")) return true;
     if (detectedFeatures) return Boolean(detectedFeatures.hasCode);
-    return await page.evaluate(() => Boolean(document.querySelector("pre code, .hljs, code[class*='language-']")));
+    return await page.evaluate(() =>
+      Array.from(document.querySelectorAll("pre code, .hljs, code[class*='language-']")).some(
+        (el) => !el.closest(".mockup-code") || el.classList.contains("hljs") || /\blanguage-/.test(el.className || "")
+      )
+    );
   }
 
   async run({ page }) {
     const errors = [];
     const check = await page.evaluate(() => {
-      const codeBlocks = Array.from(document.querySelectorAll("pre code, .hljs, code[class*='language-']"));
+      const codeBlocks = Array.from(document.querySelectorAll("pre code, .hljs, code[class*='language-']")).filter(
+        (el) => !el.closest(".mockup-code") || el.classList.contains("hljs") || /\blanguage-/.test(el.className || "")
+      );
       if (codeBlocks.length === 0) return { hasCode: false };
 
       const tsCode = document.getElementById("frontend-ts-code") || document.querySelector("code.language-typescript");

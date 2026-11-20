@@ -51,7 +51,7 @@ flowchart TD
         Bridge --> SSERoute["/__datastar_stream__ (text/event-stream)"]
     end
 
-    subgraph Client["Browser (localhost:3000)"]
+    subgraph Client["Browser (localhost:3031)"]
         SSERoute --> DS["Datastar.js Runtime (Idiomorph)"]
         DS --> TaskTree["Task Tree & Detail Cards (#task-id)"]
         DS --> ToolFeed["Tool Invocation Feed (#tool-call-feed)"]

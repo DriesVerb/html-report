@@ -70,6 +70,109 @@ describe("Phase 1: Runtime Assets & Template Shell Unit Tests", () => {
         "CSP connect-src must allow ws:, wss:, http:, and https: for live SSE and WebSockets"
       );
     });
+
+    it("should configure Grid.js tables for responsive horizontal scrolling without wrapping headers", () => {
+      const shell = fs.readFileSync(shellPath, "utf-8");
+      assert.ok(shell.includes("overflow-x: auto !important;"), "Must allow .gridjs-wrapper horizontal scroll");
+      assert.ok(shell.includes("max-width: 100% !important;"), "Must constrain .gridjs-wrapper max-width to 100%");
+      assert.ok(shell.includes("table-layout: auto !important;"), "Must use table-layout: auto on .gridjs-table");
+      assert.ok(shell.includes("min-width: 100% !important;"), "Must stretch .gridjs-table to at least 100%");
+      assert.ok(shell.includes("th.gridjs-th"), "Must define th.gridjs-th rule");
+      assert.ok(shell.includes("white-space: nowrap !important;"), "Must keep Grid.js headers on a single line");
+    });
+  });
+
+  describe("report-runtime.js: checkInsufficientHorizontalSpace", () => {
+    it("should skip .gridjs-wrapper while still flagging non-Grid.js overflowing containers", () => {
+      const originalDoc = globalThis.document;
+      const originalWindow = globalThis.window;
+
+      const makeEl = ({ tag, classNames = [], scrollWidth, clientWidth, overflowX = "auto" }) => {
+        const attrs = new Map([["data-insufficient-space", "true"]]);
+        const classes = new Set(["verify-insufficient-space", ...classNames]);
+        return {
+          tagName: tag.toUpperCase(),
+          id: classNames.includes("gridjs-wrapper") ? "grid-wrap" : "plain-wrap",
+          className: Array.from(classes).join(" "),
+          scrollWidth,
+          clientWidth,
+          style: { overflowX, display: "block", visibility: "visible" },
+          classList: {
+            contains: (c) => classes.has(c),
+            add: (c) => classes.add(c),
+            remove: (c) => classes.delete(c)
+          },
+          setAttribute: (k, v) => attrs.set(k, v),
+          removeAttribute: (k) => attrs.delete(k),
+          getAttribute: (k) => attrs.get(k) ?? null
+        };
+      };
+
+      const gridWrapper = makeEl({ tag: "div", classNames: ["gridjs-wrapper"], scrollWidth: 920, clientWidth: 560 });
+      const overflowDiv = makeEl({ tag: "div", classNames: [], scrollWidth: 500, clientWidth: 200 });
+
+      globalThis.window = {
+        getComputedStyle: (el) => el.style
+      };
+      globalThis.document = {
+        querySelector: (sel) => (sel === "main" ? {
+          querySelectorAll: () => [gridWrapper, overflowDiv]
+        } : null)
+      };
+
+      try {
+        const flagged = checkInsufficientHorizontalSpace();
+        assert.equal(flagged.length, 1);
+        assert.equal(flagged[0].id, "plain-wrap");
+        assert.equal(gridWrapper.getAttribute("data-insufficient-space"), null);
+        assert.equal(gridWrapper.classList.contains("verify-insufficient-space"), false);
+        assert.equal(overflowDiv.getAttribute("data-insufficient-space"), "true");
+      } finally {
+        globalThis.document = originalDoc;
+        globalThis.window = originalWindow;
+      }
+    });
+
+    it("initTOC() excludes #print-cover-page headings from #report-toc-list", () => {
+      const originalDoc = globalThis.document;
+      const tocChildren = [];
+      const tocList = {
+        innerHTML: "",
+        appendChild: (node) => tocChildren.push(node)
+      };
+      const coverHeading = {
+        tagName: "H1",
+        id: "print-cover-title",
+        textContent: "Cover Title",
+        classList: { contains: () => false },
+        closest: (sel) => (sel.includes("#print-cover-page") ? {} : null)
+      };
+      const mainHeading = {
+        tagName: "H1",
+        id: "report-title",
+        textContent: "Main Report Title",
+        classList: { contains: () => false },
+        closest: () => null
+      };
+      globalThis.document = {
+        getElementById: (id) => (id === "report-toc-list" ? tocList : null),
+        querySelectorAll: () => [coverHeading, mainHeading],
+        createElement: (tag) => ({
+          tagName: tag.toUpperCase(),
+          children: [],
+          addEventListener: () => {},
+          appendChild(child) { this.children.push(child); }
+        })
+      };
+      try {
+        runtime.initTOC();
+        assert.equal(tocChildren.length, 1);
+        assert.equal(tocChildren[0].children[0].href, "#report-title");
+        assert.equal(tocChildren[0].children[0].textContent, "Main Report Title");
+      } finally {
+        globalThis.document = originalDoc;
+      }
+    });
   });
 
   describe("report-runtime.js: DAISYUI_THEMES catalog", () => {
@@ -647,6 +750,20 @@ end`;
       } finally {
         globalThis.window = originalWindow;
         globalThis.document = originalDoc;
+      }
+    });
+
+    it("resizeChartsForPrint() resizes active reportCharts instances cleanly for print media", () => {
+      const originalWindow = globalThis.window;
+      let resized = 0;
+      globalThis.window = {
+        reportCharts: [{ resize: () => { resized += 1; } }, { resize: () => { resized += 1; } }]
+      };
+      try {
+        runtime.resizeChartsForPrint();
+        assert.equal(resized, 2);
+      } finally {
+        globalThis.window = originalWindow;
       }
     });
   });

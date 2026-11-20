@@ -344,6 +344,84 @@ describe("Reveal.js Presentation, CSP, Preflight & Favicon Fixes", () => {
     }
   });
 
+  it("verifies dark theme stage transparency, initially hidden bottom-right notes modal, and hidden-slide Mermaid rendering", async () => {
+    const tmpDir = makeTempDir("reveal-night-mermaid-");
+    const htmlPath = path.join(tmpDir, "night-deck.html");
+    const fragment = `
+      <main id="report-main" class="max-w-7xl mx-auto px-4 py-6">
+        <section id="presentation-shell" class="space-y-4">
+          <div class="presentation-toolbar flex items-center justify-between gap-2">
+            <h1 id="deck-title" class="text-xl font-bold">Night Theme &amp; Mermaid Deck</h1>
+            <div class="flex items-center gap-2">
+              <button id="presentation-notes-btn" type="button" class="btn btn-xs">Notes N</button>
+              <button id="presentation-fullscreen-btn" type="button" class="btn btn-xs btn-primary">Present F</button>
+            </div>
+          </div>
+          <div class="reveal-stage">
+            <div class="reveal" id="presentation-deck">
+              <div class="slides">
+                <section id="s1" data-notes="Opening note">
+                  <div class="slide-body justify-center"><h2 id="s1-h" class="text-3xl font-bold">Slide 1</h2></div>
+                </section>
+                <section id="s2" data-notes="Diagram note">
+                  <div class="slide-body justify-center">
+                    <h2 id="s2-h" class="text-2xl font-bold">Architecture Flow</h2>
+                    <div class="mermaid">flowchart LR
+  A["Ingress"] --> B["Policy"]
+  B --> C["Standby"]</div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>`;
+
+    const built = buildReport({
+      title: "Night Theme & Mermaid Deck",
+      content: fragment,
+      mode: "presentation",
+      theme: "night",
+      addons: ["reveal", "mermaid"]
+    });
+    fs.writeFileSync(htmlPath, built.html, "utf-8");
+
+    const harnessRes = await runHarness(htmlPath, {
+      mode: "presentation",
+      expectedTheme: "night",
+      quick: true,
+      timeout: 20000
+    });
+    assert.equal(
+      harnessRes.success,
+      true,
+      `Expected full presentation harness to pass, got errors: ${JSON.stringify(harnessRes.results.filter((r) => r.status === "failed"), null, 2)}`
+    );
+
+    const browser = await chromium.launch({ headless: true });
+    try {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+      await page.goto(pathToFileURL(htmlPath).href, { waitUntil: "networkidle" });
+      await page.waitForFunction(() => Boolean(document.querySelector("#s2 .mermaid svg")), null, { timeout: 8000 });
+
+      const initialState = await page.evaluate(() => {
+        const modal = document.getElementById("presentation-notes-modal");
+        const revealEl = document.querySelector(".reveal-stage .reveal");
+        const svg = document.querySelector("#s2 .mermaid svg");
+        return {
+          notesDisplay: modal ? getComputedStyle(modal).display : null,
+          revealBg: revealEl ? getComputedStyle(revealEl).backgroundColor : null,
+          svgViewBox: svg?.getAttribute("viewBox") || ""
+        };
+      });
+      assert.equal(initialState.notesDisplay, "none", "Speaker notes modal must start hidden");
+      assert.notEqual(initialState.revealBg, "rgb(255, 255, 255)", ".reveal must not paint white over dark theme stage");
+      assert.notEqual(initialState.svgViewBox, "-8 -8 16 16", "Hidden slide Mermaid SVG must not collapse to 16px");
+    } finally {
+      await browser.close();
+    }
+  });
+
   it("loads live SSE URLs cleanly in verify-report harness using waitUntil: load", async () => {
     const tmpDir = makeTempDir("reveal-sse-");
     const htmlPath = path.join(tmpDir, "sse-report.html");

@@ -165,7 +165,9 @@ export async function runHarness(htmlPath, rawOptions = {}) {
     hasLeaflet: Boolean(document.querySelector("#datacenterMap, #map, .leaflet-container")),
     hasGridJs: Boolean(document.querySelector("[data-gridjs], #gridjs-benchmark-table, .gridjs")),
     hasKaTeX: Boolean(document.querySelector(".katex, #katex-math-block, [data-katex]")),
-    hasCode: Boolean(document.querySelector("pre code, .hljs, code[class*='language-']")),
+    hasCode: Array.from(document.querySelectorAll("pre code, .hljs, code[class*='language-']")).some(
+      (el) => !el.closest(".mockup-code") || el.classList.contains("hljs") || /\blanguage-/.test(el.className || "")
+    ),
     hasMarkdown: Boolean(document.querySelector("#markdown-output, [data-markdown]")),
     hasLucide: Boolean(document.querySelector("[data-lucide], svg.lucide")),
     hasAlpine: Boolean(document.querySelector("[x-data], #alpine-example-card")),

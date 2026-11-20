@@ -109,10 +109,15 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
       ...(siblingCmd ? { aiCmd: siblingCmd } : {}),
       ...detectOptions
     });
-    const hasAuthenticatedProvider = Boolean(status.providerAvailable && status.authenticated);
     const localBridgeEnabled = isLocalBridgeModeActive();
+    const hasExplicitCustomCmd = Boolean((process.env.HTML_REPORT_AI_CMD && process.env.HTML_REPORT_AI_CMD.trim()) || siblingCmd);
+    const shouldUseLocalBridge = Boolean(
+      localBridgeEnabled &&
+      !detectOptions.provider &&
+      !hasExplicitCustomCmd
+    );
 
-    if (!hasAuthenticatedProvider && localBridgeEnabled) {
+    if (shouldUseLocalBridge) {
       const localProvider = {
         id: "local-bridge",
         type: "local",

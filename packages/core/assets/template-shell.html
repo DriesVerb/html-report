@@ -48,6 +48,9 @@
     }
     .mermaid {
       color: inherit;
+      width: 100%;
+      display: flex;
+      justify-content: center;
     }
     .mermaid svg {
       max-width: 100% !important;
@@ -56,6 +59,7 @@
     }
     .mermaid-wrapper {
       position: relative;
+      width: 100%;
     }
     .mermaid-wrapper .mermaid-enlarge-btn {
       position: absolute;
@@ -114,20 +118,31 @@
     }
     /* Grid.js Full Light & Dark Mode DaisyUI Theme Integration */
     .gridjs-container {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
       color: var(--grid-text) !important;
       background-color: transparent !important;
       font-size: 0.8125rem;
       padding: 0 !important;
     }
     .gridjs-wrapper {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
       border-radius: 0.5rem;
       border: 1px solid var(--grid-border) !important;
       background-color: var(--grid-bg-1) !important;
       box-shadow: none !important;
     }
+    table.gridjs-table,
     .gridjs-table {
       width: 100% !important;
-      table-layout: fixed !important;
+      min-width: 100% !important;
+      max-width: none !important;
+      overflow: visible !important;
+      table-layout: auto !important;
       background-color: var(--grid-bg-1) !important;
       color: var(--grid-text) !important;
     }
@@ -143,8 +158,30 @@
       padding: 8px 10px !important;
       min-width: 0 !important;
       width: auto !important;
-      word-break: break-word;
-      white-space: normal !important;
+      word-break: normal !important;
+      white-space: nowrap !important;
+      position: relative;
+    }
+    th.gridjs-th-sort {
+      padding-right: 26px !important;
+    }
+    th.gridjs-th .gridjs-th-content,
+    th.gridjs-th-sort .gridjs-th-content {
+      float: none !important;
+      display: inline-block !important;
+      width: auto !important;
+      max-width: none !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      vertical-align: middle;
+    }
+    th.gridjs-th-sort button.gridjs-sort {
+      position: absolute !important;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      float: none !important;
+      margin: 0 !important;
     }
     th.gridjs-th:hover,
     th.gridjs-th-sort:hover {
@@ -158,8 +195,12 @@
       padding: 8px 10px !important;
       min-width: 0 !important;
       width: auto !important;
-      word-break: break-word;
+      word-break: normal !important;
+      overflow-wrap: anywhere;
       white-space: normal !important;
+    }
+    input.gridjs-input.gridjs-search-input {
+      max-width: 100%;
     }
     .gridjs-footer {
       background-color: var(--grid-bg-2) !important;
@@ -384,12 +425,15 @@
       background: oklch(var(--b1) / 1);
       box-shadow: 0 12px 32px -12px oklch(var(--bc) / 0.14);
     }
-    .reveal-stage .reveal {
+    .reveal-stage .reveal,
+    .reveal-stage .reveal.reveal-viewport {
       width: 100%;
       height: 100%;
       font-family: inherit;
       font-size: inherit;
       color: inherit;
+      background: transparent !important;
+      background-color: transparent !important;
     }
     .reveal-stage .reveal .slides {
       width: 100% !important;
@@ -557,7 +601,7 @@
       backdrop-filter: blur(10px);
       overflow: hidden;
     }
-    #presentation-notes-modal.hidden,
+    #presentation-notes-modal.hidden {
       display: none !important;
     }
     #presentation-notes-modal[data-dock="bottom-right"] {
@@ -719,6 +763,22 @@
       .navbar,
       nav {
         display: none !important;
+      }
+      thead {
+        display: table-header-group;
+      }
+      tfoot {
+        display: table-row-group;
+      }
+      tr {
+        break-inside: avoid;
+      }
+      .overflow-x-auto {
+        overflow: visible !important;
+      }
+      canvas {
+        max-width: 100% !important;
+        height: auto !important;
       }
     }
   </style>
