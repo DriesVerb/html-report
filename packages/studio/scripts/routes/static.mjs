@@ -185,20 +185,25 @@ export function handleStaticRoutes(req, res, parsedUrl, pathname, ctx) {
 
     // 3. Serve static relative files (e.g. CSVs, PDFs, images, Markdown artifacts)
     const sanitizedRelPath = pathname.replace(/^\/+/, "");
+    const hasDotSegment = sanitizedRelPath.split(/[\\/]+/).some((seg) => seg.startsWith("."));
+    if (hasDotSegment) {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.end("404 Not Found");
+      return true;
+    }
     const workspaceRootDir = findWorkspaceRoot(rootDir);
     let diskPath = path.resolve(rootDir, sanitizedRelPath);
 
     // Fallback to workspaceRootDir, dev/, examples/dev/, experiments/, or examples/experiments/ directories if not found at rootDir
     if (!fs.existsSync(diskPath) || fs.statSync(diskPath).isDirectory()) {
       const wsCandidate = path.resolve(workspaceRootDir, sanitizedRelPath);
-      const hasDotSegment = sanitizedRelPath.split(/[\\/]+/).some((seg) => seg.startsWith("."));
       const fallbackCandidates = [
         path.join(rootDir, "dev", sanitizedRelPath),
         path.join(rootDir, "experiments", sanitizedRelPath),
         path.join(workspaceRootDir, "examples", "dev", sanitizedRelPath),
         path.join(workspaceRootDir, "examples", "experiments", sanitizedRelPath)
       ];
-      if (!hasDotSegment && isPathInside(workspaceRootDir, wsCandidate) && fs.existsSync(wsCandidate) && fs.statSync(wsCandidate).isFile()) {
+      if (isPathInside(workspaceRootDir, wsCandidate) && fs.existsSync(wsCandidate) && fs.statSync(wsCandidate).isFile()) {
         diskPath = wsCandidate;
       } else {
         const matched = fallbackCandidates.find((cand) =>
@@ -269,14 +274,14 @@ export function handleStaticRoutes(req, res, parsedUrl, pathname, ctx) {
         <a href="/" class="btn btn-sm btn-ghost gap-1.5"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard</a>
         <div class="flex items-center gap-2">
           <span class="badge badge-primary font-mono text-xs">${escapeHtml(fileName)}</span>
-          <a href="${pathname}?raw=true" class="btn btn-xs btn-outline font-mono">Raw Markdown</a>
+          <a href="${escapeHtml(pathname)}?raw=true" class="btn btn-xs btn-outline font-mono">Raw Markdown</a>
         </div>
       </div>
       <div id="markdown-body" class="prose prose-sm sm:prose max-w-none text-base-content mt-6"></div>
     </div>
   </div>
   <script>
-    const markdownContent = ${JSON.stringify(rawMd)};
+    const markdownContent = ${JSON.stringify(rawMd).replace(/<\//g, "<\\/")};
     const converter = new showdown.Converter({
       tables: true,
       tasklists: true,
@@ -284,7 +289,19 @@ export function handleStaticRoutes(req, res, parsedUrl, pathname, ctx) {
       ghCodeBlocks: true,
       simplifiedAutoLink: true
     });
-    document.getElementById("markdown-body").innerHTML = converter.makeHtml(markdownContent);
+    const renderedHtml = converter.makeHtml(markdownContent);
+    const tpl = document.createElement("template");
+    tpl.innerHTML = renderedHtml;
+    tpl.content.querySelectorAll("script, iframe, object, embed, link[rel='import'], meta, base, form").forEach((el) => el.remove());
+    tpl.content.querySelectorAll("*").forEach((el) => {
+      for (const attr of Array.from(el.attributes || [])) {
+        const name = attr.name.toLowerCase();
+        const val = String(attr.value || "").trim().toLowerCase();
+        if (name.startsWith("on") || name === "srcdoc") el.removeAttribute(attr.name);
+        else if ((name === "href" || name === "src" || name === "xlink:href" || name === "action" || name === "formaction") && (/^(?:javascript|vbscript):/i.test(val) || /^data:text\/html/i.test(val))) el.removeAttribute(attr.name);
+      }
+    });
+    document.getElementById("markdown-body").innerHTML = tpl.innerHTML;
     if (window.lucide) window.lucide.createIcons();
   </script>
 </body>

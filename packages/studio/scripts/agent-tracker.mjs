@@ -26,7 +26,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
   const args = process.argv.slice(2);
   if (args.includes("--tail")) {
     const portIdx = args.indexOf("--port");
-    const port = portIdx !== -1 ? Number(args[portIdx + 1]) || 3000 : 3000;
+    const port = portIdx !== -1 ? Number(args[portIdx + 1]) || 3031 : 3031;
     const fileIdx = args.indexOf("--file");
     const filePath = fileIdx !== -1 ? args[fileIdx + 1] : null;
 

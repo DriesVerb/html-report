@@ -379,6 +379,7 @@ function tailwindConfigSnippet(themeName, variables) {
 function registerCustomTheme(themeName, css = null) {
   if (!themeName || typeof themeName !== "string") return false;
   const name = themeName.trim();
+  if (!/^[a-zA-Z0-9_-]{1,64}$/.test(name)) return false;
   if (!DAISYUI_THEMES.includes(name)) {
     DAISYUI_THEMES.push(name);
   }

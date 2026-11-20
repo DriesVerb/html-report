@@ -135,7 +135,6 @@ export function parseArgs(argv = process.argv.slice(2)) {
     } else if (arg === "--live" || arg === "--live-report" || arg === "-l") {
       args.mode = "live-report";
     } else if (arg === "--pwa") {
-      args.mode = "pwa";
       args.pwa = true;
     } else if (arg === "--editable") {
       args.editable = true;

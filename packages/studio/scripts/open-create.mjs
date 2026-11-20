@@ -9,6 +9,7 @@ import { exec, spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 import { isAgentOrSandboxedEnv } from "./lib/server/persona-and-session.mjs";
+import { getChildNodeExecArgs } from "@html-report/core/env";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "../../..");
@@ -50,7 +51,7 @@ async function main() {
   const serveScript = path.resolve(__dirname, "./server.mjs");
   console.log(`Starting server on port ${primaryPort} (fallback 3032) and launching browser...`);
 
-  const child = spawn(process.execPath, [serveScript, createHtml, "--port", String(primaryPort)], {
+  const child = spawn(process.execPath, getChildNodeExecArgs([serveScript, createHtml, "--port", String(primaryPort)]), {
     detached: true,
     stdio: "ignore",
     env: { ...process.env, HTML_REPORT_NO_OPEN: "1" }

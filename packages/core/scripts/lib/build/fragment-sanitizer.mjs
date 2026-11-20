@@ -7,6 +7,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { escapeAttr } from "./addon-registry.mjs";
 
+function isPathContained(parentDir, targetPath) {
+  if (!parentDir || !targetPath) return false;
+  const rel = path.relative(parentDir, targetPath);
+  return rel !== "" && rel !== ".." && !rel.startsWith(".." + path.sep) && !path.isAbsolute(rel);
+}
+
 function loadMermaidFileContent(rawRef, { contentPath = null, workspaceRoot = process.cwd() } = {}) {
   const ref = String(rawRef || "").trim();
   if (!ref) {
@@ -24,18 +30,34 @@ function loadMermaidFileContent(rawRef, { contentPath = null, workspaceRoot = pr
     baseDir = path.dirname(absContentPath);
   }
 
-  const candidates = [path.resolve(baseDir, ref)];
+  const isAllowedLexical = (candidate) =>
+    isPathContained(resolvedWorkspace, candidate) || (Boolean(contentPath) && isPathContained(baseDir, candidate));
+
+  const rawCandidates = [path.resolve(baseDir, ref)];
   const wsCandidate = path.resolve(resolvedWorkspace, ref);
-  if (wsCandidate !== candidates[0]) {
-    candidates.push(wsCandidate);
+  if (wsCandidate !== rawCandidates[0]) {
+    rawCandidates.push(wsCandidate);
   }
 
-  const foundPath = candidates.find((p) => fs.existsSync(p) && fs.statSync(p).isFile());
+  const safeCandidates = rawCandidates.filter(isAllowedLexical);
+  if (safeCandidates.length === 0) {
+    throw new Error(`Access denied: Mermaid diagram path "${ref}" escapes allowed workspace root.`);
+  }
+
+  const foundPath = safeCandidates.find((p) => fs.existsSync(p) && fs.statSync(p).isFile());
   if (!foundPath) {
-    throw new Error(`Mermaid diagram file not found: "${ref}" (checked ${candidates.join(", ")})`);
+    throw new Error(`Mermaid diagram file not found: "${ref}" (checked ${safeCandidates.join(", ")})`);
   }
 
-  let source = fs.readFileSync(foundPath, "utf-8").trim();
+  const realFoundPath = fs.realpathSync(foundPath);
+  const realWorkspace = fs.existsSync(resolvedWorkspace) ? fs.realpathSync(resolvedWorkspace) : resolvedWorkspace;
+  const realBaseDir = (contentPath && fs.existsSync(baseDir)) ? fs.realpathSync(baseDir) : baseDir;
+  const realAllowed = isPathContained(realWorkspace, realFoundPath) || (Boolean(contentPath) && isPathContained(realBaseDir, realFoundPath));
+  if (!realAllowed) {
+    throw new Error(`Access denied: Mermaid diagram symlink "${ref}" escapes allowed workspace root.`);
+  }
+
+  let source = fs.readFileSync(realFoundPath, "utf-8").trim();
   source = source.replace(/^```(?:mermaid)?\r?\n([\s\S]*?)\r?\n```\s*$/i, "$1").trim();
   // Prevent accidental HTML tag parsing inside <div class="mermaid"> while preserving --> and ->> operators.
   return source.replace(/<(?=[a-zA-Z\/!])/g, "&lt;");
@@ -241,8 +263,13 @@ export function stripDuplicateNavbars(html = "") {
 export function fetchFeedSnapshotSync(url) {
   if (!url || typeof url !== "string") return null;
   try {
-    const stdout = child_process.execSync(
-      `curl -sSL -m 5 "${url.replace(/"/g, '\\"')}"`,
+    const parsed = new URL(url.trim());
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return null;
+    }
+    const stdout = child_process.execFileSync(
+      "curl",
+      ["-sSL", "-m", "5", parsed.href],
       { encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] }
     );
     return JSON.parse(stdout);

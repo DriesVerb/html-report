@@ -228,7 +228,7 @@ export function checkCompatibility(targetDir = process.cwd()) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const ent of entries) {
       if (ent.name.startsWith(".") && ent.name !== ".caller-requests") continue;
-      if (["node_modules", ".git", "tmp", "dist"].includes(ent.name)) continue;
+      if (["node_modules", ".git", "tmp", "dist", "openspec"].includes(ent.name)) continue;
 
       const full = path.join(dir, ent.name);
       if (ent.isDirectory()) {

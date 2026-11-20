@@ -63,9 +63,9 @@ the harness visually flags the element with `[data-insufficient-space="true"]`, 
 
 ## 🛡️ Browser Runtime Integrity & CDN Health
 
-The suite includes headless browser tests (`tests/browser-runtime-integrity.test.mjs`) that:
+The suite includes headless browser tests (`tests/e2e/browser-runtime-integrity.test.mjs`) that:
 1. Verify that `index.html` loads with **zero console errors** and **zero unhandled page errors**.
-2. Assert that all 16 external CDN globals (`tailwind`, `lucide`, `Alpine`, `Chart`, `mermaid`, `L`, `gridjs`, `katex`, `marked`, `hljs`, `dayjs`, `impress`, `Mock`, `showdown`, `FullCalendar`) initialize cleanly without collisions.
+2. Assert that external CDN globals (`tailwind`, `lucide`, `Alpine`, `Chart`, `mermaid`, `L`, `gridjs`, `katex`, `marked`, `hljs`, `dayjs`, `impress`, `Mock`, `showdown`, `FullCalendar`) initialize cleanly without collisions.
 3. Validate Content Security Policy (CSP) and Subresource Integrity (SRI) declarations.
 
 ---
@@ -73,9 +73,12 @@ The suite includes headless browser tests (`tests/browser-runtime-integrity.test
 ## 🏃 Running the Test Suite
 
 ```bash
-# Run all unit, integration, and BDD tests:
-node --test tests/*.test.mjs
+# Run unit & integration suites:
+npm run test:unit
+
+# Run Playwright E2E suites:
+npm run test:e2e
 
 # Run a specific BDD suite:
-node --test tests/agent-tracker.bdd.test.mjs
+node --test packages/studio/tests/agent-tracker.bdd.test.mjs
 ```

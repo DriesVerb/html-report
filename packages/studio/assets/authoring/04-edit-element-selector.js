@@ -395,7 +395,9 @@ const HTMLReportEdit = {
       lines.push("- Auto-priority: The AI agent must assess all tasks, identify dependencies, and create/determine its own optimal execution priority order.");
     }
     lines.push("- Follow the principles and conventions of this project (DaisyUI themes, Tailwind, light default theme).");
-    const cfgPort = (typeof HTMLReportAgent !== "undefined" && HTMLReportAgent.getConfig) ? (HTMLReportAgent.getConfig().port || 3031) : 3031;
+    const cfgPort = (typeof HTMLReportAgent !== "undefined" && typeof HTMLReportAgent.getAiConfig === "function")
+      ? (HTMLReportAgent.getAiConfig().port || 3031)
+      : 3031;
     if (hasFragment) {
       lines.push(`- Edit only ${fragmentPath}; do NOT hand-edit ${page.source || "index.html"} directly.`);
       lines.push(`- Keep the report live on localhost:${cfgPort}; saving ${fragmentPath} triggers automatic rebuild and hot-swap (no manual build-report.mjs run needed).`);

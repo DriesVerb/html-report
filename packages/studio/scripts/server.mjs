@@ -356,8 +356,16 @@ async function startServer(targetFilePathOrOptions, initialPort = 3031, autoOpen
   };
 
   const server = http.createServer((req, res) => {
-    const parsedUrl = new URL(req.url, `http://localhost:${serverPort}`);
-    const pathname = decodeURIComponent(parsedUrl.pathname);
+    let parsedUrl;
+    let pathname;
+    try {
+      parsedUrl = new URL(req.url, `http://localhost:${serverPort}`);
+      pathname = decodeURIComponent(parsedUrl.pathname);
+    } catch (_) {
+      res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("400 Bad Request");
+      return;
+    }
 
     if (handleSseRoutes(req, res, parsedUrl, pathname, routeCtx)) return;
     if (handlePublishRoutes(req, res, parsedUrl, pathname, routeCtx)) return;

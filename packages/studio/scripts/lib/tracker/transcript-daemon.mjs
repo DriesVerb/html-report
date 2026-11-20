@@ -12,7 +12,7 @@ export class TranscriptTailDaemon extends EventEmitter {
     facade = null,
     pollIntervalMs = 250,
     pushToDevServer = true,
-    port = 3000,
+    port = 3031,
     host = "127.0.0.1"
   } = {}) {
     super();

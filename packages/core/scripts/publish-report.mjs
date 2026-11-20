@@ -104,6 +104,8 @@ export async function publishProject({
       contentPath: path.relative(workspaceRoot, fragmentPath).replace(/\\/g, "/"),
       mode,
       theme: resolvedTheme,
+      customTheme: manifest.customTheme || null,
+      pwa: Boolean(manifest.pwa),
       favicon: manifest.favicon || "📊",
       addons: Array.isArray(manifest.activeAddons) ? manifest.activeAddons : [],
       editable: false,

@@ -215,11 +215,12 @@ Object.assign(HTMLReportAgent, {
       `;
     } else {
       const persona = options.persona || "analyst";
+      const safePersona = typeof escapeHtml === "function" ? escapeHtml(persona) : String(persona).replace(/[&<>"']/g, "");
       msgEl.className = "flex justify-start w-full";
       msgEl.innerHTML = `
         <div class="w-full max-w-[95%] p-3 rounded-2xl rounded-tl-none bg-base-200/90 border border-base-300 text-base-content shadow-sm space-y-2 text-xs">
           <div class="flex items-center justify-between text-[10px] text-base-content/60 pb-1 border-b border-base-300/50">
-            <span class="font-mono font-semibold text-primary uppercase">${persona}</span>
+            <span class="font-mono font-semibold text-primary uppercase">${safePersona}</span>
             <span class="font-mono">${new Date().toLocaleTimeString()}</span>
           </div>
           <div class="prose prose-xs max-w-none text-base-content leading-relaxed message-content">
@@ -235,11 +236,34 @@ Object.assign(HTMLReportAgent, {
     return msgEl;
   },
 
+  _sanitizeHtml: function(rawHtml) {
+    if (!rawHtml || typeof rawHtml !== "string") return "";
+    if (typeof document !== "undefined" && typeof document.createElement === "function") {
+      try {
+        const tpl = document.createElement("template");
+        tpl.innerHTML = rawHtml;
+        tpl.content.querySelectorAll("script, iframe, object, embed, link[rel='import'], meta, base, form").forEach((el) => el.remove());
+        tpl.content.querySelectorAll("*").forEach((el) => {
+          for (const attr of Array.from(el.attributes || [])) {
+            const name = attr.name.toLowerCase();
+            const val = String(attr.value || "").trim().toLowerCase();
+            if (name.startsWith("on") || name === "srcdoc") el.removeAttribute(attr.name);
+            else if ((name === "href" || name === "src" || name === "xlink:href" || name === "action" || name === "formaction") && (/^(?:javascript|vbscript):/i.test(val) || /^data:text\/html/i.test(val))) el.removeAttribute(attr.name);
+          }
+        });
+        return tpl.innerHTML;
+      } catch (_) {}
+    }
+    return rawHtml
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+      .replace(/\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "");
+  },
+
   _formatMarkdown: function(text) {
     if (!text) return "";
     if (typeof window !== "undefined") {
       if (window.showdownConverter && typeof window.showdownConverter.makeHtml === "function") {
-        return window.showdownConverter.makeHtml(text);
+        return this._sanitizeHtml(window.showdownConverter.makeHtml(text));
       }
       if (window.showdown && typeof window.showdown.Converter === "function") {
         const conv = new window.showdown.Converter({
@@ -250,7 +274,7 @@ Object.assign(HTMLReportAgent, {
           ghCodeBlocks: true
         });
         window.showdownConverter = conv;
-        return conv.makeHtml(text);
+        return this._sanitizeHtml(conv.makeHtml(text));
       }
     }
     // Defensive built-in markdown formatter fallback
@@ -367,7 +391,8 @@ Object.assign(HTMLReportAgent, {
       } catch (adapterErr) {
         if (loadingEl) {
           const contentEl = loadingEl.querySelector(".message-content");
-          if (contentEl) contentEl.innerHTML = `<span class="text-error font-semibold">Error: ${adapterErr.message}</span>`;
+          const safeErr = typeof escapeHtml === "function" ? escapeHtml(adapterErr.message) : String(adapterErr.message || "").replace(/[&<>"']/g, "");
+          if (contentEl) contentEl.innerHTML = `<span class="text-error font-semibold">Error: ${safeErr}</span>`;
         }
         return { ok: false, error: adapterErr.message };
       }

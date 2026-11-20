@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
+import { isDirectCliExecution } from "./env.mjs";
 import {
   generatePwaAssets,
   injectPwaIntoHtml,
@@ -196,12 +196,7 @@ export function convertReportToPwa({
 }
 
 // CLI entry point
-const isDirectCli = process.argv[1] && (
-  process.argv[1].endsWith("generate-pwa.mjs") ||
-  import.meta.url === pathToFileURL(process.argv[1]).href
-);
-
-if (isDirectCli) {
+if (isDirectCliExecution(process.argv[1], import.meta.url)) {
   const options = parseCliArgs(process.argv);
 
   if (options.help) {

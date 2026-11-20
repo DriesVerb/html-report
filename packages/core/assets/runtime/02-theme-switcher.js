@@ -240,6 +240,7 @@ async function renderMermaidWithTheme(palette) {
  */
 function createThemeSwatchButton(theme, currentTheme, { attrName = "data-set-theme", onSelect } = {}) {
   const isCustom = !STANDARD_DAISYUI_THEMES.has(theme);
+  const safeTheme = typeof escapeHtml === "function" ? escapeHtml(theme) : String(theme ?? "").replace(/[&<>"']/g, "");
   const btn = document.createElement("button");
   btn.type = "button";
   btn.setAttribute("data-theme", theme);
@@ -253,10 +254,10 @@ function createThemeSwatchButton(theme, currentTheme, { attrName = "data-set-the
             <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
           </svg>
           <span class="flex-grow text-xs font-semibold capitalize flex items-center gap-1.5">
-            <span>${theme}</span>
+            <span>${safeTheme}</span>
             ${isCustom ? '<span class="badge badge-primary badge-outline text-3xs px-1 py-0 h-4">custom</span>' : ''}
           </span>
-          <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${theme}">
+          <span class="flex h-full shrink-0 flex-wrap gap-1" data-swatch-preview="${safeTheme}">
             <span class="bg-primary rounded-badge w-2 h-4"></span>
             <span class="bg-secondary rounded-badge w-2 h-4"></span>
             <span class="bg-accent rounded-badge w-2 h-4"></span>

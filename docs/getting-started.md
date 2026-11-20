@@ -92,7 +92,7 @@ The harness will:
 Serve your report with single-tab live reload:
 
 ```bash
-node skills/html-report/scripts/serve-report.mjs report.html --port 3000
+node skills/html-report/scripts/serve-report.mjs report.html --port 3031
 ```
 
 When you update `fragment.html` and re-run the harness, your browser tab instantly refreshes in place without spawning duplicate tabs.

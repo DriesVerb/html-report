@@ -23,7 +23,6 @@ node skills/html-report/scripts/harness.mjs run <fragment-path> [options]
 - `--pdf`: Instructs Playwright to compile and verify a print-ready PDF version.
 - `--live`: Enables Datastar.js ESM module and real-time SSE streaming mode.
 - `--pwa`: Generates an instant Progressive Web App with companion `manifest.webmanifest`, `sw.js`, and `icon.svg`.
-- `--offline`: Inlines all external CDN stylesheets and scripts for 100% air-gapped offline portability.
 
 ---
 
@@ -49,8 +48,7 @@ node skills/html-report/scripts/build-report.mjs [options]
 - `--pwa-short-name <short>`: Custom PWA homescreen short name.
 - `--pwa-theme-color <hex>`: Custom PWA window/status-bar theme color.
 - `--pwa-icon <emoji>`: Custom icon emoji glyph.
-- `--offline`: Inlines external CSS/JS for standalone offline usage.
-- `--all-addons`: Explicitly forces inclusion of all 17 CDN libraries regardless of auto-detection.
+- `--all-addons`: Explicitly forces inclusion of CDN libraries regardless of auto-detection (`publish-report.mjs --inline-cdn` provides offline CDN inlining).
 
 ---
 
@@ -83,7 +81,7 @@ node skills/html-report/scripts/serve-report.mjs <report-path> [--port <number>]
 
 #### Options:
 - `<report-path>`: Path to the HTML report file to serve (e.g. `report.html` or `implementation-progress.html`).
-- `--port <number>`: Port number (defaults to `3000`).
+- `--port <number>`: Port number (defaults to `3031`, with automatic fallback to `3032` if busy).
 - `--no-open`: Prevents automatically launching the report in the default browser.
 - `--feed-proxy <prefix=targetUrl>`: Configures a local reverse proxy prefix for declarative public feeds (bypasses CORS restrictions).
 

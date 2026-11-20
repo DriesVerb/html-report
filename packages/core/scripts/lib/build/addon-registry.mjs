@@ -300,7 +300,7 @@ export const PRINT_MEDIA_CSS = `
   </style>`;
 
 export function escapeAttr(value) {
-  return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  return String(value ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 }
 
 export function normalizeMode(rawMode) {

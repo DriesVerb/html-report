@@ -16,7 +16,8 @@ import {
   isPathInside,
   isLoopbackAddress,
   findWorkspaceRoot,
-  scanWorkspaceProjects
+  scanWorkspaceProjects,
+  readRequestBody
 } from "../server-utils.mjs";
 import { handleStudioFileRoutes } from "./studio-files.mjs";
 
@@ -120,9 +121,8 @@ export function handleProjectRoutes(req, res, parsedUrl, pathname, ctx) {
       }
       if (req.method === "POST") {
         if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
-        let body = "";
-        req.on("data", (chunk) => { body += chunk; });
-        req.on("end", () => {
+        readRequestBody(req, res, { corsHeaders: applyLocalCorsHeaders(req, { "Content-Type": "application/json" }) }).then((body) => {
+          if (body === null) return;
           try {
             const payload = body ? JSON.parse(body) : {};
             if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: true, csrfToken: payload.csrfToken })) return;
@@ -188,8 +188,6 @@ export function handleProjectRoutes(req, res, parsedUrl, pathname, ctx) {
             if (typeof markProjectScaffolded === "function") {
               markProjectScaffolded(result.projectDir);
             }
-            if (typeof attachProjectsWatcher === "function") attachProjectsWatcher();
-            if (typeof syncProjectSubdirWatchers === "function") syncProjectSubdirWatchers();
             if (typeof broadcastProjectsChanged === "function") broadcastProjectsChanged();
 
             res.writeHead(200, applyLocalCorsHeaders(req, {
@@ -216,44 +214,46 @@ export function handleProjectRoutes(req, res, parsedUrl, pathname, ctx) {
         });
         return true;
       }
+      res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "POST, OPTIONS", "Content-Type": "application/json" }));
+      res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
       return true;
     }
 
     if (pathname === "/api/create/synthesize") {
       if (req.method === "OPTIONS") {
-        res.writeHead(204, {
-          "Access-Control-Allow-Origin": "*",
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
           "Access-Control-Allow-Methods": "POST, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type"
-        });
+        }));
         res.end();
         return true;
       }
       if (req.method === "POST") {
-        let body = "";
-        req.on("data", (chunk) => { body += chunk; });
-        req.on("end", () => {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        readRequestBody(req, res, { corsHeaders: applyLocalCorsHeaders(req, { "Content-Type": "application/json" }) }).then((body) => {
+          if (body === null) return;
           try {
             const rawConfig = body ? JSON.parse(body) : {};
             const config = normalizeDomainConfig(rawConfig);
             const sibling = resolveSiblingSkill(config);
             const cli = generateCliCommand(config);
             const prompt = generateDeterministicPrompt(config);
-            res.writeHead(200, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            });
+            res.writeHead(200, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
             res.end(JSON.stringify({ ok: true, config, sibling, cli, prompt }));
           } catch (err) {
-            res.writeHead(400, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            });
+            res.writeHead(400, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
             res.end(JSON.stringify({ ok: false, error: err.message }));
           }
         });
         return true;
       }
+      res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "POST, OPTIONS", "Content-Type": "application/json" }));
+      res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
       return true;
     }
 
@@ -262,24 +262,24 @@ export function handleProjectRoutes(req, res, parsedUrl, pathname, ctx) {
     // 1b-3b. Workspace Projects Discovery & Management API (/api/projects)
     if (pathname === "/api/projects" || pathname === "/api/projects/delete") {
       if (req.method === "OPTIONS") {
-        res.writeHead(204, {
-          "Access-Control-Allow-Origin": "*",
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
           "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type"
-        });
+          "Access-Control-Allow-Headers": "Content-Type, X-CSRF-Token"
+        }));
         res.end();
         return true;
       }
 
       if (req.method === "DELETE" || (req.method === "POST" && pathname === "/api/projects/delete")) {
-        let body = "";
-        req.on("data", (chunk) => { body += chunk; });
-        req.on("end", () => {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        readRequestBody(req, res, { corsHeaders: applyLocalCorsHeaders(req, { "Content-Type": "application/json" }) }).then((body) => {
+          if (body === null) return;
           try {
             const raw = body ? JSON.parse(body) : {};
             const targetRel = (raw.path || parsedUrl.searchParams.get("path") || "").trim();
             if (!targetRel) {
-              res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+              res.writeHead(400, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
               res.end(JSON.stringify({ ok: false, error: "Missing 'path' parameter" }));
               return;
             }
@@ -291,7 +291,7 @@ export function handleProjectRoutes(req, res, parsedUrl, pathname, ctx) {
             // Security guard: Ensure target is inside <workspaceRoot>/projects/ and not projects root itself
             const relFromProjects = path.relative(projectsDir, fullTarget);
             if (relFromProjects.startsWith("..") || relFromProjects === "" || path.isAbsolute(relFromProjects)) {
-              res.writeHead(403, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+              res.writeHead(403, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
               res.end(JSON.stringify({ ok: false, error: "Access denied: Target must be inside projects/ directory" }));
               return;
             }
@@ -319,10 +319,25 @@ export function handleProjectRoutes(req, res, parsedUrl, pathname, ctx) {
 
             // Check if targetToDelete is inside projects and not projects itself
             const targetRelFromProjects = path.relative(projectsDir, targetToDelete);
-            if (targetRelFromProjects.startsWith("..") || targetRelFromProjects === "") {
-              res.writeHead(403, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+            if (targetRelFromProjects.startsWith("..") || targetRelFromProjects === "" || path.isAbsolute(targetRelFromProjects)) {
+              res.writeHead(403, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
               res.end(JSON.stringify({ ok: false, error: "Cannot delete root projects directory" }));
               return;
+            }
+
+            // Verify canonical path does not escape via symlinks
+            if (fs.existsSync(projectsDir) && fs.existsSync(targetToDelete)) {
+              const realProjects = fs.realpathSync(projectsDir);
+              const lstatTarget = fs.lstatSync(targetToDelete);
+              if (!lstatTarget.isSymbolicLink()) {
+                const realTarget = fs.realpathSync(targetToDelete);
+                const realRel = path.relative(realProjects, realTarget);
+                if (realRel.startsWith("..") || realRel === "" || path.isAbsolute(realRel)) {
+                  res.writeHead(403, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+                  res.end(JSON.stringify({ ok: false, error: "Access denied: Target resolves outside projects/ directory" }));
+                  return;
+                }
+              }
             }
 
             // Delete project folder or direct file
@@ -350,13 +365,12 @@ export function handleProjectRoutes(req, res, parsedUrl, pathname, ctx) {
             // Invalidate projects cache and notify connected tabs
             broadcastProjectsChanged();
 
-            res.writeHead(200, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            });
+            res.writeHead(200, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
             res.end(JSON.stringify({ ok: true, deleted: path.relative(workspaceRoot, targetToDelete) }));
           } catch (err) {
-            res.writeHead(500, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+            res.writeHead(500, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
             res.end(JSON.stringify({ ok: false, error: err.message }));
           }
         });
@@ -392,14 +406,15 @@ export function handleProjectRoutes(req, res, parsedUrl, pathname, ctx) {
           );
         }
 
-        res.writeHead(200, {
+        res.writeHead(200, applyLocalCorsHeaders(req, {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
           "Cache-Control": "no-cache, no-store"
-        });
+        }));
         res.end(JSON.stringify({ ok: true, count: filtered.length, projects: filtered }));
         return true;
       }
+      res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "GET, POST, DELETE, OPTIONS", "Content-Type": "application/json" }));
+      res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
       return true;
     }
 

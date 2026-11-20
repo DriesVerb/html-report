@@ -77,25 +77,39 @@ export function handleSseRoutes(req, res, parsedUrl, pathname, ctx) {
           return true;
         }
       }
-      return true;
     }
 
     // 1a. Datastar Real-Time SSE Stream Endpoint (/events, /api/events, /__datastar_stream__)
     if (pathname === "/__datastar_stream__" || pathname === "/events" || pathname === "/api/events") {
       if (req.method === "OPTIONS") {
-        res.writeHead(204, {
-          "Access-Control-Allow-Origin": "*",
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
           "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, datastar-request, Cache-Control"
-        });
+        }));
         res.end();
         return true;
       }
 
       if (req.method === "POST") {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
         let body = "";
-        req.on("data", (chunk) => { body += chunk; });
+        let totalBytes = 0;
+        let aborted = false;
+        req.on("data", (chunk) => {
+          if (aborted) return;
+          totalBytes += chunk.length;
+          if (totalBytes > 2 * 1024 * 1024) {
+            aborted = true;
+            res.writeHead(413, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
+            res.end(JSON.stringify({ ok: false, error: "Payload exceeds 2 MB limit" }));
+            req.destroy();
+            return;
+          }
+          body += chunk;
+        });
         req.on("end", () => {
+          if (aborted) return;
           let ssePayload = body;
           try {
             const parsed = JSON.parse(body);
@@ -109,7 +123,7 @@ export function handleSseRoutes(req, res, parsedUrl, pathname, ctx) {
           for (const client of datastarClients) {
             try { client.write(ssePayload); } catch (_) { datastarClients.delete(client); }
           }
-          res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+          res.writeHead(200, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
           res.end(JSON.stringify({ ok: true, listeners: datastarClients.size }));
         });
         return true;
@@ -245,6 +259,8 @@ export function handleSseRoutes(req, res, parsedUrl, pathname, ctx) {
         });
         return true;
       }
+      res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "GET, POST, OPTIONS", "Content-Type": "application/json" }));
+      res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
       return true;
     }
 

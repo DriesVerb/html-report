@@ -143,6 +143,8 @@ export function handleStudioFileRoutes(req, res, parsedUrl, pathname, ctx) {
       });
       return true;
     }
+    res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "POST, OPTIONS", "Content-Type": "application/json" }));
+    res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
     return true;
   }
 
@@ -264,11 +266,10 @@ export function handleStudioFileRoutes(req, res, parsedUrl, pathname, ctx) {
         walk(workspaceRoot, 0);
         const files = [...projectFiles, ...generalFiles].slice(0, MAX_FILES);
 
-        res.writeHead(200, {
+        res.writeHead(200, applyLocalCorsHeaders(req, {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
           "Cache-Control": "no-cache, no-store"
-        });
+        }));
         res.end(JSON.stringify({
           ok: true,
           workspaceRoot,
@@ -277,11 +278,13 @@ export function handleStudioFileRoutes(req, res, parsedUrl, pathname, ctx) {
           files
         }));
       } catch (err) {
-        res.writeHead(500, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+        res.writeHead(500, applyLocalCorsHeaders(req, { "Content-Type": "application/json" }));
         res.end(JSON.stringify({ ok: false, error: err.message }));
       }
       return true;
     }
+    res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "GET, OPTIONS", "Content-Type": "application/json" }));
+    res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
     return true;
   }
 

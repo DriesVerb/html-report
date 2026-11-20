@@ -7,6 +7,7 @@
 import { getPackageVersion } from "@html-report/core/compatibility";
 import { AgentInferenceRouter } from "../preflight.mjs";
 import { DatastarBridge, escapeHtml } from "../datastar-sse.mjs";
+import { readRequestBody } from "../server-utils.mjs";
 
 const COPILOT_ROUTES = new Set([
   "/__agent_action__",
@@ -21,25 +22,24 @@ const COPILOT_ROUTES = new Set([
 export function handleAgentCopilotRoutes(req, res, parsedUrl, pathname, ctx) {
   if (!COPILOT_ROUTES.has(pathname)) return false;
 
-  const { datastarClients, personaRegistry } = ctx;
+  const { datastarClients, personaRegistry, applyLocalCorsHeaders, enforceLocalBridgeSecurity } = ctx;
 
   if (req.method === "OPTIONS") {
-    res.writeHead(204, {
-      "Access-Control-Allow-Origin": "*",
+    if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+    res.writeHead(204, applyLocalCorsHeaders(req, {
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, X-Report-Agent, datastar-request"
-    });
+    }));
     res.end();
     return true;
   }
 
   if (req.method === "GET") {
     const providerStatus = AgentInferenceRouter.detectProviders();
-    res.writeHead(200, {
+    res.writeHead(200, applyLocalCorsHeaders(req, {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
       "Cache-Control": "no-cache, no-store"
-    });
+    }));
     res.end(JSON.stringify({
       ok: true,
       bridge: providerStatus.activeProviderName
@@ -69,9 +69,9 @@ export function handleAgentCopilotRoutes(req, res, parsedUrl, pathname, ctx) {
   }
 
   if (req.method === "POST") {
-    let body = "";
-    req.on("data", (chunk) => { body += chunk; });
-    req.on("end", () => {
+    if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+    readRequestBody(req, res, { corsHeaders: applyLocalCorsHeaders(req, { "Content-Type": "application/json" }) }).then((body) => {
+      if (body === null) return;
       let payload = {};
       try { payload = JSON.parse(body); } catch (_) {}
 
@@ -136,19 +136,18 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
           : `Turnkey AI Bridge (${providerId || "agy"} • ${model})`;
 
         if (isDatastarRequest) {
-          res.writeHead(200, {
+          res.writeHead(200, applyLocalCorsHeaders(req, {
             "Content-Type": "text/event-stream",
             "Cache-Control": "no-cache",
-            Connection: "keep-alive",
-            "Access-Control-Allow-Origin": "*"
-          });
+            Connection: "keep-alive"
+          }));
 
           const badgeColor = isError ? "badge-warning" : (activePersona.badgeColor || "badge-primary");
           const badgeLabel = isError ? "LOCAL FALLBACK" : "LIVE AI CO-PILOT";
           const fragment = `
-            <div id="${targetSelector.replace(/^#/, "")}" class="p-4 rounded-xl border border-base-300 bg-base-100 shadow-md space-y-2 transition-all">
+            <div id="${escapeHtml(targetSelector.replace(/^#/, ""))}" class="p-4 rounded-xl border border-base-300 bg-base-100 shadow-md space-y-2 transition-all">
               <div class="flex items-center justify-between gap-2 flex-wrap">
-                <span class="badge ${badgeColor} badge-sm font-bold gap-1 text-[11px] shadow-sm">
+                <span class="badge ${escapeHtml(badgeColor)} badge-sm font-bold gap-1 text-[11px] shadow-sm">
                   <span class="inline-block w-2 h-2 rounded-full ${isError ? "bg-warning" : "bg-success"} animate-pulse mr-1"></span>
                   ${badgeLabel} &bull; ${escapeHtml(activePersona.name.toUpperCase())}
                 </span>
@@ -167,10 +166,9 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
           return;
         }
 
-        res.writeHead(200, {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
-        });
+        res.writeHead(200, applyLocalCorsHeaders(req, {
+          "Content-Type": "application/json"
+        }));
         res.end(JSON.stringify({
           ok: !isError,
           action,
@@ -210,5 +208,7 @@ CRITICAL INSTRUCTION: Return ONLY the single witty response. Do not include intr
     return true;
   }
 
+  res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "GET, POST, OPTIONS", "Content-Type": "application/json" }));
+  res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
   return true;
 }

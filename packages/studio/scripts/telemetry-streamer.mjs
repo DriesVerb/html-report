@@ -2,7 +2,7 @@
 /**
  * telemetry-streamer.mjs
  * Streams real-time LLM telemetry (Chain-of-Thought, Tool Invocations, Task Progress)
- * to http://localhost:3000/__datastar_stream__ using DatastarBridge and AgyTelemetryAdapter.
+ * to http://localhost:3031/__datastar_stream__ using DatastarBridge and AgyTelemetryAdapter.
  */
 
 import http from "node:http";
@@ -15,7 +15,7 @@ import {
   ToolInvocationRecord
 } from "./datastar-sse.mjs";
 
-export function pushSSEToDevServer(payload, { port = 3000, host = "127.0.0.1" } = {}) {
+export function pushSSEToDevServer(payload, { port = 3031, host = "127.0.0.1" } = {}) {
   return new Promise((resolve, reject) => {
     const data = typeof payload === "string" ? payload : JSON.stringify(payload);
     const req = http.request(
@@ -52,10 +52,10 @@ export function pushSSEToDevServer(payload, { port = 3000, host = "127.0.0.1" } 
 }
 
 /**
- * Creates a telemetry streamer pipeline wired to http://localhost:3000/__datastar_stream__
+ * Creates a telemetry streamer pipeline wired to http://localhost:3031/__datastar_stream__
  */
 export class LiveTelemetryStreamer {
-  constructor({ port = 3000, host = "127.0.0.1", session = null } = {}) {
+  constructor({ port = 3031, host = "127.0.0.1", session = null } = {}) {
     this.port = port;
     this.host = host;
     this.session = session || new SessionState({ agentType: "agy", status: "running" });

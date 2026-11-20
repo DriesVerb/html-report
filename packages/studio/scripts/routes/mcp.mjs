@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import {
   CSRFManager,
   handleMCPRequest,
@@ -7,7 +8,7 @@ import {
   formatJsonRpcResult,
   JSON_RPC_ERRORS
 } from "../mcp-server.mjs";
-import { isLoopbackAddress } from "../server-utils.mjs";
+import { isLoopbackAddress, readRequestBody } from "../server-utils.mjs";
 
 export function handleMcpRoutes(req, res, parsedUrl, pathname, ctx) {
   const {
@@ -161,18 +162,18 @@ export function handleMcpRoutes(req, res, parsedUrl, pathname, ctx) {
     // 1b-MCP-2. MCP JSON-RPC 2.0 Message Dispatcher (POST /mcp/messages)
     if (pathname === "/mcp/messages" || pathname === "/__mcp_messages__") {
       if (req.method === "OPTIONS") {
-        res.writeHead(204, {
-          "Access-Control-Allow-Origin": "*",
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
           "Access-Control-Allow-Methods": "POST, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, Authorization"
-        });
+        }));
         res.end();
         return true;
       }
       if (req.method === "POST") {
-        let body = "";
-        req.on("data", (chunk) => { body += chunk; });
-        req.on("end", async () => {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        readRequestBody(req, res, { corsHeaders: applyLocalCorsHeaders(req, { "Content-Type": "application/json" }) }).then(async (body) => {
+          if (body === null) return;
           try {
             const reqObj = JSON.parse(body);
             const mcpResponse = await handleMCPRequest(reqObj, mcpContext);
@@ -185,37 +186,32 @@ export function handleMcpRoutes(req, res, parsedUrl, pathname, ctx) {
                 mcpSseClients.delete(sessionId);
               }
             }
-            res.writeHead(200, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            });
+            res.writeHead(200, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
             res.end(JSON.stringify(mcpResponse));
           } catch (err) {
-            res.writeHead(400, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            });
+            res.writeHead(400, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
             res.end(JSON.stringify(formatJsonRpcError(null, JSON_RPC_ERRORS.PARSE_ERROR, `Parse error: ${err.message}`)));
           }
         });
         return true;
       }
+      res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "POST, OPTIONS", "Content-Type": "application/json" }));
+      res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
       return true;
     }
 
     // 1b-MCP-3. MCP CSRF Token Generator (GET /api/mcp/csrf-token)
     if (pathname === "/api/mcp/csrf-token") {
-      const host = req.headers.host;
-      if (!CSRFManager.validateHost(host)) {
-        res.writeHead(403, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ ok: false, error: "Forbidden: Host must be localhost or 127.0.0.1" }));
-        return true;
-      }
+      if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
       const tokenData = csrfManager.generateToken();
-      res.writeHead(200, {
+      res.writeHead(200, applyLocalCorsHeaders(req, {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      });
+        "Cache-Control": "no-cache, no-store"
+      }));
       res.end(JSON.stringify({ ok: true, ...tokenData }));
       return true;
     }
@@ -223,18 +219,18 @@ export function handleMcpRoutes(req, res, parsedUrl, pathname, ctx) {
     // 1b-MCP-4. MCP Client Gateway Proxy (POST /api/mcp/call-tool)
     if (pathname === "/api/mcp/call-tool") {
       if (req.method === "OPTIONS") {
-        res.writeHead(204, {
-          "Access-Control-Allow-Origin": "*",
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
           "Access-Control-Allow-Methods": "POST, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, X-CSRF-Token"
-        });
+        }));
         res.end();
         return true;
       }
       if (req.method === "POST") {
-        let body = "";
-        req.on("data", (chunk) => { body += chunk; });
-        req.on("end", async () => {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        readRequestBody(req, res, { corsHeaders: applyLocalCorsHeaders(req, { "Content-Type": "application/json" }) }).then(async (body) => {
+          if (body === null) return;
           try {
             const payload = JSON.parse(body);
             if (!payload.csrfToken && req.headers["x-csrf-token"]) {
@@ -248,21 +244,21 @@ export function handleMcpRoutes(req, res, parsedUrl, pathname, ctx) {
               timeoutMs: 15000,
               context: mcpContext
             });
-            res.writeHead(gatewayResult.statusCode, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            });
+            res.writeHead(gatewayResult.statusCode, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
             res.end(JSON.stringify(gatewayResult.body));
           } catch (err) {
-            res.writeHead(400, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            });
+            res.writeHead(400, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
             res.end(JSON.stringify({ ok: false, error: `Invalid JSON payload: ${err.message}` }));
           }
         });
         return true;
       }
+      res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "POST, OPTIONS", "Content-Type": "application/json" }));
+      res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
       return true;
     }
 

@@ -22,6 +22,7 @@ import {
   injectPwaIntoHtml,
   DEFAULT_PWA_CONFIG
 } from "@html-report/core/pwa";
+import { isDirectCliExecution, getChildNodeExecArgs } from "@html-report/core/env";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -171,13 +172,13 @@ export async function installPwa(options = {}) {
     }
 
     const serveScript = path.resolve(__dirname, "server.mjs");
-    const serverProcess = spawn(process.execPath, [
+    const serverProcess = spawn(process.execPath, getChildNodeExecArgs([
       serveScript,
       targetFile,
       "--port",
       String(activePort),
       "--no-open"
-    ], {
+    ]), {
       detached: true,
       stdio: "ignore",
       env: { ...process.env, HTML_REPORT_NO_OPEN: "1" }
@@ -214,12 +215,7 @@ export async function installPwa(options = {}) {
 }
 
 // Direct CLI invocation
-const isDirectCli = process.argv[1] && (
-  process.argv[1].endsWith("install-pwa.mjs") ||
-  import.meta.url === fileURLToPath(import.meta.url)
-);
-
-if (isDirectCli) {
+if (isDirectCliExecution(process.argv[1], import.meta.url)) {
   const options = parseInstallArgs(process.argv.slice(2));
   if (options.help) {
     console.log(`

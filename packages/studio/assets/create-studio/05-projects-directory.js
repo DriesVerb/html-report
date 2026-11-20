@@ -149,7 +149,14 @@ window.renderDropdownProjectsList = function (searchQuery = "") {
 
     const sub = document.createElement("div");
     sub.className = "flex items-center gap-1.5 text-3xs text-base-content/60 font-mono truncate mt-0.5";
-    sub.innerHTML = `<span class="badge badge-3xs ${getCategoryBadgeClass(p.category)} font-mono">${p.category || 'HTML Report'}</span> <span class="truncate">${p.path}</span>`;
+    const subBadge = document.createElement("span");
+    subBadge.className = `badge badge-3xs ${getCategoryBadgeClass(p.category)} font-mono`;
+    subBadge.textContent = p.category || "HTML Report";
+    const subPath = document.createElement("span");
+    subPath.className = "truncate";
+    subPath.textContent = p.path || "";
+    sub.appendChild(subBadge);
+    sub.appendChild(subPath);
 
     left.appendChild(title);
     left.appendChild(sub);
@@ -451,7 +458,10 @@ window.renderProjectsGrid = function () {
 
     const pathEl = document.createElement("p");
     pathEl.className = "font-mono text-3xs text-base-content/60 truncate flex items-center gap-1";
-    pathEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg> <span>${p.path}</span>`;
+    pathEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>`;
+    const pathSpan = document.createElement("span");
+    pathSpan.textContent = p.path || "";
+    pathEl.appendChild(pathSpan);
 
     body.appendChild(h3);
     body.appendChild(pathEl);

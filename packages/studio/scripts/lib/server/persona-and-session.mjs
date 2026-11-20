@@ -418,3 +418,41 @@ export function buildLocalBridgeReply({ prompt, persona, context = {}, targetSel
   lines.push(`- **Answer Summary:** Processed *"${cleanPrompt.slice(0, 140)}"* locally with zero external API keys.`);
   return lines.join("\n");
 }
+
+export const MAX_REQUEST_BODY_BYTES = 2 * 1024 * 1024;
+
+export function readRequestBody(req, res, { maxBytes = MAX_REQUEST_BODY_BYTES, corsHeaders = null } = {}) {
+  return new Promise((resolve) => {
+    const chunks = [];
+    let totalBytes = 0;
+    let settled = false;
+
+    req.on("data", (chunk) => {
+      if (settled) return;
+      totalBytes += chunk.length;
+      if (totalBytes > maxBytes) {
+        settled = true;
+        if (res && !res.writableEnded) {
+          res.writeHead(413, corsHeaders || { "Content-Type": "application/json", "Cache-Control": "no-cache, no-store" });
+          res.end(JSON.stringify({ ok: false, error: `Payload exceeds ${maxBytes} byte limit` }));
+        }
+        req.destroy();
+        resolve(null);
+        return;
+      }
+      chunks.push(chunk);
+    });
+
+    req.on("end", () => {
+      if (settled) return;
+      settled = true;
+      resolve(Buffer.concat(chunks).toString("utf-8"));
+    });
+
+    req.on("error", () => {
+      if (settled) return;
+      settled = true;
+      resolve(null);
+    });
+  });
+}

@@ -68,7 +68,7 @@ node skills/html-report/scripts/install-pwa.mjs
 ### Verification & Testing
 Test PWA manifest and service worker compliance:
 ```bash
-node --test tests/pwa.test.mjs
+node --test tests/integration/pwa.test.mjs tests/integration/pwa.bdd.test.mjs
 ```
 
 ---

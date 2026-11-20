@@ -124,7 +124,7 @@ export const NATIVE_MCP_TOOLS = [
         },
         mode: {
           type: "string",
-          enum: ["report", "dashboard", "presentation", "print", "slides", "app"],
+          enum: ["report", "dashboard", "presentation", "print", "slides", "working-report", "live-report"],
           description: "Delivery archetype mode (default: 'report')"
         },
         theme: {

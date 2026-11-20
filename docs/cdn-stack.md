@@ -78,5 +78,5 @@ Every report assembled by `html-report` is hardened against supply-chain injecti
 
 For air-gapped environments or permanent archival, `html-report` supports inlining all remote CDN assets into a 100% self-contained `.html` file:
 
-- **Build-Time Flag**: `node skills/html-report/scripts/build-report.mjs --offline --content fragment.html --output report-offline.html`
+- **CLI Offline Bundling**: `node skills/html-report/scripts/publish-report.mjs --project <slug> --inline-cdn` (uses the local `.cache/html-report-cdn/` vendor cache to inline stylesheets and scripts into `published/index.html`).
 - **In-Browser Export**: Click the download icon in the sticky navbar and select **Download as HTML**. The client-side runtime fetches and packages all stylesheets and scripts into inline `<style>` and `<script>` blocks.

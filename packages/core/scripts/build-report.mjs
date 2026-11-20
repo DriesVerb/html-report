@@ -95,14 +95,15 @@ function applyFeedDirectives(body, { feeds, feedInterval, freezeFeeds, mockFeeds
 
   if (feeds && Object.keys(feeds).length > 0) {
     const regRegex = /<script\s+id=["']feed-registry["']\s+type=["']application\/json["']>([\s\S]*?)<\/script>/i;
+    const serializeJson = (obj) => JSON.stringify(obj, null, 2).replace(/<\//g, "<\\/");
     const match = cleanBody.match(regRegex);
     if (match) {
       let existing = {};
       try { existing = JSON.parse(match[1]); } catch (_) {}
       Object.assign(existing, feeds);
-      cleanBody = cleanBody.replace(regRegex, `<script id="feed-registry" type="application/json">\n${JSON.stringify(existing, null, 2)}\n</script>`);
+      cleanBody = cleanBody.replace(regRegex, `<script id="feed-registry" type="application/json">\n${serializeJson(existing)}\n</script>`);
     } else {
-      cleanBody = `<script id="feed-registry" type="application/json">\n${JSON.stringify(feeds, null, 2)}\n</script>\n` + cleanBody;
+      cleanBody = `<script id="feed-registry" type="application/json">\n${serializeJson(feeds)}\n</script>\n` + cleanBody;
     }
   }
 
@@ -145,7 +146,7 @@ function applyFeedDirectives(body, { feeds, feedInterval, freezeFeeds, mockFeeds
         }
 
         if (snapshot !== null) {
-          const serialized = JSON.stringify(snapshot).replace(/"/g, "&quot;");
+          const serialized = escapeAttr(JSON.stringify(snapshot));
           if (/data-feed-fallback\b/i.test(prefix)) {
             prefix = prefix.replace(/data-feed-fallback=["'][^"']*["']/i, `data-feed-fallback="${serialized}"`);
             return `${prefix}${suffix}`;
@@ -392,9 +393,10 @@ export function buildReport({
 
   let html = shellTemplate;
   if (resolvedTheme) {
-    html = html.replace(/data-theme="[^"]*"/i, `data-theme="${resolvedTheme}"`);
-    html = html.replace(/(<span[^>]*id="active-theme-label"[^>]*>)[^<]*(<\/span>)/i, `$1${resolvedTheme}$2`);
-    html = html.replace(/(<span[^>]*id="modal-active-theme-label"[^>]*>)[^<]*(<\/span>)/i, `$1${resolvedTheme}$2`);
+    const safeTheme = escapeAttr(resolvedTheme);
+    html = html.replace(/data-theme="[^"]*"/i, `data-theme="${safeTheme}"`);
+    html = html.replace(/(<span[^>]*id="active-theme-label"[^>]*>)[^<]*(<\/span>)/i, `$1${safeTheme}$2`);
+    html = html.replace(/(<span[^>]*id="modal-active-theme-label"[^>]*>)[^<]*(<\/span>)/i, `$1${safeTheme}$2`);
   }
 
   html = html.replace(/<html([^>]*)>/i, (match, attrs) => {
@@ -417,7 +419,7 @@ export function buildReport({
     );
   }
 
-  html = html.replace(/<!-- {{TITLE}} -->/g, () => title);
+  html = html.replace(/<!-- {{TITLE}} -->/g, () => escapeAttr(title));
   html = html.replace(/<!-- {{FAVICON}} -->/g, () => faviconTag);
 
   let processedBody = cleanBody;

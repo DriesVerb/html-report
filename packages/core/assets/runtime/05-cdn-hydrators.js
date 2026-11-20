@@ -89,14 +89,71 @@ function autoLinkMarkdownFiles(root = document.body) {
     const mdRegex = /\b([a-zA-Z0-9_\/-]+\.md)\b/g;
     for (const node of nodes) {
       const text = node.nodeValue;
-      if (!text || !text.match(mdRegex)) continue;
-      const span = document.createElement("span");
-      span.innerHTML = text.replace(mdRegex, (match) => {
-        return `<a href="${match}" onclick="if(window.openMarkdownViewer){window.openMarkdownViewer('${match}');return false;}" class="link link-primary font-mono text-xs underline decoration-primary/40 hover:decoration-primary cursor-pointer">${match}</a>`;
-      });
-      node.parentNode.replaceChild(span, node);
+      if (!text) continue;
+      mdRegex.lastIndex = 0;
+      if (!mdRegex.test(text)) continue;
+      mdRegex.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let lastIdx = 0;
+      let match;
+      while ((match = mdRegex.exec(text)) !== null) {
+        if (match.index > lastIdx) {
+          frag.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+        }
+        const mdPath = match[1];
+        const a = document.createElement("a");
+        a.href = mdPath;
+        a.className = "link link-primary font-mono text-xs underline decoration-primary/40 hover:decoration-primary cursor-pointer";
+        a.textContent = mdPath;
+        a.addEventListener("click", (e) => {
+          if (typeof window !== "undefined" && typeof window.openMarkdownViewer === "function") {
+            e.preventDefault();
+            window.openMarkdownViewer(mdPath);
+          }
+        });
+        frag.appendChild(a);
+        lastIdx = match.index + match[0].length;
+      }
+      if (lastIdx < text.length) {
+        frag.appendChild(document.createTextNode(text.slice(lastIdx)));
+      }
+      node.parentNode.replaceChild(frag, node);
     }
   } catch (_) {}
+}
+
+/**
+ * Sanitizes rendered Markdown HTML against script/handler/dangerous-URI XSS.
+ */
+function sanitizeRenderedHtml(rawHtml) {
+  if (!rawHtml || typeof rawHtml !== "string") return "";
+  if (typeof document !== "undefined" && typeof document.createElement === "function") {
+    try {
+      const tpl = document.createElement("template");
+      tpl.innerHTML = rawHtml;
+      const blocked = tpl.content.querySelectorAll("script, iframe, object, embed, link[rel='import'], meta, base, form");
+      blocked.forEach((el) => el.remove());
+      tpl.content.querySelectorAll("*").forEach((el) => {
+        if (!el.attributes) return;
+        for (const attr of Array.from(el.attributes)) {
+          const name = attr.name.toLowerCase();
+          const val = String(attr.value || "").trim().toLowerCase();
+          if (name.startsWith("on") || name === "srcdoc") {
+            el.removeAttribute(attr.name);
+          } else if (
+            (name === "href" || name === "src" || name === "xlink:href" || name === "action" || name === "formaction") &&
+            (/^(?:javascript|vbscript):/i.test(val) || /^data:text\/html/i.test(val))
+          ) {
+            el.removeAttribute(attr.name);
+          }
+        }
+      });
+      return tpl.innerHTML;
+    } catch (_) {}
+  }
+  return rawHtml
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "");
 }
 
 /**
@@ -130,7 +187,7 @@ function initShowdown() {
         md = (rawAttr && rawAttr !== "true") ? rawAttr : el.textContent;
       }
       if (md) {
-        el.innerHTML = converter.makeHtml(md);
+        el.innerHTML = sanitizeRenderedHtml(converter.makeHtml(md));
       }
     });
   } catch (err) {
@@ -506,7 +563,7 @@ async function openMarkdownViewer(docPath) {
   }
 
   if (contentEl) {
-    contentEl.innerHTML = rendered;
+    contentEl.innerHTML = sanitizeRenderedHtml(rendered);
   }
   try { rehydrateLucideIcons(modal); } catch (_) {}
   return modal;

@@ -27,7 +27,7 @@ const HTMLReportPublisher = {
     docClone.querySelectorAll(".divider").forEach((d) => {
       if (d.textContent && d.textContent.includes("Quick Controls")) d.remove();
     });
-    docClone.querySelectorAll('meta[name="html-report-ai"]').forEach((el) => el.remove());
+    docClone.querySelectorAll('meta[name="html-report-ai"], meta[name^="html-report-ai-"]').forEach((el) => el.remove());
     docClone.querySelectorAll("#html-report-verify-styles").forEach((el) => el.remove());
     docClone.querySelectorAll("[data-agent-authoring], [data-session-id], [data-insufficient-space]").forEach((el) => {
       el.removeAttribute("data-agent-authoring");

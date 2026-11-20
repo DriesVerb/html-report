@@ -2,7 +2,7 @@ import { getPackageVersion } from "@html-report/core/compatibility";
 import { CSRFManager } from "../mcp-server.mjs";
 import { AgentInferenceRouter } from "../preflight.mjs";
 import { escapeHtml } from "../datastar-sse.mjs";
-import { isLoopbackAddress, buildLocalBridgeReply } from "../server-utils.mjs";
+import { isLoopbackAddress, buildLocalBridgeReply, readRequestBody } from "../server-utils.mjs";
 import { handleAgentEditRoutes } from "./agent-edit.mjs";
 import { handleAgentCopilotRoutes } from "./agent-copilot.mjs";
 
@@ -160,25 +160,24 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
 
     if (pathname === "/api/agent/persona" || pathname === "/__agent_persona__") {
       if (req.method === "OPTIONS") {
-        res.writeHead(204, {
-          "Access-Control-Allow-Origin": "*",
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        res.writeHead(204, applyLocalCorsHeaders(req, {
           "Access-Control-Allow-Methods": "POST, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type"
-        });
+        }));
         res.end();
         return true;
       }
       if (req.method === "POST") {
-        let body = "";
-        req.on("data", (chunk) => { body += chunk; });
-        req.on("end", () => {
+        if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
+        readRequestBody(req, res, { corsHeaders: applyLocalCorsHeaders(req, { "Content-Type": "application/json" }) }).then((body) => {
+          if (body === null) return;
           try {
             const payload = JSON.parse(body);
             const registered = personaRegistry.register(payload);
-            res.writeHead(200, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            });
+            res.writeHead(200, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
             res.end(JSON.stringify({
               ok: true,
               registered: registered.id,
@@ -186,15 +185,16 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
               persona: registered
             }));
           } catch (err) {
-            res.writeHead(400, {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            });
+            res.writeHead(400, applyLocalCorsHeaders(req, {
+              "Content-Type": "application/json"
+            }));
             res.end(JSON.stringify({ ok: false, error: err.message }));
           }
         });
         return true;
       }
+      res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "POST, OPTIONS", "Content-Type": "application/json" }));
+      res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
       return true;
     }
 
@@ -212,9 +212,8 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
 
       if (req.method === "POST") {
         if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
-        let body = "";
-        req.on("data", (chunk) => { body += chunk; });
-        req.on("end", () => {
+        readRequestBody(req, res, { corsHeaders: applyLocalCorsHeaders(req, { "Content-Type": "application/json" }) }).then((body) => {
+          if (body === null) return;
           let payload = {};
           try { payload = JSON.parse(body); } catch (_) {}
           if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: true, csrfToken: payload.csrfToken })) return;
@@ -269,7 +268,7 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
 
               // 1. If targetSelector provided, push Datastar morph fragment into the page element
               if (targetSelector) {
-                const cleanId = targetSelector.replace(/^#/, "");
+                const cleanId = escapeHtml(targetSelector.replace(/^#/, ""));
                 const targetFragment = `
                   <div id="${cleanId}" class="p-4 rounded-xl border border-primary/50 bg-base-100 shadow-md space-y-2 transition-all">
                     <div class="flex items-center justify-between text-xs pb-1 border-b border-base-200">
@@ -426,6 +425,8 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
         });
         return true;
       }
+      res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "POST, OPTIONS", "Content-Type": "application/json" }));
+      res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
       return true;
     }
 
@@ -442,9 +443,8 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
 
       if (req.method === "POST") {
         if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: false })) return true;
-        let body = "";
-        req.on("data", (chunk) => { body += chunk; });
-        req.on("end", () => {
+        readRequestBody(req, res, { corsHeaders: applyLocalCorsHeaders(req, { "Content-Type": "application/json" }) }).then((body) => {
+          if (body === null) return;
           let payload = {};
           try { payload = JSON.parse(body); } catch (_) {}
           if (!enforceLocalBridgeSecurity(req, res, { requireCsrf: true, csrfToken: payload.csrfToken })) return;
@@ -457,8 +457,9 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
 
           if (approved && action) {
             // Broadcast execution fragment if Datastar clients are active
+            const safeActionId = escapeHtml(actionId);
             const resultHtml = `
-              <div id="action-result-${actionId}" class="p-2.5 rounded-lg bg-success/10 border border-success/30 text-xs text-success flex items-center gap-2">
+              <div id="action-result-${safeActionId}" class="p-2.5 rounded-lg bg-success/10 border border-success/30 text-xs text-success flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                 <span>Action <strong>${escapeHtml(action.description || actionId)}</strong> was successfully executed.</span>
               </div>
@@ -487,6 +488,8 @@ export function handleAgentBridgeRoutes(req, res, parsedUrl, pathname, ctx) {
         });
         return true;
       }
+      res.writeHead(405, applyLocalCorsHeaders(req, { Allow: "POST, OPTIONS", "Content-Type": "application/json" }));
+      res.end(JSON.stringify({ ok: false, error: `Method ${req.method} not allowed` }));
       return true;
     }
 

@@ -35,10 +35,10 @@ if (HTMLReportSettings) {
       });
     });
 
-    // Populate 32-theme selector grid
+    // Populate 32-theme selector grid (re-populate if custom themes were added)
     const themeGrid = document.getElementById("modal-theme-grid");
-    if (themeGrid && !themeGrid.__populated && typeof DAISYUI_THEMES !== "undefined") {
-      themeGrid.__populated = true;
+    if (themeGrid && typeof DAISYUI_THEMES !== "undefined" && themeGrid.__populatedCount !== DAISYUI_THEMES.length) {
+      themeGrid.__populatedCount = DAISYUI_THEMES.length;
       themeGrid.innerHTML = "";
       const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
       DAISYUI_THEMES.forEach((theme) => {
