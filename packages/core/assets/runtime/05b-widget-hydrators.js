@@ -57,7 +57,7 @@ function initDeclarativeCharts(retries = 25) {
 
   window.reportCharts = Array.isArray(window.reportCharts) ? window.reportCharts : [];
   const palette = typeof resolveDaisyUIThemePalette === "function" ? resolveDaisyUIThemePalette() : {};
-  const paletteSequence = ["primary", "secondary", "accent", "info", "success", "warning", "error"];
+  const paletteSequence = ["primary", "secondary", "accent", "info", "success", "warning", "error", "neutral"];
   const fallbackColor = {
     hex: "#3b82f6",
     rgba: (a = 1) => `rgba(59, 130, 246, ${a})`
@@ -175,12 +175,25 @@ function initDeclarativeCharts(retries = 25) {
     config.options.plugins.legend = config.options.plugins.legend && typeof config.options.plugins.legend === "object"
       ? config.options.plugins.legend
       : {};
+    const isPieOrDoughnut = baseChartType === "pie" || baseChartType === "doughnut" || baseChartType === "polararea";
+    const labelCount = Array.isArray(config.data.labels) ? config.data.labels.length : 0;
+    if (isPieOrDoughnut && labelCount > 4 && config.options.plugins.legend.position === undefined) {
+      config.options.plugins.legend.position = "bottom";
+    }
     config.options.plugins.legend.labels =
       config.options.plugins.legend.labels && typeof config.options.plugins.legend.labels === "object"
         ? config.options.plugins.legend.labels
         : {};
     if (!config.options.plugins.legend.labels.color) {
       config.options.plugins.legend.labels.color = textHex;
+    }
+    if (isPieOrDoughnut && labelCount > 4) {
+      if (config.options.plugins.legend.labels.boxWidth === undefined) {
+        config.options.plugins.legend.labels.boxWidth = 10;
+      }
+      if (config.options.plugins.legend.labels.padding === undefined) {
+        config.options.plugins.legend.labels.padding = 8;
+      }
     }
 
     try {

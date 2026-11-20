@@ -303,7 +303,7 @@ async function setReportTheme(themeName) {
   const palette = resolveDaisyUIThemePalette();
 
   // Dynamic Chart.js color sync (scalar & array datasets, scales, and legend)
-  const paletteSequence = ["primary", "secondary", "accent", "info", "success", "warning", "error"];
+  const paletteSequence = ["primary", "secondary", "accent", "info", "success", "warning", "error", "neutral"];
   const activeCharts = (typeof window !== "undefined" && Array.isArray(window.reportCharts) && window.reportCharts.length > 0)
     ? window.reportCharts
     : (typeof document !== "undefined" && typeof Chart !== "undefined" && typeof Chart.getChart === "function"

@@ -578,5 +578,76 @@ end`;
         globalThis.document = originalDoc;
       }
     });
+
+    it("should default doughnut charts with >4 slices to compact bottom legend and 8-color DaisyUI palette", () => {
+      const originalWindow = globalThis.window;
+      const originalDoc = globalThis.document;
+      const createdConfigs = [];
+      class MockChart {
+        constructor(_ctx, config) {
+          this.config = config;
+          this.data = config.data;
+          this.options = config.options;
+          createdConfigs.push(config);
+        }
+        static getChart() { return null; }
+      }
+      const doughnutCanvas = {
+        dataset: {},
+        getContext: () => ({ id: "ctx-doughnut" }),
+        getAttribute: (name) => name === "data-chart" ? JSON.stringify({
+          type: "doughnut",
+          data: {
+            labels: ["A", "B", "C", "D", "E", "F", "G", "H"],
+            datasets: [{ label: "Share", data: [10, 12, 8, 15, 20, 11, 14, 10] }]
+          }
+        }) : null
+      };
+      let canvasFillStyle = "";
+      globalThis.window = {
+        Chart: MockChart,
+        reportCharts: [],
+        getComputedStyle: (el) => {
+          if (el.className.includes("bg-neutral")) return { backgroundColor: "rgb(61, 68, 81)", color: "#ffffff" };
+          return { backgroundColor: "rgb(59, 130, 246)", color: "#1f2937" };
+        }
+      };
+      globalThis.document = {
+        body: { appendChild() {}, removeChild() {} },
+        documentElement: { getAttribute: () => "light" },
+        createElement: (tag) => {
+          if (tag === "canvas") {
+            return {
+              width: 1,
+              height: 1,
+              getContext: () => ({
+                set fillStyle(val) { canvasFillStyle = val; },
+                get fillStyle() { return canvasFillStyle; },
+                fillRect() {},
+                getImageData: () => {
+                  const m = canvasFillStyle.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/);
+                  if (m) return { data: [Number(m[1]), Number(m[2]), Number(m[3]), 255] };
+                  return { data: [59, 130, 246, 255] };
+                }
+              })
+            };
+          }
+          return { style: {}, className: "", appendChild() {}, remove() {} };
+        },
+        querySelectorAll: (sel) => (sel === "canvas[data-chart], canvas[data-chart-source]" ? [doughnutCanvas] : [])
+      };
+      try {
+        const created = initDeclarativeCharts(0);
+        assert.equal(created.length, 1);
+        const cfg = createdConfigs[0];
+        assert.equal(cfg.options.plugins.legend.position, "bottom");
+        assert.equal(cfg.options.plugins.legend.labels.boxWidth, 10);
+        assert.equal(cfg.data.datasets[0].borderColor.length, 8);
+        assert.equal(cfg.data.datasets[0].borderColor[7], "#3d4451", "8th slice should use neutral palette token");
+      } finally {
+        globalThis.window = originalWindow;
+        globalThis.document = originalDoc;
+      }
+    });
   });
 });

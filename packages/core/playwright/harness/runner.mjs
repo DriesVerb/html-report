@@ -196,7 +196,7 @@ export async function runHarness(htmlPath, rawOptions = {}) {
     options.grep ||
     options.allCdns ||
     options.cdns ||
-    Object.entries(options).some(([k, v]) => v === true && (k.startsWith("check") || k.startsWith("cdn")))
+    Object.entries(options).some(([k, v]) => v === true && k.startsWith("check"))
   );
 
   reporter.onRunStart({
@@ -271,6 +271,9 @@ export async function runHarness(htmlPath, rawOptions = {}) {
       const screenshotDir = typeof options.screenshots === "string" ? options.screenshots : "./screenshots";
       await page.setViewportSize({ width: 1280, height: 900 });
       await reporter.captureScreenshot(page, "review_desktop", screenshotDir);
+      await page.setViewportSize({ width: 640, height: 800 });
+      await reporter.captureScreenshot(page, "review_mobile", screenshotDir);
+      await page.setViewportSize({ width: 1280, height: 900 });
       const inventory = await page.evaluate(() => {
         const title = document.getElementById("navbar-report-title")?.textContent?.trim() || document.title;
         const mode = document.documentElement.getAttribute("data-report-mode") || "report";

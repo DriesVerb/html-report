@@ -550,5 +550,28 @@ describe("Playwright Extensible Harness Test Suite", () => {
       });
       assert.equal(goodPrintRes.success, true, `Expected hidden cover to pass, got: ${JSON.stringify(goodPrintRes.failures)}`);
     });
+
+    it("should not misclassify cdnCache=true as TARGETED and should capture both desktop and mobile review screenshots", async () => {
+      const { buildReport } = await import(
+        path.resolve(process.cwd(), "skills/html-report/scripts/build-report.mjs")
+      );
+      const built = buildReport({
+        title: "Review Packet Coverage Test",
+        content: `<section id="overview"><h1 id="main-heading">Overview</h1><p>Body</p></section>`,
+        mode: "report"
+      });
+      const reportFile = path.join(tmpDir, "review-coverage.html");
+      const shotDir = path.join(tmpDir, "shots");
+      fs.writeFileSync(reportFile, built.html, "utf-8");
+
+      const parsed = parseArgs(["node", "verify-report.mjs", reportFile, "--quick", "--review-packet", "--screenshots", shotDir]);
+      assert.equal(parsed.cdnCache, true);
+      const res = await runHarness(reportFile, parsed);
+      assert.equal(res.success, true);
+      assert.ok(res.reviewPacket && Array.isArray(res.screenshots));
+      const names = res.screenshots.map((s) => s.name);
+      assert.ok(names.includes("review_desktop"), "review_desktop screenshot must be captured");
+      assert.ok(names.includes("review_mobile"), "review_mobile screenshot must be captured");
+    });
   });
 });
